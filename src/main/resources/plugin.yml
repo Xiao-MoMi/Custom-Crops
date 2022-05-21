@@ -1,0 +1,10 @@
+name: CustomCrops
+version: '${project.version}'
+main: net.momirealms.customcrops.CustomCrops
+api-version: 1.18
+depend: [ ItemsAdder , ProtocolLib ]
+softdepend: [ PlaceholderAPI ]
+authors: [ XiaoMoMi ]
+commands:
+  customcrops:
+    permission-message: No Permission
