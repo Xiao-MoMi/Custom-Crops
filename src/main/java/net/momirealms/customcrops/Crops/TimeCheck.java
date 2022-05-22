@@ -45,7 +45,8 @@ public class TimeCheck extends BukkitRunnable {
                         if (CustomBlock.byAlreadyPlaced(world.getBlockAt(seedLocation)).getNamespacedID().equalsIgnoreCase(config.getString("config.dead-crop"))){
                             return;
                         }
-                        String[] cropNameList = CustomBlock.byAlreadyPlaced(world.getBlockAt(seedLocation)).getNamespacedID().split("_");
+                        String namespace = CustomBlock.byAlreadyPlaced(world.getBlockAt(seedLocation)).getNamespacedID().split(":")[0];
+                        String[] cropNameList = CustomBlock.byAlreadyPlaced(world.getBlockAt(seedLocation)).getNamespacedID().split(":")[1].split("_");
                         Label_out:
                         if(enable_season){
                             if(enable_greenhouse){
@@ -74,13 +75,13 @@ public class TimeCheck extends BukkitRunnable {
                             }
                         }
                         int nextStage = Integer.parseInt(cropNameList[2]) + 1;
-                        if (CustomBlock.getInstance(cropNameList[0] + "_" +cropNameList[1] +"_" + nextStage) != null) {
+                        if (CustomBlock.getInstance( namespace +":"+cropNameList[0] + "_stage_" + nextStage) != null) {
                             Bukkit.getScheduler().callSyncMethod(CustomCrops.instance, () ->{
                                 CustomBlock.remove(potLocation);
                                 CustomBlock.place(config.getString("config.pot"),potLocation);
                                 if(Math.random()< config.getDouble("config.grow-success-chance")){
                                     CustomBlock.remove(seedLocation);
-                                    CustomBlock.place(cropNameList[0] + "_" +cropNameList[1] +"_" + nextStage,seedLocation);
+                                    CustomBlock.place(namespace + ":" + cropNameList[0] + "_stage_" + nextStage,seedLocation);
                                 }
                                 return null;
                             });

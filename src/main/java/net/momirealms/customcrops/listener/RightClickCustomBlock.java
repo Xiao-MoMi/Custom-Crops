@@ -57,7 +57,7 @@ public class RightClickCustomBlock implements Listener {
                 String namespace = clickedCustomBlock.getNamespacedID().split(":")[0];
                 String[] cropNameList = clickedCustomBlock.getNamespacedID().split(":")[1].split("_");
                 int nextStage = Integer.parseInt(cropNameList[2]) + 1;
-                if (CustomBlock.getInstance(namespace + ":" + cropNameList[0] + "_" +cropNameList[1] +"_" + nextStage) == null) {
+                if (CustomBlock.getInstance(namespace + ":" + cropNameList[0] + "_stage_" + nextStage) == null) {
                     clickedCustomBlock.getLoot().forEach(itemStack -> {
                         clickedBlockLocation.getWorld().dropItem(clickedBlockLocation.clone().add(0.5,0.2,0.5),itemStack);
                     });
@@ -107,17 +107,18 @@ public class RightClickCustomBlock implements Listener {
                 if (mainHandItem.getType() == Material.BONE_MEAL){
                     //植物是否具有stage属性
                     if (clickedCustomBlock.getNamespacedID().contains("stage")){
-                        String[] cropNameList = clickedCustomBlock.getNamespacedID().split("_");
+                        String namespace = clickedCustomBlock.getNamespacedID().split(":")[0];
+                        String[] cropNameList = clickedCustomBlock.getNamespacedID().split(":")[1].split("_");
                         int nextStage = Integer.parseInt(cropNameList[2]) + 1;
                         //植物是否存在下一个stage
-                        if (CustomBlock.getInstance(cropNameList[0] + "_" +cropNameList[1] +"_" + nextStage) != null){
+                        if (CustomBlock.getInstance(namespace+ ":" + cropNameList[0] + "_stage_" + nextStage) != null){
                             if(player.getGameMode() != GameMode.CREATIVE){
                                 mainHandItem.setAmount(mainHandItem.getAmount() - 1);
                             }
                             //骨粉的成功率
                             if (Math.random() < config.getDouble("config.bone-meal-chance")){
                                 CustomBlock.remove(clickedBlockLocation);
-                                CustomBlock.place(cropNameList[0] + "_" +cropNameList[1] +"_" + nextStage,clickedBlockLocation);
+                                CustomBlock.place(namespace + ":" + cropNameList[0] + "_stage_" + nextStage,clickedBlockLocation);
                                 Particle particleSuccess = Particle.valueOf(config.getString("config.particle.success"));
                                 world.spawnParticle(particleSuccess, clickedBlockLocation.clone().add(0.5, 0.1,0.5), 1 ,0,0,0,0);
                                 //使用骨粉是否消耗水分
