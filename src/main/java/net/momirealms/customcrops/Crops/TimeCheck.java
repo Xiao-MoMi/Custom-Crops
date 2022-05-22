@@ -18,8 +18,6 @@ import java.util.Objects;
 
 public class TimeCheck extends BukkitRunnable {
 
-
-
     @Override
     public void run() {
         long time = Bukkit.getWorld("world").getTime();
@@ -155,9 +153,7 @@ public class TimeCheck extends BukkitRunnable {
     private void waterPot(Location tempLoc, World world, FileConfiguration config) {
         if(CustomBlock.byAlreadyPlaced(world.getBlockAt(tempLoc)) != null){
             if(CustomBlock.byAlreadyPlaced(world.getBlockAt(tempLoc)).getNamespacedID().equalsIgnoreCase(config.getString("config.pot"))){
-
                 PacketContainer fakeWater = new PacketContainer(PacketType.Play.Server.ENTITY_HEAD_ROTATION);
-
                 Bukkit.getScheduler().callSyncMethod(CustomCrops.instance,()->{
                     CustomBlock.remove(tempLoc);
                     CustomBlock.place(config.getString("config.watered-pot"), tempLoc);

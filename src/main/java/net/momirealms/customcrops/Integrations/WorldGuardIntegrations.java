@@ -17,10 +17,7 @@ public class WorldGuardIntegrations {
         RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
         RegionQuery query = container.createQuery();
 
-        if (!query.testState(BukkitAdapter.adapt(loc), localPlayer, Flags.BUILD)) {
-            return true;
-        }
-        return false;
+        return !query.testState(BukkitAdapter.adapt(loc), localPlayer, Flags.BUILD);
     }
     public static boolean checkWGHarvest(Location loc,Player player){
 
@@ -28,9 +25,6 @@ public class WorldGuardIntegrations {
         RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
         RegionQuery query = container.createQuery();
 
-        if (!query.testState(BukkitAdapter.adapt(loc), localPlayer, Flags.BLOCK_BREAK)) {
-            return true;
-        }
-        return false;
+        return !query.testState(BukkitAdapter.adapt(loc), localPlayer, Flags.BLOCK_BREAK);
     }
 }

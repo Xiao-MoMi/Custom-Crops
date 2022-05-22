@@ -25,6 +25,7 @@ public class BackUp {
             BackUp.backUp(sprinkler_data,sprinklerBackUp);
         } catch (IOException e) {
             e.printStackTrace();
+            CustomCrops.instance.getLogger().warning("备份发生错误");
         }
     }
 
