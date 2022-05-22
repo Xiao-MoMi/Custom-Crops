@@ -1,5 +1,9 @@
 package net.momirealms.customcrops.listener;
 
+import com.bekvon.bukkit.residence.Residence;
+import com.bekvon.bukkit.residence.protection.ClaimedResidence;
+import com.bekvon.bukkit.residence.protection.FlagPermissions;
+import com.bekvon.bukkit.residence.protection.ResidencePermissions;
 import dev.lone.itemsadder.api.CustomStack;
 import net.momirealms.customcrops.CustomCrops;
 import net.momirealms.customcrops.DataManager.MaxSprinklersPerChunk;
@@ -24,16 +28,16 @@ import java.util.List;
 
 public class RightClickBlock implements Listener {
 
-    FileConfiguration config = CustomCrops.instance.getConfig();
-
     @EventHandler
     public void rightClickBlock(PlayerInteractEvent event){
-        if(event.getAction() != Action.RIGHT_CLICK_BLOCK || !event.hasItem()){
+        FileConfiguration config = CustomCrops.instance.getConfig();
+        if(!event.hasItem()){
             return;
         }
+        if(event.getAction() != Action.RIGHT_CLICK_BLOCK && event.getAction() != Action.RIGHT_CLICK_AIR) return;
         Player player = event.getPlayer();
         ItemStack itemStack = event.getItem();
-
+        //水壶加水
         if(itemStack.getType() == Material.WOODEN_SWORD){
             List<Block> lineOfSight = player.getLineOfSight(null, 3);
             boolean hasWater = false;
@@ -47,18 +51,29 @@ public class RightClickBlock implements Listener {
                 return;
             }
         }
+        if(event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
         if(event.getBlockFace() != BlockFace.UP) return;
+        if(CustomStack.byItemStack(event.getItem()) == null) return;
 
-        if(CustomStack.byItemStack(event.getItem()) == null){
-            return;
+        Location location = event.getClickedBlock().getLocation();
+        if(config.getBoolean("config.integration.residence")){
+            FlagPermissions.addFlag("build");
+            ClaimedResidence res = Residence.getInstance().getResidenceManager().getByLoc(location);
+            if(res!=null){
+                ResidencePermissions perms = res.getPermissions();
+                String playerName = event.getPlayer().getName();
+                boolean hasPermission = perms.playerHas(playerName, "build", true);
+                if(!hasPermission){
+                    event.setCancelled(true);
+                    return;
+                }
+            }
         }
-
+        //是否过高过低
         if(event.getClickedBlock().getY() > config.getInt("config.height.max") || event.getClickedBlock().getY() < config.getInt("config.height.min")){
             MessageManager.playerMessage(config.getString("messages.prefix") + config.getString("messages.not-a-good-place"),player);
             return;
         }
-
-        Location location = event.getClickedBlock().getLocation();
 
         if(CustomStack.byItemStack(event.getItem()).getNamespacedID().equalsIgnoreCase(config.getString("config.sprinkler-1-item"))){
             if(MaxSprinklersPerChunk.maxSprinklersPerChunk(location)){
@@ -83,6 +98,7 @@ public class RightClickBlock implements Listener {
         }
     }
     private void addWater(ItemStack itemStack, Player player){
+        FileConfiguration config = CustomCrops.instance.getConfig();
         if(CustomStack.byItemStack(itemStack)!= null){
             CustomStack customStack = CustomStack.byItemStack(itemStack);
             if(customStack.getNamespacedID().equalsIgnoreCase(config.getString("config.watering-can-1")) ||

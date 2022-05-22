@@ -65,6 +65,12 @@ config:
     - world
   # 只在被加载的区块中生长和枯萎，对性能友好
   only-grow-in-loaded-chunks: true
+  #与第三方插件兼容
+  integration:
+    #收获权限为harvest 浇水种植权限为build
+    residence: false
+    #收获flag为BLOCK_BREAK 浇水种植flag为BUILD
+    worldguard: false
 
 messages:
   prefix: '<gradient:#ccfbff:#ef96c5>[CustomCrops] </gradient>'
