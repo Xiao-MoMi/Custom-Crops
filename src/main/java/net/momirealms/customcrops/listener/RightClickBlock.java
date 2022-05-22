@@ -1,9 +1,5 @@
 package net.momirealms.customcrops.listener;
 
-import com.bekvon.bukkit.residence.Residence;
-import com.bekvon.bukkit.residence.protection.ClaimedResidence;
-import com.bekvon.bukkit.residence.protection.FlagPermissions;
-import com.bekvon.bukkit.residence.protection.ResidencePermissions;
 import dev.lone.itemsadder.api.CustomStack;
 import net.momirealms.customcrops.CustomCrops;
 import net.momirealms.customcrops.DataManager.MaxSprinklersPerChunk;
@@ -33,11 +29,11 @@ public class RightClickBlock implements Listener {
 
     @EventHandler
     public void rightClickBlock(PlayerInteractEvent event){
-        FileConfiguration config = CustomCrops.instance.getConfig();
-        if(!event.hasItem()){
-            return;
-        }
+
+        if(!event.hasItem()) return;
         if(event.getAction() != Action.RIGHT_CLICK_BLOCK && event.getAction() != Action.RIGHT_CLICK_AIR) return;
+        if(CustomStack.byItemStack(event.getItem()) == null) return;
+
         Player player = event.getPlayer();
         ItemStack itemStack = event.getItem();
         //水壶加水
@@ -54,10 +50,12 @@ public class RightClickBlock implements Listener {
                 return;
             }
         }
+
         if(event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
         if(event.getBlockFace() != BlockFace.UP) return;
-        if(CustomStack.byItemStack(event.getItem()) == null) return;
 
+
+        FileConfiguration config = CustomCrops.instance.getConfig();
         Location location = event.getClickedBlock().getLocation();
         //res兼容
         if(config.getBoolean("config.integration.residence")){
@@ -82,7 +80,6 @@ public class RightClickBlock implements Listener {
             MessageManager.playerMessage(config.getString("messages.prefix") + config.getString("messages.not-a-good-place"),player);
             return;
         }
-
         if(CustomStack.byItemStack(event.getItem()).getNamespacedID().equalsIgnoreCase(config.getString("config.sprinkler-1-item"))){
             if(MaxSprinklersPerChunk.maxSprinklersPerChunk(location)){
                 MessageManager.playerMessage(config.getString("messages.prefix")+config.getString("messages.reach-limit-sprinkler").replace("{Max}", config.getString("config.max-sprinklers")),player);
@@ -107,18 +104,16 @@ public class RightClickBlock implements Listener {
     }
     private void addWater(ItemStack itemStack, Player player){
         FileConfiguration config = CustomCrops.instance.getConfig();
-        if(CustomStack.byItemStack(itemStack)!= null){
-            CustomStack customStack = CustomStack.byItemStack(itemStack);
-            if(customStack.getNamespacedID().equalsIgnoreCase(config.getString("config.watering-can-1")) ||
-                    customStack.getNamespacedID().equalsIgnoreCase(config.getString("config.watering-can-2")) ||
-                    customStack.getNamespacedID().equalsIgnoreCase(config.getString("config.watering-can-3")))
-            {
-                if(customStack.getMaxDurability() == customStack.getDurability()){
-                    MessageManager.playerMessage(config.getString("messages.prefix") + config.getString("messages.can-full"),player);
-                }else {
-                    customStack.setDurability(customStack.getDurability() + 1);
-                    player.playSound(player, Sound.ITEM_BUCKET_FILL,1,1);
-                }
+        CustomStack customStack = CustomStack.byItemStack(itemStack);
+        if(customStack.getNamespacedID().equalsIgnoreCase(config.getString("config.watering-can-1")) ||
+           customStack.getNamespacedID().equalsIgnoreCase(config.getString("config.watering-can-2")) ||
+           customStack.getNamespacedID().equalsIgnoreCase(config.getString("config.watering-can-3")))
+        {
+            if(customStack.getMaxDurability() == customStack.getDurability()){
+                MessageManager.playerMessage(config.getString("messages.prefix") + config.getString("messages.can-full"),player);
+            }else {
+                customStack.setDurability(customStack.getDurability() + 1);
+                player.playSound(player, Sound.ITEM_BUCKET_FILL,1,1);
             }
         }
     }

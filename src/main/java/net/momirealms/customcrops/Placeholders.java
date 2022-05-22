@@ -14,7 +14,6 @@ public class Placeholders extends PlaceholderExpansion{
         this.plugin = plugin;
     }
 
-
     @Override
     public @NotNull String getIdentifier() {
         return "customcrops";

@@ -40,6 +40,7 @@ public class RightClickCustomBlock implements Listener {
                 return;
             }
         }
+        //空手收获农作物
         if (event.getItem() == null) {
             if(config.getBoolean("config.integration.residence")){
                 if(ResidenceIntegrations.checkResHarvest(clickedBlockLocation,player)){
@@ -61,11 +62,13 @@ public class RightClickCustomBlock implements Listener {
                         clickedBlockLocation.getWorld().dropItem(clickedBlockLocation.clone().add(0.5,0.2,0.5),itemStack);
                     });
                     CustomBlock.remove(clickedBlockLocation);
+                    //如果配置文件有配置则返回第几阶段
                     if(config.getConfigurationSection("crops." + cropNameList[0]).getKeys(false).contains("return")){
                         CustomBlock.place(config.getString("crops." + cropNameList[0] + ".return"), clickedBlockLocation);
                     }
                 }
             }
+            return;
         }
         //res兼容
         if(config.getBoolean("config.integration.residence")){
@@ -73,17 +76,14 @@ public class RightClickCustomBlock implements Listener {
                return;
            }
         }
-
         //wg兼容
         if(config.getBoolean("config.integration.worldguard")){
             if(WorldGuardIntegrations.checkWGBuild(clickedBlockLocation,player)){
                 return;
             }
         }
-
         World world = player.getWorld();
         ItemStack mainHandItem = player.getInventory().getItemInMainHand();
-
         //右键的作物下方是否为自定义方块
         if (CustomBlock.byAlreadyPlaced(world.getBlockAt(clickedBlockLocation.clone().subtract(0,1,0))) != null && clickedBlock.getType() == Material.TRIPWIRE) {
             //检测右键的方块下方是否为干燥的种植盆方块
@@ -152,14 +152,12 @@ public class RightClickCustomBlock implements Listener {
                 }
                 //检测右键的方块是否为湿润的种植盆方块
             }else if(CustomBlock.byAlreadyPlaced(world.getBlockAt(clickedBlockLocation)).getNamespacedID().equalsIgnoreCase(config.getString("config.watered-pot"))){
-
                 tryPlantSeed(clickedBlockLocation, mainHandItem, player, config);
             }
         }
     }
     //尝试种植植物
     private void tryPlantSeed(Location clickedBlockLocation, ItemStack mainHandItem, Player player, FileConfiguration config) {
-
         if(CustomStack.byItemStack(mainHandItem) == null) return;
         if (CustomStack.byItemStack(mainHandItem).getNamespacedID().toLowerCase().endsWith("_seeds")){
             String namespaced_id = CustomStack.byItemStack(mainHandItem).getNamespacedID().toLowerCase();
@@ -221,9 +219,7 @@ public class RightClickCustomBlock implements Listener {
     private void waterPot(ItemStack itemStack, Player player, Location location, FileConfiguration config){
 
         if(CustomStack.byItemStack(itemStack) == null) return;
-
         CustomStack customStack = CustomStack.byItemStack(itemStack);
-
         if(customStack.getDurability() > 0){
             CustomStack.byItemStack(itemStack).setDurability(CustomStack.byItemStack(itemStack).getDurability() - 1);
         }else return;
