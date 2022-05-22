@@ -9,6 +9,9 @@ import net.momirealms.customcrops.CustomCrops;
 import net.momirealms.customcrops.DataManager.MaxSprinklersPerChunk;
 import net.momirealms.customcrops.DataManager.SprinklerManager;
 import net.momirealms.customcrops.IAFurniture;
+import net.momirealms.customcrops.Integrations.KingdomsXIntegrations;
+import net.momirealms.customcrops.Integrations.ResidenceIntegrations;
+import net.momirealms.customcrops.Integrations.WorldGuardIntegrations;
 import net.momirealms.customcrops.MessageManager;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -56,17 +59,22 @@ public class RightClickBlock implements Listener {
         if(CustomStack.byItemStack(event.getItem()) == null) return;
 
         Location location = event.getClickedBlock().getLocation();
+        //res兼容
         if(config.getBoolean("config.integration.residence")){
-            FlagPermissions.addFlag("build");
-            ClaimedResidence res = Residence.getInstance().getResidenceManager().getByLoc(location);
-            if(res!=null){
-                ResidencePermissions perms = res.getPermissions();
-                String playerName = event.getPlayer().getName();
-                boolean hasPermission = perms.playerHas(playerName, "build", true);
-                if(!hasPermission){
-                    event.setCancelled(true);
-                    return;
-                }
+            if(ResidenceIntegrations.checkResBuild(location,player)){
+                return;
+            }
+        }
+        //wg兼容
+        if(config.getBoolean("config.integration.worldguard")){
+            if(WorldGuardIntegrations.checkWGBuild(location,player)){
+                return;
+            }
+        }
+        //kingdomsX兼容
+        if(config.getBoolean("config.integration.kingdomsX")){
+            if(KingdomsXIntegrations.checkKDBuild(location,player)){
+                return;
             }
         }
         //是否过高过低

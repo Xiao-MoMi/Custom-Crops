@@ -11,10 +11,9 @@ import org.bukkit.event.entity.EntitySpawnEvent;
 
 public class BreakFurniture implements Listener {
 
-    FileConfiguration config = CustomCrops.instance.getConfig();
-
     @EventHandler
     public void breakFurniture(EntitySpawnEvent event){
+        FileConfiguration config = CustomCrops.instance.getConfig();
         Entity entity = event.getEntity();
         if(!(entity instanceof Item)){
             return;

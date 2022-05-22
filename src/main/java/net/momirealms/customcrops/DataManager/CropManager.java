@@ -15,7 +15,7 @@ import java.util.*;
 public class CropManager {
 
     public static HashMap<Location, String> instances;
-
+    //开服的时候将文件的数据读入
     public CropManager(FileConfiguration data) {
         FileConfiguration config = CustomCrops.instance.getConfig();
         File file = new File(CustomCrops.instance.getDataFolder(), "crop-data.yml");
@@ -38,7 +38,7 @@ public class CropManager {
         }
         saveData();
     }
-
+    //根据世界名获取所有的农作物
     public static List<Location> getCrops(World world){
         FileConfiguration config = CustomCrops.instance.getConfig();
         File file = new File(CustomCrops.instance.getDataFolder(), "crop-data.yml");
@@ -61,12 +61,13 @@ public class CropManager {
         }
         return locations;
     }
-
+    //保存数据
     public static void saveData(){
         File file = new File(CustomCrops.instance.getDataFolder(), "crop-data.yml");
         FileConfiguration data;
         data = YamlConfiguration.loadConfiguration(file);
         if (CropManager.instances != null) {
+            //性能更高
             Set<Map.Entry<Location, String>> en = instances.entrySet();
             for(Map.Entry<Location, String> entry : en){
                 data.set(entry.getKey().getWorld().getName() + "." + entry.getKey().getBlockX() + "," + entry.getKey().getBlockY()+ ","+entry.getKey().getBlockZ(), entry.getValue());
@@ -74,7 +75,7 @@ public class CropManager {
         }
         else {
             CropManager.instances = new HashMap<Location, String>();
-            Bukkit.getConsoleSender().sendMessage("错误");
+            Bukkit.getConsoleSender().sendMessage("错误类型1:请联系开发者并提供报错信息");
         }
         try {
             data.save(file);
@@ -84,12 +85,21 @@ public class CropManager {
         }
     }
     //test
+    public static void testData(){
+        for(int i = 1; i < 100000;i++){
+            Location tempLoc = new Location(Bukkit.getWorld("world"),i,100,i);
+            String name = "1";
+            instances.put(tempLoc, name);
+        }
+    }
     public static void putInstance(Location location, String season) {
         CropManager.instances.put(location, season);
     }
     public HashMap<Location, String> getMap() {
         return CropManager.instances;
     }
+
+    //清理无效的农作物
     public static void cleanLoadedCache() {
         FileConfiguration config = CustomCrops.instance.getConfig();
         File file = new File(CustomCrops.instance.getDataFolder(), "crop-data.yml");

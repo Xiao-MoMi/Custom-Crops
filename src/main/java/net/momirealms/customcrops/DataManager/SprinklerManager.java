@@ -16,6 +16,7 @@ public class SprinklerManager {
 
     public static HashMap<Location, String> instances;
 
+    //开服的时候将文件的数据读入
     public SprinklerManager(FileConfiguration data) {
         FileConfiguration config = CustomCrops.instance.getConfig();
         File file = new File(CustomCrops.instance.getDataFolder(), "sprinkler-data.yml");
@@ -38,7 +39,7 @@ public class SprinklerManager {
         }
         saveData();
     }
-
+    //根据世界名获取所有的洒水器
     public static List<Location> getSprinklers(World world){
         FileConfiguration config = CustomCrops.instance.getConfig();
         File file = new File(CustomCrops.instance.getDataFolder(), "sprinkler-data.yml");
@@ -49,6 +50,7 @@ public class SprinklerManager {
             if(data.contains(world.getName())){
                 data.getConfigurationSection(world.getName()).getKeys(false).forEach(key ->{
                     String[] string_list = key.split(",");
+                    //只返回被加载的区块中的洒水器坐标
                     if (config.getBoolean("config.only-grow-in-loaded-chunks")){
                         if (world.isChunkLoaded(Integer.parseInt(string_list[0])/16, Integer.parseInt(string_list[2])/16)){
                             locations.add(new Location(world, Double.parseDouble(string_list[0]),Double.parseDouble(string_list[1]),Double.parseDouble(string_list[2])));
@@ -61,12 +63,13 @@ public class SprinklerManager {
         }
         return locations;
     }
-
+    //保存数据
     public static void saveData(){
         File file = new File(CustomCrops.instance.getDataFolder(), "sprinkler-data.yml");
         FileConfiguration data;
         data = YamlConfiguration.loadConfiguration(file);
         if (SprinklerManager.instances != null) {
+            //性能更高
             Set<Map.Entry<Location, String>> en = instances.entrySet();
             for(Map.Entry<Location, String> entry : en){
                 data.set(entry.getKey().getWorld().getName() + "." + entry.getKey().getBlockX() + "," + entry.getKey().getBlockY()+ ","+entry.getKey().getBlockZ(), entry.getValue());
@@ -74,7 +77,7 @@ public class SprinklerManager {
         }
         else {
             SprinklerManager.instances = new HashMap<Location, String>();
-            Bukkit.getConsoleSender().sendMessage("错误");
+            Bukkit.getConsoleSender().sendMessage("错误:请联系开发者并提供报错信息");
         }
         try {
             data.save(file);
@@ -90,6 +93,8 @@ public class SprinklerManager {
         File file = new File(CustomCrops.instance.getDataFolder(), "sprinkler-data.yml");
         FileConfiguration data;
         data = YamlConfiguration.loadConfiguration(file);
+        //map不能一边循环一边删除
+        //创建一个新的HashSet,用作循环
         Bukkit.getScheduler().callSyncMethod(CustomCrops.instance,()->{
             Set<Location> key = new HashSet(instances.keySet());
             try{

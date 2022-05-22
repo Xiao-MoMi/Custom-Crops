@@ -3,6 +3,7 @@ package net.momirealms.customcrops;
 import net.momirealms.customcrops.DataManager.BackUp;
 import net.momirealms.customcrops.DataManager.CropManager;
 import net.momirealms.customcrops.DataManager.SprinklerManager;
+import net.momirealms.customcrops.Integrations.KingdomsXIntegrations;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -26,6 +27,7 @@ public class CommandHandler implements CommandExecutor {
 
         FileConfiguration config = CustomCrops.instance.getConfig();
 
+        //重载插件
         if(args[0].equalsIgnoreCase("reload")){
             CustomCrops.loadConfig();
             if(sender instanceof Player){
@@ -34,7 +36,7 @@ public class CommandHandler implements CommandExecutor {
                 MessageManager.consoleMessage(config.getString("messages.prefix") + config.getString("messages.reload"), Bukkit.getConsoleSender());
             }
         }
-
+        //设置季节
         if(args[0].equalsIgnoreCase("setseason")){
             if(config.getBoolean("enable-season")){
                 config.set("current-season", args[1]);
@@ -60,7 +62,7 @@ public class CommandHandler implements CommandExecutor {
                 }
             }
         }
-
+        //强制保存
         if(args[0].equalsIgnoreCase("forcesave")){
             CropManager.saveData();
             SprinklerManager.saveData();
@@ -70,7 +72,7 @@ public class CommandHandler implements CommandExecutor {
                 MessageManager.consoleMessage(config.getString("messages.prefix") + config.getString("messages.force-save"), Bukkit.getConsoleSender());
             }
         }
-
+        //清除缓存
         if(args[0].equalsIgnoreCase("cleancache")){
             Bukkit.getScheduler().runTaskAsynchronously(CustomCrops.instance,()->{
                 CropManager.cleanLoadedCache();
@@ -82,7 +84,6 @@ public class CommandHandler implements CommandExecutor {
                 MessageManager.consoleMessage(config.getString("messages.prefix") + config.getString("messages.clean-cache"), Bukkit.getConsoleSender());
             }
         }
-        
         if(args[0].equalsIgnoreCase("backup")){
             BackUp.backUpData();
             if(sender instanceof Player){

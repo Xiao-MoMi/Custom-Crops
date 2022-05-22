@@ -6,6 +6,7 @@ import dev.lone.itemsadder.api.Events.CustomBlockInteractEvent;
 import net.momirealms.customcrops.CustomCrops;
 import net.momirealms.customcrops.DataManager.CropManager;
 import net.momirealms.customcrops.DataManager.MaxCropsPerChunk;
+import net.momirealms.customcrops.Integrations.KingdomsXIntegrations;
 import net.momirealms.customcrops.Integrations.ResidenceIntegrations;
 import net.momirealms.customcrops.Integrations.WorldGuardIntegrations;
 import net.momirealms.customcrops.MessageManager;
@@ -33,14 +34,20 @@ public class RightClickCustomBlock implements Listener {
         CustomBlock clickedCustomBlock = CustomBlock.byAlreadyPlaced(clickedBlock);
         FileConfiguration config = CustomCrops.instance.getConfig();
         Player player = event.getPlayer();
+        //kingdomsX兼容
+        if(config.getBoolean("config.integration.kingdomsX")){
+            if(KingdomsXIntegrations.checkKDBuild(clickedBlockLocation,player)){
+                return;
+            }
+        }
         if (event.getItem() == null) {
             if(config.getBoolean("config.integration.residence")){
-                if(ResidenceIntegrations.checkResHarvest(clickedBlockLocation, event)){
+                if(ResidenceIntegrations.checkResHarvest(clickedBlockLocation,player)){
                     return;
                 }
             }
             if(config.getBoolean("config.integration.worldguard")){
-                if(WorldGuardIntegrations.checkWGHarvest(player,clickedBlockLocation, event)){
+                if(WorldGuardIntegrations.checkWGHarvest(clickedBlockLocation,player)){
                     return;
                 }
             }
@@ -62,14 +69,14 @@ public class RightClickCustomBlock implements Listener {
         }
         //res兼容
         if(config.getBoolean("config.integration.residence")){
-           if(ResidenceIntegrations.checkResBuild(clickedBlockLocation, event)){
+           if(ResidenceIntegrations.checkResBuild(clickedBlockLocation,player)){
                return;
            }
         }
 
         //wg兼容
         if(config.getBoolean("config.integration.worldguard")){
-            if(WorldGuardIntegrations.checkWGBuild(player,clickedBlockLocation, event)){
+            if(WorldGuardIntegrations.checkWGBuild(clickedBlockLocation,player)){
                 return;
             }
         }

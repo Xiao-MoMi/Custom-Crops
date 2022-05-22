@@ -18,7 +18,7 @@ import java.util.Objects;
 
 public class TimeCheck extends BukkitRunnable {
 
-    FileConfiguration config = CustomCrops.instance.getConfig();
+
 
     @Override
     public void run() {
@@ -30,6 +30,7 @@ public class TimeCheck extends BukkitRunnable {
             CropManager.saveData();
         }
         if(time == 23900){
+            FileConfiguration config = CustomCrops.instance.getConfig();
             File file = new File(CustomCrops.instance.getDataFolder(), "crop-data.yml");
             FileConfiguration data;
             data = YamlConfiguration.loadConfiguration(file);
@@ -126,6 +127,7 @@ public class TimeCheck extends BukkitRunnable {
             SprinklerManager.saveData();
         }
         if(time == 500){
+            FileConfiguration config = CustomCrops.instance.getConfig();
             File file = new File(CustomCrops.instance.getDataFolder(), "sprinkler-data.yml");
             FileConfiguration data;
             data = YamlConfiguration.loadConfiguration(file);
@@ -136,21 +138,21 @@ public class TimeCheck extends BukkitRunnable {
                     for(int i = -1; i <= 1;i++){
                         for (int j = -1; j <= 1; j++){
                             Location tempLoc = location.clone().add(i,-1,j);
-                            waterPot(tempLoc, world);
+                            waterPot(tempLoc, world, config);
                         }
                     }
                 }else if(type.equals("s2")){
                     for(int i = -2; i <= 2;i++){
                         for (int j = -2; j <= 2; j++){
                             Location tempLoc = location.clone().add(i,-1,j);
-                            waterPot(tempLoc, world);
+                            waterPot(tempLoc, world, config);
                         }
                     }
                 }
             }));
         }
     }
-    private void waterPot(Location tempLoc, World world) {
+    private void waterPot(Location tempLoc, World world, FileConfiguration config) {
         if(CustomBlock.byAlreadyPlaced(world.getBlockAt(tempLoc)) != null){
             if(CustomBlock.byAlreadyPlaced(world.getBlockAt(tempLoc)).getNamespacedID().equalsIgnoreCase(config.getString("config.pot"))){
 

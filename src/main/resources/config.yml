@@ -71,6 +71,8 @@ config:
     residence: false
     #收获flag为BLOCK_BREAK 浇水种植flag为BUILD
     worldguard: false
+    #王国成员可以破坏和种植
+    kingdomsX: false
 
 messages:
   prefix: '<gradient:#ccfbff:#ef96c5>[CustomCrops] </gradient>'

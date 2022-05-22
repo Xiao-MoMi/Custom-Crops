@@ -1,9 +1,9 @@
 name: CustomCrops
-version: '${project.version}'
+version: '1.1'
 main: net.momirealms.customcrops.CustomCrops
 api-version: 1.18
 depend: [ ItemsAdder , ProtocolLib ]
-softdepend: [ PlaceholderAPI ]
+softdepend: [ PlaceholderAPI , Kingdoms , Residence , WorldGuard ]
 authors: [ XiaoMoMi ]
 commands:
   customcrops:

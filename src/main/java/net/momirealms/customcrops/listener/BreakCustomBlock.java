@@ -13,10 +13,9 @@ import org.bukkit.event.Listener;
 
 public class BreakCustomBlock implements Listener {
 
-    FileConfiguration config = CustomCrops.instance.getConfig();
-
     @EventHandler
     public void breakCustomBlock(CustomBlockBreakEvent event){
+        FileConfiguration config = CustomCrops.instance.getConfig();
         Player player =event.getPlayer();
         Location location = event.getBlock().getLocation();
         if(event.getNamespacedID().contains("stage")){

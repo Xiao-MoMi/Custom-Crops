@@ -11,10 +11,12 @@ public class IAFurniture {
 
     static FileConfiguration config = CustomCrops.instance.getConfig();
 
+    //放置IA自定义家具
     public static void placeFurniture(String name, Location location){
         CustomFurniture.spawn(name,location.getWorld().getBlockAt(location));
     }
 
+    //根据位置获取盔甲架，如果是洒水器返回true，否则返回false
     public static boolean getFromLocation(Location location, World world){
         for(Entity entity : world.getNearbyEntities(location,0,0,0)){
             if(entity instanceof ArmorStand){
