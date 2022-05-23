@@ -2,6 +2,7 @@ package net.momirealms.customcrops;
 
 import net.momirealms.customcrops.DataManager.BackUp;
 import net.momirealms.customcrops.DataManager.CropManager;
+import net.momirealms.customcrops.DataManager.NextSeason;
 import net.momirealms.customcrops.DataManager.SprinklerManager;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -9,6 +10,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+import org.kingdoms.data.DataManager;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Objects;
@@ -89,6 +91,14 @@ public class CommandHandler implements CommandExecutor {
                 MessageManager.playerMessage(config.getString("messages.prefix") + config.getString("messages.backup"), (Player) sender);
             }else {
                 MessageManager.consoleMessage(config.getString("messages.prefix") + config.getString("messages.backup"), Bukkit.getConsoleSender());
+            }
+        }
+        if(args[0].equalsIgnoreCase("nextseason")){
+            NextSeason.changeSeason();
+            if(sender instanceof Player){
+                MessageManager.playerMessage(config.getString("messages.prefix") + config.getString("messages.nextseason"), (Player) sender);
+            }else {
+                MessageManager.consoleMessage(config.getString("messages.prefix") + config.getString("messages.nextseason"), Bukkit.getConsoleSender());
             }
         }
         return false;

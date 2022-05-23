@@ -82,6 +82,7 @@ messages:
   no-such-seed: 此种子未在配置文件中配置!
   wrong-season: 这个季节不适合这种农作物生长!
   season-set: 成功设置季节为{Season}
+  nextseason: 已切换到下一季节！
   season-disabled: 季节系统未启用.
   clean-cache: 无效农作物和洒水器数据清除完毕!
   reach-limit-crop: 农作物已到达最大区块上限{Max}!

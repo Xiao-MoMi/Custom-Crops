@@ -1,0 +1,22 @@
+package net.momirealms.customcrops.DataManager;
+
+import net.momirealms.customcrops.CustomCrops;
+import org.bukkit.configuration.file.FileConfiguration;
+
+import java.util.Objects;
+
+public class NextSeason {
+    public static void changeSeason(){
+        FileConfiguration config = CustomCrops.instance.getConfig();
+        String currentSeason = config.getString("current-season");
+        String nextSeason = switch (Objects.requireNonNull(currentSeason)) {
+            case "spring" -> "summer";
+            case "summer" -> "autumn";
+            case "autumn" -> "winter";
+            case "winter" -> "spring";
+            default -> null;
+        };
+        config.set("current-season", nextSeason);
+        CustomCrops.instance.saveConfig();
+    }
+}

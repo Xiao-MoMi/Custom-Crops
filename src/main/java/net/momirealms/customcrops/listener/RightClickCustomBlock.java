@@ -163,6 +163,11 @@ public class RightClickCustomBlock implements Listener {
         if (CustomStack.byItemStack(mainHandItem).getNamespacedID().toLowerCase().endsWith("_seeds")){
             String namespaced_id = CustomStack.byItemStack(mainHandItem).getNamespacedID().toLowerCase();
             String[] crop = CustomStack.byItemStack(mainHandItem).getNamespacedID().toLowerCase().replace("_seeds","").split(":");
+            //该种子是否存在于配置文件中
+            if(!config.getConfigurationSection("crops").getKeys(false).contains(crop[1])){
+                MessageManager.playerMessage(config.getString("messages.prefix")+config.getString("messages.no-such-seed"),player);
+                return;
+            }
             //是否超高超低
             if (clickedBlockLocation.getY() < config.getInt("config.height.min") || clickedBlockLocation.getY() > config.getInt("config.height.max")){
                 MessageManager.playerMessage(config.getString("messages.prefix") + config.getString("messages.not-a-good-place"),player);
@@ -193,11 +198,7 @@ public class RightClickCustomBlock implements Listener {
                     return;
                 }
             }
-            //该种子是否存在于配置文件中
-            if(!config.contains("crops."+crop[1])){
-                MessageManager.playerMessage(config.getString("messages.prefix")+config.getString("messages.no-such-seed"),player);
-                return;
-            }
+
             //是否到达区块上限
             if(MaxCropsPerChunk.maxCropsPerChunk(clickedBlockLocation)){
                 MessageManager.playerMessage(config.getString("messages.prefix")+config.getString("messages.reach-limit-crop").replace("{Max}", config.getString("config.max-crops")),player);

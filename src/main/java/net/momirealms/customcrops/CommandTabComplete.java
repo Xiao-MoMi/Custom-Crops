@@ -14,7 +14,7 @@ public class CommandTabComplete implements TabCompleter {
     @ParametersAreNonnullByDefault
     public @Nullable List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         if (args.length == 1) {
-            return Arrays.asList("backup" , "cleancache", "forcesave", "reload", "setseason");
+            return Arrays.asList("backup" , "cleancache", "forcesave", "reload", "setseason" , "nextseason");
         }
         if(args[0].equalsIgnoreCase("setseason")){
             return Arrays.asList("spring","summer","autumn","winter");

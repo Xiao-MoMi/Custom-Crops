@@ -1,5 +1,5 @@
 name: CustomCrops
-version: '1.2'
+version: '1.2.2'
 main: net.momirealms.customcrops.CustomCrops
 api-version: 1.18
 depend: [ ItemsAdder , ProtocolLib ]
