@@ -16,7 +16,11 @@ public class NextSeason {
             case "winter" -> "spring";
             default -> null;
         };
-        config.set("current-season", nextSeason);
-        CustomCrops.instance.saveConfig();
+        if(nextSeason != null){
+            config.set("current-season", nextSeason);
+            CustomCrops.instance.saveConfig();
+        }else {
+            CustomCrops.instance.getLogger().warning("季节配置文件出错!");
+        }
     }
 }
