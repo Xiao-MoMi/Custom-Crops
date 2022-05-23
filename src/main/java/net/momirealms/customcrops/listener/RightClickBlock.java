@@ -76,25 +76,32 @@ public class RightClickBlock implements Listener {
             }
         }
         //是否过高过低
-        if(event.getClickedBlock().getY() > config.getInt("config.height.max") || event.getClickedBlock().getY() < config.getInt("config.height.min")){
-            MessageManager.playerMessage(config.getString("messages.prefix") + config.getString("messages.not-a-good-place"),player);
-            return;
-        }
+
         if(CustomStack.byItemStack(event.getItem()).getNamespacedID().equalsIgnoreCase(config.getString("config.sprinkler-1-item"))){
+            if(event.getClickedBlock().getY() > config.getInt("config.height.max") || event.getClickedBlock().getY() < config.getInt("config.height.min")){
+                MessageManager.playerMessage(config.getString("messages.prefix") + config.getString("messages.not-a-good-place"),player);
+                return;
+            }
             if(MaxSprinklersPerChunk.maxSprinklersPerChunk(location)){
                 MessageManager.playerMessage(config.getString("messages.prefix")+config.getString("messages.reach-limit-sprinkler").replace("{Max}", config.getString("config.max-sprinklers")),player);
                 return;
             }
+
             if(player.getGameMode() != GameMode.CREATIVE){
                 itemStack.setAmount(itemStack.getAmount() -1);
             }
             IAFurniture.placeFurniture(config.getString("config.sprinkler-1"),location.clone().add(0,1,0));
             SprinklerManager.putInstance(location.clone().add(0,1,0),"s1");
         }else if(CustomStack.byItemStack(event.getItem()).getNamespacedID().equalsIgnoreCase(config.getString("config.sprinkler-2-item"))){
+            if(event.getClickedBlock().getY() > config.getInt("config.height.max") || event.getClickedBlock().getY() < config.getInt("config.height.min")){
+                MessageManager.playerMessage(config.getString("messages.prefix") + config.getString("messages.not-a-good-place"),player);
+                return;
+            }
             if(MaxSprinklersPerChunk.maxSprinklersPerChunk(location)){
                 MessageManager.playerMessage(config.getString("messages.prefix")+config.getString("messages.reach-limit-sprinkler").replace("{Max}", config.getString("config.max-sprinklers")),player);
                 return;
             }
+
             if(player.getGameMode() != GameMode.CREATIVE){
                 itemStack.setAmount(itemStack.getAmount() -1);
             }
