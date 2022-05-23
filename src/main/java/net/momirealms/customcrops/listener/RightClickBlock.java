@@ -54,30 +54,28 @@ public class RightClickBlock implements Listener {
         if(event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
         if(event.getBlockFace() != BlockFace.UP) return;
 
-
         FileConfiguration config = CustomCrops.instance.getConfig();
         Location location = event.getClickedBlock().getLocation();
-        //res兼容
-        if(config.getBoolean("config.integration.residence")){
-            if(ResidenceIntegrations.checkResBuild(location,player)){
-                return;
-            }
-        }
-        //wg兼容
-        if(config.getBoolean("config.integration.worldguard")){
-            if(WorldGuardIntegrations.checkWGBuild(location,player)){
-                return;
-            }
-        }
-        //kingdomsX兼容
-        if(config.getBoolean("config.integration.kingdomsX")){
-            if(KingdomsXIntegrations.checkKDBuild(location,player)){
-                return;
-            }
-        }
-        //是否过高过低
 
         if(CustomStack.byItemStack(event.getItem()).getNamespacedID().equalsIgnoreCase(config.getString("config.sprinkler-1-item"))){
+            //res兼容
+            if(config.getBoolean("config.integration.residence")){
+                if(ResidenceIntegrations.checkResBuild(location,player)){
+                    return;
+                }
+            }
+            //wg兼容
+            if(config.getBoolean("config.integration.worldguard")){
+                if(WorldGuardIntegrations.checkWGBuild(location,player)){
+                    return;
+                }
+            }
+            //kingdomsX兼容
+            if(config.getBoolean("config.integration.kingdomsX")){
+                if(KingdomsXIntegrations.checkKDBuild(location,player)){
+                    return;
+                }
+            }
             if(event.getClickedBlock().getY() > config.getInt("config.height.max") || event.getClickedBlock().getY() < config.getInt("config.height.min")){
                 MessageManager.playerMessage(config.getString("messages.prefix") + config.getString("messages.not-a-good-place"),player);
                 return;
@@ -93,6 +91,24 @@ public class RightClickBlock implements Listener {
             IAFurniture.placeFurniture(config.getString("config.sprinkler-1"),location.clone().add(0,1,0));
             SprinklerManager.putInstance(location.clone().add(0,1,0),"s1");
         }else if(CustomStack.byItemStack(event.getItem()).getNamespacedID().equalsIgnoreCase(config.getString("config.sprinkler-2-item"))){
+            //res兼容
+            if(config.getBoolean("config.integration.residence")){
+                if(ResidenceIntegrations.checkResBuild(location,player)){
+                    return;
+                }
+            }
+            //wg兼容
+            if(config.getBoolean("config.integration.worldguard")){
+                if(WorldGuardIntegrations.checkWGBuild(location,player)){
+                    return;
+                }
+            }
+            //kingdomsX兼容
+            if(config.getBoolean("config.integration.kingdomsX")){
+                if(KingdomsXIntegrations.checkKDBuild(location,player)){
+                    return;
+                }
+            }
             if(event.getClickedBlock().getY() > config.getInt("config.height.max") || event.getClickedBlock().getY() < config.getInt("config.height.min")){
                 MessageManager.playerMessage(config.getString("messages.prefix") + config.getString("messages.not-a-good-place"),player);
                 return;
