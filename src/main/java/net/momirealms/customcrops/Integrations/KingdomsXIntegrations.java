@@ -11,9 +11,6 @@ public class KingdomsXIntegrations {
         KingdomPlayer kp = KingdomPlayer.getKingdomPlayer(player);
         Land land = Land.getLand(location);
         if (land == null) return false;
-        if (player.isOp()) {
-            return false;
-        }
         if (land.isClaimed()) {
             Kingdom cropKingdom = land.getKingdom();
             if (kp.getKingdom() != null) {

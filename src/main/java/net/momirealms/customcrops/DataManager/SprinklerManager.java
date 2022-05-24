@@ -77,13 +77,14 @@ public class SprinklerManager {
         }
         else {
             SprinklerManager.instances = new HashMap<Location, String>();
-            Bukkit.getConsoleSender().sendMessage("错误:请联系开发者并提供报错信息");
+            Bukkit.getConsoleSender().sendMessage("错误：空数据");
         }
         try {
             data.save(file);
         }
         catch (IOException e) {
             e.printStackTrace();
+            CustomCrops.instance.getLogger().warning("洒水器数据保存出错");
         }
     }
     public static void putInstance(Location location, String type) {
@@ -111,6 +112,7 @@ public class SprinklerManager {
                 data.save(file);
             }catch (IOException e){
                 e.printStackTrace();
+                CustomCrops.instance.getLogger().warning("洒水器缓存清理保存出错!");
             }
             return null;
         });

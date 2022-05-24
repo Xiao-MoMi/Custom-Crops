@@ -25,7 +25,7 @@ public class CropManager {
                 CropManager.instances = new HashMap<Location, String>();
                 if(data.getConfigurationSection(world) != null){
                     for (String coordinate : data.getConfigurationSection(world).getKeys(false)) {
-                        Location tempLocation = new Location(Bukkit.getWorld(world), Integer.parseInt(coordinate.split(",")[0]), Integer.parseInt(coordinate.split(",")[1]), Integer.parseInt(coordinate.split(",")[2]));
+                        Location tempLocation = new Location(Bukkit.getWorld(world), (double)Integer.parseInt(coordinate.split(",")[0]), (double)Integer.parseInt(coordinate.split(",")[1]), (double)Integer.parseInt(coordinate.split(",")[2]));
                         String season = data.getString(world + "." + coordinate);
                         CropManager.instances.put(tempLocation, season);
                     }
@@ -75,18 +75,21 @@ public class CropManager {
         }
         else {
             CropManager.instances = new HashMap<Location, String>();
-            Bukkit.getConsoleSender().sendMessage("错误类型1:请联系开发者并提供报错信息");
+            Bukkit.getConsoleSender().sendMessage("错误：空数据");
         }
         try {
             data.save(file);
         }
         catch (IOException e) {
             e.printStackTrace();
+            CustomCrops.instance.getLogger().warning("农作物数据保存出错");
         }
     }
-
     public static void putInstance(Location location, String season) {
         CropManager.instances.put(location, season);
+    }
+    public HashMap<Location, String> getMap() {
+        return CropManager.instances;
     }
 
     //清理无效的农作物
@@ -114,6 +117,7 @@ public class CropManager {
             data.save(file);
         }catch (IOException e){
             e.printStackTrace();
+            CustomCrops.instance.getLogger().warning("农作物缓存清理保存出错!");
         }
     }
 }

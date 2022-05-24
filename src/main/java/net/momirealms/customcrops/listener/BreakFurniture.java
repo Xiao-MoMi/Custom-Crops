@@ -13,10 +13,12 @@ public class BreakFurniture implements Listener {
 
     @EventHandler
     public void breakFurniture(EntitySpawnEvent event){
+        FileConfiguration config = CustomCrops.instance.getConfig();
         Entity entity = event.getEntity();
-        if(!(entity instanceof Item)) return;
+        if(!(entity instanceof Item)){
+            return;
+        }
         if(CustomStack.byItemStack(((Item) entity).getItemStack()) != null){
-            FileConfiguration config = CustomCrops.instance.getConfig();
             if(CustomStack.byItemStack(((Item) entity).getItemStack()).getNamespacedID().equalsIgnoreCase(config.getString("config.sprinkler-1"))){
                 entity.remove();
                 entity.getWorld().dropItem(entity.getLocation() ,CustomStack.getInstance(config.getString("config.sprinkler-1-item")).getItemStack());

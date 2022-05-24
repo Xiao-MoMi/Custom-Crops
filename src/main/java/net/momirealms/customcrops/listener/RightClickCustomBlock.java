@@ -34,13 +34,11 @@ public class RightClickCustomBlock implements Listener {
         CustomBlock clickedCustomBlock = CustomBlock.byAlreadyPlaced(clickedBlock);
         FileConfiguration config = CustomCrops.instance.getConfig();
         Player player = event.getPlayer();
-        //kingdomsX兼容
         if(config.getBoolean("config.integration.kingdomsX")){
             if(KingdomsXIntegrations.checkKDBuild(clickedBlockLocation,player)){
                 return;
             }
         }
-        //空手收获农作物
         if (event.getItem() == null) {
             if(config.getBoolean("config.integration.residence")){
                 if(ResidenceIntegrations.checkResHarvest(clickedBlockLocation,player)){
@@ -57,12 +55,11 @@ public class RightClickCustomBlock implements Listener {
                 String namespace = clickedCustomBlock.getNamespacedID().split(":")[0];
                 String[] cropNameList = clickedCustomBlock.getNamespacedID().split(":")[1].split("_");
                 int nextStage = Integer.parseInt(cropNameList[2]) + 1;
-                if (CustomBlock.getInstance(namespace + ":" + cropNameList[0] + "_stage_" + nextStage) == null) {
+                if (CustomBlock.getInstance(namespace + ":" + cropNameList[0] + "_" +cropNameList[1] +"_" + nextStage) == null) {
                     clickedCustomBlock.getLoot().forEach(itemStack -> {
                         clickedBlockLocation.getWorld().dropItem(clickedBlockLocation.clone().add(0.5,0.2,0.5),itemStack);
                     });
                     CustomBlock.remove(clickedBlockLocation);
-                    //如果配置文件有配置则返回第几阶段
                     if(config.getConfigurationSection("crops." + cropNameList[0]).getKeys(false).contains("return")){
                         CustomBlock.place(config.getString("crops." + cropNameList[0] + ".return"), clickedBlockLocation);
                     }
@@ -72,18 +69,21 @@ public class RightClickCustomBlock implements Listener {
         }
         //res兼容
         if(config.getBoolean("config.integration.residence")){
-           if(ResidenceIntegrations.checkResBuild(clickedBlockLocation,player)){
-               return;
-           }
+            if(ResidenceIntegrations.checkResBuild(clickedBlockLocation,player)){
+                return;
+            }
         }
+
         //wg兼容
         if(config.getBoolean("config.integration.worldguard")){
             if(WorldGuardIntegrations.checkWGBuild(clickedBlockLocation,player)){
                 return;
             }
         }
+
         World world = player.getWorld();
         ItemStack mainHandItem = player.getInventory().getItemInMainHand();
+
         //右键的作物下方是否为自定义方块
         if (CustomBlock.byAlreadyPlaced(world.getBlockAt(clickedBlockLocation.clone().subtract(0,1,0))) != null && clickedBlock.getType() == Material.TRIPWIRE) {
             //检测右键的方块下方是否为干燥的种植盆方块
@@ -153,12 +153,14 @@ public class RightClickCustomBlock implements Listener {
                 }
                 //检测右键的方块是否为湿润的种植盆方块
             }else if(CustomBlock.byAlreadyPlaced(world.getBlockAt(clickedBlockLocation)).getNamespacedID().equalsIgnoreCase(config.getString("config.watered-pot"))){
+
                 tryPlantSeed(clickedBlockLocation, mainHandItem, player, config);
             }
         }
     }
     //尝试种植植物
     private void tryPlantSeed(Location clickedBlockLocation, ItemStack mainHandItem, Player player, FileConfiguration config) {
+
         if(CustomStack.byItemStack(mainHandItem) == null) return;
         if (CustomStack.byItemStack(mainHandItem).getNamespacedID().toLowerCase().endsWith("_seeds")){
             String namespaced_id = CustomStack.byItemStack(mainHandItem).getNamespacedID().toLowerCase();
@@ -198,7 +200,6 @@ public class RightClickCustomBlock implements Listener {
                     return;
                 }
             }
-
             //是否到达区块上限
             if(MaxCropsPerChunk.maxCropsPerChunk(clickedBlockLocation)){
                 MessageManager.playerMessage(config.getString("messages.prefix")+config.getString("messages.reach-limit-crop").replace("{Max}", config.getString("config.max-crops")),player);
@@ -221,7 +222,9 @@ public class RightClickCustomBlock implements Listener {
     private void waterPot(ItemStack itemStack, Player player, Location location, FileConfiguration config){
 
         if(CustomStack.byItemStack(itemStack) == null) return;
+
         CustomStack customStack = CustomStack.byItemStack(itemStack);
+
         if(customStack.getDurability() > 0){
             CustomStack.byItemStack(itemStack).setDurability(CustomStack.byItemStack(itemStack).getDurability() - 1);
         }else return;
@@ -246,7 +249,7 @@ public class RightClickCustomBlock implements Listener {
              45 < yaw < 135 x-
              else z-
             */
-            player.playSound(player,Sound.BLOCK_WATER_AMBIENT,1,1);
+            player.getWorld().playSound(player.getLocation(),Sound.BLOCK_WATER_AMBIENT,1,1);
             float yaw = player.getLocation().getYaw();
             if (yaw <= 45 && yaw >= -135) {
                 if (yaw > -45) {

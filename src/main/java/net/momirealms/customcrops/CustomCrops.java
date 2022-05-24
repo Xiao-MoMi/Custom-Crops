@@ -7,7 +7,6 @@ import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
-import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.momirealms.customcrops.Crops.CropTimer;
 import net.momirealms.customcrops.DataManager.BackUp;
 import net.momirealms.customcrops.DataManager.CropManager;
@@ -20,7 +19,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -34,7 +32,6 @@ public final class CustomCrops extends JavaPlugin {
     public static CropTimer timer;
     public static CropManager cropManager;
     public static SprinklerManager sprinklerManager;
-    private BukkitAudiences adventure;
 
     @Override
     public void onEnable() {
@@ -57,6 +54,7 @@ public final class CustomCrops extends JavaPlugin {
                 List<WrappedChatComponent> components = packet.getChatComponents().getValues();
                 for (WrappedChatComponent component : components) {
                     if(component.toString().contains("Ender Chest")){
+                        //component.setJson("{\"text\":\"收纳袋\"}");
                         component.setJson("{\"translate\":\"container.enderchest\"}");
                         packet.getChatComponents().write(components.indexOf(component), component);
                     }
@@ -96,10 +94,11 @@ public final class CustomCrops extends JavaPlugin {
         //检测papi依赖
         if(Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null){
             new Placeholders(this).register();
-            MessageManager.consoleMessage("<gradient:#ccfbff:#ef96c5>[CustomCorps] 检测到PlaceHolderAPI 已启用季节变量!</gradient>",Bukkit.getConsoleSender());
+            MessageManager.consoleMessage("&#ccfbff-#ef96c5&[CustomCrops] 检测到PlaceHolderAPI 已启用季节变量!",Bukkit.getConsoleSender());
         }
         //启动成功
-        MessageManager.consoleMessage("<gradient:#ccfbff:#ef96c5>[CustomCorps] 自定义农作物插件已启用！作者：小默米 QQ:3266959688</gradient>",Bukkit.getConsoleSender());
+        MessageManager.consoleMessage("&#ccfbff-#ef96c5&[CustomCrops] 自定义农作物插件已启用！作者：小默米 QQ:3266959688",Bukkit.getConsoleSender());
+        //this.getLogger().info("自定义农作物插件已启用！作者：小默米 QQ:3266959688");
     }
 
     @Override
@@ -113,23 +112,12 @@ public final class CustomCrops extends JavaPlugin {
         CropManager.saveData();
         SprinklerManager.saveData();
 
-        //关闭adventure
-        if(this.adventure != null) {
-            this.adventure.close();
-            this.adventure = null;
-        }
 
         //备份
         BackUp.backUpData();
-        MessageManager.consoleMessage("<gradient:#ccfbff:#ef96c5>[CustomCorps] 自定义农作物插件已卸载！作者：小默米 QQ:3266959688</gradient>",Bukkit.getConsoleSender());
+        MessageManager.consoleMessage(("&#ccfbff-#ef96c5&[CustomCrops] 自定义农作物插件已卸载！作者：小默米 QQ:3266959688"),Bukkit.getConsoleSender());
     }
 
-    public @NonNull BukkitAudiences adventure() {
-        if(this.adventure == null) {
-            throw new IllegalStateException("Tried to access Adventure when the plugin was disabled!");
-        }
-        return this.adventure;
-    }
 
     //定时任务
     public static void startTimer() {

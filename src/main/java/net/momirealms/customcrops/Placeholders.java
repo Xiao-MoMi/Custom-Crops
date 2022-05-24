@@ -5,6 +5,8 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+
 public class Placeholders extends PlaceholderExpansion{
 
 
@@ -13,6 +15,7 @@ public class Placeholders extends PlaceholderExpansion{
     public Placeholders(CustomCrops customCrops) {
         this.plugin = plugin;
     }
+
 
     @Override
     public @NotNull String getIdentifier() {
@@ -35,11 +38,11 @@ public class Placeholders extends PlaceholderExpansion{
         FileConfiguration config = CustomCrops.instance.getConfig();
 
         if(params.equalsIgnoreCase("season")){
-            return config.getString("current-season")
-                    .replace("spring", config.getString("messages.spring"))
-                    .replace("summer", config.getString("messages.summer"))
-                    .replace("autumn", config.getString("messages.autumn"))
-                    .replace("winter", config.getString("messages.winter"));
+            return Objects.requireNonNull(config.getString("current-season"))
+                    .replace("spring", Objects.requireNonNull(config.getString("messages.spring")))
+                    .replace("summer", Objects.requireNonNull(config.getString("messages.summer")))
+                    .replace("autumn", Objects.requireNonNull(config.getString("messages.autumn")))
+                    .replace("winter", Objects.requireNonNull(config.getString("messages.winter")));
         }
         return null;
     }

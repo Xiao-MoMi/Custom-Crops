@@ -1,5 +1,6 @@
 package net.momirealms.customcrops.Integrations;
 
+import com.bekvon.bukkit.residence.containers.Flags;
 import com.bekvon.bukkit.residence.protection.ClaimedResidence;
 import com.bekvon.bukkit.residence.protection.FlagPermissions;
 import com.bekvon.bukkit.residence.protection.ResidencePermissions;
@@ -13,7 +14,8 @@ public class ResidenceIntegrations {
         if(res!=null){
             ResidencePermissions perms = res.getPermissions();
             String playerName = player.getName();
-            boolean hasPermission = perms.playerHas(playerName, "build", true);
+            boolean hasPermission = perms.playerHas(player, Flags.build, true);
+            ///perms.playerHas(playerName, "build", true);
             return !hasPermission;
         }
         return false;
@@ -24,7 +26,8 @@ public class ResidenceIntegrations {
         if(res!=null){
             ResidencePermissions perms = res.getPermissions();
             String playerName = player.getName();
-            boolean hasPermission = perms.playerHas(playerName, "harvest", true);
+            boolean hasPermission = perms.playerHas(player, Flags.harvest, true);
+            //boolean hasPermission = perms.playerHas(playerName, "harvest", true);
             return !hasPermission;
         }
         return false;

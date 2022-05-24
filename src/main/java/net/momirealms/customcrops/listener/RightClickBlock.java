@@ -50,7 +50,6 @@ public class RightClickBlock implements Listener {
                 return;
             }
         }
-
         if(event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
         if(event.getBlockFace() != BlockFace.UP) return;
 
@@ -84,7 +83,6 @@ public class RightClickBlock implements Listener {
                 MessageManager.playerMessage(config.getString("messages.prefix")+config.getString("messages.reach-limit-sprinkler").replace("{Max}", config.getString("config.max-sprinklers")),player);
                 return;
             }
-
             if(player.getGameMode() != GameMode.CREATIVE){
                 itemStack.setAmount(itemStack.getAmount() -1);
             }
@@ -127,16 +125,18 @@ public class RightClickBlock implements Listener {
     }
     private void addWater(ItemStack itemStack, Player player){
         FileConfiguration config = CustomCrops.instance.getConfig();
-        CustomStack customStack = CustomStack.byItemStack(itemStack);
-        if(customStack.getNamespacedID().equalsIgnoreCase(config.getString("config.watering-can-1")) ||
-           customStack.getNamespacedID().equalsIgnoreCase(config.getString("config.watering-can-2")) ||
-           customStack.getNamespacedID().equalsIgnoreCase(config.getString("config.watering-can-3")))
-        {
-            if(customStack.getMaxDurability() == customStack.getDurability()){
-                MessageManager.playerMessage(config.getString("messages.prefix") + config.getString("messages.can-full"),player);
-            }else {
-                customStack.setDurability(customStack.getDurability() + 1);
-                player.playSound(player, Sound.ITEM_BUCKET_FILL,1,1);
+        if(CustomStack.byItemStack(itemStack)!= null){
+            CustomStack customStack = CustomStack.byItemStack(itemStack);
+            if(customStack.getNamespacedID().equalsIgnoreCase(config.getString("config.watering-can-1")) ||
+                    customStack.getNamespacedID().equalsIgnoreCase(config.getString("config.watering-can-2")) ||
+                    customStack.getNamespacedID().equalsIgnoreCase(config.getString("config.watering-can-3")))
+            {
+                if(customStack.getMaxDurability() == customStack.getDurability()){
+                    MessageManager.playerMessage(config.getString("messages.prefix") + config.getString("messages.can-full"),player);
+                }else {
+                    customStack.setDurability(customStack.getDurability() + 1);
+                    player.getWorld().playSound(player.getLocation(),Sound.ITEM_BUCKET_FILL,1,1);
+                }
             }
         }
     }

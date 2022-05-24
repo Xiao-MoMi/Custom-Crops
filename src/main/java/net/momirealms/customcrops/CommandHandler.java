@@ -10,7 +10,6 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
-import org.kingdoms.data.DataManager;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Objects;
