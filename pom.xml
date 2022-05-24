@@ -93,7 +93,7 @@
                     <relocations>
                         <relocation>
                             <pattern>de.themoep.minedown</pattern>
-                            <shadedPattern>net.momirealms.customcrops.libraries.minedown</shadedPattern>
+                            <shadedPattern>net.momirealms.customcrops.Libs.minedown</shadedPattern>
                         </relocation>
                     </relocations>
                 </configuration>
