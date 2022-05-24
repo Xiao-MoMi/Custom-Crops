@@ -28,7 +28,7 @@ config:
   # 洒水器工作点
   sprinkler-time:
     - 200
-      # - 12200
+  # - 12200
 
     # 生长生效的世界
   whitelist-worlds:
