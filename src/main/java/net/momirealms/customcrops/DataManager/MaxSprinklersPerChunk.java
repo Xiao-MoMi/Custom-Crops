@@ -24,10 +24,10 @@ public class MaxSprinklersPerChunk {
         Label_out:
         for (int i = 0; i < 16; ++i) {
             for (int j = 0; j < 16; ++j) {
-                final Location square = chunkLocation.clone().add((double)i, 0.0, (double)j);
+                final Location square = chunkLocation.clone().add((double)(i+0.5), 0.5, (double)(j+0.5));
                 for (int k = minY; k <= maxY; ++k) {
                     square.add(0.0, 1.0, 0.0);
-                    if(IAFurniture.getFromLocation(square.clone().add(0.5,0.5,0.5), world)){
+                    if(IAFurniture.getFromLocation(square, world)){
                         if (n++ > maxAmount) {
                             break Label_out;
                         }
