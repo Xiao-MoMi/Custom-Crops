@@ -10,7 +10,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class BackUp {
-
     public static void backUpData(){
 
         Date date = new Date();
@@ -23,11 +22,13 @@ public class BackUp {
 
         try {
             BackUp.backUp(crop_data,cropBackUp);
+            
         } catch (IOException e) {
             e.printStackTrace();
         }
         try {
             BackUp.backUp(sprinkler_data,sprinklerBackUp);
+            
         } catch (IOException e) {
             e.printStackTrace();
         }
