@@ -13,9 +13,7 @@ public class ResidenceIntegrations {
         ClaimedResidence res = com.bekvon.bukkit.residence.Residence.getInstance().getResidenceManager().getByLoc(location);
         if(res!=null){
             ResidencePermissions perms = res.getPermissions();
-            String playerName = player.getName();
             boolean hasPermission = perms.playerHas(player, Flags.build, true);
-            ///perms.playerHas(playerName, "build", true);
             return !hasPermission;
         }
         return false;
@@ -25,9 +23,7 @@ public class ResidenceIntegrations {
         ClaimedResidence res = com.bekvon.bukkit.residence.Residence.getInstance().getResidenceManager().getByLoc(location);
         if(res!=null){
             ResidencePermissions perms = res.getPermissions();
-            String playerName = player.getName();
             boolean hasPermission = perms.playerHas(player, Flags.harvest, true);
-            //boolean hasPermission = perms.playerHas(playerName, "harvest", true);
             return !hasPermission;
         }
         return false;

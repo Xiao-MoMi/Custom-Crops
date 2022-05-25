@@ -11,10 +11,11 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class SprinklerManager {
 
-    public static HashMap<Location, String> instances;
+    public static ConcurrentHashMap<Location, String> instances;
 
     //开服的时候将文件的数据读入
     public SprinklerManager(FileConfiguration data) {
@@ -23,7 +24,7 @@ public class SprinklerManager {
         data = YamlConfiguration.loadConfiguration(file);
         try {
             for (String world : config.getStringList("config.whitelist-worlds")) {
-                SprinklerManager.instances = new HashMap<Location, String>();
+                SprinklerManager.instances = new ConcurrentHashMap<Location, String>();
                 if(data.getConfigurationSection(world) != null){
                     for (String coordinate : data.getConfigurationSection(world).getKeys(false)) {
                         Location tempLocation = new Location(Bukkit.getWorld(world), Integer.parseInt(coordinate.split(",")[0]), Integer.parseInt(coordinate.split(",")[1]), Integer.parseInt(coordinate.split(",")[2]));
@@ -34,7 +35,7 @@ public class SprinklerManager {
             }
         }
         catch (Exception e) {
-            SprinklerManager.instances = new HashMap<Location, String>();
+            SprinklerManager.instances = new ConcurrentHashMap<Location, String>();
             e.printStackTrace();
         }
         saveData();
@@ -76,7 +77,7 @@ public class SprinklerManager {
             }
         }
         else {
-            SprinklerManager.instances = new HashMap<Location, String>();
+            SprinklerManager.instances = new ConcurrentHashMap<Location, String>();
             Bukkit.getConsoleSender().sendMessage("错误：空数据");
         }
         try {

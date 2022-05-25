@@ -1,6 +1,7 @@
 package net.momirealms.customcrops.DataManager;
 
 import net.momirealms.customcrops.CustomCrops;
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -11,10 +12,31 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class CropManager {
 
-    public static HashMap<Location, String> instances;
+    public static ConcurrentHashMap<Location, String> instances;
+
+    //4W性能测试
+    public static void testData_1(){
+        for(int i = -100; i < 100; i++){
+            for(int j = -100; j < 100; j++){
+                Location tempLoc = new Location(Bukkit.getWorld("world"),i,100,j);
+                String name = "spring";
+                instances.put(tempLoc, name);
+            }
+        }
+    }
+    //20W性能测试
+    public static void testData_2(){
+        for(int i = -100000; i < 100000; i++){
+                Location tempLoc = new Location(Bukkit.getWorld("world"),i,100,i);
+                String name = "spring";
+                instances.put(tempLoc, name);
+        }
+    }
+
     //开服的时候将文件的数据读入
     public CropManager(FileConfiguration data) {
         FileConfiguration config = CustomCrops.instance.getConfig();
@@ -22,7 +44,7 @@ public class CropManager {
         data = YamlConfiguration.loadConfiguration(file);
         try {
             for (String world : config.getStringList("config.whitelist-worlds")) {
-                CropManager.instances = new HashMap<Location, String>();
+                CropManager.instances = new ConcurrentHashMap<Location, String>();
                 if(data.getConfigurationSection(world) != null){
                     for (String coordinate : data.getConfigurationSection(world).getKeys(false)) {
                         Location tempLocation = new Location(Bukkit.getWorld(world), (double)Integer.parseInt(coordinate.split(",")[0]), (double)Integer.parseInt(coordinate.split(",")[1]), (double)Integer.parseInt(coordinate.split(",")[2]));
@@ -33,7 +55,7 @@ public class CropManager {
             }
         }
         catch (Exception e) {
-            CropManager.instances = new HashMap<Location, String>();
+            CropManager.instances = new ConcurrentHashMap<Location, String>();
             e.printStackTrace();
         }
         saveData();
@@ -74,7 +96,7 @@ public class CropManager {
             }
         }
         else {
-            CropManager.instances = new HashMap<Location, String>();
+            CropManager.instances = new ConcurrentHashMap<Location, String>();
             Bukkit.getConsoleSender().sendMessage("错误：空数据");
         }
         try {
@@ -88,7 +110,7 @@ public class CropManager {
     public static void putInstance(Location location, String season) {
         CropManager.instances.put(location, season);
     }
-    public HashMap<Location, String> getMap() {
+    public ConcurrentHashMap<Location, String> getMap() {
         return CropManager.instances;
     }
 
@@ -102,7 +124,7 @@ public class CropManager {
             if(data.contains(worldName)){
                 World world = Bukkit.getWorld(worldName);
                 data.getConfigurationSection(worldName).getKeys(false).forEach(key ->{
-                    String[] string_list = key.split(",");
+                    String[] string_list = StringUtils.split(key,",");
                     if (world.isChunkLoaded(Integer.parseInt(string_list[0])/16, Integer.parseInt(string_list[2])/16)){
                         Location tempLoc = new Location(world,Double.parseDouble(string_list[0]),Double.parseDouble(string_list[1]),Double.parseDouble(string_list[2]));
                         if(world.getBlockAt(tempLoc).getType() != Material.TRIPWIRE){

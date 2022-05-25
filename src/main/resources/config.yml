@@ -12,23 +12,23 @@ current-season: spring
 config:
   # ######################
   #       基础设置       #
+  #    重启服务器生效    #
   # ######################
   # 植物生长的可能时间点，你可以在一天设置多个时间点判断生长
   # 为了防止植物生长过快你可以适当调低生长一个阶段的概率
   # 你设置的时间节点越多，则服务器计算量也越大
-  # 请尽量在植物生长后200ticks以上设置洒水器工作点，如果生长和洒水时间靠太近可能会带来一些不必要的麻烦
+  # 请尽量在植物生长后200ticks以上设置洒水器工作点，如果生长和洒水时间靠太近可能会带来一些不必要的麻烦（例如数据太多，植物还没来得及生长完洒水器就开始工作）
   # mc的时间范围为0-23999ticks，1秒=20ticks
-  # 你可以设置的时间范围为0-23899ticks（需要预留100tick）
-  # 此设置需要重启服务器生效！
 
   # 生长时间点
   grow-time:
     - 0
   # - 12000
+
   # 洒水器工作点
   sprinkler-time:
     - 200
-      # - 12200
+  # - 12200
 
     # 生长生效的世界
   whitelist-worlds:
@@ -80,11 +80,11 @@ config:
   greenhouse-glass: customcrops:greenhouse_glass
   # 洒水器的家具
   sprinkler-1: customcrops:sprinkler_1
-  # 洒水器的方块的物品
+  # 洒水器的方块的物品（请以_item结尾）
   sprinkler-1-item: customcrops:sprinkler_1_item
   # 优质洒水器的家具
   sprinkler-2: customcrops:sprinkler_2
-  # 优质洒水器的方块的物品
+  # 优质洒水器的方块的物品（请以_item结尾）
   sprinkler-2-item: customcrops:sprinkler_2_item
   # 农作物枯萎后变成的方块,物品ID中请保留stage以保持其下方方块被破坏时，枯萎作物也被破坏的特性
   dead-crop: customcrops:crop_stage_death
@@ -106,6 +106,7 @@ config:
 
   # ######################
   #       插件兼容       #
+  #      重启服务器生效   #
   # ######################
   integration:
     # 收获权限为harvest 浇水种植权限为build
@@ -147,7 +148,7 @@ messages:
 # ######################
 crops:
   tomato:
-    # 在IA配置文件中命名农作物时请以_seeds和_stage_X结尾，否则会报错
+    # 在IA配置文件中命名农作物时请以_seeds和_stage_X结尾，否则会无法生长和种植
     # 适宜的生长季节，若未启用季节系统可以无视此项目
     season: spring,summer
 # 空手收获后返回第几个生长状态

@@ -15,7 +15,7 @@ public class CropTimer {
 
     public CropTimer() {
         TimeCheck tc = new TimeCheck();
-        BukkitTask task = tc.runTaskTimerAsynchronously(CustomCrops.instance, 1,1);
+        BukkitTask task = tc.runTaskTimer(CustomCrops.instance, 1,1);
         this.taskID = task.getTaskId();
     }
 

@@ -15,30 +15,38 @@ import java.io.File;
 import java.util.Objects;
 
 public class SprinklerWork {
+
     public static void sprinklerWork(){
-        FileConfiguration config = CustomCrops.instance.getConfig();
+
         File file = new File(CustomCrops.instance.getDataFolder(), "sprinkler-data.yml");
         FileConfiguration data;
         data = YamlConfiguration.loadConfiguration(file);
-        config.getStringList("config.whitelist-worlds").forEach(worldName -> SprinklerManager.getSprinklers(Objects.requireNonNull(Bukkit.getWorld(worldName))).forEach(location -> {
+
+        FileConfiguration config = CustomCrops.instance.getConfig();
+
+        config.getStringList("config.whitelist-worlds").forEach(worldName -> {
+
             World world = Bukkit.getWorld(worldName);
-            String type = Objects.requireNonNull(data.getString(worldName + "." + location.getBlockX() + "," + location.getBlockY() + "," + location.getBlockZ()));
-            if(type.equals("s1")){
-                for(int i = -1; i <= 1;i++){
-                    for (int j = -1; j <= 1; j++){
-                        Location tempLoc = location.clone().add(i,-1,j);
-                        waterPot(tempLoc, world, config);
+            SprinklerManager.getSprinklers(Bukkit.getWorld(worldName)).forEach(location -> {
+
+                String type = Objects.requireNonNull(data.getString(worldName + "." + location.getBlockX() + "," + location.getBlockY() + "," + location.getBlockZ()));
+                if(type.equals("s1")){
+                    for(int i = -1; i <= 1;i++){
+                        for (int j = -1; j <= 1; j++){
+                            Location tempLoc = location.clone().add(i,-1,j);
+                            waterPot(tempLoc, world, config);
+                        }
+                    }
+                }else if(type.equals("s2")){
+                    for(int i = -2; i <= 2;i++){
+                        for (int j = -2; j <= 2; j++){
+                            Location tempLoc = location.clone().add(i,-1,j);
+                            waterPot(tempLoc, world, config);
+                        }
                     }
                 }
-            }else if(type.equals("s2")){
-                for(int i = -2; i <= 2;i++){
-                    for (int j = -2; j <= 2; j++){
-                        Location tempLoc = location.clone().add(i,-1,j);
-                        waterPot(tempLoc, world, config);
-                    }
-                }
-            }
-        }));
+            });
+        });
     }
     private static void waterPot(Location tempLoc, World world, FileConfiguration config) {
         if(CustomBlock.byAlreadyPlaced(world.getBlockAt(tempLoc)) != null){

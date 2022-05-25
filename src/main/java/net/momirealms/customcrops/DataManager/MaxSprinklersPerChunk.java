@@ -7,8 +7,11 @@ import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
 
 public class MaxSprinklersPerChunk {
+
+    static FileConfiguration config = CustomCrops.instance.getConfig();
+
     public static boolean maxSprinklersPerChunk(Location location){
-        FileConfiguration config = CustomCrops.instance.getConfig();
+
         if(!config.getBoolean("config.enable-limit")){
             return false;
         }
@@ -24,10 +27,10 @@ public class MaxSprinklersPerChunk {
         Label_out:
         for (int i = 0; i < 16; ++i) {
             for (int j = 0; j < 16; ++j) {
-                final Location square = chunkLocation.clone().add((double)i, 0.0, (double)j);
+                Location square = chunkLocation.clone().add(i+0.5, 0.5, j+0.5);
                 for (int k = minY; k <= maxY; ++k) {
                     square.add(0.0, 1.0, 0.0);
-                    if(IAFurniture.getFromLocation(square.clone().add(0.5,0.5,0.5), world)){
+                    if(IAFurniture.getFromLocation(square, world)){
                         if (n++ > maxAmount) {
                             break Label_out;
                         }
@@ -36,5 +39,8 @@ public class MaxSprinklersPerChunk {
             }
         }
         return n > maxAmount;
+    }
+    public static boolean alreadyPlaced(Location location){
+        return IAFurniture.getFromLocation(location.clone().add(0.5, 1.5, 0.5), location.getWorld());
     }
 }

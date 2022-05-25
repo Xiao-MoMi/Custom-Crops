@@ -3,106 +3,133 @@ package net.momirealms.customcrops.Crops;
 import dev.lone.itemsadder.api.CustomBlock;
 import net.momirealms.customcrops.CustomCrops;
 import net.momirealms.customcrops.DataManager.CropManager;
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.scheduler.BukkitScheduler;
 
 import java.io.File;
 import java.util.Objects;
 
 public class CropGrow {
     public static void cropGrow(){
+
         FileConfiguration config = CustomCrops.instance.getConfig();
         File file = new File(CustomCrops.instance.getDataFolder(), "crop-data.yml");
         FileConfiguration data;
         data = YamlConfiguration.loadConfiguration(file);
+
         boolean enable_season = config.getBoolean("enable-season");
         boolean enable_greenhouse = config.getBoolean("config.enable-greenhouse");
         int range = config.getInt("config.greenhouse-range");
+        double growChance = config.getDouble("config.grow-success-chance");
         String glass = config.getString("config.greenhouse-glass");
-        config.getStringList("config.whitelist-worlds").forEach(worldName -> CropManager.getCrops(Objects.requireNonNull(Bukkit.getWorld(worldName))).forEach(seedLocation -> {
+        String wateredPot = config.getString("config.watered-pot");
+        String pot = config.getString("config.pot");
+        String deadCrop = config.getString("config.dead-crop");
+        String current = config.getString("current-season");
+        BukkitScheduler bukkitScheduler = Bukkit.getScheduler();
+
+        config.getStringList("config.whitelist-worlds").forEach(worldName -> {
+
             World world = Bukkit.getWorld(worldName);
-            Location potLocation = seedLocation.clone().subtract(0,1,0);
-            String[] seasons = Objects.requireNonNull(data.getString(worldName + "." + seedLocation.getBlockX() + "," + seedLocation.getBlockY() + "," + seedLocation.getBlockZ())).split(",");
-            if (CustomBlock.byAlreadyPlaced(world.getBlockAt(potLocation)) != null && CustomBlock.byAlreadyPlaced(world.getBlockAt(seedLocation)) != null){
-                if (CustomBlock.byAlreadyPlaced((world.getBlockAt(potLocation))).getNamespacedID().equalsIgnoreCase(config.getString("config.watered-pot")) && CustomBlock.byAlreadyPlaced(world.getBlockAt(seedLocation)).getNamespacedID().contains("stage")){
-                    if (CustomBlock.byAlreadyPlaced(world.getBlockAt(seedLocation)).getNamespacedID().equalsIgnoreCase(config.getString("config.dead-crop"))){
-                        return;
-                    }
-                    String namespace = CustomBlock.byAlreadyPlaced(world.getBlockAt(seedLocation)).getNamespacedID().split(":")[0];
-                    String[] cropNameList = CustomBlock.byAlreadyPlaced(world.getBlockAt(seedLocation)).getNamespacedID().split(":")[1].split("_");
-                    Label_out:
-                    if(enable_season){
-                        if(enable_greenhouse){
-                            for(int i = 1; i <= range; i++){
-                                Location tempLocation = seedLocation.clone().add(0,i,0);
-                                if (CustomBlock.byAlreadyPlaced(world.getBlockAt(tempLocation)) != null){
-                                    if(CustomBlock.byAlreadyPlaced(world.getBlockAt(tempLocation)).getNamespacedID().equalsIgnoreCase(glass)){
-                                        break Label_out;
-                                    }
-                                }
-                            }
-                        }
-                        boolean wrongSeason = true;
-                        for(String season : seasons){
-                            if(Objects.equals(season, config.getString("current-season"))){
-                                wrongSeason = false;
-                            }
-                        }
-                        if(wrongSeason){
-                            Bukkit.getScheduler().callSyncMethod(CustomCrops.instance, () -> {
-                                CustomBlock.remove(seedLocation);
-                                CustomBlock.place(config.getString("config.dead-crop"),seedLocation);
-                                return null;
-                            });
+            CropManager.getCrops(Bukkit.getWorld(worldName)).forEach(seedLocation -> {
+
+                Location potLocation = seedLocation.clone().subtract(0,1,0);
+                Block seedBlock = world.getBlockAt(seedLocation);
+                Block potBlock = world.getBlockAt(potLocation);
+
+                String[] seasons = StringUtils.split(data.getString(worldName + "." + seedLocation.getBlockX() + "," + seedLocation.getBlockY() + "," + seedLocation.getBlockZ()),",");
+
+                if (CustomBlock.byAlreadyPlaced(potBlock) != null && CustomBlock.byAlreadyPlaced(seedBlock) != null){
+
+                    String seedNamespace = CustomBlock.byAlreadyPlaced(seedBlock).getNamespacedID();
+
+                    if (CustomBlock.byAlreadyPlaced(potBlock).getNamespacedID().equalsIgnoreCase(wateredPot) && seedNamespace.contains("stage")){
+                        if (seedNamespace.equalsIgnoreCase(deadCrop)){
                             return;
                         }
-                    }
-                    int nextStage = Integer.parseInt(cropNameList[2]) + 1;
-                    if (CustomBlock.getInstance( namespace +":"+cropNameList[0] + "_stage_" + nextStage) != null) {
-                        Bukkit.getScheduler().callSyncMethod(CustomCrops.instance, () ->{
-                            CustomBlock.remove(potLocation);
-                            CustomBlock.place(config.getString("config.pot"),potLocation);
-                            if(Math.random()< config.getDouble("config.grow-success-chance")){
-                                CustomBlock.remove(seedLocation);
-                                CustomBlock.place(namespace + ":" + cropNameList[0] + "_stage_" + nextStage,seedLocation);
-                            }
-                            return null;
-                        });
-                    }
-                }else if(CustomBlock.byAlreadyPlaced((world.getBlockAt(potLocation))).getNamespacedID().equalsIgnoreCase(config.getString("config.pot")) && CustomBlock.byAlreadyPlaced(world.getBlockAt(seedLocation)).getNamespacedID().contains("stage")){
-                    if (CustomBlock.byAlreadyPlaced(world.getBlockAt(seedLocation)).getNamespacedID().equalsIgnoreCase(config.getString("config.dead-crop"))){
-                        return;
-                    }
-                    if(enable_season) {
-                        if(enable_greenhouse){
-                            for(int i = 1; i <= range; i++){
-                                Location tempLocation = seedLocation.clone().add(0,i,0);
-                                if (CustomBlock.byAlreadyPlaced(world.getBlockAt(tempLocation)) != null){
-                                    if(CustomBlock.byAlreadyPlaced(world.getBlockAt(tempLocation)).getNamespacedID().equalsIgnoreCase(config.getString("config.greenhouse-glass"))){
-                                        return;
+
+                        String[] split = StringUtils.split(seedNamespace,":");
+                        String[] cropNameList = StringUtils.split(split[1],"_");
+
+                        Label_out:
+                        if(enable_season){
+                            if(enable_greenhouse){
+                                for(int i = 1; i <= range; i++){
+                                    Location tempLocation = seedLocation.clone().add(0,i,0);
+                                    if (CustomBlock.byAlreadyPlaced(world.getBlockAt(tempLocation)) != null){
+                                        if(CustomBlock.byAlreadyPlaced(world.getBlockAt(tempLocation)).getNamespacedID().equalsIgnoreCase(glass)){
+                                            break Label_out;
+                                        }
                                     }
                                 }
                             }
-                        }
-                        boolean wrongSeason = true;
-                        for (String season : seasons) {
-                            if (Objects.equals(season, config.getString("current-season"))) {
-                                wrongSeason = false;
+                            boolean wrongSeason = true;
+                            for(String season : seasons){
+                                if (Objects.equals(season, current)) {
+                                    wrongSeason = false;
+                                    break;
+                                }
+                            }
+                            if(wrongSeason){
+                                bukkitScheduler.callSyncMethod(CustomCrops.instance, () -> {
+                                    CustomBlock.remove(seedLocation);
+                                    CustomBlock.place(deadCrop,seedLocation);
+                                    return null;
+                                });
+                                return;
                             }
                         }
-                        if (wrongSeason) {
-                            Bukkit.getScheduler().callSyncMethod(CustomCrops.instance, () -> {
-                                CustomBlock.remove(seedLocation);
-                                CustomBlock.place(config.getString("config.dead-crop"), seedLocation);
+                        int nextStage = Integer.parseInt(cropNameList[2]) + 1;
+                        if (CustomBlock.getInstance( split[0] +":"+cropNameList[0] + "_stage_" + nextStage) != null) {
+                            bukkitScheduler.callSyncMethod(CustomCrops.instance, () ->{
+                                CustomBlock.remove(potLocation);
+                                CustomBlock.place(pot,potLocation);
+                                if(Math.random()< growChance){
+                                    CustomBlock.remove(seedLocation);
+                                    CustomBlock.place(split[0] + ":" + cropNameList[0] + "_stage_" + nextStage,seedLocation);
+                                }
                                 return null;
                             });
+                        }
+                    }else if(CustomBlock.byAlreadyPlaced(potBlock).getNamespacedID().equalsIgnoreCase(pot) && seedNamespace.contains("stage")){
+                        if (seedNamespace.equalsIgnoreCase(deadCrop)){
+                            return;
+                        }
+                        if(enable_season) {
+                            if(enable_greenhouse){
+                                for(int i = 1; i <= range; i++){
+                                    Location tempLocation = seedLocation.clone().add(0,i,0);
+                                    if (CustomBlock.byAlreadyPlaced(world.getBlockAt(tempLocation)) != null){
+                                        if(CustomBlock.byAlreadyPlaced(world.getBlockAt(tempLocation)).getNamespacedID().equalsIgnoreCase(glass)){
+                                            return;
+                                        }
+                                    }
+                                }
+                            }
+                            boolean wrongSeason = true;
+                            for (String season : seasons) {
+                                if (Objects.equals(season, current)) {
+                                    wrongSeason = false;
+                                    break;
+                                }
+                            }
+                            if (wrongSeason) {
+                                bukkitScheduler.callSyncMethod(CustomCrops.instance, () -> {
+                                    CustomBlock.remove(seedLocation);
+                                    CustomBlock.place(deadCrop, seedLocation);
+                                    return null;
+                                });
+                            }
                         }
                     }
                 }
-            }
-        }));
+            });
+        });
     }
 }

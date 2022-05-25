@@ -100,6 +100,9 @@ public class CommandHandler implements CommandExecutor {
                 MessageManager.consoleMessage(config.getString("messages.prefix") + config.getString("messages.nextseason"), Bukkit.getConsoleSender());
             }
         }
+        if(args[0].equalsIgnoreCase("test")){
+            CropManager.testData_2();
+        }
         return false;
     }
 }
