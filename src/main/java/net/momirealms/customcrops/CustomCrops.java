@@ -54,6 +54,7 @@ public final class CustomCrops extends JavaPlugin {
                 List<WrappedChatComponent> components = packet.getChatComponents().getValues();
                 for (WrappedChatComponent component : components) {
                     if(component.toString().contains("Ender Chest")){
+                        //component.setJson("{\"text\":\"收纳袋\"}");
                         component.setJson("{\"translate\":\"container.enderchest\"}");
                         packet.getChatComponents().write(components.indexOf(component), component);
                     }
