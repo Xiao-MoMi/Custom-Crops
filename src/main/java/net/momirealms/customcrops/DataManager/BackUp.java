@@ -22,7 +22,13 @@ public class BackUp {
 
         try {
             BackUp.backUp(crop_data,cropBackUp);
+            
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
             BackUp.backUp(sprinkler_data,sprinklerBackUp);
+            
         } catch (IOException e) {
             e.printStackTrace();
         }
