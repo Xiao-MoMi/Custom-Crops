@@ -22,6 +22,7 @@ public class BreakCustomBlock implements Listener {
         Player player =event.getPlayer();
         Location location = event.getBlock().getLocation();
         String namespacedId = event.getNamespacedID();
+
         if(namespacedId.contains("stage")){
             if(player.getInventory().getItemInMainHand().containsEnchantment(Enchantment.SILK_TOUCH) || player.getInventory().getItemInMainHand().getType() == Material.SHEARS){
                 event.setCancelled(true);

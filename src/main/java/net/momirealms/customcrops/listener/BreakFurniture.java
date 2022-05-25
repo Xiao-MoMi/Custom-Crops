@@ -25,6 +25,8 @@ public class BreakFurniture implements Listener {
             }else if(namespacedId.equalsIgnoreCase(config.getString("config.sprinkler-2"))){
                 entity.remove();
                 entity.getWorld().dropItem(entity.getLocation() ,CustomStack.getInstance(namespacedId + "_item").getItemStack());
+            }else if(namespacedId.contains("_stage_")){
+                entity.remove();
             }
         }
     }
