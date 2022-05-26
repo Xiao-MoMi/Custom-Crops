@@ -30,11 +30,9 @@ config:
     - 200
   # - 12200
 
-    # 生长生效的世界
+  # 生长生效的世界
   whitelist-worlds:
     - world
-  # 只在被加载的区块中生长和枯萎，对性能友好
-  only-grow-in-loaded-chunks: true
   # 农作物每次成长一个阶段的概率（0-1）
   grow-success-chance: 0.8
 
@@ -103,6 +101,15 @@ config:
   max-crops: 32
   max-sprinklers: 4
 
+  # ######################
+  #       巨大植物       #
+  # ######################
+  gigantic:
+    # 是否启用巨大植物
+    enable: true
+    # 农作物巨大化的概率
+    chance: 0.01
+
 
   # ######################
   #       插件兼容       #
@@ -132,7 +139,8 @@ messages:
   season-set: '&f成功设置季节为{Season}'
   nextseason: '&f已切换到下一季节！'
   season-disabled: '&f季节系统未启用.'
-  clean-cache: '&f无效农作物和洒水器数据清除完毕!'
+  force-grow: '&f已强制生长!'
+  force-water: '&f已强制洒水!'
   reach-limit-crop: '&f农作物已到达最大区块上限{Max}!'
   reach-limit-sprinkler: '&f洒水器已到达最大区块上限{Max}!'
   backup: '&f备份完成'
@@ -151,8 +159,10 @@ crops:
     # 在IA配置文件中命名农作物时请以_seeds和_stage_X结尾，否则会无法生长和种植
     # 适宜的生长季节，若未启用季节系统可以无视此项目
     season: spring,summer
-# 空手收获后返回第几个生长状态
-# return: customcrops:tomato_stage_3
+    # 空手收获后返回第几个生长状态
+    # return: customcrops:tomato_stage_3
+    # 巨大化植物
+    # gigantic: customcrops:gigantic_tomato
 
 
 # ######################

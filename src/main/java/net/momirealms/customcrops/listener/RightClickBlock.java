@@ -1,7 +1,7 @@
 package net.momirealms.customcrops.listener;
 
 import dev.lone.itemsadder.api.CustomStack;
-import net.momirealms.customcrops.CustomCrops;
+import net.momirealms.customcrops.ConfigManager;
 import net.momirealms.customcrops.DataManager.MaxSprinklersPerChunk;
 import net.momirealms.customcrops.DataManager.SprinklerManager;
 import net.momirealms.customcrops.IAFurniture;
@@ -13,7 +13,6 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -48,12 +47,12 @@ public class RightClickBlock implements Listener {
                     }
                 }
                 if(hasWater){
-                    FileConfiguration config = CustomCrops.instance.getConfig();
-                    if(namespacedId.equalsIgnoreCase(config.getString("config.watering-can-1")) ||
-                            namespacedId.equalsIgnoreCase(config.getString("config.watering-can-2")) ||
-                            namespacedId.equalsIgnoreCase(config.getString("config.watering-can-3"))) {
+
+                    if(namespacedId.equalsIgnoreCase(ConfigManager.Config.watering_can_1) ||
+                            namespacedId.equalsIgnoreCase(ConfigManager.Config.watering_can_2) ||
+                            namespacedId.equalsIgnoreCase(ConfigManager.Config.watering_can_3)) {
                             if(customStack.getMaxDurability() == customStack.getDurability()){
-                                MessageManager.playerMessage(config.getString("messages.prefix") + config.getString("messages.can-full"),player);
+                                MessageManager.playerMessage(ConfigManager.Config.prefix + ConfigManager.Config.can_full,player);
                             }else {
                                 customStack.setDurability(customStack.getDurability() + 1);
                                 player.getWorld().playSound(player.getLocation(),Sound.ITEM_BUCKET_FILL,1,1);
@@ -63,16 +62,16 @@ public class RightClickBlock implements Listener {
                 return;
             }
             if(event.getAction() == Action.RIGHT_CLICK_BLOCK || event.getBlockFace() == BlockFace.UP) {
-                FileConfiguration config = CustomCrops.instance.getConfig();
-                if(namespacedId.equalsIgnoreCase(config.getString("config.sprinkler-1-item")) || namespacedId.equalsIgnoreCase(config.getString("config.sprinkler-2-item"))){
+
+                if(namespacedId.equalsIgnoreCase(ConfigManager.Config.sprinkler_1i) || namespacedId.equalsIgnoreCase(ConfigManager.Config.sprinkler_2i)){
                     Location location = event.getClickedBlock().getLocation();
                     //兼容性检测
                     if(IntegrationCheck.PlaceCheck(location,player)){
                         return;
                     }
                     //高度限制
-                    if(event.getClickedBlock().getY() > config.getInt("config.height.max") || event.getClickedBlock().getY() < config.getInt("config.height.min")){
-                        MessageManager.playerMessage(config.getString("messages.prefix") + config.getString("messages.not-a-good-place"),player);
+                    if(event.getClickedBlock().getY() > ConfigManager.Config.maxh || event.getClickedBlock().getY() < ConfigManager.Config.minh){
+                        MessageManager.playerMessage(ConfigManager.Config.prefix + ConfigManager.Config.bad_place,player);
                         return;
                     }
                     //此位置是否已有洒水器
@@ -81,13 +80,13 @@ public class RightClickBlock implements Listener {
                     }
                     //区块上限
                     if(MaxSprinklersPerChunk.maxSprinklersPerChunk(location)){
-                        MessageManager.playerMessage(config.getString("messages.prefix")+config.getString("messages.reach-limit-sprinkler").replace("{Max}", config.getString("config.max-sprinklers")),player);
+                        MessageManager.playerMessage(ConfigManager.Config.prefix + ConfigManager.Config.limit_sprinkler.replace("{Max}", String.valueOf(ConfigManager.Config.max_sprinkler)),player);
                         return;
                     }
                     if(player.getGameMode() != GameMode.CREATIVE){
                         itemStack.setAmount(itemStack.getAmount() -1);
                     }
-                    if(namespacedId.equalsIgnoreCase(config.getString("config.sprinkler-1-item"))){
+                    if(namespacedId.equalsIgnoreCase(ConfigManager.Config.sprinkler_1i)){
                         SprinklerManager.putInstance(location.clone().add(0,1,0),"s1");
                     }else {
                         SprinklerManager.putInstance(location.clone().add(0,1,0),"s2");

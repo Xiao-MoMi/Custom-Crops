@@ -1,23 +1,20 @@
 package net.momirealms.customcrops.DataManager;
 
-import net.momirealms.customcrops.CustomCrops;
+import net.momirealms.customcrops.ConfigManager;
 import net.momirealms.customcrops.IAFurniture;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.configuration.file.FileConfiguration;
 
 public class MaxSprinklersPerChunk {
 
-    static FileConfiguration config = CustomCrops.instance.getConfig();
-
     public static boolean maxSprinklersPerChunk(Location location){
 
-        if(!config.getBoolean("config.enable-limit")){
+        if(!ConfigManager.Config.limit){
             return false;
         }
-        int maxY = config.getInt("config.height.max");
-        int minY = config.getInt("config.height.min");
-        int maxAmount = config.getInt("config.max-sprinklers");
+        int maxY = ConfigManager.Config.maxh;
+        int minY = ConfigManager.Config.minh;
+        int maxAmount = ConfigManager.Config.max_sprinkler;
 
         int n = 1;
 

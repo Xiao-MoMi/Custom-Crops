@@ -3,6 +3,7 @@ package net.momirealms.customcrops.listener;
 import dev.lone.itemsadder.api.CustomBlock;
 import dev.lone.itemsadder.api.CustomStack;
 import dev.lone.itemsadder.api.Events.CustomBlockInteractEvent;
+import net.momirealms.customcrops.ConfigManager;
 import net.momirealms.customcrops.CustomCrops;
 import net.momirealms.customcrops.DataManager.CropManager;
 import net.momirealms.customcrops.DataManager.MaxCropsPerChunk;
@@ -30,7 +31,6 @@ public class RightClickCustomBlock implements Listener {
             return;
         }
         //获取配置文件
-        FileConfiguration config = CustomCrops.instance.getConfig();
         Player player = event.getPlayer();
         Block clickedBlock = event.getBlockClicked();
         Location clickedBlockLocation = clickedBlock.getLocation();
@@ -49,7 +49,7 @@ public class RightClickCustomBlock implements Listener {
                 //如果ID内有stage则进行下一步
                 if (namespacedID.contains("stage")){
                     //是否为枯萎植物
-                    if(namespacedID.equalsIgnoreCase(config.getString("config.dead-crop"))) return;
+                    if(namespacedID.equalsIgnoreCase(ConfigManager.Config.dead)) return;
                     //String namespace = clickedCustomBlock.getNamespacedID().split(":")[0];
                     String[] split = StringUtils.split(namespacedID,":");
                     //String[] cropNameList = clickedCustomBlock.getNamespacedID().split(":")[1].split("_");
@@ -60,11 +60,11 @@ public class RightClickCustomBlock implements Listener {
                     if (CustomBlock.getInstance(split[0] + ":" + cropNameList[0] + "_stage_" + nextStage) == null) {
                         //如果不存在下一阶段说明已是最终阶段，可以收获
                         //遍历掉落物并删除方块
-                        clickedCustomBlock.getLoot().forEach(itemStack -> {
-                            clickedBlockLocation.getWorld().dropItem(clickedBlockLocation.clone().add(0.5,0.2,0.5),itemStack);
-                        });
+                        clickedCustomBlock.getLoot().forEach(itemStack -> clickedBlockLocation.getWorld().dropItem(clickedBlockLocation.clone().add(0.5,0.2,0.5),itemStack));
                         CustomBlock.remove(clickedBlockLocation);
                         //如果配置文件中有return项目则放置方块
+                        FileConfiguration config = CustomCrops.instance.getConfig();
+
                         if(config.getConfigurationSection("crops." + cropNameList[0]).getKeys(false).contains("return")){
                             CustomBlock.place(config.getString("crops." + cropNameList[0] + ".return"), clickedBlockLocation);
                         }
@@ -89,7 +89,7 @@ public class RightClickCustomBlock implements Listener {
                     Block blockUnder = world.getBlockAt(clickedBlockLocation.clone().subtract(0,1,0));
                     if (CustomBlock.byAlreadyPlaced(blockUnder) == null) return;
                     //检测右键的方块下方是否为干燥的种植盆方块
-                    if (CustomBlock.byAlreadyPlaced(blockUnder).getNamespacedID().equalsIgnoreCase(config.getString("config.pot"))) {
+                    if (CustomBlock.byAlreadyPlaced(blockUnder).getNamespacedID().equalsIgnoreCase(ConfigManager.Config.pot)) {
                         //获取手中的物品
                         ItemStack mainHandItem = player.getInventory().getItemInMainHand();
                         Location locUnder = clickedBlockLocation.clone().subtract(0,1,0);
@@ -101,13 +101,13 @@ public class RightClickCustomBlock implements Listener {
                                 player.getInventory().addItem(new ItemStack(Material.BUCKET));
                             }
                             CustomBlock.remove(locUnder);
-                            CustomBlock.place(config.getString("config.watered-pot"), locUnder);
+                            CustomBlock.place(ConfigManager.Config.watered_pot, locUnder);
                         } else if (mainHandItem.getType() == Material.WOODEN_SWORD) {
-                            waterPot(mainHandItem, player, locUnder, config);
+                            waterPot(mainHandItem, player, locUnder);
                         }
                     }
                     //检测右键的方块下方是否为湿润的种植盆方块
-                    else if(CustomBlock.byAlreadyPlaced(blockUnder).getNamespacedID().equalsIgnoreCase(config.getString("config.watered-pot"))){
+                    else if(CustomBlock.byAlreadyPlaced(blockUnder).getNamespacedID().equalsIgnoreCase(ConfigManager.Config.watered_pot)){
                         //获取手中的物品
                         ItemStack mainHandItem = player.getInventory().getItemInMainHand();
                         //如果是骨粉
@@ -128,18 +128,18 @@ public class RightClickCustomBlock implements Listener {
                                         mainHandItem.setAmount(mainHandItem.getAmount() - 1);
                                     }
                                     //骨粉的成功率
-                                    if (Math.random() < config.getDouble("config.bone-meal-chance")){
+                                    if (Math.random() < ConfigManager.Config.bone_chance){
                                         CustomBlock.remove(clickedBlockLocation);
                                         CustomBlock.place(split[0] + ":" + cropNameList[0] + "_stage_" + nextStage,clickedBlockLocation);
-                                        Particle particleSuccess = Particle.valueOf(config.getString("config.particle.success"));
+                                        Particle particleSuccess = Particle.valueOf(ConfigManager.Config.success);
                                         world.spawnParticle(particleSuccess, clickedBlockLocation.clone().add(0.5, 0.1,0.5), 1 ,0,0,0,0);
                                         //使用骨粉是否消耗水分
-                                        if(config.getBoolean("config.bone-meal-consume-water")){
+                                        if(ConfigManager.Config.need_water){
                                             CustomBlock.remove(clickedBlockLocation.clone().subtract(0,1,0));
-                                            CustomBlock.place(config.getString("config.pot"), clickedBlockLocation.clone().subtract(0,1,0));
+                                            CustomBlock.place(ConfigManager.Config.pot, clickedBlockLocation.clone().subtract(0,1,0));
                                         }
                                     }else {
-                                        Particle particleFailure = Particle.valueOf(config.getString("config.particle.failure"));
+                                        Particle particleFailure = Particle.valueOf(ConfigManager.Config.failure);
                                         world.spawnParticle(particleFailure, clickedBlockLocation.clone().add(0.5, 0.1,0.5), 1 ,0,0,0,0);
                                     }
                                 }
@@ -154,10 +154,9 @@ public class RightClickCustomBlock implements Listener {
             else if (event.getBlockFace() == BlockFace.UP){
                     //获取手中的物品
                     ItemStack mainHandItem = player.getInventory().getItemInMainHand();
-                    World world = player.getWorld();
 
                     //检测右键的方块是否为干燥的种植盆方块
-                    if (namespacedId.equalsIgnoreCase(config.getString("config.pot"))){
+                    if (namespacedId.equalsIgnoreCase(ConfigManager.Config.pot)){
                         //如果手中的是水桶，那么转干为湿
 
                         if (mainHandItem.getType() == Material.WATER_BUCKET){
@@ -167,22 +166,22 @@ public class RightClickCustomBlock implements Listener {
                                 player.getInventory().addItem(new ItemStack(Material.BUCKET));
                             }
                             CustomBlock.remove(clickedBlockLocation);
-                            CustomBlock.place(config.getString("config.watered-pot"),clickedBlockLocation);
+                            CustomBlock.place(ConfigManager.Config.watered_pot,clickedBlockLocation);
                         } else if (mainHandItem.getType() == Material.WOODEN_SWORD){
-                            waterPot(mainHandItem, player,clickedBlockLocation, config);
+                            waterPot(mainHandItem, player,clickedBlockLocation);
                         } else {
-                            tryPlantSeed(clickedBlockLocation, mainHandItem, player, config);
+                            tryPlantSeed(clickedBlockLocation, mainHandItem, player);
                         }
                     }
                     //检测右键的方块是否为湿润的种植盆方块
-                    else if(namespacedId.equalsIgnoreCase(config.getString("config.watered-pot"))){
-                        tryPlantSeed(clickedBlockLocation, mainHandItem, player, config);
+                    else if(namespacedId.equalsIgnoreCase(ConfigManager.Config.watered_pot)){
+                        tryPlantSeed(clickedBlockLocation, mainHandItem, player);
                     }
            }
         }
     }
     //尝试种植植物
-    private void tryPlantSeed(Location clickedBlockLocation, ItemStack mainHandItem, Player player, FileConfiguration config) {
+    private void tryPlantSeed(Location clickedBlockLocation, ItemStack mainHandItem, Player player) {
         //是否为IA物品
         if(CustomStack.byItemStack(mainHandItem) == null) return;
         //获取命名空间名与ID
@@ -192,30 +191,33 @@ public class RightClickCustomBlock implements Listener {
             //获取农作物名
             String cropName = StringUtils.split(namespaced_id.replace("_seeds",""),":")[1];
             //String[] crop = CustomStack.byItemStack(mainHandItem).getNamespacedID().toLowerCase().replace("_seeds","").split(":");
-            //该种子是否存在于配置文件中
-            if(!config.getConfigurationSection("crops").getKeys(false).contains(cropName)){
-                MessageManager.playerMessage(config.getString("messages.prefix")+config.getString("messages.no-such-seed"),player);
-                return;
-            }
+
             //检测上方为空气
             if(clickedBlockLocation.getWorld().getBlockAt(clickedBlockLocation.clone().add(0, 1, 0)).getType() != Material.AIR){
                 return;
             }
+            FileConfiguration config = CustomCrops.instance.getConfig();
+            //该种子是否存在于配置文件中
+            if(!config.getConfigurationSection("crops").getKeys(false).contains(cropName)){
+                MessageManager.playerMessage(ConfigManager.Config.prefix + ConfigManager.Config.no_such_seed,player);
+                return;
+            }
             //是否超高超低
-            if (clickedBlockLocation.getY() < config.getInt("config.height.min") || clickedBlockLocation.getY() > config.getInt("config.height.max")){
-                MessageManager.playerMessage(config.getString("messages.prefix") + config.getString("messages.not-a-good-place"),player);
+            if (clickedBlockLocation.getY() < ConfigManager.Config.minh || clickedBlockLocation.getY() > ConfigManager.Config.maxh){
+                MessageManager.playerMessage(ConfigManager.Config.prefix + ConfigManager.Config.bad_place,player);
                 return;
             }
             Location locUp = clickedBlockLocation.clone().add(0,1,0);
             //是否启用了季节
             Label_out:
-            if(config.getBoolean("enable-season")){
-                if(config.getBoolean("config.enable-greenhouse")){
+            if(ConfigManager.Config.season){
+                if(ConfigManager.Config.greenhouse){
+                    int range = ConfigManager.Config.range;
                     World world = player.getWorld();
-                    for(int i = 1; i <= config.getInt("config.greenhouse-range"); i++){
+                    for(int i = 1; i <= range; i++){
                         Location tempLocation = locUp.clone().add(0,i,0);
                         if (CustomBlock.byAlreadyPlaced(world.getBlockAt(tempLocation)) != null){
-                            if(CustomBlock.byAlreadyPlaced(world.getBlockAt(tempLocation)).getNamespacedID().equalsIgnoreCase(config.getString("config.greenhouse-glass"))){
+                            if(CustomBlock.byAlreadyPlaced(world.getBlockAt(tempLocation)).getNamespacedID().equalsIgnoreCase(ConfigManager.Config.glass)){
                                 break Label_out;
                             }
                         }
@@ -225,22 +227,23 @@ public class RightClickCustomBlock implements Listener {
                 String[] seasons = config.getString("crops."+cropName+".season").split(",");
                 boolean wrongSeason = true;
                 for(String season : seasons){
-                    if(Objects.equals(season, config.getString("current-season"))){
+                    if (Objects.equals(season, ConfigManager.Config.current)) {
                         wrongSeason = false;
+                        break;
                     }
                 }
                 if(wrongSeason){
-                    MessageManager.playerMessage(config.getString("messages.prefix")+config.getString("messages.wrong-season"),player);
+                    MessageManager.playerMessage(ConfigManager.Config.prefix + ConfigManager.Config.wrong_season,player);
                     return;
                 }
             }
             //是否到达区块上限
             if(MaxCropsPerChunk.maxCropsPerChunk(clickedBlockLocation)){
-                MessageManager.playerMessage(config.getString("messages.prefix")+config.getString("messages.reach-limit-crop").replace("{Max}", config.getString("config.max-crops")),player);
+                MessageManager.playerMessage(ConfigManager.Config.prefix + ConfigManager.Config.limit_crop.replace("{Max}", String.valueOf(ConfigManager.Config.max_crop)),player);
                 return;
             }
             //添加到缓存中
-            if(config.getBoolean("enable-season")){
+            if(ConfigManager.Config.season){
                 CropManager.putInstance(locUp, config.getString("crops."+cropName+".season"));
             }else{
                 CropManager.putInstance(locUp, "all");
@@ -253,7 +256,7 @@ public class RightClickCustomBlock implements Listener {
             CustomBlock.place(namespaced_id.replace("_seeds","_stage_1"),locUp);
         }
     }
-    private void waterPot(ItemStack itemStack, Player player, Location location, FileConfiguration config){
+    private void waterPot(ItemStack itemStack, Player player, Location location){
         //是否为IA物品
         if(CustomStack.byItemStack(itemStack) == null) return;
 
@@ -268,13 +271,13 @@ public class RightClickCustomBlock implements Listener {
             int x;
             int z;
 
-            if (namespacedId.equalsIgnoreCase(config.getString("config.watering-can-1"))) {
+            if (namespacedId.equalsIgnoreCase(ConfigManager.Config.watering_can_1)) {
                 x = 0;
                 z = 0;
-            } else if (namespacedId.equalsIgnoreCase(config.getString("config.watering-can-2"))) {
+            } else if (namespacedId.equalsIgnoreCase(ConfigManager.Config.watering_can_2)){
                 x = 2;
                 z = 2;
-            } else if (namespacedId.equalsIgnoreCase(config.getString("config.watering-can-3"))) {
+            } else if (namespacedId.equalsIgnoreCase(ConfigManager.Config.watering_can_3)){
                 x = 4;
                 z = 4;
             } else return;
@@ -289,8 +292,8 @@ public class RightClickCustomBlock implements Listener {
             float yaw = player.getLocation().getYaw();
 
             //提前获取ID与命名空间，以免for循环循环get
-            String wateredPot = config.getString("config.watered-pot");
-            String pot = config.getString("config.pot");
+            String wateredPot = ConfigManager.Config.watered_pot;
+            String pot = ConfigManager.Config.pot;
 
             //根据朝向确定浇水方向
             if (yaw <= 45 && yaw >= -135) {

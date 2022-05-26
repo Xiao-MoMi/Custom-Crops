@@ -12,7 +12,6 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.Objects;
 
 public class CommandHandler implements CommandExecutor {
 
@@ -25,83 +24,103 @@ public class CommandHandler implements CommandExecutor {
             return false;
         }
 
-        FileConfiguration config = CustomCrops.instance.getConfig();
-
         //重载插件
         if(args[0].equalsIgnoreCase("reload")){
-            CustomCrops.loadConfig();
+
+            ConfigManager.Config.ReloadConfig();
+
             if(sender instanceof Player){
-                MessageManager.playerMessage(config.getString("messages.prefix") + config.getString("messages.reload"), (Player) sender);
+                MessageManager.playerMessage(ConfigManager.Config.prefix + ConfigManager.Config.reload, (Player) sender);
             }else {
-                MessageManager.consoleMessage(config.getString("messages.prefix") + config.getString("messages.reload"), Bukkit.getConsoleSender());
+                MessageManager.consoleMessage(ConfigManager.Config.prefix + ConfigManager.Config.reload, Bukkit.getConsoleSender());
             }
+            return true;
         }
         //设置季节
         if(args[0].equalsIgnoreCase("setseason")){
-            if(config.getBoolean("enable-season")){
+            if(ConfigManager.Config.season){
+
+                FileConfiguration config = CustomCrops.instance.getConfig();
                 config.set("current-season", args[1]);
-                if(sender instanceof Player){
-                    MessageManager.playerMessage(config.getString("messages.prefix") + Objects.requireNonNull(config.getString("messages.season-set")).replace("{Season}",args[1])
-                            .replace("spring", Objects.requireNonNull(config.getString("messages.spring")))
-                            .replace("summer", Objects.requireNonNull(config.getString("messages.summer")))
-                            .replace("autumn", Objects.requireNonNull(config.getString("messages.autumn")))
-                            .replace("winter", Objects.requireNonNull(config.getString("messages.winter"))), (Player) sender);
-                }else {
-                    MessageManager.consoleMessage(config.getString("messages.prefix") + Objects.requireNonNull(config.getString("messages.season-set")).replace("{Season}",args[1])
-                            .replace("spring", Objects.requireNonNull(config.getString("messages.spring")))
-                            .replace("summer", Objects.requireNonNull(config.getString("messages.summer")))
-                            .replace("autumn", Objects.requireNonNull(config.getString("messages.autumn")))
-                            .replace("winter", Objects.requireNonNull(config.getString("messages.winter"))), Bukkit.getConsoleSender());
-                }
                 CustomCrops.instance.saveConfig();
+                ConfigManager.Config.current = args[1];
+
+                if(sender instanceof Player){
+                    MessageManager.playerMessage(ConfigManager.Config.prefix + ConfigManager.Config.season_set.replace("{Season}",args[1])
+                            .replace("spring", ConfigManager.Config.spring)
+                            .replace("summer", ConfigManager.Config.summer)
+                            .replace("autumn", ConfigManager.Config.autumn)
+                            .replace("winter", ConfigManager.Config.winter), (Player) sender);
+                }else {
+                    MessageManager.consoleMessage(config.getString("messages.prefix") + ConfigManager.Config.season_set.replace("{Season}",args[1])
+                            .replace("spring", ConfigManager.Config.spring)
+                            .replace("summer", ConfigManager.Config.summer)
+                            .replace("autumn", ConfigManager.Config.autumn)
+                            .replace("winter", ConfigManager.Config.winter), Bukkit.getConsoleSender());
+                }
+
             }else{
                 if(sender instanceof Player){
-                    MessageManager.playerMessage(config.getString("messages.prefix") + config.getString("messages.season-disabled"), (Player) sender);
+                    MessageManager.playerMessage(ConfigManager.Config.prefix + ConfigManager.Config.season_disabled, (Player) sender);
                 }else {
-                    MessageManager.consoleMessage(config.getString("messages.prefix") + config.getString("messages.season-disabled"), Bukkit.getConsoleSender());
+                    MessageManager.consoleMessage(ConfigManager.Config.prefix + ConfigManager.Config.season_disabled, Bukkit.getConsoleSender());
                 }
             }
+            return true;
         }
         //强制保存
         if(args[0].equalsIgnoreCase("forcesave")){
             CropManager.saveData();
             SprinklerManager.saveData();
             if(sender instanceof Player){
-                MessageManager.playerMessage(config.getString("messages.prefix") + config.getString("messages.force-save"), (Player) sender);
+                MessageManager.playerMessage(ConfigManager.Config.prefix + ConfigManager.Config.force_save, (Player) sender);
             }else {
-                MessageManager.consoleMessage(config.getString("messages.prefix") + config.getString("messages.force-save"), Bukkit.getConsoleSender());
+                MessageManager.consoleMessage(ConfigManager.Config.prefix + ConfigManager.Config.force_save, Bukkit.getConsoleSender());
             }
+            return true;
         }
-        //清除缓存
-        if(args[0].equalsIgnoreCase("cleancache")){
-            Bukkit.getScheduler().runTaskAsynchronously(CustomCrops.instance,()->{
-                CropManager.cleanLoadedCache();
-                SprinklerManager.cleanCache();
-            });
+        //强制生长
+        if(args[0].equalsIgnoreCase("forcegrow")){
+            Bukkit.getScheduler().runTaskAsynchronously(CustomCrops.instance, CropManager::CropGrow);
             if(sender instanceof Player){
-                MessageManager.playerMessage(config.getString("messages.prefix") + config.getString("messages.clean-cache"), (Player) sender);
+                MessageManager.playerMessage(ConfigManager.Config.prefix + ConfigManager.Config.force_grow, (Player) sender);
             }else {
-                MessageManager.consoleMessage(config.getString("messages.prefix") + config.getString("messages.clean-cache"), Bukkit.getConsoleSender());
+                MessageManager.consoleMessage(ConfigManager.Config.prefix + ConfigManager.Config.force_grow, Bukkit.getConsoleSender());
             }
+            return true;
+        }
+        //强制洒水
+        if(args[0].equalsIgnoreCase("forcewater")){
+            Bukkit.getScheduler().runTaskAsynchronously(CustomCrops.instance, SprinklerManager::SprinklerWork);
+            if(sender instanceof Player){
+                MessageManager.playerMessage(ConfigManager.Config.prefix + ConfigManager.Config.force_water, (Player) sender);
+            }else {
+                MessageManager.consoleMessage(ConfigManager.Config.prefix + ConfigManager.Config.force_water, Bukkit.getConsoleSender());
+            }
+            return true;
         }
         if(args[0].equalsIgnoreCase("backup")){
             BackUp.backUpData();
             if(sender instanceof Player){
-                MessageManager.playerMessage(config.getString("messages.prefix") + config.getString("messages.backup"), (Player) sender);
+                MessageManager.playerMessage(ConfigManager.Config.prefix + ConfigManager.Config.backup, (Player) sender);
             }else {
-                MessageManager.consoleMessage(config.getString("messages.prefix") + config.getString("messages.backup"), Bukkit.getConsoleSender());
+                MessageManager.consoleMessage(ConfigManager.Config.prefix + ConfigManager.Config.backup, Bukkit.getConsoleSender());
             }
+            return true;
         }
         if(args[0].equalsIgnoreCase("nextseason")){
             NextSeason.changeSeason();
             if(sender instanceof Player){
-                MessageManager.playerMessage(config.getString("messages.prefix") + config.getString("messages.nextseason"), (Player) sender);
+                MessageManager.playerMessage(ConfigManager.Config.prefix + ConfigManager.Config.nextSeason, (Player) sender);
             }else {
-                MessageManager.consoleMessage(config.getString("messages.prefix") + config.getString("messages.nextseason"), Bukkit.getConsoleSender());
+                MessageManager.consoleMessage(ConfigManager.Config.prefix + ConfigManager.Config.nextSeason, Bukkit.getConsoleSender());
             }
+            return true;
         }
         if(args[0].equalsIgnoreCase("test")){
             CropManager.testData_2();
+            SprinklerManager.testData_3();
+            return true;
         }
         return false;
     }

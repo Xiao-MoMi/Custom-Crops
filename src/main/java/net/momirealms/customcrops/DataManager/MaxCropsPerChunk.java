@@ -1,23 +1,20 @@
 package net.momirealms.customcrops.DataManager;
 
 import dev.lone.itemsadder.api.CustomBlock;
-import net.momirealms.customcrops.CustomCrops;
+import net.momirealms.customcrops.ConfigManager;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
-import org.bukkit.configuration.file.FileConfiguration;
 
 public class MaxCropsPerChunk {
 
-    static FileConfiguration config = CustomCrops.instance.getConfig();
-
     public static boolean maxCropsPerChunk(Location location){
 
-        if(!config.getBoolean("config.enable-limit")){
+        if(!ConfigManager.Config.limit){
             return false;
         }
-        int maxY = config.getInt("config.height.max");
-        int minY = config.getInt("config.height.min");
-        int maxAmount = config.getInt("config.max-crops");
+        int maxY = ConfigManager.Config.maxh;
+        int minY = ConfigManager.Config.minh;
+        int maxAmount = ConfigManager.Config.max_crop;
 
         int n = 1;
 

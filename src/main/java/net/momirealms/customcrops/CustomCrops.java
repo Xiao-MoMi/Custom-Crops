@@ -1,12 +1,6 @@
 package net.momirealms.customcrops;
 
-import com.comphenix.protocol.PacketType;
-import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
-import com.comphenix.protocol.events.PacketAdapter;
-import com.comphenix.protocol.events.PacketContainer;
-import com.comphenix.protocol.events.PacketEvent;
-import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import net.momirealms.customcrops.Crops.CropTimer;
 import net.momirealms.customcrops.DataManager.BackUp;
 import net.momirealms.customcrops.DataManager.CropManager;
@@ -22,7 +16,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 import java.util.Objects;
 
 public final class CustomCrops extends JavaPlugin {
@@ -38,6 +31,9 @@ public final class CustomCrops extends JavaPlugin {
         instance = this;
         saveDefaultConfig();
 
+        //加载配置文件
+        ConfigManager.Config.ReloadConfig();
+
         //指令注册
         Objects.requireNonNull(Bukkit.getPluginCommand("customcrops")).setExecutor(new CommandHandler());
         Objects.requireNonNull(Bukkit.getPluginCommand("customcrops")).setTabCompleter(new CommandTabComplete());
@@ -46,24 +42,8 @@ public final class CustomCrops extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new RightClickBlock(),this);
         Bukkit.getPluginManager().registerEvents(new BreakFurniture(),this);
 
-        //修改末影箱标题
-        manager = ProtocolLibrary.getProtocolManager();
-        manager.addPacketListener(new PacketAdapter(this, PacketType.Play.Server.OPEN_WINDOW) {
-            public void onPacketSending(PacketEvent event) {
-                PacketContainer packet = event.getPacket();
-                List<WrappedChatComponent> components = packet.getChatComponents().getValues();
-                for (WrappedChatComponent component : components) {
-                    if(component.toString().contains("Ender Chest")){
-                        //component.setJson("{\"text\":\"收纳袋\"}");
-                        component.setJson("{\"translate\":\"container.enderchest\"}");
-                        packet.getChatComponents().write(components.indexOf(component), component);
-                    }
-                }
-            }
-        });
-
         //开始计时任务
-        startTimer();
+        CustomCrops.timer = new CropTimer();
 
         //新建data文件
         File crop_file = new File(CustomCrops.instance.getDataFolder(), "crop-data.yml");
@@ -73,6 +53,7 @@ public final class CustomCrops extends JavaPlugin {
                 crop_file.createNewFile();
             } catch (IOException e) {
                 e.printStackTrace();
+                MessageManager.consoleMessage("&c[CustomCrops] 农作物数据文件生成失败!",Bukkit.getConsoleSender());
             }
         }
         if(!sprinkler_file.exists()){
@@ -80,6 +61,7 @@ public final class CustomCrops extends JavaPlugin {
                 sprinkler_file.createNewFile();
             } catch (IOException e) {
                 e.printStackTrace();
+                MessageManager.consoleMessage("&c[CustomCrops] 洒水器数据文件生成失败!",Bukkit.getConsoleSender());
             }
         }
 
@@ -103,7 +85,7 @@ public final class CustomCrops extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        //关闭异步定时任务
+        //关闭定时任务
         if (CustomCrops.timer != null) {
             CropTimer.stopTimer(CustomCrops.timer.getTaskID());
         }
@@ -112,20 +94,8 @@ public final class CustomCrops extends JavaPlugin {
         CropManager.saveData();
         SprinklerManager.saveData();
 
-
         //备份
         BackUp.backUpData();
         MessageManager.consoleMessage(("&#ccfbff-#ef96c5&[CustomCrops] 自定义农作物插件已卸载！作者：小默米 QQ:3266959688"),Bukkit.getConsoleSender());
-    }
-
-
-    //定时任务
-    public static void startTimer() {
-        CustomCrops.timer = new CropTimer();
-    }
-
-    //重载插件
-    public static void loadConfig(){
-        instance.reloadConfig();
     }
 }
