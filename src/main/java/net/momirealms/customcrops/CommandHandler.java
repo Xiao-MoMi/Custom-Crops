@@ -1,9 +1,9 @@
 package net.momirealms.customcrops;
 
-import net.momirealms.customcrops.DataManager.BackUp;
-import net.momirealms.customcrops.DataManager.CropManager;
-import net.momirealms.customcrops.DataManager.NextSeason;
-import net.momirealms.customcrops.DataManager.SprinklerManager;
+import net.momirealms.customcrops.datamanager.BackUp;
+import net.momirealms.customcrops.datamanager.CropManager;
+import net.momirealms.customcrops.datamanager.NextSeason;
+import net.momirealms.customcrops.datamanager.SprinklerManager;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;

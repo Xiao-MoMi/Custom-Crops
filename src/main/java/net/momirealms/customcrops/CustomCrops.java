@@ -1,10 +1,10 @@
 package net.momirealms.customcrops;
 
 import com.comphenix.protocol.ProtocolManager;
-import net.momirealms.customcrops.Crops.CropTimer;
-import net.momirealms.customcrops.DataManager.BackUp;
-import net.momirealms.customcrops.DataManager.CropManager;
-import net.momirealms.customcrops.DataManager.SprinklerManager;
+import net.momirealms.customcrops.crops.CropTimer;
+import net.momirealms.customcrops.datamanager.BackUp;
+import net.momirealms.customcrops.datamanager.CropManager;
+import net.momirealms.customcrops.datamanager.SprinklerManager;
 import net.momirealms.customcrops.listener.BreakCustomBlock;
 import net.momirealms.customcrops.listener.BreakFurniture;
 import net.momirealms.customcrops.listener.RightClickBlock;

@@ -1,4 +1,4 @@
-package net.momirealms.customcrops.Integrations;
+package net.momirealms.customcrops.integrations;
 
 import net.momirealms.customcrops.ConfigManager;
 import org.bukkit.Location;

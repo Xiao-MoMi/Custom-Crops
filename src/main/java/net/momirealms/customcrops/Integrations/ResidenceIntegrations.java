@@ -1,4 +1,4 @@
-package net.momirealms.customcrops.Integrations;
+package net.momirealms.customcrops.integrations;
 
 import com.bekvon.bukkit.residence.containers.Flags;
 import com.bekvon.bukkit.residence.protection.ClaimedResidence;

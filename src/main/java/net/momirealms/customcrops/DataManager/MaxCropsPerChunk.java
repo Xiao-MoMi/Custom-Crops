@@ -1,4 +1,4 @@
-package net.momirealms.customcrops.DataManager;
+package net.momirealms.customcrops.datamanager;
 
 import dev.lone.itemsadder.api.CustomBlock;
 import net.momirealms.customcrops.ConfigManager;
@@ -26,7 +26,7 @@ public class MaxCropsPerChunk {
                 Location square = chunkLocation.clone().add(i, 0.0, j);
                 for (int k = minY; k <= maxY; ++k) {
                     square.add(0.0, 1.0, 0.0);
-                    Block b = location.getWorld().getBlockAt(square);
+                    Block b = square.getBlock();
                     if(CustomBlock.byAlreadyPlaced(b)!= null){
                         if (CustomBlock.byAlreadyPlaced(b).getNamespacedID().contains("stage")) {
                             if (n++ > maxAmount) {

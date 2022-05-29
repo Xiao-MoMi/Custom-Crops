@@ -5,9 +5,9 @@ import dev.lone.itemsadder.api.CustomStack;
 import dev.lone.itemsadder.api.Events.CustomBlockInteractEvent;
 import net.momirealms.customcrops.ConfigManager;
 import net.momirealms.customcrops.CustomCrops;
-import net.momirealms.customcrops.DataManager.CropManager;
-import net.momirealms.customcrops.DataManager.MaxCropsPerChunk;
-import net.momirealms.customcrops.Integrations.IntegrationCheck;
+import net.momirealms.customcrops.datamanager.CropManager;
+import net.momirealms.customcrops.datamanager.MaxCropsPerChunk;
+import net.momirealms.customcrops.integrations.IntegrationCheck;
 import net.momirealms.customcrops.MessageManager;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.*;
@@ -86,7 +86,7 @@ public class RightClickCustomBlock implements Listener {
             if (namespacedId.contains("stage")) {
                     //下方方块不是自定义方块则返回
                     World world = player.getWorld();
-                    Block blockUnder = world.getBlockAt(clickedBlockLocation.clone().subtract(0,1,0));
+                    Block blockUnder = clickedBlockLocation.clone().subtract(0,1,0).getBlock();
                     if (CustomBlock.byAlreadyPlaced(blockUnder) == null) return;
                     //检测右键的方块下方是否为干燥的种植盆方块
                     if (CustomBlock.byAlreadyPlaced(blockUnder).getNamespacedID().equalsIgnoreCase(ConfigManager.Config.pot)) {
@@ -193,7 +193,7 @@ public class RightClickCustomBlock implements Listener {
             //String[] crop = CustomStack.byItemStack(mainHandItem).getNamespacedID().toLowerCase().replace("_seeds","").split(":");
 
             //检测上方为空气
-            if(clickedBlockLocation.getWorld().getBlockAt(clickedBlockLocation.clone().add(0, 1, 0)).getType() != Material.AIR){
+            if(clickedBlockLocation.clone().add(0, 1, 0).getBlock().getType() != Material.AIR){
                 return;
             }
             FileConfiguration config = CustomCrops.instance.getConfig();
@@ -216,8 +216,8 @@ public class RightClickCustomBlock implements Listener {
                     World world = player.getWorld();
                     for(int i = 1; i <= range; i++){
                         Location tempLocation = locUp.clone().add(0,i,0);
-                        if (CustomBlock.byAlreadyPlaced(world.getBlockAt(tempLocation)) != null){
-                            if(CustomBlock.byAlreadyPlaced(world.getBlockAt(tempLocation)).getNamespacedID().equalsIgnoreCase(ConfigManager.Config.glass)){
+                        if (CustomBlock.byAlreadyPlaced(tempLocation.getBlock()) != null){
+                            if(CustomBlock.byAlreadyPlaced(tempLocation.getBlock()).getNamespacedID().equalsIgnoreCase(ConfigManager.Config.glass)){
                                 break Label_out;
                             }
                         }
@@ -305,8 +305,8 @@ public class RightClickCustomBlock implements Listener {
                 for (int i = 0; i <= x; i++) {
                     for (int j = 0; j <= z; j++) {
                         Location tempLoc = location.clone().add(i, 0, j);
-                        if(CustomBlock.byAlreadyPlaced(world.getBlockAt(tempLoc)) != null){
-                            if(CustomBlock.byAlreadyPlaced(world.getBlockAt(tempLoc)).getNamespacedID().equalsIgnoreCase(pot)){
+                        if(CustomBlock.byAlreadyPlaced(tempLoc.getBlock()) != null){
+                            if(CustomBlock.byAlreadyPlaced(tempLoc.getBlock()).getNamespacedID().equalsIgnoreCase(pot)){
                                 //同步替换方块
                                 bukkitScheduler.callSyncMethod(CustomCrops.instance,()->{
                                     CustomBlock.remove(tempLoc);
@@ -326,8 +326,8 @@ public class RightClickCustomBlock implements Listener {
                 for (int i = 0; i <= x; i++) {
                     for (int j = 0; j <= z; j++) {
                         Location tempLoc = location.clone().subtract(i, 0, j);
-                        if(CustomBlock.byAlreadyPlaced(world.getBlockAt(tempLoc)) != null){
-                            if(CustomBlock.byAlreadyPlaced(world.getBlockAt(tempLoc)).getNamespacedID().equalsIgnoreCase(pot)){
+                        if(CustomBlock.byAlreadyPlaced(tempLoc.getBlock()) != null){
+                            if(CustomBlock.byAlreadyPlaced(tempLoc.getBlock()).getNamespacedID().equalsIgnoreCase(pot)){
                                 //同步替换方块
                                 bukkitScheduler.callSyncMethod(CustomCrops.instance,()->{
                                     CustomBlock.remove(tempLoc);

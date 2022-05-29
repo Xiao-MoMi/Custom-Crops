@@ -1,4 +1,4 @@
-package net.momirealms.customcrops.DataManager;
+package net.momirealms.customcrops.datamanager;
 
 import net.momirealms.customcrops.ConfigManager;
 import net.momirealms.customcrops.IAFurniture;

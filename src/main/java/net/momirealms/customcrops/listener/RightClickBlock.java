@@ -2,10 +2,10 @@ package net.momirealms.customcrops.listener;
 
 import dev.lone.itemsadder.api.CustomStack;
 import net.momirealms.customcrops.ConfigManager;
-import net.momirealms.customcrops.DataManager.MaxSprinklersPerChunk;
-import net.momirealms.customcrops.DataManager.SprinklerManager;
+import net.momirealms.customcrops.datamanager.MaxSprinklersPerChunk;
+import net.momirealms.customcrops.datamanager.SprinklerManager;
 import net.momirealms.customcrops.IAFurniture;
-import net.momirealms.customcrops.Integrations.IntegrationCheck;
+import net.momirealms.customcrops.integrations.IntegrationCheck;
 import net.momirealms.customcrops.MessageManager;
 import org.bukkit.GameMode;
 import org.bukkit.Location;

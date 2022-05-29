@@ -1,4 +1,4 @@
-package net.momirealms.customcrops.Crops;
+package net.momirealms.customcrops.crops;
 
 import net.momirealms.customcrops.CustomCrops;
 import org.bukkit.Bukkit;

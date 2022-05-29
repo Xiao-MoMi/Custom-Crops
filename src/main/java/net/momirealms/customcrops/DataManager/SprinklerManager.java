@@ -1,4 +1,4 @@
-package net.momirealms.customcrops.DataManager;
+package net.momirealms.customcrops.datamanager;
 
 import dev.lone.itemsadder.api.CustomBlock;
 import net.momirealms.customcrops.ConfigManager;
@@ -8,7 +8,6 @@ import net.momirealms.customcrops.MessageManager;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -211,8 +210,8 @@ public class SprinklerManager {
         });
     }
     private static void waterPot(Location tempLoc, World world) {
-        if(CustomBlock.byAlreadyPlaced(world.getBlockAt(tempLoc)) != null){
-            if(CustomBlock.byAlreadyPlaced(world.getBlockAt(tempLoc)).getNamespacedID().equalsIgnoreCase(ConfigManager.Config.pot)){
+        if(CustomBlock.byAlreadyPlaced(tempLoc.getBlock()) != null){
+            if(CustomBlock.byAlreadyPlaced(tempLoc.getBlock()).getNamespacedID().equalsIgnoreCase(ConfigManager.Config.pot)){
                 Bukkit.getScheduler().callSyncMethod(CustomCrops.instance,()->{
                     CustomBlock.remove(tempLoc);
                     CustomBlock.place((ConfigManager.Config.watered_pot), tempLoc);

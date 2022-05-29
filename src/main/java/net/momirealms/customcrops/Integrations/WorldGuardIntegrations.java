@@ -1,4 +1,4 @@
-package net.momirealms.customcrops.Integrations;
+package net.momirealms.customcrops.integrations;
 
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldguard.LocalPlayer;

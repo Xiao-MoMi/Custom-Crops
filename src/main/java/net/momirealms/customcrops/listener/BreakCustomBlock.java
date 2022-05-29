@@ -25,14 +25,14 @@ public class BreakCustomBlock implements Listener {
             if(player.getInventory().getItemInMainHand().containsEnchantment(Enchantment.SILK_TOUCH) || player.getInventory().getItemInMainHand().getType() == Material.SHEARS){
                 event.setCancelled(true);
                 CustomBlock.place(namespacedId, location);
-                CustomBlock.byAlreadyPlaced(location.getWorld().getBlockAt(location)).getLoot().forEach(itemStack -> {
+                CustomBlock.byAlreadyPlaced(location.getBlock()).getLoot().forEach(itemStack -> {
                     location.getWorld().dropItem(location.clone().add(0.5,0.2,0.5), itemStack);
                     CustomBlock.remove(location);
                 });
             }
         }else if(namespacedId.equalsIgnoreCase(ConfigManager.Config.watered_pot) || namespacedId.equalsIgnoreCase(ConfigManager.Config.pot)){
             World world = location.getWorld();
-            Block blockUp = world.getBlockAt(location.add(0,1,0));
+            Block blockUp = location.add(0,1,0).getBlock();
             if(CustomBlock.byAlreadyPlaced(blockUp) != null){
                 if(CustomBlock.byAlreadyPlaced(blockUp).getNamespacedID().contains("stage")){
                     for (ItemStack itemStack : CustomBlock.byAlreadyPlaced(blockUp).getLoot()) {

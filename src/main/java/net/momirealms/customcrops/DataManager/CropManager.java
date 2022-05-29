@@ -1,4 +1,4 @@
-package net.momirealms.customcrops.DataManager;
+package net.momirealms.customcrops.datamanager;
 
 import dev.lone.itemsadder.api.CustomBlock;
 import net.momirealms.customcrops.ConfigManager;
@@ -151,7 +151,7 @@ public class CropManager {
                     String[] string_list = StringUtils.split(key,",");
                     if (world.isChunkLoaded(Integer.parseInt(string_list[0])/16, Integer.parseInt(string_list[2])/16)){
                         Location tempLoc = new Location(world,Double.parseDouble(string_list[0]),Double.parseDouble(string_list[1]),Double.parseDouble(string_list[2]));
-                        if(world.getBlockAt(tempLoc).getType() != Material.TRIPWIRE){
+                        if(tempLoc.getBlock().getType() != Material.TRIPWIRE){
                             CropManager.instances.remove(tempLoc);
                             data.set(worldName+"."+string_list[0]+","+string_list[1]+","+string_list[2], null);
                         }else {
@@ -183,8 +183,8 @@ public class CropManager {
             locations.forEach(seedLocation -> {
 
                 Location potLocation = seedLocation.clone().subtract(0,1,0);
-                Block seedBlock = world.getBlockAt(seedLocation);
-                Block potBlock = world.getBlockAt(potLocation);
+                Block seedBlock = seedLocation.getBlock();
+                Block potBlock = potLocation.getBlock();
 
                 String[] seasons = StringUtils.split(data.getString(worldName + "." + seedLocation.getBlockX() + "," + seedLocation.getBlockY() + "," + seedLocation.getBlockZ()),",");
 
@@ -203,8 +203,8 @@ public class CropManager {
                             if(ConfigManager.Config.greenhouse){
                                 for(int i = 1; i <= ConfigManager.Config.range; i++){
                                     Location tempLocation = seedLocation.clone().add(0,i,0);
-                                    if (CustomBlock.byAlreadyPlaced(world.getBlockAt(tempLocation)) != null){
-                                        if(CustomBlock.byAlreadyPlaced(world.getBlockAt(tempLocation)).getNamespacedID().equalsIgnoreCase(ConfigManager.Config.glass)){
+                                    if (CustomBlock.byAlreadyPlaced(tempLocation.getBlock()) != null){
+                                        if(CustomBlock.byAlreadyPlaced(tempLocation.getBlock()).getNamespacedID().equalsIgnoreCase(ConfigManager.Config.glass)){
                                             break Label_out;
                                         }
                                     }
@@ -259,8 +259,8 @@ public class CropManager {
                             if(ConfigManager.Config.greenhouse){
                                 for(int i = 1; i <= ConfigManager.Config.range; i++){
                                     Location tempLocation = seedLocation.clone().add(0,i,0);
-                                    if (CustomBlock.byAlreadyPlaced(world.getBlockAt(tempLocation)) != null){
-                                        if(CustomBlock.byAlreadyPlaced(world.getBlockAt(tempLocation)).getNamespacedID().equalsIgnoreCase(ConfigManager.Config.glass)){
+                                    if (CustomBlock.byAlreadyPlaced(tempLocation.getBlock()) != null){
+                                        if(CustomBlock.byAlreadyPlaced(tempLocation.getBlock()).getNamespacedID().equalsIgnoreCase(ConfigManager.Config.glass)){
                                             return;
                                         }
                                     }
