@@ -281,7 +281,7 @@ public class RightClickCustomBlock implements Listener {
                 x = 4;
                 z = 4;
             } else return;
-            //虽Who cares一点水呢？
+
             if(customStack.getDurability() > 0){
                 CustomStack.byItemStack(itemStack).setDurability(CustomStack.byItemStack(itemStack).getDurability() - 1);
             }else return;
@@ -291,7 +291,6 @@ public class RightClickCustomBlock implements Listener {
             //获取玩家朝向
             float yaw = player.getLocation().getYaw();
 
-            //提前获取ID与命名空间，以免for循环循环get
             String wateredPot = ConfigManager.Config.watered_pot;
             String pot = ConfigManager.Config.pot;
 
