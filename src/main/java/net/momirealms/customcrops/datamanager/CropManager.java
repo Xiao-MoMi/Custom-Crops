@@ -191,6 +191,8 @@ public class CropManager {
                                                 CustomBlock.remove(potLoc);
                                                 CustomBlock.place(ConfigManager.Config.pot, potLoc);
                                                 if(crop.getGiantChance() > Math.random()){
+                                                    CROPS.remove(sLoc);
+                                                    data.set(worldName+"."+coordinate[0]+","+coordinate[1]+","+coordinate[2], null);
                                                     CustomBlock.remove(sLoc);
                                                     CustomBlock.place(crop.getGiant(), sLoc);
                                                 }

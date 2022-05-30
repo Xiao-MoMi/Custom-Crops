@@ -10,8 +10,6 @@ import net.momirealms.customcrops.listener.RightClickBlock;
 import net.momirealms.customcrops.listener.RightClickCustomBlock;
 import net.momirealms.customcrops.utils.Placeholders;
 import org.bukkit.Bukkit;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -22,8 +20,6 @@ public final class CustomCrops extends JavaPlugin {
 
     public static JavaPlugin instance;
     public static CropTimer timer;
-    public static CropManager cropManager;
-    public static SprinklerManager sprinklerManager;
 
     @Override
     public void onEnable() {
@@ -73,9 +69,7 @@ public final class CustomCrops extends JavaPlugin {
             new Placeholders(this).register();
             MessageManager.consoleMessage("&#ccfbff-#ef96c5&[CustomCrops] 检测到PlaceHolderAPI 已启用季节变量!",Bukkit.getConsoleSender());
         }
-
         MessageManager.consoleMessage("&#ccfbff-#ef96c5&[CustomCrops] 自定义农作物插件已启用！作者：小默米 QQ:3266959688",Bukkit.getConsoleSender());
-
     }
 
     @Override
