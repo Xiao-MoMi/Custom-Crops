@@ -1,12 +1,12 @@
 package net.momirealms.customcrops.listener;
 
 import dev.lone.itemsadder.api.CustomStack;
-import net.momirealms.customcrops.ConfigManager;
-import net.momirealms.customcrops.datamanager.MaxSprinklersPerChunk;
+import net.momirealms.customcrops.datamanager.ConfigManager;
+import net.momirealms.customcrops.limits.MaxSprinklersPerChunk;
 import net.momirealms.customcrops.datamanager.SprinklerManager;
-import net.momirealms.customcrops.IAFurniture;
+import net.momirealms.customcrops.utils.IAFurniture;
 import net.momirealms.customcrops.integrations.IntegrationCheck;
-import net.momirealms.customcrops.MessageManager;
+import net.momirealms.customcrops.datamanager.MessageManager;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -49,13 +49,13 @@ public class RightClickBlock implements Listener {
                 if(hasWater){
 
                     if(namespacedId.equalsIgnoreCase(ConfigManager.Config.watering_can_1) ||
-                            namespacedId.equalsIgnoreCase(ConfigManager.Config.watering_can_2) ||
-                            namespacedId.equalsIgnoreCase(ConfigManager.Config.watering_can_3)) {
-                            if(customStack.getMaxDurability() == customStack.getDurability()){
-                                MessageManager.playerMessage(ConfigManager.Config.prefix + ConfigManager.Config.can_full,player);
-                            }else {
-                                customStack.setDurability(customStack.getDurability() + 1);
-                                player.getWorld().playSound(player.getLocation(),Sound.ITEM_BUCKET_FILL,1,1);
+                        namespacedId.equalsIgnoreCase(ConfigManager.Config.watering_can_2) ||
+                        namespacedId.equalsIgnoreCase(ConfigManager.Config.watering_can_3)) {
+                        if(customStack.getMaxDurability() == customStack.getDurability()){
+                            MessageManager.playerMessage(ConfigManager.Config.prefix + ConfigManager.Config.can_full, player);
+                        }else {
+                            customStack.setDurability(customStack.getDurability() + 1);
+                            player.getWorld().playSound(player.getLocation(),Sound.ITEM_BUCKET_FILL,1,1);
                         }
                     }
                 }

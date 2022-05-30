@@ -1,10 +1,24 @@
-package net.momirealms.customcrops;
+package net.momirealms.customcrops.datamanager;
 
+import net.momirealms.customcrops.CustomCrops;
+import net.momirealms.customcrops.utils.Crop;
+import org.apache.commons.lang.StringUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.scheduler.BukkitScheduler;
 
+import java.io.File;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 public class ConfigManager {
+
+    public static HashMap<String, Crop> CONFIG;
+    static {
+        CONFIG = new HashMap<>();
+    }
 
     public static class Config{
 
@@ -14,7 +28,6 @@ public class ConfigManager {
         public static boolean season;
         public static boolean need_water;
         public static boolean greenhouse;
-        public static boolean big;
         public static boolean limit;
 
         public static List<String> worlds;
@@ -56,8 +69,6 @@ public class ConfigManager {
         public static String failure;
 
         public static double bone_chance;
-        public static double grow_chance;
-        public static double big_chance;
 
         public static int range;
         public static int maxh;
@@ -69,6 +80,7 @@ public class ConfigManager {
 
             CustomCrops.instance.reloadConfig();
             FileConfiguration configuration = CustomCrops.instance.getConfig();
+            cropLoad();
 
             //处理配置
             Config.res = configuration.getBoolean("integration.residence");
@@ -77,12 +89,9 @@ public class ConfigManager {
             Config.season = configuration.getBoolean("enable-season");
             Config.need_water = configuration.getBoolean("config.bone-meal-consume-water");
             Config.greenhouse = configuration.getBoolean("config.enable-greenhouse");
-            Config.big = configuration.getBoolean("config.gigantic.enable");
             Config.limit = configuration.getBoolean("config.enable-limit");
 
             Config.bone_chance = configuration.getDouble("config.bone-meal-chance");
-            Config.grow_chance = configuration.getDouble("config.grow-success-chance");
-            Config.big_chance = configuration.getDouble("config.gigantic.chance");
 
             Config.range = configuration.getInt("config.greenhouse-range");
             Config.maxh = configuration.getInt("config.height.max");
@@ -129,6 +138,55 @@ public class ConfigManager {
             Config.summer = configuration.getString("messages.summer");
             Config.autumn = configuration.getString("messages.autumn");
             Config.winter = configuration.getString("messages.winter");
+        }
+
+        /*
+        根据文件名获取配置文件
+        */
+        public static YamlConfiguration getConfig(String configName) {
+
+            File file = new File(CustomCrops.instance.getDataFolder(), configName);
+            //文件不存在则生成默认配置
+            if (!file.exists()) {
+                CustomCrops.instance.saveResource(configName, false);
+            }
+            return YamlConfiguration.loadConfiguration(file);
+        }
+
+        /*
+        加载农作物数据
+        */
+        public static void cropLoad(){
+            try {
+                CONFIG.clear();
+                YamlConfiguration cropConfig = getConfig("crops.yml");
+                Set<String> keys = cropConfig.getConfigurationSection("crops").getKeys(false);
+                keys.forEach(key -> {
+                    double chance = cropConfig.getDouble("crops."+key+".grow-chance");
+                    Crop crop = new Crop(key, chance);
+                    if(cropConfig.getConfigurationSection("crops."+key).contains("return")){
+                        crop.setWillReturn(true);
+                        crop.setReturnStage(cropConfig.getString("crops."+key+".return"));
+                    }else {
+                        crop.setWillReturn(false);
+                    }
+                    if(cropConfig.getConfigurationSection("crops."+key).contains("season")){
+                        crop.setSeasons(StringUtils.split( cropConfig.getString("crops."+key+".season"), ","));
+                    }
+                    if(cropConfig.getConfigurationSection("crops."+key).contains("gigantic")){
+                        crop.setWillGiant(true);
+                        crop.setGiant(cropConfig.getString("crops."+key+".gigantic"));
+                        crop.setGiantChance(cropConfig.getDouble("crops."+key+".gigantic-chance"));
+                    }else {
+                        crop.setWillGiant(false);
+                    }
+                    CONFIG.put(key, crop);
+                });
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+                CustomCrops.instance.getLogger().warning("crops.yml加载失败!");
+            }
         }
     }
 }

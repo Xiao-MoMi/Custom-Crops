@@ -12,19 +12,15 @@ import org.bukkit.entity.Player;
 
 public class WorldGuardIntegrations {
     public static boolean checkWGBuild(Location loc,Player player){
-
         LocalPlayer localPlayer = WorldGuardPlugin.inst().wrapPlayer(player);
         RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
         RegionQuery query = container.createQuery();
-
         return !query.testState(BukkitAdapter.adapt(loc), localPlayer, Flags.BUILD);
     }
     public static boolean checkWGHarvest(Location loc,Player player){
-
         LocalPlayer localPlayer = WorldGuardPlugin.inst().wrapPlayer(player);
         RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
         RegionQuery query = container.createQuery();
-
         return !query.testState(BukkitAdapter.adapt(loc), localPlayer, Flags.BLOCK_BREAK);
     }
 }

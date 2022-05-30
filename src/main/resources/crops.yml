@@ -1,0 +1,22 @@
+crops:
+  tomato:
+    #在IA配置文件中命名农作物时请以_seeds和_stage_X结尾，否则会无法生长和种植
+    #只要遵循正确的命名规则，你可以无限自定义农作物阶段数量
+
+    #每个生长点生长一个阶段的概率
+    #此项目必填（0-1）
+    grow-chance: 0.4
+
+    #适宜的生长季节，若未启用季节系统可以无视此项目
+    #若启用季节则必须填写此项目
+    #季节之间用逗号分隔
+    #可用的季节类型spring,summer,autumn,winter
+    #season: spring,summer
+
+    #空手收获后返回第几个生长状态
+    #不填写此项目则无法重复收获
+    #return: customcrops:tomato_stage_1
+
+    #巨大化植物，以极低的概率生长为另一种形态
+    #gigantic: customcrops:gigantic_tomato
+    #gigantic-chance: 0.01

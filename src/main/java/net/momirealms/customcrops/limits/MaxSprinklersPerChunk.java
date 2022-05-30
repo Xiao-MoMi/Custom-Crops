@@ -1,7 +1,7 @@
-package net.momirealms.customcrops.datamanager;
+package net.momirealms.customcrops.limits;
 
-import net.momirealms.customcrops.ConfigManager;
-import net.momirealms.customcrops.IAFurniture;
+import net.momirealms.customcrops.datamanager.ConfigManager;
+import net.momirealms.customcrops.utils.IAFurniture;
 import org.bukkit.Location;
 import org.bukkit.World;
 

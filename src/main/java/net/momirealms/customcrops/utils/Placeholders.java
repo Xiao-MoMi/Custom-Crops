@@ -1,6 +1,8 @@
-package net.momirealms.customcrops;
+package net.momirealms.customcrops.utils;
 
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
+import net.momirealms.customcrops.datamanager.ConfigManager;
+import net.momirealms.customcrops.CustomCrops;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 

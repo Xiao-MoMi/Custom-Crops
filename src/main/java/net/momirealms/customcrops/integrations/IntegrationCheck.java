@@ -1,6 +1,6 @@
 package net.momirealms.customcrops.integrations;
 
-import net.momirealms.customcrops.ConfigManager;
+import net.momirealms.customcrops.datamanager.ConfigManager;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 

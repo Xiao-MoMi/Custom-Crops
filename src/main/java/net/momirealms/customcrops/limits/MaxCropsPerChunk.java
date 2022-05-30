@@ -1,7 +1,7 @@
-package net.momirealms.customcrops.datamanager;
+package net.momirealms.customcrops.limits;
 
 import dev.lone.itemsadder.api.CustomBlock;
-import net.momirealms.customcrops.ConfigManager;
+import net.momirealms.customcrops.datamanager.ConfigManager;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 
@@ -28,7 +28,7 @@ public class MaxCropsPerChunk {
                     square.add(0.0, 1.0, 0.0);
                     Block b = square.getBlock();
                     if(CustomBlock.byAlreadyPlaced(b)!= null){
-                        if (CustomBlock.byAlreadyPlaced(b).getNamespacedID().contains("stage")) {
+                        if (CustomBlock.byAlreadyPlaced(b).getNamespacedID().contains("_stage_")) {
                             if (n++ > maxAmount) {
                                 break Label_out;
                             }

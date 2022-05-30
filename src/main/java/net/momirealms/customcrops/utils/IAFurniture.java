@@ -1,6 +1,7 @@
-package net.momirealms.customcrops;
+package net.momirealms.customcrops.utils;
 
 import dev.lone.itemsadder.api.CustomFurniture;
+import net.momirealms.customcrops.CustomCrops;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;

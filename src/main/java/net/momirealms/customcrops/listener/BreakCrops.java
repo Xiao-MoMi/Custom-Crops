@@ -1,17 +1,17 @@
 package net.momirealms.customcrops.listener;
 
 import dev.lone.itemsadder.api.CustomStack;
-import net.momirealms.customcrops.ConfigManager;
+import net.momirealms.customcrops.datamanager.ConfigManager;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntitySpawnEvent;
 
-public class BreakFurniture implements Listener {
+public class BreakCrops implements Listener {
 
     @EventHandler
-    public void breakFurniture(EntitySpawnEvent event){
+    public void breakCrops(EntitySpawnEvent event){
         Entity entity = event.getEntity();
         if(!(entity instanceof Item)) return;
         if(CustomStack.byItemStack(((Item) entity).getItemStack()) != null){

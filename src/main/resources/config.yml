@@ -1,132 +1,96 @@
-# ######################
-#       季节设置       #
-# ######################
-# 是否使用季节
-# 非植物季节则无法耕种，过了季节则枯死
-enable-season: true
-# 当前季节
-# 使用/customcrops setseason 来切换季节
-# 使用/customcrops nextseason 进入下一季节
+#是否使用季节
+#非植物季节则无法耕种，过了季节则枯死
+enable-season: false
+#当前季节
+#使用/customcrops setseason 来切换季节
+#使用/customcrops nextseason 进入下一季节
 current-season: spring
 
 config:
-  # ######################
-  #       基础设置       #
-  # ######################
-  # 植物生长的可能时间点，你可以在一天设置多个时间点判断生长
-  # 为了防止植物生长过快你可以适当调低生长一个阶段的概率
-  # 你设置的时间节点越多，则服务器计算量也越大
-  # 请尽量在植物生长后200ticks以上设置洒水器工作点，如果生长和洒水时间靠太近可能会带来一些不必要的麻烦（例如数据太多，植物还没来得及生长完洒水器就开始工作）
-  # mc的时间范围为0-23999ticks，1秒=20ticks
+  #植物生长的可能时间点，你可以在一天设置多个时间点判断生长
+  #为了防止植物生长过快你可以适当调低生长一个阶段的概率
+  #请尽量在植物生长后200ticks以上设置洒水器工作点，如果生长和洒水时间靠太近可能会带来一些不必要的麻烦（例如数据太多，植物还没来得及生长完洒水器就开始工作）
+  #mc的时间范围为0-23999ticks，1秒=20ticks
 
-  # 生长时间点
+  #生长时间点
   grow-time:
     - 0
-  # - 12000
+    - 12000
 
-  # 洒水器工作点
+  #洒水器工作点
   sprinkler-time:
     - 200
-  # - 12200
+    - 12200
 
-  # 生长生效的世界
+  #生长生效的世界
   whitelist-worlds:
     - world
-  # 农作物每次成长一个阶段的概率（0-1）
-  grow-success-chance: 0.8
 
-
-  # ######################
-  #       骨粉设置       #
-  # ######################
-  # 骨粉催熟农作物进入下一阶段的概率（0-1）
+  #骨粉催熟农作物进入下一阶段的概率（0-1）
   bone-meal-chance: 0.5
-  # 使用骨粉是否会让种植盆从湿润转为干燥
+  #使用骨粉是否会让种植盆从湿润转为干燥
   bone-meal-consume-water: true
-  # 粒子效果
+  #粒子效果
   particle:
-    # 使用骨粉成功的粒子
+    #使用骨粉成功的粒子
     success: HEART
-    # 使用骨粉失败的粒子
+    #使用骨粉失败的粒子
     failure: VILLAGER_ANGRY
 
 
-  # ######################
-  #       温室系统       #
-  # ######################
-  # 温室玻璃，在温室玻璃正下方的方块可以无视季节种植
+  #温室系统，在温室玻璃正下方的方块可以无视季节种植
   enable-greenhouse: true
-  # 温室玻璃有效范围
+  #温室玻璃有效范围
   greenhouse-range: 7
 
 
-  # ######################
-  #        IA物品        #
-  # ######################
-  # 植物的种植盆方块
+  #植物的种植盆方块
   pot: customcrops:pot
-  # 植物的浇过水的种植盆方块
+  #植物的浇过水的种植盆方块
   watered-pot: customcrops:watered_pot
-  # 水壶1x1
+  #水壶1x1
   watering-can-1: customcrops:watering_can_1
-  # 水壶1x3
+  #水壶1x3
   watering-can-2: customcrops:watering_can_2
-  # 水壶1x5
+  #水壶1x5
   watering-can-3: customcrops:watering_can_3
-  # 温室玻璃方块
+  #温室玻璃方块
   greenhouse-glass: customcrops:greenhouse_glass
-  # 洒水器的家具
+  #洒水器的家具
   sprinkler-1: customcrops:sprinkler_1
-  # 洒水器的方块的物品（请以_item结尾）
+  #洒水器的方块的物品（请以_item结尾）
   sprinkler-1-item: customcrops:sprinkler_1_item
-  # 优质洒水器的家具
+  #优质洒水器的家具
   sprinkler-2: customcrops:sprinkler_2
-  # 优质洒水器的方块的物品（请以_item结尾）
+  #优质洒水器的方块的物品（请以_item结尾）
   sprinkler-2-item: customcrops:sprinkler_2_item
-  # 农作物枯萎后变成的方块,物品ID中请保留stage以保持其下方方块被破坏时，枯萎作物也被破坏的特性
+  #农作物枯萎后变成的方块,物品ID中请保留stage以保持其下方方块被破坏时，枯萎作物也被破坏的特性
   dead-crop: customcrops:crop_stage_death
 
 
-  # ######################
-  #       优化限制       #
-  # ######################
-  # 种植的最低和最高Y坐标
+  #种植的最低和最高Y坐标
   height:
     min: 50
     max: 100
-  # 每个区块最大农作物数量和洒水器数量
-  # 是否启用限制
+  #每个区块最大农作物数量和洒水器数量
+  #是否启用限制
   enable-limit: true
   max-crops: 32
   max-sprinklers: 4
 
-  # ######################
-  #       巨大植物       #
-  # ######################
-  gigantic:
-    # 是否启用巨大植物
-    enable: true
-    # 农作物巨大化的概率
-    chance: 0.01
 
-
-  # ######################
-  #       插件兼容       #
-  # ######################
+  #插件兼容
   integration:
-    # 收获权限为harvest 浇水种植权限为build
+    #收获flag为harvest 浇水种植flag为build
     residence: false
-    # 收获flag为BLOCK-BREAK 浇水种植flag为BUILD
+    #收获flag为BLOCK-BREAK 浇水种植flag为BUILD
     worldguard: false
-    # 王国成员可以破坏和种植
+    #只有王国成员可以破坏浇水和种植
     kingdomsX: false
 
 
-# ######################
-#       消息文件       #
-# ######################
-# MineDown格式Wiki
-# https://github.com/Phoenix616/MineDown
+#MineDown格式Wiki
+#https://github.com/Phoenix616/MineDown
 messages:
   prefix: '&#ccfbff-#ef96c5&[CustomCrops] '
   not-a-good-place: '&f这个地方太高/太低了,请换个地方试试吧!'
@@ -141,43 +105,9 @@ messages:
   force-water: '&f已强制洒水!'
   reach-limit-crop: '&f农作物已到达最大区块上限{Max}!'
   reach-limit-sprinkler: '&f洒水器已到达最大区块上限{Max}!'
+  can-full: '&f水壶已满！'
   backup: '&f备份完成'
   spring: '&f春'
   summer: '&f夏'
   autumn: '&f秋'
   winter: '&f冬'
-  can-full: '&f水壶已满！'
-
-
-# ######################
-#        农作物        #
-# ######################
-crops:
-  tomato:
-    # 在IA配置文件中命名农作物时请以_seeds和_stage_X结尾，否则会无法生长和种植
-    # 适宜的生长季节，若未启用季节系统可以无视此项目
-    season: spring,summer
-    # 空手收获后返回第几个生长状态
-    # return: customcrops:tomato_stage_3
-    # 巨大化植物
-    # gigantic: customcrops:gigantic_tomato
-
-
-# ######################
-#         果树         #
-# ######################
-# 果树系统还未写，以下配置无效
-trees:
-  lemon:
-    # 生长季节与结果季节
-    season: spring,summer
-    # 果树每天成长一个阶段的概率
-    chance: 0.2
-    # 果树的果实
-    result: customcrops:lemon
-    # 果实数量，可选范围
-    amount: 1-4
-    # 收获后返回第几阶段
-    return: customcrops:lemon_tree_5
-    # 若在当前季节无法及时结果，是否返回上一个return的状态
-    force-return: true

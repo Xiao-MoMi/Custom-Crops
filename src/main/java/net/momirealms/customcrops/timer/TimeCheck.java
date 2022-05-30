@@ -1,6 +1,6 @@
-package net.momirealms.customcrops.crops;
+package net.momirealms.customcrops.timer;
 
-import net.momirealms.customcrops.ConfigManager;
+import net.momirealms.customcrops.datamanager.ConfigManager;
 import net.momirealms.customcrops.CustomCrops;
 import net.momirealms.customcrops.datamanager.CropManager;
 import net.momirealms.customcrops.datamanager.SprinklerManager;

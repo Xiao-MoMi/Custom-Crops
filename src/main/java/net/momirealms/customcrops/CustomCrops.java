@@ -1,14 +1,14 @@
 package net.momirealms.customcrops;
 
-import com.comphenix.protocol.ProtocolManager;
-import net.momirealms.customcrops.crops.CropTimer;
-import net.momirealms.customcrops.datamanager.BackUp;
-import net.momirealms.customcrops.datamanager.CropManager;
-import net.momirealms.customcrops.datamanager.SprinklerManager;
+import net.momirealms.customcrops.commands.CommandHandler;
+import net.momirealms.customcrops.commands.CommandTabComplete;
+import net.momirealms.customcrops.datamanager.*;
+import net.momirealms.customcrops.listener.BreakCrops;
+import net.momirealms.customcrops.timer.CropTimer;
 import net.momirealms.customcrops.listener.BreakCustomBlock;
-import net.momirealms.customcrops.listener.BreakFurniture;
 import net.momirealms.customcrops.listener.RightClickBlock;
 import net.momirealms.customcrops.listener.RightClickCustomBlock;
+import net.momirealms.customcrops.utils.Placeholders;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -21,7 +21,6 @@ import java.util.Objects;
 public final class CustomCrops extends JavaPlugin {
 
     public static JavaPlugin instance;
-    public static ProtocolManager manager;
     public static CropTimer timer;
     public static CropManager cropManager;
     public static SprinklerManager sprinklerManager;
@@ -40,7 +39,7 @@ public final class CustomCrops extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new RightClickCustomBlock(),this);
         Bukkit.getPluginManager().registerEvents(new BreakCustomBlock(),this);
         Bukkit.getPluginManager().registerEvents(new RightClickBlock(),this);
-        Bukkit.getPluginManager().registerEvents(new BreakFurniture(),this);
+        Bukkit.getPluginManager().registerEvents(new BreakCrops(),this);
 
         //开始计时任务
         CustomCrops.timer = new CropTimer();
@@ -66,21 +65,17 @@ public final class CustomCrops extends JavaPlugin {
         }
 
         //载入data数据
-        FileConfiguration crop_data;
-        FileConfiguration sprinkler_data;
-        crop_data = YamlConfiguration.loadConfiguration(crop_file);
-        sprinkler_data = YamlConfiguration.loadConfiguration(sprinkler_file);
-        CustomCrops.cropManager = new CropManager(crop_data);
-        CustomCrops.sprinklerManager = new SprinklerManager(sprinkler_data);
+        CropManager.loadData();
+        SprinklerManager.loadData();
 
         //检测papi依赖
         if(Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null){
             new Placeholders(this).register();
             MessageManager.consoleMessage("&#ccfbff-#ef96c5&[CustomCrops] 检测到PlaceHolderAPI 已启用季节变量!",Bukkit.getConsoleSender());
         }
-        //启动成功
+
         MessageManager.consoleMessage("&#ccfbff-#ef96c5&[CustomCrops] 自定义农作物插件已启用！作者：小默米 QQ:3266959688",Bukkit.getConsoleSender());
-        //this.getLogger().info("自定义农作物插件已启用！作者：小默米 QQ:3266959688");
+
     }
 
     @Override

@@ -1,5 +1,8 @@
-package net.momirealms.customcrops;
+package net.momirealms.customcrops.commands;
 
+import net.momirealms.customcrops.datamanager.ConfigManager;
+import net.momirealms.customcrops.CustomCrops;
+import net.momirealms.customcrops.datamanager.MessageManager;
 import net.momirealms.customcrops.datamanager.BackUp;
 import net.momirealms.customcrops.datamanager.CropManager;
 import net.momirealms.customcrops.datamanager.NextSeason;
@@ -115,11 +118,6 @@ public class CommandHandler implements CommandExecutor {
             }else {
                 MessageManager.consoleMessage(ConfigManager.Config.prefix + ConfigManager.Config.nextSeason, Bukkit.getConsoleSender());
             }
-            return true;
-        }
-        if(args[0].equalsIgnoreCase("test")){
-            CropManager.testData_2();
-            SprinklerManager.testData_3();
             return true;
         }
         return false;
