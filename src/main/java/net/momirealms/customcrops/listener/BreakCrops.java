@@ -18,10 +18,10 @@ public class BreakCrops implements Listener {
             String namespacedId = CustomStack.byItemStack(((Item) entity).getItemStack()).getNamespacedID();
             if(namespacedId.equalsIgnoreCase(ConfigManager.Config.sprinkler_1)){
                 entity.remove();
-                entity.getWorld().dropItem(entity.getLocation() ,CustomStack.getInstance(namespacedId + "_item").getItemStack());
+                entity.getWorld().dropItem(entity.getLocation() ,CustomStack.getInstance(ConfigManager.Config.sprinkler_1i).getItemStack());
             }else if(namespacedId.equalsIgnoreCase(ConfigManager.Config.sprinkler_2)){
                 entity.remove();
-                entity.getWorld().dropItem(entity.getLocation() ,CustomStack.getInstance(namespacedId + "_item").getItemStack());
+                entity.getWorld().dropItem(entity.getLocation() ,CustomStack.getInstance(ConfigManager.Config.sprinkler_2i).getItemStack());
             }else if(namespacedId.contains("_stage_")){
                 entity.remove();
             }

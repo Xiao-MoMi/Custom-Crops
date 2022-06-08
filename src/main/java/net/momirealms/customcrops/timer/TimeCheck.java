@@ -10,22 +10,19 @@ import org.bukkit.scheduler.BukkitScheduler;
 
 public class TimeCheck extends BukkitRunnable {
 
-    BukkitScheduler bukkitScheduler = Bukkit.getScheduler();
-
     @Override
     public void run() {
-
         ConfigManager.Config.worlds.forEach(world ->{
+            BukkitScheduler bukkitScheduler = Bukkit.getScheduler();
             long time = Bukkit.getWorld(world).getTime();
-
             ConfigManager.Config.cropGrowTimeList.forEach(cropGrowTime -> {
                 if(time == cropGrowTime){
-                    bukkitScheduler.runTaskAsynchronously(CustomCrops.instance, CropManager::CropGrow);
+                    bukkitScheduler.runTaskAsynchronously(CustomCrops.instance, () -> CropManager.CropGrow(world));
                 }
             });
             ConfigManager.Config.sprinklerWorkTimeList.forEach(sprinklerTime -> {
                 if(time == sprinklerTime){
-                    bukkitScheduler.runTaskAsynchronously(CustomCrops.instance, SprinklerManager::SprinklerWork);
+                    bukkitScheduler.runTaskAsynchronously(CustomCrops.instance, () -> SprinklerManager.SprinklerWork(world));
                 }
             });
         });

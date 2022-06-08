@@ -22,11 +22,7 @@ public class CommandHandler implements CommandExecutor {
     @Override
     @ParametersAreNonnullByDefault
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-
-        if(sender instanceof Player && !sender.isOp()){
-            return false;
-        }
-
+        if(args.length<1) return true;
         //重载插件
         if(args[0].equalsIgnoreCase("reload")){
 
@@ -41,6 +37,7 @@ public class CommandHandler implements CommandExecutor {
         }
         //设置季节
         if(args[0].equalsIgnoreCase("setseason")){
+            if(args.length<2) return true;
             if(ConfigManager.Config.season){
 
                 FileConfiguration config = CustomCrops.instance.getConfig();
@@ -84,7 +81,8 @@ public class CommandHandler implements CommandExecutor {
         }
         //强制生长
         if(args[0].equalsIgnoreCase("forcegrow")){
-            Bukkit.getScheduler().runTaskAsynchronously(CustomCrops.instance, CropManager::CropGrow);
+            if(args.length<2) return true;
+            Bukkit.getScheduler().runTaskAsynchronously(CustomCrops.instance, () -> CropManager.CropGrow(args[1]));
             if(sender instanceof Player){
                 MessageManager.playerMessage(ConfigManager.Config.prefix + ConfigManager.Config.force_grow, (Player) sender);
             }else {
@@ -94,7 +92,8 @@ public class CommandHandler implements CommandExecutor {
         }
         //强制洒水
         if(args[0].equalsIgnoreCase("forcewater")){
-            Bukkit.getScheduler().runTaskAsynchronously(CustomCrops.instance, SprinklerManager::SprinklerWork);
+            if(args.length<2) return true;
+            Bukkit.getScheduler().runTaskAsynchronously(CustomCrops.instance, () -> SprinklerManager.SprinklerWork(args[1]));
             if(sender instanceof Player){
                 MessageManager.playerMessage(ConfigManager.Config.prefix + ConfigManager.Config.force_water, (Player) sender);
             }else {

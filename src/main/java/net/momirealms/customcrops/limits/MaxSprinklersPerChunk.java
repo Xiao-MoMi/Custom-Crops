@@ -37,7 +37,4 @@ public class MaxSprinklersPerChunk {
         }
         return n > maxAmount;
     }
-    public static boolean alreadyPlaced(Location location){
-        return IAFurniture.getFromLocation(location.clone().add(0.5, 1.5, 0.5), location.getWorld());
-    }
 }

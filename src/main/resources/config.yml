@@ -58,11 +58,11 @@ config:
   greenhouse-glass: customcrops:greenhouse_glass
   #洒水器的家具
   sprinkler-1: customcrops:sprinkler_1
-  #洒水器的方块的物品（请以_item结尾）
+  #洒水器的方块的2D物品
   sprinkler-1-item: customcrops:sprinkler_1_item
   #优质洒水器的家具
   sprinkler-2: customcrops:sprinkler_2
-  #优质洒水器的方块的物品（请以_item结尾）
+  #优质洒水器的方块的2D物品
   sprinkler-2-item: customcrops:sprinkler_2_item
   #农作物枯萎后变成的方块,物品ID中请保留stage以保持其下方方块被破坏时，枯萎作物也被破坏的特性
   dead-crop: customcrops:crop_stage_death
@@ -111,3 +111,4 @@ messages:
   summer: '&f夏'
   autumn: '&f秋'
   winter: '&f冬'
+  noperm: '&f权限不足'

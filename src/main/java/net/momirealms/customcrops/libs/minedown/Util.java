@@ -1,4 +1,4 @@
-package net.momirealms.customcrops.Libs.minedown;
+package net.momirealms.customcrops.libs.minedown;
 
 /*
  * Copyright (c) 2017 Max Lee (https://github.com/Phoenix616)

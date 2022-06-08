@@ -75,7 +75,7 @@ public class RightClickBlock implements Listener {
                         return;
                     }
                     //此位置是否已有洒水器
-                    if(MaxSprinklersPerChunk.alreadyPlaced(location)){
+                    if(IAFurniture.getFromLocation(location.clone().add(0.5, 1.5, 0.5), location.getWorld())){
                         return;
                     }
                     //区块上限

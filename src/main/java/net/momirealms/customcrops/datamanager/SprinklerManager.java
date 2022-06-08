@@ -18,7 +18,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class SprinklerManager {
 
-    public static ConcurrentHashMap<Location, String> SPRINKLERS;
+    static ConcurrentHashMap<Location, String> SPRINKLERS;
     /*
     开服的时候将文件的数据读入
     */
@@ -63,7 +63,7 @@ public class SprinklerManager {
         SPRINKLERS.put(location, type);
     }
 
-    public static void SprinklerWork() {
+    public static void SprinklerWork(String worldName) {
          /*
         阶段1：更新数据
          */
@@ -78,45 +78,47 @@ public class SprinklerManager {
             data.set(entry.getKey().getWorld().getName() + "." + entry.getKey().getBlockX() + "," + entry.getKey().getBlockY()+ ","+entry.getKey().getBlockZ(), entry.getValue());
         }
         long finish1 = System.currentTimeMillis();
-        MessageManager.consoleMessage("&#ccfbff-#ef96c5&[CustomCrops] &7洒水器数据更新耗时&a" + String.valueOf(finish1-start1) + "&fms",Bukkit.getConsoleSender());
+        MessageManager.consoleMessage("&#ccfbff-#ef96c5&[CustomCrops] &7洒水器数据更新耗时&a" + (finish1-start1) + "&fms",Bukkit.getConsoleSender());
         /*
         阶段2：清理数据内无效的洒水器并工作
         */
         bukkitScheduler.callSyncMethod(CustomCrops.instance,()->{
             long start2 = System.currentTimeMillis();
             //检测碰撞体积需要同步
-            ConfigManager.Config.worlds.forEach(worldName ->{
-                if(data.contains(worldName)){
-                    World world = Bukkit.getWorld(worldName);
-                    data.getConfigurationSection(worldName).getKeys(false).forEach(key ->{
-                        String[] coordinate = StringUtils.split(key,",");
-                        if (world.isChunkLoaded(Integer.parseInt(coordinate[0])/16, Integer.parseInt(coordinate[2])/16)){
-                            Location tempLoc = new Location(world,Double.parseDouble(coordinate[0])+0.5,Double.parseDouble(coordinate[1])+0.5,Double.parseDouble(coordinate[2])+0.5);
-                            if(!IAFurniture.getFromLocation(tempLoc, world)){
-                                SPRINKLERS.remove(tempLoc);
-                                data.set(worldName+"."+coordinate[0]+","+coordinate[1]+","+coordinate[2], null);
-                            }else {
-                                String type = data.getString(worldName + "." + coordinate[0] + "," + coordinate[1] + "," + coordinate[2]);
-                                if(type.equals("s1")){
-                                    for(int i = -1; i <= 1;i++){
-                                        for (int j = -1; j <= 1; j++){
-                                            waterPot(tempLoc.clone().add(i,-1,j));
-                                        }
+            if(data.contains(worldName)){
+                World world = Bukkit.getWorld(worldName);
+                data.getConfigurationSection(worldName).getKeys(false).forEach(key ->{
+                    String[] coordinate = StringUtils.split(key,",");
+                    if (world.isChunkLoaded(Integer.parseInt(coordinate[0])/16, Integer.parseInt(coordinate[2])/16)){
+                        Location tempLoc = new Location(world,Double.parseDouble(coordinate[0])+0.5,Double.parseDouble(coordinate[1])+0.5,Double.parseDouble(coordinate[2])+0.5);
+                        if(!IAFurniture.getFromLocation(tempLoc, world)){
+                            SPRINKLERS.remove(tempLoc);
+                            data.set(worldName+"."+coordinate[0]+","+coordinate[1]+","+coordinate[2], null);
+                        }else {
+                            String type = data.getString(worldName + "." + coordinate[0] + "," + coordinate[1] + "," + coordinate[2]);
+                            if(type == null){
+                                MessageManager.consoleMessage("错误数据位于"+ worldName + coordinate[0] + "," + coordinate[1] + "," + coordinate[2], Bukkit.getConsoleSender());
+                                return;
+                            }
+                            if(type.equalsIgnoreCase("s1")){
+                                for(int i = -1; i <= 1;i++){
+                                    for (int j = -1; j <= 1; j++){
+                                        waterPot(tempLoc.clone().add(i,-1,j));
                                     }
-                                }else{
-                                    for(int i = -2; i <= 2;i++){
-                                        for (int j = -2; j <= 2; j++){
-                                            waterPot(tempLoc.clone().add(i,-1,j));
-                                        }
+                                }
+                            }else{
+                                for(int i = -2; i <= 2;i++){
+                                    for (int j = -2; j <= 2; j++){
+                                        waterPot(tempLoc.clone().add(i,-1,j));
                                     }
                                 }
                             }
                         }
-                    });
-                }
-            });
+                    }
+                });
+            }
             long finish2 = System.currentTimeMillis();
-            MessageManager.consoleMessage("&#ccfbff-#ef96c5&[CustomCrops] &7洒水器工作耗时&a" + String.valueOf(finish2-start2) + "&fms",Bukkit.getConsoleSender());
+            MessageManager.consoleMessage("&#ccfbff-#ef96c5&[CustomCrops] &7洒水器工作耗时&a" + (finish2-start2) + "&fms",Bukkit.getConsoleSender());
 
             bukkitScheduler.runTaskAsynchronously(CustomCrops.instance,()->{
                 /*
@@ -130,19 +132,17 @@ public class SprinklerManager {
                     CustomCrops.instance.getLogger().warning("洒水器数据保存出错!");
                 }
                 long finish3 = System.currentTimeMillis();
-                MessageManager.consoleMessage("&#ccfbff-#ef96c5&[CustomCrops] &7洒水器数据保存耗时&a" + String.valueOf(finish3-start3) + "&fms",Bukkit.getConsoleSender());
+                MessageManager.consoleMessage("&#ccfbff-#ef96c5&[CustomCrops] &7洒水器数据保存耗时&a" + (finish3-start3) + "&fms",Bukkit.getConsoleSender());
             });
             return null;
         });
     }
     private static void waterPot(Location tempLoc) {
-        if(CustomBlock.byAlreadyPlaced(tempLoc.getBlock()) != null){
-            if(CustomBlock.byAlreadyPlaced(tempLoc.getBlock()).getNamespacedID().equalsIgnoreCase(ConfigManager.Config.pot)){
-                Bukkit.getScheduler().callSyncMethod(CustomCrops.instance,()->{
-                    CustomBlock.remove(tempLoc);
-                    CustomBlock.place((ConfigManager.Config.watered_pot), tempLoc);
-                    return null;
-                });
+        CustomBlock cb = CustomBlock.byAlreadyPlaced(tempLoc.getBlock());
+        if(cb != null){
+            if(cb.getNamespacedID().equalsIgnoreCase(ConfigManager.Config.pot)){
+                CustomBlock.remove(tempLoc);
+                CustomBlock.place((ConfigManager.Config.watered_pot), tempLoc);
             }
         }
     }

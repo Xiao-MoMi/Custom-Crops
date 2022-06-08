@@ -11,6 +11,7 @@ import org.bukkit.block.Block;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.scheduler.BukkitScheduler;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -66,17 +67,11 @@ public class CropManager {
         }
     }
 
-    /*
-    添加农作物实例
-    */
-    public static void putInstance(Location location, String crop) {
-        CROPS.put(location, crop);
-    }
 
     /*
     生长部分
     */
-    public static void CropGrow() {
+    public static void CropGrow(String worldName) {
         /*
         阶段1：更新数据
         */
@@ -97,154 +92,150 @@ public class CropManager {
         阶段2：清理数据内无效的农作物并让有效农作物生长
         */
         long start2 = System.currentTimeMillis();
-        ConfigManager.Config.worlds.forEach(worldName ->{
-            if(data.contains(worldName)){
+        if(data.contains(worldName)){
+            World world = Bukkit.getWorld(worldName);
+            data.getConfigurationSection(worldName).getKeys(false).forEach(key ->{
+                String[] coordinate = StringUtils.split(key,",");
+                //先判断区块是否加载，未加载则不进行下一步计算
+                if (world.isChunkLoaded(Integer.parseInt(coordinate[0])/16, Integer.parseInt(coordinate[2])/16)){
 
-                World world = Bukkit.getWorld(worldName);
-                data.getConfigurationSection(worldName).getKeys(false).forEach(key ->{
+                    Location sLoc = new Location(world,Double.parseDouble(coordinate[0]),Double.parseDouble(coordinate[1]),Double.parseDouble(coordinate[2]));
+                    CustomBlock seedBlock = CustomBlock.byAlreadyPlaced(sLoc.getBlock());
 
-                    String[] coordinate = StringUtils.split(key,",");
-                    //先判断区块是否加载，未加载则不进行下一步计算
-                    if (world.isChunkLoaded(Integer.parseInt(coordinate[0])/16, Integer.parseInt(coordinate[2])/16)){
-
-                        Location sLoc = new Location(world,Double.parseDouble(coordinate[0]),Double.parseDouble(coordinate[1]),Double.parseDouble(coordinate[2]));
-                        CustomBlock seedBlock = CustomBlock.byAlreadyPlaced(sLoc.getBlock());
-
-                        if(seedBlock == null){
+                    if(seedBlock == null){
+                        CROPS.remove(sLoc);
+                        data.set(worldName+"."+coordinate[0]+","+coordinate[1]+","+coordinate[2], null);
+                    }else{
+                        String namespacedID = seedBlock.getNamespacedID();
+                        /*
+                        对之前旧版本的一些兼容
+                        以及一些意料之外的情况，防止报错
+                        */
+                        if(namespacedID.equalsIgnoreCase(ConfigManager.Config.dead)){
                             CROPS.remove(sLoc);
                             data.set(worldName+"."+coordinate[0]+","+coordinate[1]+","+coordinate[2], null);
-                        }else{
-                            String namespacedID = seedBlock.getNamespacedID();
-                            /*
-                            对之前旧版本的一些兼容
-                            以及一些意料之外的情况，防止报错
-                            */
-                            if(namespacedID.equalsIgnoreCase(ConfigManager.Config.dead)){
-                                CROPS.remove(sLoc);
-                                data.set(worldName+"."+coordinate[0]+","+coordinate[1]+","+coordinate[2], null);
-                                return;
-                            }
-                            if(namespacedID.contains("_stage_")){
+                            return;
+                        }
+                        if(namespacedID.contains("_stage_")){
 
-                                Location potLoc = sLoc.clone().subtract(0,1,0);
-                                Block potBlock = potLoc.getBlock();
-                                CustomBlock pot = CustomBlock.byAlreadyPlaced(potBlock);
+                            Location potLoc = sLoc.clone().subtract(0,1,0);
+                            Block potBlock = potLoc.getBlock();
+                            CustomBlock pot = CustomBlock.byAlreadyPlaced(potBlock);
 
-                                if (pot != null){
-                                    String potName = pot.getNamespacedID();
-                                    /*
-                                    是湿润的种植盆吗
-                                    */
-                                    if (potName.equalsIgnoreCase(ConfigManager.Config.watered_pot)){
+                            if (pot != null){
+                                String potName = pot.getNamespacedID();
+                                /*
+                                是湿润的种植盆吗
+                                */
+                                if (potName.equalsIgnoreCase(ConfigManager.Config.watered_pot)){
 
-                                        String[] split = StringUtils.split(namespacedID,":");
-                                        String[] cropNameList = StringUtils.split(split[1],"_");
-                                        Crop crop = ConfigManager.CONFIG.get(cropNameList[0]);
+                                    String[] split = StringUtils.split(namespacedID,":");
+                                    String[] cropNameList = StringUtils.split(split[1],"_");
+                                    Crop crop = ConfigManager.CONFIG.get(cropNameList[0]);
 
-                                        //季节判断
-                                        Label_out:
-                                        if(ConfigManager.Config.season){
-                                            if(ConfigManager.Config.greenhouse){
-                                                for(int i = 1; i <= ConfigManager.Config.range; i++){
-                                                    CustomBlock cb = CustomBlock.byAlreadyPlaced(sLoc.clone().add(0,i,0).getBlock());
-                                                    if (cb != null){
-                                                        if(cb.getNamespacedID().equalsIgnoreCase(ConfigManager.Config.glass)){
-                                                            break Label_out;
-                                                        }
+                                    //季节判断
+                                    Label_out:
+                                    if(ConfigManager.Config.season){
+                                        if(ConfigManager.Config.greenhouse){
+                                            for(int i = 1; i <= ConfigManager.Config.range; i++){
+                                                CustomBlock cb = CustomBlock.byAlreadyPlaced(sLoc.clone().add(0,i,0).getBlock());
+                                                if (cb != null){
+                                                    if(cb.getNamespacedID().equalsIgnoreCase(ConfigManager.Config.glass)){
+                                                        break Label_out;
                                                     }
                                                 }
                                             }
-                                            boolean ws = true;
-                                            for(String season : crop.getSeasons()){
-                                                if (Objects.equals(season, ConfigManager.Config.current)) {
-                                                    ws = false;
-                                                    break;
-                                                }
-                                            }
-                                            if(ws){
-                                                CROPS.remove(sLoc);
-                                                data.set(worldName+"."+coordinate[0]+","+coordinate[1]+","+coordinate[2], null);
-                                                bukkitScheduler.callSyncMethod(CustomCrops.instance, () -> {
-                                                    CustomBlock.remove(sLoc);
-                                                    CustomBlock.place(ConfigManager.Config.dead, sLoc);
-                                                    return null;
-                                                });
-                                                return;
+                                        }
+                                        boolean ws = true;
+                                        for(String season : crop.getSeasons()){
+                                            if (Objects.equals(season, ConfigManager.Config.current)) {
+                                                ws = false;
+                                                break;
                                             }
                                         }
-                                        //下一阶段判断
-                                        int nextStage = Integer.parseInt(cropNameList[2]) + 1;
-                                        if (CustomBlock.getInstance(split[0] +":"+cropNameList[0] + "_stage_" + nextStage) != null) {
-                                            bukkitScheduler.callSyncMethod(CustomCrops.instance, () ->{
-                                                CustomBlock.remove(potLoc);
-                                                CustomBlock.place(ConfigManager.Config.pot, potLoc);
-                                                if(Math.random()< crop.getChance()){
-                                                    CustomBlock.remove(sLoc);
-                                                    CustomBlock.place(split[0] + ":" + cropNameList[0] + "_stage_" + nextStage, sLoc);
-                                                }
+                                        if(ws){
+                                            CROPS.remove(sLoc);
+                                            data.set(worldName+"."+coordinate[0]+","+coordinate[1]+","+coordinate[2], null);
+                                            bukkitScheduler.callSyncMethod(CustomCrops.instance, () -> {
+                                                CustomBlock.remove(sLoc);
+                                                CustomBlock.place(ConfigManager.Config.dead, sLoc);
                                                 return null;
                                             });
-                                        }
-                                        //巨大化判断
-                                        else if(crop.getWillGiant()){
-                                            bukkitScheduler.callSyncMethod(CustomCrops.instance, () ->{
-                                                CustomBlock.remove(potLoc);
-                                                CustomBlock.place(ConfigManager.Config.pot, potLoc);
-                                                if(crop.getGiantChance() > Math.random()){
-                                                    CROPS.remove(sLoc);
-                                                    data.set(worldName+"."+coordinate[0]+","+coordinate[1]+","+coordinate[2], null);
-                                                    CustomBlock.remove(sLoc);
-                                                    CustomBlock.place(crop.getGiant(), sLoc);
-                                                }
-                                                return null;
-                                            });
+                                            return;
                                         }
                                     }
-                                    /*
-                                    是干燥的种植盆吗
-                                    */
-                                    else if(potName.equalsIgnoreCase(ConfigManager.Config.pot)){
-                                        if(ConfigManager.Config.season) {
-                                            if(ConfigManager.Config.greenhouse){
-                                                for(int i = 1; i <= ConfigManager.Config.range; i++){
-                                                    CustomBlock cb = CustomBlock.byAlreadyPlaced(sLoc.clone().add(0,i,0).getBlock());
-                                                    if (cb != null){
-                                                        if(cb.getNamespacedID().equalsIgnoreCase(ConfigManager.Config.glass)){
-                                                            return;
-                                                        }
+                                    //下一阶段判断
+                                    int nextStage = Integer.parseInt(cropNameList[2]) + 1;
+                                    if (CustomBlock.getInstance(split[0] +":"+cropNameList[0] + "_stage_" + nextStage) != null) {
+                                        bukkitScheduler.callSyncMethod(CustomCrops.instance, () ->{
+                                            CustomBlock.remove(potLoc);
+                                            CustomBlock.place(ConfigManager.Config.pot, potLoc);
+                                            if(Math.random()< crop.getChance()){
+                                                CustomBlock.remove(sLoc);
+                                                CustomBlock.place(split[0] + ":" + cropNameList[0] + "_stage_" + nextStage, sLoc);
+                                            }
+                                            return null;
+                                        });
+                                    }
+                                    //巨大化判断
+                                    else if(crop.getWillGiant()){
+                                        bukkitScheduler.callSyncMethod(CustomCrops.instance, () ->{
+                                            CustomBlock.remove(potLoc);
+                                            CustomBlock.place(ConfigManager.Config.pot, potLoc);
+                                            if(crop.getGiantChance() > Math.random()){
+                                                CROPS.remove(sLoc);
+                                                data.set(worldName+"."+coordinate[0]+","+coordinate[1]+","+coordinate[2], null);
+                                                CustomBlock.remove(sLoc);
+                                                CustomBlock.place(crop.getGiant(), sLoc);
+                                            }
+                                            return null;
+                                        });
+                                    }
+                                }
+                                /*
+                                是干燥的种植盆吗
+                                */
+                                else if(potName.equalsIgnoreCase(ConfigManager.Config.pot)){
+                                    if(ConfigManager.Config.season) {
+                                        if(ConfigManager.Config.greenhouse){
+                                            for(int i = 1; i <= ConfigManager.Config.range; i++){
+                                                CustomBlock cb = CustomBlock.byAlreadyPlaced(sLoc.clone().add(0,i,0).getBlock());
+                                                if (cb != null){
+                                                    if(cb.getNamespacedID().equalsIgnoreCase(ConfigManager.Config.glass)){
+                                                        return;
                                                     }
                                                 }
                                             }
-                                            boolean ws = true;
-                                            Crop crop = ConfigManager.CONFIG.get(StringUtils.split(StringUtils.split(namespacedID,":")[1],"_")[0]);
-                                            for (String season : crop.getSeasons()) {
-                                                if (Objects.equals(season, ConfigManager.Config.current)) {
-                                                    ws = false;
-                                                    break;
-                                                }
+                                        }
+                                        boolean ws = true;
+                                        Crop crop = ConfigManager.CONFIG.get(StringUtils.split(StringUtils.split(namespacedID,":")[1],"_")[0]);
+                                        for (String season : crop.getSeasons()) {
+                                            if (Objects.equals(season, ConfigManager.Config.current)) {
+                                                ws = false;
+                                                break;
                                             }
-                                            if (ws) {
-                                                CROPS.remove(sLoc);
-                                                data.set(worldName+"."+coordinate[0]+","+coordinate[1]+","+coordinate[2], null);
-                                                bukkitScheduler.callSyncMethod(CustomCrops.instance, () -> {
-                                                    CustomBlock.remove(sLoc);
-                                                    CustomBlock.place(ConfigManager.Config.dead, sLoc);
-                                                    return null;
-                                                });
-                                            }
+                                        }
+                                        if (ws) {
+                                            CROPS.remove(sLoc);
+                                            data.set(worldName+"."+coordinate[0]+","+coordinate[1]+","+coordinate[2], null);
+                                            bukkitScheduler.callSyncMethod(CustomCrops.instance, () -> {
+                                                CustomBlock.remove(sLoc);
+                                                CustomBlock.place(ConfigManager.Config.dead, sLoc);
+                                                return null;
+                                            });
                                         }
                                     }
                                 }
                             }
-                            else {
-                                CROPS.remove(sLoc);
-                                data.set(worldName+"."+coordinate[0]+","+coordinate[1]+","+coordinate[2], null);
-                            }
+                        }
+                        else {
+                            CROPS.remove(sLoc);
+                            data.set(worldName+"."+coordinate[0]+","+coordinate[1]+","+coordinate[2], null);
                         }
                     }
-                });
-            }
-        });
+                }
+            });
+        }
         long finish2 = System.currentTimeMillis();
         MessageManager.consoleMessage("&#ccfbff-#ef96c5&[CustomCrops] &7农作物生长耗时&a" + (finish2 - start2) + "&fms",Bukkit.getConsoleSender());
 

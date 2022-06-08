@@ -1,6 +1,6 @@
 package net.momirealms.customcrops.datamanager;
 
-import net.momirealms.customcrops.Libs.minedown.MineDown;
+import net.momirealms.customcrops.libs.minedown.MineDown;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 

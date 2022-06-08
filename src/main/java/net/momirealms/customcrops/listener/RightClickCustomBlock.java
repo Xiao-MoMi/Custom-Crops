@@ -4,8 +4,6 @@ import dev.lone.itemsadder.api.CustomBlock;
 import dev.lone.itemsadder.api.CustomStack;
 import dev.lone.itemsadder.api.Events.CustomBlockInteractEvent;
 import net.momirealms.customcrops.datamanager.ConfigManager;
-import net.momirealms.customcrops.CustomCrops;
-import net.momirealms.customcrops.datamanager.CropManager;
 import net.momirealms.customcrops.limits.MaxCropsPerChunk;
 import net.momirealms.customcrops.integrations.IntegrationCheck;
 import net.momirealms.customcrops.datamanager.MessageManager;
@@ -19,13 +17,12 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitScheduler;
 
 import java.util.Objects;
 
-public class RightClickCustomBlock implements Listener {
+import static net.momirealms.customcrops.datamanager.CropManager.CROPS;
 
-    BukkitScheduler bukkitScheduler = Bukkit.getScheduler();
+public class RightClickCustomBlock implements Listener {
 
     @EventHandler
     public void rightClickCustomBlock(CustomBlockInteractEvent event){
@@ -238,7 +235,7 @@ public class RightClickCustomBlock implements Listener {
             return false;
         }
         //添加到缓存中
-        CropManager.putInstance(locUp, key);
+        CROPS.put(locUp, key);
         //放置自定义农作物
         CustomBlock.place(namespacedID.replace("_seeds","_stage_1"),locUp);
         return true;
@@ -246,77 +243,69 @@ public class RightClickCustomBlock implements Listener {
     private void waterPot(ItemStack itemStack, Player player, Location location){
         //是否为IA物品
         if(CustomStack.byItemStack(itemStack) == null) return;
-        bukkitScheduler.runTaskAsynchronously(CustomCrops.instance,()-> {
-            //获取IA物品
-            CustomStack customStack = CustomStack.byItemStack(itemStack);
-            String namespacedId = customStack.getNamespacedID();
-            World world = player.getWorld();
-            int x;
-            int z;
-            if (namespacedId.equalsIgnoreCase(ConfigManager.Config.watering_can_1)) {
+        //获取IA物品
+        CustomStack customStack = CustomStack.byItemStack(itemStack);
+        String namespacedId = customStack.getNamespacedID();
+        World world = player.getWorld();
+        int x;
+        int z;
+        if (namespacedId.equalsIgnoreCase(ConfigManager.Config.watering_can_1)) {
+            x = 0;
+            z = 0;
+        } else if (namespacedId.equalsIgnoreCase(ConfigManager.Config.watering_can_2)){
+            x = 2;
+            z = 2;
+        } else if (namespacedId.equalsIgnoreCase(ConfigManager.Config.watering_can_3)){
+            x = 4;
+            z = 4;
+        } else return;
+        //判断耐久度
+        if(customStack.getDurability() > 0){
+            CustomStack.byItemStack(itemStack).setDurability(CustomStack.byItemStack(itemStack).getDurability() - 1);
+        }else return;
+        //播放洒水音效
+        world.playSound(player.getLocation(),Sound.BLOCK_WATER_AMBIENT,1,1);
+        //获取玩家朝向
+        float yaw = player.getLocation().getYaw();
+        //根据朝向确定浇水方向
+        if (yaw <= 45 && yaw >= -135) {
+            if (yaw > -45) {
                 x = 0;
-                z = 0;
-            } else if (namespacedId.equalsIgnoreCase(ConfigManager.Config.watering_can_2)){
-                x = 2;
-                z = 2;
-            } else if (namespacedId.equalsIgnoreCase(ConfigManager.Config.watering_can_3)){
-                x = 4;
-                z = 4;
-            } else return;
-            //判断耐久度
-            if(customStack.getDurability() > 0){
-                CustomStack.byItemStack(itemStack).setDurability(CustomStack.byItemStack(itemStack).getDurability() - 1);
-            }else return;
-            //播放洒水音效
-            world.playSound(player.getLocation(),Sound.BLOCK_WATER_AMBIENT,1,1);
-            //获取玩家朝向
-            float yaw = player.getLocation().getYaw();
-            //根据朝向确定浇水方向
-            if (yaw <= 45 && yaw >= -135) {
-                if (yaw > -45) {
-                    x = 0;
-                } else {
-                    z = 0;
-                }
-                for (int i = 0; i <= x; i++) {
-                    for (int j = 0; j <= z; j++) {
-                        Location tempLoc = location.clone().add(i, 0, j);
-                        CustomBlock cb = CustomBlock.byAlreadyPlaced(tempLoc.getBlock());
-                        if(cb != null){
-                            if(cb.getNamespacedID().equalsIgnoreCase(ConfigManager.Config.pot)){
-                                //同步替换方块
-                                bukkitScheduler.callSyncMethod(CustomCrops.instance,()->{
-                                    CustomBlock.remove(tempLoc);
-                                    CustomBlock.place(ConfigManager.Config.watered_pot,tempLoc);
-                                    return null;
-                                });
-                            }
-                        }
-                    }
-                }
             } else {
-                if (yaw < 135 && yaw > 45) {
-                    z= 0;
-                } else {
-                    x= 0;
-                }
-                for (int i = 0; i <= x; i++) {
-                    for (int j = 0; j <= z; j++) {
-                        Location tempLoc = location.clone().subtract(i, 0, j);
-                        CustomBlock cb = CustomBlock.byAlreadyPlaced(tempLoc.getBlock());
-                        if(cb != null){
-                            if(cb.getNamespacedID().equalsIgnoreCase(ConfigManager.Config.pot)){
-                                //同步替换方块
-                                bukkitScheduler.callSyncMethod(CustomCrops.instance,()->{
-                                    CustomBlock.remove(tempLoc);
-                                    CustomBlock.place(ConfigManager.Config.watered_pot,tempLoc);
-                                    return null;
-                                });
-                            }
+                z = 0;
+            }
+            for (int i = 0; i <= x; i++) {
+                for (int j = 0; j <= z; j++) {
+                    Location tempLoc = location.clone().add(i, 0, j);
+                    CustomBlock cb = CustomBlock.byAlreadyPlaced(tempLoc.getBlock());
+                    if(cb != null){
+                        if(cb.getNamespacedID().equalsIgnoreCase(ConfigManager.Config.pot)){
+                            //同步替换方块
+                            CustomBlock.remove(tempLoc);
+                            CustomBlock.place(ConfigManager.Config.watered_pot,tempLoc);
                         }
                     }
                 }
             }
-        });
+        } else {
+            if (yaw < 135 && yaw > 45) {
+                z= 0;
+            } else {
+                x= 0;
+            }
+            for (int i = 0; i <= x; i++) {
+                for (int j = 0; j <= z; j++) {
+                    Location tempLoc = location.clone().subtract(i, 0, j);
+                    CustomBlock cb = CustomBlock.byAlreadyPlaced(tempLoc.getBlock());
+                    if(cb != null){
+                        if(cb.getNamespacedID().equalsIgnoreCase(ConfigManager.Config.pot)){
+                            //同步替换方块
+                            CustomBlock.remove(tempLoc);
+                            CustomBlock.place(ConfigManager.Config.watered_pot,tempLoc);
+                        }
+                    }
+                }
+            }
+        }
     }
 }

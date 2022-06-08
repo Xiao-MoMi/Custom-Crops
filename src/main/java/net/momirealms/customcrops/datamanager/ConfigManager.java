@@ -136,6 +136,7 @@ public class ConfigManager {
             Config.summer = configuration.getString("messages.summer");
             Config.autumn = configuration.getString("messages.autumn");
             Config.winter = configuration.getString("messages.winter");
+            Config.winter = configuration.getString("messages.noperm");
         }
 
         /*

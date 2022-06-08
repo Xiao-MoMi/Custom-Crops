@@ -1,4 +1,4 @@
-package net.momirealms.customcrops.Libs.minedown;
+package net.momirealms.customcrops.libs.minedown;
 
 /*
  * Copyright (c) 2017 Max Lee (https://github.com/Phoenix616)
@@ -44,11 +44,11 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 
-import static net.momirealms.customcrops.Libs.minedown.MineDown.COLOR_PREFIX;
-import static net.momirealms.customcrops.Libs.minedown.MineDown.FONT_PREFIX;
-import static net.momirealms.customcrops.Libs.minedown.MineDown.FORMAT_PREFIX;
-import static net.momirealms.customcrops.Libs.minedown.MineDown.HOVER_PREFIX;
-import static net.momirealms.customcrops.Libs.minedown.MineDown.INSERTION_PREFIX;
+import static net.momirealms.customcrops.libs.minedown.MineDown.COLOR_PREFIX;
+import static net.momirealms.customcrops.libs.minedown.MineDown.FONT_PREFIX;
+import static net.momirealms.customcrops.libs.minedown.MineDown.FORMAT_PREFIX;
+import static net.momirealms.customcrops.libs.minedown.MineDown.HOVER_PREFIX;
+import static net.momirealms.customcrops.libs.minedown.MineDown.INSERTION_PREFIX;
 
 public class MineDownStringifier {
 
