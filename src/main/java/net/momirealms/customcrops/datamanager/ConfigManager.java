@@ -1,8 +1,10 @@
 package net.momirealms.customcrops.datamanager;
 
+import dev.lone.itemsadder.api.CustomBlock;
 import net.momirealms.customcrops.CustomCrops;
 import net.momirealms.customcrops.utils.Crop;
 import org.apache.commons.lang.StringUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -169,18 +171,33 @@ public class ConfigManager {
                     }else {
                         crop.setWillReturn(false);
                     }
-                    if(cropConfig.getConfigurationSection("crops."+key).contains("season")){
-                        crop.setSeasons(StringUtils.split( cropConfig.getString("crops."+key+".season"), ","));
+                    if(Config.season){
+                        if(cropConfig.getConfigurationSection("crops."+key).contains("season")){
+                            crop.setSeasons(StringUtils.split( cropConfig.getString("crops."+key+".season"), ","));
+                        }else {
+                            MessageManager.consoleMessage("&c[CustomCrops] 错误！在启用季节模式的情况下未设置农作物 &f"+ key +" &c的生长季节!", Bukkit.getConsoleSender());
+                            return;
+                        }
                     }
                     if(cropConfig.getConfigurationSection("crops."+key).contains("gigantic")){
                         crop.setWillGiant(true);
                         crop.setGiant(cropConfig.getString("crops."+key+".gigantic"));
-                        crop.setGiantChance(cropConfig.getDouble("crops."+key+".gigantic-chance"));
+                        if(cropConfig.getConfigurationSection("crops."+key).contains("gigantic-chance")){
+                            crop.setGiantChance(cropConfig.getDouble("crops."+key+".gigantic-chance"));
+                        }else {
+                            MessageManager.consoleMessage("&c[CustomCrops] 错误！未设置农作物 &f"+ key +" &c的巨大化概率!", Bukkit.getConsoleSender());
+                            return;
+                        }
                     }else {
                         crop.setWillGiant(false);
                     }
                     CONFIG.put(key, crop);
                 });
+                if(keys.size() == CONFIG.size()){
+                    MessageManager.consoleMessage("&#ccfbff-#ef96c5&[CustomCrops] &f成功载入 &a" + CONFIG.size() + " &f种农作物", Bukkit.getConsoleSender());
+                }else {
+                    MessageManager.consoleMessage("&c[CustomCrops] crops.yml配置存在错误，请根据上述提示仔细检查!", Bukkit.getConsoleSender());
+                }
             }
             catch (Exception e) {
                 e.printStackTrace();

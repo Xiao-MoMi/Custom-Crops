@@ -1,16 +1,13 @@
 package net.momirealms.customcrops.utils;
 
 import dev.lone.itemsadder.api.CustomFurniture;
-import net.momirealms.customcrops.CustomCrops;
+import net.momirealms.customcrops.datamanager.ConfigManager;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 
 public class IAFurniture {
-
-    static FileConfiguration config = CustomCrops.instance.getConfig();
 
     //放置IA自定义家具
     public static void placeFurniture(String name, Location location){
@@ -22,7 +19,7 @@ public class IAFurniture {
         for(Entity entity : world.getNearbyEntities(location,0,0,0)){
             if(entity instanceof ArmorStand){
                 if(CustomFurniture.byAlreadySpawned((ArmorStand) entity) != null){
-                    if(CustomFurniture.byAlreadySpawned((ArmorStand) entity).getNamespacedID().equalsIgnoreCase(config.getString("config.sprinkler-1")) || CustomFurniture.byAlreadySpawned((ArmorStand) entity).getNamespacedID().equalsIgnoreCase(config.getString("config.sprinkler-2"))){
+                    if(CustomFurniture.byAlreadySpawned((ArmorStand) entity).getNamespacedID().equalsIgnoreCase(ConfigManager.Config.sprinkler_1) || CustomFurniture.byAlreadySpawned((ArmorStand) entity).getNamespacedID().equalsIgnoreCase(ConfigManager.Config.sprinkler_2)){
                         return true;
                     }
                 }

@@ -67,9 +67,9 @@ public final class CustomCrops extends JavaPlugin {
         //检测papi依赖
         if(Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null){
             new Placeholders(this).register();
-            MessageManager.consoleMessage("&#ccfbff-#ef96c5&[CustomCrops] 检测到PlaceHolderAPI 已启用季节变量!",Bukkit.getConsoleSender());
+            MessageManager.consoleMessage("&#ccfbff-#ef96c5&[CustomCrops] &f检测到PlaceHolderAPI 已启用季节变量!",Bukkit.getConsoleSender());
         }
-        MessageManager.consoleMessage("&#ccfbff-#ef96c5&[CustomCrops] 自定义农作物插件已启用！作者：小默米 QQ:3266959688",Bukkit.getConsoleSender());
+        MessageManager.consoleMessage("&#ccfbff-#ef96c5&[CustomCrops] &f自定义农作物插件已启用！作者：小默米 QQ:3266959688",Bukkit.getConsoleSender());
     }
 
     @Override
@@ -85,6 +85,6 @@ public final class CustomCrops extends JavaPlugin {
 
         //备份
         BackUp.backUpData();
-        MessageManager.consoleMessage(("&#ccfbff-#ef96c5&[CustomCrops] 自定义农作物插件已卸载！作者：小默米 QQ:3266959688"),Bukkit.getConsoleSender());
+        MessageManager.consoleMessage(("&#ccfbff-#ef96c5&[CustomCrops] &f自定义农作物插件已卸载！作者：小默米 QQ:3266959688"),Bukkit.getConsoleSender());
     }
 }

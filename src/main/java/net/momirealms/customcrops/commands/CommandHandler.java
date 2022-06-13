@@ -18,7 +18,6 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 public class CommandHandler implements CommandExecutor {
 
-
     @Override
     @ParametersAreNonnullByDefault
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
