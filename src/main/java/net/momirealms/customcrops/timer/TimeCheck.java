@@ -3,6 +3,7 @@ package net.momirealms.customcrops.timer;
 import net.momirealms.customcrops.datamanager.ConfigManager;
 import net.momirealms.customcrops.CustomCrops;
 import net.momirealms.customcrops.datamanager.CropManager;
+import net.momirealms.customcrops.datamanager.MessageManager;
 import net.momirealms.customcrops.datamanager.SprinklerManager;
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -14,17 +15,21 @@ public class TimeCheck extends BukkitRunnable {
     public void run() {
         ConfigManager.Config.worlds.forEach(world ->{
             BukkitScheduler bukkitScheduler = Bukkit.getScheduler();
-            long time = Bukkit.getWorld(world).getTime();
-            ConfigManager.Config.cropGrowTimeList.forEach(cropGrowTime -> {
-                if(time == cropGrowTime){
-                    bukkitScheduler.runTaskAsynchronously(CustomCrops.instance, () -> CropManager.CropGrow(world));
-                }
-            });
-            ConfigManager.Config.sprinklerWorkTimeList.forEach(sprinklerTime -> {
-                if(time == sprinklerTime){
-                    bukkitScheduler.runTaskAsynchronously(CustomCrops.instance, () -> SprinklerManager.SprinklerWork(world));
-                }
-            });
+            if(Bukkit.getWorld(world) != null){
+                long time = Bukkit.getWorld(world).getTime();
+                ConfigManager.Config.cropGrowTimeList.forEach(cropGrowTime -> {
+                    if(time == cropGrowTime){
+                        bukkitScheduler.runTaskAsynchronously(CustomCrops.instance, () -> CropManager.CropGrow(world));
+                    }
+                });
+                ConfigManager.Config.sprinklerWorkTimeList.forEach(sprinklerTime -> {
+                    if(time == sprinklerTime){
+                        bukkitScheduler.runTaskAsynchronously(CustomCrops.instance, () -> SprinklerManager.SprinklerWork(world));
+                    }
+                });
+            }else {
+                MessageManager.consoleMessage("&c[CustomCrops] 错误! 白名单世界 "+ world +" 不存在!",Bukkit.getConsoleSender());
+            }
         });
     }
 }

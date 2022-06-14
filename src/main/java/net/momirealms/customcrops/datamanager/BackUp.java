@@ -25,11 +25,13 @@ public class BackUp {
             BackUp.backUp(crop_data,cropBackUp);
         } catch (IOException e) {
             e.printStackTrace();
+            CustomCrops.instance.getLogger().warning("crop-data.yml备份出错!");
         }
         try {
             BackUp.backUp(sprinkler_data,sprinklerBackUp);
         } catch (IOException e) {
             e.printStackTrace();
+            CustomCrops.instance.getLogger().warning("sprinkler-data.yml备份出错!");
         }
     }
 

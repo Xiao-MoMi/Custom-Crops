@@ -163,35 +163,39 @@ public class ConfigManager {
                 YamlConfiguration cropConfig = getConfig("crops.yml");
                 Set<String> keys = cropConfig.getConfigurationSection("crops").getKeys(false);
                 keys.forEach(key -> {
-                    double chance = cropConfig.getDouble("crops."+key+".grow-chance");
-                    Crop crop = new Crop(key, chance);
-                    if(cropConfig.getConfigurationSection("crops."+key).contains("return")){
-                        crop.setWillReturn(true);
-                        crop.setReturnStage(cropConfig.getString("crops."+key+".return"));
-                    }else {
-                        crop.setWillReturn(false);
-                    }
-                    if(Config.season){
-                        if(cropConfig.getConfigurationSection("crops."+key).contains("season")){
-                            crop.setSeasons(StringUtils.split( cropConfig.getString("crops."+key+".season"), ","));
+                    if(cropConfig.getConfigurationSection("crops."+key).contains("grow-chance")){
+                        double chance = cropConfig.getDouble("crops."+key+".grow-chance");
+                        Crop crop = new Crop(key, chance);
+                        if(cropConfig.getConfigurationSection("crops."+key).contains("return")){
+                            crop.setWillReturn(true);
+                            crop.setReturnStage(cropConfig.getString("crops."+key+".return"));
                         }else {
-                            MessageManager.consoleMessage("&c[CustomCrops] 错误！在启用季节模式的情况下未设置农作物 &f"+ key +" &c的生长季节!", Bukkit.getConsoleSender());
-                            return;
+                            crop.setWillReturn(false);
                         }
-                    }
-                    if(cropConfig.getConfigurationSection("crops."+key).contains("gigantic")){
-                        crop.setWillGiant(true);
-                        crop.setGiant(cropConfig.getString("crops."+key+".gigantic"));
-                        if(cropConfig.getConfigurationSection("crops."+key).contains("gigantic-chance")){
-                            crop.setGiantChance(cropConfig.getDouble("crops."+key+".gigantic-chance"));
+                        if(Config.season){
+                            if(cropConfig.getConfigurationSection("crops."+key).contains("season")){
+                                crop.setSeasons(StringUtils.split( cropConfig.getString("crops."+key+".season"), ","));
+                            }else {
+                                MessageManager.consoleMessage("&c[CustomCrops] 错误！在启用季节模式的情况下未设置农作物 &f"+ key +" &c的生长季节!", Bukkit.getConsoleSender());
+                                return;
+                            }
+                        }
+                        if(cropConfig.getConfigurationSection("crops."+key).contains("gigantic")){
+                            crop.setWillGiant(true);
+                            crop.setGiant(cropConfig.getString("crops."+key+".gigantic"));
+                            if(cropConfig.getConfigurationSection("crops."+key).contains("gigantic-chance")){
+                                crop.setGiantChance(cropConfig.getDouble("crops."+key+".gigantic-chance"));
+                            }else {
+                                MessageManager.consoleMessage("&c[CustomCrops] 错误！未设置农作物 &f"+ key +" &c的巨大化概率!", Bukkit.getConsoleSender());
+                                return;
+                            }
                         }else {
-                            MessageManager.consoleMessage("&c[CustomCrops] 错误！未设置农作物 &f"+ key +" &c的巨大化概率!", Bukkit.getConsoleSender());
-                            return;
+                            crop.setWillGiant(false);
                         }
+                        CONFIG.put(key, crop);
                     }else {
-                        crop.setWillGiant(false);
+                        MessageManager.consoleMessage("&c[CustomCrops] 错误！未设置农作物 &f"+ key +" &c的生长概率!", Bukkit.getConsoleSender());
                     }
-                    CONFIG.put(key, crop);
                 });
                 if(keys.size() == CONFIG.size()){
                     MessageManager.consoleMessage("&#ccfbff-#ef96c5&[CustomCrops] &f成功载入 &a" + CONFIG.size() + " &f种农作物", Bukkit.getConsoleSender());

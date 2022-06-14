@@ -129,7 +129,7 @@ public class SprinklerManager {
                     data.save(file);
                 }catch (IOException e){
                     e.printStackTrace();
-                    CustomCrops.instance.getLogger().warning("洒水器数据保存出错!");
+                    CustomCrops.instance.getLogger().warning("sprinkler-data.yml保存出错!");
                 }
                 long finish3 = System.currentTimeMillis();
                 MessageManager.consoleMessage("&#ccfbff-#ef96c5&[CustomCrops] &7洒水器数据保存耗时&a" + (finish3-start3) + "&fms",Bukkit.getConsoleSender());

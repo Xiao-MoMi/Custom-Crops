@@ -70,115 +70,115 @@ public class RightClickCustomBlock implements Listener {
             右键的是特殊作物吗
              */
             if (namespacedId.contains("stage")) {
-                    //下方方块不是自定义方块则返回
-                    Player player = event.getPlayer();
-                    Block blockUnder = clickedBlockLocation.clone().subtract(0,1,0).getBlock();
-                    CustomBlock cb = CustomBlock.byAlreadyPlaced(blockUnder);
-                    if (cb == null) return;
-                    //检测右键的方块下方是否为干燥的种植盆方块
-                    if (cb.getNamespacedID().equalsIgnoreCase(ConfigManager.Config.pot)) {
-                        //获取手中的物品
-                        ItemStack mainHandItem = player.getInventory().getItemInMainHand();
-                        Location locUnder = clickedBlockLocation.clone().subtract(0,1,0);
-                        //如果手中的是水桶，那么转干为湿
-                        if (mainHandItem.getType() == Material.WATER_BUCKET) {
-                            //扣除水桶
-                            if (player.getGameMode() != GameMode.CREATIVE) {
-                                mainHandItem.setAmount(mainHandItem.getAmount() - 1);
-                                player.getInventory().addItem(new ItemStack(Material.BUCKET));
-                            }
-                            CustomBlock.remove(locUnder);
-                            CustomBlock.place(ConfigManager.Config.watered_pot, locUnder);
-                        } else if (mainHandItem.getType() == Material.WOODEN_SWORD) {
-                            waterPot(mainHandItem, player, locUnder);
+                //下方方块不是自定义方块则返回
+                Player player = event.getPlayer();
+                Block blockUnder = clickedBlockLocation.clone().subtract(0,1,0).getBlock();
+                CustomBlock cb = CustomBlock.byAlreadyPlaced(blockUnder);
+                if (cb == null) return;
+                //检测右键的方块下方是否为干燥的种植盆方块
+                if (cb.getNamespacedID().equalsIgnoreCase(ConfigManager.Config.pot)) {
+                    //获取手中的物品
+                    ItemStack mainHandItem = player.getInventory().getItemInMainHand();
+                    Location locUnder = clickedBlockLocation.clone().subtract(0,1,0);
+                    //如果手中的是水桶，那么转干为湿
+                    if (mainHandItem.getType() == Material.WATER_BUCKET) {
+                        //扣除水桶
+                        if (player.getGameMode() != GameMode.CREATIVE) {
+                            mainHandItem.setAmount(mainHandItem.getAmount() - 1);
+                            player.getInventory().addItem(new ItemStack(Material.BUCKET));
                         }
+                        CustomBlock.remove(locUnder);
+                        CustomBlock.place(ConfigManager.Config.watered_pot, locUnder);
+                    } else if (mainHandItem.getType() == Material.WOODEN_SWORD) {
+                        waterPot(mainHandItem, player, locUnder);
                     }
-                    //检测右键的方块下方是否为湿润的种植盆方块
-                    else if(cb.getNamespacedID().equalsIgnoreCase(ConfigManager.Config.watered_pot)){
-                        //获取手中的物品
-                        ItemStack mainHandItem = player.getInventory().getItemInMainHand();
-                        //如果是骨粉
-                        if (mainHandItem.getType() == Material.BONE_MEAL){
-                            //植物是否具有stage属性
-                            if (namespacedId.contains("_stage_")){
-                                String[] split = StringUtils.split(namespacedId,":");
-                                String[] cropNameList = StringUtils.split(split[1],"_");
-                                //下一生长阶段
-                                int nextStage = Integer.parseInt(cropNameList[2]) + 1;
-                                //植物是否存在下一个stage
-                                if (CustomBlock.getInstance(split[0]+ ":" + cropNameList[0] + "_stage_" + nextStage) != null){
-                                    if(player.getGameMode() != GameMode.CREATIVE){
-                                        mainHandItem.setAmount(mainHandItem.getAmount() - 1);
+                }
+                //检测右键的方块下方是否为湿润的种植盆方块
+                else if(cb.getNamespacedID().equalsIgnoreCase(ConfigManager.Config.watered_pot)){
+                    //获取手中的物品
+                    ItemStack mainHandItem = player.getInventory().getItemInMainHand();
+                    //如果是骨粉
+                    if (mainHandItem.getType() == Material.BONE_MEAL){
+                        //植物是否具有stage属性
+                        if (namespacedId.contains("_stage_")){
+                            String[] split = StringUtils.split(namespacedId,":");
+                            String[] cropNameList = StringUtils.split(split[1],"_");
+                            //下一生长阶段
+                            int nextStage = Integer.parseInt(cropNameList[2]) + 1;
+                            //植物是否存在下一个stage
+                            if (CustomBlock.getInstance(split[0]+ ":" + cropNameList[0] + "_stage_" + nextStage) != null){
+                                if(player.getGameMode() != GameMode.CREATIVE){
+                                    mainHandItem.setAmount(mainHandItem.getAmount() - 1);
+                                }
+                                World world = player.getWorld();
+                                //骨粉的成功率
+                                if (Math.random() < ConfigManager.Config.bone_chance){
+                                    CustomBlock.remove(clickedBlockLocation);
+                                    CustomBlock.place(split[0] + ":" + cropNameList[0] + "_stage_" + nextStage,clickedBlockLocation);
+                                    Particle particleSuccess = Particle.valueOf(ConfigManager.Config.success);
+                                    world.spawnParticle(particleSuccess, clickedBlockLocation.clone().add(0.5, 0.1,0.5), 1 ,0,0,0,0);
+                                    //使用骨粉是否消耗水分
+                                    if(ConfigManager.Config.need_water){
+                                        CustomBlock.remove(clickedBlockLocation.clone().subtract(0,1,0));
+                                        CustomBlock.place(ConfigManager.Config.pot, clickedBlockLocation.clone().subtract(0,1,0));
                                     }
-                                    World world = player.getWorld();
-                                    //骨粉的成功率
-                                    if (Math.random() < ConfigManager.Config.bone_chance){
-                                        CustomBlock.remove(clickedBlockLocation);
-                                        CustomBlock.place(split[0] + ":" + cropNameList[0] + "_stage_" + nextStage,clickedBlockLocation);
-                                        Particle particleSuccess = Particle.valueOf(ConfigManager.Config.success);
-                                        world.spawnParticle(particleSuccess, clickedBlockLocation.clone().add(0.5, 0.1,0.5), 1 ,0,0,0,0);
-                                        //使用骨粉是否消耗水分
-                                        if(ConfigManager.Config.need_water){
-                                            CustomBlock.remove(clickedBlockLocation.clone().subtract(0,1,0));
-                                            CustomBlock.place(ConfigManager.Config.pot, clickedBlockLocation.clone().subtract(0,1,0));
-                                        }
-                                    }else {
-                                        Particle particleFailure = Particle.valueOf(ConfigManager.Config.failure);
-                                        world.spawnParticle(particleFailure, clickedBlockLocation.clone().add(0.5, 0.1,0.5), 1 ,0,0,0,0);
-                                    }
+                                }else {
+                                    Particle particleFailure = Particle.valueOf(ConfigManager.Config.failure);
+                                    world.spawnParticle(particleFailure, clickedBlockLocation.clone().add(0.5, 0.1,0.5), 1 ,0,0,0,0);
                                 }
                             }
                         }
                     }
+                }
             }
             /*
             右键的是种植盆吗
              */
             else if (event.getBlockFace() == BlockFace.UP){
-                    //获取手中的物品
-                    ItemStack item = event.getItem();
-                    Player player = event.getPlayer();
-                    //检测右键的方块是否为干燥的种植盆方块
-                    if (namespacedId.equalsIgnoreCase(ConfigManager.Config.pot)){
-                        //如果手中的是水桶，那么转干为湿
-                        if (item.getType() == Material.WATER_BUCKET){
-                            //扣除水桶
-                            if(player.getGameMode() != GameMode.CREATIVE){
-                                item.setAmount(item.getAmount() - 1);
-                                player.getInventory().addItem(new ItemStack(Material.BUCKET));
-                            }
-                            CustomBlock.remove(clickedBlockLocation);
-                            CustomBlock.place(ConfigManager.Config.watered_pot,clickedBlockLocation);
-                            return;
+                //获取手中的物品
+                ItemStack item = event.getItem();
+                Player player = event.getPlayer();
+                //检测右键的方块是否为干燥的种植盆方块
+                if (namespacedId.equalsIgnoreCase(ConfigManager.Config.pot)){
+                    //如果手中的是水桶，那么转干为湿
+                    if (item.getType() == Material.WATER_BUCKET){
+                        //扣除水桶
+                        if(player.getGameMode() != GameMode.CREATIVE){
+                            item.setAmount(item.getAmount() - 1);
+                            player.getInventory().addItem(new ItemStack(Material.BUCKET));
                         }
-                        CustomStack customStack = CustomStack.byItemStack(item);
-                        if (customStack != null){
-                            String namespacedID = customStack.getNamespacedID();
-                            if (namespacedID.endsWith("_seeds")){
-                                if(tryPlantSeed(clickedBlockLocation, namespacedID, player)){
-                                    if(player.getGameMode() != GameMode.CREATIVE){
-                                        item.setAmount(item.getAmount() -1);
-                                    }
+                        CustomBlock.remove(clickedBlockLocation);
+                        CustomBlock.place(ConfigManager.Config.watered_pot,clickedBlockLocation);
+                        return;
+                    }
+                    CustomStack customStack = CustomStack.byItemStack(item);
+                    if (customStack != null){
+                        String namespacedID = customStack.getNamespacedID();
+                        if (namespacedID.endsWith("_seeds")){
+                            if(tryPlantSeed(clickedBlockLocation, namespacedID, player)){
+                                if(player.getGameMode() != GameMode.CREATIVE){
+                                    item.setAmount(item.getAmount() -1);
                                 }
-                            }else {
-                                waterPot(item, player, clickedBlockLocation);
+                            }
+                        }else {
+                            waterPot(item, player, clickedBlockLocation);
+                        }
+                    }
+                }
+                //检测右键的方块是否为湿润的种植盆方块
+                else if(namespacedId.equalsIgnoreCase(ConfigManager.Config.watered_pot)){
+                    CustomStack customStack = CustomStack.byItemStack(item);
+                    if (customStack != null){
+                        String namespacedID = customStack.getNamespacedID();
+                        if (namespacedID.endsWith("_seeds")){
+                            if(tryPlantSeed(clickedBlockLocation, namespacedID, player)){
+                                if(player.getGameMode() != GameMode.CREATIVE){
+                                    item.setAmount(item.getAmount() -1);
+                                }
                             }
                         }
                     }
-                    //检测右键的方块是否为湿润的种植盆方块
-                    else if(namespacedId.equalsIgnoreCase(ConfigManager.Config.watered_pot)){
-                        CustomStack customStack = CustomStack.byItemStack(item);
-                        if (customStack != null){
-                            String namespacedID = customStack.getNamespacedID();
-                            if (namespacedID.endsWith("_seeds")){
-                                if(tryPlantSeed(clickedBlockLocation, namespacedID, player)){
-                                    if(player.getGameMode() != GameMode.CREATIVE){
-                                        item.setAmount(item.getAmount() -1);
-                                    }
-                                }
-                            }
-                        }
-                    }
+                }
            }
         }
     }
@@ -280,7 +280,6 @@ public class RightClickCustomBlock implements Listener {
                     CustomBlock cb = CustomBlock.byAlreadyPlaced(tempLoc.getBlock());
                     if(cb != null){
                         if(cb.getNamespacedID().equalsIgnoreCase(ConfigManager.Config.pot)){
-                            //同步替换方块
                             CustomBlock.remove(tempLoc);
                             CustomBlock.place(ConfigManager.Config.watered_pot,tempLoc);
                         }
@@ -299,7 +298,6 @@ public class RightClickCustomBlock implements Listener {
                     CustomBlock cb = CustomBlock.byAlreadyPlaced(tempLoc.getBlock());
                     if(cb != null){
                         if(cb.getNamespacedID().equalsIgnoreCase(ConfigManager.Config.pot)){
-                            //同步替换方块
                             CustomBlock.remove(tempLoc);
                             CustomBlock.place(ConfigManager.Config.watered_pot,tempLoc);
                         }

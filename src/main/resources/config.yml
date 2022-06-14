@@ -75,8 +75,8 @@ config:
   #每个区块最大农作物数量和洒水器数量
   #是否启用限制
   enable-limit: true
-  max-crops: 32
-  max-sprinklers: 4
+  max-crops: 64
+  max-sprinklers: 8
 
 
   #插件兼容
@@ -94,11 +94,11 @@ config:
 messages:
   prefix: '&#ccfbff-#ef96c5&[CustomCrops] '
   not-a-good-place: '&f这个地方太高/太低了,请换个地方试试吧!'
-  reload: '&f插件已重载'
-  force-save: '&f成功强制保存缓存信息'
+  reload: '&f插件已重载.'
+  force-save: '&f成功强制保存缓存信息!'
   no-such-seed: '&f此种子未在配置文件中配置!'
   wrong-season: '&f这个季节不适合这种农作物生长!'
-  season-set: '&f成功设置季节为{Season}'
+  season-set: '&f成功设置季节为{Season}.'
   nextseason: '&f已切换到下一季节！'
   season-disabled: '&f季节系统未启用.'
   force-grow: '&f已强制生长!'
@@ -111,4 +111,4 @@ messages:
   summer: '&f夏'
   autumn: '&f秋'
   winter: '&f冬'
-  noperm: '&f权限不足'
+  noperm: '&f权限不足.'

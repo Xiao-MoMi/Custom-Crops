@@ -8,7 +8,6 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 public class ResidenceIntegrations {
-
     public static boolean checkResBuild(Location location, Player player){
         FlagPermissions.addFlag("build");
         ClaimedResidence res = com.bekvon.bukkit.residence.Residence.getInstance().getResidenceManager().getByLoc(location);

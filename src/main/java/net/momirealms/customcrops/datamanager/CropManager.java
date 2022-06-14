@@ -51,7 +51,6 @@ public class CropManager {
         FileConfiguration data;
         data = YamlConfiguration.loadConfiguration(file);
 
-        //性能更高
         Set<Map.Entry<Location, String>> en = CROPS.entrySet();
         for(Map.Entry<Location, String> entry : en){
             Location loc = entry.getKey();
@@ -65,8 +64,6 @@ public class CropManager {
             CustomCrops.instance.getLogger().warning("农作物数据保存出错");
         }
     }
-
-
     /*
     生长部分
     */
@@ -78,7 +75,6 @@ public class CropManager {
         File file = new File(CustomCrops.instance.getDataFolder(), "crop-data.yml");
         FileConfiguration data = YamlConfiguration.loadConfiguration(file);
         BukkitScheduler bukkitScheduler = Bukkit.getScheduler();
-
         Set<Map.Entry<Location, String>> en = CROPS.entrySet();
         for(Map.Entry<Location, String> entry : en){
             Location key = entry.getKey();
@@ -86,7 +82,6 @@ public class CropManager {
         }
         long finish1 = System.currentTimeMillis();
         MessageManager.consoleMessage("&#ccfbff-#ef96c5&[CustomCrops] &7农作物数据更新耗时&a" + (finish1 - start1) + "&fms",Bukkit.getConsoleSender());
-
         /*
         阶段2：清理数据内无效的农作物并让有效农作物生长
         */
@@ -97,10 +92,8 @@ public class CropManager {
                 String[] coordinate = StringUtils.split(key,",");
                 //先判断区块是否加载，未加载则不进行下一步计算
                 if (world.isChunkLoaded(Integer.parseInt(coordinate[0])/16, Integer.parseInt(coordinate[2])/16)){
-
                     Location sLoc = new Location(world,Double.parseDouble(coordinate[0]),Double.parseDouble(coordinate[1]),Double.parseDouble(coordinate[2]));
                     CustomBlock seedBlock = CustomBlock.byAlreadyPlaced(sLoc.getBlock());
-
                     if(seedBlock == null){
                         CROPS.remove(sLoc);
                         data.set(worldName+"."+coordinate[0]+","+coordinate[1]+","+coordinate[2], null);
@@ -116,22 +109,18 @@ public class CropManager {
                             return;
                         }
                         if(namespacedID.contains("_stage_")){
-
                             Location potLoc = sLoc.clone().subtract(0,1,0);
                             Block potBlock = potLoc.getBlock();
                             CustomBlock pot = CustomBlock.byAlreadyPlaced(potBlock);
-
                             if (pot != null){
                                 String potName = pot.getNamespacedID();
                                 /*
                                 是湿润的种植盆吗
                                 */
                                 if (potName.equalsIgnoreCase(ConfigManager.Config.watered_pot)){
-
                                     String[] split = StringUtils.split(namespacedID,":");
                                     String[] cropNameList = StringUtils.split(split[1],"_");
                                     Crop crop = ConfigManager.CONFIG.get(cropNameList[0]);
-
                                     //季节判断
                                     Label_out:
                                     if(ConfigManager.Config.season){
@@ -246,7 +235,7 @@ public class CropManager {
             data.save(file);
         }catch (IOException e){
             e.printStackTrace();
-            CustomCrops.instance.getLogger().warning("农作物缓存清理保存出错!");
+            CustomCrops.instance.getLogger().warning("crop-data.yml保存出错!");
         }
         long finish3 = System.currentTimeMillis();
         MessageManager.consoleMessage("&#ccfbff-#ef96c5&[CustomCrops] &7农作物数据保存耗时&a" + (finish3 - start3) + "&fms",Bukkit.getConsoleSender());

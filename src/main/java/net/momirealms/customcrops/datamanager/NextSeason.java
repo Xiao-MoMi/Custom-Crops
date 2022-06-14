@@ -22,7 +22,7 @@ public class NextSeason {
             ConfigManager.Config.current = nextSeason;
             CustomCrops.instance.saveConfig();
         }else {
-            CustomCrops.instance.getLogger().warning("季节配置文件出错!");
+            CustomCrops.instance.getLogger().warning("季节出错!");
         }
     }
 }
