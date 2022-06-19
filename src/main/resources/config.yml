@@ -85,8 +85,10 @@ config:
     residence: false
     #收获flag为BLOCK-BREAK 浇水种植flag为BUILD
     worldguard: false
-    #只有王国成员可以破坏浇水和种植
+    #只有王国成员可以收获、浇水和种植
     kingdomsX: false
+    #信任的玩家可以收获、浇水和种植
+    griefdefender: false
 
 
 #MineDown格式Wiki

@@ -66,7 +66,7 @@ public class RightClickBlock implements Listener {
                 if(namespacedId.equalsIgnoreCase(ConfigManager.Config.sprinkler_1i) || namespacedId.equalsIgnoreCase(ConfigManager.Config.sprinkler_2i)){
                     Location location = event.getClickedBlock().getLocation();
                     //兼容性检测
-                    if(IntegrationCheck.PlaceCheck(location,player)){
+                    if(!IntegrationCheck.PlaceCheck(location,player)){
                         return;
                     }
                     //高度限制

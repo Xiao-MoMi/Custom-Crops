@@ -1,6 +1,5 @@
 package net.momirealms.customcrops.datamanager;
 
-import dev.lone.itemsadder.api.CustomBlock;
 import net.momirealms.customcrops.CustomCrops;
 import net.momirealms.customcrops.utils.Crop;
 import org.apache.commons.lang.StringUtils;
@@ -25,6 +24,7 @@ public class ConfigManager {
         public static boolean res;
         public static boolean wg;
         public static boolean king;
+        public static boolean gd;
         public static boolean season;
         public static boolean need_water;
         public static boolean greenhouse;
@@ -77,15 +77,49 @@ public class ConfigManager {
         public static int max_sprinkler;
 
         public static void ReloadConfig(){
-
+            CustomCrops.instance.saveDefaultConfig();
             CustomCrops.instance.reloadConfig();
             FileConfiguration configuration = CustomCrops.instance.getConfig();
             cropLoad();
-
             //处理配置
-            Config.res = configuration.getBoolean("integration.residence");
-            Config.king = configuration.getBoolean("integration.kingdomsX");
-            Config.wg = configuration.getBoolean("integration.worldguard");
+            Config.res = configuration.getBoolean("config.integration.residence");
+            Config.king = configuration.getBoolean("config.integration.kingdomsX");
+            Config.wg = configuration.getBoolean("config.integration.worldguard");
+            Config.gd = configuration.getBoolean("config.integration.griefdefender");
+
+            if(res){
+                if(Bukkit.getPluginManager().getPlugin("Residence") == null){
+                    CustomCrops.instance.getLogger().warning("未检测到插件Residence!");
+                    res = false;
+                }else {
+                    MessageManager.consoleMessage("&#ccfbff-#ef96c5&[CustomCrops] &7检测到 &aResidence &7已启用领地保护!",Bukkit.getConsoleSender());
+                }
+            }
+            if(king){
+                if(Bukkit.getPluginManager().getPlugin("Kingdoms") == null){
+                    CustomCrops.instance.getLogger().warning("未检测到插件KingdomsX!");
+                    king = false;
+                }else {
+                    MessageManager.consoleMessage("&#ccfbff-#ef96c5&[CustomCrops] &7检测到 &aKingdomsX &7已启用领地保护!",Bukkit.getConsoleSender());
+                }
+            }
+            if(wg){
+                if(Bukkit.getPluginManager().getPlugin("WorldGuard") == null){
+                    CustomCrops.instance.getLogger().warning("未检测到插件WorldGuard!");
+                    wg = false;
+                }else {
+                    MessageManager.consoleMessage("&#ccfbff-#ef96c5&[CustomCrops] &7检测到 &aWorldGuard &7已启用区域保护!",Bukkit.getConsoleSender());
+                }
+            }
+            if(gd){
+                if(Bukkit.getPluginManager().getPlugin("GriefDefender") == null){
+                    CustomCrops.instance.getLogger().warning("未检测到插件GriefDefender!");
+                    gd = false;
+                }else {
+                    MessageManager.consoleMessage("&#ccfbff-#ef96c5&[CustomCrops] &7检测到 &aGriefDefender &7已启用领地保护!",Bukkit.getConsoleSender());
+                }
+            }
+
             Config.season = configuration.getBoolean("enable-season");
             Config.need_water = configuration.getBoolean("config.bone-meal-consume-water");
             Config.greenhouse = configuration.getBoolean("config.enable-greenhouse");
@@ -198,7 +232,7 @@ public class ConfigManager {
                     }
                 });
                 if(keys.size() == CONFIG.size()){
-                    MessageManager.consoleMessage("&#ccfbff-#ef96c5&[CustomCrops] &f成功载入 &a" + CONFIG.size() + " &f种农作物", Bukkit.getConsoleSender());
+                    MessageManager.consoleMessage("&#ccfbff-#ef96c5&[CustomCrops] &7成功载入 &a" + CONFIG.size() + " &7种农作物", Bukkit.getConsoleSender());
                 }else {
                     MessageManager.consoleMessage("&c[CustomCrops] crops.yml配置存在错误，请根据上述提示仔细检查!", Bukkit.getConsoleSender());
                 }

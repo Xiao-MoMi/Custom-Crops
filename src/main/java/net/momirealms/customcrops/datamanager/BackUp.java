@@ -17,9 +17,9 @@ public class BackUp {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
 
         File crop_data = new File(CustomCrops.instance.getDataFolder(), "crop-data.yml");
-        File cropBackUp = new File(CustomCrops.instance.getDataFolder(), "backups/"+ format.format(date) + "/" + "crop-data.yml");
+        File cropBackUp = new File(CustomCrops.instance.getDataFolder(), "backups"+ File.separatorChar + format.format(date) + File.separatorChar + "crop-data.yml");
         File sprinkler_data = new File(CustomCrops.instance.getDataFolder(), "sprinkler-data.yml");
-        File sprinklerBackUp = new File(CustomCrops.instance.getDataFolder(), "backups/"+ format.format(date) + "/" + "sprinkler-data.yml");
+        File sprinklerBackUp = new File(CustomCrops.instance.getDataFolder(), "backups"+ File.separatorChar + format.format(date) + File.separatorChar + "sprinkler-data.yml");
 
         try {
             BackUp.backUp(crop_data,cropBackUp);

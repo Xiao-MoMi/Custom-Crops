@@ -18,11 +18,17 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.HashMap;
 import java.util.Objects;
 
 import static net.momirealms.customcrops.datamanager.CropManager.CROPS;
 
 public class RightClickCustomBlock implements Listener {
+
+    private HashMap<Player, Long> coolDown;
+    {
+        coolDown = new HashMap<Player, Long>();
+    }
 
     @EventHandler
     public void rightClickCustomBlock(CustomBlockInteractEvent event){
@@ -39,7 +45,7 @@ public class RightClickCustomBlock implements Listener {
             CustomBlock clickedCustomBlock = CustomBlock.byAlreadyPlaced(clickedBlock);
             Player player = event.getPlayer();
             //兼容性检测
-            if(!IntegrationCheck.HarvestCheck(clickedBlockLocation, player)){
+            if(IntegrationCheck.HarvestCheck(clickedBlockLocation, player)){
                 //获取点击方块的命名空间与ID
                 String namespacedID = event.getNamespacedID();
                 //如果ID内有stage则进行下一步

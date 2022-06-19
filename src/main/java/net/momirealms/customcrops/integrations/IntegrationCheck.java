@@ -8,36 +8,68 @@ public class IntegrationCheck {
 
     //收获权限检测
     public static boolean HarvestCheck(Location location, Player player){
-        if(ConfigManager.Config.king){
-            if(KingdomsXIntegrations.checkKDBuild(location,player)){
-                return true;
+        boolean canH = false;
+        if(ConfigManager.Config.res){
+            if(ResidenceIntegrations.checkResHarvest(location, player)){
+                canH = true;
+            }else {
+                return false;
             }
         }
-        if(ConfigManager.Config.res){
-            if(ResidenceIntegrations.checkResHarvest(location,player)){
-                return true;
+        if(ConfigManager.Config.king){
+            if(KingdomsXIntegrations.checkKDBuild(location, player)){
+                canH = true;
+            }else {
+                return false;
             }
         }
         if(ConfigManager.Config.wg){
-            return WorldGuardIntegrations.checkWGHarvest(location, player);
+            if(WorldGuardIntegrations.checkWGHarvest(location, player)){
+                canH = true;
+            }else {
+                return false;
+            }
         }
-        return false;
+        if(ConfigManager.Config.gd){
+            if(GriefDefenderIntegrations.checkGDBreak(location, player)){
+                canH = true;
+            }else {
+                return false;
+            }
+        }
+        return canH;
     }
     //种植等权限检测
     public static boolean PlaceCheck(Location location, Player player){
-        if(ConfigManager.Config.king){
-            if(KingdomsXIntegrations.checkKDBuild(location,player)){
-                return true;
-            }
-        }
+        boolean canB = false;
         if(ConfigManager.Config.res){
             if(ResidenceIntegrations.checkResBuild(location,player)){
-                return true;
+                canB = true;
+            }else {
+                return false;
+            }
+        }
+        if(ConfigManager.Config.king){
+            if(KingdomsXIntegrations.checkKDBuild(location,player)){
+                canB = true;
+            }else {
+                return false;
             }
         }
         if(ConfigManager.Config.wg){
-            return WorldGuardIntegrations.checkWGBuild(location, player);
+            if(WorldGuardIntegrations.checkWGBuild(location, player)){
+                canB = true;
+            }else {
+                return false;
+            }
         }
-        return false;
+        if(ConfigManager.Config.gd){
+            if(GriefDefenderIntegrations.checkGDBuild(location, player)){
+                canB = true;
+            }else {
+                return false;
+            }
+        }
+        return canB;
     }
 }
