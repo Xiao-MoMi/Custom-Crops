@@ -41,35 +41,26 @@ public class IntegrationCheck {
     }
     //种植等权限检测
     public static boolean PlaceCheck(Location location, Player player){
-        boolean canB = false;
         if(ConfigManager.Config.res){
-            if(ResidenceIntegrations.checkResBuild(location,player)){
-                canB = true;
-            }else {
+            if(!ResidenceIntegrations.checkResBuild(location,player)){
                 return false;
             }
         }
         if(ConfigManager.Config.king){
-            if(KingdomsXIntegrations.checkKDBuild(location,player)){
-                canB = true;
-            }else {
+            if(!KingdomsXIntegrations.checkKDBuild(location,player)){
                 return false;
             }
         }
         if(ConfigManager.Config.wg){
-            if(WorldGuardIntegrations.checkWGBuild(location, player)){
-                canB = true;
-            }else {
+            if(!WorldGuardIntegrations.checkWGBuild(location, player)){
                 return false;
             }
         }
         if(ConfigManager.Config.gd){
-            if(GriefDefenderIntegrations.checkGDBuild(location, player)){
-                canB = true;
-            }else {
+            if(!GriefDefenderIntegrations.checkGDBuild(location, player)){
                 return false;
             }
         }
-        return canB;
+        return true;
     }
 }

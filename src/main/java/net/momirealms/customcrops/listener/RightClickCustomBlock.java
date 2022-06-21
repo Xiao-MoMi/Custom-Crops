@@ -206,7 +206,12 @@ public class RightClickCustomBlock implements Listener {
             MessageManager.playerMessage(ConfigManager.Config.prefix + ConfigManager.Config.bad_place,player);
             return false;
         }
+
         Location locUp = clickedBlockLocation.clone().add(0,1,0);
+        //兼容性检测
+        if(!IntegrationCheck.PlaceCheck(locUp,player)){
+            return false;
+        }
         //是否启用了季节
         Label_out:
         if(ConfigManager.Config.season){
@@ -269,6 +274,10 @@ public class RightClickCustomBlock implements Listener {
         if(customStack.getDurability() > 0){
             CustomStack.byItemStack(itemStack).setDurability(CustomStack.byItemStack(itemStack).getDurability() - 1);
         }else return;
+        //兼容性检测
+        if(!IntegrationCheck.PlaceCheck(location,player)){
+            return;
+        }
         //播放洒水音效
         world.playSound(player.getLocation(),Sound.BLOCK_WATER_AMBIENT,1,1);
         //获取玩家朝向
