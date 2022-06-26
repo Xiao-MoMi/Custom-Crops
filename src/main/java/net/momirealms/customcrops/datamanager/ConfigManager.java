@@ -29,6 +29,7 @@ public class ConfigManager {
         public static boolean need_water;
         public static boolean greenhouse;
         public static boolean limit;
+        public static boolean log_time;
 
         public static List<String> worlds;
         public static List<Long> cropGrowTimeList;
@@ -82,10 +83,10 @@ public class ConfigManager {
             FileConfiguration configuration = CustomCrops.instance.getConfig();
             cropLoad();
             //处理配置
-            Config.res = configuration.getBoolean("config.integration.residence");
-            Config.king = configuration.getBoolean("config.integration.kingdomsX");
-            Config.wg = configuration.getBoolean("config.integration.worldguard");
-            Config.gd = configuration.getBoolean("config.integration.griefdefender");
+            Config.res = configuration.getBoolean("config.integration.residence",false);
+            Config.king = configuration.getBoolean("config.integration.kingdomsX",false);
+            Config.wg = configuration.getBoolean("config.integration.worldguard",false);
+            Config.gd = configuration.getBoolean("config.integration.griefdefender",false);
 
             if(res){
                 if(Bukkit.getPluginManager().getPlugin("Residence") == null){
@@ -124,6 +125,7 @@ public class ConfigManager {
             Config.need_water = configuration.getBoolean("config.bone-meal-consume-water");
             Config.greenhouse = configuration.getBoolean("config.enable-greenhouse");
             Config.limit = configuration.getBoolean("config.enable-limit");
+            Config.log_time = configuration.getBoolean("config.log-time-consume", false);
 
             Config.bone_chance = configuration.getDouble("config.bone-meal-chance");
 
@@ -172,7 +174,6 @@ public class ConfigManager {
             Config.summer = configuration.getString("messages.summer");
             Config.autumn = configuration.getString("messages.autumn");
             Config.winter = configuration.getString("messages.winter");
-            Config.winter = configuration.getString("messages.noperm");
         }
 
         /*

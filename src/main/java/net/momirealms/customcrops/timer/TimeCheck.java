@@ -14,16 +14,17 @@ public class TimeCheck extends BukkitRunnable {
     @Override
     public void run() {
         ConfigManager.Config.worlds.forEach(world ->{
-            BukkitScheduler bukkitScheduler = Bukkit.getScheduler();
             if(Bukkit.getWorld(world) != null){
                 long time = Bukkit.getWorld(world).getTime();
                 ConfigManager.Config.cropGrowTimeList.forEach(cropGrowTime -> {
                     if(time == cropGrowTime){
+                        BukkitScheduler bukkitScheduler = Bukkit.getScheduler();
                         bukkitScheduler.runTaskAsynchronously(CustomCrops.instance, () -> CropManager.CropGrow(world));
                     }
                 });
                 ConfigManager.Config.sprinklerWorkTimeList.forEach(sprinklerTime -> {
                     if(time == sprinklerTime){
+                        BukkitScheduler bukkitScheduler = Bukkit.getScheduler();
                         bukkitScheduler.runTaskAsynchronously(CustomCrops.instance, () -> SprinklerManager.SprinklerWork(world));
                     }
                 });

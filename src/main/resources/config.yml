@@ -37,12 +37,10 @@ config:
     #使用骨粉失败的粒子
     failure: VILLAGER_ANGRY
 
-
   #温室系统，在温室玻璃正下方的方块可以无视季节种植
   enable-greenhouse: true
   #温室玻璃有效范围
   greenhouse-range: 7
-
 
   #植物的种植盆方块
   pot: customcrops:pot
@@ -67,17 +65,18 @@ config:
   #农作物枯萎后变成的方块,物品ID中请保留stage以保持其下方方块被破坏时，枯萎作物也被破坏的特性
   dead-crop: customcrops:crop_stage_death
 
-
   #种植的最低和最高Y坐标
   height:
     min: 50
-    max: 100
+    max: 150
   #每个区块最大农作物数量和洒水器数量
   #是否启用限制
   enable-limit: true
   max-crops: 64
   max-sprinklers: 8
 
+  #记录生长判断和洒水所需的时间
+  log-time-consume: false
 
   #插件兼容
   integration:

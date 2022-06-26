@@ -78,7 +78,9 @@ public class SprinklerManager {
             data.set(entry.getKey().getWorld().getName() + "." + entry.getKey().getBlockX() + "," + entry.getKey().getBlockY()+ ","+entry.getKey().getBlockZ(), entry.getValue());
         }
         long finish1 = System.currentTimeMillis();
-        MessageManager.consoleMessage("&#ccfbff-#ef96c5&[CustomCrops] &7洒水器数据更新耗时&a" + (finish1-start1) + "&fms",Bukkit.getConsoleSender());
+        if (ConfigManager.Config.log_time){
+            MessageManager.consoleMessage("&#ccfbff-#ef96c5&[CustomCrops] &7洒水器数据更新耗时&a" + (finish1-start1) + "&fms",Bukkit.getConsoleSender());
+        }
         /*
         阶段2：清理数据内无效的洒水器并工作
         */
@@ -118,8 +120,9 @@ public class SprinklerManager {
                 });
             }
             long finish2 = System.currentTimeMillis();
-            MessageManager.consoleMessage("&#ccfbff-#ef96c5&[CustomCrops] &7洒水器工作耗时&a" + (finish2-start2) + "&fms",Bukkit.getConsoleSender());
-
+            if (ConfigManager.Config.log_time){
+                MessageManager.consoleMessage("&#ccfbff-#ef96c5&[CustomCrops] &7洒水器工作耗时&a" + (finish2-start2) + "&fms",Bukkit.getConsoleSender());
+            }
             bukkitScheduler.runTaskAsynchronously(CustomCrops.instance,()->{
                 /*
                 阶段3：保存数据
@@ -132,7 +135,9 @@ public class SprinklerManager {
                     CustomCrops.instance.getLogger().warning("sprinkler-data.yml保存出错!");
                 }
                 long finish3 = System.currentTimeMillis();
-                MessageManager.consoleMessage("&#ccfbff-#ef96c5&[CustomCrops] &7洒水器数据保存耗时&a" + (finish3-start3) + "&fms",Bukkit.getConsoleSender());
+                if (ConfigManager.Config.log_time){
+                    MessageManager.consoleMessage("&#ccfbff-#ef96c5&[CustomCrops] &7洒水器数据保存耗时&a" + (finish3-start3) + "&fms",Bukkit.getConsoleSender());
+                }
             });
             return null;
         });

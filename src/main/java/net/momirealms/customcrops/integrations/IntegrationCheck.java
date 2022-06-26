@@ -8,36 +8,27 @@ public class IntegrationCheck {
 
     //收获权限检测
     public static boolean HarvestCheck(Location location, Player player){
-        boolean canH = false;
         if(ConfigManager.Config.res){
-            if(ResidenceIntegrations.checkResHarvest(location, player)){
-                canH = true;
-            }else {
+            if(!ResidenceIntegrations.checkResHarvest(location, player)){
                 return false;
             }
         }
         if(ConfigManager.Config.king){
-            if(KingdomsXIntegrations.checkKDBuild(location, player)){
-                canH = true;
-            }else {
+            if(!KingdomsXIntegrations.checkKDBuild(location, player)){
                 return false;
             }
         }
         if(ConfigManager.Config.wg){
-            if(WorldGuardIntegrations.checkWGHarvest(location, player)){
-                canH = true;
-            }else {
+            if(!WorldGuardIntegrations.checkWGHarvest(location, player)){
                 return false;
             }
         }
         if(ConfigManager.Config.gd){
-            if(GriefDefenderIntegrations.checkGDBreak(location, player)){
-                canH = true;
-            }else {
+            if(!GriefDefenderIntegrations.checkGDBreak(location, player)){
                 return false;
             }
         }
-        return canH;
+        return true;
     }
     //种植等权限检测
     public static boolean PlaceCheck(Location location, Player player){

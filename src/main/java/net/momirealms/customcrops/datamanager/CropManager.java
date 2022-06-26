@@ -81,7 +81,9 @@ public class CropManager {
             data.set(key.getWorld().getName() + "." + key.getBlockX() + "," + key.getBlockY()+ ","+ key.getBlockZ(), entry.getValue());
         }
         long finish1 = System.currentTimeMillis();
-        MessageManager.consoleMessage("&#ccfbff-#ef96c5&[CustomCrops] &7农作物数据更新耗时&a" + (finish1 - start1) + "&fms",Bukkit.getConsoleSender());
+        if (ConfigManager.Config.log_time){
+            MessageManager.consoleMessage("&#ccfbff-#ef96c5&[CustomCrops] &7农作物数据更新耗时&a" + (finish1 - start1) + "&fms",Bukkit.getConsoleSender());
+        }
         /*
         阶段2：清理数据内无效的农作物并让有效农作物生长
         */
@@ -225,7 +227,9 @@ public class CropManager {
             });
         }
         long finish2 = System.currentTimeMillis();
-        MessageManager.consoleMessage("&#ccfbff-#ef96c5&[CustomCrops] &7农作物生长耗时&a" + (finish2 - start2) + "&fms",Bukkit.getConsoleSender());
+        if (ConfigManager.Config.log_time){
+            MessageManager.consoleMessage("&#ccfbff-#ef96c5&[CustomCrops] &7农作物生长耗时&a" + (finish2 - start2) + "&fms",Bukkit.getConsoleSender());
+        }
 
         /*
         阶段3：保存文件
@@ -238,6 +242,8 @@ public class CropManager {
             CustomCrops.instance.getLogger().warning("crop-data.yml保存出错!");
         }
         long finish3 = System.currentTimeMillis();
-        MessageManager.consoleMessage("&#ccfbff-#ef96c5&[CustomCrops] &7农作物数据保存耗时&a" + (finish3 - start3) + "&fms",Bukkit.getConsoleSender());
+        if (ConfigManager.Config.log_time){
+            MessageManager.consoleMessage("&#ccfbff-#ef96c5&[CustomCrops] &7农作物数据保存耗时&a" + (finish3 - start3) + "&fms",Bukkit.getConsoleSender());
+        }
     }
 }
