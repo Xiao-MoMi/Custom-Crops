@@ -8,6 +8,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
@@ -81,7 +82,6 @@ public class ConfigManager {
             CustomCrops.instance.saveDefaultConfig();
             CustomCrops.instance.reloadConfig();
             FileConfiguration configuration = CustomCrops.instance.getConfig();
-            cropLoad();
             //处理配置
             Config.res = configuration.getBoolean("config.integration.residence",false);
             Config.king = configuration.getBoolean("config.integration.kingdomsX",false);
@@ -174,6 +174,8 @@ public class ConfigManager {
             Config.summer = configuration.getString("messages.summer");
             Config.autumn = configuration.getString("messages.autumn");
             Config.winter = configuration.getString("messages.winter");
+
+            cropLoad();
         }
 
         /*

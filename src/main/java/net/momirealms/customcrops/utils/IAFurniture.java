@@ -18,8 +18,8 @@ public class IAFurniture {
     public static boolean getFromLocation(Location location, World world){
         for(Entity entity : world.getNearbyEntities(location,0,0,0)){
             if(entity instanceof ArmorStand){
-                if(CustomFurniture.byAlreadySpawned((ArmorStand) entity) != null){
-                    if(CustomFurniture.byAlreadySpawned((ArmorStand) entity).getNamespacedID().equalsIgnoreCase(ConfigManager.Config.sprinkler_1) || CustomFurniture.byAlreadySpawned((ArmorStand) entity).getNamespacedID().equalsIgnoreCase(ConfigManager.Config.sprinkler_2)){
+                if(CustomFurniture.byAlreadySpawned(entity) != null){
+                    if(CustomFurniture.byAlreadySpawned(entity).getNamespacedID().equalsIgnoreCase(ConfigManager.Config.sprinkler_1) || CustomFurniture.byAlreadySpawned(entity).getNamespacedID().equalsIgnoreCase(ConfigManager.Config.sprinkler_2)){
                         return true;
                     }
                 }
