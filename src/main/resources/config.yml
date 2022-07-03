@@ -1,114 +1,55 @@
-#是否使用季节
-#非植物季节则无法耕种，过了季节则枯死
-enable-season: false
-#当前季节
-#使用/customcrops setseason 来切换季节
-#使用/customcrops nextseason 进入下一季节
-current-season: spring
-
 config:
-  #植物生长的可能时间点，你可以在一天设置多个时间点判断生长
-  #为了防止植物生长过快你可以适当调低生长一个阶段的概率
-  #请尽量在植物生长后200ticks以上设置洒水器工作点，如果生长和洒水时间靠太近可能会带来一些不必要的麻烦（例如数据太多，植物还没来得及生长完洒水器就开始工作）
-  #mc的时间范围为0-23999ticks，1秒=20ticks
+  #插件兼容
+  integration:
+    #收获flag为harvest 浇水种植flag为build
+    Residence: false
+    #收获flag为BLOCK-BREAK 浇水种植flag为BUILD
+    WorldGuard: false
+    #只有王国成员可以收获、浇水和种植
+    Kingdoms: false
+    #信任的玩家可以收获、浇水和种植
+    GriefDefender: false
 
-  #生长时间点
+  #生长时间点(tick)
+  #洒水器将会在农作物全部完成生长后开始工作
   grow-time:
-    - 0
-    - 12000
+    - 1000
 
-  #洒水器工作点
-  sprinkler-time:
-    - 200
-    - 12200
+  #产物品质
+  quality:
+    #若不启用则植物成熟阶段会掉落IA配置里的loot
+    #如果关闭产物品质需要在IA物品配置内自行添加最后一阶段掉落物
+    enable: true
+    #默认品质权重比
+    default-ratio: 17/2/1
+
+  #异步时间检测，此设置需要重启生效
+  #启用异步时间检测会带来更好的性能但是可能会因为服务器的跳tick原因错过一些生长时间点
+  async-time-check: false
+
+  #使用一次水桶可以补充几个洒水器水槽
+  sprinkler-refill: 2
 
   #生长生效的世界
   whitelist-worlds:
     - world
 
-  #骨粉催熟农作物进入下一阶段的概率（0-1）
-  bone-meal-chance: 0.5
-  #使用骨粉是否会让种植盆从湿润转为干燥
-  bone-meal-consume-water: true
-  #粒子效果
-  particle:
-    #使用骨粉成功的粒子
-    success: HEART
-    #使用骨粉失败的粒子
-    failure: VILLAGER_ANGRY
-
-  #温室系统，在温室玻璃正下方的方块可以无视季节种植
-  enable-greenhouse: true
-  #温室玻璃有效范围
-  greenhouse-range: 7
-
-  #植物的种植盆方块
-  pot: customcrops:pot
-  #植物的浇过水的种植盆方块
-  watered-pot: customcrops:watered_pot
-  #水壶1x1
-  watering-can-1: customcrops:watering_can_1
-  #水壶1x3
-  watering-can-2: customcrops:watering_can_2
-  #水壶1x5
-  watering-can-3: customcrops:watering_can_3
-  #温室玻璃方块
-  greenhouse-glass: customcrops:greenhouse_glass
-  #洒水器的家具
-  sprinkler-1: customcrops:sprinkler_1
-  #洒水器的方块的2D物品
-  sprinkler-1-item: customcrops:sprinkler_1_item
-  #优质洒水器的家具
-  sprinkler-2: customcrops:sprinkler_2
-  #优质洒水器的方块的2D物品
-  sprinkler-2-item: customcrops:sprinkler_2_item
-  #农作物枯萎后变成的方块,物品ID中请保留stage以保持其下方方块被破坏时，枯萎作物也被破坏的特性
-  dead-crop: customcrops:crop_stage_death
-
-  #种植的最低和最高Y坐标
-  height:
-    min: 50
-    max: 150
   #每个区块最大农作物数量和洒水器数量
   #是否启用限制
-  enable-limit: true
-  max-crops: 64
-  max-sprinklers: 8
+  limit:
+    enable: true
+    crop: 64
+    sprinkler: 8
 
-  #记录生长判断和洒水所需的时间
+  #记录生长判断和洒水所需的时间(测试性能用)
   log-time-consume: false
 
-  #插件兼容
-  integration:
-    #收获flag为harvest 浇水种植flag为build
-    residence: false
-    #收获flag为BLOCK-BREAK 浇水种植flag为BUILD
-    worldguard: false
-    #只有王国成员可以收获、浇水和种植
-    kingdomsX: false
-    #信任的玩家可以收获、浇水和种植
-    griefdefender: false
-
-
-#MineDown格式Wiki
-#https://github.com/Phoenix616/MineDown
-messages:
-  prefix: '&#ccfbff-#ef96c5&[CustomCrops] '
-  not-a-good-place: '&f这个地方太高/太低了,请换个地方试试吧!'
-  reload: '&f插件已重载.'
-  force-save: '&f成功强制保存缓存信息!'
-  no-such-seed: '&f此种子未在配置文件中配置!'
-  wrong-season: '&f这个季节不适合这种农作物生长!'
-  season-set: '&f成功设置季节为{Season}.'
-  nextseason: '&f已切换到下一季节！'
-  season-disabled: '&f季节系统未启用.'
-  force-grow: '&f已强制生长!'
-  force-water: '&f已强制洒水!'
-  reach-limit-crop: '&f农作物已到达最大区块上限{Max}!'
-  reach-limit-sprinkler: '&f洒水器已到达最大区块上限{Max}!'
-  can-full: '&f水壶已满！'
-  backup: '&f备份完成'
-  spring: '&f春'
-  summer: '&f夏'
-  autumn: '&f秋'
-  winter: '&f冬'
+  #是否只有加载中的区块农作物才会生长
+  #如果你不使用季节、可重复收获、巨大化农作物特性
+  #插件data只会记录正在生长中某个阶段的农作物数据
+  #生长到最后一阶段农作物生长数据就会清除
+  #那么可以尝试设置此值为false来让数据内全部农作物生长
+  #如果你使用上述三个特性中的任意一个，请不要设置为false
+  #否则农作物生长到最后一阶段不会从数据中清除，过大的数据量
+  #可能会导致服务器严重卡顿
+  only-grow-in-loaded-chunks: true

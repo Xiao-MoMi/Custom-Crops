@@ -4,13 +4,13 @@ import net.momirealms.customcrops.CustomCrops;
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitTask;
 
-public class CropTimer {
+public class CropTimerAsync {
 
     private final int taskID;
 
-    public CropTimer(CustomCrops plugin) {
+    public CropTimerAsync(CustomCrops plugin) {
         TimeCheck tc = new TimeCheck(plugin);
-        BukkitTask task = tc.runTaskTimer(CustomCrops.instance, 1,1);
+        BukkitTask task = tc.runTaskTimerAsynchronously(CustomCrops.instance, 1,1);
         this.taskID = task.getTaskId();
     }
 

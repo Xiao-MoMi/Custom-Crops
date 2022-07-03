@@ -1,32 +1,64 @@
+#在IA配置文件中
+#农作物种子ID请以 _seeds 结尾
+#农作物生长阶段请以 _stage_X 结尾
+#生长阶段从1开始依次累加
+#若无法理解可以参考范例配置文件
 crops:
-  #在IA配置文件中命名农作物时请以_seeds和_stage_X结尾，否则会无法生长和种植
-  #只要遵循正确的命名规则，你可以无限自定义农作物阶段数量
   tomato:
-    #每个生长点生长一个阶段的概率
-    #此项目必填（0-1）
-    grow-chance: 0.4
-
-    #适宜的生长季节，若未启用季节系统可以无视此项目
-    #若启用季节则必须填写此项目
-    #季节之间用逗号分隔
-    #可用的季节类型spring,summer,autumn,winter
-    season: spring,summer
-
-    #空手收获后返回第几个生长状态
-    #不填写此项目则无法重复收获
-    return: customcrops:tomato_stage_1
+    #收获时获取的基础数量
+    amount: 1~4
+    #农作物收获得到的三种品质
+    quality:
+      1: customcrops:tomato
+      2: customcrops:tomato_silver_star
+      3: customcrops:tomato_golden_star
 
     #巨大化植物，以极低的概率生长为另一种形态
-    gigantic: customcrops:gigantic_tomato
-    gigantic-chance: 0.01
+    gigantic:
+      block: customcrops:gigantic_tomato
+      chance: 0.01
+
+    #生长季节
+    season:
+      - spring
+      - summer
+
+    requirements:
+      #适宜的生长高度
+      yPos:
+        - 50~100
+        - 150~200
+      #适宜的生长群系
+      biome:
+        - minecraft:plains
+      #适宜的世界
+      world:
+        - world
+      #种植此农作物需要玩家有什么权限
+      permission: 'customcrops.plant.tomato'
 
   cabbage:
-    grow-chance: 0.8
-    season: summer,autumn
+    amount: 1~2
+    quality:
+      1: customcrops:cabbage
+      2: customcrops:cabbage_silver_star
+      3: customcrops:cabbage_golden_star
     gigantic: customcrops:gigantic_cabbage
     gigantic-chance: 0.02
+    requirements:
+      season:
+        - spring
+        - summer
 
   grape:
-    grow-chance: 0.5
-    season: autumn
+    amount: 2~4
+    #空手收获后返回第几个生长状态
+    quality:
+      1: customcrops:grape
+      2: customcrops:grape_silver_star
+      3: customcrops:grape_golden_star
     return: customcrops:grape_stage_4
+    requirements:
+      season:
+        - spring
+        - summer

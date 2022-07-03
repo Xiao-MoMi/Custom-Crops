@@ -1,89 +1,120 @@
 package net.momirealms.customcrops;
 
-import net.momirealms.customcrops.commands.CommandHandler;
-import net.momirealms.customcrops.commands.CommandTabComplete;
+import net.kyori.adventure.platform.bukkit.BukkitAudiences;
+import net.momirealms.customcrops.commands.Executor;
+import net.momirealms.customcrops.commands.Completer;
 import net.momirealms.customcrops.datamanager.*;
-import net.momirealms.customcrops.listener.BreakCrops;
+import net.momirealms.customcrops.listener.BreakBlock;
+import net.momirealms.customcrops.listener.InteractEntity;
+import net.momirealms.customcrops.listener.ItemSpawn;
+import net.momirealms.customcrops.listener.RightClick;
 import net.momirealms.customcrops.timer.CropTimer;
-import net.momirealms.customcrops.listener.BreakCustomBlock;
-import net.momirealms.customcrops.listener.RightClickBlock;
-import net.momirealms.customcrops.listener.RightClickCustomBlock;
+import net.momirealms.customcrops.timer.CropTimerAsync;
+import net.momirealms.customcrops.utils.AdventureManager;
+import net.momirealms.customcrops.utils.BackUp;
+import net.momirealms.customcrops.utils.HoloUtil;
 import net.momirealms.customcrops.utils.Placeholders;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.Objects;
 
 public final class CustomCrops extends JavaPlugin {
 
     public static JavaPlugin instance;
-    public static CropTimer timer;
+    public static BukkitAudiences adventure;
+    private CropTimer cropTimer;
+    private CropTimerAsync cropTimerAsync;
+    private CropManager cropManager;
+    private SprinklerManager sprinklerManager;
+    private SeasonManager seasonManager;
+    private PotManager potManager;
 
     @Override
     public void onEnable() {
+
         instance = this;
+        adventure = BukkitAudiences.create(this);
+
+        AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><color:#FFEBCD>Running on " + Bukkit.getVersion());
 
         //加载配置文件
-        ConfigManager.Config.ReloadConfig();
+        ConfigReader.ReloadConfig();
+
+        //PAPI
+        if(Bukkit.getPluginManager().getPlugin("PlaceHolderAPI") != null){
+            new Placeholders().register();
+            AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><color:#F5DEB3>检测到 <gold>PlaceHolderAPI <color:#FFEBCD>已启用变量!");
+        }
 
         //指令注册
-        Objects.requireNonNull(Bukkit.getPluginCommand("customcrops")).setExecutor(new CommandHandler());
-        Objects.requireNonNull(Bukkit.getPluginCommand("customcrops")).setTabCompleter(new CommandTabComplete());
-        Bukkit.getPluginManager().registerEvents(new RightClickCustomBlock(),this);
-        Bukkit.getPluginManager().registerEvents(new BreakCustomBlock(),this);
-        Bukkit.getPluginManager().registerEvents(new RightClickBlock(),this);
-        Bukkit.getPluginManager().registerEvents(new BreakCrops(),this);
+        Objects.requireNonNull(Bukkit.getPluginCommand("customcrops")).setExecutor(new Executor(this));
+        Objects.requireNonNull(Bukkit.getPluginCommand("customcrops")).setTabCompleter(new Completer());
 
-        //开始计时任务
-        CustomCrops.timer = new CropTimer();
+        //注册事件
+        Bukkit.getPluginManager().registerEvents(new ItemSpawn(), this);
+        Bukkit.getPluginManager().registerEvents(new RightClick(), this);
+        Bukkit.getPluginManager().registerEvents(new BreakBlock(), this);
+        Bukkit.getPluginManager().registerEvents(new InteractEntity(this), this);
 
-        //新建data文件
-        File crop_file = new File(CustomCrops.instance.getDataFolder(), "crop-data.yml");
-        File sprinkler_file = new File(CustomCrops.instance.getDataFolder(), "sprinkler-data.yml");
-        if(!crop_file.exists()){
-            try {
-                crop_file.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-                MessageManager.consoleMessage("&c[CustomCrops] 农作物数据文件生成失败!",Bukkit.getConsoleSender());
-            }
-        }
-        if(!sprinkler_file.exists()){
-            try {
-                sprinkler_file.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-                MessageManager.consoleMessage("&c[CustomCrops] 洒水器数据文件生成失败!",Bukkit.getConsoleSender());
-            }
+        //开始计时器
+        if(ConfigReader.Config.asyncCheck){
+            this.cropTimerAsync = new CropTimerAsync(this);
+        }else {
+            this.cropTimer = new CropTimer(this);
         }
 
-        //载入data数据
-        CropManager.loadData();
-        SprinklerManager.loadData();
-
-        //检测papi依赖
-        if(Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null){
-            new Placeholders(this).register();
-            MessageManager.consoleMessage("&#ccfbff-#ef96c5&[CustomCrops] &7检测到 &aPlaceHolderAPI &7已启用季节变量!",Bukkit.getConsoleSender());
+        //载入数据
+        if (ConfigReader.Season.enable){
+            this.seasonManager = new SeasonManager(this);
+            this.seasonManager.loadData();
         }
-        MessageManager.consoleMessage("&#ccfbff-#ef96c5&[CustomCrops] &7自定义农作物插件已启用！作者：小默米 QQ:3266959688",Bukkit.getConsoleSender());
+        this.cropManager = new CropManager(this);
+        this.cropManager.loadData();
+        this.sprinklerManager = new SprinklerManager(this);
+        this.sprinklerManager.loadData();
+        this.potManager = new PotManager(this);
+        this.potManager.loadData();
+
+        //启动完成
+        AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><color:#F5DEB3>插件已加载！作者：小默米 QQ:3266959688");
     }
 
     @Override
     public void onDisable() {
-        //关闭定时任务
-        if (CustomCrops.timer != null) {
-            CropTimer.stopTimer(CustomCrops.timer.getTaskID());
+
+        //保存数据
+        this.cropManager.saveData();
+        this.sprinklerManager.saveData();
+        this.potManager.saveData();
+        if (ConfigReader.Season.enable && !ConfigReader.Season.seasonChange){
+            this.seasonManager.saveData();
         }
 
-        //保存缓存中的数据
-        CropManager.saveData();
-        SprinklerManager.saveData();
+        //清除悬浮展示实体
+        HoloUtil.cache.keySet().forEach(player -> {
+            HoloUtil.cache.get(player).remove();
+        });
 
-        //备份
+        //关闭计时器
+        if (cropTimer != null) {
+            this.cropTimer.stopTimer(cropTimer.getTaskID());
+        }
+        if (cropTimerAsync != null){
+            this.cropTimerAsync.stopTimer(cropTimerAsync.getTaskID());
+        }
+
+        //备份数据
+        AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><color:#F5DEB3>插件数据自动备份中...");
         BackUp.backUpData();
-        MessageManager.consoleMessage(("&#ccfbff-#ef96c5&[CustomCrops] &7自定义农作物插件已卸载！作者：小默米 QQ:3266959688"),Bukkit.getConsoleSender());
+        AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><color:#F5DEB3>备份已完成!");
+
+        //卸载完成
+        AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><color:#F5DEB3>插件已卸载！作者：小默米 QQ:3266959688");
     }
+
+    public CropManager getCropManager() { return this.cropManager; }
+    public SprinklerManager getSprinklerManager() { return sprinklerManager; }
+    public SeasonManager getSeasonManager() { return seasonManager; }
+    public PotManager getPotManager() { return potManager; }
 }

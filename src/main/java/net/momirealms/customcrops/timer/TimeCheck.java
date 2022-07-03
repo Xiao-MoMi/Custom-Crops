@@ -1,36 +1,34 @@
 package net.momirealms.customcrops.timer;
 
-import net.momirealms.customcrops.datamanager.ConfigManager;
+import net.momirealms.customcrops.ConfigReader;
 import net.momirealms.customcrops.CustomCrops;
-import net.momirealms.customcrops.datamanager.CropManager;
-import net.momirealms.customcrops.datamanager.MessageManager;
-import net.momirealms.customcrops.datamanager.SprinklerManager;
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitScheduler;
 
 public class TimeCheck extends BukkitRunnable {
 
+    private final CustomCrops plugin;
+    public TimeCheck(CustomCrops plugin){
+        this.plugin = plugin;
+    }
+
     @Override
     public void run() {
-        ConfigManager.Config.worlds.forEach(world ->{
-            if(Bukkit.getWorld(world) != null){
-                long time = Bukkit.getWorld(world).getTime();
-                ConfigManager.Config.cropGrowTimeList.forEach(cropGrowTime -> {
-                    if(time == cropGrowTime){
-                        BukkitScheduler bukkitScheduler = Bukkit.getScheduler();
-                        bukkitScheduler.runTaskAsynchronously(CustomCrops.instance, () -> CropManager.CropGrow(world));
+        ConfigReader.Config.worlds.forEach(world ->{
+            long time = world.getTime();
+            ConfigReader.Config.cropGrowTimeList.forEach(cropGrowTime -> {
+                if(time == 0){
+                    if(ConfigReader.Season.enable && ConfigReader.Season.seasonChange){
+                        plugin.getSeasonManager().getSeason(world);
                     }
-                });
-                ConfigManager.Config.sprinklerWorkTimeList.forEach(sprinklerTime -> {
-                    if(time == sprinklerTime){
-                        BukkitScheduler bukkitScheduler = Bukkit.getScheduler();
-                        bukkitScheduler.runTaskAsynchronously(CustomCrops.instance, () -> SprinklerManager.SprinklerWork(world));
-                    }
-                });
-            }else {
-                MessageManager.consoleMessage("&c[CustomCrops] 错误! 白名单世界 "+ world +" 不存在!",Bukkit.getConsoleSender());
-            }
+                }
+                if(time == cropGrowTime){
+                    Bukkit.getScheduler().runTaskAsynchronously(CustomCrops.instance, () -> {
+                        plugin.getCropManager().cropGrow(world.getName());
+                        plugin.getSprinklerManager().sprinklerWork(world.getName());
+                    });
+                }
+            });
         });
     }
 }

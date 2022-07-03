@@ -1,0 +1,164 @@
+package net.momirealms.customcrops.commands;
+
+import net.momirealms.customcrops.utils.AdventureManager;
+import net.momirealms.customcrops.ConfigReader;
+import net.momirealms.customcrops.CustomCrops;
+import net.momirealms.customcrops.utils.BackUp;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+
+import javax.annotation.ParametersAreNonnullByDefault;
+
+public class Executor implements CommandExecutor {
+
+    private final CustomCrops plugin;
+
+    public Executor(CustomCrops plugin){
+        this.plugin = plugin;
+    }
+
+    @Override
+    @ParametersAreNonnullByDefault
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        //权限不足
+        if (!(sender.hasPermission("customcrops.admin") || sender.isOp())){
+            AdventureManager.playerMessage((Player) sender, ConfigReader.Message.prefix + ConfigReader.Message.noPerm);
+            return true;
+        }
+        //参数不足
+        if (args.length < 1) {
+            lackArgs(sender);
+            return true;
+        }
+        switch (args[0]){
+            case "reload" -> {
+                long time = System.currentTimeMillis();
+                ConfigReader.ReloadConfig();
+                if(sender instanceof Player){
+                    AdventureManager.playerMessage((Player) sender,ConfigReader.Message.prefix + ConfigReader.Message.reload.replace("{time}", String.valueOf(System.currentTimeMillis() - time)));
+                }else {
+                    AdventureManager.consoleMessage(ConfigReader.Message.prefix + ConfigReader.Message.reload.replace("{time}", String.valueOf(System.currentTimeMillis() - time)));
+                }
+                return true;
+            }
+            case "forcegrow" -> {
+                if (args.length < 2) {
+                    lackArgs(sender);
+                    return true;
+                }
+                plugin.getCropManager().cropGrow(args[1]);
+                if (sender instanceof Player player){
+                    AdventureManager.playerMessage(player,ConfigReader.Message.prefix + ConfigReader.Message.forceGrow.replace("{world}",args[1]));
+                }else {
+                    AdventureManager.consoleMessage(ConfigReader.Message.prefix + ConfigReader.Message.forceGrow.replace("{world}",args[1]));
+                }
+                return true;
+            }
+            case "forcewater" -> {
+                if (args.length < 2) {
+                    lackArgs(sender);
+                    return true;
+                }
+                plugin.getSprinklerManager().sprinklerWork(args[1]);
+                if (sender instanceof Player player){
+                    AdventureManager.playerMessage(player,ConfigReader.Message.prefix + ConfigReader.Message.forceWater.replace("{world}",args[1]));
+                }else {
+                    AdventureManager.consoleMessage(ConfigReader.Message.prefix + ConfigReader.Message.forceWater.replace("{world}",args[1]));
+                }
+                return true;
+            }
+            case "forcesave" -> {
+                if (args.length < 2) {
+                    lackArgs(sender);
+                    return true;
+                }
+                switch (args[1]){
+                    case "all" -> {
+                        plugin.getSprinklerManager().updateData();
+                        plugin.getSprinklerManager().saveData();
+                        if (ConfigReader.Season.enable && !ConfigReader.Season.seasonChange){
+                            plugin.getSeasonManager().saveData();
+                        }
+                        plugin.getCropManager().updateData();
+                        plugin.getCropManager().saveData();
+                        plugin.getPotManager().saveData();
+                        forceSave(sender);
+                    }
+                    case "crop" -> {
+                        plugin.getCropManager().updateData();
+                        plugin.getCropManager().saveData();
+                        forceSave(sender);
+                    }
+                    case "pot" -> {
+                        plugin.getPotManager().saveData();
+                        forceSave(sender);
+                    }
+                    case "season" -> {
+                        plugin.getSeasonManager().saveData();
+                        forceSave(sender);
+                    }
+                    case "sprinkler" -> {
+                        plugin.getSprinklerManager().updateData();
+                        plugin.getSprinklerManager().saveData();
+                        forceSave(sender);
+                    }
+                }
+            }
+            case "backup" -> {
+                BackUp.backUpData();
+                if (sender instanceof Player player){
+                    AdventureManager.playerMessage(player,ConfigReader.Message.prefix + ConfigReader.Message.backUp);
+                }else {
+                    AdventureManager.consoleMessage(ConfigReader.Message.prefix + ConfigReader.Message.backUp);
+                }
+                return true;
+            }
+            case "setseason" -> {
+                if (args.length < 3) {
+                    lackArgs(sender);
+                    return true;
+                }
+                if (plugin.getSeasonManager().setSeason(args[1], args[2])){
+                    if (sender instanceof Player player){
+                        AdventureManager.playerMessage(player,ConfigReader.Message.prefix + ConfigReader.Message.setSeason.replace("{world}",args[1]).replace("{season}",args[2]));
+                    }else {
+                        AdventureManager.consoleMessage(ConfigReader.Message.prefix + ConfigReader.Message.setSeason.replace("{world}",args[1]).replace("{season}",args[2]));
+                    }
+                }else {
+                    if (sender instanceof Player player){
+                        AdventureManager.playerMessage(player,ConfigReader.Message.prefix + ConfigReader.Message.wrongArgs);
+                    }else {
+                        AdventureManager.consoleMessage(ConfigReader.Message.prefix + ConfigReader.Message.wrongArgs);
+                    }
+                }
+                return true;
+            }
+            default -> {
+                if (sender instanceof Player player){
+                    AdventureManager.playerMessage(player,"");
+                }else {
+                    AdventureManager.consoleMessage("");
+                }
+            }
+        }
+        return true;
+    }
+
+    private void lackArgs(CommandSender sender){
+        if (sender instanceof Player){
+            AdventureManager.playerMessage((Player) sender,ConfigReader.Message.prefix + ConfigReader.Message.lackArgs);
+        }else {
+            AdventureManager.consoleMessage(ConfigReader.Message.prefix + ConfigReader.Message.lackArgs);
+        }
+    }
+
+    private void forceSave(CommandSender sender){
+        if (sender instanceof Player player){
+            AdventureManager.playerMessage(player,ConfigReader.Message.prefix + ConfigReader.Message.forceSave);
+        }else {
+            AdventureManager.consoleMessage(ConfigReader.Message.prefix + ConfigReader.Message.forceSave);
+        }
+    }
+}

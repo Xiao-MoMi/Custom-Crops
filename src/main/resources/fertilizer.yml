@@ -1,0 +1,74 @@
+#你可以自定义任意数量的肥料
+
+#有概率一次生长两个阶段
+加速肥料:
+  speed_1:
+    #肥料名，用于悬浮展示
+    name: '뀌'
+    #生效的概率
+    chance: 0.1
+    #肥料在土壤中存留的生长周期数
+    times: 14
+    #命名空间随意，物品ID请保持一致
+    item: customcrops:speed_1
+    #肥料是否只有在种植前才能使用
+    before-plant: true
+
+  speed_2:
+    name: '뀍'
+    chance: 0.2
+    times: 14
+    item: customcrops:speed_2
+    before-plant: true
+  speed_3:
+    name: '뀎'
+    chance: 0.3
+    times: 14
+    item: customcrops:speed_3
+    before-plant: true
+
+#土壤在生长点过后有一定概率仍然保持湿润
+保湿肥料:
+  retaining_1:
+    name: '뀉'
+    chance: 0.1
+    times: 28
+    item: customcrops:retaining_1
+    before-plant: false
+
+  retaining_2:
+    name: '뀊'
+    chance: 0.2
+    times: 28
+    item: customcrops:retaining_2
+    before-plant: false
+
+  retaining_3:
+    name: '뀋'
+    chance: 0.3
+    times: 28
+    item: customcrops:retaining_3
+    before-plant: false
+
+#更改农作物产物三种品质的权重
+品质肥料:
+  quality_1:
+    name: '뀆'
+    times: 28
+    chance: 7/2/1
+    item: customcrops:quality_1
+    before-plant: true
+
+  quality_2:
+    name: '뀇'
+    times: 28
+    chance: 11/6/3
+    item: customcrops:quality_2
+    before-plant: true
+
+  quality_3:
+    name: '뀈'
+    times: 28
+    chance: 2/2/1
+    item: customcrops:quality_3
+    before-plant: true

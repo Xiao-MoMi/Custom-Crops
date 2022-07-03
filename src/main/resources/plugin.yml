@@ -1,9 +1,10 @@
 name: CustomCrops
-version: '1.4.8'
+version: '1.5.0-SNAPSHOT'
 main: net.momirealms.customcrops.CustomCrops
 api-version: 1.16
 depend:
   - ItemsAdder
+  - ProtocolLib
 softdepend:
   - PlaceholderAPI
   - Residence
@@ -14,5 +15,3 @@ authors: [ XiaoMoMi ]
 commands:
   customcrops:
     usage: /customcrops <args>
-    permission-message: No Permission
-    permission: customcrops.admin

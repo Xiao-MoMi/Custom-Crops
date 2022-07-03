@@ -1,0 +1,17 @@
+season:
+  #是否使用季节限制
+  #非植物季节则无法耕种，过了季节则枯死
+  enable: true
+
+  auto-season-change:
+    #是否启用内置季节交替
+    #启用此设置将根据服务器单个世界的游戏天数自动计算当前季节
+    enable: true
+    #每个季节的时长（天）
+    duration: 28
+
+  greenhouse:
+    #温室系统，在温室玻璃正下方的方块可以无视季节种植
+    enable: true
+    #温室玻璃有效范围
+    range: 5

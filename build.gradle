@@ -1,0 +1,96 @@
+plugins {
+    id 'java'
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
+}
+
+
+group = 'net.momirealms'
+version = '1.5.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+    maven {
+        name = 'papermc-repo'
+        url = 'https://papermc.io/repo/repository/maven-public/'
+    }
+    maven {
+        name = 'sonatype'
+        url = 'https://oss.sonatype.org/content/groups/public/'
+    }
+    maven {
+        name = "sonatype-oss-snapshots1"
+        url = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
+    }
+    maven {
+        name = "dmulloy2-repo"
+        url = "https://repo.dmulloy2.net/repository/public/"
+    }
+    maven {
+        name = "clip-repo"
+        url = 'https://repo.extendedclip.com/content/repositories/placeholderapi/'
+    }
+    maven {
+        name = "NBT-API"
+        url = "https://repo.codemc.org/repository/maven-public/"
+    }
+    maven {
+        name = "sk89q-repo"
+        url = "https://maven.enginehub.org/repo/"
+    }
+    maven {
+        name = "Lumine Releases"
+        url = "https://mvn.lumine.io/repository/maven-public"
+    }
+    maven {
+        name = "jitpack-repo"
+        url = "https://jitpack.io"
+    }
+}
+
+dependencies {
+    compileOnly 'com.destroystokyo.paper:paper-api:1.16.5-R0.1-SNAPSHOT'
+    compileOnly group: "com.comphenix.protocol", name: "ProtocolLib", version: "4.8.0"
+    compileOnly 'me.clip:placeholderapi:2.11.1'
+    compileOnly 'com.sk89q.worldguard:worldguard-bukkit:7.0.7'
+    compileOnly 'io.lumine:Mythic-Dist:5.0.3-SNAPSHOT'
+    compileOnly 'com.github.LoneDev6:api-itemsadder:3.2.0c-beta6'
+    compileOnly fileTree(dir:'libs',includes:['*jar'])
+    implementation("net.kyori:adventure-api:4.11.0")
+    implementation("net.kyori:adventure-platform-bukkit:4.1.1")
+    implementation("net.kyori:adventure-text-minimessage:4.11.0")
+    implementation 'de.tr7zw:item-nbt-api:2.10.0'
+}
+
+def targetJavaVersion = 16
+java {
+    def javaVersion = JavaVersion.toVersion(targetJavaVersion)
+    sourceCompatibility = javaVersion
+    targetCompatibility = javaVersion
+    if (JavaVersion.current() < javaVersion) {
+        toolchain.languageVersion = JavaLanguageVersion.of(targetJavaVersion)
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    if (targetJavaVersion >= 10 || JavaVersion.current().isJava10Compatible()) {
+        options.release = targetJavaVersion
+    }
+}
+
+processResources {
+    def props = [version: version]
+    inputs.properties props
+    filteringCharset 'UTF-8'
+    filesMatching('plugin.yml') {
+        expand props
+    }
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
+}
+
+shadowJar {
+    relocate 'net.kyori', 'libs.kyori'
+    relocate 'de.tr7zw', 'libs.tr7zw'
+}
