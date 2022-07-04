@@ -5,7 +5,6 @@ import de.tr7zw.changeme.nbtapi.NBTItem;
 import dev.lone.itemsadder.api.CustomBlock;
 import dev.lone.itemsadder.api.CustomStack;
 import net.momirealms.customcrops.ConfigReader;
-import net.momirealms.customcrops.CustomCrops;
 import net.momirealms.customcrops.datamanager.CropManager;
 import net.momirealms.customcrops.datamanager.PotManager;
 import net.momirealms.customcrops.datamanager.SeasonManager;
@@ -92,19 +91,12 @@ public class RightClick implements Listener {
                                             world.dropItem(itemLoc, CustomStack.getInstance(cropInstance.getQuality_3()).getItemStack());
                                         }
                                     }
+                                }else {
+                                    BreakBlock.normalDrop(cropInstance, random, itemLoc, world);
                                 }
                             }
                             else {
-                                for (int i = 0; i < random; i++){
-                                    double ran = Math.random();
-                                    if (ran < ConfigReader.Config.quality_1){
-                                        world.dropItem(itemLoc, CustomStack.getInstance(cropInstance.getQuality_1()).getItemStack());
-                                    }else if(ran > ConfigReader.Config.quality_2){
-                                        world.dropItem(itemLoc, CustomStack.getInstance(cropInstance.getQuality_2()).getItemStack());
-                                    }else {
-                                        world.dropItem(itemLoc, CustomStack.getInstance(cropInstance.getQuality_3()).getItemStack());
-                                    }
-                                }
+                                BreakBlock.normalDrop(cropInstance, random, itemLoc, world);
                             }
                         }else {
                             customBlock.getLoot().forEach(loot-> location.getWorld().dropItem(location.clone().add(0.5,0.2,0.5), loot));
@@ -225,13 +217,30 @@ public class RightClick implements Listener {
                     }
                     String namespacedID = customBlock.getNamespacedID();
                     if (namespacedID.equals(ConfigReader.Basic.pot) || namespacedID.equals(ConfigReader.Basic.watered_pot)){
-                        itemStack.setAmount(itemStack.getAmount() - 1);
-                        player.getWorld().playSound(player.getLocation(), Sound.ITEM_HOE_TILL,1,1);
-                        addFertilizer(fertilizerConfig, block);
-                    }else if (!fertilizerConfig.isBefore() && namespacedID.contains("_stage_")){
-                        itemStack.setAmount(itemStack.getAmount() - 1);
-                        addFertilizer(fertilizerConfig, block);
-                        player.getWorld().playSound(player.getLocation(), Sound.ITEM_HOE_TILL,1,1);
+                        CustomBlock customBlockUp = CustomBlock.byAlreadyPlaced(block.getLocation().clone().add(0,1,0).getBlock());
+                        if (customBlockUp != null){
+                            if (fertilizerConfig.isBefore() && customBlockUp.getNamespacedID().contains("_stage_")){
+                                AdventureManager.playerMessage(player, ConfigReader.Message.prefix + ConfigReader.Message.beforePlant);
+                                return;
+                            }else {
+                                itemStack.setAmount(itemStack.getAmount() - 1);
+                                player.getWorld().playSound(player.getLocation(), Sound.ITEM_HOE_TILL,1,1);
+                                addFertilizer(fertilizerConfig, block);
+                            }
+                        }else {
+                            itemStack.setAmount(itemStack.getAmount() - 1);
+                            player.getWorld().playSound(player.getLocation(), Sound.ITEM_HOE_TILL,1,1);
+                            addFertilizer(fertilizerConfig, block);
+                        }
+                    }else if (namespacedID.contains("_stage_")){
+                        if (!fertilizerConfig.isBefore()){
+                            itemStack.setAmount(itemStack.getAmount() - 1);
+                            addFertilizer(fertilizerConfig, block);
+                            player.getWorld().playSound(player.getLocation(), Sound.ITEM_HOE_TILL,1,1);
+                        }else {
+                            AdventureManager.playerMessage(player, ConfigReader.Message.prefix + ConfigReader.Message.beforePlant);
+                            return;
+                        }
                     }
                     return;
                 }
@@ -249,6 +258,7 @@ public class RightClick implements Listener {
                         return;
                     }
                     Sprinkler sprinklerData = new Sprinkler(sprinkler.get().getRange(), 0);
+                    itemStack.setAmount(itemStack.getAmount() - 1);
                     SprinklerManager.Cache.put(location.add(0,1,0), sprinklerData);
                     IAFurniture.placeFurniture(sprinkler.get().getNamespacedID_2(),location);
                     return;

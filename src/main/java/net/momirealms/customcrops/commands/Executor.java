@@ -137,9 +137,19 @@ public class Executor implements CommandExecutor {
             }
             default -> {
                 if (sender instanceof Player player){
-                    AdventureManager.playerMessage(player,"");
+                    AdventureManager.playerMessage(player,"<color:#F5DEB3>/customcrops reload 重载插件");
+                    AdventureManager.playerMessage(player,"<color:#F5DEB3>/customcrops setseason <world> <season> 设置某个世界的季节");
+                    AdventureManager.playerMessage(player,"<color:#F5DEB3>/customcrops backup 备份数据");
+                    AdventureManager.playerMessage(player,"<color:#F5DEB3>/customcrops forcegrow <world> 强制某个世界的农作物进行生长判定");
+                    AdventureManager.playerMessage(player,"<color:#F5DEB3>/customcrops forcewater <world> 强制某个世界的洒水器进行工作判定");
+                    AdventureManager.playerMessage(player,"<color:#F5DEB3>/customcrops forcesave <file> 强制更新缓存并保存");
                 }else {
-                    AdventureManager.consoleMessage("");
+                    AdventureManager.consoleMessage("<color:#F5DEB3>/customcrops reload 重载插件");
+                    AdventureManager.consoleMessage("<color:#F5DEB3>/customcrops setseason <world> <season> 设置某个世界的季节");
+                    AdventureManager.consoleMessage("<color:#F5DEB3>/customcrops backup 备份数据");
+                    AdventureManager.consoleMessage("<color:#F5DEB3>/customcrops forcegrow <world> 强制某个世界的农作物进行生长判定");
+                    AdventureManager.consoleMessage("<color:#F5DEB3>/customcrops forcewater <world> 强制某个世界的洒水器进行工作判定");
+                    AdventureManager.consoleMessage("<color:#F5DEB3>/customcrops forcesave <file> 强制更新缓存并保存");
                 }
             }
         }

@@ -1,6 +1,5 @@
 package net.momirealms.customcrops.utils;
 
-import net.momirealms.customcrops.ConfigReader;
 import net.momirealms.customcrops.CustomCrops;
 
 import java.io.File;

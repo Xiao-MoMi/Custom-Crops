@@ -23,7 +23,7 @@ public record Residence() implements Integration {
         ClaimedResidence res = com.bekvon.bukkit.residence.Residence.getInstance().getResidenceManager().getByLoc(location);
         if(res!=null){
             ResidencePermissions perms = res.getPermissions();
-            return perms.playerHas(player, Flags.harvest, true);
+            return perms.playerHas(player, Flags.destroy, true);
         }
         return true;
     }

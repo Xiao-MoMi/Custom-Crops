@@ -1,16 +1,6 @@
 package net.momirealms.customcrops.utils;
 
-public class WateringCan {
-
-    private final int max;
-    private final int width;
-    private final int length;
-
-    public WateringCan(int max, int width, int length){
-        this.length = length;
-        this.max = max;
-        this.width = width;
-    }
+public record WateringCan(int max, int width, int length) {
 
     public int getMax() {
         return max;

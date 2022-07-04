@@ -19,7 +19,6 @@ public record WorldGuard() implements Integration {
         RegionQuery query = container.createQuery();
         ApplicableRegionSet set = query.getApplicableRegions(BukkitAdapter.adapt(location));
         if (set != null){
-            System.out.println(set);
             return query.testState(BukkitAdapter.adapt(location), localPlayer, Flags.BUILD);
         }else {
             return true;
@@ -33,7 +32,6 @@ public record WorldGuard() implements Integration {
         RegionQuery query = container.createQuery();
         ApplicableRegionSet set = query.getApplicableRegions(BukkitAdapter.adapt(location));
         if (set != null){
-            System.out.println(set);
             return query.testState(BukkitAdapter.adapt(location), localPlayer, Flags.BLOCK_BREAK);
         }else {
             return true;

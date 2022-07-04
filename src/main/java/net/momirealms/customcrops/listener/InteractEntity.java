@@ -49,11 +49,11 @@ public class InteractEntity implements Listener {
                 int z = location.getBlockZ();
                 int maxWater = config.getWater();
                 int currentWater = 0;
+                Location loc = location.subtract(0,1,0).getBlock().getLocation().add(0,1,0);
+                Sprinkler sprinkler = SprinklerManager.Cache.get(loc);
                 if (itemStack.getType() == Material.WATER_BUCKET){
                     itemStack.setType(Material.BUCKET);
                     player.getWorld().playSound(player.getLocation(), Sound.ITEM_BUCKET_FILL,1,1);
-                    Location loc = location.subtract(0,1,0).getBlock().getLocation().add(0,1,0);
-                    Sprinkler sprinkler = SprinklerManager.Cache.get(loc);
                     if (sprinkler != null){
                         currentWater = sprinkler.getWater();
                         currentWater += ConfigReader.Config.sprinklerRefill;
@@ -62,21 +62,27 @@ public class InteractEntity implements Listener {
                         }
                         sprinkler.setWater(currentWater);
                     }else {
-                        StringBuilder stringBuilder = new StringBuilder().append(world).append(".").append(x/16).append(",").append(z/16).append(".").append(x).append(",").append(location.getBlockY()).append(",").append(z).append(".water");
-                        currentWater = plugin.getSprinklerManager().data.getInt(stringBuilder.toString());
+                        String path = world + "." + x / 16 + "," + z / 16 + "." + x + "," + location.getBlockY() + "," + z + ".water";
+                        currentWater = plugin.getSprinklerManager().data.getInt(path);
                         currentWater += ConfigReader.Config.sprinklerRefill;
                         if (currentWater > maxWater){
                             currentWater = maxWater;
                         }
-                        plugin.getSprinklerManager().data.set(stringBuilder.toString(), currentWater);
+                        plugin.getSprinklerManager().data.set(path, currentWater);
+                    }
+                }else {
+                    if (sprinkler != null){
+                        currentWater = sprinkler.getWater();
+                    }else {
+                        String path = world + "." + x / 16 + "," + z / 16 + "." + x + "," + location.getBlockY() + "," + z + ".water";
+                        currentWater = plugin.getSprinklerManager().data.getInt(path);
                     }
                 }
-                Location loc = armorStand.getLocation().add(0, ConfigReader.Message.sprinklerOffset,0);
                 if (ConfigReader.Message.hasSprinklerInfo){
                     String string = ConfigReader.Message.sprinklerLeft + ConfigReader.Message.sprinklerFull.repeat(currentWater) +
                             ConfigReader.Message.sprinklerEmpty.repeat(maxWater - currentWater) + ConfigReader.Message.sprinklerRight;
                     if(HoloUtil.cache.get(player) == null) {
-                        HoloUtil.showHolo(string.replace("{max_water}", String.valueOf(maxWater)).replace("{water}", String.valueOf(currentWater)), player, loc, ConfigReader.Message.sprinklerTime);
+                        HoloUtil.showHolo(string.replace("{max_water}", String.valueOf(maxWater)).replace("{water}", String.valueOf(currentWater)), player, location.add(0, ConfigReader.Message.sprinklerOffset,0), ConfigReader.Message.sprinklerTime);
                     }
                 }
             }

@@ -8,7 +8,6 @@ import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
-import net.momirealms.customcrops.ConfigReader;
 import net.momirealms.customcrops.CustomCrops;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;

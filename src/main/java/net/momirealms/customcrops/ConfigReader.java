@@ -41,9 +41,9 @@ public class ConfigReader {
         Config.loadConfig();
         Message.loadMessage();
         Basic.loadBasic();
-        Season.loadSeason();
         cropLoad();
         fertilizerLoad();
+        Season.loadSeason();
     }
 
     public static class Config{
@@ -150,7 +150,7 @@ public class ConfigReader {
                     CustomCrops.instance.getLogger().warning("未检测到插件 Residence!");
                 }else {
                     integration.add(new Residence());
-                    AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><color:#FFEBCD>检测到 <gold>Residence <color:#FFEBCD>已启用保护!");
+                    AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><color:#FFEBCD>已启用 <gold>Residence <color:#FFEBCD>保护!");
                 }
             }
             if(config.getBoolean("config.integration.Kingdoms",false)){
@@ -158,7 +158,7 @@ public class ConfigReader {
                     CustomCrops.instance.getLogger().warning("未检测到插件 Kingdoms!");
                 }else {
                     integration.add(new KingdomsX());
-                    AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><color:#FFEBCD>检测到 <gold>KingdomsX <color:#FFEBCD>已启用保护!");
+                    AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><color:#FFEBCD>已启用 <gold>KingdomsX <color:#FFEBCD>保护!");
                 }
             }
             if(config.getBoolean("config.integration.WorldGuard",false)){
@@ -166,7 +166,7 @@ public class ConfigReader {
                     CustomCrops.instance.getLogger().warning("未检测到插件 WorldGuard!");
                 }else {
                     integration.add(new WorldGuard());
-                    AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><color:#FFEBCD>检测到 <gold>WorldGuard <color:#FFEBCD>已启用保护!");
+                    AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><color:#FFEBCD>已启用 <gold>WorldGuard <color:#FFEBCD>保护!");
                 }
             }
             if(config.getBoolean("config.integration.GriefDefender",false)){
@@ -174,7 +174,15 @@ public class ConfigReader {
                     CustomCrops.instance.getLogger().warning("未检测到插件 GriefDefender!");
                 }else {
                     integration.add(new GriefDefender());
-                    AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><color:#FFEBCD>检测到 <gold>GriefDefender <color:#FFEBCD>已启用保护!");
+                    AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><color:#FFEBCD>已启用 <gold>GriefDefender <color:#FFEBCD>保护!");
+                }
+            }
+            if(config.getBoolean("config.integration.PlotSquared",false)){
+                if(Bukkit.getPluginManager().getPlugin("PlotSquared") == null){
+                    CustomCrops.instance.getLogger().warning("未检测到插件 PlotSquared!");
+                }else {
+                    integration.add(new PlotSquared());
+                    AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><color:#FFEBCD>已启用 <gold>PlotSquared <color:#FFEBCD>保护!");
                 }
             }
         }
@@ -220,6 +228,7 @@ public class ConfigReader {
                     }
                 });
             }
+            AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><color:#FFEBCD>已载入 <white>" + CANS.size() + " <color:#FFEBCD>个水壶!");
 
             SPRINKLERS.clear();
             if (config.contains("sprinkler")){
@@ -236,6 +245,7 @@ public class ConfigReader {
                     }
                 });
             }
+            AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><color:#FFEBCD>已载入 <white>" + SPRINKLERS.size()/2 + " <color:#FFEBCD>个洒水器!");
         }
     }
 
@@ -258,7 +268,10 @@ public class ConfigReader {
                 }
                 seasonChange = config.getBoolean("season.auto-season-change.enable",false);
                 if (seasonChange) {
+                    AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><color:#FFEBCD>当前季节变换模式: <gold>自动");
                     duration = config.getInt("season.auto-season-change.duration",28);
+                }else {
+                    AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><color:#FFEBCD>当前季节变换模式: <gold>指令");
                 }
             }
         }
@@ -297,6 +310,7 @@ public class ConfigReader {
         public static String sprinklerFull;
         public static String sprinklerEmpty;
         public static String sprinklerRight;
+        public static String beforePlant;
         public static double cropOffset;
         public static double sprinklerOffset;
 
@@ -324,6 +338,7 @@ public class ConfigReader {
             setSeason = config.getString("messages.set-season");
             wrongArgs = config.getString("messages.wrong-args");
             forceSave = config.getString("messages.force-save");
+            beforePlant = config.getString("messages.before-plant");
 
             hasCropInfo = config.getBoolean("hologram.grow-info.enable");
             if (hasCropInfo){
@@ -385,6 +400,7 @@ public class ConfigReader {
             }
             CROPS.put(key, cropInstance);
         });
+        AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><color:#FFEBCD>已载入 <white>" + CROPS.size() + " <color:#FFEBCD>种农作物!");
     }
 
     public static void fertilizerLoad(){
@@ -428,5 +444,6 @@ public class ConfigReader {
                 }
             });
         }
+        AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><color:#FFEBCD>已载入 <white>" + FERTILIZERS.size() + " <color:#FFEBCD>种肥料!");
     }
 }

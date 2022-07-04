@@ -23,6 +23,7 @@ messages:
   force-save: '成功强制保存缓存信息!'
   back-up: '已完成数据备份!'
   set-season: '成功切换世界 {world} 的季节为 {season}!'
+  before-plant: '这种肥料必须在种植前使用!'
 
 #全息信息显示
 hologram:
@@ -39,7 +40,7 @@ hologram:
   #洒水器信息
   sprinkler-info:
     enable: true
-    y-offset: -0.2
+    y-offset: 0.8
     duration: 1
     #可用变量 {water}当前水量 {max_water}最大蓄水量
     left: '<font:customcrops:default>뀂'

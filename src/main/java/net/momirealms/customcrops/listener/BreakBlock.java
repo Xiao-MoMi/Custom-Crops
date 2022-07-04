@@ -7,6 +7,7 @@ import net.momirealms.customcrops.ConfigReader;
 import net.momirealms.customcrops.datamanager.PotManager;
 import net.momirealms.customcrops.fertilizer.Fertilizer;
 import net.momirealms.customcrops.fertilizer.QualityCrop;
+import net.momirealms.customcrops.integrations.Integration;
 import net.momirealms.customcrops.utils.CropInstance;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Location;
@@ -28,9 +29,12 @@ public class BreakBlock implements Listener {
         String namespacedId = event.getNamespacedID();
         if(namespacedId.contains("_stage_")){
             Player player =event.getPlayer();
+            Location location = event.getBlock().getLocation();
+            for (Integration integration : ConfigReader.Config.integration){
+                if(!integration.canPlace(location, player)) return;
+            }
             if(player.getInventory().getItemInMainHand().containsEnchantment(Enchantment.SILK_TOUCH) || player.getInventory().getItemInMainHand().getType() == Material.SHEARS){
                 event.setCancelled(true);
-                Location location = event.getBlock().getLocation();
                 CustomBlock.place(namespacedId, location);
                 CustomBlock.byAlreadyPlaced(location.getBlock()).getLoot().forEach(itemStack -> {
                     location.getWorld().dropItem(location.clone().add(0.5,0.2,0.5), itemStack);
@@ -45,7 +49,6 @@ public class BreakBlock implements Listener {
                 CropInstance cropInstance = ConfigReader.CROPS.get(cropNameList[0]);
                 ThreadLocalRandom current = ThreadLocalRandom.current();
                 int random = current.nextInt(cropInstance.getMin(), cropInstance.getMax() + 1);
-                Location location = event.getBlock().getLocation();
                 Location itemLoc = location.clone().add(0.5,0.2,0.5);
                 World world = location.getWorld();
                 Fertilizer fertilizer = PotManager.Cache.get(location.clone().subtract(0,1,0));
@@ -65,19 +68,12 @@ public class BreakBlock implements Listener {
                                 world.dropItem(itemLoc, CustomStack.getInstance(cropInstance.getQuality_3()).getItemStack());
                             }
                         }
+                    }else {
+                        normalDrop(cropInstance, random, itemLoc, world);
                     }
                 }
                 else {
-                    for (int i = 0; i < random; i++){
-                        double ran = Math.random();
-                        if (ran < ConfigReader.Config.quality_1){
-                            world.dropItem(itemLoc, CustomStack.getInstance(cropInstance.getQuality_1()).getItemStack());
-                        }else if(ran > ConfigReader.Config.quality_2){
-                            world.dropItem(itemLoc, CustomStack.getInstance(cropInstance.getQuality_2()).getItemStack());
-                        }else {
-                            world.dropItem(itemLoc, CustomStack.getInstance(cropInstance.getQuality_3()).getItemStack());
-                        }
-                    }
+                    normalDrop(cropInstance, random, itemLoc, world);
                 }
             }
         }
@@ -86,6 +82,9 @@ public class BreakBlock implements Listener {
             PotManager.Cache.remove(location);
             World world = location.getWorld();
             Block blockUp = location.add(0,1,0).getBlock();
+            for (Integration integration : ConfigReader.Config.integration){
+                if(!integration.canPlace(location, event.getPlayer())) return;
+            }
             if(CustomBlock.byAlreadyPlaced(blockUp) != null){
                 String cropNamespacedId = CustomBlock.byAlreadyPlaced(blockUp).getNamespacedID();
                 if(cropNamespacedId.contains("_stage_")){
@@ -120,16 +119,7 @@ public class BreakBlock implements Listener {
                                 }
                             }
                             else {
-                                for (int i = 0; i < random; i++){
-                                    double ran = Math.random();
-                                    if (ran < ConfigReader.Config.quality_1){
-                                        world.dropItem(itemLoc, CustomStack.getInstance(cropInstance.getQuality_1()).getItemStack());
-                                    }else if(ran > ConfigReader.Config.quality_2){
-                                        world.dropItem(itemLoc, CustomStack.getInstance(cropInstance.getQuality_2()).getItemStack());
-                                    }else {
-                                        world.dropItem(itemLoc, CustomStack.getInstance(cropInstance.getQuality_3()).getItemStack());
-                                    }
-                                }
+                                normalDrop(cropInstance, random, itemLoc, world);
                             }
                             return;
                         }
@@ -139,6 +129,19 @@ public class BreakBlock implements Listener {
                     }
                     CustomBlock.remove(location);
                 }
+            }
+        }
+    }
+
+    static void normalDrop(CropInstance cropInstance, int random, Location itemLoc, World world) {
+        for (int i = 0; i < random; i++){
+            double ran = Math.random();
+            if (ran < ConfigReader.Config.quality_1){
+                world.dropItem(itemLoc, CustomStack.getInstance(cropInstance.getQuality_1()).getItemStack());
+            }else if(ran > ConfigReader.Config.quality_2){
+                world.dropItem(itemLoc, CustomStack.getInstance(cropInstance.getQuality_2()).getItemStack());
+            }else {
+                world.dropItem(itemLoc, CustomStack.getInstance(cropInstance.getQuality_3()).getItemStack());
             }
         }
     }

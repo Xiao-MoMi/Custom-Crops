@@ -11,6 +11,7 @@ softdepend:
   - Kingdoms
   - WorldGuard
   - GriefDefender
+  - PlotSquared
 authors: [ XiaoMoMi ]
 commands:
   customcrops:
