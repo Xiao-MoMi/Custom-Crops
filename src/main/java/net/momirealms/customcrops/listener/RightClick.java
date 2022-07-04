@@ -180,6 +180,11 @@ public class RightClick implements Listener {
                                 nbtItem.setInteger("WaterAmount", water + 1);
                                 player.getWorld().playSound(player.getLocation(), Sound.ITEM_BUCKET_FILL,1,1);
                                 itemStack.setItemMeta(nbtItem.getItem().getItemMeta());
+                                if (ConfigReader.Message.hasWaterInfo){
+                                    String string = ConfigReader.Message.waterLeft + ConfigReader.Message.waterFull.repeat(water + 1) +
+                                            ConfigReader.Message.waterEmpty.repeat(wateringCan.getMax() - water - 1) + ConfigReader.Message.waterRight;
+                                    AdventureManager.playerActionbar(player, string.replace("{max_water}", String.valueOf(wateringCan.getMax())).replace("{water}", String.valueOf(water + 1)));
+                                }
                             }
                             return;
                         }
@@ -197,11 +202,21 @@ public class RightClick implements Listener {
                             itemStack.setItemMeta(nbtItem.getItem().getItemMeta());
                             player.getWorld().playSound(player.getLocation(), Sound.BLOCK_WATER_AMBIENT,1,1);
                             waterPot(wateringCan.getWidth(), wateringCan.getLength(), block.getLocation(), player.getLocation().getYaw());
+                            if (ConfigReader.Message.hasWaterInfo){
+                                String string = ConfigReader.Message.waterLeft + ConfigReader.Message.waterFull.repeat(water - 1) +
+                                        ConfigReader.Message.waterEmpty.repeat(wateringCan.getMax() - water + 1) + ConfigReader.Message.waterRight;
+                                AdventureManager.playerActionbar(player, string.replace("{max_water}", String.valueOf(wateringCan.getMax())).replace("{water}", String.valueOf(water -1)));
+                            }
                         }else if (namespacedID.contains("_stage_")){
                             nbtItem.setInteger("WaterAmount", water - 1);
                             itemStack.setItemMeta(nbtItem.getItem().getItemMeta());
                             player.getWorld().playSound(player.getLocation(), Sound.BLOCK_WATER_AMBIENT,1,1);
                             waterPot(wateringCan.getWidth(), wateringCan.getLength(), block.getLocation().subtract(0,1,0), player.getLocation().getYaw());
+                            if (ConfigReader.Message.hasWaterInfo){
+                                String string = ConfigReader.Message.waterLeft + ConfigReader.Message.waterFull.repeat(water - 1) +
+                                        ConfigReader.Message.waterEmpty.repeat(wateringCan.getMax() - water + 1) + ConfigReader.Message.waterRight;
+                                AdventureManager.playerActionbar(player, string.replace("{max_water}", String.valueOf(wateringCan.getMax())).replace("{water}", String.valueOf(water -1)));
+                            }
                         }
                     }
                     return;

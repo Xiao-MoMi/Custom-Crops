@@ -64,6 +64,7 @@ public class ConfigReader {
         public static int yMin;
         public static int yMax;
         public static int sprinklerRefill;
+        public static int timeToGrow;
         public static boolean logTime;
         public static boolean onlyLoadedGrow;
         public static boolean quality;
@@ -86,10 +87,12 @@ public class ConfigReader {
                 }
             });
 
+            timeToGrow = config.getInt("config.time-to-grow",60)*20;
+
             //异步读取时间
             asyncCheck = config.getBoolean("config.async-time-check",false);
             logTime = config.getBoolean("config.log-time-consume",false);
-            onlyLoadedGrow = config.getBoolean("config.only-grow-in-loaded-chunks",true);
+            onlyLoadedGrow = !config.getBoolean("config.only-grow-in-loaded-chunks",true);
 
             //骨粉设置（已废弃）
 //            useBoneMeal = config.getBoolean("config.bone-meal.enable",false);
@@ -267,9 +270,9 @@ public class ConfigReader {
                     range = config.getInt("season.greenhouse.range",7);
                 }
                 seasonChange = config.getBoolean("season.auto-season-change.enable",false);
+                duration = config.getInt("season.auto-season-change.duration",28);
                 if (seasonChange) {
                     AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><color:#FFEBCD>当前季节变换模式: <gold>自动");
-                    duration = config.getInt("season.auto-season-change.duration",28);
                 }else {
                     AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><color:#FFEBCD>当前季节变换模式: <gold>指令");
                 }
@@ -303,6 +306,7 @@ public class ConfigReader {
         public static String forceSave;
         public static boolean hasCropInfo;
         public static boolean hasSprinklerInfo;
+        public static boolean hasWaterInfo;
         public static int cropTime;
         public static int sprinklerTime;
         public static String cropText;
@@ -311,6 +315,10 @@ public class ConfigReader {
         public static String sprinklerEmpty;
         public static String sprinklerRight;
         public static String beforePlant;
+        public static String waterLeft;
+        public static String waterFull;
+        public static String waterEmpty;
+        public static String waterRight;
         public static double cropOffset;
         public static double sprinklerOffset;
 
@@ -340,6 +348,7 @@ public class ConfigReader {
             forceSave = config.getString("messages.force-save");
             beforePlant = config.getString("messages.before-plant");
 
+
             hasCropInfo = config.getBoolean("hologram.grow-info.enable");
             if (hasCropInfo){
                 cropTime = config.getInt("hologram.grow-info.duration");
@@ -354,6 +363,13 @@ public class ConfigReader {
                 sprinklerEmpty = config.getString("hologram.sprinkler-info.empty");
                 sprinklerRight = config.getString("hologram.sprinkler-info.right");
                 sprinklerOffset = config.getDouble("hologram.sprinkler-info.y-offset");
+            }
+            hasWaterInfo = config.getBoolean("actionbar.watering-can.enable");
+            if (hasWaterInfo){
+                waterLeft = config.getString("actionbar.watering-can.left");
+                waterFull = config.getString("actionbar.watering-can.full");
+                waterEmpty = config.getString("actionbar.watering-can.empty");
+                waterRight = config.getString("actionbar.watering-can.right");
             }
         }
     }

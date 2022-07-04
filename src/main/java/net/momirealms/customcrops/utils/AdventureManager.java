@@ -33,4 +33,10 @@ public class AdventureManager {
         Title title = Title.title(mm.deserialize(s1), mm.deserialize(s2), times);
         au.showTitle(title);
     }
+
+    public static void playerActionbar(Player player, String s) {
+        Audience au = CustomCrops.adventure.player(player);
+        MiniMessage mm = MiniMessage.miniMessage();
+        au.sendActionBar(mm.deserialize(s));
+    }
 }

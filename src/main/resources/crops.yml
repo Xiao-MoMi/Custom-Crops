@@ -20,8 +20,8 @@ crops:
 
     #生长季节
     season:
-      - spring
       - summer
+      - autumn
 
     requirements:
       #适宜的生长高度
@@ -44,21 +44,30 @@ crops:
       2: customcrops:cabbage_silver_star
       3: customcrops:cabbage_golden_star
     gigantic: customcrops:gigantic_cabbage
-    gigantic-chance: 0.02
+    gigantic-chance: 0.01
     requirements:
       season:
         - spring
-        - summer
 
   grape:
     amount: 2~4
-    #空手收获后返回第几个生长状态
     quality:
       1: customcrops:grape
       2: customcrops:grape_silver_star
       3: customcrops:grape_golden_star
+    #空手收获后返回第几个生长状态
     return: customcrops:grape_stage_4
     requirements:
       season:
-        - spring
+        - autumn
+
+  corn:
+    amount: 1~2
+    quality:
+      1: customcrops:corn
+      2: customcrops:corn_silver_star
+      3: customcrops:corn_golden_star
+    requirements:
+      season:
+        - autumn
         - summer

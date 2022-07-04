@@ -48,8 +48,8 @@ public class InteractEntity implements Listener {
                 int x = location.getBlockX();
                 int z = location.getBlockZ();
                 int maxWater = config.getWater();
-                int currentWater = 0;
-                Location loc = location.subtract(0,1,0).getBlock().getLocation().add(0,1,0);
+                int currentWater;
+                Location loc = location.clone().subtract(0,1,0).getBlock().getLocation().add(0,1,0);
                 Sprinkler sprinkler = SprinklerManager.Cache.get(loc);
                 if (itemStack.getType() == Material.WATER_BUCKET){
                     itemStack.setType(Material.BUCKET);

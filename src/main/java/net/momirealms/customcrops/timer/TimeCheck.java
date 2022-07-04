@@ -25,8 +25,10 @@ public class TimeCheck extends BukkitRunnable {
                 if(time == cropGrowTime){
                     Bukkit.getScheduler().runTaskAsynchronously(CustomCrops.instance, () -> {
                         plugin.getCropManager().cropGrow(world.getName());
-                        plugin.getSprinklerManager().sprinklerWork(world.getName());
                     });
+                    Bukkit.getScheduler().runTaskLaterAsynchronously(CustomCrops.instance, ()->{
+                        plugin.getSprinklerManager().sprinklerWork(world.getName());
+                    }, ConfigReader.Config.timeToGrow);
                 }
             });
         });

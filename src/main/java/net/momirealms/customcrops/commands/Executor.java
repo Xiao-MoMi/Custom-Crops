@@ -4,6 +4,7 @@ import net.momirealms.customcrops.utils.AdventureManager;
 import net.momirealms.customcrops.ConfigReader;
 import net.momirealms.customcrops.CustomCrops;
 import net.momirealms.customcrops.utils.BackUp;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -48,7 +49,9 @@ public class Executor implements CommandExecutor {
                     lackArgs(sender);
                     return true;
                 }
-                plugin.getCropManager().cropGrow(args[1]);
+                Bukkit.getScheduler().runTaskAsynchronously(CustomCrops.instance, ()-> {
+                    plugin.getCropManager().cropGrow(args[1]);
+                });
                 if (sender instanceof Player player){
                     AdventureManager.playerMessage(player,ConfigReader.Message.prefix + ConfigReader.Message.forceGrow.replace("{world}",args[1]));
                 }else {
@@ -61,7 +64,9 @@ public class Executor implements CommandExecutor {
                     lackArgs(sender);
                     return true;
                 }
-                plugin.getSprinklerManager().sprinklerWork(args[1]);
+                Bukkit.getScheduler().runTaskAsynchronously(CustomCrops.instance, ()-> {
+                    plugin.getSprinklerManager().sprinklerWork(args[1]);
+                });
                 if (sender instanceof Player player){
                     AdventureManager.playerMessage(player,ConfigReader.Message.prefix + ConfigReader.Message.forceWater.replace("{world}",args[1]));
                 }else {
@@ -114,6 +119,9 @@ public class Executor implements CommandExecutor {
                     AdventureManager.consoleMessage(ConfigReader.Message.prefix + ConfigReader.Message.backUp);
                 }
                 return true;
+            }
+            case "test" -> {
+                plugin.getCropManager().testData();
             }
             case "setseason" -> {
                 if (args.length < 3) {

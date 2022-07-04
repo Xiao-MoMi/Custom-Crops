@@ -14,10 +14,13 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.scheduler.BukkitScheduler;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
+import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class CropManager {
@@ -25,9 +28,11 @@ public class CropManager {
     private YamlConfiguration data;
     private final CustomCrops plugin;
     public static ConcurrentHashMap<Location, String> Cache = new ConcurrentHashMap<>();
+    private BukkitScheduler bukkitScheduler;
 
     public CropManager(CustomCrops plugin){
         this.plugin = plugin;
+        this.bukkitScheduler = Bukkit.getScheduler();
     }
 
     //载入数据
@@ -43,6 +48,15 @@ public class CropManager {
             }
         }
         this.data = YamlConfiguration.loadConfiguration(file);
+    }
+
+    public void testData(){
+        for (int i = -200; i <= 200; i++){
+            for (int j = -200; j <= 200; j++){
+                Location location = new Location(Bukkit.getWorld("world"), i, 91,j);
+                Cache.put(location, "tomato");
+            }
+        }
     }
 
     //保存数据
@@ -84,7 +98,6 @@ public class CropManager {
                         Location seedLocation = new Location(world,Double.parseDouble(coordinate[0]),Double.parseDouble(coordinate[1]),Double.parseDouble(coordinate[2]));
                         CustomBlock seedBlock = CustomBlock.byAlreadyPlaced(seedLocation.getBlock());
                         StringBuilder stringBuilder = new StringBuilder();
-                        //需要修改
                         stringBuilder.append(worldName).append(".").append(chunk).append(".").append(key);
                         if(seedBlock == null) {
                             data.set(stringBuilder.toString(), null);
@@ -106,16 +119,16 @@ public class CropManager {
                         String potNamespacedID = pot.getNamespacedID();
                         String[] cropNameList = StringUtils.split(id,"_");
                         CropInstance cropInstance = ConfigReader.CROPS.get(cropNameList[0]);
+                        int random = new Random().nextInt(ConfigReader.Config.timeToGrow);
                         if (potNamespacedID.equals(ConfigReader.Basic.watered_pot)){
                             //如果启用季节限制且农作物有季节需求
                             if (ConfigReader.Season.enable && cropInstance.getSeasons() != null){
                                 if (isWrongSeason(seedLocation, cropInstance.getSeasons(), worldName)){
                                     data.set(stringBuilder.toString(), null);
-                                    Bukkit.getScheduler().callSyncMethod(CustomCrops.instance, () -> {
+                                    bukkitScheduler.runTaskLater(CustomCrops.instance, () -> {
                                         CustomBlock.remove(seedLocation);
                                         CustomBlock.place(ConfigReader.Basic.dead, seedLocation);
-                                        return null;
-                                    });
+                                    }, random);
                                     return;
                                 }
                             }
@@ -128,18 +141,18 @@ public class CropManager {
                                         fertilizer.setTimes(times - 1);
                                         if (fertilizer instanceof SpeedGrow speedGrow){
                                             if (Math.random() < speedGrow.getChance() && CustomBlock.getInstance(StringUtils.chop(namespacedID) + (nextStage + 1)) != null){
-                                                addStage(potLocation, seedLocation, namespacedID, nextStage + 1);
+                                                addStage(potLocation, seedLocation, namespacedID, nextStage + 1, random);
                                             }else {
-                                                addStage(potLocation, seedLocation, namespacedID, nextStage);
+                                                addStage(potLocation, seedLocation, namespacedID, nextStage, random);
                                             }
                                         }else if(fertilizer instanceof RetainingSoil retainingSoil){
                                             if (Math.random() < retainingSoil.getChance()){
-                                                addStage(seedLocation, namespacedID, nextStage);
+                                                addStage(seedLocation, namespacedID, nextStage, random);
                                             }else {
-                                                addStage(potLocation, seedLocation, namespacedID, nextStage);
+                                                addStage(potLocation, seedLocation, namespacedID, nextStage, random);
                                             }
                                         }else if(fertilizer instanceof QualityCrop){
-                                            addStage(potLocation, seedLocation, namespacedID, nextStage);
+                                            addStage(potLocation, seedLocation, namespacedID, nextStage, random);
                                         }else {
                                             AdventureManager.consoleMessage("<red>[CustomCrops] 发现未知类型肥料,已自动清除错误数据!</red>");
                                             PotManager.Cache.remove(potLocation);
@@ -149,11 +162,11 @@ public class CropManager {
                                     }
                                 }
                                 else {
-                                    addStage(potLocation, seedLocation, namespacedID, nextStage);
+                                    addStage(potLocation, seedLocation, namespacedID, nextStage, random);
                                 }
                             }
                             else if(cropInstance.getGiant() != null){
-                                Bukkit.getScheduler().callSyncMethod(CustomCrops.instance, () ->{
+                                bukkitScheduler.runTaskLater(CustomCrops.instance, () ->{
                                     CustomBlock.remove(potLocation);
                                     CustomBlock.place(ConfigReader.Basic.pot, potLocation);
                                     if(cropInstance.getGiantChance() > Math.random()){
@@ -161,25 +174,22 @@ public class CropManager {
                                         CustomBlock.remove(seedLocation);
                                         CustomBlock.place(cropInstance.getGiant(), seedLocation);
                                     }
-                                    return null;
-                                });
+                                }, random);
                             }else {
                                 if (cropInstance.getReturnStage() == null && !ConfigReader.Season.enable) data.set(stringBuilder.toString(), null);
-                                Bukkit.getScheduler().callSyncMethod(CustomCrops.instance, () -> {
+                                bukkitScheduler.runTaskLater(CustomCrops.instance, () -> {
                                     CustomBlock.remove(potLocation);
                                     CustomBlock.place(ConfigReader.Basic.pot, potLocation);
-                                    return null;
-                                });
+                                }, random);
                             }
                         }else if(potNamespacedID.equals(ConfigReader.Basic.pot)){
                             if(!ConfigReader.Season.enable || cropInstance.getSeasons() == null) return;
                             if(isWrongSeason(seedLocation, cropInstance.getSeasons(), worldName)){
                                 data.set(stringBuilder.toString(), null);
-                                Bukkit.getScheduler().callSyncMethod(CustomCrops.instance, () -> {
+                                bukkitScheduler.runTaskLater(CustomCrops.instance, () -> {
                                     CustomBlock.remove(seedLocation);
                                     CustomBlock.place(ConfigReader.Basic.dead, seedLocation);
-                                    return null;
-                                });
+                                }, random);
                             }
                         }
                     });
@@ -216,21 +226,19 @@ public class CropManager {
         return true;
     }
 
-    private void addStage(Location potLocation, Location seedLocation, String namespacedID, int nextStage){
-        Bukkit.getScheduler().callSyncMethod(CustomCrops.instance, () ->{
+    private void addStage(Location potLocation, Location seedLocation, String namespacedID, int nextStage, int random){
+        bukkitScheduler.runTaskLater(CustomCrops.instance, () ->{
             CustomBlock.remove(potLocation);
             CustomBlock.place(ConfigReader.Basic.pot, potLocation);
             CustomBlock.remove(seedLocation);
             CustomBlock.place(StringUtils.chop(namespacedID) + nextStage, seedLocation);
-            return null;
-        });
+        }, random);
     }
 
-    private void addStage(Location seedLocation, String namespacedID, int nextStage){
-        Bukkit.getScheduler().callSyncMethod(CustomCrops.instance, () ->{
+    private void addStage(Location seedLocation, String namespacedID, int nextStage, int random){
+        bukkitScheduler.runTaskLater(CustomCrops.instance, () ->{
             CustomBlock.remove(seedLocation);
             CustomBlock.place(StringUtils.chop(namespacedID) + nextStage, seedLocation);
-            return null;
-        });
+        }, random);
     }
 }

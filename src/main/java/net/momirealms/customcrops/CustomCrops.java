@@ -1,5 +1,6 @@
 package net.momirealms.customcrops;
 
+import de.tr7zw.changeme.nbtapi.NBTItem;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.momirealms.customcrops.commands.Executor;
 import net.momirealms.customcrops.commands.Completer;
@@ -15,6 +16,8 @@ import net.momirealms.customcrops.utils.BackUp;
 import net.momirealms.customcrops.utils.HoloUtil;
 import net.momirealms.customcrops.utils.Placeholders;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Objects;
@@ -76,6 +79,8 @@ public final class CustomCrops extends JavaPlugin {
         this.potManager = new PotManager(this);
         this.potManager.loadData();
 
+        NBTItem nbtItem = new NBTItem(new ItemStack(Material.WHEAT));
+
         //启动完成
         AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><color:#F5DEB3>插件已加载！作者：小默米 QQ:3266959688");
     }
@@ -91,6 +96,11 @@ public final class CustomCrops extends JavaPlugin {
             this.seasonManager.saveData();
         }
 
+        //备份数据
+        AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><color:#F5DEB3>插件数据自动备份中...");
+        BackUp.backUpData();
+        AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><color:#F5DEB3>备份已完成!");
+
         //清除悬浮展示实体
         HoloUtil.cache.keySet().forEach(player -> {
             HoloUtil.cache.get(player).remove();
@@ -103,11 +113,6 @@ public final class CustomCrops extends JavaPlugin {
         if (cropTimerAsync != null){
             this.cropTimerAsync.stopTimer(cropTimerAsync.getTaskID());
         }
-
-        //备份数据
-        AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><color:#F5DEB3>插件数据自动备份中...");
-        BackUp.backUpData();
-        AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><color:#F5DEB3>备份已完成!");
 
         //卸载完成
         AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><color:#F5DEB3>插件已卸载！作者：小默米 QQ:3266959688");
