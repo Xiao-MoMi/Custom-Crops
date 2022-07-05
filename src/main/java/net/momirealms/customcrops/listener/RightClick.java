@@ -54,7 +54,8 @@ public class RightClick implements Listener {
         Action action = event.getAction();
         if (action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK){
             ItemStack itemStack = event.getItem();
-            if (itemStack == null && action == Action.RIGHT_CLICK_BLOCK){
+            if (itemStack == null){
+                if (action != Action.RIGHT_CLICK_BLOCK) return;
                 Block block = event.getClickedBlock();
                 Location location = block.getLocation();
                 CustomBlock customBlock = CustomBlock.byAlreadyPlaced(block);
@@ -108,88 +109,121 @@ public class RightClick implements Listener {
                         }
                     }
                 }
-                return;
-            }
-            NBTItem nbtItem = new NBTItem(itemStack);
-            NBTCompound nbtCompound = nbtItem.getCompound("itemsadder");
-            if (nbtCompound != null){
-                String id = nbtCompound.getString("id");
-                if (id.endsWith("_seeds") && action == Action.RIGHT_CLICK_BLOCK && event.getBlockFace() == BlockFace.UP){
-                    String cropName = StringUtils.remove(id, "_seeds");
-                    Optional<CropInstance> crop = Optional.ofNullable(ConfigReader.CROPS.get(cropName));
-                    if (crop.isPresent()){
-                        Block block = event.getClickedBlock();
-                        CustomBlock customBlock = CustomBlock.byAlreadyPlaced(block);
-                        if (customBlock == null) return;
-                        String namespacedID = customBlock.getNamespacedID();
-                        if (namespacedID.equals(ConfigReader.Basic.pot) || namespacedID.equals(ConfigReader.Basic.watered_pot)){
-                            Location location = block.getLocation().add(0,1,0); //已+1
-                            for (Integration integration : ConfigReader.Config.integration){
-                                if(!integration.canPlace(location, player)) return;
-                            }
-                            CropInstance cropInstance = crop.get();
-                            PlantingCondition plantingCondition = new PlantingCondition(player, location);
-                            for (Requirement requirement : cropInstance.getRequirements()){
-                                if (!requirement.canPlant(plantingCondition)) return;
-                            }
-                            Label_out:
-                            if (ConfigReader.Season.enable && cropInstance.getSeasons() != null){
-                                for (String season : cropInstance.getSeasons()) {
-                                    if (season.equals(SeasonManager.SEASON.get(location.getWorld().getName()))){
-                                        break Label_out;
-                                    }
+            }else {
+                NBTItem nbtItem = new NBTItem(itemStack);
+                NBTCompound nbtCompound = nbtItem.getCompound("itemsadder");
+                if (nbtCompound != null){
+                    String id = nbtCompound.getString("id");
+                    if (id.endsWith("_seeds") && action == Action.RIGHT_CLICK_BLOCK && event.getBlockFace() == BlockFace.UP){
+                        String cropName = StringUtils.remove(id, "_seeds");
+                        Optional<CropInstance> crop = Optional.ofNullable(ConfigReader.CROPS.get(cropName));
+                        if (crop.isPresent()){
+                            Block block = event.getClickedBlock();
+                            CustomBlock customBlock = CustomBlock.byAlreadyPlaced(block);
+                            if (customBlock == null) return;
+                            String namespacedID = customBlock.getNamespacedID();
+                            if (namespacedID.equals(ConfigReader.Basic.pot) || namespacedID.equals(ConfigReader.Basic.watered_pot)){
+                                Location location = block.getLocation().add(0,1,0); //已+1
+                                for (Integration integration : ConfigReader.Config.integration){
+                                    if(!integration.canPlace(location, player)) return;
                                 }
-                                if(ConfigReader.Season.greenhouse){
-                                    for(int i = 1; i <= ConfigReader.Season.range; i++){
-                                        CustomBlock cb = CustomBlock.byAlreadyPlaced(location.clone().add(0,i,0).getBlock());
-                                        if (cb != null){
-                                            if(cb.getNamespacedID().equalsIgnoreCase(ConfigReader.Basic.glass)){
-                                                break Label_out;
+                                CropInstance cropInstance = crop.get();
+                                PlantingCondition plantingCondition = new PlantingCondition(player, location);
+                                for (Requirement requirement : cropInstance.getRequirements()){
+                                    if (!requirement.canPlant(plantingCondition)) return;
+                                }
+                                Label_out:
+                                if (ConfigReader.Season.enable && cropInstance.getSeasons() != null){
+                                    for (String season : cropInstance.getSeasons()) {
+                                        if (season.equals(SeasonManager.SEASON.get(location.getWorld().getName()))){
+                                            break Label_out;
+                                        }
+                                    }
+                                    if(ConfigReader.Season.greenhouse){
+                                        for(int i = 1; i <= ConfigReader.Season.range; i++){
+                                            CustomBlock cb = CustomBlock.byAlreadyPlaced(location.clone().add(0,i,0).getBlock());
+                                            if (cb != null){
+                                                if(cb.getNamespacedID().equalsIgnoreCase(ConfigReader.Basic.glass)){
+                                                    break Label_out;
+                                                }
                                             }
                                         }
                                     }
+                                    AdventureManager.playerMessage(player, ConfigReader.Message.prefix + ConfigReader.Message.badSeason);
+                                    return;
                                 }
-                                AdventureManager.playerMessage(player, ConfigReader.Message.prefix + ConfigReader.Message.badSeason);
+                                if(location.getBlock().getType() != Material.AIR){
+                                    return;
+                                }
+                                if(CropsPerChunk.isLimited(location)){
+                                    AdventureManager.playerMessage(player,ConfigReader.Message.prefix + ConfigReader.Message.crop_limit.replace("{max}", String.valueOf(ConfigReader.Config.cropLimit)));
+                                    return;
+                                }
+                                itemStack.setAmount(itemStack.getAmount() - 1);
+                                CropManager.Cache.put(location, cropName);
+                                CustomBlock.place((nbtCompound.getString("namespace") + ":" + cropName + "_stage_1"), location);
                                 return;
                             }
-                            if(location.getBlock().getType() != Material.AIR){
-                                return;
-                            }
-                            if(CropsPerChunk.isLimited(location)){
-                                AdventureManager.playerMessage(player,ConfigReader.Message.prefix + ConfigReader.Message.crop_limit.replace("{max}", String.valueOf(ConfigReader.Config.cropLimit)));
-                                return;
-                            }
-                            itemStack.setAmount(itemStack.getAmount() - 1);
-                            CropManager.Cache.put(location, cropName);
-                            CustomBlock.place((nbtCompound.getString("namespace") + ":" + cropName + "_stage_1"), location);
-                            return;
+                        }else {
+                            AdventureManager.playerMessage(player, ConfigReader.Message.prefix + ConfigReader.Message.not_configed);
                         }
-                    }else {
-                        AdventureManager.playerMessage(player, ConfigReader.Message.prefix + ConfigReader.Message.not_configed);
+                        return;
                     }
-                    return;
-                }
-                Optional<WateringCan> can = Optional.ofNullable(ConfigReader.CANS.get(id));
-                if (can.isPresent()){
-                    WateringCan wateringCan = can.get();
-                    int water = nbtItem.getInteger("WaterAmount");
-                    List<Block> lineOfSight = player.getLineOfSight(null, 5);
-                    for (Block block : lineOfSight) {
-                        if (block.getType() == Material.WATER) {
-                            if (wateringCan.getMax() > water){
-                                nbtItem.setInteger("WaterAmount", water + 1);
-                                player.getWorld().playSound(player.getLocation(), Sound.ITEM_BUCKET_FILL,1,1);
+                    Optional<WateringCan> can = Optional.ofNullable(ConfigReader.CANS.get(id));
+                    if (can.isPresent()){
+                        WateringCan wateringCan = can.get();
+                        int water = nbtItem.getInteger("WaterAmount");
+                        List<Block> lineOfSight = player.getLineOfSight(null, 5);
+                        for (Block block : lineOfSight) {
+                            if (block.getType() == Material.WATER) {
+                                if (wateringCan.getMax() > water){
+                                    nbtItem.setInteger("WaterAmount", water + 1);
+                                    player.getWorld().playSound(player.getLocation(), Sound.ITEM_BUCKET_FILL,1,1);
+                                    itemStack.setItemMeta(nbtItem.getItem().getItemMeta());
+                                    if (ConfigReader.Message.hasWaterInfo){
+                                        String string = ConfigReader.Message.waterLeft + ConfigReader.Message.waterFull.repeat(water + 1) +
+                                                ConfigReader.Message.waterEmpty.repeat(wateringCan.getMax() - water - 1) + ConfigReader.Message.waterRight;
+                                        AdventureManager.playerActionbar(player, string.replace("{max_water}", String.valueOf(wateringCan.getMax())).replace("{water}", String.valueOf(water + 1)));
+                                    }
+                                }
+                                return;
+                            }
+                        }
+                        if(water != 0 && action == Action.RIGHT_CLICK_BLOCK && event.getBlockFace() == BlockFace.UP){
+                            Block block = event.getClickedBlock();
+                            CustomBlock customBlock = CustomBlock.byAlreadyPlaced(block);
+                            if (customBlock == null) return;
+                            for (Integration integration : ConfigReader.Config.integration){
+                                if(!integration.canPlace(block.getLocation(), player)) return;
+                            }
+                            String namespacedID = customBlock.getNamespacedID();
+                            if (namespacedID.equals(ConfigReader.Basic.pot) || namespacedID.equals(ConfigReader.Basic.watered_pot)){
+                                nbtItem.setInteger("WaterAmount", water - 1);
                                 itemStack.setItemMeta(nbtItem.getItem().getItemMeta());
+                                player.getWorld().playSound(player.getLocation(), Sound.BLOCK_WATER_AMBIENT,1,1);
+                                waterPot(wateringCan.getWidth(), wateringCan.getLength(), block.getLocation(), player.getLocation().getYaw());
                                 if (ConfigReader.Message.hasWaterInfo){
-                                    String string = ConfigReader.Message.waterLeft + ConfigReader.Message.waterFull.repeat(water + 1) +
-                                            ConfigReader.Message.waterEmpty.repeat(wateringCan.getMax() - water - 1) + ConfigReader.Message.waterRight;
-                                    AdventureManager.playerActionbar(player, string.replace("{max_water}", String.valueOf(wateringCan.getMax())).replace("{water}", String.valueOf(water + 1)));
+                                    String string = ConfigReader.Message.waterLeft + ConfigReader.Message.waterFull.repeat(water - 1) +
+                                            ConfigReader.Message.waterEmpty.repeat(wateringCan.getMax() - water + 1) + ConfigReader.Message.waterRight;
+                                    AdventureManager.playerActionbar(player, string.replace("{max_water}", String.valueOf(wateringCan.getMax())).replace("{water}", String.valueOf(water -1)));
+                                }
+                            }else if (namespacedID.contains("_stage_")){
+                                nbtItem.setInteger("WaterAmount", water - 1);
+                                itemStack.setItemMeta(nbtItem.getItem().getItemMeta());
+                                player.getWorld().playSound(player.getLocation(), Sound.BLOCK_WATER_AMBIENT,1,1);
+                                waterPot(wateringCan.getWidth(), wateringCan.getLength(), block.getLocation().subtract(0,1,0), player.getLocation().getYaw());
+                                if (ConfigReader.Message.hasWaterInfo){
+                                    String string = ConfigReader.Message.waterLeft + ConfigReader.Message.waterFull.repeat(water - 1) +
+                                            ConfigReader.Message.waterEmpty.repeat(wateringCan.getMax() - water + 1) + ConfigReader.Message.waterRight;
+                                    AdventureManager.playerActionbar(player, string.replace("{max_water}", String.valueOf(wateringCan.getMax())).replace("{water}", String.valueOf(water -1)));
                                 }
                             }
-                            return;
                         }
+                        return;
                     }
-                    if(water != 0 && action == Action.RIGHT_CLICK_BLOCK && event.getBlockFace() == BlockFace.UP){
+                    Optional<Fertilizer> fertilize = Optional.ofNullable(ConfigReader.FERTILIZERS.get(id));
+                    if (fertilize.isPresent() && action == Action.RIGHT_CLICK_BLOCK){
+                        Fertilizer fertilizerConfig = fertilize.get();
                         Block block = event.getClickedBlock();
                         CustomBlock customBlock = CustomBlock.byAlreadyPlaced(block);
                         if (customBlock == null) return;
@@ -198,114 +232,81 @@ public class RightClick implements Listener {
                         }
                         String namespacedID = customBlock.getNamespacedID();
                         if (namespacedID.equals(ConfigReader.Basic.pot) || namespacedID.equals(ConfigReader.Basic.watered_pot)){
-                            nbtItem.setInteger("WaterAmount", water - 1);
-                            itemStack.setItemMeta(nbtItem.getItem().getItemMeta());
-                            player.getWorld().playSound(player.getLocation(), Sound.BLOCK_WATER_AMBIENT,1,1);
-                            waterPot(wateringCan.getWidth(), wateringCan.getLength(), block.getLocation(), player.getLocation().getYaw());
-                            if (ConfigReader.Message.hasWaterInfo){
-                                String string = ConfigReader.Message.waterLeft + ConfigReader.Message.waterFull.repeat(water - 1) +
-                                        ConfigReader.Message.waterEmpty.repeat(wateringCan.getMax() - water + 1) + ConfigReader.Message.waterRight;
-                                AdventureManager.playerActionbar(player, string.replace("{max_water}", String.valueOf(wateringCan.getMax())).replace("{water}", String.valueOf(water -1)));
-                            }
-                        }else if (namespacedID.contains("_stage_")){
-                            nbtItem.setInteger("WaterAmount", water - 1);
-                            itemStack.setItemMeta(nbtItem.getItem().getItemMeta());
-                            player.getWorld().playSound(player.getLocation(), Sound.BLOCK_WATER_AMBIENT,1,1);
-                            waterPot(wateringCan.getWidth(), wateringCan.getLength(), block.getLocation().subtract(0,1,0), player.getLocation().getYaw());
-                            if (ConfigReader.Message.hasWaterInfo){
-                                String string = ConfigReader.Message.waterLeft + ConfigReader.Message.waterFull.repeat(water - 1) +
-                                        ConfigReader.Message.waterEmpty.repeat(wateringCan.getMax() - water + 1) + ConfigReader.Message.waterRight;
-                                AdventureManager.playerActionbar(player, string.replace("{max_water}", String.valueOf(wateringCan.getMax())).replace("{water}", String.valueOf(water -1)));
-                            }
-                        }
-                    }
-                    return;
-                }
-                Optional<Fertilizer> fertilize = Optional.ofNullable(ConfigReader.FERTILIZERS.get(id));
-                if (fertilize.isPresent() && action == Action.RIGHT_CLICK_BLOCK){
-                    Fertilizer fertilizerConfig = fertilize.get();
-                    Block block = event.getClickedBlock();
-                    CustomBlock customBlock = CustomBlock.byAlreadyPlaced(block);
-                    if (customBlock == null) return;
-                    for (Integration integration : ConfigReader.Config.integration){
-                        if(!integration.canPlace(block.getLocation(), player)) return;
-                    }
-                    String namespacedID = customBlock.getNamespacedID();
-                    if (namespacedID.equals(ConfigReader.Basic.pot) || namespacedID.equals(ConfigReader.Basic.watered_pot)){
-                        CustomBlock customBlockUp = CustomBlock.byAlreadyPlaced(block.getLocation().clone().add(0,1,0).getBlock());
-                        if (customBlockUp != null){
-                            if (fertilizerConfig.isBefore() && customBlockUp.getNamespacedID().contains("_stage_")){
-                                AdventureManager.playerMessage(player, ConfigReader.Message.prefix + ConfigReader.Message.beforePlant);
-                                return;
+                            CustomBlock customBlockUp = CustomBlock.byAlreadyPlaced(block.getLocation().clone().add(0,1,0).getBlock());
+                            if (customBlockUp != null){
+                                if (fertilizerConfig.isBefore() && customBlockUp.getNamespacedID().contains("_stage_")){
+                                    AdventureManager.playerMessage(player, ConfigReader.Message.prefix + ConfigReader.Message.beforePlant);
+                                    return;
+                                }else {
+                                    itemStack.setAmount(itemStack.getAmount() - 1);
+                                    player.getWorld().playSound(player.getLocation(), Sound.ITEM_HOE_TILL,1,1);
+                                    addFertilizer(fertilizerConfig, block);
+                                }
                             }else {
                                 itemStack.setAmount(itemStack.getAmount() - 1);
                                 player.getWorld().playSound(player.getLocation(), Sound.ITEM_HOE_TILL,1,1);
                                 addFertilizer(fertilizerConfig, block);
                             }
-                        }else {
-                            itemStack.setAmount(itemStack.getAmount() - 1);
-                            player.getWorld().playSound(player.getLocation(), Sound.ITEM_HOE_TILL,1,1);
-                            addFertilizer(fertilizerConfig, block);
-                        }
-                    }else if (namespacedID.contains("_stage_")){
-                        if (!fertilizerConfig.isBefore()){
-                            itemStack.setAmount(itemStack.getAmount() - 1);
-                            addFertilizer(fertilizerConfig, block);
-                            player.getWorld().playSound(player.getLocation(), Sound.ITEM_HOE_TILL,1,1);
-                        }else {
-                            AdventureManager.playerMessage(player, ConfigReader.Message.prefix + ConfigReader.Message.beforePlant);
-                            return;
-                        }
-                    }
-                    return;
-                }
-                Optional<Sprinkler> sprinkler = Optional.ofNullable(ConfigReader.SPRINKLERS.get(id));
-                if (sprinkler.isPresent() && action == Action.RIGHT_CLICK_BLOCK && event.getBlockFace() == BlockFace.UP){
-                    Location location = event.getClickedBlock().getLocation();
-                    for (Integration integration : ConfigReader.Config.integration){
-                        if (!integration.canPlace(location, player)) return;
-                    }
-                    if(IAFurniture.getFromLocation(location.clone().add(0.5, 1.5, 0.5), location.getWorld())){
-                        return;
-                    }
-                    if(SprinklersPerChunk.isLimited(location)){
-                        AdventureManager.playerMessage(player, ConfigReader.Message.prefix + ConfigReader.Message.sprinkler_limit.replace("{max}", String.valueOf(ConfigReader.Config.sprinklerLimit)));
-                        return;
-                    }
-                    Sprinkler sprinklerData = new Sprinkler(sprinkler.get().getRange(), 0);
-                    itemStack.setAmount(itemStack.getAmount() - 1);
-                    SprinklerManager.Cache.put(location.add(0,1,0), sprinklerData);
-                    IAFurniture.placeFurniture(sprinkler.get().getNamespacedID_2(),location);
-                    return;
-                }
-                if (ConfigReader.Message.hasCropInfo && id.equals(ConfigReader.Basic.soilDetector) && action == Action.RIGHT_CLICK_BLOCK){
-                    Block block = event.getClickedBlock();
-                    CustomBlock customBlock = CustomBlock.byAlreadyPlaced(block);
-                    if (customBlock == null) return;
-                    for (Integration integration : ConfigReader.Config.integration){
-                        if(!integration.canPlace(block.getLocation(), player)) return;
-                    }
-                    String namespacedID = customBlock.getNamespacedID();
-                    if (namespacedID.contains("_stage_")){
-                        Location location = block.getLocation().subtract(0,1,0);
-                        Fertilizer fertilizer = PotManager.Cache.get(location);
-                        if (fertilizer != null){
-                            Fertilizer config = ConfigReader.FERTILIZERS.get(fertilizer.getKey());
-                            String name = config.getName();
-                            int max_times = config.getTimes();
-                            if(HoloUtil.cache.get(player) == null) {
-                                HoloUtil.showHolo(ConfigReader.Message.cropText.replace("{fertilizer}", name).replace("{times}", String.valueOf(fertilizer.getTimes())).replace("{max_times}", String.valueOf(max_times)), player, location.add(0.5, ConfigReader.Message.cropOffset, 0.5), ConfigReader.Message.cropTime);
+                        }else if (namespacedID.contains("_stage_")){
+                            if (!fertilizerConfig.isBefore()){
+                                itemStack.setAmount(itemStack.getAmount() - 1);
+                                addFertilizer(fertilizerConfig, block);
+                                player.getWorld().playSound(player.getLocation(), Sound.ITEM_HOE_TILL,1,1);
+                            }else {
+                                AdventureManager.playerMessage(player, ConfigReader.Message.prefix + ConfigReader.Message.beforePlant);
+                                return;
                             }
                         }
-                    }else if(namespacedID.equals(ConfigReader.Basic.pot) || namespacedID.equals(ConfigReader.Basic.watered_pot)){
-                        Location location = block.getLocation();
-                        Fertilizer fertilizer = PotManager.Cache.get(block.getLocation());
-                        if (fertilizer != null){
-                            Fertilizer config = ConfigReader.FERTILIZERS.get(fertilizer.getKey());
-                            String name = config.getName();
-                            int max_times = config.getTimes();
-                            if(HoloUtil.cache.get(player) == null){
-                                HoloUtil.showHolo(ConfigReader.Message.cropText.replace("{fertilizer}", name).replace("{times}", String.valueOf(fertilizer.getTimes())).replace("{max_times}", String.valueOf(max_times)), player, location.add(0.5,ConfigReader.Message.cropOffset,0.5), ConfigReader.Message.cropTime);
+                        return;
+                    }
+                    Optional<Sprinkler> sprinkler = Optional.ofNullable(ConfigReader.SPRINKLERS.get(id));
+                    if (sprinkler.isPresent() && action == Action.RIGHT_CLICK_BLOCK && event.getBlockFace() == BlockFace.UP){
+                        Location location = event.getClickedBlock().getLocation();
+                        for (Integration integration : ConfigReader.Config.integration){
+                            if (!integration.canPlace(location, player)) return;
+                        }
+                        if(IAFurniture.getFromLocation(location.clone().add(0.5, 1.5, 0.5), location.getWorld())){
+                            return;
+                        }
+                        if(SprinklersPerChunk.isLimited(location)){
+                            AdventureManager.playerMessage(player, ConfigReader.Message.prefix + ConfigReader.Message.sprinkler_limit.replace("{max}", String.valueOf(ConfigReader.Config.sprinklerLimit)));
+                            return;
+                        }
+                        Sprinkler sprinklerData = new Sprinkler(sprinkler.get().getRange(), 0);
+                        itemStack.setAmount(itemStack.getAmount() - 1);
+                        SprinklerManager.Cache.put(location.add(0,1,0), sprinklerData);
+                        IAFurniture.placeFurniture(sprinkler.get().getNamespacedID_2(),location);
+                        return;
+                    }
+                    if (ConfigReader.Message.hasCropInfo && id.equals(ConfigReader.Basic.soilDetector) && action == Action.RIGHT_CLICK_BLOCK){
+                        Block block = event.getClickedBlock();
+                        CustomBlock customBlock = CustomBlock.byAlreadyPlaced(block);
+                        if (customBlock == null) return;
+                        for (Integration integration : ConfigReader.Config.integration){
+                            if(!integration.canPlace(block.getLocation(), player)) return;
+                        }
+                        String namespacedID = customBlock.getNamespacedID();
+                        if (namespacedID.contains("_stage_")){
+                            Location location = block.getLocation().subtract(0,1,0);
+                            Fertilizer fertilizer = PotManager.Cache.get(location);
+                            if (fertilizer != null){
+                                Fertilizer config = ConfigReader.FERTILIZERS.get(fertilizer.getKey());
+                                String name = config.getName();
+                                int max_times = config.getTimes();
+                                if(HoloUtil.cache.get(player) == null) {
+                                    HoloUtil.showHolo(ConfigReader.Message.cropText.replace("{fertilizer}", name).replace("{times}", String.valueOf(fertilizer.getTimes())).replace("{max_times}", String.valueOf(max_times)), player, location.add(0.5, ConfigReader.Message.cropOffset, 0.5), ConfigReader.Message.cropTime);
+                                }
+                            }
+                        }else if(namespacedID.equals(ConfigReader.Basic.pot) || namespacedID.equals(ConfigReader.Basic.watered_pot)){
+                            Location location = block.getLocation();
+                            Fertilizer fertilizer = PotManager.Cache.get(block.getLocation());
+                            if (fertilizer != null){
+                                Fertilizer config = ConfigReader.FERTILIZERS.get(fertilizer.getKey());
+                                String name = config.getName();
+                                int max_times = config.getTimes();
+                                if(HoloUtil.cache.get(player) == null){
+                                    HoloUtil.showHolo(ConfigReader.Message.cropText.replace("{fertilizer}", name).replace("{times}", String.valueOf(fertilizer.getTimes())).replace("{max_times}", String.valueOf(max_times)), player, location.add(0.5,ConfigReader.Message.cropOffset,0.5), ConfigReader.Message.cropTime);
+                                }
                             }
                         }
                     }

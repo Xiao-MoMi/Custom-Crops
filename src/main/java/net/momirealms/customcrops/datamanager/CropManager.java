@@ -50,15 +50,6 @@ public class CropManager {
         this.data = YamlConfiguration.loadConfiguration(file);
     }
 
-    public void testData(){
-        for (int i = -200; i <= 200; i++){
-            for (int j = -200; j <= 200; j++){
-                Location location = new Location(Bukkit.getWorld("world"), i, 91,j);
-                Cache.put(location, "tomato");
-            }
-        }
-    }
-
     //保存数据
     public void saveData() {
         File file = new File(CustomCrops.instance.getDataFolder(), "data" + File.separator + "crop.yml");
@@ -78,6 +69,17 @@ public class CropManager {
             data.set(location.getWorld().getName() + "." + x / 16 + "," + z / 16 + "." + x + "," + location.getBlockY() + "," + z, String);
         });
         Cache.clear();
+    }
+
+    //隐藏指令，清除无用数据
+    public void cleanData(){
+        data.getKeys(false).forEach(world -> {
+            data.getConfigurationSection(world).getKeys(false).forEach(chunk ->{
+                if (data.getConfigurationSection(world + "." + chunk).getKeys(false).size() == 0){
+                    data.set(world + "." + chunk, null);
+                }
+            });
+        });
     }
 
     //农作物生长

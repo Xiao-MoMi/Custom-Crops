@@ -348,7 +348,6 @@ public class ConfigReader {
             forceSave = config.getString("messages.force-save");
             beforePlant = config.getString("messages.before-plant");
 
-
             hasCropInfo = config.getBoolean("hologram.grow-info.enable");
             if (hasCropInfo){
                 cropTime = config.getInt("hologram.grow-info.duration");

@@ -51,6 +51,16 @@ public class SprinklerManager {
         }
     }
 
+    public void cleanData(){
+        data.getKeys(false).forEach(world -> {
+            data.getConfigurationSection(world).getKeys(false).forEach(chunk ->{
+                if (data.getConfigurationSection(world + "." + chunk).getKeys(false).size() == 0){
+                    data.set(world + "." + chunk, null);
+                }
+            });
+        });
+    }
+
     public void updateData(){
         Cache.forEach((location, sprinklerData) -> {
             String world = location.getWorld().getName();

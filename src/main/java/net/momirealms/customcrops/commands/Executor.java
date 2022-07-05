@@ -120,8 +120,9 @@ public class Executor implements CommandExecutor {
                 }
                 return true;
             }
-            case "test" -> {
-                plugin.getCropManager().testData();
+            case "cleandata" -> {
+                plugin.getCropManager().cleanData();
+                plugin.getSprinklerManager().cleanData();
             }
             case "setseason" -> {
                 if (args.length < 3) {
