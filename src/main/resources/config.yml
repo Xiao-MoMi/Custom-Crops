@@ -1,18 +1,13 @@
 config:
   #插件兼容
   integration:
-    #收获flag为destroy 浇水种植flag为build
     Residence: false
-    #收获flag为BLOCK-BREAK 浇水种植flag为BUILD
     WorldGuard: false
-    #只有王国成员可以收获、浇水和种植
     Kingdoms: false
-    #信任的玩家可以收获、浇水和种植
     GriefDefender: false
-    #拥有plot add的玩家可以收获、浇水和种植
     PlotSquared: false
-    #拥有Town权限的玩家可以收获、浇水和种植
     Towny: false
+    Lands: false
 
   #生长时间点(tick)
   #洒水器将会在农作物全部完成生长后开始工作

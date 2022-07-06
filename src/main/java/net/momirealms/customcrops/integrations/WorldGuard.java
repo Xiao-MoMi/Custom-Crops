@@ -13,7 +13,7 @@ import com.sk89q.worldguard.protection.regions.RegionQuery;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-public record WorldGuard() implements Integration {
+public class WorldGuard implements Integration {
 
     @Override
     public boolean canPlace(Location location, Player player) {

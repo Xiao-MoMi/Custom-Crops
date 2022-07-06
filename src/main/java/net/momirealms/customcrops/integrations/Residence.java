@@ -6,7 +6,7 @@ import com.bekvon.bukkit.residence.protection.ResidencePermissions;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-public record Residence() implements Integration {
+public class Residence implements Integration {
 
     @Override
     public boolean canBreak(Location location, Player player) {

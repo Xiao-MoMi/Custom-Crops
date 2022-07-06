@@ -1,5 +1,5 @@
 name: CustomCrops
-version: '1.5.4'
+version: '1.5.5'
 main: net.momirealms.customcrops.CustomCrops
 api-version: 1.16
 depend:
@@ -13,6 +13,7 @@ softdepend:
   - GriefDefender
   - PlotSquared
   - Towny
+  - Lands
 authors: [ XiaoMoMi ]
 commands:
   customcrops:

@@ -3,7 +3,7 @@ package net.momirealms.customcrops.integrations;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-public record GriefDefender() implements Integration {
+public class GriefDefender implements Integration {
 
     @Override
     public boolean canBreak(Location location, Player player) {

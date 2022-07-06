@@ -1,6 +1,5 @@
 package net.momirealms.customcrops;
 
-import de.tr7zw.changeme.nbtapi.NBTItem;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.momirealms.customcrops.commands.Executor;
 import net.momirealms.customcrops.commands.Completer;
@@ -16,8 +15,6 @@ import net.momirealms.customcrops.utils.BackUp;
 import net.momirealms.customcrops.utils.HoloUtil;
 import net.momirealms.customcrops.utils.Placeholders;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Objects;

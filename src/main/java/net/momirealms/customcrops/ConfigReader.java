@@ -196,6 +196,14 @@ public class ConfigReader {
                     AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><color:#FFEBCD>已启用 <gold>Towny <color:#FFEBCD>保护!");
                 }
             }
+            if(config.getBoolean("config.integration.Lands",false)){
+                if(Bukkit.getPluginManager().getPlugin("Lands") == null){
+                    CustomCrops.instance.getLogger().warning("未检测到插件 Lands!");
+                }else {
+                    integration.add(new Lands());
+                    AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><color:#FFEBCD>已启用 <gold>Lands <color:#FFEBCD>保护!");
+                }
+            }
         }
     }
 
