@@ -42,7 +42,7 @@ public class BreakBlock implements Listener {
                 CustomBlock.remove(location);
                 return;
             }
-            if(ConfigReader.Config.quality && namespacedId.equals(ConfigReader.Basic.dead)) return;
+            if(!ConfigReader.Config.quality || namespacedId.equals(ConfigReader.Basic.dead)) return;
             String[] cropNameList = StringUtils.split(StringUtils.split(namespacedId, ":")[1], "_");
             int nextStage = Integer.parseInt(cropNameList[2]) + 1;
             if (CustomBlock.getInstance(StringUtils.chop(namespacedId) + nextStage) == null) {
@@ -83,21 +83,21 @@ public class BreakBlock implements Listener {
             World world = location.getWorld();
             Block blockUp = location.add(0,1,0).getBlock();
             for (Integration integration : ConfigReader.Config.integration){
-                if(!integration.canPlace(location, event.getPlayer())) return;
+                if(!integration.canBreak(location, event.getPlayer())) return;
             }
             if(CustomBlock.byAlreadyPlaced(blockUp) != null){
-                String cropNamespacedId = CustomBlock.byAlreadyPlaced(blockUp).getNamespacedID();
+                CustomBlock customBlock = CustomBlock.byAlreadyPlaced(blockUp);
+                String cropNamespacedId = customBlock.getNamespacedID();
                 if(cropNamespacedId.contains("_stage_")){
                     CustomBlock.remove(location);
                     if (cropNamespacedId.equals(ConfigReader.Basic.dead)) return;
-                    if(ConfigReader.Config.quality){
+                    if (ConfigReader.Config.quality){
                         String[] cropNameList = StringUtils.split(StringUtils.split(cropNamespacedId, ":")[1], "_");
                         int nextStage = Integer.parseInt(cropNameList[2]) + 1;
                         if (CustomBlock.getInstance(StringUtils.chop(cropNamespacedId) + nextStage) == null) {
                             CropInstance cropInstance = ConfigReader.CROPS.get(cropNameList[0]);
                             ThreadLocalRandom current = ThreadLocalRandom.current();
                             int random = current.nextInt(cropInstance.getMin(), cropInstance.getMax() + 1);
-                            location.add(0,1,0);
                             Location itemLoc = location.clone().add(0.5,0.2,0.5);
                             Fertilizer fertilizer = PotManager.Cache.get(location.clone().subtract(0,1,0));
                             if (fertilizer != null){
@@ -124,7 +124,7 @@ public class BreakBlock implements Listener {
                             return;
                         }
                     }
-                    for (ItemStack itemStack : CustomBlock.byAlreadyPlaced(blockUp).getLoot()) {
+                    for (ItemStack itemStack : customBlock.getLoot()) {
                         world.dropItem(location.clone().add(0.5, 0.2, 0.5), itemStack);
                     }
                     CustomBlock.remove(location);
