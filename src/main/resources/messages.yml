@@ -24,6 +24,7 @@ messages:
   back-up: '<white>已完成数据备份!'
   set-season: '<white>成功切换世界 {world} 的季节为 {season}!'
   before-plant: '<white>这种肥料必须在种植前使用!'
+  no-season: '当前世界没有季节'
 
 #全息信息显示
 hologram:

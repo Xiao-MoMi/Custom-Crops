@@ -79,10 +79,12 @@ public final class CustomCrops extends JavaPlugin {
         this.potManager = new PotManager(this);
         this.potManager.loadData();
 
-        NBTItem nbtItem = new NBTItem(new ItemStack(Material.WHEAT));
-
         //启动完成
         AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><color:#F5DEB3>插件已加载！作者：小默米 QQ:3266959688");
+
+        NBTItem nbtItem = new NBTItem(new ItemStack(Material.WHEAT));
+        nbtItem.getItem();
+
     }
 
     @Override

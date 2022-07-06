@@ -188,6 +188,14 @@ public class ConfigReader {
                     AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><color:#FFEBCD>已启用 <gold>PlotSquared <color:#FFEBCD>保护!");
                 }
             }
+            if(config.getBoolean("config.integration.Towny",false)){
+                if(Bukkit.getPluginManager().getPlugin("Towny") == null){
+                    CustomCrops.instance.getLogger().warning("未检测到插件 Towny!");
+                }else {
+                    integration.add(new Towny());
+                    AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><color:#FFEBCD>已启用 <gold>Towny <color:#FFEBCD>保护!");
+                }
+            }
         }
     }
 
@@ -304,6 +312,7 @@ public class ConfigReader {
         public static String setSeason;
         public static String wrongArgs;
         public static String forceSave;
+        public static String noSeason;
         public static boolean hasCropInfo;
         public static boolean hasSprinklerInfo;
         public static boolean hasWaterInfo;
@@ -347,6 +356,7 @@ public class ConfigReader {
             wrongArgs = config.getString("messages.wrong-args");
             forceSave = config.getString("messages.force-save");
             beforePlant = config.getString("messages.before-plant");
+            noSeason = config.getString("messages.no-season","当前世界没有季节");
 
             hasCropInfo = config.getBoolean("hologram.grow-info.enable");
             if (hasCropInfo){

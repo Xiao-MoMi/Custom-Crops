@@ -7,6 +7,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Optional;
+
 public class Placeholders extends PlaceholderExpansion{
 
     @Override
@@ -27,7 +29,7 @@ public class Placeholders extends PlaceholderExpansion{
     @Override
     public String onRequest(OfflinePlayer player, String params) {
         if (params.equalsIgnoreCase("season")){
-            return SeasonManager.SEASON.get(player.getPlayer().getWorld().getName())
+            return Optional.ofNullable(SeasonManager.SEASON.get(player.getPlayer().getWorld().getName())).orElse(ConfigReader.Message.noSeason)
                     .replace("spring", ConfigReader.Message.spring)
                     .replace("summer", ConfigReader.Message.summer)
                     .replace("autumn", ConfigReader.Message.autumn)
