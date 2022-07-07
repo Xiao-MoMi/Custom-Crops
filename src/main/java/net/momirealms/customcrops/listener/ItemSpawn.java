@@ -13,10 +13,6 @@ public class ItemSpawn implements Listener {
         if(event.getEntity() instanceof Item item) {
             if(CustomStack.byItemStack(item.getItemStack()) != null){
                 String id = CustomStack.byItemStack(item.getItemStack()).getId();
-//                if(ConfigReader.SPRINKLERS.get(id) != null){
-//                    item.remove();
-//                    item.getWorld().dropItem(item.getLocation() ,CustomStack.getInstance(ConfigReader.SPRINKLERS.get(id).getNamespacedID_1()).getItemStack());
-//                }else
                 if(id.contains("_stage_")){
                     item.remove();
                 }

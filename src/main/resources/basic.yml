@@ -35,6 +35,22 @@ water-can:
     width: 3
     length: 5
 
+lore:
+  #是否修改水壶物品的Lore
+  watering-can:
+    enable: true
+    #Lore样式
+    lore:
+      - '<italic:false><white>{water_info}'
+      - '<italic:false><gray>右键水方块为水壶加水'
+
+    #水量 {water_info}
+    #可用变量 {water}当前水量 {max_water}最大蓄水量
+    left: '<font:customcrops:default>뀂'
+    full: '뀁뀃'
+    empty: '뀁뀄'
+    right: '뀁뀅</font>'
+
 sprinkler:
   sprinkler_1:
     #洒水器工作范围

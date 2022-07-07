@@ -83,7 +83,6 @@ public class ConfigReader {
             cropGrowTimeList.forEach(time -> {
                 if(time < 0 || time > 23999){
                     AdventureManager.consoleMessage("<red>[CustomCrops] 农作物生长时间点必须位于0-23999之间");
-                    cropGrowTimeList.remove(time);
                 }
             });
 
@@ -119,9 +118,9 @@ public class ConfigReader {
             }
 
             //农作物品质处理
-            quality = config.getBoolean("config.quality.enable");
+            quality = config.getBoolean("config.quality.enable",true);
             if (quality){
-                String[] split = StringUtils.split(config.getString("config.quality.default-ratio"), "/");
+                String[] split = StringUtils.split(config.getString("config.quality.default-ratio","17/2/1"), "/");
                 double[] ratios = new double[3];
                 ratios[0] = Double.parseDouble(split[0]);
                 ratios[1] = Double.parseDouble(split[1]);
@@ -139,7 +138,6 @@ public class ConfigReader {
             worldNames.forEach(worldName -> {
                 World world = Bukkit.getWorld(worldName);
                 if (world == null){
-                    worldNames.remove(worldName);
                     AdventureManager.consoleMessage("<red>[CustomCrops] 世界" + worldName + "" + "不存在");
                 }else {
                     worlds.add(world);
@@ -212,24 +210,31 @@ public class ConfigReader {
         public static String pot;
         public static String watered_pot;
         public static String glass;
-        public static String sprinkler_1;
-        public static String sprinkler_2;
-        public static String sprinkler_1i;
-        public static String sprinkler_2i;
         public static String dead;
         public static String soilDetector;
+        public static boolean hasWaterLore;
+        public static String waterLeft;
+        public static String waterFull;
+        public static String waterEmpty;
+        public static String waterRight;
+        public static List<String> waterLore;
 
         public static void loadBasic(){
             YamlConfiguration config = getConfig("basic.yml");
-            pot = config.getString("basic.pot");
-            watered_pot = config.getString("basic.watered-pot");
-            glass = config.getString("basic.greenhouse-glass");
-            sprinkler_1 = config.getString("basic.sprinkler-1");
-            sprinkler_2 = config.getString("basic.sprinkler-2");
-            sprinkler_1i = config.getString("basic.sprinkler-1-item");
-            sprinkler_2i = config.getString("basic.sprinkler-2-item");
-            dead = config.getString("basic.dead-crop");
-            soilDetector = StringUtils.split(config.getString("basic.soil-detector"),":")[1];
+            pot = config.getString("basic.pot","customcrops:pot");
+            watered_pot = config.getString("basic.watered-pot","customcrops:watered_pot");
+            glass = config.getString("basic.greenhouse-glass","customcrops:greenhouse_glass");
+            dead = config.getString("basic.dead-crop","customcrops:crop_stage_death");
+            soilDetector = StringUtils.split(config.getString("basic.soil-detector","customcrops:soil_detector"),":")[1];
+
+            hasWaterLore = config.getBoolean("lore.watering-can.enable",false);
+            if (hasWaterLore){
+                waterLeft = config.getString("lore.watering-can.left");
+                waterFull = config.getString("lore.watering-can.full");
+                waterEmpty = config.getString("lore.watering-can.empty");
+                waterRight = config.getString("lore.watering-can.right");
+                waterLore = config.getStringList("lore.watering-can.lore");
+            }
 
             CANS.clear();
             if (config.contains("water-can")){
