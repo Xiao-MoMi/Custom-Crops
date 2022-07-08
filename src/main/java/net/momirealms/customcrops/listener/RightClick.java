@@ -77,8 +77,10 @@ public class RightClick implements Listener {
                                 }
                                 CropInstance cropInstance = crop.get();
                                 PlantingCondition plantingCondition = new PlantingCondition(player, location);
-                                for (Requirement requirement : cropInstance.getRequirements()){
-                                    if (!requirement.canPlant(plantingCondition)) return;
+                                if (cropInstance.getRequirements() != null){
+                                    for (Requirement requirement : cropInstance.getRequirements()){
+                                        if (!requirement.canPlant(plantingCondition)) return;
+                                    }
                                 }
                                 Label_out:
                                 if (ConfigReader.Season.enable && cropInstance.getSeasons() != null){
