@@ -45,9 +45,9 @@ crops:
       3: customcrops:cabbage_golden_star
     gigantic: customcrops:gigantic_cabbage
     gigantic-chance: 0.01
-    requirements:
-      season:
-        - spring
+    season:
+      - spring
+
 
   grape:
     amount: 2~4
@@ -57,9 +57,8 @@ crops:
       3: customcrops:grape_golden_star
     #空手收获后返回第几个生长状态
     return: customcrops:grape_stage_4
-    requirements:
-      season:
-        - autumn
+    season:
+      - autumn
 
   corn:
     amount: 1~2
@@ -67,7 +66,6 @@ crops:
       1: customcrops:corn
       2: customcrops:corn_silver_star
       3: customcrops:corn_golden_star
-    requirements:
-      season:
-        - autumn
-        - summer
+    season:
+      - autumn
+      - summer

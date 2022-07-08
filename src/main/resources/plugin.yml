@@ -1,5 +1,5 @@
 name: CustomCrops
-version: '1.5.6'
+version: '1.5.7'
 main: net.momirealms.customcrops.CustomCrops
 api-version: 1.16
 depend:

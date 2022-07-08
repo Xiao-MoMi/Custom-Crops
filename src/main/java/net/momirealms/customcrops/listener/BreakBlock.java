@@ -31,7 +31,7 @@ public class BreakBlock implements Listener {
             Player player =event.getPlayer();
             Location location = event.getBlock().getLocation();
             for (Integration integration : ConfigReader.Config.integration){
-                if(!integration.canPlace(location, player)) return;
+                if(!integration.canBreak(location, player)) return;
             }
             if(player.getInventory().getItemInMainHand().containsEnchantment(Enchantment.SILK_TOUCH) || player.getInventory().getItemInMainHand().getType() == Material.SHEARS){
                 event.setCancelled(true);
