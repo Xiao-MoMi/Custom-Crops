@@ -1,6 +1,8 @@
 package net.momirealms.customcrops.utils;
 
 import net.kyori.adventure.audience.Audience;
+import net.kyori.adventure.key.Key;
+import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.title.Title;
@@ -38,5 +40,11 @@ public class AdventureManager {
         Audience au = CustomCrops.adventure.player(player);
         MiniMessage mm = MiniMessage.miniMessage();
         au.sendActionBar(mm.deserialize(s));
+    }
+
+    public static void playerSound(Player player, Sound.Source source, Key key) {
+        Sound sound = Sound.sound(key, source, 1, 1);
+        Audience au = CustomCrops.adventure.player(player);
+        au.playSound(sound);
     }
 }

@@ -36,7 +36,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -58,6 +57,7 @@ public class RightClick implements Listener {
         if (action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK){
             ItemStack itemStack = event.getItem();
             if (itemStack != null){
+                if (itemStack.getType() == Material.AIR) return;
                 NBTItem nbtItem = new NBTItem(itemStack);
                 NBTCompound nbtCompound = nbtItem.getCompound("itemsadder");
                 if (nbtCompound != null){
@@ -112,6 +112,7 @@ public class RightClick implements Listener {
                                 itemStack.setAmount(itemStack.getAmount() - 1);
                                 CropManager.Cache.put(location, cropName);
                                 CustomBlock.place((nbtCompound.getString("namespace") + ":" + cropName + "_stage_1"), location);
+                                AdventureManager.playerSound(player, ConfigReader.Sounds.plantSeedSource, ConfigReader.Sounds.plantSeedKey);
                                 return;
                             }
                         }else {
@@ -127,16 +128,20 @@ public class RightClick implements Listener {
                         for (Block block : lineOfSight) {
                             if (block.getType() == Material.WATER) {
                                 if (wateringCan.getMax() > water){
-                                    nbtItem.setInteger("WaterAmount", water + 1);
+                                    water += ConfigReader.Config.waterCanRefill;
+                                    if (water > wateringCan.getMax()){
+                                        water = wateringCan.getMax();
+                                    }
+                                    nbtItem.setInteger("WaterAmount", water);
                                     player.getWorld().playSound(player.getLocation(), Sound.ITEM_BUCKET_FILL,1,1);
                                     if (ConfigReader.Message.hasWaterInfo){
-                                        String string = ConfigReader.Message.waterLeft + ConfigReader.Message.waterFull.repeat(water + 1) +
-                                                ConfigReader.Message.waterEmpty.repeat(wateringCan.getMax() - water - 1) + ConfigReader.Message.waterRight;
-                                        AdventureManager.playerActionbar(player, string.replace("{max_water}", String.valueOf(wateringCan.getMax())).replace("{water}", String.valueOf(water + 1)));
+                                        String string = ConfigReader.Message.waterLeft + ConfigReader.Message.waterFull.repeat(water) +
+                                                ConfigReader.Message.waterEmpty.repeat(wateringCan.getMax() - water) + ConfigReader.Message.waterRight;
+                                        AdventureManager.playerActionbar(player, string.replace("{max_water}", String.valueOf(wateringCan.getMax())).replace("{water}", String.valueOf(water)));
                                     }
                                     if (ConfigReader.Basic.hasWaterLore){
-                                        String string = (ConfigReader.Basic.waterLeft + ConfigReader.Basic.waterFull.repeat(water + 1) +
-                                                ConfigReader.Basic.waterEmpty.repeat(wateringCan.getMax() - water - 1) + ConfigReader.Basic.waterRight).replace("{max_water}", String.valueOf(wateringCan.getMax())).replace("{water}", String.valueOf(water + 1));
+                                        String string = (ConfigReader.Basic.waterLeft + ConfigReader.Basic.waterFull.repeat(water) +
+                                                ConfigReader.Basic.waterEmpty.repeat(wateringCan.getMax() - water) + ConfigReader.Basic.waterRight).replace("{max_water}", String.valueOf(wateringCan.getMax())).replace("{water}", String.valueOf(water));
                                         List<String> lores = nbtItem.getCompound("display").getStringList("Lore");
                                         lores.clear();
                                         ConfigReader.Basic.waterLore.forEach(lore -> lores.add(GsonComponentSerializer.gson().serialize(MiniMessage.miniMessage().deserialize(lore.replace("{water_info}", string)))));
@@ -156,7 +161,7 @@ public class RightClick implements Listener {
                             String namespacedID = customBlock.getNamespacedID();
                             if (namespacedID.equals(ConfigReader.Basic.pot) || namespacedID.equals(ConfigReader.Basic.watered_pot)){
                                 nbtItem.setInteger("WaterAmount", water - 1);
-                                player.getWorld().playSound(player.getLocation(), Sound.BLOCK_WATER_AMBIENT,1,1);
+                                AdventureManager.playerSound(player, ConfigReader.Sounds.waterPotSource, ConfigReader.Sounds.waterPotKey);
                                 waterPot(wateringCan.getWidth(), wateringCan.getLength(), block.getLocation(), player.getLocation().getYaw());
                                 if (ConfigReader.Message.hasWaterInfo){
                                     String string = ConfigReader.Message.waterLeft + ConfigReader.Message.waterFull.repeat(water - 1) +
@@ -173,7 +178,7 @@ public class RightClick implements Listener {
                                 itemStack.setItemMeta(nbtItem.getItem().getItemMeta());
                             }else if (namespacedID.contains("_stage_")){
                                 nbtItem.setInteger("WaterAmount", water - 1);
-                                player.getWorld().playSound(player.getLocation(), Sound.BLOCK_WATER_AMBIENT,1,1);
+                                AdventureManager.playerSound(player, ConfigReader.Sounds.waterPotSource, ConfigReader.Sounds.waterPotKey);
                                 waterPot(wateringCan.getWidth(), wateringCan.getLength(), block.getLocation().subtract(0,1,0), player.getLocation().getYaw());
                                 if (ConfigReader.Message.hasWaterInfo){
                                     String string = ConfigReader.Message.waterLeft + ConfigReader.Message.waterFull.repeat(water - 1) +
@@ -210,19 +215,19 @@ public class RightClick implements Listener {
                                     return;
                                 }else {
                                     itemStack.setAmount(itemStack.getAmount() - 1);
-                                    player.getWorld().playSound(player.getLocation(), Sound.ITEM_HOE_TILL,1,1);
+                                    AdventureManager.playerSound(player, ConfigReader.Sounds.useFertilizerSource, ConfigReader.Sounds.useFertilizerKey);
                                     addFertilizer(fertilizerConfig, block);
                                 }
                             }else {
                                 itemStack.setAmount(itemStack.getAmount() - 1);
-                                player.getWorld().playSound(player.getLocation(), Sound.ITEM_HOE_TILL,1,1);
+                                AdventureManager.playerSound(player, ConfigReader.Sounds.useFertilizerSource, ConfigReader.Sounds.useFertilizerKey);
                                 addFertilizer(fertilizerConfig, block);
                             }
                         }else if (namespacedID.contains("_stage_")){
                             if (!fertilizerConfig.isBefore()){
                                 itemStack.setAmount(itemStack.getAmount() - 1);
                                 addFertilizer(fertilizerConfig, block);
-                                player.getWorld().playSound(player.getLocation(), Sound.ITEM_HOE_TILL,1,1);
+                                AdventureManager.playerSound(player, ConfigReader.Sounds.useFertilizerSource, ConfigReader.Sounds.useFertilizerKey);
                             }else {
                                 AdventureManager.playerMessage(player, ConfigReader.Message.prefix + ConfigReader.Message.beforePlant);
                                 return;
@@ -247,6 +252,7 @@ public class RightClick implements Listener {
                         itemStack.setAmount(itemStack.getAmount() - 1);
                         SprinklerManager.Cache.put(location.add(0,1,0), sprinklerData);
                         IAFurniture.placeFurniture(sprinkler.get().getNamespacedID_2(),location);
+                        AdventureManager.playerSound(player, ConfigReader.Sounds.placeSprinklerSource, ConfigReader.Sounds.placeSprinklerKey);
                         return;
                     }
                     if (ConfigReader.Message.hasCropInfo && id.equals(ConfigReader.Basic.soilDetector) && action == Action.RIGHT_CLICK_BLOCK){

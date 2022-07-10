@@ -1,5 +1,6 @@
 package net.momirealms.customcrops;
 
+import net.kyori.adventure.key.Key;
 import net.momirealms.customcrops.fertilizer.Fertilizer;
 import net.momirealms.customcrops.fertilizer.QualityCrop;
 import net.momirealms.customcrops.fertilizer.RetainingSoil;
@@ -12,15 +13,13 @@ import net.momirealms.customcrops.requirements.YPos;
 import net.momirealms.customcrops.utils.*;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class ConfigReader {
 
@@ -44,6 +43,7 @@ public class ConfigReader {
         cropLoad();
         fertilizerLoad();
         Season.loadSeason();
+        Sounds.loadSound();
     }
 
     public static class Config{
@@ -64,10 +64,13 @@ public class ConfigReader {
         public static int yMin;
         public static int yMax;
         public static int sprinklerRefill;
+        public static int waterCanRefill;
         public static int timeToGrow;
+        public static int timeToWork;
         public static boolean logTime;
         public static boolean onlyLoadedGrow;
         public static boolean quality;
+        public static boolean canAddWater;
         public static double quality_1;
         public static double quality_2;
 
@@ -87,6 +90,7 @@ public class ConfigReader {
             });
 
             timeToGrow = config.getInt("config.time-to-grow",60)*20;
+            timeToWork = config.getInt("config.time-to-work",30)*20;
 
             //异步读取时间
             asyncCheck = config.getBoolean("config.async-time-check",false);
@@ -131,6 +135,8 @@ public class ConfigReader {
             }
 
             sprinklerRefill = config.getInt("config.sprinkler-refill",2);
+            waterCanRefill = config.getInt("config.water-can-refill",1);
+            canAddWater = config.getBoolean("config.water-can-add-water-to-sprinkler",true);
 
             //农作物生长的白名单世界
             worlds = new ArrayList<>();
@@ -483,5 +489,48 @@ public class ConfigReader {
             });
         }
         AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><color:#FFEBCD>已载入 <white>" + FERTILIZERS.size() + " <color:#FFEBCD>种肥料!");
+    }
+
+    public static class Sounds{
+
+        public static Key waterPotKey;
+        public static net.kyori.adventure.sound.Sound.Source waterPotSource;
+
+        public static Key addWaterToCanKey;
+        public static net.kyori.adventure.sound.Sound.Source addWaterToCanSource;
+
+        public static Key addWaterToSprinklerKey;
+        public static net.kyori.adventure.sound.Sound.Source addWaterToSprinklerSource;
+
+        public static Key placeSprinklerKey;
+        public static net.kyori.adventure.sound.Sound.Source placeSprinklerSource;
+
+        public static Key plantSeedKey;
+        public static net.kyori.adventure.sound.Sound.Source plantSeedSource;
+
+        public static Key useFertilizerKey;
+        public static net.kyori.adventure.sound.Sound.Source useFertilizerSource;
+
+        public static void loadSound(){
+            YamlConfiguration config = getConfig("sounds.yml");
+
+            waterPotKey = Key.key(config.getString("water-pot.sound"));
+            waterPotSource = net.kyori.adventure.sound.Sound.Source.valueOf(config.getString("water-pot.type").toUpperCase());
+
+            addWaterToCanKey = Key.key(config.getString("add-water-to-can.sound"));
+            addWaterToCanSource = net.kyori.adventure.sound.Sound.Source.valueOf(config.getString("add-water-to-can.type").toUpperCase());
+
+            addWaterToSprinklerKey = Key.key(config.getString("add-water-to-sprinkler.sound"));
+            addWaterToSprinklerSource = net.kyori.adventure.sound.Sound.Source.valueOf(config.getString("add-water-to-sprinkler.type").toUpperCase());
+
+            placeSprinklerKey = Key.key(config.getString("place-sprinkler.sound"));
+            placeSprinklerSource = net.kyori.adventure.sound.Sound.Source.valueOf(config.getString("place-sprinkler.type").toUpperCase());
+
+            plantSeedKey = Key.key(config.getString("plant-seed.sound"));
+            plantSeedSource = net.kyori.adventure.sound.Sound.Source.valueOf(config.getString("plant-seed.type").toUpperCase());
+
+            useFertilizerKey = Key.key(config.getString("use-fertilizer.sound"));
+            useFertilizerSource = net.kyori.adventure.sound.Sound.Source.valueOf(config.getString("use-fertilizer.type").toUpperCase());
+        }
     }
 }

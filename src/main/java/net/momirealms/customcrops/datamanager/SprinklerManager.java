@@ -12,9 +12,11 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.MemorySection;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.scheduler.BukkitScheduler;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class SprinklerManager {
@@ -81,6 +83,7 @@ public class SprinklerManager {
             AdventureManager.consoleMessage("性能监测: 洒水器数据更新" + (time2-time1) + "ms");
         }
         if (data.contains(worldName)){
+            BukkitScheduler bukkitScheduler = Bukkit.getScheduler();
             data.getConfigurationSection(worldName).getKeys(false).forEach(chunk ->{
                 String[] split = StringUtils.split(chunk,",");
                 World world = Bukkit.getWorld(worldName);
@@ -88,23 +91,26 @@ public class SprinklerManager {
                     data.getConfigurationSection(worldName + "." + chunk).getValues(false).forEach((key, value) -> {
                         String[] coordinate = StringUtils.split(key, ",");
                         Location location = new Location(world,Double.parseDouble(coordinate[0])+0.5,Double.parseDouble(coordinate[1])+0.5,Double.parseDouble(coordinate[2])+0.5);
+                        int random = new Random().nextInt(ConfigReader.Config.timeToWork);
                         if (value instanceof MemorySection map){
-                            Bukkit.getScheduler().callSyncMethod(CustomCrops.instance, ()->{
+                            bukkitScheduler.callSyncMethod(CustomCrops.instance, ()->{
                                 int water = (int) map.get("water");
                                 int range = (int) map.get("range");
                                 if(!IAFurniture.getFromLocation(location, world)){
                                     data.set(worldName + "." + chunk + "." + key, null);
                                     return null;
                                 }
-                                if (range == 0) data.set(worldName + "." + chunk + "." + key, null);
                                 if (water > 0){
                                     data.set(worldName + "." + chunk + "." + key + ".water", water - 1);
-                                    for(int i = -range; i <= range; i++){
-                                        for (int j = -range; j <= range; j++){
-                                            waterPot(location.clone().add(i,-1,j));
+                                    bukkitScheduler.runTaskLater(CustomCrops.instance, ()-> {
+                                        for(int i = -range; i <= range; i++){
+                                            for (int j = -range; j <= range; j++){
+                                                waterPot(location.clone().add(i,-1,j));
+                                            }
                                         }
-                                    }
+                                    }, random);
                                 }
+                                if (range == 0) data.set(worldName + "." + chunk + "." + key, null);
                                 return null;
                             });
                         }
