@@ -129,6 +129,62 @@ public class SprinklerManager {
         }
     }
 
+    public void sprinklerWorkAll(){
+        Long time1 = System.currentTimeMillis();
+        updateData();
+        Long time2 = System.currentTimeMillis();
+        if (ConfigReader.Config.logTime){
+            AdventureManager.consoleMessage("性能监测: 洒水器数据更新" + (time2-time1) + "ms");
+        }
+        Bukkit.getWorlds().forEach(world -> {
+            String worldName = world.getName();
+            if (data.contains(worldName)){
+                BukkitScheduler bukkitScheduler = Bukkit.getScheduler();
+                data.getConfigurationSection(worldName).getKeys(false).forEach(chunk ->{
+                    String[] split = StringUtils.split(chunk,",");
+                    if (ConfigReader.Config.onlyLoadedGrow || world.isChunkLoaded(Integer.parseInt(split[0]), Integer.parseInt(split[1]))) {
+                        data.getConfigurationSection(worldName + "." + chunk).getValues(false).forEach((key, value) -> {
+                            String[] coordinate = StringUtils.split(key, ",");
+                            Location location = new Location(world,Double.parseDouble(coordinate[0])+0.5,Double.parseDouble(coordinate[1])+0.5,Double.parseDouble(coordinate[2])+0.5);
+                            int random = new Random().nextInt(ConfigReader.Config.timeToWork);
+                            if (value instanceof MemorySection map){
+                                bukkitScheduler.callSyncMethod(CustomCrops.instance, ()->{
+                                    int water = (int) map.get("water");
+                                    int range = (int) map.get("range");
+                                    if(!IAFurniture.getFromLocation(location, world)){
+                                        data.set(worldName + "." + chunk + "." + key, null);
+                                        return null;
+                                    }
+                                    if (water > 0){
+                                        data.set(worldName + "." + chunk + "." + key + ".water", water - 1);
+                                        bukkitScheduler.runTaskLater(CustomCrops.instance, ()-> {
+                                            for(int i = -range; i <= range; i++){
+                                                for (int j = -range; j <= range; j++){
+                                                    waterPot(location.clone().add(i,-1,j));
+                                                }
+                                            }
+                                        }, random);
+                                    }
+                                    if (range == 0) data.set(worldName + "." + chunk + "." + key, null);
+                                    return null;
+                                });
+                            }
+                        });
+                    }
+                });
+            }
+        });
+        Long time3 = System.currentTimeMillis();
+        if(ConfigReader.Config.logTime){
+            AdventureManager.consoleMessage("性能监测: 洒水器工作过程" + (time3-time2) + "ms");
+        }
+        saveData();
+        Long time4 = System.currentTimeMillis();
+        if(ConfigReader.Config.logTime){
+            AdventureManager.consoleMessage("性能监测: 洒水器数据保存" + (time4-time3) + "ms");
+        }
+    }
+
     private void waterPot(Location potLoc) {
         CustomBlock cb = CustomBlock.byAlreadyPlaced(potLoc.getBlock());
         if(cb != null){

@@ -23,12 +23,21 @@ public class TimeCheck extends BukkitRunnable {
                     }
                 }
                 if(time == cropGrowTime){
-                    Bukkit.getScheduler().runTaskAsynchronously(CustomCrops.instance, () -> {
-                        plugin.getCropManager().cropGrow(world.getName());
-                    });
-                    Bukkit.getScheduler().runTaskLaterAsynchronously(CustomCrops.instance, ()->{
-                        plugin.getSprinklerManager().sprinklerWork(world.getName());
-                    }, ConfigReader.Config.timeToGrow);
+                    if (ConfigReader.Config.allWorld){
+                        Bukkit.getScheduler().runTaskAsynchronously(CustomCrops.instance, () -> {
+                            plugin.getCropManager().cropGrowAll();
+                        });
+                        Bukkit.getScheduler().runTaskLaterAsynchronously(CustomCrops.instance, ()->{
+                            plugin.getSprinklerManager().sprinklerWorkAll();
+                        }, ConfigReader.Config.timeToGrow);
+                    }else {
+                        Bukkit.getScheduler().runTaskAsynchronously(CustomCrops.instance, () -> {
+                            plugin.getCropManager().cropGrow(world.getName());
+                        });
+                        Bukkit.getScheduler().runTaskLaterAsynchronously(CustomCrops.instance, ()->{
+                            plugin.getSprinklerManager().sprinklerWork(world.getName());
+                        }, ConfigReader.Config.timeToGrow);
+                    }
                 }
             });
         });

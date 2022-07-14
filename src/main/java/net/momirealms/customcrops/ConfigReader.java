@@ -13,7 +13,6 @@ import net.momirealms.customcrops.requirements.YPos;
 import net.momirealms.customcrops.utils.*;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -53,11 +52,6 @@ public class ConfigReader {
         public static List<Long> cropGrowTimeList;
         public static List<Integration> integration;
         public static boolean asyncCheck;
-//        public static boolean useBoneMeal;
-//        public static boolean consumeWater;
-//        public static double boneMealChance;
-//        public static String success;
-//        public static String failure;
         public static boolean enableLimit;
         public static int cropLimit;
         public static int sprinklerLimit;
@@ -71,6 +65,7 @@ public class ConfigReader {
         public static boolean onlyLoadedGrow;
         public static boolean quality;
         public static boolean canAddWater;
+        public static boolean allWorld;
         public static double quality_1;
         public static double quality_2;
 
@@ -92,19 +87,10 @@ public class ConfigReader {
             timeToGrow = config.getInt("config.time-to-grow",60)*20;
             timeToWork = config.getInt("config.time-to-work",30)*20;
 
-            //异步读取时间
             asyncCheck = config.getBoolean("config.async-time-check",false);
             logTime = config.getBoolean("config.log-time-consume",false);
             onlyLoadedGrow = !config.getBoolean("config.only-grow-in-loaded-chunks",true);
-
-            //骨粉设置（已废弃）
-//            useBoneMeal = config.getBoolean("config.bone-meal.enable",false);
-//            if (useBoneMeal){
-//                boneMealChance = config.getDouble("config.bone-meal.chance");
-//                consumeWater = config.getBoolean("config.bone-meal.consume-water");
-//                success = config.getString("config.bone-meal.particle.success");
-//                failure = config.getString("config.bone-meal.particle.failure");
-//            }
+            allWorld = config.getBoolean("config.all-world-grow",false);
 
             //数量与高度限制
             enableLimit = config.getBoolean("config.limit.enable",true);
@@ -121,7 +107,7 @@ public class ConfigReader {
                 yMax = 320;
             }
 
-            //农作物品质处理
+            //农作物品质
             quality = config.getBoolean("config.quality.enable",true);
             if (quality){
                 String[] split = StringUtils.split(config.getString("config.quality.default-ratio","17/2/1"), "/");

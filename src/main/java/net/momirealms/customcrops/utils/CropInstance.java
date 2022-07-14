@@ -31,43 +31,18 @@ public class CropInstance {
     public double getGiantChance() { return this.giantChance; }
     public List<Requirement> getRequirements() {return requirements;}
     public List<String> getSeasons() {return seasons;}
+    public String getQuality_1() { return quality_1; }
+    public String getQuality_2() { return quality_2; }
+    public String getQuality_3() { return quality_3; }
+    public int getMax() { return max; }
+    public int getMin() { return min; }
 
-    public String getQuality_1() {
-        return quality_1;
-    }
-
-    public String getQuality_2() {
-        return quality_2;
-    }
-
-    public String getQuality_3() {
-        return quality_3;
-    }
-
-    public int getMax() {
-        return max;
-    }
-    public int getMin() {
-        return min;
-    }
-
-    public void setReturnStage(String stage){
-        this.returnStage = stage;
-    }
-    public void setGiant(String giant) {this.giant = giant; }
+    public void setReturnStage(String stage){ this.returnStage = stage; }
+    public void setGiant(String giant) { this.giant = giant; }
     public void setGiantChance(double giantChance) { this.giantChance = giantChance; }
     public void setRequirements(List<Requirement> requirements) { this.requirements = requirements; }
     public void setSeasons(List<String> seasons) { this.seasons = seasons; }
-
-    public void setQuality_1(String quality_1) {
-        this.quality_1 = quality_1;
-    }
-
-    public void setQuality_2(String quality_2) {
-        this.quality_2 = quality_2;
-    }
-
-    public void setQuality_3(String quality_3) {
-        this.quality_3 = quality_3;
-    }
+    public void setQuality_1(String quality_1) { this.quality_1 = quality_1; }
+    public void setQuality_2(String quality_2) { this.quality_2 = quality_2; }
+    public void setQuality_3(String quality_3) { this.quality_3 = quality_3; }
 }

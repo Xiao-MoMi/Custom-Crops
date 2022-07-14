@@ -5,7 +5,7 @@ public class QualityCrop implements Fertilizer{
     private int[] chance;
     private String key;
     private int times;
-    private boolean before;
+    private final boolean before;
     private String name;
 
     public QualityCrop(String key, int times, int[] chance, boolean before) {

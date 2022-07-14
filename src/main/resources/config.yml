@@ -67,3 +67,6 @@ config:
   #否则农作物生长到最后一阶段不会从数据中清除，过大的数据量
   #可能会导致服务器严重卡顿
   only-grow-in-loaded-chunks: true
+
+  #在此模式下白名单世界将作为触发所有世界农作物生长的时间标准
+  all-world-grow: true

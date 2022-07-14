@@ -5,7 +5,7 @@ public class SpeedGrow implements Fertilizer{
     private double chance;
     private String key;
     private int times;
-    private boolean before;
+    private final boolean before;
     private String name;
 
     public SpeedGrow(String key, int times, double chance, boolean before){
