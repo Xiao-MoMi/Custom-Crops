@@ -5,7 +5,7 @@ plugins {
 
 
 group = 'net.momirealms'
-version = '1.5.0-SNAPSHOT'
+version = '1.5.9'
 
 repositories {
     mavenCentral()
@@ -45,19 +45,25 @@ repositories {
         name = "jitpack-repo"
         url = "https://jitpack.io"
     }
+    maven {
+        name = 'glaremasters repo'
+        url = 'https://repo.glaremasters.me/repository/towny/'
+    }
 }
 
 dependencies {
+    compileOnly "com.github.angeschossen:LandsAPI:6.5.1"
     compileOnly 'com.destroystokyo.paper:paper-api:1.16.5-R0.1-SNAPSHOT'
-    compileOnly group: "com.comphenix.protocol", name: "ProtocolLib", version: "4.8.0"
+    compileOnly 'com.comphenix.protocol:ProtocolLib:4.8.0'
     compileOnly 'me.clip:placeholderapi:2.11.1'
     compileOnly 'com.sk89q.worldguard:worldguard-bukkit:7.0.7'
     compileOnly 'io.lumine:Mythic-Dist:5.0.3-SNAPSHOT'
     compileOnly 'com.github.LoneDev6:api-itemsadder:3.2.0c-beta6'
-    compileOnly fileTree(dir:'libs',includes:['*jar'])
-    implementation("net.kyori:adventure-api:4.11.0")
-    implementation("net.kyori:adventure-platform-bukkit:4.1.1")
-    implementation("net.kyori:adventure-text-minimessage:4.11.0")
+    compileOnly 'com.palmergames.bukkit.towny:towny:0.98.2.0'
+    compileOnly fileTree(dir:'libs',includes:['*.jar'])
+    compileOnly("net.kyori:adventure-api:4.11.0")
+    compileOnly("net.kyori:adventure-platform-bukkit:4.1.1")
+    compileOnly("net.kyori:adventure-text-minimessage:4.11.0")
     implementation 'de.tr7zw:item-nbt-api:2.10.0'
 }
 
@@ -91,6 +97,5 @@ tasks.withType(JavaCompile) {
 }
 
 shadowJar {
-    relocate 'net.kyori', 'libs.kyori'
     relocate 'de.tr7zw', 'libs.tr7zw'
 }
