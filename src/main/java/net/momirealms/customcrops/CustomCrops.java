@@ -108,9 +108,9 @@ public final class CustomCrops extends JavaPlugin {
         }
 
         //备份数据
-        AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><color:#F5DEB3>插件数据自动备份中...");
+        getLogger().info("插件数据自动备份中...");
         BackUp.backUpData();
-        AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><color:#F5DEB3>备份已完成!");
+        getLogger().info("备份已完成...");
 
         //清除悬浮展示实体
         HoloUtil.cache.keySet().forEach(player -> {
@@ -125,8 +125,11 @@ public final class CustomCrops extends JavaPlugin {
             this.cropTimerAsync.stopTimer(cropTimerAsync.getTaskID());
         }
 
-        //卸载完成
-        AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><color:#F5DEB3>插件已卸载！作者：小默米 QQ:3266959688");
+        if (adventure != null) {
+            adventure.close();
+        }
+
+        instance = null;
     }
 
     public CropManager getCropManager() { return this.cropManager; }
