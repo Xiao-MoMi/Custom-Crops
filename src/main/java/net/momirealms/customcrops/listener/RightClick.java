@@ -1,3 +1,20 @@
+/*
+ *  Copyright (C) <2022> <XiaoMoMi>
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package net.momirealms.customcrops.listener;
 
 import de.tr7zw.changeme.nbtapi.NBTCompound;
@@ -84,9 +101,17 @@ public class RightClick implements Listener {
                                 }
                                 Label_out:
                                 if (ConfigReader.Season.enable && cropInstance.getSeasons() != null){
-                                    for (String season : cropInstance.getSeasons()) {
-                                        if (season.equals(SeasonManager.SEASON.get(location.getWorld().getName()))){
-                                            break Label_out;
+                                    if (!ConfigReader.Config.allWorld){
+                                        for (String season : cropInstance.getSeasons()) {
+                                            if (season.equals(SeasonManager.SEASON.get(location.getWorld().getName()))){
+                                                break Label_out;
+                                            }
+                                        }
+                                    }else {
+                                        for(String season : cropInstance.getSeasons()){
+                                            if (season.equals(SeasonManager.SEASON.get(ConfigReader.Config.referenceWorld))) {
+                                                break Label_out;
+                                            }
                                         }
                                     }
                                     if(ConfigReader.Season.greenhouse){
@@ -216,17 +241,17 @@ public class RightClick implements Listener {
                                 }else {
                                     itemStack.setAmount(itemStack.getAmount() - 1);
                                     AdventureManager.playerSound(player, ConfigReader.Sounds.useFertilizerSource, ConfigReader.Sounds.useFertilizerKey);
-                                    addFertilizer(fertilizerConfig, block);
+                                    addFertilizer(fertilizerConfig, block.getLocation());
                                 }
                             }else {
                                 itemStack.setAmount(itemStack.getAmount() - 1);
                                 AdventureManager.playerSound(player, ConfigReader.Sounds.useFertilizerSource, ConfigReader.Sounds.useFertilizerKey);
-                                addFertilizer(fertilizerConfig, block);
+                                addFertilizer(fertilizerConfig, block.getLocation());
                             }
                         }else if (namespacedID.contains("_stage_")){
                             if (!fertilizerConfig.isBefore()){
                                 itemStack.setAmount(itemStack.getAmount() - 1);
-                                addFertilizer(fertilizerConfig, block);
+                                addFertilizer(fertilizerConfig, block.getLocation().subtract(0,1,0));
                                 AdventureManager.playerSound(player, ConfigReader.Sounds.useFertilizerSource, ConfigReader.Sounds.useFertilizerKey);
                             }else {
                                 AdventureManager.playerMessage(player, ConfigReader.Message.prefix + ConfigReader.Message.beforePlant);
@@ -265,24 +290,24 @@ public class RightClick implements Listener {
                         String namespacedID = customBlock.getNamespacedID();
                         if (namespacedID.contains("_stage_")){
                             Location location = block.getLocation().subtract(0,1,0);
-                            Fertilizer fertilizer = PotManager.Cache.get(location);
+                            Fertilizer fertilizer = PotManager.Cache.get(SimpleLocation.fromLocation(location));
                             if (fertilizer != null){
                                 Fertilizer config = ConfigReader.FERTILIZERS.get(fertilizer.getKey());
                                 String name = config.getName();
                                 int max_times = config.getTimes();
-                                if(HoloUtil.cache.get(player) == null) {
-                                    HoloUtil.showHolo(ConfigReader.Message.cropText.replace("{fertilizer}", name).replace("{times}", String.valueOf(fertilizer.getTimes())).replace("{max_times}", String.valueOf(max_times)), player, location.add(0.5, ConfigReader.Message.cropOffset, 0.5), ConfigReader.Message.cropTime);
+                                if(HoloUtil.cache.get(location.add(0.5, ConfigReader.Message.cropOffset, 0.5)) == null) {
+                                    HoloUtil.showHolo(ConfigReader.Message.cropText.replace("{fertilizer}", name).replace("{times}", String.valueOf(fertilizer.getTimes())).replace("{max_times}", String.valueOf(max_times)), player, location, ConfigReader.Message.cropTime);
                                 }
                             }
                         }else if(namespacedID.equals(ConfigReader.Basic.pot) || namespacedID.equals(ConfigReader.Basic.watered_pot)){
                             Location location = block.getLocation();
-                            Fertilizer fertilizer = PotManager.Cache.get(block.getLocation());
+                            Fertilizer fertilizer = PotManager.Cache.get(SimpleLocation.fromLocation(block.getLocation()));
                             if (fertilizer != null){
                                 Fertilizer config = ConfigReader.FERTILIZERS.get(fertilizer.getKey());
                                 String name = config.getName();
                                 int max_times = config.getTimes();
-                                if(HoloUtil.cache.get(player) == null){
-                                    HoloUtil.showHolo(ConfigReader.Message.cropText.replace("{fertilizer}", name).replace("{times}", String.valueOf(fertilizer.getTimes())).replace("{max_times}", String.valueOf(max_times)), player, location.add(0.5,ConfigReader.Message.cropOffset,0.5), ConfigReader.Message.cropTime);
+                                if(HoloUtil.cache.get(location.add(0.5,ConfigReader.Message.cropOffset,0.5)) == null){
+                                    HoloUtil.showHolo(ConfigReader.Message.cropText.replace("{fertilizer}", name).replace("{times}", String.valueOf(fertilizer.getTimes())).replace("{max_times}", String.valueOf(max_times)), player, location, ConfigReader.Message.cropTime);
                                 }
                             }
                         }
@@ -352,16 +377,16 @@ public class RightClick implements Listener {
         coolDown.remove(event.getPlayer());
     }
 
-    private void addFertilizer(Fertilizer fertilizerConfig, Block block) {
+    private void addFertilizer(Fertilizer fertilizerConfig, Location location) {
         if (fertilizerConfig instanceof QualityCrop config){
             QualityCrop qualityCrop = new QualityCrop(config.getKey(), config.getTimes(), config.getChance(), config.isBefore());
-            PotManager.Cache.put(block.getLocation(), qualityCrop);
+            PotManager.Cache.put(SimpleLocation.fromLocation(location), qualityCrop);
         }else if (fertilizerConfig instanceof SpeedGrow config){
             SpeedGrow speedGrow = new SpeedGrow(config.getKey(), config.getTimes(),config.getChance(), config.isBefore());
-            PotManager.Cache.put(block.getLocation(), speedGrow);
+            PotManager.Cache.put(SimpleLocation.fromLocation(location), speedGrow);
         }else if (fertilizerConfig instanceof RetainingSoil config){
             RetainingSoil retainingSoil = new RetainingSoil(config.getKey(), config.getTimes(),config.getChance(), config.isBefore());
-            PotManager.Cache.put(block.getLocation(), retainingSoil);
+            PotManager.Cache.put(SimpleLocation.fromLocation(location), retainingSoil);
         }
     }
 

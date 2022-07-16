@@ -1,3 +1,20 @@
+/*
+ *  Copyright (C) <2022> <XiaoMoMi>
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package net.momirealms.customcrops.listener;
 
 import dev.lone.itemsadder.api.CustomBlock;
@@ -9,6 +26,7 @@ import net.momirealms.customcrops.fertilizer.Fertilizer;
 import net.momirealms.customcrops.fertilizer.QualityCrop;
 import net.momirealms.customcrops.integrations.Integration;
 import net.momirealms.customcrops.utils.CropInstance;
+import net.momirealms.customcrops.utils.SimpleLocation;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -51,7 +69,7 @@ public class BreakBlock implements Listener {
                 int random = current.nextInt(cropInstance.getMin(), cropInstance.getMax() + 1);
                 Location itemLoc = location.clone().add(0.5,0.2,0.5);
                 World world = location.getWorld();
-                Fertilizer fertilizer = PotManager.Cache.get(location.clone().subtract(0,1,0));
+                Fertilizer fertilizer = PotManager.Cache.get(SimpleLocation.fromLocation(location.clone().subtract(0,1,0)));
                 if (fertilizer != null){
                     if (fertilizer instanceof QualityCrop qualityCrop){
                         int[] weights = qualityCrop.getChance();
@@ -79,7 +97,7 @@ public class BreakBlock implements Listener {
         }
         else if(namespacedId.equalsIgnoreCase(ConfigReader.Basic.watered_pot) || namespacedId.equalsIgnoreCase(ConfigReader.Basic.pot)){
             Location location = event.getBlock().getLocation();
-            PotManager.Cache.remove(location);
+            PotManager.Cache.remove(SimpleLocation.fromLocation(location));
             World world = location.getWorld();
             Block blockUp = location.add(0,1,0).getBlock();
             for (Integration integration : ConfigReader.Config.integration){
@@ -99,7 +117,7 @@ public class BreakBlock implements Listener {
                             ThreadLocalRandom current = ThreadLocalRandom.current();
                             int random = current.nextInt(cropInstance.getMin(), cropInstance.getMax() + 1);
                             Location itemLoc = location.clone().add(0.5,0.2,0.5);
-                            Fertilizer fertilizer = PotManager.Cache.get(location.clone().subtract(0,1,0));
+                            Fertilizer fertilizer = PotManager.Cache.get(SimpleLocation.fromLocation(location.clone().subtract(0,1,0)));
                             if (fertilizer != null){
                                 if (fertilizer instanceof QualityCrop qualityCrop){
                                     int[] weights = qualityCrop.getChance();

@@ -1,3 +1,20 @@
+/*
+ *  Copyright (C) <2022> <XiaoMoMi>
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package net.momirealms.customcrops.listener;
 
 import de.tr7zw.changeme.nbtapi.NBTCompound;
@@ -134,8 +151,8 @@ public class InteractEntity implements Listener {
                 if (ConfigReader.Message.hasSprinklerInfo){
                     String string = ConfigReader.Message.sprinklerLeft + ConfigReader.Message.sprinklerFull.repeat(currentWater) +
                             ConfigReader.Message.sprinklerEmpty.repeat(maxWater - currentWater) + ConfigReader.Message.sprinklerRight;
-                    if(HoloUtil.cache.get(player) == null) {
-                        HoloUtil.showHolo(string.replace("{max_water}", String.valueOf(maxWater)).replace("{water}", String.valueOf(currentWater)), player, location.add(0, ConfigReader.Message.sprinklerOffset,0), ConfigReader.Message.sprinklerTime);
+                    if(HoloUtil.cache.get(location.add(0, ConfigReader.Message.sprinklerOffset,0)) == null) {
+                        HoloUtil.showHolo(string.replace("{max_water}", String.valueOf(maxWater)).replace("{water}", String.valueOf(currentWater)), player, location, ConfigReader.Message.sprinklerTime);
                     }
                 }
             }

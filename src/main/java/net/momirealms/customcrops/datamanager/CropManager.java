@@ -1,3 +1,20 @@
+/*
+ *  Copyright (C) <2022> <XiaoMoMi>
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package net.momirealms.customcrops.datamanager;
 
 import dev.lone.itemsadder.api.CustomBlock;
@@ -9,6 +26,7 @@ import net.momirealms.customcrops.fertilizer.Fertilizer;
 import net.momirealms.customcrops.fertilizer.RetainingSoil;
 import net.momirealms.customcrops.fertilizer.SpeedGrow;
 import net.momirealms.customcrops.utils.CropInstance;
+import net.momirealms.customcrops.utils.SimpleLocation;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -137,7 +155,7 @@ public class CropManager {
                             }
                             int nextStage = Integer.parseInt(cropNameList[2]) + 1;
                             if (CustomBlock.getInstance(StringUtils.chop(namespacedID) + nextStage) != null) {
-                                Fertilizer fertilizer = PotManager.Cache.get(potLocation);
+                                Fertilizer fertilizer = PotManager.Cache.get(SimpleLocation.fromLocation(potLocation));
                                 if (fertilizer != null){
                                     int times = fertilizer.getTimes();
                                     if (times > 0){
@@ -158,10 +176,10 @@ public class CropManager {
                                             addStage(potLocation, seedLocation, namespacedID, nextStage, random);
                                         }else {
                                             AdventureManager.consoleMessage("<red>[CustomCrops] 发现未知类型肥料,已自动清除错误数据!</red>");
-                                            PotManager.Cache.remove(potLocation);
+                                            PotManager.Cache.remove(SimpleLocation.fromLocation(potLocation));
                                         }
                                     }else {
-                                        PotManager.Cache.remove(potLocation);
+                                        PotManager.Cache.remove(SimpleLocation.fromLocation(potLocation));
                                     }
                                 }
                                 else {
@@ -265,7 +283,7 @@ public class CropManager {
                                 }
                                 int nextStage = Integer.parseInt(cropNameList[2]) + 1;
                                 if (CustomBlock.getInstance(StringUtils.chop(namespacedID) + nextStage) != null) {
-                                    Fertilizer fertilizer = PotManager.Cache.get(potLocation);
+                                    Fertilizer fertilizer = PotManager.Cache.get(SimpleLocation.fromLocation(potLocation));
                                     if (fertilizer != null){
                                         int times = fertilizer.getTimes();
                                         if (times > 0){
@@ -286,10 +304,10 @@ public class CropManager {
                                                 addStage(potLocation, seedLocation, namespacedID, nextStage, random);
                                             }else {
                                                 AdventureManager.consoleMessage("<red>[CustomCrops] 发现未知类型肥料,已自动清除错误数据!</red>");
-                                                PotManager.Cache.remove(potLocation);
+                                                PotManager.Cache.remove(SimpleLocation.fromLocation(potLocation));
                                             }
                                         }else {
-                                            PotManager.Cache.remove(potLocation);
+                                            PotManager.Cache.remove(SimpleLocation.fromLocation(potLocation));
                                         }
                                     }
                                     else {
@@ -350,9 +368,17 @@ public class CropManager {
                 }
             }
         }
-        for(String season : seasons){
-            if (season.equals(SeasonManager.SEASON.get(worldName))) {
-                return false;
+        if (!ConfigReader.Config.allWorld){
+            for(String season : seasons){
+                if (season.equals(SeasonManager.SEASON.get(worldName))) {
+                    return false;
+                }
+            }
+        }else {
+            for(String season : seasons){
+                if (season.equals(SeasonManager.SEASON.get(ConfigReader.Config.referenceWorld))) {
+                    return false;
+                }
             }
         }
         return true;

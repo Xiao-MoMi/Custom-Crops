@@ -1,3 +1,20 @@
+/*
+ *  Copyright (C) <2022> <XiaoMoMi>
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package net.momirealms.customcrops;
 
 import net.kyori.adventure.key.Key;
@@ -51,6 +68,7 @@ public class ConfigReader {
         public static List<String> worldNames;
         public static List<Long> cropGrowTimeList;
         public static List<Integration> integration;
+        public static String referenceWorld;
         public static boolean asyncCheck;
         public static boolean enableLimit;
         public static int cropLimit;
@@ -124,17 +142,26 @@ public class ConfigReader {
             waterCanRefill = config.getInt("config.water-can-refill",1);
             canAddWater = config.getBoolean("config.water-can-add-water-to-sprinkler",true);
 
-            //农作物生长的白名单世界
-            worlds = new ArrayList<>();
-            worldNames = config.getStringList("config.whitelist-worlds");
-            worldNames.forEach(worldName -> {
-                World world = Bukkit.getWorld(worldName);
-                if (world == null){
-                    AdventureManager.consoleMessage("<red>[CustomCrops] 世界" + worldName + "" + "不存在");
+            if (allWorld){
+                if (config.getStringList("config.whitelist-worlds").size() > 1){
+                    referenceWorld = config.getStringList("config.whitelist-worlds").get(0);
+                    AdventureManager.consoleMessage("<red>[CustomCrops] 全世界生长模式下只能填写一个白名单世界!");
                 }else {
-                    worlds.add(world);
+                    referenceWorld = config.getStringList("config.whitelist-worlds").get(0);
                 }
-            });
+            }else {
+                //农作物生长的白名单世界
+                worlds = new ArrayList<>();
+                worldNames = config.getStringList("config.whitelist-worlds");
+                worldNames.forEach(worldName -> {
+                    World world = Bukkit.getWorld(worldName);
+                    if (world == null){
+                        AdventureManager.consoleMessage("<red>[CustomCrops] 世界" + worldName + "" + "不存在");
+                    }else {
+                        worlds.add(world);
+                    }
+                });
+            }
 
             //处理插件兼容性
             integration = new ArrayList<>();
