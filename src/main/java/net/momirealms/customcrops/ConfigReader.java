@@ -149,20 +149,19 @@ public class ConfigReader {
                 }else {
                     referenceWorld = config.getStringList("config.whitelist-worlds").get(0);
                 }
-            }else {
-                //农作物生长的白名单世界
-                worlds = new ArrayList<>();
-                worldNames = config.getStringList("config.whitelist-worlds");
-                worldNames.forEach(worldName -> {
-                    World world = Bukkit.getWorld(worldName);
-                    if (world == null){
-                        AdventureManager.consoleMessage("<red>[CustomCrops] 世界" + worldName + "" + "不存在");
-                    }else {
-                        worlds.add(world);
-                    }
-                });
             }
 
+            //农作物生长的白名单世界
+            worlds = new ArrayList<>();
+            worldNames = config.getStringList("config.whitelist-worlds");
+            worldNames.forEach(worldName -> {
+                World world = Bukkit.getWorld(worldName);
+                if (world == null){
+                    AdventureManager.consoleMessage("<red>[CustomCrops] 世界" + worldName + "" + "不存在");
+                }else {
+                    worlds.add(world);
+                }
+            });
             //处理插件兼容性
             integration = new ArrayList<>();
             if(config.getBoolean("config.integration.Residence",false)){
