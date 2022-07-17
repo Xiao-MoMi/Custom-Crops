@@ -9,7 +9,7 @@ https://afdian.net/@xiaomomi
 Just compile it with -gradle shadowjar. Some premium plugins are used as 
 local libraries. If you don't need those integrations just remove them!
 Default ItemsAdder Config is also included in this project, which will 
-provide a template and help you understand how this plugin works.\
+provide a template and help you understand how this plugin works.
 
 ### Game Mechanics
 Crops will grow at a specified time which you will see in the config.\
@@ -22,25 +22,25 @@ which means crops only grow in a suitable season. Inproper
 seasons will make crops into dead stage but you can use 
 greenhouse glass to allow them grow all year.\
 Season change has two modes: Automatic and Command\
-You might use command to change season to sync other plugin's season for example RealisticSeason.\
+You might use command to change season to sync other plugin's season for example RealisticSeason.
 
 ### Fertilizer
 There are three templates of fertiziliers: \
 SpeedGrow: Crops have a small chance to grow two stages at a time\
 RetainingSoil: Pot have a small chance to retain its water after crops grow\
-QuailityCrops: When haveresting, players have a higher chance to get high quality crops.\
+QuailityCrops: When haveresting, players have a higher chance to get high quality crops.
 
 ### Sprinkler & WateringCan
 Sprinkler is a semi-automatic way of watering pot. You can add water to sprinkler with
 water bucket or watering can. Max storage and range can be customized.\
-Watering can also has its max storage and range. 1x1 1x3 3x3 and even 9x99 is supported!\
+Watering can also has its max storage and range. 1x1 1x3 3x3 and even 9x99 is supported!
 
 ### OverWeight
-If configurated, crops will still absorb water every day and have a very little chance to be OverWeight(gigantic) before it's dead.\
+If configurated, crops will still absorb water every day and have a very little chance to be OverWeight(gigantic) before it's dead.
 
 ### Quality
 Crops have three qualities, if you don't want this feature just disable it in config. 
-Quality is determined by the fertizilier players use and their luck!\
+Quality is determined by the fertizilier players use and their luck!
 
 ### Harvest Repeatedly
 If configurated, crops can be harvested with hands repeatedly and return to a specified stage.
@@ -59,10 +59,10 @@ NEVER SET "only-grow-in-loaded-chunks" TRUE IF YOU DON'T DISABLE THREE FEATURES 
 /customcrops backup # back up the data\
 /customcrops forcegrow [world] # force a specified world's crops to grow a stage\
 /customcrops forcewater [world] # force a specified world's sprinklers to work\
-/customcrops forcesave [file] # save the cache to file\
+/customcrops forcesave [file] # save the cache to file
 
 ### Placeholders
 %customcrops_season% show the season in the world\
 %customcrops_season_[world]%\
 %customcrops_nextseason% show the days to the next season\
-%customcrops_nextseason_[world]%\
+%customcrops_nextseason_[world]%
