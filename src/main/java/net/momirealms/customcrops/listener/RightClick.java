@@ -39,10 +39,7 @@ import net.momirealms.customcrops.requirements.PlantingCondition;
 import net.momirealms.customcrops.requirements.Requirement;
 import net.momirealms.customcrops.utils.*;
 import org.apache.commons.lang.StringUtils;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Sound;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
@@ -159,6 +156,7 @@ public class RightClick implements Listener {
                                     }
                                     nbtItem.setInteger("WaterAmount", water);
                                     player.getWorld().playSound(player.getLocation(), Sound.ITEM_BUCKET_FILL,1,1);
+
                                     if (ConfigReader.Message.hasWaterInfo){
                                         String string = ConfigReader.Message.waterLeft + ConfigReader.Message.waterFull.repeat(water) +
                                                 ConfigReader.Message.waterEmpty.repeat(wateringCan.getMax() - water) + ConfigReader.Message.waterRight;
@@ -170,6 +168,9 @@ public class RightClick implements Listener {
                                         List<String> lores = nbtItem.getCompound("display").getStringList("Lore");
                                         lores.clear();
                                         ConfigReader.Basic.waterLore.forEach(lore -> lores.add(GsonComponentSerializer.gson().serialize(MiniMessage.miniMessage().deserialize(lore.replace("{water_info}", string)))));
+                                    }
+                                    if (ConfigReader.Config.hasParticle){
+                                        player.getWorld().spawnParticle(Particle.WATER_SPLASH, block.getLocation().add(0.5,1, 0.5),15,0.1,0.1,0.1);
                                     }
                                     itemStack.setItemMeta(nbtItem.getItem().getItemMeta());
                                 }
@@ -201,7 +202,7 @@ public class RightClick implements Listener {
                                     ConfigReader.Basic.waterLore.forEach(lore -> lores.add(GsonComponentSerializer.gson().serialize(MiniMessage.miniMessage().deserialize(lore.replace("{water_info}", string)))));
                                 }
                                 itemStack.setItemMeta(nbtItem.getItem().getItemMeta());
-                            }else if (namespacedID.contains("_stage_")){
+                            } else if (namespacedID.contains("_stage_")){
                                 nbtItem.setInteger("WaterAmount", water - 1);
                                 AdventureManager.playerSound(player, ConfigReader.Sounds.waterPotSource, ConfigReader.Sounds.waterPotKey);
                                 waterPot(wateringCan.getWidth(), wateringCan.getLength(), block.getLocation().subtract(0,1,0), player.getLocation().getYaw());
@@ -363,6 +364,7 @@ public class RightClick implements Listener {
                         }
                         CustomBlock.remove(location);
                         CropInstance crop = ConfigReader.CROPS.get(cropNameList[0]);
+                        AdventureManager.playerSound(player, ConfigReader.Sounds.harvestSource, ConfigReader.Sounds.harvestKey);
                         if(crop.getReturnStage() != null){
                             CustomBlock.place(crop.getReturnStage(), location);
                         }
@@ -390,7 +392,10 @@ public class RightClick implements Listener {
         }
     }
 
-    private void waterPot(int width, int length, Location clickedLocation, float yaw){
+    private void waterPot(int width, int length, Location location, float yaw){
+        if (ConfigReader.Config.hasParticle){
+            location.getWorld().spawnParticle(Particle.WATER_SPLASH, location.clone().add(0.5,1.2,0.5),15,0.1,0.1, 0.1);
+        }
         int extend = width / 2;
         // -90~90 z+
         // -180~-90 & 90-180 z-
@@ -400,7 +405,7 @@ public class RightClick implements Listener {
             // -45 ~ 45
             if (yaw > -45) {
                 for (int i = -extend; i <= extend; i++) {
-                    Location tempLoc = clickedLocation.clone().add(i, 0, -1);
+                    Location tempLoc = location.clone().add(i, 0, -1);
                     for (int j = 0; j < length; j++){
                         tempLoc.add(0,0,1);
                         CustomBlock customBlock = CustomBlock.byAlreadyPlaced(tempLoc.getBlock());
@@ -416,7 +421,7 @@ public class RightClick implements Listener {
             // -135 ~ -45
             else {
                 for (int i = -extend; i <= extend; i++) {
-                    Location tempLoc = clickedLocation.clone().add(-1, 0, i);
+                    Location tempLoc = location.clone().add(-1, 0, i);
                     for (int j = 0; j < length; j++){
                         tempLoc.add(1,0,0);
                         CustomBlock customBlock = CustomBlock.byAlreadyPlaced(tempLoc.getBlock());
@@ -434,7 +439,7 @@ public class RightClick implements Listener {
             // 45 ~ 135
             if (yaw > 45 && yaw < 135) {
                 for (int i = -extend; i <= extend; i++) {
-                    Location tempLoc = clickedLocation.clone().add(1, 0, i);
+                    Location tempLoc = location.clone().add(1, 0, i);
                     for (int j = 0; j < length; j++){
                         tempLoc.subtract(1,0,0);
                         CustomBlock customBlock = CustomBlock.byAlreadyPlaced(tempLoc.getBlock());
@@ -450,7 +455,7 @@ public class RightClick implements Listener {
             // -180 ~ -135 135~180
             else {
                 for (int i = -extend; i <= extend; i++) {
-                    Location tempLoc = clickedLocation.clone().add(i, 0, 1);
+                    Location tempLoc = location.clone().add(i, 0, 1);
                     for (int j = 0; j < length; j++){
                         tempLoc.subtract(0,0,1);
                         CustomBlock customBlock = CustomBlock.byAlreadyPlaced(tempLoc.getBlock());

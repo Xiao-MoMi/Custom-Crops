@@ -22,3 +22,7 @@ plant-seed:
 use-fertilizer:
   sound: minecraft:item.hoe.till
   type: player
+#空手收获的音效
+harvest:
+  sound: minecraft:block.crop.break
+  type: player

@@ -43,6 +43,8 @@ config:
   water-can-refill: 1
   #是否可以用水壶为洒水器加水
   water-can-add-water-to-sprinkler: true
+  #使用水的时候是否产生粒子效果
+  water-particles: true
 
   #生长生效的世界
   whitelist-worlds:

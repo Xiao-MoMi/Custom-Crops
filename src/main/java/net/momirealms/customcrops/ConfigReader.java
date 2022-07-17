@@ -71,6 +71,7 @@ public class ConfigReader {
         public static String referenceWorld;
         public static boolean asyncCheck;
         public static boolean enableLimit;
+        public static boolean hasParticle;
         public static int cropLimit;
         public static int sprinklerLimit;
         public static int yMin;
@@ -109,6 +110,7 @@ public class ConfigReader {
             logTime = config.getBoolean("config.log-time-consume",false);
             onlyLoadedGrow = !config.getBoolean("config.only-grow-in-loaded-chunks",true);
             allWorld = config.getBoolean("config.all-world-grow",false);
+            hasParticle = config.getBoolean("config.water-particles", true);
 
             //数量与高度限制
             enableLimit = config.getBoolean("config.limit.enable",true);
@@ -523,26 +525,32 @@ public class ConfigReader {
         public static Key useFertilizerKey;
         public static net.kyori.adventure.sound.Sound.Source useFertilizerSource;
 
+        public static Key harvestKey;
+        public static net.kyori.adventure.sound.Sound.Source harvestSource;
+
         public static void loadSound(){
             YamlConfiguration config = getConfig("sounds.yml");
 
-            waterPotKey = Key.key(config.getString("water-pot.sound"));
-            waterPotSource = net.kyori.adventure.sound.Sound.Source.valueOf(config.getString("water-pot.type").toUpperCase());
+            waterPotKey = Key.key(config.getString("water-pot.sound", "minecraft:block.water.ambient"));
+            waterPotSource = net.kyori.adventure.sound.Sound.Source.valueOf(config.getString("water-pot.type","player").toUpperCase());
 
-            addWaterToCanKey = Key.key(config.getString("add-water-to-can.sound"));
-            addWaterToCanSource = net.kyori.adventure.sound.Sound.Source.valueOf(config.getString("add-water-to-can.type").toUpperCase());
+            addWaterToCanKey = Key.key(config.getString("add-water-to-can.sound", "minecraft:item.bucket.fill"));
+            addWaterToCanSource = net.kyori.adventure.sound.Sound.Source.valueOf(config.getString("add-water-to-can.type","player").toUpperCase());
 
-            addWaterToSprinklerKey = Key.key(config.getString("add-water-to-sprinkler.sound"));
-            addWaterToSprinklerSource = net.kyori.adventure.sound.Sound.Source.valueOf(config.getString("add-water-to-sprinkler.type").toUpperCase());
+            addWaterToSprinklerKey = Key.key(config.getString("add-water-to-sprinkler.sound", "minecraft:item.bucket.fill"));
+            addWaterToSprinklerSource = net.kyori.adventure.sound.Sound.Source.valueOf(config.getString("add-water-to-sprinkler.type","player").toUpperCase());
 
-            placeSprinklerKey = Key.key(config.getString("place-sprinkler.sound"));
-            placeSprinklerSource = net.kyori.adventure.sound.Sound.Source.valueOf(config.getString("place-sprinkler.type").toUpperCase());
+            placeSprinklerKey = Key.key(config.getString("place-sprinkler.sound", "minecraft:block.bone_block.place"));
+            placeSprinklerSource = net.kyori.adventure.sound.Sound.Source.valueOf(config.getString("place-sprinkler.type","player").toUpperCase());
 
-            plantSeedKey = Key.key(config.getString("plant-seed.sound"));
-            plantSeedSource = net.kyori.adventure.sound.Sound.Source.valueOf(config.getString("plant-seed.type").toUpperCase());
+            plantSeedKey = Key.key(config.getString("plant-seed.sound", "minecraft:item.hoe.till"));
+            plantSeedSource = net.kyori.adventure.sound.Sound.Source.valueOf(config.getString("plant-seed.type","player").toUpperCase());
 
-            useFertilizerKey = Key.key(config.getString("use-fertilizer.sound"));
-            useFertilizerSource = net.kyori.adventure.sound.Sound.Source.valueOf(config.getString("use-fertilizer.type").toUpperCase());
+            useFertilizerKey = Key.key(config.getString("use-fertilizer.sound", "minecraft:item.hoe.till"));
+            useFertilizerSource = net.kyori.adventure.sound.Sound.Source.valueOf(config.getString("use-fertilizer.type","player").toUpperCase());
+
+            harvestKey = Key.key(config.getString("harvest.sound", "minecraft:block.crop.break"));
+            harvestSource = net.kyori.adventure.sound.Sound.Source.valueOf(config.getString("harvest.type", "player").toUpperCase());
         }
     }
 }

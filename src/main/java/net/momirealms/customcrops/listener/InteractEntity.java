@@ -31,6 +31,7 @@ import net.momirealms.customcrops.utils.Sprinkler;
 import net.momirealms.customcrops.utils.WateringCan;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -77,7 +78,6 @@ public class InteractEntity implements Listener {
                 Sprinkler sprinkler = SprinklerManager.Cache.get(loc);
                 if (itemStack.getType() == Material.WATER_BUCKET){
                     itemStack.setType(Material.BUCKET);
-                    AdventureManager.playerSound(player, ConfigReader.Sounds.addWaterToSprinklerSource, ConfigReader.Sounds.addWaterToSprinklerKey);
                     if (sprinkler != null){
                         currentWater = sprinkler.getWater();
                         currentWater += ConfigReader.Config.sprinklerRefill;
@@ -94,6 +94,7 @@ public class InteractEntity implements Listener {
                         }
                         plugin.getSprinklerManager().data.set(path, currentWater);
                     }
+                    AdventureManager.playerSound(player, ConfigReader.Sounds.addWaterToSprinklerSource, ConfigReader.Sounds.addWaterToSprinklerKey);
                 }
                 else {
                     if (ConfigReader.Config.canAddWater && itemStack.getType() != Material.AIR){
