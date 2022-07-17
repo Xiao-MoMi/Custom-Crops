@@ -1,0 +1,263 @@
+info:
+  namespace: customcrops
+items:
+######################
+#       种植盆       #
+######################
+  pot:
+    item_flags:
+    - HIDE_ATTRIBUTES
+    - HIDE_ENCHANTS
+    display_name: 种植盆
+    resource:
+      material: PAPER
+      generate: false
+      model_path: 'base/pot'
+    specific_properties:
+      block:
+        placed_model:
+          type: REAL_NOTE
+          break_particles: ITEM
+        sound:
+          place:
+            name: block.wood.place
+          break:
+            name: block.wood.break
+  watered_pot:
+    display_name: 湿润的种植盆
+    resource:
+      material: PAPER
+      generate: false
+      model_path: 'base/watered_pot'
+    specific_properties:
+      block:
+        placed_model:
+          type: REAL_NOTE
+          break_particles: ITEM
+        cancel_drop: true
+        sound:
+          place:
+            name: block.wood.place
+          break:
+            name: block.wood.break
+
+######################
+#       洒水器       #
+######################
+  sprinkler_1:
+    display_name: 洒水器3D
+    resource:
+      material: PAPER
+      generate: false
+      model_path: 'base/sprinkler_1'
+    behaviours:
+      furniture:
+        entity: armor_stand
+        fixed_rotation: true
+        solid: false
+        cancel_drop: true
+        hitbox:
+          length: 1
+          width: 1
+          height: 1
+        placeable_on:
+          walls: false
+          ceiling: false
+          floor: true
+    events:
+      placed_armorstand:
+        break:
+          drop_item:
+            item: sprinkler_1_item
+  sprinkler_1_item:
+    display_name: 洒水器
+    resource:
+      generate: false
+      material: PAPER
+      model_path: base/sprinkler_1_item
+  sprinkler_2:
+    display_name: 优质洒水器3D
+    resource:
+      material: PAPER
+      generate: false
+      model_path: 'base/sprinkler_2'
+    behaviours:
+      furniture:
+        entity: armor_stand
+        fixed_rotation: true
+        solid: false
+        cancel_drop: true
+        hitbox:
+          length: 1
+          width: 1
+          height: 1
+        placeable_on:
+          walls: false
+          ceiling: false
+          floor: true
+    events:
+      placed_armorstand:
+        break:
+          drop_item:
+            item: sprinkler_2_item
+  sprinkler_2_item:
+    display_name: 优质洒水器
+    resource:
+      generate: false
+      material: PAPER
+      model_path: base/sprinkler_2_item
+
+####################
+#       温室       #
+####################
+  greenhouse_glass:
+    display_name: 温室玻璃
+    resource:
+      material: PAPER
+      generate: false
+      model_path: 'base/greenhouse_glass'
+    specific_properties:
+      block:
+        placed_model:
+          type: REAL_TRANSPARENT
+          break_particles: ITEM
+        sound:
+          place:
+            name: block.glass.place
+          break:
+            name: block.glass.break
+
+
+####################
+#       状态       #
+####################
+  crop_stage_death:
+    display_name: 死去的植物
+    resource:
+      generate: false
+      material: PAPER
+      model_path: base/death_crop
+    specific_properties:
+      block:
+        placed_model:
+          type: REAL_WIRE
+        cancel_drop: true
+        sound:
+          place:
+            name: block.azalea.place
+          break:
+            name: block.azalea.break
+
+####################
+#       水壶       #
+####################
+  watering_can_1:
+    display_name: 铜制水壶
+    resource:
+      generate: false
+      material: GOLDEN_HORSE_ARMOR
+      model_path: base/watering_can_1
+  watering_can_2:
+    display_name: 铁制水壶
+    resource:
+      generate: false
+      material: GOLDEN_HORSE_ARMOR
+      model_path: base/watering_can_2
+  watering_can_3:
+    display_name: 金制水壶
+    resource:
+      generate: false
+      material: GOLDEN_HORSE_ARMOR
+      model_path: base/watering_can_3
+  watering_can_4:
+    display_name: 铱金水壶
+    resource:
+      generate: false
+      material: GOLDEN_HORSE_ARMOR
+      model_path: base/watering_can_4
+
+
+####################
+#       肥料       #
+####################
+  speed_1:
+    display_name: 生长激素
+    resource:
+      generate: false
+      material: PAPER
+      model_path: base/speed_1
+  speed_2:
+    display_name: 高级生长激素
+    resource:
+      generate: false
+      material: PAPER
+      model_path: base/speed_2
+  speed_3:
+    display_name: 顶级生长激素
+    resource:
+      generate: false
+      material: PAPER
+      model_path: base/speed_3
+
+  retaining_1:
+    display_name: 初级保湿土壤
+    resource:
+      generate: false
+      material: PAPER
+      model_path: base/retaining_1
+  retaining_2:
+    display_name: 高级保湿土壤
+    resource:
+      generate: false
+      material: PAPER
+      model_path: base/retaining_2
+  retaining_3:
+    display_name: 顶级保湿土壤
+    resource:
+      generate: false
+      material: PAPER
+      model_path: base/retaining_3
+
+  quality_1:
+    display_name: 初级肥料
+    resource:
+      generate: false
+      material: PAPER
+      model_path: base/quality_1
+  quality_2:
+    display_name: 高级肥料
+    resource:
+      generate: false
+      material: PAPER
+      model_path: base/quality_2
+  quality_3:
+    display_name: 顶级肥料
+    resource:
+      generate: false
+      material: PAPER
+      model_path: base/quality_3
+
+
+####################
+#    土质探测器    #
+####################
+  soil_detector:
+    display_name: 土质探测器
+    lore:
+      - '&7用于查看使用的肥料种类和残余量'
+    resource:
+      generate: false
+      material: PAPER
+      model_path: base/soil_detector
+
+loots:
+  blocks:
+    watered_pot:
+      type: customcrops:watered_pot
+      items:
+        result_1:
+          item: customcrops:pot
+          min_amount: 1
+          max_amount: 1
+          chance: 100
+          ignore_fortune: true
