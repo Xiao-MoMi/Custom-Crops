@@ -1,7 +1,8 @@
+![2](https://user-images.githubusercontent.com/70987828/179509189-0f609f88-170a-4fc1-8b1b-19f10ba40647.png)
+
+
 # Custom-Crops
 StardewValley Like Farming System
-
-![1](https://user-images.githubusercontent.com/70987828/179508884-a32072ca-691a-411b-b0c3-15fe4dccf5c8.png)
 
 ### How to buy
 Unfortunately I only accept Chinese Payments.\
