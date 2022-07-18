@@ -6,7 +6,7 @@ StardewValley Like Farming System
 
 ### How to buy
 
-https://afdian.net/@xiaomomi\
+https://afdian.net/@xiaomomi
 
 https://polymart.org/resource/customcrops.2625
 
