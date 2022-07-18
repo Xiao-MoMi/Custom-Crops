@@ -51,22 +51,24 @@ public final class CustomCrops extends JavaPlugin {
     @Override
     public void onLoad(){
 
-        instance = this;
-        LibraryLoader.load("net.kyori","adventure-api","4.11.0","https://oss.sonatype.org/content/groups/public");
-        LibraryLoader.load("net.kyori","adventure-platform-api","4.1.1","https://oss.sonatype.org/content/groups/public");
-        LibraryLoader.load("net.kyori","adventure-platform-bukkit","4.1.1","https://oss.sonatype.org/content/groups/public");
-        LibraryLoader.load("net.kyori","adventure-platform-facet","4.1.1","https://oss.sonatype.org/content/groups/public");
-        LibraryLoader.load("net.kyori","adventure-text-minimessage","4.10.1","https://oss.sonatype.org/content/groups/public");
-        LibraryLoader.load("net.kyori","adventure-text-serializer-gson","4.11.0","https://oss.sonatype.org/content/groups/public");
-        LibraryLoader.load("net.kyori","adventure-text-serializer-plain","4.11.0","https://oss.sonatype.org/content/groups/public");
-        LibraryLoader.load("net.kyori","adventure-text-serializer-gson-legacy-impl","4.11.0","https://oss.sonatype.org/content/groups/public");
-        LibraryLoader.load("net.kyori","adventure-nbt","4.11.0","https://oss.sonatype.org/content/groups/public");
-        LibraryLoader.load("net.kyori","adventure-key","4.11.0","https://oss.sonatype.org/content/groups/public");
+//        instance = this;
+//        LibraryLoader.load("net.kyori","adventure-api","4.11.0","https://oss.sonatype.org/content/groups/public");
+//        LibraryLoader.load("net.kyori","adventure-platform-api","4.1.1","https://oss.sonatype.org/content/groups/public");
+//        LibraryLoader.load("net.kyori","adventure-platform-bukkit","4.1.1","https://oss.sonatype.org/content/groups/public");
+//        LibraryLoader.load("net.kyori","adventure-platform-facet","4.1.1","https://oss.sonatype.org/content/groups/public");
+//        LibraryLoader.load("net.kyori","adventure-text-serializer-gson","4.11.0","https://oss.sonatype.org/content/groups/public");
+//        LibraryLoader.load("net.kyori","adventure-text-serializer-plain","4.11.0","https://oss.sonatype.org/content/groups/public");
+//        LibraryLoader.load("net.kyori","adventure-text-serializer-gson-legacy-impl","4.11.0","https://oss.sonatype.org/content/groups/public");
+//        LibraryLoader.load("net.kyori","adventure-nbt","4.11.0","https://oss.sonatype.org/content/groups/public");
+//        LibraryLoader.load("net.kyori","adventure-key","4.11.0","https://oss.sonatype.org/content/groups/public");
+//        LibraryLoader.load("net.kyori","adventure-text-minimessage","4.11.0","https://oss.sonatype.org/content/groups/public");
+
     }
 
     @Override
     public void onEnable() {
 
+        instance = this;
         adventure = BukkitAudiences.create(instance);
 
         AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><color:#FFEBCD>Running on " + Bukkit.getVersion());

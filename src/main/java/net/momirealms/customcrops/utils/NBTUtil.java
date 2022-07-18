@@ -84,7 +84,7 @@ public class NBTUtil {
                 nbtCompound.setInteger(key, (Integer) value);
             }catch (ClassCastException e){
                 e.printStackTrace();
-                AdventureManager.consoleMessage("<red>[CustomFishing] 非Int类型数字必须加上强制转换标识!</red>");
+                AdventureManager.consoleMessage("<red>[CustomCrops] 非Int类型数字必须加上强制转换标识!</red>");
             }
         }
     }
