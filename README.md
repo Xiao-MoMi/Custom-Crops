@@ -51,7 +51,7 @@ If configurated, crops can be harvested with hands repeatedly and return to a sp
 3.Crops will not actually grow at the same time. It's laggy to replace so many blocks at the same time. They will grow in a random time(in seconds) which you can specified in the config after "grow-time"(7am default)\
 4.Defaultly crops will only grow in loaded chunks. If you want a mechanic similar to OriginRealms just DISABLE SEASON, GIGANTIC(OverWeight) and REPEATED HARVESTING.\
 In this way crops data will be removed from file after it comes to its max stage. In other words, plugin will only record the crops still on growing.\
-NEVER SET "only-grow-in-loaded-chunks" TRUE IF YOU DON'T DISABLE THREE FEATURES MENTIONED ABOVE.
+NEVER SET "only-grow-in-loaded-chunks" FALSE IF YOU DON'T DISABLE THE THREE FEATURES MENTIONED ABOVE.
 
 ### Commands
 /customcrops setseason [world] [season] # set a specified world's season\
