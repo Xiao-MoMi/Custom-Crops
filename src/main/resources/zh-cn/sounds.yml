@@ -1,27 +1,28 @@
+#使用水壶浇水的音效
 water-pot:
   sound: minecraft:block.water.ambient
   type: player
-
+#使用水壶装水的音效
 add-water-to-can:
   sound: minecraft:item.bucket.fill
   type: player
-
+#将水加入洒水器的音效
 add-water-to-sprinkler:
   sound: minecraft:item.bucket.fill
   type: player
-
+#放置洒水器的音效
 place-sprinkler:
   sound: minecraft:block.bone_block.place
   type: player
-
+#种植种子的音效
 plant-seed:
   sound: minecraft:item.hoe.till
   type: player
-
+#使用肥料的音效
 use-fertilizer:
   sound: minecraft:item.hoe.till
   type: player
-
+#空手收获的音效
 harvest:
   sound: minecraft:block.crop.break
   type: player

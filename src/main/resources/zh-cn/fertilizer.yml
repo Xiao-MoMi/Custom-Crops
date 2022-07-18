@@ -1,14 +1,17 @@
-#Crops have a small chance to grow two stages at a time
+#你可以自定义任意数量的肥料
+
+#有概率一次生长两个阶段
 speed:
   speed_1:
-    #Fertilizer Hologram display name
+    #肥料名，用于悬浮展示
     name: '뀌'
+    #生效的概率
     chance: 0.1
-    #How many times can this fertilizer stay in pot
+    #肥料在土壤中存留的生长周期数
     times: 14
-    #ItemsAdder item namespacedID
+    #命名空间随意，物品ID请保持一致
     item: customcrops:speed_1
-    #Should this fertilizer be used before planting
+    #肥料是否只有在种植前才能使用
     before-plant: true
 
   speed_2:
@@ -24,7 +27,7 @@ speed:
     item: customcrops:speed_3
     before-plant: true
 
-#Pot have a small chance to retain its water after crops grow
+#土壤在生长点过后有一定概率仍然保持湿润
 retaining:
   retaining_1:
     name: '뀉'
@@ -47,7 +50,7 @@ retaining:
     item: customcrops:retaining_3
     before-plant: false
 
-#When haveresting, players have a higher chance to get high quality crops.
+#更改农作物产物三种品质的权重
 quality:
   quality_1:
     name: '뀆'

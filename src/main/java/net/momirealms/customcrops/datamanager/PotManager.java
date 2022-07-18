@@ -82,7 +82,6 @@ public class PotManager {
 
     public void saveData(){
         File file = new File(CustomCrops.instance.getDataFolder(), "data" + File.separator + "pot.yml");
-        System.out.println(Cache.size());
         YamlConfiguration data = new YamlConfiguration();
         Cache.forEach(((location, fertilizer) -> {
             String world = location.getWorldName();

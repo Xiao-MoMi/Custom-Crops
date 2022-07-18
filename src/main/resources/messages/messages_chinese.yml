@@ -1,0 +1,60 @@
+#MiniMessage Format
+#https://docs.adventure.kyori.net/minimessage/format.html
+messages:
+  prefix: '<gradient:#ff206c:#fdee55>[CustomCrops] </gradient>'
+  reload: '<white>重载成功! 耗时 <green>{time}ms'
+  no-perm: '<red>权限不足!'
+  lack-args: '<white>参数不足!'
+  wrong-args: '<white>参数错误!'
+  spring: '春'
+  summer: '夏'
+  autumn: '秋'
+  winter: '冬'
+  sprinkler-limit: '<white>此区块的洒水器已到达上限{max}'
+  crop-limit: '<white>此区块的农作物数量已到达上限{max}'
+  not-configed: '<white>此种子未在配置文件中配置!'
+  bad-Y: '<white>此高度不适合这种农作物生长!'
+  bad-biome: '<white>此生物群系不适合这种农作物生长!'
+  bad-perm: '<white>你还没有权限种植这种农作物呢!'
+  bad-world: '<white>这个农作物无法在这个世界生长!'
+  bad-season: '<white>当前季节不适合这种农作物生长!'
+  force-grow: '<white>成功强制 {world} 的农作物生长!'
+  force-water: '<white>成功强制 {world} 的洒水器洒水!'
+  force-save: '<white>成功强制保存缓存信息!'
+  back-up: '<white>已完成数据备份!'
+  set-season: '<white>成功切换世界 {world} 的季节为 {season}!'
+  before-plant: '<white>这种肥料必须在种植前使用!'
+  no-season: '当前世界没有季节'
+
+#全息信息显示
+hologram:
+  #农作物肥料信息
+  grow-info:
+    enable: true
+    #悬浮信息高度偏移
+    y-offset: 0.8
+    #悬浮信息持续时间(秒)
+    duration: 1
+    #悬浮信息内容
+    #可用变量 {fertilizer}肥料名 {times}剩余生效次数 {max_times}最大生效次数
+    text: '<font:customcrops:default>{fertilizer} </font><white>{times}<gray>/<white>{max_times}'
+  #洒水器信息
+  sprinkler-info:
+    enable: true
+    y-offset: -0.2
+    duration: 1
+    #可用变量 {water}当前水量 {max_water}最大蓄水量
+    left: '<font:customcrops:default>뀂'
+    full: '뀁뀃'
+    empty: '뀁뀄'
+    right: '뀁뀅</font>'
+
+actionbar:
+  #使用水壶的时候是否发送actionbar
+  watering-can:
+    enable: true
+    #可用变量 {water}当前水量 {max_water}最大蓄水量
+    left: '<font:customcrops:default>뀂'
+    full: '뀁뀃'
+    empty: '뀁뀄'
+    right: '뀁뀅</font>'

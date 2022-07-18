@@ -1,17 +1,22 @@
-#ItemsAdder items namespacedID
+#填写IA物品的命名空间与物品ID
 basic:
+  #植物的种植盆方块
   pot: customcrops:pot
+  #植物的浇过水的种植盆方块
   watered-pot: customcrops:watered_pot
+  #温室玻璃方块
   greenhouse-glass: customcrops:greenhouse_glass
+  #农作物枯萎后变成的方块,物品ID中请保留stage以保持其下方方块被破坏时，枯萎作物也被破坏的特性
   dead-crop: customcrops:crop_stage_death
+  #土质探测器，用于查看使用的肥料种类和残余量
   soil-detector: customcrops:soil_detector
 
 water-can:
   watering_can_1:
     item: customcrops:watering_can_1
-    #Max storage
+    #水壶最大容量
     max: 3
-    #Effective Range
+    #水壶工作的范围
     width: 1
     length: 1
   watering_can_2:
@@ -31,16 +36,16 @@ water-can:
     length: 5
 
 lore:
-  #Should lore be changed when using watering-can
+  #是否修改水壶物品的Lore
   watering-can:
     enable: true
-    #Lore format
+    #Lore样式
     lore:
       - '<italic:false><white>{water_info}'
-      - '<italic:false><gray>Right click water to add water to the can.'
+      - '<italic:false><gray>右键水方块为水壶加水'
 
-    #Available variables: {water_info}
-    #{water}current water {max_water}max storage
+    #水量 {water_info}
+    #可用变量 {water}当前水量 {max_water}最大蓄水量
     left: '<font:customcrops:default>뀂'
     full: '뀁뀃'
     empty: '뀁뀄'
@@ -48,8 +53,9 @@ lore:
 
 sprinkler:
   sprinkler_1:
+    #洒水器工作范围
     range: 1
-    #Max storage
+    #洒水器最大水储量
     max-water: 5
     3Ditem: customcrops:sprinkler_1
     2Ditem: customcrops:sprinkler_1_item

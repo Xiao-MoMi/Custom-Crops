@@ -1,35 +1,40 @@
-#ItemsAdder items' name should end with "_seeds" "_stage_X" 
-#to be identified by the plugin
-#Just read the default config and you will know how this plugin work
-
+#在IA配置文件中
+#农作物种子ID请以 _seeds 结尾
+#农作物生长阶段请以 _stage_X 结尾
+#生长阶段从1开始依次累加
+#若无法理解可以参考范例配置文件
 crops:
   tomato:
+    #收获时获取的基础数量
     amount: 1~4
+    #农作物收获得到的三种品质
     quality:
       1: customcrops:tomato
       2: customcrops:tomato_silver_star
       3: customcrops:tomato_golden_star
 
-    #optional
-    #Overweight
+    #巨大化植物，以极低的概率生长为另一种形态
     gigantic:
       block: customcrops:gigantic_tomato
       chance: 0.01
 
+    #生长季节
     season:
       - summer
       - autumn
 
-    #optional
-    #Requirements to plant
     requirements:
+      #适宜的生长高度
       yPos:
         - 50~100
         - 150~200
+      #适宜的生长群系
       biome:
         - minecraft:plains
+      #适宜的世界
       world:
         - world
+      #种植此农作物需要玩家有什么权限
       permission: 'customcrops.plant.tomato'
 
   cabbage:
@@ -50,8 +55,7 @@ crops:
       1: customcrops:grape
       2: customcrops:grape_silver_star
       3: customcrops:grape_golden_star
-    #optional
-    #The stage to return when havesting with empty hands
+    #空手收获后返回第几个生长状态
     return: customcrops:grape_stage_4
     season:
       - autumn

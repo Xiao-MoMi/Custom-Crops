@@ -79,7 +79,7 @@ public final class CustomCrops extends JavaPlugin {
         //PAPI
         if(Bukkit.getPluginManager().getPlugin("PlaceHolderAPI") != null){
             new Placeholders().register();
-            AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><color:#F5DEB3>检测到 <gold>PlaceHolderAPI <color:#FFEBCD>已启用变量!");
+            AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><gold>PlaceHolderAPI <color:#FFEBCD>Hooked!");
         }
 
         //指令注册
@@ -112,7 +112,7 @@ public final class CustomCrops extends JavaPlugin {
         this.potManager.loadData();
 
         //启动完成
-        AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><color:#F5DEB3>插件已加载！作者：小默米 QQ:3266959688");
+        AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><color:#F5DEB3>Plugin Enabled!");
     }
 
     @Override
@@ -129,9 +129,9 @@ public final class CustomCrops extends JavaPlugin {
         }
 
         //备份数据
-        getLogger().info("插件数据自动备份中...");
+        getLogger().info("Back Up...");
         BackUp.backUpData();
-        getLogger().info("备份已完成...");
+        getLogger().info("Done.");
 
         //清除悬浮展示实体
         HoloUtil.cache.keySet().forEach(location -> {

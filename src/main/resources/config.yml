@@ -1,5 +1,8 @@
 config:
-  #插件兼容
+  #english spanish chinese
+  lang: english
+
+  #integration to prevent other players' grief
   integration:
     Residence: false
     WorldGuard: false
@@ -9,70 +12,65 @@ config:
     Towny: false
     Lands: false
 
-  #生长时间点(tick)
-  #1000代表上午7点，农作物陆续开始生长
-  #洒水器将会在农作物全部完成生长后开始工作
+  #The time to start growing(ticks)
+  #1000ticks is 7am in game. (0-23999)
+  #Sprinklers will work after all crops finish growing
   grow-time:
     - 1000
 
-  #生长点后农作物成长所需的时间（秒）
-  #农作物将在60秒内随机完成生长以避免在短时间内大量方块替换造成卡顿
-  #但也不建议设置过长时间，否则内存无法及时释放，区块会被持续加载
-  #配合上方的默认时间点，意思为每天上午7点后，农作物将在60秒内完成生长过程
+  #Time in random a single crop need to grow（seconds）
+  #This prevents a large amount of crops grow at the same time
+  #Large amount of block replacement would cause lag.
   time-to-grow: 60
-  #农作物全部完成生长后洒水器工作所需的时间
+  #Similar to "time-to-grow", this prevent all sprinklers work at the same time
   time-to-work: 30
 
-  #产物品质
   quality:
-    #若不启用则植物成熟阶段会掉落IA配置里的loot
-    #如果关闭产物品质需要在IA物品配置内自行添加最后一阶段掉落物
-    #如果你使用的领地插件不被兼容，请不要启用产物品质功能，
-    #请立即更换领地插件或寻找作者写领地兼容
+    #If disabled, you need to configurate the loot in ItemsAdder config
+    #If enabled, make sure that your Grief Prevention Plugin is supported.
+    #Otherwise there might exists duplication.
     enable: true
-    #默认品质权重比
+    #Default ratio
     default-ratio: 17/2/1
 
-  #异步时间检测，此设置需要重启生效
-  #启用异步时间检测会带来更好的性能但是可能会因为服务器的跳tick原因错过一些生长时间点
+  #Async Time Check (requires restart)
+  #Crops might not grow when using async.
+  #It is not really necessary to be Async
   async-time-check: false
 
-  #使用一次水桶可以补充几个洒水器水槽
+  #Water Amount to refill when using water bucket
   sprinkler-refill: 2
-  #水壶右键一次水方块能补充多少水量
+  #Water Amount to refill with a sigle click to water block 
   water-can-refill: 1
-  #是否可以用水壶为洒水器加水
+  #Can watering-can add water to sprinklers?
   water-can-add-water-to-sprinkler: true
-  #使用水的时候是否产生粒子效果
+  #Should particles be displayed when using watering can?
   water-particles: true
 
-  #生长生效的世界
+  #Worlds where crops would grow
   whitelist-worlds:
     - world
 
-  #每个区块最大农作物数量和洒水器数量
-  #是否启用限制
+  #Should we limit the max amount of crops and sprinkler in one chunk
+  #Recommended to enable because ItemsAdder might throw StackOverFlow 
+  #when there are too many custom blocks in one chunk
   limit:
     enable: true
     crop: 64
     sprinkler: 8
 
-  #记录生长判断和洒水所需的时间(测试性能用)
+  #Test performance
   log-time-consume: false
 
-  #是否只有加载中的区块农作物才会生长
-  #如果你不使用季节、可重复收获、巨大化农作物特性
-  #插件data只会记录正在生长中某个阶段的农作物数据
-  #生长到最后一阶段农作物生长数据就会清除
-  #那么可以尝试设置此值为false来让数据内全部农作物生长
-  #如果你使用上述三个特性中的任意一个，请不要设置为false
-  #否则农作物生长到最后一阶段不会从数据中清除，过大的数据量
-  #可能会导致服务器严重卡顿
+  #Defaultly crops will only grow in loaded chunks. 
+  #If you want a mechanic similar to OriginRealms just DISABLE SEASON, GIGANTIC(OverWeight) and REPEATED HARVESTING.
+  #In this way crops data will be removed from file after it comes to its final stage.
+  #In other words, plugin will only record the crops still on growing.
+  #NEVER SET "only-grow-in-loaded-chunks" FALSE IF YOU DON'T DISABLE THE THREE FEATURES MENTIONED ABOVE.
+  #Otherwise it would be laggy because too many data in cache.
   only-grow-in-loaded-chunks: true
-
-  #是否所有加载中的世界都要进行生长判断
-  #本选项适用于使用玩家独立世界的服务器
-  #因为有大量世界所以无法通过添加白名单世界的方式生长
-  #在此选项开启的状态下，白名单世界只能填写一个
-  #作为所有世界农作物生长的时间、季节判断依据
+  
+  #Should all the worlds' crops grow?
+  #This is useful for per player per world server.
+  #In this mode, whitelist world can only have one as the standard of time & season judgment.
   all-world-grow: false

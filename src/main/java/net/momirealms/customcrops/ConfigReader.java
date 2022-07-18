@@ -69,6 +69,7 @@ public class ConfigReader {
         public static List<Long> cropGrowTimeList;
         public static List<Integration> integration;
         public static String referenceWorld;
+        public static String lang;
         public static boolean asyncCheck;
         public static boolean enableLimit;
         public static boolean hasParticle;
@@ -95,11 +96,13 @@ public class ConfigReader {
             CustomCrops.instance.reloadConfig();
             FileConfiguration config = CustomCrops.instance.getConfig();
 
+            lang = config.getString("config.lang","chinese");
+
             //农作物生长时间点
             cropGrowTimeList = config.getLongList("config.grow-time");
             cropGrowTimeList.forEach(time -> {
                 if(time < 0 || time > 23999){
-                    AdventureManager.consoleMessage("<red>[CustomCrops] 农作物生长时间点必须位于0-23999之间");
+                    AdventureManager.consoleMessage("<red>[CustomCrops] time should be between 0 and 23999");
                 }
             });
 
@@ -147,7 +150,7 @@ public class ConfigReader {
             if (allWorld){
                 if (config.getStringList("config.whitelist-worlds").size() > 1){
                     referenceWorld = config.getStringList("config.whitelist-worlds").get(0);
-                    AdventureManager.consoleMessage("<red>[CustomCrops] 全世界生长模式下只能填写一个白名单世界!");
+                    AdventureManager.consoleMessage("<red>[CustomCrops] Only one whitelist world is allowed when \"all-world-grow\" enabled!");
                 }else {
                     referenceWorld = config.getStringList("config.whitelist-worlds").get(0);
                 }
@@ -159,7 +162,7 @@ public class ConfigReader {
             worldNames.forEach(worldName -> {
                 World world = Bukkit.getWorld(worldName);
                 if (world == null){
-                    AdventureManager.consoleMessage("<red>[CustomCrops] 世界" + worldName + "" + "不存在");
+                    AdventureManager.consoleMessage("<red>[CustomCrops] World " + worldName + " doesn't exist");
                 }else {
                     worlds.add(world);
                 }
@@ -168,58 +171,58 @@ public class ConfigReader {
             integration = new ArrayList<>();
             if(config.getBoolean("config.integration.Residence",false)){
                 if(Bukkit.getPluginManager().getPlugin("Residence") == null){
-                    CustomCrops.instance.getLogger().warning("未检测到插件 Residence!");
+                    CustomCrops.instance.getLogger().warning("Failed to initialize Residence!");
                 }else {
                     integration.add(new Residence());
-                    AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><color:#FFEBCD>已启用 <gold>Residence <color:#FFEBCD>保护!");
+                    AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><gold>Residence <color:#FFEBCD>Hooked!");
                 }
             }
             if(config.getBoolean("config.integration.Kingdoms",false)){
                 if(Bukkit.getPluginManager().getPlugin("Kingdoms") == null){
-                    CustomCrops.instance.getLogger().warning("未检测到插件 Kingdoms!");
+                    CustomCrops.instance.getLogger().warning("Failed to initialize Kingdoms!");
                 }else {
                     integration.add(new KingdomsX());
-                    AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><color:#FFEBCD>已启用 <gold>KingdomsX <color:#FFEBCD>保护!");
+                    AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><gold>KingdomsX <color:#FFEBCD>Hooked!");
                 }
             }
             if(config.getBoolean("config.integration.WorldGuard",false)){
                 if(Bukkit.getPluginManager().getPlugin("WorldGuard") == null){
-                    CustomCrops.instance.getLogger().warning("未检测到插件 WorldGuard!");
+                    CustomCrops.instance.getLogger().warning("Failed to initialize WorldGuard!");
                 }else {
                     integration.add(new WorldGuard());
-                    AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><color:#FFEBCD>已启用 <gold>WorldGuard <color:#FFEBCD>保护!");
+                    AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><gold>WorldGuard <color:#FFEBCD>Hooked!");
                 }
             }
             if(config.getBoolean("config.integration.GriefDefender",false)){
                 if(Bukkit.getPluginManager().getPlugin("GriefDefender") == null){
-                    CustomCrops.instance.getLogger().warning("未检测到插件 GriefDefender!");
+                    CustomCrops.instance.getLogger().warning("Failed to initialize GriefDefender!");
                 }else {
                     integration.add(new GriefDefender());
-                    AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><color:#FFEBCD>已启用 <gold>GriefDefender <color:#FFEBCD>保护!");
+                    AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><gold>GriefDefender <color:#FFEBCD>Hooked!");
                 }
             }
             if(config.getBoolean("config.integration.PlotSquared",false)){
                 if(Bukkit.getPluginManager().getPlugin("PlotSquared") == null){
-                    CustomCrops.instance.getLogger().warning("未检测到插件 PlotSquared!");
+                    CustomCrops.instance.getLogger().warning("Failed to initialize PlotSquared!");
                 }else {
                     integration.add(new PlotSquared());
-                    AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><color:#FFEBCD>已启用 <gold>PlotSquared <color:#FFEBCD>保护!");
+                    AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><gold>PlotSquared <color:#FFEBCD>Hooked!");
                 }
             }
             if(config.getBoolean("config.integration.Towny",false)){
                 if(Bukkit.getPluginManager().getPlugin("Towny") == null){
-                    CustomCrops.instance.getLogger().warning("未检测到插件 Towny!");
+                    CustomCrops.instance.getLogger().warning("Failed to initialize Towny!");
                 }else {
                     integration.add(new Towny());
-                    AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><color:#FFEBCD>已启用 <gold>Towny <color:#FFEBCD>保护!");
+                    AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><gold>Towny <color:#FFEBCD>Hooked!");
                 }
             }
             if(config.getBoolean("config.integration.Lands",false)){
                 if(Bukkit.getPluginManager().getPlugin("Lands") == null){
-                    CustomCrops.instance.getLogger().warning("未检测到插件 Lands!");
+                    CustomCrops.instance.getLogger().warning("Failed to initialize Lands!");
                 }else {
                     integration.add(new Lands());
-                    AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><color:#FFEBCD>已启用 <gold>Lands <color:#FFEBCD>保护!");
+                    AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><gold>Lands <color:#FFEBCD>Hooked!");
                 }
             }
         }
@@ -262,17 +265,17 @@ public class ConfigReader {
                     if (key.equals(StringUtils.split(config.getString("water-can." + key + ".item"),":")[1])){
                         int width = config.getInt("water-can." + key + ".width");
                         if (width % 2 == 0){
-                            AdventureManager.consoleMessage("<red>[CustomCrops] 水壶 " + key + " 的浇灌宽度必须为奇数!</red>");
+                            AdventureManager.consoleMessage("<red>[CustomCrops] Watering Can " + key + "'s width should be odd!</red>");
                             return;
                         }
                         WateringCan wateringCan = new WateringCan(config.getInt("water-can." + key + ".max"), width, config.getInt("water-can." + key + ".length"));
                         CANS.put(key, wateringCan);
                     }else {
-                        AdventureManager.consoleMessage("<red>[CustomCrops] 水壶 " + key + " 与ItemsAdder物品ID不一致</red>");
+                        AdventureManager.consoleMessage("<red>[CustomCrops] Watering Can " + key + "'s key should be the same</red>");
                     }
                 });
             }
-            AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><color:#FFEBCD>已载入 <white>" + CANS.size() + " <color:#FFEBCD>个水壶!");
+            AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><white>" + CANS.size() + " <color:#FFEBCD>cans loaded!");
 
             SPRINKLERS.clear();
             if (config.contains("sprinkler")){
@@ -285,11 +288,11 @@ public class ConfigReader {
                         SPRINKLERS.put(key, sprinklerData);
                         SPRINKLERS.put(StringUtils.split(twoD,":")[1], sprinklerData);
                     }else {
-                        AdventureManager.consoleMessage("<red>[CustomCrops] 洒水器 " + key + " 与ItemsAdder物品ID不一致</red>");
+                        AdventureManager.consoleMessage("<red>[CustomCrops] Sprinkler " + key + "'s key should be the same with ItemsAdder 3D sprinkler's key</red>");
                     }
                 });
             }
-            AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><color:#FFEBCD>已载入 <white>" + SPRINKLERS.size()/2 + " <color:#FFEBCD>个洒水器!");
+            AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><white>" + SPRINKLERS.size()/2 + "<color:#FFEBCD> srpinklers loaded!");
         }
     }
 
@@ -313,9 +316,9 @@ public class ConfigReader {
                 seasonChange = config.getBoolean("season.auto-season-change.enable",false);
                 duration = config.getInt("season.auto-season-change.duration",28);
                 if (seasonChange) {
-                    AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><color:#FFEBCD>当前季节变换模式: <gold>自动");
+                    AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><color:#FFEBCD>Season Change mode: <gold>Auto");
                 }else {
-                    AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><color:#FFEBCD>当前季节变换模式: <gold>指令");
+                    AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><color:#FFEBCD>Season Change mode: <gold>Command");
                 }
             }
         }
@@ -365,7 +368,7 @@ public class ConfigReader {
         public static double sprinklerOffset;
 
         public static void loadMessage(){
-            YamlConfiguration config = getConfig("messages.yml");
+            YamlConfiguration config = getConfig("messages/messages_" + Config.lang +".yml");
             prefix = config.getString("messages.prefix");
             reload = config.getString("messages.reload");
             lackArgs = config.getString("messages.lack-args");
@@ -389,7 +392,7 @@ public class ConfigReader {
             wrongArgs = config.getString("messages.wrong-args");
             forceSave = config.getString("messages.force-save");
             beforePlant = config.getString("messages.before-plant");
-            noSeason = config.getString("messages.no-season","当前世界没有季节");
+            noSeason = config.getString("messages.no-season","Season Disabled");
 
             hasCropInfo = config.getBoolean("hologram.grow-info.enable");
             if (hasCropInfo){
@@ -426,7 +429,7 @@ public class ConfigReader {
                 String[] split = StringUtils.split(config.getString("crops." + key + ".amount"),"~");
                 cropInstance = new CropInstance(Integer.parseInt(split[0]),Integer.parseInt(split[1]));
             }else {
-                AdventureManager.consoleMessage("<red>[CustomCrops] 未设置农作物 " + key +" 的产物数量!</red>");
+                AdventureManager.consoleMessage("<red>[CustomCrops] You forget to set " + key +"'s amount!</red>");
                 return;
             }
             if (config.contains("crops." + key + ".gigantic")){
@@ -458,12 +461,50 @@ public class ConfigReader {
             }
             CROPS.put(key, cropInstance);
         });
-        AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><color:#FFEBCD>已载入 <white>" + CROPS.size() + " <color:#FFEBCD>种农作物!");
+        AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><white>" + CROPS.size() + " <color:#FFEBCD>crops loaded!");
     }
 
     public static void fertilizerLoad(){
         FERTILIZERS.clear();
         YamlConfiguration config = getConfig("fertilizer.yml");
+        if (config.contains("speed")){
+            config.getConfigurationSection("speed").getKeys(false).forEach(key -> {
+                if (StringUtils.split(config.getString("speed." + key + ".item"), ":")[1].equals(key)){
+                    SpeedGrow speedGrow = new SpeedGrow(key, config.getInt("speed." + key + ".times"), config.getDouble("speed." + key + ".chance"), config.getBoolean("加速肥料." + key + ".before-plant"));
+                    speedGrow.setName(config.getString("speed." + key + ".name"));
+                    FERTILIZERS.put(key, speedGrow);
+                }else {
+                    AdventureManager.consoleMessage("<red>[CustomCrops] fertilizer " + key + "'s key should be the same with ItemsAdder item's key </red>");
+                }
+            });
+        }
+        if (config.contains("retaining")){
+            config.getConfigurationSection("retaining").getKeys(false).forEach(key -> {
+                if (StringUtils.split(config.getString("retaining." + key + ".item"), ":")[1].equals(key)){
+                    RetainingSoil retainingSoil = new RetainingSoil(key, config.getInt("retaining." + key + ".times"), config.getDouble("retaining." + key + ".chance"), config.getBoolean("保湿肥料." + key + ".before-plant"));
+                    retainingSoil.setName(config.getString("retaining." + key + ".name"));
+                    FERTILIZERS.put(key, retainingSoil);
+                }else {
+                    AdventureManager.consoleMessage("<red>[CustomCrops] fertilizer " + key + "'s key should be the same with ItemsAdder item's key </red>");
+                }
+            });
+        }
+        if (config.contains("quality")){
+            config.getConfigurationSection("quality").getKeys(false).forEach(key -> {
+                if (StringUtils.split(config.getString("quality." + key + ".item"), ":")[1].equals(key)){
+                    String[] split = StringUtils.split(config.getString("quality." + key + ".chance"), "/");
+                    int[] weight = new int[3];
+                    weight[0] = Integer.parseInt(split[0]);
+                    weight[1] = Integer.parseInt(split[1]);
+                    weight[2] = Integer.parseInt(split[2]);
+                    QualityCrop qualityCrop = new QualityCrop(key, config.getInt("quality." + key + ".times"), weight, config.getBoolean("quality." + key + ".before-plant"));
+                    qualityCrop.setName(config.getString("quality." + key + ".name"));
+                    FERTILIZERS.put(key, qualityCrop);
+                }else {
+                    AdventureManager.consoleMessage("<red>[CustomCrops] fertilizer " + key + "'s key should be the same with ItemsAdder item's key </red>");
+                }
+            });
+        }
         if (config.contains("加速肥料")){
             config.getConfigurationSection("加速肥料").getKeys(false).forEach(key -> {
                 if (StringUtils.split(config.getString("加速肥料." + key + ".item"), ":")[1].equals(key)){
@@ -502,7 +543,7 @@ public class ConfigReader {
                 }
             });
         }
-        AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><color:#FFEBCD>已载入 <white>" + FERTILIZERS.size() + " <color:#FFEBCD>种肥料!");
+        AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><white>" + FERTILIZERS.size() + " <color:#FFEBCD>fertilizers loaded!");
     }
 
     public static class Sounds{

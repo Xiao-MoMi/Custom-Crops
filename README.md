@@ -2,8 +2,10 @@
 StardewValley Like Farming System
 
 ### How to buy
-Unfortunately I only accept Chinese Payments.\
-https://afdian.net/@xiaomomi
+
+https://afdian.net/@xiaomomi\
+
+https://polymart.org/resource/customcrops.2625
 
 ### How to compile
 Just compile it with -gradle shadowjar. Some premium plugins are used as 
