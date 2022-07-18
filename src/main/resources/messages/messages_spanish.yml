@@ -1,0 +1,57 @@
+#MiniMessage Format
+#https://docs.adventure.kyori.net/minimessage/format.html
+messages:
+  prefix: '<gradient:#ff206c:#fdee55>[CustomCrops] </gradient>'
+  reload: '<white>¡Recargado! Tomó <green>{time}ms'
+  no-perm: '<red>¡No hay permisos!'
+  lack-args: '<white>Los argumentos son insuficientes.'
+  wrong-args: '<white>Argumentos equivocados!'
+  spring: 'Primavera'
+  summer: 'Verano'
+  autumn: 'Otoño'
+  winter: 'Invierno'
+  sprinkler-limit: '<white>Los aspersores han llegado al límite de su capacidad {max}'
+  crop-limit: '<white>Los cultivos han llegado al límite de su tamaño {max}'
+  not-configed: '<white>Esta semilla no está configurada en la configuración.'
+  bad-Y: '<white>Esta altura no es adecuada para plantar.'
+  bad-biome: '<white>Este bioma no es apto para ser plantado.'
+  bad-perm: '<white>¡No tienes permiso para plantar este cultivo!'
+  bad-world: '<white>Este mundo no es adecuado para plantar'
+  bad-season: '<white>La temporada actual no es adecuada para la plantación'
+  force-grow: '<white>¡Forzó a los cultivos de {world} a empezar a crecer!'
+  force-water: '<white>¡Forzó a los aspersores del {world} a empezar a crecer!'
+  force-save: '<white>¡Guardado con éxito la caché en un archivo!'
+  back-up: '<white>Backed up!'
+  set-season: '<white>¡Cambió la estación de {world} a {season}!'
+  before-plant: '<white>Este abono debe utilizarse antes de la siembra.'
+  no-season: 'Temporada Desactivada'
+
+#Holograms
+hologram:
+  #Pot infomation
+  grow-info:
+    enable: true
+    y-offset: 0.8
+    duration: 1
+    #available variables {fertilizer} {times} {max_times}
+    text: '<font:customcrops:default>{fertilizer} </font><white>{times}<gray>/<white>{max_times}'
+  #Sprinkler infomation
+  sprinkler-info:
+    enable: true
+    y-offset: -0.2
+    duration: 1
+    #available variables {water} {max_water}
+    left: '<font:customcrops:default>뀂'
+    full: '뀁뀃'
+    empty: '뀁뀄'
+    right: '뀁뀅</font>'
+
+actionbar:
+  #Should actionbar be sent when using watering-can
+  watering-can:
+    enable: true
+    #available variables  {water} {max_water}
+    left: '<font:customcrops:default>뀂'
+    full: '뀁뀃'
+    empty: '뀁뀄'
+    right: '뀁뀅</font>'
