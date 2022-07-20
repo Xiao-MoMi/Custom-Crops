@@ -89,6 +89,9 @@ public class RightClick implements Listener {
                                 for (Integration integration : ConfigReader.Config.integration){
                                     if(!integration.canPlace(location, player)) return;
                                 }
+                                if(IAFurniture.getFromLocation(location.clone().add(0.5, 0.5, 0.5), location.getWorld())){
+                                    return;
+                                }
                                 CropInstance cropInstance = crop.get();
                                 PlantingCondition plantingCondition = new PlantingCondition(player, location);
                                 if (cropInstance.getRequirements() != null){

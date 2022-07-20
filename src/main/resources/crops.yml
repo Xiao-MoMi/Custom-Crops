@@ -57,7 +57,7 @@ crops:
       - autumn
 
   corn:
-    amount: 1~2
+    amount: 2~3
     quality:
       1: customcrops:corn
       2: customcrops:corn_silver_star
@@ -65,3 +65,21 @@ crops:
     season:
       - autumn
       - summer
+
+  pepper:
+    amount: 3~6
+    quality:
+      1: customcrops:pepper
+      2: customcrops:pepper_silver_star
+      3: customcrops:pepper_golden_star
+    season:
+      - spring
+      - summer
+    return: customcrops:pepper_stage_3
+
+  garlic:
+    amount: 3~4
+    quality:
+      1: customcrops:garlic
+      2: customcrops:garlic_silver_star
+      3: customcrops:garlic_golden_star

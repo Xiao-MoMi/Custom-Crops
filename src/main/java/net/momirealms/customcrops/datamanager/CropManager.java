@@ -18,6 +18,7 @@
 package net.momirealms.customcrops.datamanager;
 
 import dev.lone.itemsadder.api.CustomBlock;
+import dev.lone.itemsadder.api.CustomStack;
 import net.momirealms.customcrops.fertilizer.QualityCrop;
 import net.momirealms.customcrops.utils.AdventureManager;
 import net.momirealms.customcrops.ConfigReader;
