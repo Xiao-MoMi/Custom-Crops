@@ -74,3 +74,7 @@ config:
   #This is useful for per player per world server.
   #In this mode, whitelist world can only have one as the standard of time & season judgment.
   all-world-grow: false
+
+  #can player harvest crops with right click?
+  #if set "false" crops can't be harvested repeatedly
+  right-click-harvest: true

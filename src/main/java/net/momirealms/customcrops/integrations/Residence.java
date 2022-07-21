@@ -30,7 +30,7 @@ public class Residence implements Integration {
         ClaimedResidence res = com.bekvon.bukkit.residence.Residence.getInstance().getResidenceManager().getByLoc(location);
         if(res!=null){
             ResidencePermissions perms = res.getPermissions();
-            return perms.playerHas(player, Flags.build, true);
+            return perms.playerHas(player, Flags.destroy, true);
         }
         return true;
     }
@@ -40,7 +40,7 @@ public class Residence implements Integration {
         ClaimedResidence res = com.bekvon.bukkit.residence.Residence.getInstance().getResidenceManager().getByLoc(location);
         if(res!=null){
             ResidencePermissions perms = res.getPermissions();
-            return perms.playerHas(player, Flags.destroy, true);
+            return perms.playerHas(player, Flags.build, true);
         }
         return true;
     }

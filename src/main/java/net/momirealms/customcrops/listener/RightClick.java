@@ -318,7 +318,7 @@ public class RightClick implements Listener {
                     }
                 }
             }
-            else if (action == Action.RIGHT_CLICK_BLOCK) {
+            else if (ConfigReader.Config.rightClickHarvest && action == Action.RIGHT_CLICK_BLOCK) {
                 Block block = event.getClickedBlock();
                 Location location = block.getLocation();
                 CustomBlock customBlock = CustomBlock.byAlreadyPlaced(block);

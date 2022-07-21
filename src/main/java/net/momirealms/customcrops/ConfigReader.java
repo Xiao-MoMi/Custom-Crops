@@ -73,6 +73,7 @@ public class ConfigReader {
         public static boolean asyncCheck;
         public static boolean enableLimit;
         public static boolean hasParticle;
+        public static boolean rightClickHarvest;
         public static int cropLimit;
         public static int sprinklerLimit;
         public static int yMin;
@@ -114,6 +115,7 @@ public class ConfigReader {
             onlyLoadedGrow = !config.getBoolean("config.only-grow-in-loaded-chunks",true);
             allWorld = config.getBoolean("config.all-world-grow",false);
             hasParticle = config.getBoolean("config.water-particles", true);
+            rightClickHarvest = config.getBoolean("config.right-click-harvest", true);
 
             //数量与高度限制
             enableLimit = config.getBoolean("config.limit.enable",true);
