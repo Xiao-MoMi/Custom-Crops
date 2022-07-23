@@ -5,7 +5,7 @@ plugins {
 
 
 group = 'net.momirealms'
-version = '1.5.13'
+version = '1.5.16'
 
 repositories {
     mavenCentral()
@@ -53,6 +53,7 @@ repositories {
 
 dependencies {
     compileOnly "com.github.angeschossen:LandsAPI:6.5.1"
+    compileOnly "com.github.TechFortress:GriefPrevention:16.18"
     compileOnly 'com.destroystokyo.paper:paper-api:1.16.5-R0.1-SNAPSHOT'
     compileOnly 'com.comphenix.protocol:ProtocolLib:4.8.0'
     compileOnly 'me.clip:placeholderapi:2.11.2'
