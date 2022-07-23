@@ -33,8 +33,11 @@ import net.momirealms.customcrops.utils.BackUp;
 import net.momirealms.customcrops.utils.HoloUtil;
 import net.momirealms.customcrops.utils.Placeholders;
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Objects;
 
 public final class CustomCrops extends JavaPlugin {
@@ -111,8 +114,19 @@ public final class CustomCrops extends JavaPlugin {
         this.potManager = new PotManager(this);
         this.potManager.loadData();
 
-        //启动完成
-        AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><color:#F5DEB3>Plugin Enabled!");
+        FileConfiguration fileConfiguration = Bukkit.getPluginManager().getPlugin("ItemsAdder").getConfig();
+        if (fileConfiguration.getBoolean("blocks.disable-REAL_WIRE")){
+            fileConfiguration.set("blocks.disable-REAL_WIRE", false);
+            try {
+                fileConfiguration.save(new File(Bukkit.getPluginManager().getPlugin("ItemsAdder").getDataFolder(), "config.yml"));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><red>Detected that you might have not set \"disable-REAL_WIRE\" false in ItemsAdder's config!");
+            AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><red>You need a restart to apply that config :)");
+        }else {
+            AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><color:#F5DEB3>Plugin Enabled!");
+        }
     }
 
     @Override

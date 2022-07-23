@@ -15,6 +15,7 @@ softdepend:
   - PlotSquared
   - Towny
   - Lands
+  - GriefPrevention
 commands:
   customcrops:
     usage: /customcrops <args>

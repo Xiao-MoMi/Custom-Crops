@@ -11,6 +11,7 @@ config:
     PlotSquared: false
     Towny: false
     Lands: false
+    GriefPrevention: false
 
   #The time to start growing(ticks)
   #1000ticks is 7am in game. (0-23999)
@@ -27,8 +28,6 @@ config:
 
   quality:
     #If disabled, you need to configurate the loot in ItemsAdder config
-    #If enabled, make sure that your Grief Prevention Plugin is supported.
-    #Otherwise there might exists duplication.
     enable: true
     #Default ratio
     default-ratio: 17/2/1

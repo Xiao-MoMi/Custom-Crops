@@ -33,7 +33,6 @@ public class CropTimer {
 
     public void stopTimer(int ID) {
         Bukkit.getScheduler().cancelTask(ID);
-        Bukkit.getServer().getScheduler().cancelTask(ID);
     }
 
     public int getTaskID() {

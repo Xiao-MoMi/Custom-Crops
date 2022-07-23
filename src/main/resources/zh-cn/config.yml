@@ -1,4 +1,6 @@
 config:
+  lang: chinese
+
   #插件兼容
   integration:
     Residence: false
@@ -8,6 +10,7 @@ config:
     PlotSquared: false
     Towny: false
     Lands: false
+    GriefPrevention: false
 
   #生长时间点(tick)
   #1000代表上午7点，农作物陆续开始生长
@@ -27,8 +30,6 @@ config:
   quality:
     #若不启用则植物成熟阶段会掉落IA配置里的loot
     #如果关闭产物品质需要在IA物品配置内自行添加最后一阶段掉落物
-    #如果你使用的领地插件不被兼容，请不要启用产物品质功能，
-    #请立即更换领地插件或寻找作者写领地兼容
     enable: true
     #默认品质权重比
     default-ratio: 17/2/1
@@ -76,3 +77,6 @@ config:
   #在此选项开启的状态下，白名单世界只能填写一个
   #作为所有世界农作物生长的时间、季节判断依据
   all-world-grow: false
+
+  #玩家是否能空手右键收获
+  right-click-harvest: true

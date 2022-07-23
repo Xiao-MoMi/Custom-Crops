@@ -44,7 +44,7 @@ public class ConfigReader {
     public static HashMap<String, WateringCan> CANS = new HashMap<>();
     public static HashMap<String, Sprinkler> SPRINKLERS = new HashMap<>();
 
-    private static YamlConfiguration getConfig(String configName) {
+    public static YamlConfiguration getConfig(String configName) {
         File file = new File(CustomCrops.instance.getDataFolder(), configName);
         if (!file.exists()) {
             CustomCrops.instance.saveResource(configName, false);
@@ -225,6 +225,14 @@ public class ConfigReader {
                 }else {
                     integration.add(new Lands());
                     AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><gold>Lands <color:#FFEBCD>Hooked!");
+                }
+            }
+            if(config.getBoolean("config.integration.GriefPrevention",false)){
+                if(Bukkit.getPluginManager().getPlugin("GriefPrevention") == null){
+                    CustomCrops.instance.getLogger().warning("Failed to initialize GriefPrevention!");
+                }else {
+                    integration.add(new GriefPrevention());
+                    AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><gold>GriefPrevention <color:#FFEBCD>Hooked!");
                 }
             }
         }
