@@ -317,61 +317,74 @@ public class RightClick implements Listener {
                         }
                     }
                 }
+                else if(ConfigReader.Config.rightClickHarvest && !ConfigReader.Config.needEmptyHand){
+                    rightClickHarvest(event, player);
+                }
             }
             else if (ConfigReader.Config.rightClickHarvest && action == Action.RIGHT_CLICK_BLOCK) {
-                Block block = event.getClickedBlock();
-                Location location = block.getLocation();
-                CustomBlock customBlock = CustomBlock.byAlreadyPlaced(block);
-                if (customBlock == null) return;
-                for (Integration integration : ConfigReader.Config.integration){
-                    if (!integration.canBreak(location, player)) return;
-                }
-                String namespacedID = customBlock.getNamespacedID();
-                if (namespacedID.contains("_stage_")){
-                    if(namespacedID.equals(ConfigReader.Basic.dead)) return;
-                    String[] cropNameList = StringUtils.split(customBlock.getId(), "_");
-                    int nextStage = Integer.parseInt(cropNameList[2]) + 1;
-                    if (CustomBlock.getInstance(StringUtils.chop(namespacedID) + nextStage) == null) {
-                        if (ConfigReader.Config.quality){
-                            CropInstance cropInstance = ConfigReader.CROPS.get(cropNameList[0]);
-                            ThreadLocalRandom current = ThreadLocalRandom.current();
-                            int random = current.nextInt(cropInstance.getMin(), cropInstance.getMax() + 1);
-                            World world = location.getWorld();
-                            Location itemLoc = location.clone().add(0.5,0.2,0.5);
-                            Fertilizer fertilizer = PotManager.Cache.get(location.clone().subtract(0,1,0));
-                            if (fertilizer != null){
-                                if (fertilizer instanceof QualityCrop qualityCrop){
-                                    int[] weights = qualityCrop.getChance();
-                                    double weightTotal = weights[0] + weights[1] + weights[2];
-                                    double rank_1 = weights[0]/(weightTotal);
-                                    double rank_2 = 1 - weights[1]/(weightTotal);
-                                    for (int i = 0; i < random; i++){
-                                        double ran = Math.random();
-                                        if (ran < rank_1){
-                                            world.dropItem(itemLoc, CustomStack.getInstance(cropInstance.getQuality_1()).getItemStack());
-                                        }else if(ran > rank_2){
-                                            world.dropItem(itemLoc, CustomStack.getInstance(cropInstance.getQuality_2()).getItemStack());
-                                        }else {
-                                            world.dropItem(itemLoc, CustomStack.getInstance(cropInstance.getQuality_3()).getItemStack());
-                                        }
-                                    }
-                                }else {
-                                    BreakBlock.normalDrop(cropInstance, random, itemLoc, world);
-                                }
-                            }
-                            else {
-                                BreakBlock.normalDrop(cropInstance, random, itemLoc, world);
-                            }
-                        }else {
-                            customBlock.getLoot().forEach(loot-> location.getWorld().dropItem(location.clone().add(0.5,0.2,0.5), loot));
-                        }
-                        CustomBlock.remove(location);
-                        CropInstance crop = ConfigReader.CROPS.get(cropNameList[0]);
-                        AdventureManager.playerSound(player, ConfigReader.Sounds.harvestSource, ConfigReader.Sounds.harvestKey);
-                        if(crop.getReturnStage() != null){
-                            CustomBlock.place(crop.getReturnStage(), location);
+                rightClickHarvest(event, player);
+            }
+        }
+    }
+
+    private void rightClickHarvest(PlayerInteractEvent event, Player player) {
+        Block block = event.getClickedBlock();
+        Location location = block.getLocation();
+        CustomBlock customBlock = CustomBlock.byAlreadyPlaced(block);
+        if (customBlock == null) return;
+        for (Integration integration : ConfigReader.Config.integration){
+            if (!integration.canBreak(location, player)) return;
+        }
+        String namespacedID = customBlock.getNamespacedID();
+        if (namespacedID.contains("_stage_")){
+            if(namespacedID.equals(ConfigReader.Basic.dead)) return;
+            String[] cropNameList = StringUtils.split(customBlock.getId(), "_");
+            int nextStage = Integer.parseInt(cropNameList[2]) + 1;
+            if (CustomBlock.getInstance(StringUtils.chop(namespacedID) + nextStage) == null) {
+                if (ConfigReader.Config.quality){
+                    CropInstance cropInstance = ConfigReader.CROPS.get(cropNameList[0]);
+                    ThreadLocalRandom current = ThreadLocalRandom.current();
+                    int random = current.nextInt(cropInstance.getMin(), cropInstance.getMax() + 1);
+                    World world = location.getWorld();
+                    Location itemLoc = location.clone().add(0.5,0.2,0.5);
+                    Fertilizer fertilizer = PotManager.Cache.get(location.clone().subtract(0,1,0));
+                    List<String> commands = cropInstance.getCommands();
+                    if (commands != null){
+                        for (String command : commands){
+                            Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), command.replace("{player}", player.getName()));
                         }
                     }
+                    if (fertilizer != null){
+                        if (fertilizer instanceof QualityCrop qualityCrop){
+                            int[] weights = qualityCrop.getChance();
+                            double weightTotal = weights[0] + weights[1] + weights[2];
+                            double rank_1 = weights[0]/(weightTotal);
+                            double rank_2 = 1 - weights[1]/(weightTotal);
+                            for (int i = 0; i < random; i++){
+                                double ran = Math.random();
+                                if (ran < rank_1){
+                                    world.dropItem(itemLoc, CustomStack.getInstance(cropInstance.getQuality_1()).getItemStack());
+                                }else if(ran > rank_2){
+                                    world.dropItem(itemLoc, CustomStack.getInstance(cropInstance.getQuality_2()).getItemStack());
+                                }else {
+                                    world.dropItem(itemLoc, CustomStack.getInstance(cropInstance.getQuality_3()).getItemStack());
+                                }
+                            }
+                        }else {
+                            BreakBlock.normalDrop(cropInstance, random, itemLoc, world);
+                        }
+                    }
+                    else {
+                        BreakBlock.normalDrop(cropInstance, random, itemLoc, world);
+                    }
+                }else {
+                    customBlock.getLoot().forEach(loot-> location.getWorld().dropItem(location.clone().add(0.5,0.2,0.5), loot));
+                }
+                CustomBlock.remove(location);
+                CropInstance crop = ConfigReader.CROPS.get(cropNameList[0]);
+                AdventureManager.playerSound(player, ConfigReader.Sounds.harvestSource, ConfigReader.Sounds.harvestKey);
+                if(crop.getReturnStage() != null){
+                    CustomBlock.place(crop.getReturnStage(), location);
                 }
             }
         }

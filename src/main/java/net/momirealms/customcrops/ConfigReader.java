@@ -87,6 +87,7 @@ public class ConfigReader {
         public static boolean quality;
         public static boolean canAddWater;
         public static boolean allWorld;
+        public static boolean needEmptyHand;
         public static double quality_1;
         public static double quality_2;
 
@@ -116,6 +117,7 @@ public class ConfigReader {
             allWorld = config.getBoolean("config.all-world-grow",false);
             hasParticle = config.getBoolean("config.water-particles", true);
             rightClickHarvest = config.getBoolean("config.right-click-harvest", true);
+            needEmptyHand = config.getBoolean("config.harvest-with-empty-hand", true);
 
             //数量与高度限制
             enableLimit = config.getBoolean("config.limit.enable",true);
@@ -378,6 +380,7 @@ public class ConfigReader {
         public static double sprinklerOffset;
 
         public static void loadMessage(){
+
             YamlConfiguration config = getConfig("messages/messages_" + Config.lang +".yml");
             prefix = config.getString("messages.prefix");
             reload = config.getString("messages.reload");
@@ -451,6 +454,9 @@ public class ConfigReader {
             }
             if (config.contains("crops." + key + ".return")){
                 cropInstance.setReturnStage(config.getString("crops." + key + ".return"));
+            }
+            if (config.contains("crops." + key + ".commands")){
+                cropInstance.setCommands(config.getStringList("crops." + key + ".commands"));
             }
             if (config.contains("crops." + key + ".requirements")){
                 List<Requirement> requirements = new ArrayList<>();

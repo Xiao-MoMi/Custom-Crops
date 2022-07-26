@@ -18,6 +18,10 @@ crops:
       block: customcrops:gigantic_tomato
       chance: 0.01
 
+    #收获时候执行指令
+    commands:
+      - 'say {player} harvested a tomato! lol'
+
     #生长季节
     season:
       - summer

@@ -60,10 +60,22 @@ public class Placeholders extends PlaceholderExpansion{
                     .replace("winter", ConfigReader.Message.winter);
         }
         if (params.equalsIgnoreCase("nextseason")){
+            if (!ConfigReader.Config.worlds.contains(player.getPlayer().getWorld())){
+                return ConfigReader.Message.noSeason;
+            }
             return String.valueOf(ConfigReader.Season.duration - ((int) ((player.getPlayer().getWorld().getFullTime() / 24000L) % (ConfigReader.Season.duration * 4)) % ConfigReader.Season.duration));
         }
         if (params.startsWith("nextseason_")){
             return String.valueOf(ConfigReader.Season.duration - ((int) ((Bukkit.getWorld(params.substring(11)).getFullTime() / 24000L) % (ConfigReader.Season.duration * 4)) % ConfigReader.Season.duration));
+        }
+        if (params.equalsIgnoreCase("current")){
+            if (!ConfigReader.Config.worlds.contains(player.getPlayer().getWorld())){
+                return ConfigReader.Message.noSeason;
+            }
+            return String.valueOf((int) ((player.getPlayer().getWorld().getFullTime() / 24000L) % (ConfigReader.Season.duration * 4)) % ConfigReader.Season.duration + 1);
+        }
+        if (params.startsWith("current_")){
+            return String.valueOf(((int) (Bukkit.getWorld(params.substring(8)).getFullTime() / 24000L) % (ConfigReader.Season.duration * 4)) % ConfigReader.Season.duration+ 1);
         }
         return null;
     }

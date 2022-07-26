@@ -16,6 +16,11 @@ crops:
       block: customcrops:gigantic_tomato
       chance: 0.01
 
+    #optional
+    commands:
+      - 'say {player} harvested a tomato! lol'
+
+    #optional
     season:
       - summer
       - autumn

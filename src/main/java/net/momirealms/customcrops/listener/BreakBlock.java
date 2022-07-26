@@ -40,6 +40,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class BreakBlock implements Listener {
@@ -66,7 +67,6 @@ public class BreakBlock implements Listener {
             String[] cropNameList = StringUtils.split(StringUtils.split(namespacedId, ":")[1], "_");
             int nextStage = Integer.parseInt(cropNameList[2]) + 1;
             if (CustomBlock.getInstance(StringUtils.chop(namespacedId) + nextStage) == null) {
-
                 Bukkit.getScheduler().runTaskAsynchronously(CustomCrops.instance, ()-> {
                     if (location.getBlock().getType() != Material.AIR) return;
                     CropInstance cropInstance = ConfigReader.CROPS.get(cropNameList[0]);
@@ -75,6 +75,15 @@ public class BreakBlock implements Listener {
                     Location itemLoc = location.clone().add(0.5,0.2,0.5);
                     World world = location.getWorld();
                     Fertilizer fertilizer = PotManager.Cache.get(SimpleLocation.fromLocation(location.clone().subtract(0,1,0)));
+                    List<String> commands = cropInstance.getCommands();
+                    if (commands != null){
+                        Bukkit.getScheduler().callSyncMethod(CustomCrops.instance, ()-> {
+                            for (String command : commands){
+                                Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), command.replace("{player}", player.getName()));
+                            }
+                            return null;
+                        });
+                    }
                     if (fertilizer != null){
                         if (fertilizer instanceof QualityCrop qualityCrop){
                             int[] weights = qualityCrop.getChance();

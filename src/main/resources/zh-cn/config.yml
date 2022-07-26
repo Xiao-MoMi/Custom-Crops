@@ -1,6 +1,4 @@
 config:
-  lang: chinese
-
   #插件兼容
   integration:
     Residence: false
@@ -10,7 +8,6 @@ config:
     PlotSquared: false
     Towny: false
     Lands: false
-    GriefPrevention: false
 
   #生长时间点(tick)
   #1000代表上午7点，农作物陆续开始生长
@@ -78,5 +75,8 @@ config:
   #作为所有世界农作物生长的时间、季节判断依据
   all-world-grow: false
 
-  #玩家是否能空手右键收获
+  #玩家是否能右键收获
   right-click-harvest: true
+
+  #玩家是否需要空手右键收获
+  harvest-with-empty-hand: true

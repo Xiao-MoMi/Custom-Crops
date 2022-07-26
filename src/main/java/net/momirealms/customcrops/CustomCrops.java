@@ -21,13 +21,11 @@ import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.momirealms.customcrops.commands.Executor;
 import net.momirealms.customcrops.commands.Completer;
 import net.momirealms.customcrops.datamanager.*;
-import net.momirealms.customcrops.helper.LibraryLoader;
 import net.momirealms.customcrops.listener.BreakBlock;
 import net.momirealms.customcrops.listener.InteractEntity;
 import net.momirealms.customcrops.listener.ItemSpawn;
 import net.momirealms.customcrops.listener.RightClick;
 import net.momirealms.customcrops.timer.CropTimer;
-import net.momirealms.customcrops.timer.CropTimerAsync;
 import net.momirealms.customcrops.utils.AdventureManager;
 import net.momirealms.customcrops.utils.BackUp;
 import net.momirealms.customcrops.utils.HoloUtil;
@@ -45,7 +43,6 @@ public final class CustomCrops extends JavaPlugin {
     public static JavaPlugin instance;
     public static BukkitAudiences adventure;
     private CropTimer cropTimer;
-    private CropTimerAsync cropTimerAsync;
     private CropManager cropManager;
     private SprinklerManager sprinklerManager;
     private SeasonManager seasonManager;
@@ -53,18 +50,6 @@ public final class CustomCrops extends JavaPlugin {
 
     @Override
     public void onLoad(){
-
-//        instance = this;
-//        LibraryLoader.load("net.kyori","adventure-api","4.11.0","https://oss.sonatype.org/content/groups/public");
-//        LibraryLoader.load("net.kyori","adventure-platform-api","4.1.1","https://oss.sonatype.org/content/groups/public");
-//        LibraryLoader.load("net.kyori","adventure-platform-bukkit","4.1.1","https://oss.sonatype.org/content/groups/public");
-//        LibraryLoader.load("net.kyori","adventure-platform-facet","4.1.1","https://oss.sonatype.org/content/groups/public");
-//        LibraryLoader.load("net.kyori","adventure-text-serializer-gson","4.11.0","https://oss.sonatype.org/content/groups/public");
-//        LibraryLoader.load("net.kyori","adventure-text-serializer-plain","4.11.0","https://oss.sonatype.org/content/groups/public");
-//        LibraryLoader.load("net.kyori","adventure-text-serializer-gson-legacy-impl","4.11.0","https://oss.sonatype.org/content/groups/public");
-//        LibraryLoader.load("net.kyori","adventure-nbt","4.11.0","https://oss.sonatype.org/content/groups/public");
-//        LibraryLoader.load("net.kyori","adventure-key","4.11.0","https://oss.sonatype.org/content/groups/public");
-//        LibraryLoader.load("net.kyori","adventure-text-minimessage","4.11.0","https://oss.sonatype.org/content/groups/public");
 
     }
 
@@ -96,11 +81,7 @@ public final class CustomCrops extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new InteractEntity(this), this);
 
         //开始计时器
-        if(ConfigReader.Config.asyncCheck){
-            this.cropTimerAsync = new CropTimerAsync(this);
-        }else {
-            this.cropTimer = new CropTimer(this);
-        }
+        this.cropTimer = new CropTimer(this);
 
         //载入数据
         if (ConfigReader.Season.enable){
@@ -156,15 +137,10 @@ public final class CustomCrops extends JavaPlugin {
         if (cropTimer != null) {
             this.cropTimer.stopTimer(cropTimer.getTaskID());
         }
-        if (cropTimerAsync != null){
-            this.cropTimerAsync.stopTimer(cropTimerAsync.getTaskID());
-        }
 
         if (adventure != null) {
             adventure.close();
         }
-
-        instance = null;
     }
 
     public CropManager getCropManager() { return this.cropManager; }

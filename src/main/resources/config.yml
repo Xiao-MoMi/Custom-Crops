@@ -13,6 +13,9 @@ config:
     Lands: false
     GriefPrevention: false
 
+    AureliumSkills: false
+    mcMMO: false
+
   #The time to start growing(ticks)
   #1000ticks is 7am in game. (0-23999)
   #Sprinklers will work after all crops finish growing
@@ -77,3 +80,7 @@ config:
   #can player harvest crops with right click?
   #if set "false" crops can't be harvested repeatedly
   right-click-harvest: true
+
+  #If "right-click-harvest" is true
+  #Should player be allowed to harvest with items in hand
+  harvest-with-empty-hand: true

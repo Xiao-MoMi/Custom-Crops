@@ -17,6 +17,7 @@
 
 package net.momirealms.customcrops.timer;
 
+import net.momirealms.customcrops.ConfigReader;
 import net.momirealms.customcrops.CustomCrops;
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitTask;
@@ -27,7 +28,12 @@ public class CropTimer {
 
     public CropTimer(CustomCrops plugin) {
         TimeCheck tc = new TimeCheck(plugin);
-        BukkitTask task = tc.runTaskTimer(CustomCrops.instance, 1,1);
+        BukkitTask task;
+        if (ConfigReader.Config.asyncCheck){
+            task = tc.runTaskTimerAsynchronously(CustomCrops.instance, 1,1);
+        }else {
+            task = tc.runTaskTimer(CustomCrops.instance, 1,1);
+        }
         this.taskID = task.getTaskId();
     }
 

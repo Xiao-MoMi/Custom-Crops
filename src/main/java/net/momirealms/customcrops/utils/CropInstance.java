@@ -33,6 +33,7 @@ public class CropInstance {
     private String quality_1;
     private String quality_2;
     private String quality_3;
+    private List<String> commands;
 
     public CropInstance(int min, int max){
         this.min = min;
@@ -53,6 +54,7 @@ public class CropInstance {
     public String getQuality_3() { return quality_3; }
     public int getMax() { return max; }
     public int getMin() { return min; }
+    public List<String> getCommands() { return commands; }
 
     public void setReturnStage(String stage){ this.returnStage = stage; }
     public void setGiant(String giant) { this.giant = giant; }
@@ -62,4 +64,5 @@ public class CropInstance {
     public void setQuality_1(String quality_1) { this.quality_1 = quality_1; }
     public void setQuality_2(String quality_2) { this.quality_2 = quality_2; }
     public void setQuality_3(String quality_3) { this.quality_3 = quality_3; }
+    public void setCommands(List<String> commands) { this.commands = commands; }
 }

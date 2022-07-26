@@ -35,12 +35,12 @@ lore:
   watering-can:
     enable: true
     #Lore format
+    #Available variables: {water_info}
+    #{water}current water {max_water}max storage
     lore:
       - '<italic:false><white>{water_info}'
       - '<italic:false><gray>Right click water to add water to the can.'
-
-    #Available variables: {water_info}
-    #{water}current water {max_water}max storage
+    #{water_info}
     left: '<font:customcrops:default>뀂'
     full: '뀁뀃'
     empty: '뀁뀄'
