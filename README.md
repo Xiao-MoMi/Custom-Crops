@@ -69,6 +69,10 @@ NEVER SET "only-grow-in-loaded-chunks" FALSE IF YOU DON'T DISABLE THE THREE FEAT
 ### Placeholders
 %customcrops_season% show the season in the world\
 %customcrops_season_[world]%\
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5b4051e47471e1fef498039557036ccff8060511
 ==== these papi below will be accurate only in "Auto" mode ====\
 %customcrops_nextseason% show the days to the next season\
 %customcrops_nextseason_[world]%\
