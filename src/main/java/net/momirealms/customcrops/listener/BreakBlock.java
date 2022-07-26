@@ -25,7 +25,7 @@ import net.momirealms.customcrops.CustomCrops;
 import net.momirealms.customcrops.datamanager.PotManager;
 import net.momirealms.customcrops.fertilizer.Fertilizer;
 import net.momirealms.customcrops.fertilizer.QualityCrop;
-import net.momirealms.customcrops.integrations.Integration;
+import net.momirealms.customcrops.integrations.protection.Integration;
 import net.momirealms.customcrops.utils.CropInstance;
 import net.momirealms.customcrops.utils.SimpleLocation;
 import org.apache.commons.lang.StringUtils;
@@ -84,6 +84,12 @@ public class BreakBlock implements Listener {
                             return null;
                         });
                     }
+                    if (ConfigReader.Config.skillXP != null && cropInstance.getSkillXP() != 0){
+                        Bukkit.getScheduler().callSyncMethod(CustomCrops.instance, ()-> {
+                            ConfigReader.Config.skillXP.addXp(player, cropInstance.getSkillXP());
+                            return null;
+                        });
+                    }
                     if (fertilizer != null){
                         if (fertilizer instanceof QualityCrop qualityCrop){
                             int[] weights = qualityCrop.getChance();
@@ -111,8 +117,7 @@ public class BreakBlock implements Listener {
                             });
 
                         }
-                    }
-                    else {
+                    } else {
                         Bukkit.getScheduler().callSyncMethod(CustomCrops.instance, ()-> {
                             normalDrop(cropInstance, random, itemLoc, world);
                             return null;

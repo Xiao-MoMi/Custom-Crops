@@ -15,39 +15,34 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.momirealms.customcrops.integrations;
+package net.momirealms.customcrops.integrations.protection;
 
+import me.angeschossen.lands.api.flags.Flags;
+import me.angeschossen.lands.api.integration.LandsIntegration;
+import me.angeschossen.lands.api.land.Area;
+import net.momirealms.customcrops.CustomCrops;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import org.kingdoms.constants.group.Kingdom;
-import org.kingdoms.constants.land.Land;
-import org.kingdoms.constants.player.KingdomPlayer;
 
-public class KingdomsX implements Integration {
+public class Lands implements Integration{
 
     @Override
     public boolean canBreak(Location location, Player player) {
-        return kingdomsCheck(location, player);
+        Area area = new LandsIntegration(CustomCrops.instance).getAreaByLoc(location);
+        if (area != null){
+            return area.hasFlag(player, Flags.BLOCK_BREAK, false);
+        }else {
+            return true;
+        }
     }
 
     @Override
     public boolean canPlace(Location location, Player player) {
-        return kingdomsCheck(location, player);
-    }
-
-    private boolean kingdomsCheck(Location location, Player player) {
-        Land land = Land.getLand(location);
-        if (land == null) return true;
-        if (land.isClaimed()) {
-            KingdomPlayer kp = KingdomPlayer.getKingdomPlayer(player);
-            Kingdom cropKingdom = land.getKingdom();
-            if (kp.getKingdom() != null) {
-                Kingdom kingdom = kp.getKingdom();
-                return kingdom != cropKingdom;
-            } else {
-                return false;
-            }
+        Area area = new LandsIntegration(CustomCrops.instance).getAreaByLoc(location);
+        if (area != null){
+            return area.hasFlag(player, Flags.BLOCK_PLACE, false);
+        }else {
+            return true;
         }
-        return true;
     }
 }

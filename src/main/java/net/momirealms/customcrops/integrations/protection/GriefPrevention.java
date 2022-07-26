@@ -15,26 +15,20 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.momirealms.customcrops.integrations;
+package net.momirealms.customcrops.integrations.protection;
 
-import com.palmergames.bukkit.towny.object.TownyPermission;
-import com.palmergames.bukkit.towny.utils.PlayerCacheUtil;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-public class Towny implements Integration{
+public class GriefPrevention implements Integration{
 
     @Override
     public boolean canBreak(Location location, Player player) {
-        return TownyPermission(player, location, TownyPermission.ActionType.DESTROY);
+        return me.ryanhamshire.GriefPrevention.GriefPrevention.instance.allowBreak(player, location.getBlock(), location) == null;
     }
 
     @Override
     public boolean canPlace(Location location, Player player) {
-        return TownyPermission(player, location, TownyPermission.ActionType.BUILD);
-    }
-
-    private boolean TownyPermission(Player player, Location location, TownyPermission.ActionType actionType){
-        return PlayerCacheUtil.getCachePermission(player, location, location.getBlock().getType(), actionType);
+        return me.ryanhamshire.GriefPrevention.GriefPrevention.instance.allowBuild(player, location) == null;
     }
 }

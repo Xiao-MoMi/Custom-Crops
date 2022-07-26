@@ -21,6 +21,10 @@ crops:
       - 'say {player} harvested a tomato! lol'
 
     #optional
+    #If you are using skill plugin, you can add farming skill xp to players
+    #skill-xp: 100
+
+    #optional
     season:
       - summer
       - autumn

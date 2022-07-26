@@ -16,6 +16,9 @@ softdepend:
   - Towny
   - Lands
   - GriefPrevention
+  - mcMMO
+  - AureliumSkills
+  - MMOCore
 commands:
   customcrops:
     usage: /customcrops <args>

@@ -15,34 +15,26 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.momirealms.customcrops.integrations;
+package net.momirealms.customcrops.integrations.protection;
 
-import me.angeschossen.lands.api.flags.Flags;
-import me.angeschossen.lands.api.integration.LandsIntegration;
-import me.angeschossen.lands.api.land.Area;
-import net.momirealms.customcrops.CustomCrops;
+import com.palmergames.bukkit.towny.object.TownyPermission;
+import com.palmergames.bukkit.towny.utils.PlayerCacheUtil;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-public class Lands implements Integration{
+public class Towny implements Integration{
 
     @Override
     public boolean canBreak(Location location, Player player) {
-        Area area = new LandsIntegration(CustomCrops.instance).getAreaByLoc(location);
-        if (area != null){
-            return area.hasFlag(player, Flags.BLOCK_BREAK, false);
-        }else {
-            return true;
-        }
+        return TownyPermission(player, location, TownyPermission.ActionType.DESTROY);
     }
 
     @Override
     public boolean canPlace(Location location, Player player) {
-        Area area = new LandsIntegration(CustomCrops.instance).getAreaByLoc(location);
-        if (area != null){
-            return area.hasFlag(player, Flags.BLOCK_PLACE, false);
-        }else {
-            return true;
-        }
+        return TownyPermission(player, location, TownyPermission.ActionType.BUILD);
+    }
+
+    private boolean TownyPermission(Player player, Location location, TownyPermission.ActionType actionType){
+        return PlayerCacheUtil.getCachePermission(player, location, location.getBlock().getType(), actionType);
     }
 }

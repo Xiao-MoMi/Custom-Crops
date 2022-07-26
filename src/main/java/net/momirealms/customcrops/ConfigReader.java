@@ -22,7 +22,11 @@ import net.momirealms.customcrops.fertilizer.Fertilizer;
 import net.momirealms.customcrops.fertilizer.QualityCrop;
 import net.momirealms.customcrops.fertilizer.RetainingSoil;
 import net.momirealms.customcrops.fertilizer.SpeedGrow;
-import net.momirealms.customcrops.integrations.*;
+import net.momirealms.customcrops.integrations.protection.*;
+import net.momirealms.customcrops.integrations.skill.Aurelium;
+import net.momirealms.customcrops.integrations.skill.MMOCore;
+import net.momirealms.customcrops.integrations.skill.SkillXP;
+import net.momirealms.customcrops.integrations.skill.mcMMO;
 import net.momirealms.customcrops.requirements.Biome;
 import net.momirealms.customcrops.requirements.Permission;
 import net.momirealms.customcrops.requirements.Requirement;
@@ -90,6 +94,7 @@ public class ConfigReader {
         public static boolean needEmptyHand;
         public static double quality_1;
         public static double quality_2;
+        public static SkillXP skillXP;
 
         public static void loadConfig(){
 
@@ -235,6 +240,33 @@ public class ConfigReader {
                 }else {
                     integration.add(new GriefPrevention());
                     AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><gold>GriefPrevention <color:#FFEBCD>Hooked!");
+                }
+            }
+
+            skillXP = null;
+
+            if(config.getBoolean("config.integration.mcMMO",false)){
+                if(Bukkit.getPluginManager().getPlugin("mcMMO") == null){
+                    CustomCrops.instance.getLogger().warning("Failed to initialize mcMMO!");
+                }else {
+                    skillXP = new mcMMO();
+                    AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><gold>mcMMO <color:#FFEBCD>Hooked!");
+                }
+            }
+            if(config.getBoolean("config.integration.AureliumSkills",false)){
+                if(Bukkit.getPluginManager().getPlugin("AureliumSkills") == null){
+                    CustomCrops.instance.getLogger().warning("Failed to initialize AureliumSkills!");
+                }else {
+                    skillXP = new Aurelium();
+                    AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><gold>AureliumSkills <color:#FFEBCD>Hooked!");
+                }
+            }
+            if(config.getBoolean("config.integration.MMOCore",false)){
+                if(Bukkit.getPluginManager().getPlugin("MMOCore") == null){
+                    CustomCrops.instance.getLogger().warning("Failed to initialize MMOCore!");
+                }else {
+                    skillXP = new MMOCore();
+                    AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><gold>MMOCore <color:#FFEBCD>Hooked!");
                 }
             }
         }
@@ -457,6 +489,9 @@ public class ConfigReader {
             }
             if (config.contains("crops." + key + ".commands")){
                 cropInstance.setCommands(config.getStringList("crops." + key + ".commands"));
+            }
+            if (config.contains("crops." + key + ".skill-xp")){
+                cropInstance.setSkillXP(config.getDouble("crops." + key + ".skill-xp"));
             }
             if (config.contains("crops." + key + ".requirements")){
                 List<Requirement> requirements = new ArrayList<>();

@@ -49,11 +49,6 @@ public final class CustomCrops extends JavaPlugin {
     private PotManager potManager;
 
     @Override
-    public void onLoad(){
-
-    }
-
-    @Override
     public void onEnable() {
 
         instance = this;

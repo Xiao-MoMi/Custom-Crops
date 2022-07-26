@@ -32,7 +32,7 @@ import net.momirealms.customcrops.fertilizer.Fertilizer;
 import net.momirealms.customcrops.fertilizer.QualityCrop;
 import net.momirealms.customcrops.fertilizer.RetainingSoil;
 import net.momirealms.customcrops.fertilizer.SpeedGrow;
-import net.momirealms.customcrops.integrations.Integration;
+import net.momirealms.customcrops.integrations.protection.Integration;
 import net.momirealms.customcrops.limits.CropsPerChunk;
 import net.momirealms.customcrops.limits.SprinklersPerChunk;
 import net.momirealms.customcrops.requirements.PlantingCondition;
@@ -180,7 +180,7 @@ public class RightClick implements Listener {
                                 return;
                             }
                         }
-                        if(water != 0 && action == Action.RIGHT_CLICK_BLOCK && event.getBlockFace() == BlockFace.UP){
+                        if(water != 0 && action == Action.RIGHT_CLICK_BLOCK){
                             Block block = event.getClickedBlock();
                             CustomBlock customBlock = CustomBlock.byAlreadyPlaced(block);
                             if (customBlock == null) return;
@@ -188,7 +188,7 @@ public class RightClick implements Listener {
                                 if(!integration.canPlace(block.getLocation(), player)) return;
                             }
                             String namespacedID = customBlock.getNamespacedID();
-                            if (namespacedID.equals(ConfigReader.Basic.pot) || namespacedID.equals(ConfigReader.Basic.watered_pot)){
+                            if ((namespacedID.equals(ConfigReader.Basic.pot) || namespacedID.equals(ConfigReader.Basic.watered_pot)) && event.getBlockFace() == BlockFace.UP){
                                 nbtItem.setInteger("WaterAmount", water - 1);
                                 AdventureManager.playerSound(player, ConfigReader.Sounds.waterPotSource, ConfigReader.Sounds.waterPotKey);
                                 waterPot(wateringCan.getWidth(), wateringCan.getLength(), block.getLocation(), player.getLocation().getYaw());
@@ -353,6 +353,9 @@ public class RightClick implements Listener {
                         for (String command : commands){
                             Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), command.replace("{player}", player.getName()));
                         }
+                    }
+                    if (ConfigReader.Config.skillXP != null && cropInstance.getSkillXP() != 0){
+                        ConfigReader.Config.skillXP.addXp(player, cropInstance.getSkillXP());
                     }
                     if (fertilizer != null){
                         if (fertilizer instanceof QualityCrop qualityCrop){

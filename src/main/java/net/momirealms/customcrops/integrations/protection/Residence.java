@@ -15,20 +15,33 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.momirealms.customcrops.integrations;
+package net.momirealms.customcrops.integrations.protection;
 
+import com.bekvon.bukkit.residence.containers.Flags;
+import com.bekvon.bukkit.residence.protection.ClaimedResidence;
+import com.bekvon.bukkit.residence.protection.ResidencePermissions;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-public class GriefPrevention implements Integration{
+public class Residence implements Integration {
 
     @Override
     public boolean canBreak(Location location, Player player) {
-        return me.ryanhamshire.GriefPrevention.GriefPrevention.instance.allowBreak(player, location.getBlock(), location) == null;
+        ClaimedResidence res = com.bekvon.bukkit.residence.Residence.getInstance().getResidenceManager().getByLoc(location);
+        if(res!=null){
+            ResidencePermissions perms = res.getPermissions();
+            return perms.playerHas(player, Flags.destroy, true);
+        }
+        return true;
     }
 
     @Override
     public boolean canPlace(Location location, Player player) {
-        return me.ryanhamshire.GriefPrevention.GriefPrevention.instance.allowBuild(player, location) == null;
+        ClaimedResidence res = com.bekvon.bukkit.residence.Residence.getInstance().getResidenceManager().getByLoc(location);
+        if(res!=null){
+            ResidencePermissions perms = res.getPermissions();
+            return perms.playerHas(player, Flags.build, true);
+        }
+        return true;
     }
 }

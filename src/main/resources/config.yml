@@ -2,8 +2,9 @@ config:
   #english spanish chinese
   lang: english
 
-  #integration to prevent other players' grief
+
   integration:
+    #integration to prevent other players' grief
     Residence: false
     WorldGuard: false
     Kingdoms: false
@@ -12,9 +13,10 @@ config:
     Towny: false
     Lands: false
     GriefPrevention: false
-
+    #integration to add players' farming skill xp
     AureliumSkills: false
     mcMMO: false
+    MMOCore: false
 
   #The time to start growing(ticks)
   #1000ticks is 7am in game. (0-23999)

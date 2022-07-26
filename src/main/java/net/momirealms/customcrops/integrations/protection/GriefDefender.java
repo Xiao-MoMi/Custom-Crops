@@ -15,27 +15,20 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.momirealms.customcrops.timer;
+package net.momirealms.customcrops.integrations.protection;
 
-import net.momirealms.customcrops.CustomCrops;
-import org.bukkit.Bukkit;
-import org.bukkit.scheduler.BukkitTask;
+import org.bukkit.Location;
+import org.bukkit.entity.Player;
 
-public class CropTimerAsync {
+public class GriefDefender implements Integration {
 
-    private final int taskID;
-
-    public CropTimerAsync(CustomCrops plugin) {
-        TimeCheck tc = new TimeCheck(plugin);
-        BukkitTask task = tc.runTaskTimerAsynchronously(CustomCrops.instance, 1,1);
-        this.taskID = task.getTaskId();
+    @Override
+    public boolean canBreak(Location location, Player player) {
+        return com.griefdefender.api.GriefDefender.getCore().getUser(player.getUniqueId()).canBreak(location);
     }
 
-    public void stopTimer(int ID) {
-        Bukkit.getScheduler().cancelTask(ID);
-    }
-
-    public int getTaskID() {
-        return this.taskID;
+    @Override
+    public boolean canPlace(Location location, Player player) {
+        return com.griefdefender.api.GriefDefender.getCore().getUser(player.getUniqueId()).canPlace(player.getInventory().getItemInMainHand(), location);
     }
 }
