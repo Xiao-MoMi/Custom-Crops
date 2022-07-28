@@ -22,12 +22,13 @@ Crops will grow at a specified time which you will see in the config.\
 All crops will grow successively if their pot is watered.
 
 ### Season & Greenhouse
-Season is an important part of StardewValley Farming System
-which means crops only grow in a suitable season. Inproper
-seasons will make crops into dead stage but you can use 
-greenhouse glass to allow them grow all year.\
+Season is now an important part of StardewValley Farming System.
+Crops only grow in a suitable season and inproper
+seasons will make crops into a dead stage. 
+You can use greenhouse glass to allow them to grow all year.\
 Season change has two modes: Automatic and Command\
-You might use command to change season to sync other plugin's season for example RealisticSeason.
+You might use the command to change the season to sync another plugin's season, for example RealisticSeason.
+
 
 ### Fertilizer
 There are three templates of fertiziliers: \
