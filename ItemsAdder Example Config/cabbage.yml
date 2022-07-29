@@ -1,12 +1,12 @@
 info:
   namespace: customcrops
 items:
-  tomato_stage_1:
+  cabbage_stage_1:
     display_name: ""
     resource:
       generate: false
       material: PAPER
-      model_path: tomato/stage_1
+      model_path: cabbage/stage_1
     specific_properties:
       block:
         placed_model:
@@ -17,12 +17,12 @@ items:
             name: block.azalea.place
           break:
             name: block.azalea.break
-  tomato_stage_2:
+  cabbage_stage_2:
     display_name: ""
     resource:
       generate: false
       material: PAPER
-      model_path: tomato/stage_2
+      model_path: cabbage/stage_2
     specific_properties:
       block:
         placed_model:
@@ -33,12 +33,12 @@ items:
             name: block.azalea.place
           break:
             name: block.azalea.break
-  tomato_stage_3:
+  cabbage_stage_3:
     display_name: ""
     resource:
       generate: false
       material: PAPER
-      model_path: tomato/stage_3
+      model_path: cabbage/stage_3
     specific_properties:
       block:
         placed_model:
@@ -49,12 +49,12 @@ items:
             name: block.azalea.place
           break:
             name: block.azalea.break
-  tomato_stage_4:
+  cabbage_stage_4:
     display_name: ""
     resource:
       generate: false
       material: PAPER
-      model_path: tomato/stage_4
+      model_path: cabbage/stage_4
     specific_properties:
       block:
         placed_model:
@@ -65,74 +65,74 @@ items:
             name: block.azalea.place
           break:
             name: block.azalea.break
-  tomato_seeds:
-    display_name: "番茄种子"
+  cabbage_seeds:
+    display_name: "卷心菜种子"
     resource:
       generate: false
       material: PAPER
-      model_path: tomato/tomato_seeds
-  tomato:
-    display_name: "番茄"
+      model_path: cabbage/cabbage_seeds
+  cabbage:
+    display_name: "卷心菜"
     resource:
       generate: false
       material: APPLE
-      model_path: tomato/tomato
-  tomato_silver_star:
-    display_name: "番茄"
+      model_path: cabbage/cabbage
+  cabbage_silver_star:
+    display_name: "卷心菜"
     resource:
       generate: false
       material: APPLE
-      model_path: tomato/tomato_silver_star
-  tomato_golden_star:
-    display_name: "番茄"
+      model_path: cabbage/cabbage_silver_star
+  cabbage_golden_star:
+    display_name: "卷心菜"
     resource:
       generate: false
       material: APPLE
-      model_path: tomato/tomato_golden_star
-  gigantic_tomato:
-    display_name: "巨型番茄"
+      model_path: cabbage/cabbage_golden_star
+  gigantic_cabbage:
+    display_name: "巨型卷心菜"
     resource:
       generate: false
       material: PAPER
-      model_path: tomato/gigantic_tomato
+      model_path: cabbage/gigantic_cabbage
     specific_properties:
       block:
         placed_model:
           type: REAL_TRANSPARENT
 loots:
   blocks:
-    tomato_stage_1:
-      type: customcrops:tomato_stage_1
+    cabbage_stage_1:
+      type: customcrops:cabbage_stage_1
       items:
         result_1:
-          item: customcrops:tomato_seeds
+          item: customcrops:cabbage_seeds
           min_amount: 1
           max_amount: 1
           chance: 100
           ignore_fortune: true
-    tomato_stage_2:
-      type: customcrops:tomato_stage_2
+    cabbage_stage_2:
+      type: customcrops:cabbage_stage_2
       items:
         result_1:
-          item: customcrops:tomato_seeds
+          item: customcrops:cabbage_seeds
           min_amount: 1
           max_amount: 1
           chance: 100
           ignore_fortune: true
-    tomato_stage_3:
-      type: customcrops:tomato_stage_3
+    cabbage_stage_3:
+      type: customcrops:cabbage_stage_3
       items:
         result_1:
-          item: customcrops:tomato_seeds
+          item: customcrops:cabbage_seeds
           min_amount: 1
           max_amount: 1
           chance: 100
           ignore_fortune: true
-    tomato_stage_4:
-      type: customcrops:tomato_stage_4
-      items:
-        result_1:
-          item: customcrops:tomato
-          min_amount: 1
-          max_amount: 3
-          chance: 100
+#    cabbage_stage_4:
+#      type: customcrops:cabbage_stage_4
+#      items:
+#        result_1:
+#          item: customcrops:cabbage
+#          min_amount: 1
+#          max_amount: 3
+#          chance: 100
