@@ -42,7 +42,8 @@ water bucket or watering can. Max storage and range can be customized.\
 Watering can also has its max storage and range. 1x1 1x3 3x3 and even 9x99 is supported!
 
 ### OverWeight
-If configurated, crops will still absorb water every day and have a very little chance to be OverWeight(gigantic) before it's dead.
+If configurated, crops will still absorb water every day and have a very little chance to be OverWeight(gigantic) before it's dead.\
+I prefer the Stardrew Valley method but you can also set it to golden crops like OriginRealms. It's up to you.
 
 ### Quality
 Crops have three qualities, if you don't want this feature just disable it in config. 
@@ -55,9 +56,9 @@ If configurated, crops can be harvested with hands repeatedly and return to a sp
 1.Crops only grow at the specified time and won't impact the performance in other times.\
 2.Growing judge is async and only the last step ** replace blcoks ** is sync.\
 3.Crops will not actually grow at the same time. It's laggy to replace so many blocks at the same time. They will grow in a random time(in seconds) which you can specified in the config after "grow-time"(7am default)\
-4.Defaultly crops will only grow in loaded chunks. If you want a mechanic similar to OriginRealms just DISABLE SEASON, GIGANTIC(OverWeight) and REPEATED HARVESTING.\
+4.Defaultly crops will only grow in loaded chunks. If you want a mechanic similar to OriginRealms just DISABLE SEASON and REPEATED HARVESTING.\
 In this way crops data will be removed from file after it comes to its max stage. In other words, plugin will only record the crops still on growing.\
-NEVER SET "only-grow-in-loaded-chunks" FALSE IF YOU DON'T DISABLE THE THREE FEATURES MENTIONED ABOVE.
+NEVER SET "only-grow-in-loaded-chunks" FALSE IF YOU DON'T DISABLE THE TWO FEATURES MENTIONED ABOVE.
 
 ### Commands
 /customcrops setseason [world] [season] # set a specified world's season\
