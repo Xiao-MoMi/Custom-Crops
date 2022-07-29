@@ -30,6 +30,9 @@ import java.util.List;
 
 public class BackUp {
 
+    /**
+     * 备份全部文件
+     */
     public static void backUpData(){
 
         List<String> files = Arrays.asList("crop","sprinkler","pot","season");
@@ -49,6 +52,12 @@ public class BackUp {
         });
     }
 
+    /**
+     * 复制某个文件
+     * @param file_from 源文件
+     * @param file_to 目标文件
+     * @throws IOException IO异常
+     */
     private static void backUp(File file_from, File file_to) throws IOException {
         if(!file_to.exists()){
             file_to.getParentFile().mkdirs();

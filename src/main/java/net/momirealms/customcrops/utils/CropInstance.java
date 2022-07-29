@@ -17,7 +17,6 @@
 
 package net.momirealms.customcrops.utils;
 
-import net.momirealms.customcrops.integrations.skill.SkillXP;
 import net.momirealms.customcrops.requirements.Requirement;
 
 import java.util.List;
@@ -35,7 +34,9 @@ public class CropInstance {
     private String quality_2;
     private String quality_3;
     private double skillXP;
+    private boolean dropIALoot;
     private List<String> commands;
+    private double growChance;
 
     public CropInstance(int min, int max){
         this.min = min;
@@ -58,6 +59,8 @@ public class CropInstance {
     public int getMin() { return min; }
     public List<String> getCommands() { return commands; }
     public double getSkillXP() {return skillXP;}
+    public boolean doesDropIALoot() {return dropIALoot;}
+    public double getGrowChance() {return growChance;}
 
     public void setReturnStage(String stage){ this.returnStage = stage; }
     public void setGiant(String giant) { this.giant = giant; }
@@ -69,4 +72,6 @@ public class CropInstance {
     public void setQuality_3(String quality_3) { this.quality_3 = quality_3; }
     public void setCommands(List<String> commands) { this.commands = commands; }
     public void setSkillXP(double skillXP) {this.skillXP = skillXP;}
+    public void setDropIALoot(boolean dropIALoot) {this.dropIALoot = dropIALoot;}
+    public void setGrowChance(double growChance) {this.growChance = growChance;}
 }

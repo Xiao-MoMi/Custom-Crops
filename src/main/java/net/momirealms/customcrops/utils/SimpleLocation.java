@@ -35,25 +35,19 @@ public class SimpleLocation {
         this.z = z;
     }
 
+    /**
+     * 将Location转换为SimpleLocation
+     * @param location Location
+     * @return SimpleLocation
+     */
     public static SimpleLocation fromLocation(Location location){
         return new SimpleLocation(location.getWorld().getName(), location.getBlockX(), location.getBlockY(), location.getBlockZ());
     }
 
-    public int getX() {
-        return x;
-    }
-
-    public int getZ() {
-        return z;
-    }
-
-    public int getY() {
-        return y;
-    }
-
-    public String getWorldName() {
-        return worldName;
-    }
+    public int getX() {return x;}
+    public int getZ() {return z;}
+    public int getY() {return y;}
+    public String getWorldName() {return worldName;}
 
     @Override
     public boolean equals(Object obj) {

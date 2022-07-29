@@ -37,13 +37,11 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class PotManager {
 
-    private CustomCrops plugin;
     public static ConcurrentHashMap<SimpleLocation, Fertilizer> Cache = new ConcurrentHashMap<>();
 
-    public PotManager(CustomCrops plugin){
-        this.plugin = plugin;
-    }
-
+    /**
+     * 载入数据
+     */
     public void loadData(){
         File file = new File(CustomCrops.instance.getDataFolder(), "data" + File.separator + "pot.yml");
         if(!file.exists()){
@@ -65,13 +63,10 @@ public class PotManager {
                     if (fertilizer == null) return;
                     if (fertilizer instanceof SpeedGrow speedGrow){
                         Cache.put(new SimpleLocation(worldName, Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2])),  new SpeedGrow(name, (int) map.get("times"), speedGrow.getChance(), speedGrow.isBefore()));
-                        //Cache.put(new Location(Bukkit.getWorld(worldName), Double.parseDouble(split[0]), Double.parseDouble(split[1]), Double.parseDouble(split[2])), new SpeedGrow(name, (int) map.get("times"), speedGrow.getChance(), speedGrow.isBefore()));
                     }else if (fertilizer instanceof QualityCrop qualityCrop){
                         Cache.put(new SimpleLocation(worldName, Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2])), new QualityCrop(name, (int) map.get("times"), qualityCrop.getChance(), qualityCrop.isBefore()));
-                        //Cache.put(new Location(Bukkit.getWorld(worldName), Double.parseDouble(split[0]), Double.parseDouble(split[1]), Double.parseDouble(split[2])), new QualityCrop(name, (int) map.get("times"), qualityCrop.getChance(), qualityCrop.isBefore()));
                     }else if (fertilizer instanceof RetainingSoil retainingSoil){
                         Cache.put(new SimpleLocation(worldName, Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2])), new RetainingSoil(name, (int) map.get("times"), retainingSoil.getChance(), retainingSoil.isBefore()));
-                        //Cache.put(new Location(Bukkit.getWorld(worldName), Double.parseDouble(split[0]), Double.parseDouble(split[1]), Double.parseDouble(split[2])), new RetainingSoil(name, (int) map.get("times"), retainingSoil.getChance(), retainingSoil.isBefore()));
                     }else {
                         AdventureManager.consoleMessage("<red>[CustomCrops] 未知肥料类型错误!</red>");
                     }
@@ -80,6 +75,9 @@ public class PotManager {
         });
     }
 
+    /**
+     * 保存数据
+     */
     public void saveData(){
         File file = new File(CustomCrops.instance.getDataFolder(), "data" + File.separator + "pot.yml");
         YamlConfiguration data = new YamlConfiguration();

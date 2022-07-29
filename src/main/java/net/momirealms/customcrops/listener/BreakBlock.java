@@ -115,7 +115,6 @@ public class BreakBlock implements Listener {
                                 normalDrop(cropInstance, random, itemLoc, world);
                                 return null;
                             });
-
                         }
                     } else {
                         Bukkit.getScheduler().callSyncMethod(CustomCrops.instance, ()-> {
@@ -124,7 +123,6 @@ public class BreakBlock implements Listener {
                         });
                     }
                 });
-
             }
         }
         else if(namespacedId.equalsIgnoreCase(ConfigReader.Basic.watered_pot) || namespacedId.equalsIgnoreCase(ConfigReader.Basic.pot)){
@@ -138,9 +136,8 @@ public class BreakBlock implements Listener {
             if(CustomBlock.byAlreadyPlaced(blockUp) != null){
                 CustomBlock customBlock = CustomBlock.byAlreadyPlaced(blockUp);
                 String cropNamespacedId = customBlock.getNamespacedID();
-                if(cropNamespacedId.contains("_stage_")){
+                if(cropNamespacedId.contains("_stage_") && !cropNamespacedId.equals(ConfigReader.Basic.dead)){
                     CustomBlock.remove(location);
-                    if (cropNamespacedId.equals(ConfigReader.Basic.dead)) return;
                     if (ConfigReader.Config.quality){
                         String[] cropNameList = StringUtils.split(StringUtils.split(cropNamespacedId, ":")[1], "_");
                         int nextStage = Integer.parseInt(cropNameList[2]) + 1;
@@ -183,6 +180,13 @@ public class BreakBlock implements Listener {
         }
     }
 
+    /**
+     * 没有品质肥料下的普通掉落
+     * @param cropInstance 农作物
+     * @param random 随机农作物数量
+     * @param itemLoc 掉落物位置
+     * @param world 世界
+     */
     static void normalDrop(CropInstance cropInstance, int random, Location itemLoc, World world) {
         for (int i = 0; i < random; i++){
             double ran = Math.random();

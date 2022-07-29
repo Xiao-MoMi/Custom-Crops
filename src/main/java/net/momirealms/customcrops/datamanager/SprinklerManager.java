@@ -39,13 +39,11 @@ import java.util.concurrent.ConcurrentHashMap;
 public class SprinklerManager {
 
     public YamlConfiguration data;
-    private final CustomCrops plugin;
     public static ConcurrentHashMap<Location, Sprinkler> Cache = new ConcurrentHashMap<>();
 
-    public SprinklerManager(CustomCrops plugin){
-        this.plugin = plugin;
-    }
-
+    /**
+     * 载入数据
+     */
     public void loadData() {
         File file = new File(CustomCrops.instance.getDataFolder(), "data" + File.separator + "sprinkler.yml");
         if(!file.exists()){
@@ -60,6 +58,9 @@ public class SprinklerManager {
         this.data = YamlConfiguration.loadConfiguration(file);
     }
 
+    /**
+     * 保存数据
+     */
     public void saveData(){
         File file = new File(CustomCrops.instance.getDataFolder(), "data" + File.separator + "sprinkler.yml");
         try{
@@ -70,6 +71,9 @@ public class SprinklerManager {
         }
     }
 
+    /**
+     * 清理无用数据
+     */
     public void cleanData(){
         data.getKeys(false).forEach(world -> {
             data.getConfigurationSection(world).getKeys(false).forEach(chunk ->{
@@ -80,6 +84,9 @@ public class SprinklerManager {
         });
     }
 
+    /**
+     * 将hashmap中的数据保存到data中
+     */
     public void updateData(){
         Cache.forEach((location, sprinklerData) -> {
             String world = location.getWorld().getName();
@@ -92,6 +99,10 @@ public class SprinklerManager {
         Cache.clear();
     }
 
+    /**
+     * 指定世界的洒水器工作
+     * @param worldName 世界名
+     */
     public void sprinklerWork(String worldName){
         Long time1 = System.currentTimeMillis();
         updateData();
@@ -146,6 +157,9 @@ public class SprinklerManager {
         }
     }
 
+    /**
+     * 所有世界的洒水器工作
+     */
     public void sprinklerWorkAll(){
         Long time1 = System.currentTimeMillis();
         updateData();
@@ -202,6 +216,10 @@ public class SprinklerManager {
         }
     }
 
+    /**
+     * 转干为湿
+     * @param potLoc 种植盆的位置
+     */
     private void waterPot(Location potLoc) {
         CustomBlock cb = CustomBlock.byAlreadyPlaced(potLoc.getBlock());
         if(cb != null){

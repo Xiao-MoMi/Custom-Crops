@@ -30,10 +30,14 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Set;
 
-public record SeasonManager(CustomCrops plugin) {
+public class SeasonManager{
 
     public static HashMap<String, String> SEASON = new HashMap<>();
 
+    /**
+     * 读取文件中的季节
+     * @param file 季节数据文件
+     */
     private YamlConfiguration readData(File file) {
         if (!file.exists()) {
             try {
@@ -47,6 +51,9 @@ public record SeasonManager(CustomCrops plugin) {
         return YamlConfiguration.loadConfiguration(file);
     }
 
+    /**
+     * 载入数据
+     */
     public void loadData() {
         SEASON.clear();
         YamlConfiguration data = readData(new File(CustomCrops.instance.getDataFolder(), "data" + File.separator + "season.yml"));
@@ -68,8 +75,11 @@ public record SeasonManager(CustomCrops plugin) {
         ConfigReader.Config.worlds.forEach(this::getSeason);
     }
 
+    /**
+     * 计算某个世界的季节
+     * @param world 世界
+     */
     public void getSeason(World world) {
-
         int season = (int) ((world.getFullTime() / 24000L) % (ConfigReader.Season.duration * 4)) / ConfigReader.Season.duration;
         switch (season) {
             case 0 -> SEASON.put(world.getName(), "spring");
@@ -80,6 +90,9 @@ public record SeasonManager(CustomCrops plugin) {
         }
     }
 
+    /**
+     * 保存数据
+     */
     public void saveData() {
         SEASON.forEach((key, value) -> {
             File file = new File(CustomCrops.instance.getDataFolder(), "data" + File.separator + "season.yml");
@@ -94,6 +107,11 @@ public record SeasonManager(CustomCrops plugin) {
         });
     }
 
+    /**
+     * 设置季节
+     * @param worldName 世界名
+     * @param season 季节
+     */
     public boolean setSeason(String worldName, String season){
         if (!ConfigReader.Config.worldNames.contains(worldName)){
             return false;

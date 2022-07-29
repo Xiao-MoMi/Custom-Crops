@@ -40,12 +40,12 @@ public class Executor implements CommandExecutor {
     @Override
     @ParametersAreNonnullByDefault
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        //权限不足
+
         if (!(sender.hasPermission("customcrops.admin") || sender.isOp())){
             AdventureManager.playerMessage((Player) sender, ConfigReader.Message.prefix + ConfigReader.Message.noPerm);
             return true;
         }
-        //参数不足
+
         if (args.length < 1) {
             lackArgs(sender);
             return true;
@@ -182,6 +182,10 @@ public class Executor implements CommandExecutor {
         return true;
     }
 
+    /**
+     * 缺少参数的提示语
+     * @param sender 发送者
+     */
     private void lackArgs(CommandSender sender){
         if (sender instanceof Player){
             AdventureManager.playerMessage((Player) sender,ConfigReader.Message.prefix + ConfigReader.Message.lackArgs);
@@ -190,6 +194,10 @@ public class Executor implements CommandExecutor {
         }
     }
 
+    /**
+     * 强制保存的提示语
+     * @param sender 发送者
+     */
     private void forceSave(CommandSender sender){
         if (sender instanceof Player player){
             AdventureManager.playerMessage(player,ConfigReader.Message.prefix + ConfigReader.Message.forceSave);

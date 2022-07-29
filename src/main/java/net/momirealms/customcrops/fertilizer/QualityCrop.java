@@ -33,43 +33,18 @@ public class QualityCrop implements Fertilizer{
     }
 
     @Override
-    public String getKey() {
-        return this.key;
-    }
-
+    public String getKey() {return this.key;}
     @Override
-    public int getTimes() {
-        return this.times;
-    }
-
+    public int getTimes() {return this.times;}
     @Override
-    public void setTimes(int times) {
-        this.times = times;
-    }
-
+    public void setTimes(int times) {this.times = times;}
     @Override
-    public boolean isBefore() {
-        return this.before;
-    }
-
+    public boolean isBefore() {return this.before;}
     @Override
-    public String getName() {
-        return this.name;
-    }
+    public String getName() {return this.name;}
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setChance(int[] chance) {
-        this.chance = chance;
-    }
-
-    public void setKey(String key) {
-        this.key = key;
-    }
-
-    public int[] getChance() {
-        return chance;
-    }
+    public void setName(String name) {this.name = name;}
+    public void setChance(int[] chance) {this.chance = chance;}
+    public void setKey(String key) {this.key = key;}
+    public int[] getChance() {return chance;}
 }

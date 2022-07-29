@@ -70,8 +70,7 @@ public class RightClick implements Listener {
         Action action = event.getAction();
         if (action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK){
             ItemStack itemStack = event.getItem();
-            if (itemStack != null){
-                if (itemStack.getType() == Material.AIR) return;
+            if (itemStack != null && itemStack.getType() != Material.AIR){
                 NBTItem nbtItem = new NBTItem(itemStack);
                 NBTCompound nbtCompound = nbtItem.getCompound("itemsadder");
                 if (nbtCompound != null){
@@ -145,9 +144,8 @@ public class RightClick implements Listener {
                         }
                         return;
                     }
-                    Optional<WateringCan> can = Optional.ofNullable(ConfigReader.CANS.get(id));
-                    if (can.isPresent()){
-                        WateringCan wateringCan = can.get();
+                    WateringCan wateringCan = ConfigReader.CANS.get(id);
+                    if (wateringCan != null){
                         int water = nbtItem.getInteger("WaterAmount");
                         List<Block> lineOfSight = player.getLineOfSight(null, 5);
                         for (Block block : lineOfSight) {
@@ -226,9 +224,8 @@ public class RightClick implements Listener {
                         }
                         return;
                     }
-                    Optional<Fertilizer> fertilize = Optional.ofNullable(ConfigReader.FERTILIZERS.get(id));
-                    if (fertilize.isPresent() && action == Action.RIGHT_CLICK_BLOCK){
-                        Fertilizer fertilizerConfig = fertilize.get();
+                    Fertilizer fertilizerConfig = ConfigReader.FERTILIZERS.get(id);
+                    if (fertilizerConfig != null && action == Action.RIGHT_CLICK_BLOCK){
                         Block block = event.getClickedBlock();
                         CustomBlock customBlock = CustomBlock.byAlreadyPlaced(block);
                         if (customBlock == null) return;
@@ -264,8 +261,8 @@ public class RightClick implements Listener {
                         }
                         return;
                     }
-                    Optional<Sprinkler> sprinkler = Optional.ofNullable(ConfigReader.SPRINKLERS.get(id));
-                    if (sprinkler.isPresent() && action == Action.RIGHT_CLICK_BLOCK && event.getBlockFace() == BlockFace.UP){
+                    Sprinkler sprinkler = ConfigReader.SPRINKLERS.get(id);
+                    if (sprinkler != null && action == Action.RIGHT_CLICK_BLOCK && event.getBlockFace() == BlockFace.UP){
                         Location location = event.getClickedBlock().getLocation();
                         for (Integration integration : ConfigReader.Config.integration){
                             if (!integration.canPlace(location, player)) return;
@@ -277,10 +274,10 @@ public class RightClick implements Listener {
                             AdventureManager.playerMessage(player, ConfigReader.Message.prefix + ConfigReader.Message.sprinkler_limit.replace("{max}", String.valueOf(ConfigReader.Config.sprinklerLimit)));
                             return;
                         }
-                        Sprinkler sprinklerData = new Sprinkler(sprinkler.get().getRange(), 0);
+                        Sprinkler sprinklerData = new Sprinkler(sprinkler.getRange(), 0);
                         itemStack.setAmount(itemStack.getAmount() - 1);
                         SprinklerManager.Cache.put(location.add(0,1,0), sprinklerData);
-                        IAFurniture.placeFurniture(sprinkler.get().getNamespacedID_2(),location);
+                        IAFurniture.placeFurniture(sprinkler.getNamespacedID_2(),location);
                         AdventureManager.playerSound(player, ConfigReader.Sounds.placeSprinklerSource, ConfigReader.Sounds.placeSprinklerKey);
                         return;
                     }
@@ -318,17 +315,27 @@ public class RightClick implements Listener {
                     }
                 }
                 else if(ConfigReader.Config.rightClickHarvest && !ConfigReader.Config.needEmptyHand){
-                    rightClickHarvest(event, player);
+                    Block block = event.getClickedBlock();
+                    if (block != null){
+                        rightClickHarvest(block, player);
+                    }
                 }
             }
             else if (ConfigReader.Config.rightClickHarvest && action == Action.RIGHT_CLICK_BLOCK) {
-                rightClickHarvest(event, player);
+                Block block = event.getClickedBlock();
+                if (block != null){
+                    rightClickHarvest(block, player);
+                }
             }
         }
     }
 
-    private void rightClickHarvest(PlayerInteractEvent event, Player player) {
-        Block block = event.getClickedBlock();
+    /**
+     * 右键收获判定
+     * @param block 农作物方块
+     * @param player 玩家
+     */
+    private void rightClickHarvest(Block block, Player player) {
         Location location = block.getLocation();
         CustomBlock customBlock = CustomBlock.byAlreadyPlaced(block);
         if (customBlock == null) return;
@@ -356,6 +363,11 @@ public class RightClick implements Listener {
                     }
                     if (ConfigReader.Config.skillXP != null && cropInstance.getSkillXP() != 0){
                         ConfigReader.Config.skillXP.addXp(player, cropInstance.getSkillXP());
+                    }
+                    if (cropInstance.doesDropIALoot()){
+                        customBlock.getLoot().forEach(itemStack -> {
+                            location.getWorld().dropItem(location.clone().add(0.5,0.2,0.5), itemStack);
+                        });
                     }
                     if (fertilizer != null){
                         if (fertilizer instanceof QualityCrop qualityCrop){
@@ -398,6 +410,11 @@ public class RightClick implements Listener {
         coolDown.remove(event.getPlayer());
     }
 
+    /**
+     * 添加肥料
+     * @param fertilizerConfig 肥料配置
+     * @param location 种植盆位置
+     */
     private void addFertilizer(Fertilizer fertilizerConfig, Location location) {
         if (fertilizerConfig instanceof QualityCrop config){
             QualityCrop qualityCrop = new QualityCrop(config.getKey(), config.getTimes(), config.getChance(), config.isBefore());
@@ -411,6 +428,13 @@ public class RightClick implements Listener {
         }
     }
 
+    /**
+     * 水壶浇水判定
+     * @param width 宽度
+     * @param length 长度
+     * @param location 位置
+     * @param yaw 视角
+     */
     private void waterPot(int width, int length, Location location, float yaw){
         if (ConfigReader.Config.hasParticle){
             location.getWorld().spawnParticle(Particle.WATER_SPLASH, location.clone().add(0.5,1.2,0.5),15,0.1,0.1, 0.1);

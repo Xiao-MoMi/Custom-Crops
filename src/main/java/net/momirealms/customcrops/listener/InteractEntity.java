@@ -31,7 +31,6 @@ import net.momirealms.customcrops.utils.Sprinkler;
 import net.momirealms.customcrops.utils.WateringCan;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.Particle;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -160,6 +159,15 @@ public class InteractEntity implements Listener {
         }
     }
 
+    /**
+     * 获取某个洒水器的水量
+     * @param location 洒水器位置
+     * @param world 世界
+     * @param x 坐标
+     * @param z 坐标
+     * @param sprinkler 洒水器类型
+     * @return 水量
+     */
     private int getCurrentWater(Location location, String world, int x, int z, Sprinkler sprinkler) {
         int currentWater;
         if (sprinkler != null){

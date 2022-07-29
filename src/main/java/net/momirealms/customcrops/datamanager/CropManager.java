@@ -45,16 +45,16 @@ import java.util.concurrent.ConcurrentHashMap;
 public class CropManager {
 
     private YamlConfiguration data;
-    private final CustomCrops plugin;
     public static ConcurrentHashMap<Location, String> Cache = new ConcurrentHashMap<>();
-    private BukkitScheduler bukkitScheduler;
+    private final BukkitScheduler bukkitScheduler;
 
-    public CropManager(CustomCrops plugin){
-        this.plugin = plugin;
+    public CropManager(){
         this.bukkitScheduler = Bukkit.getScheduler();
     }
 
-    //载入数据
+    /**
+     * 载入数据
+     */
     public void loadData() {
         File file = new File(CustomCrops.instance.getDataFolder(), "data" + File.separator + "crop.yml");
         if(!file.exists()){
@@ -69,7 +69,9 @@ public class CropManager {
         this.data = YamlConfiguration.loadConfiguration(file);
     }
 
-    //保存数据
+    /**
+     * 保存数据
+     */
     public void saveData() {
         File file = new File(CustomCrops.instance.getDataFolder(), "data" + File.separator + "crop.yml");
         try{
@@ -80,7 +82,9 @@ public class CropManager {
         }
     }
 
-    //将缓存内新数据更新到data内
+    /**
+     * 将hashmap中的数据保存到data中
+     */
     public void updateData(){
         Cache.forEach((location, String) -> {
             int x = location.getBlockX();
@@ -90,7 +94,9 @@ public class CropManager {
         Cache.clear();
     }
 
-    //隐藏指令，清除无用数据
+    /**
+     * 清除无用数据
+     */
     public void cleanData(){
         data.getKeys(false).forEach(world -> {
             data.getConfigurationSection(world).getKeys(false).forEach(chunk ->{
@@ -101,7 +107,10 @@ public class CropManager {
         });
     }
 
-    //农作物生长
+    /**
+     * 农作物生长
+     * @param worldName 进行生长判定的世界名
+     */
     public void cropGrow(String worldName){
 
         Long time1 = System.currentTimeMillis();
@@ -155,7 +164,7 @@ public class CropManager {
                                 }
                             }
                             int nextStage = Integer.parseInt(cropNameList[2]) + 1;
-                            if (CustomBlock.getInstance(StringUtils.chop(namespacedID) + nextStage) != null) {
+                            if (CustomBlock.getInstance(StringUtils.chop(namespacedID) + nextStage) != null && cropInstance.getGrowChance() > Math.random()) {
                                 Fertilizer fertilizer = PotManager.Cache.get(SimpleLocation.fromLocation(potLocation));
                                 if (fertilizer != null){
                                     int times = fertilizer.getTimes();
@@ -229,7 +238,10 @@ public class CropManager {
         }
     }
 
-    //农作物生长
+    /**
+     * 全部世界农作物生长
+     * 对于使用动态加载世界的服务器有效
+     */
     public void cropGrowAll(){
         Long time1 = System.currentTimeMillis();
         updateData();
@@ -271,7 +283,6 @@ public class CropManager {
                             CropInstance cropInstance = ConfigReader.CROPS.get(cropNameList[0]);
                             int random = new Random().nextInt(ConfigReader.Config.timeToGrow);
                             if (potNamespacedID.equals(ConfigReader.Basic.watered_pot)){
-                                //如果启用季节限制且农作物有季节需求
                                 if (ConfigReader.Season.enable && cropInstance.getSeasons() != null){
                                     if (isWrongSeason(seedLocation, cropInstance.getSeasons(), worldName)){
                                         data.set(stringBuilder.toString(), null);
@@ -283,7 +294,7 @@ public class CropManager {
                                     }
                                 }
                                 int nextStage = Integer.parseInt(cropNameList[2]) + 1;
-                                if (CustomBlock.getInstance(StringUtils.chop(namespacedID) + nextStage) != null) {
+                                if (CustomBlock.getInstance(StringUtils.chop(namespacedID) + nextStage) != null  && cropInstance.getGrowChance() > Math.random()) {
                                     Fertilizer fertilizer = PotManager.Cache.get(SimpleLocation.fromLocation(potLocation));
                                     if (fertilizer != null){
                                         int times = fertilizer.getTimes();
@@ -358,6 +369,12 @@ public class CropManager {
         }
     }
 
+    /**
+     * 判定季节
+     * @param worldName 世界名
+     * @param seasons 农作物能生长的季节
+     * @param seedLocation 农作物的位置
+     */
     private boolean isWrongSeason(Location seedLocation, List<String> seasons, String worldName){
         if(ConfigReader.Season.greenhouse){
             for(int i = 1; i <= ConfigReader.Season.range; i++){
@@ -385,19 +402,36 @@ public class CropManager {
         return true;
     }
 
+    /**
+     * 生长一个阶段(消耗水)
+     * @param potLocation 种植盆位置
+     * @param seedLocation 农作物位置
+     * @param namespacedID 农作物下一阶段的ID
+     * @param nextStage 农作物下一阶段的阶段数
+     * @param random 随机生长时间
+     */
     private void addStage(Location potLocation, Location seedLocation, String namespacedID, int nextStage, int random){
+        String stage = StringUtils.chop(namespacedID) + nextStage;
         bukkitScheduler.runTaskLater(CustomCrops.instance, () ->{
             CustomBlock.remove(potLocation);
             CustomBlock.place(ConfigReader.Basic.pot, potLocation);
             CustomBlock.remove(seedLocation);
-            CustomBlock.place(StringUtils.chop(namespacedID) + nextStage, seedLocation);
+            CustomBlock.place(stage, seedLocation);
         }, random);
     }
 
+    /**
+     * 生长一个阶段(不消耗水)
+     * @param seedLocation 农作物位置
+     * @param namespacedID 农作物下一阶段的ID
+     * @param nextStage 农作物下一阶段的阶段数
+     * @param random 随机生长时间
+     */
     private void addStage(Location seedLocation, String namespacedID, int nextStage, int random){
+        String stage = StringUtils.chop(namespacedID) + nextStage;
         bukkitScheduler.runTaskLater(CustomCrops.instance, () ->{
             CustomBlock.remove(seedLocation);
-            CustomBlock.place(StringUtils.chop(namespacedID) + nextStage, seedLocation);
+            CustomBlock.place(stage, seedLocation);
         }, random);
     }
 }

@@ -4,11 +4,20 @@
 
 crops:
   tomato:
+
     amount: 1~4
     quality:
       1: customcrops:tomato
       2: customcrops:tomato_silver_star
       3: customcrops:tomato_golden_star
+
+    #optional
+    #The chance that a crop grow a stage at grow time
+    grow-chance: 0.9
+
+    #When harvesting, should the crop drop the loots from ItemsAdder too
+    #This is useful for droping seeds and other items
+    drop-ia-loots: false
 
     #optional
     #Overweight

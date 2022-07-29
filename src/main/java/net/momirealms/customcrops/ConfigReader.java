@@ -336,7 +336,7 @@ public class ConfigReader {
                     }
                 });
             }
-            AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><white>" + SPRINKLERS.size()/2 + "<color:#FFEBCD> srpinklers loaded!");
+            AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><white>" + SPRINKLERS.size()/2 + "<color:#FFEBCD> sprinklers loaded!");
         }
     }
 
@@ -505,10 +505,22 @@ public class ConfigReader {
                 });
                 cropInstance.setRequirements(requirements);
             }
+            if (config.contains("crops." + key + ".grow-chance")){
+                cropInstance.setGrowChance(config.getDouble("crops." + key + ".grow-chance"));
+            }else {
+                cropInstance.setGrowChance(1);
+            }
             if (Config.quality){
                 cropInstance.setQuality_1(config.getString("crops." + key + ".quality.1"));
                 cropInstance.setQuality_2(config.getString("crops." + key + ".quality.2"));
                 cropInstance.setQuality_3(config.getString("crops." + key + ".quality.3"));
+                if (config.contains("crops." + key + ".drop-ia-loots")){
+                    cropInstance.setDropIALoot(config.getBoolean("crops." + key + ".drop-ia-loots"));
+                }else {
+                    cropInstance.setDropIALoot(false);
+                }
+            }else {
+                cropInstance.setDropIALoot(false);
             }
             CROPS.put(key, cropInstance);
         });

@@ -26,10 +26,21 @@ import org.bukkit.entity.Entity;
 
 public class IAFurniture {
 
+    /**
+     * 在指定位置放置家具
+     * @param name 物品名
+     * @param location 位置
+     */
     public static void placeFurniture(String name, Location location){
         CustomFurniture.spawn(name, location.getBlock());
     }
 
+    /**
+     * 判断指定位置的盔甲架是不是洒水器
+     * @param location 位置
+     * @param world 世界
+     * @return 是/否
+     */
     public static boolean getFromLocation(Location location, World world){
         for(Entity entity : world.getNearbyEntities(location,0,0,0)){
             if(entity instanceof ArmorStand armorStand){

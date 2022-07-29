@@ -39,6 +39,13 @@ public class HoloUtil {
 
     public static HashMap<Location, Entity> cache = new HashMap<>();
 
+    /**
+     * 对指定玩家展示在指定位置的盔甲架
+     * @param text 文本
+     * @param player 玩家
+     * @param location 位置
+     * @param duration 持续时间
+     */
     public static void showHolo(String text, Player player, Location location, int duration){
 
         ArmorStand entity = location.getWorld().spawn(location, ArmorStand.class, a -> {
