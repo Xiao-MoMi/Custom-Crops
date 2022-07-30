@@ -13,6 +13,9 @@ speed:
     item: customcrops:speed_1
     #肥料是否只有在种植前才能使用
     before-plant: true
+    #施肥的粒子效果(可选)
+    #https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Particle.html
+    #particle: VILLAGER_HAPPY
 
   speed_2:
     name: '뀍'

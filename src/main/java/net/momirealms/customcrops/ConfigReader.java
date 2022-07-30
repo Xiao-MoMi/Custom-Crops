@@ -34,6 +34,7 @@ import net.momirealms.customcrops.requirements.YPos;
 import net.momirealms.customcrops.utils.*;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.Particle;
 import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -91,7 +92,12 @@ public class ConfigReader {
         public static boolean quality;
         public static boolean canAddWater;
         public static boolean allWorld;
+        public static boolean pwSeason;
+        public static boolean nwSeason;
         public static boolean needEmptyHand;
+        public static boolean boneMeal;
+        public static Particle boneMealSuccess;
+        public static double boneMealChance;
         public static double quality_1;
         public static double quality_2;
         public static SkillXP skillXP;
@@ -123,6 +129,14 @@ public class ConfigReader {
             hasParticle = config.getBoolean("config.water-particles", true);
             rightClickHarvest = config.getBoolean("config.right-click-harvest", true);
             needEmptyHand = config.getBoolean("config.harvest-with-empty-hand", true);
+            pwSeason = config.getBoolean("config.prevent-plant-if-wrong-season", true);
+            nwSeason = config.getBoolean("config.should-notify-if-wrong-season", true);
+
+            boneMeal = config.getBoolean("config.bone-meal.enable", true);
+            if (boneMeal){
+                boneMealChance = config.getDouble("config.bone-meal.chance",0.5);
+                boneMealSuccess = Particle.valueOf(config.getString("config.bone-meal.success-particle", "VILLAGER_HAPPY").toUpperCase());
+            }
 
             //数量与高度限制
             enableLimit = config.getBoolean("config.limit.enable",true);
@@ -532,78 +546,37 @@ public class ConfigReader {
         YamlConfiguration config = getConfig("fertilizer.yml");
         if (config.contains("speed")){
             config.getConfigurationSection("speed").getKeys(false).forEach(key -> {
-                if (StringUtils.split(config.getString("speed." + key + ".item"), ":")[1].equals(key)){
-                    SpeedGrow speedGrow = new SpeedGrow(key, config.getInt("speed." + key + ".times"), config.getDouble("speed." + key + ".chance"), config.getBoolean("加速肥料." + key + ".before-plant"));
-                    speedGrow.setName(config.getString("speed." + key + ".name"));
-                    FERTILIZERS.put(key, speedGrow);
-                }else {
-                    AdventureManager.consoleMessage("<red>[CustomCrops] fertilizer " + key + "'s key should be the same with ItemsAdder item's key </red>");
+                SpeedGrow speedGrow = new SpeedGrow(key, config.getInt("speed." + key + ".times"), config.getDouble("speed." + key + ".chance"), config.getBoolean("speed." + key + ".before-plant"));
+                speedGrow.setName(config.getString("speed." + key + ".name"));
+                if (config.contains("speed." + key + ".particle")){
+                    speedGrow.setParticle(Particle.valueOf(config.getString("speed." + key + ".particle").toUpperCase()));
                 }
+                FERTILIZERS.put(StringUtils.split(config.getString("speed." + key + ".item"), ":")[1], speedGrow);
             });
         }
         if (config.contains("retaining")){
             config.getConfigurationSection("retaining").getKeys(false).forEach(key -> {
-                if (StringUtils.split(config.getString("retaining." + key + ".item"), ":")[1].equals(key)){
-                    RetainingSoil retainingSoil = new RetainingSoil(key, config.getInt("retaining." + key + ".times"), config.getDouble("retaining." + key + ".chance"), config.getBoolean("保湿肥料." + key + ".before-plant"));
-                    retainingSoil.setName(config.getString("retaining." + key + ".name"));
-                    FERTILIZERS.put(key, retainingSoil);
-                }else {
-                    AdventureManager.consoleMessage("<red>[CustomCrops] fertilizer " + key + "'s key should be the same with ItemsAdder item's key </red>");
+                RetainingSoil retainingSoil = new RetainingSoil(key, config.getInt("retaining." + key + ".times"), config.getDouble("retaining." + key + ".chance"), config.getBoolean("retaining." + key + ".before-plant"));
+                retainingSoil.setName(config.getString("retaining." + key + ".name"));
+                if (config.contains("retaining." + key + ".particle")){
+                    retainingSoil.setParticle(Particle.valueOf(config.getString("retaining." + key + ".particle").toUpperCase()));
                 }
+                FERTILIZERS.put(StringUtils.split(config.getString("retaining." + key + ".item"), ":")[1], retainingSoil);
             });
         }
         if (config.contains("quality")){
             config.getConfigurationSection("quality").getKeys(false).forEach(key -> {
-                if (StringUtils.split(config.getString("quality." + key + ".item"), ":")[1].equals(key)){
-                    String[] split = StringUtils.split(config.getString("quality." + key + ".chance"), "/");
-                    int[] weight = new int[3];
-                    weight[0] = Integer.parseInt(split[0]);
-                    weight[1] = Integer.parseInt(split[1]);
-                    weight[2] = Integer.parseInt(split[2]);
-                    QualityCrop qualityCrop = new QualityCrop(key, config.getInt("quality." + key + ".times"), weight, config.getBoolean("quality." + key + ".before-plant"));
-                    qualityCrop.setName(config.getString("quality." + key + ".name"));
-                    FERTILIZERS.put(key, qualityCrop);
-                }else {
-                    AdventureManager.consoleMessage("<red>[CustomCrops] fertilizer " + key + "'s key should be the same with ItemsAdder item's key </red>");
+                String[] split = StringUtils.split(config.getString("quality." + key + ".chance"), "/");
+                int[] weight = new int[3];
+                weight[0] = Integer.parseInt(split[0]);
+                weight[1] = Integer.parseInt(split[1]);
+                weight[2] = Integer.parseInt(split[2]);
+                QualityCrop qualityCrop = new QualityCrop(key, config.getInt("quality." + key + ".times"), weight, config.getBoolean("quality." + key + ".before-plant"));
+                qualityCrop.setName(config.getString("quality." + key + ".name"));
+                if (config.contains("quality." + key + ".particle")){
+                    qualityCrop.setParticle(Particle.valueOf(config.getString("quality." + key + ".particle").toUpperCase()));
                 }
-            });
-        }
-        if (config.contains("加速肥料")){
-            config.getConfigurationSection("加速肥料").getKeys(false).forEach(key -> {
-                if (StringUtils.split(config.getString("加速肥料." + key + ".item"), ":")[1].equals(key)){
-                    SpeedGrow speedGrow = new SpeedGrow(key, config.getInt("加速肥料." + key + ".times"), config.getDouble("加速肥料." + key + ".chance"), config.getBoolean("加速肥料." + key + ".before-plant"));
-                    speedGrow.setName(config.getString("加速肥料." + key + ".name"));
-                    FERTILIZERS.put(key, speedGrow);
-                }else {
-                    AdventureManager.consoleMessage("<red>[CustomCrops] 肥料 " + key + " 与ItemsAdder物品ID不一致</red>");
-                }
-            });
-        }
-        if (config.contains("保湿肥料")){
-            config.getConfigurationSection("保湿肥料").getKeys(false).forEach(key -> {
-                if (StringUtils.split(config.getString("保湿肥料." + key + ".item"), ":")[1].equals(key)){
-                    RetainingSoil retainingSoil = new RetainingSoil(key, config.getInt("保湿肥料." + key + ".times"), config.getDouble("保湿肥料." + key + ".chance"), config.getBoolean("保湿肥料." + key + ".before-plant"));
-                    retainingSoil.setName(config.getString("保湿肥料." + key + ".name"));
-                    FERTILIZERS.put(key, retainingSoil);
-                }else {
-                    AdventureManager.consoleMessage("<red>[CustomCrops] 肥料 " + key + " 与ItemsAdder物品ID不一致</red>");
-                }
-            });
-        }
-        if (config.contains("品质肥料")){
-            config.getConfigurationSection("品质肥料").getKeys(false).forEach(key -> {
-                if (StringUtils.split(config.getString("品质肥料." + key + ".item"), ":")[1].equals(key)){
-                    String[] split = StringUtils.split(config.getString("品质肥料." + key + ".chance"), "/");
-                    int[] weight = new int[3];
-                    weight[0] = Integer.parseInt(split[0]);
-                    weight[1] = Integer.parseInt(split[1]);
-                    weight[2] = Integer.parseInt(split[2]);
-                    QualityCrop qualityCrop = new QualityCrop(key, config.getInt("品质肥料." + key + ".times"), weight, config.getBoolean("品质肥料." + key + ".before-plant"));
-                    qualityCrop.setName(config.getString("品质肥料." + key + ".name"));
-                    FERTILIZERS.put(key, qualityCrop);
-                }else {
-                    AdventureManager.consoleMessage("<red>[CustomCrops] 肥料 " + key + " 与ItemsAdder物品ID不一致</red>");
-                }
+                FERTILIZERS.put(StringUtils.split(config.getString("quality." + key + ".item"), ":")[1], qualityCrop);
             });
         }
         AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><white>" + FERTILIZERS.size() + " <color:#FFEBCD>fertilizers loaded!");
@@ -632,6 +605,9 @@ public class ConfigReader {
         public static Key harvestKey;
         public static net.kyori.adventure.sound.Sound.Source harvestSource;
 
+        public static Key boneMealKey;
+        public static net.kyori.adventure.sound.Sound.Source boneMealSource;
+
         public static void loadSound(){
             YamlConfiguration config = getConfig("sounds.yml");
 
@@ -655,6 +631,9 @@ public class ConfigReader {
 
             harvestKey = Key.key(config.getString("harvest.sound", "minecraft:block.crop.break"));
             harvestSource = net.kyori.adventure.sound.Sound.Source.valueOf(config.getString("harvest.type", "player").toUpperCase());
+
+            boneMealKey = Key.key(config.getString("bonemeal.sound", "minecraft:item.hoe.till"));
+            boneMealSource = net.kyori.adventure.sound.Sound.Source.valueOf(config.getString("bonemeal.type","player").toUpperCase());
         }
     }
 }

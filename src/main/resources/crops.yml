@@ -4,20 +4,22 @@
 
 crops:
   tomato:
-
+    #the total amount of crops to be dropped
     amount: 1~4
+
+    #Quality Items
     quality:
       1: customcrops:tomato
       2: customcrops:tomato_silver_star
       3: customcrops:tomato_golden_star
 
+    #When harvesting, should the crop drop the loots from ItemsAdder too
+    #This is useful for dropping seeds and other items
+    drop-ia-loots: false
+
     #optional
     #The chance that a crop grow a stage at grow time
     grow-chance: 0.9
-
-    #When harvesting, should the crop drop the loots from ItemsAdder too
-    #This is useful for droping seeds and other items
-    drop-ia-loots: false
 
     #optional
     #Overweight
@@ -60,7 +62,6 @@ crops:
     gigantic-chance: 0.01
     season:
       - spring
-
 
   grape:
     amount: 2~4

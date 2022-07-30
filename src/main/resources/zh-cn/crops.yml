@@ -12,21 +12,24 @@ crops:
       1: customcrops:tomato
       2: customcrops:tomato_silver_star
       3: customcrops:tomato_golden_star
-
+    #农作物每个时间点生长一个阶段的概率
+    #不设置默认为1
+    grow-chance: 0.9
+    #收获的时候是否额外掉落IA配置里的战利品
+    #可用于最后一阶段掉落种子等操作
+    drop-ia-loots: false
     #巨大化植物，以极低的概率生长为另一种形态
     gigantic:
       block: customcrops:gigantic_tomato
       chance: 0.01
-
     #收获时候执行指令
     commands:
       - 'say {player} harvested a tomato! lol'
-
     #生长季节
     season:
       - summer
       - autumn
-
+    #种植所需的条件
     requirements:
       #适宜的生长高度
       yPos:
@@ -53,7 +56,6 @@ crops:
     season:
       - spring
 
-
   grape:
     amount: 2~4
     quality:
@@ -74,3 +76,21 @@ crops:
     season:
       - autumn
       - summer
+
+  pepper:
+    amount: 3~6
+    quality:
+      1: customcrops:pepper
+      2: customcrops:pepper_silver_star
+      3: customcrops:pepper_golden_star
+    season:
+      - spring
+      - summer
+    return: customcrops:pepper_stage_3
+
+  garlic:
+    amount: 3~4
+    quality:
+      1: customcrops:garlic
+      2: customcrops:garlic_silver_star
+      3: customcrops:garlic_golden_star

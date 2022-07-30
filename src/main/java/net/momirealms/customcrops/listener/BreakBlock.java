@@ -136,8 +136,9 @@ public class BreakBlock implements Listener {
             if(CustomBlock.byAlreadyPlaced(blockUp) != null){
                 CustomBlock customBlock = CustomBlock.byAlreadyPlaced(blockUp);
                 String cropNamespacedId = customBlock.getNamespacedID();
-                if(cropNamespacedId.contains("_stage_") && !cropNamespacedId.equals(ConfigReader.Basic.dead)){
+                if(cropNamespacedId.contains("_stage_")){
                     CustomBlock.remove(location);
+                    if (cropNamespacedId.equals(ConfigReader.Basic.dead)) return;
                     if (ConfigReader.Config.quality){
                         String[] cropNameList = StringUtils.split(StringUtils.split(cropNamespacedId, ":")[1], "_");
                         int nextStage = Integer.parseInt(cropNameList[2]) + 1;

@@ -10,6 +10,10 @@ speed:
     item: customcrops:speed_1
     #Should this fertilizer be used before planting
     before-plant: true
+    #Optional
+    #The particle to display
+    #https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Particle.html
+    #particle: VILLAGER_HAPPY
 
   speed_2:
     name: '뀍'

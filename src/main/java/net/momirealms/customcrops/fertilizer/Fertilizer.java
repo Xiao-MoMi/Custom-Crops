@@ -17,10 +17,13 @@
 
 package net.momirealms.customcrops.fertilizer;
 
+import org.bukkit.Particle;
+
 public interface Fertilizer {
     String getKey();
     int getTimes();
     void setTimes(int times);
     boolean isBefore();
     String getName();
+    Particle getParticle();
 }

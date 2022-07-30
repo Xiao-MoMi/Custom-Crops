@@ -123,8 +123,12 @@ public class RightClick implements Listener {
                                             }
                                         }
                                     }
-                                    AdventureManager.playerMessage(player, ConfigReader.Message.prefix + ConfigReader.Message.badSeason);
-                                    return;
+                                    if (ConfigReader.Config.nwSeason){
+                                        AdventureManager.playerMessage(player, ConfigReader.Message.prefix + ConfigReader.Message.badSeason);
+                                    }
+                                    if (ConfigReader.Config.pwSeason){
+                                        return;
+                                    }
                                 }
                                 if(location.getBlock().getType() != Material.AIR){
                                     return;
@@ -314,18 +318,35 @@ public class RightClick implements Listener {
                         }
                     }
                 }
-                else if(ConfigReader.Config.rightClickHarvest && !ConfigReader.Config.needEmptyHand){
+                else if (ConfigReader.Config.boneMeal && itemStack.getType() == Material.BONE_MEAL && action == Action.RIGHT_CLICK_BLOCK){
                     Block block = event.getClickedBlock();
-                    if (block != null){
-                        rightClickHarvest(block, player);
+                    CustomBlock customBlock = CustomBlock.byAlreadyPlaced(block);
+                    if (customBlock == null) return;
+                    for (Integration integration : ConfigReader.Config.integration){
+                        if(!integration.canPlace(block.getLocation(), player)) return;
                     }
+                    String namespacedID = customBlock.getNamespacedID();
+                    if (namespacedID.contains("_stage_") && !namespacedID.equals(ConfigReader.Basic.dead)){
+                        int nextStage = Integer.parseInt(namespacedID.substring(namespacedID.length()-1)) + 1;
+                        String next = StringUtils.chop(namespacedID) + nextStage;
+                        if (CustomBlock.getInstance(next) != null){
+                            Location location = block.getLocation();
+                            itemStack.setAmount(itemStack.getAmount() - 1);
+                            AdventureManager.playerSound(player, ConfigReader.Sounds.boneMealSource, ConfigReader.Sounds.boneMealKey);
+                            if (Math.random() < ConfigReader.Config.boneMealChance){
+                                CustomBlock.remove(location);
+                                CustomBlock.place(next, location);
+                                block.getWorld().spawnParticle(ConfigReader.Config.boneMealSuccess, location.add(0.5,0.3,0.5),5,0.2,0.2,0.2);
+                            }
+                        }
+                    }
+                }
+                else if(ConfigReader.Config.rightClickHarvest && !ConfigReader.Config.needEmptyHand && action == Action.RIGHT_CLICK_BLOCK){
+                    rightClickHarvest(event.getClickedBlock(), player);
                 }
             }
             else if (ConfigReader.Config.rightClickHarvest && action == Action.RIGHT_CLICK_BLOCK) {
-                Block block = event.getClickedBlock();
-                if (block != null){
-                    rightClickHarvest(block, player);
-                }
+                rightClickHarvest(event.getClickedBlock(), player);
             }
         }
     }
@@ -425,6 +446,9 @@ public class RightClick implements Listener {
         }else if (fertilizerConfig instanceof RetainingSoil config){
             RetainingSoil retainingSoil = new RetainingSoil(config.getKey(), config.getTimes(),config.getChance(), config.isBefore());
             PotManager.Cache.put(SimpleLocation.fromLocation(location), retainingSoil);
+        }
+        if (fertilizerConfig.getParticle() != null){
+            location.getWorld().spawnParticle(fertilizerConfig.getParticle(), location.add(0.5,1.3,0.5), 5,0.2,0.2,0.2);
         }
     }
 

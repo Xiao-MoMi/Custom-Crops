@@ -17,13 +17,16 @@
 
 package net.momirealms.customcrops.fertilizer;
 
+import org.bukkit.Particle;
+
 public class RetainingSoil implements Fertilizer{
 
     private double chance;
     private String key;
     private int times;
     private final boolean before;
-    public String name;
+    private String name;
+    private Particle particle;
 
     public RetainingSoil(String key, int times, double chance, boolean before){
         this.times = times;
@@ -42,9 +45,12 @@ public class RetainingSoil implements Fertilizer{
     public boolean isBefore() {return this.before;}
     @Override
     public String getName() {return this.name;}
+    @Override
+    public Particle getParticle() {return this.particle;}
+    public double getChance() {return chance;}
 
     public void setName(String name) {this.name = name;}
     public void setChance(double chance) {this.chance = chance;}
     public void setKey(String key) {this.key = key;}
-    public double getChance() {return chance;}
+    public void setParticle(Particle particle) {this.particle = particle;}
 }

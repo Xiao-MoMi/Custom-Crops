@@ -25,3 +25,7 @@ use-fertilizer:
 harvest:
   sound: minecraft:block.crop.break
   type: player
+
+bonemeal:
+  sound: minecraft:item.hoe.till
+  type: player

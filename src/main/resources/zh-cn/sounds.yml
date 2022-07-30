@@ -26,3 +26,7 @@ use-fertilizer:
 harvest:
   sound: minecraft:block.crop.break
   type: player
+#使用骨粉的音效
+bonemeal:
+  sound: minecraft:item.hoe.till
+  type: player

@@ -11,7 +11,7 @@ https://afdian.net/@xiaomomi
 https://polymart.org/resource/customcrops.2625
 
 ### How to compile
-Just compile it with -gradle shadowjar. Some premium plugins are used as 
+Just compile it with gradle build. Some premium plugins are used as 
 local libraries. If you don't need those integrations just remove them!
 Default ItemsAdder Config is also included in this project, which will 
 provide a template and help you understand how this plugin works.

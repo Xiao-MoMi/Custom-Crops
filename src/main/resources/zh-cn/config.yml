@@ -8,6 +8,9 @@ config:
     PlotSquared: false
     Towny: false
     Lands: false
+    AureliumSkills: false
+    mcMMO: false
+    MMOCore: false
 
   #生长时间点(tick)
   #1000代表上午7点，农作物陆续开始生长
@@ -59,11 +62,11 @@ config:
   log-time-consume: false
 
   #是否只有加载中的区块农作物才会生长
-  #如果你不使用季节、可重复收获、巨大化农作物特性
+  #如果你不使用季节、可重复收获特性
   #插件data只会记录正在生长中某个阶段的农作物数据
   #生长到最后一阶段农作物生长数据就会清除
   #那么可以尝试设置此值为false来让数据内全部农作物生长
-  #如果你使用上述三个特性中的任意一个，请不要设置为false
+  #如果你使用上述特性中的任意一个，请不要设置为false
   #否则农作物生长到最后一阶段不会从数据中清除，过大的数据量
   #可能会导致服务器严重卡顿
   only-grow-in-loaded-chunks: true
@@ -80,3 +83,14 @@ config:
 
   #玩家是否需要空手右键收获
   harvest-with-empty-hand: true
+
+  #是否阻止玩家在错误的季节种植
+  prevent-plant-if-wrong-season: true
+  #是否告知玩家这是错误的季节
+  should-notify-if-wrong-season: true
+
+  #骨粉设置
+  bone-meal:
+    enable: true
+    chance: 0.5
+    success-particle: VILLAGER_HAPPY

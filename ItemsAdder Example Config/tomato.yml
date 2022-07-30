@@ -128,11 +128,11 @@ loots:
           max_amount: 1
           chance: 100
           ignore_fortune: true
-    tomato_stage_4:
-      type: customcrops:tomato_stage_4
-      items:
-        result_1:
-          item: customcrops:tomato
-          min_amount: 1
-          max_amount: 3
-          chance: 100
+#    tomato_stage_4:
+#      type: customcrops:tomato_stage_4
+#      items:
+#        result_1:
+#          item: customcrops:tomato
+#          min_amount: 1
+#          max_amount: 3
+#          chance: 100

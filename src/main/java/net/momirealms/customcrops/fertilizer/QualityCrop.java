@@ -17,6 +17,8 @@
 
 package net.momirealms.customcrops.fertilizer;
 
+import org.bukkit.Particle;
+
 public class QualityCrop implements Fertilizer{
 
     private int[] chance;
@@ -24,6 +26,7 @@ public class QualityCrop implements Fertilizer{
     private int times;
     private final boolean before;
     private String name;
+    private Particle particle;
 
     public QualityCrop(String key, int times, int[] chance, boolean before) {
         this.chance = chance;
@@ -42,9 +45,12 @@ public class QualityCrop implements Fertilizer{
     public boolean isBefore() {return this.before;}
     @Override
     public String getName() {return this.name;}
+    @Override
+    public Particle getParticle() {return this.particle;}
+    public int[] getChance() {return chance;}
 
     public void setName(String name) {this.name = name;}
     public void setChance(int[] chance) {this.chance = chance;}
     public void setKey(String key) {this.key = key;}
-    public int[] getChance() {return chance;}
+    public void setParticle(Particle particle) {this.particle = particle;}
 }
