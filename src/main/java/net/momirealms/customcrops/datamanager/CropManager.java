@@ -146,10 +146,13 @@ public class CropManager {
                         }
                         Location potLocation = seedLocation.clone().subtract(0,1,0);
                         CustomBlock pot = CustomBlock.byAlreadyPlaced(potLocation.getBlock());
-                        if (pot == null) return;
                         String potNamespacedID = pot.getNamespacedID();
                         String[] cropNameList = StringUtils.split(id,"_");
                         CropInstance cropInstance = ConfigReader.CROPS.get(cropNameList[0]);
+                        if (pot == null || cropInstance == null){
+                            data.set(stringBuilder.toString(), null);
+                            return;
+                        }
                         int random = new Random().nextInt(ConfigReader.Config.timeToGrow);
                         if (potNamespacedID.equals(ConfigReader.Basic.watered_pot)){
                             //如果启用季节限制且农作物有季节需求
@@ -207,7 +210,7 @@ public class CropManager {
                                     }
                                 }, random);
                             }else {
-                                if (cropInstance.getReturnStage() == null && !ConfigReader.Season.enable) data.set(stringBuilder.toString(), null);
+                                if (!ConfigReader.Season.enable) data.set(stringBuilder.toString(), null);
                                 bukkitScheduler.runTaskLater(CustomCrops.instance, () -> {
                                     CustomBlock.remove(potLocation);
                                     CustomBlock.place(ConfigReader.Basic.pot, potLocation);
@@ -222,6 +225,8 @@ public class CropManager {
                                     CustomBlock.place(ConfigReader.Basic.dead, seedLocation);
                                 }, random);
                             }
+                        }else {
+                            data.set(stringBuilder.toString(), null);
                         }
                     });
                 }
@@ -277,10 +282,13 @@ public class CropManager {
                             }
                             Location potLocation = seedLocation.clone().subtract(0,1,0);
                             CustomBlock pot = CustomBlock.byAlreadyPlaced(potLocation.getBlock());
-                            if (pot == null) return;
                             String potNamespacedID = pot.getNamespacedID();
                             String[] cropNameList = StringUtils.split(id,"_");
                             CropInstance cropInstance = ConfigReader.CROPS.get(cropNameList[0]);
+                            if (pot == null || cropInstance == null){
+                                data.set(stringBuilder.toString(), null);
+                                return;
+                            }
                             int random = new Random().nextInt(ConfigReader.Config.timeToGrow);
                             if (potNamespacedID.equals(ConfigReader.Basic.watered_pot)){
                                 if (ConfigReader.Season.enable && cropInstance.getSeasons() != null){
@@ -337,7 +345,7 @@ public class CropManager {
                                         }
                                     }, random);
                                 }else {
-                                    if (cropInstance.getReturnStage() == null && !ConfigReader.Season.enable) data.set(stringBuilder.toString(), null);
+                                    if (!ConfigReader.Season.enable) data.set(stringBuilder.toString(), null);
                                     bukkitScheduler.runTaskLater(CustomCrops.instance, () -> {
                                         CustomBlock.remove(potLocation);
                                         CustomBlock.place(ConfigReader.Basic.pot, potLocation);
@@ -352,6 +360,8 @@ public class CropManager {
                                         CustomBlock.place(ConfigReader.Basic.dead, seedLocation);
                                     }, random);
                                 }
+                            }else {
+                                data.set(stringBuilder.toString(), null);
                             }
                         });
                     }

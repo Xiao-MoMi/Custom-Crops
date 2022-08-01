@@ -58,8 +58,9 @@ crops:
       1: customcrops:cabbage
       2: customcrops:cabbage_silver_star
       3: customcrops:cabbage_golden_star
-    gigantic: customcrops:gigantic_cabbage
-    gigantic-chance: 0.01
+    gigantic:
+      block: customcrops:gigantic_cabbage
+      chance: 0.01
     season:
       - spring
 

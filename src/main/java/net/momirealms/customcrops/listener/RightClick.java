@@ -369,8 +369,8 @@ public class RightClick implements Listener {
             String[] cropNameList = StringUtils.split(customBlock.getId(), "_");
             int nextStage = Integer.parseInt(cropNameList[2]) + 1;
             if (CustomBlock.getInstance(StringUtils.chop(namespacedID) + nextStage) == null) {
+                CropInstance cropInstance = ConfigReader.CROPS.get(cropNameList[0]);
                 if (ConfigReader.Config.quality){
-                    CropInstance cropInstance = ConfigReader.CROPS.get(cropNameList[0]);
                     ThreadLocalRandom current = ThreadLocalRandom.current();
                     int random = current.nextInt(cropInstance.getMin(), cropInstance.getMax() + 1);
                     World world = location.getWorld();
@@ -417,10 +417,10 @@ public class RightClick implements Listener {
                     customBlock.getLoot().forEach(loot-> location.getWorld().dropItem(location.clone().add(0.5,0.2,0.5), loot));
                 }
                 CustomBlock.remove(location);
-                CropInstance crop = ConfigReader.CROPS.get(cropNameList[0]);
                 AdventureManager.playerSound(player, ConfigReader.Sounds.harvestSource, ConfigReader.Sounds.harvestKey);
-                if(crop.getReturnStage() != null){
-                    CustomBlock.place(crop.getReturnStage(), location);
+                if(cropInstance.getReturnStage() != null){
+                    CustomBlock.place(cropInstance.getReturnStage(), location);
+                    CropManager.Cache.put(location, cropNameList[0]);
                 }
             }
         }
