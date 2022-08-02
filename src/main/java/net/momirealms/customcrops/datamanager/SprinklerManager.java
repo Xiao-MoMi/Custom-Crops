@@ -133,12 +133,12 @@ public class SprinklerManager {
                 String[] split = StringUtils.split(chunk,",");
                 if (world.isChunkLoaded(Integer.parseInt(split[0]), Integer.parseInt(split[1]))) {
                     data.getConfigurationSection(worldName + "." + chunk).getValues(false).forEach((key, value) -> {
-                        String[] coordinate = StringUtils.split(key, ",");
-                        Location location = new Location(world,Double.parseDouble(coordinate[0])+0.5,Double.parseDouble(coordinate[1])+0.5,Double.parseDouble(coordinate[2])+0.5);
                         if (value instanceof MemorySection map){
+                            String[] coordinate = StringUtils.split(key, ",");
+                            Location location = new Location(world,Double.parseDouble(coordinate[0])+0.5,Double.parseDouble(coordinate[1])+0.5,Double.parseDouble(coordinate[2])+0.5);
                             bukkitScheduler.runTask(CustomCrops.instance, ()->{
                                 int water = (int) map.get("water");
-                                int range = (int) map.get("range");
+                                int range = (int) Optional.ofNullable(map.get("range")).orElse(0);
                                 if(!IAFurniture.getFromLocation(location, world)){
                                     data.set(worldName + "." + chunk + "." + key, null);
                                     return;
@@ -196,7 +196,7 @@ public class SprinklerManager {
                         Location location = new Location(world,Double.parseDouble(coordinate[0])+0.5,Double.parseDouble(coordinate[1])+0.5,Double.parseDouble(coordinate[2])+0.5);
                         bukkitScheduler.callSyncMethod(CustomCrops.instance, ()->{
                             int water = (int) map.get("water");
-                            int range = (int) map.get("range");
+                            int range = (int) Optional.ofNullable(map.get("range")).orElse(0);
                             if (water > 0){
                                 data.set(worldName + "." + chunk + "." + key + ".water", water - 1);
                                 bukkitScheduler.runTaskLater(CustomCrops.instance, ()-> {
@@ -241,11 +241,11 @@ public class SprinklerManager {
                 String[] split = StringUtils.split(chunk,",");
                 if (world.isChunkLoaded(Integer.parseInt(split[0]), Integer.parseInt(split[1]))) {
                     data.getConfigurationSection(worldName + "." + chunk).getValues(false).forEach((key, value) -> {
-                        String[] coordinate = StringUtils.split(key, ",");
-                        Location location = new Location(world,Double.parseDouble(coordinate[0])+0.5,Double.parseDouble(coordinate[1])+0.5,Double.parseDouble(coordinate[2])+0.5);
                         if (value instanceof MemorySection map){
                             int water = (int) map.get("water");
-                            int range = (int) map.get("range");
+                            int range = (int) Optional.ofNullable(map.get("range")).orElse(0);
+                            String[] coordinate = StringUtils.split(key, ",");
+                            Location location = new Location(world,Double.parseDouble(coordinate[0])+0.5,Double.parseDouble(coordinate[1])+0.5,Double.parseDouble(coordinate[2])+0.5);
                             bukkitScheduler.runTask(CustomCrops.instance, ()->{
                                 if(!IAFurniture.getFromLocation(location, world)){
                                     data.set(worldName + "." + chunk + "." + key, null);
@@ -275,11 +275,11 @@ public class SprinklerManager {
                                 return;
                             }
                             if (!players.contains(player)) return;
-                            String[] coordinate = StringUtils.split(key, ",");
-                            Location location = new Location(world,Double.parseDouble(coordinate[0])+0.5,Double.parseDouble(coordinate[1])+0.5,Double.parseDouble(coordinate[2])+0.5);
                             int water = (int) map.get("water");
-                            int range = (int) map.get("range");
+                            int range = (int) Optional.ofNullable(map.get("range")).orElse(0);
                             if (water > 0){
+                                String[] coordinate = StringUtils.split(key, ",");
+                                Location location = new Location(world,Double.parseDouble(coordinate[0])+0.5,Double.parseDouble(coordinate[1])+0.5,Double.parseDouble(coordinate[2])+0.5);
                                 data.set(worldName + "." + chunk + "." + key + ".water", water - 1);
                                 bukkitScheduler.runTaskLater(CustomCrops.instance, ()-> {
                                     for(int i = -range; i <= range; i++){
@@ -319,12 +319,12 @@ public class SprinklerManager {
             World world = Bukkit.getWorld(worldName);
             data.getConfigurationSection(worldName).getKeys(false).forEach(chunk ->{
                 data.getConfigurationSection(worldName + "." + chunk).getValues(false).forEach((key, value) -> {
-                    String[] coordinate = StringUtils.split(key, ",");
-                    Location location = new Location(world,Double.parseDouble(coordinate[0])+0.5,Double.parseDouble(coordinate[1])+0.5,Double.parseDouble(coordinate[2])+0.5);
                     if (value instanceof MemorySection map){
                         int water = (int) map.get("water");
-                        int range = (int) map.get("range");
+                        int range = (int) Optional.ofNullable(map.get("range")).orElse(0);
                         if (water > 0){
+                            String[] coordinate = StringUtils.split(key, ",");
+                            Location location = new Location(world,Double.parseDouble(coordinate[0])+0.5,Double.parseDouble(coordinate[1])+0.5,Double.parseDouble(coordinate[2])+0.5);
                             data.set(worldName + "." + chunk + "." + key + ".water", water - 1);
                             bukkitScheduler.runTaskLater(CustomCrops.instance, ()-> {
                                 for(int i = -range; i <= range; i++){
@@ -347,6 +347,7 @@ public class SprinklerManager {
         Long time4 = System.currentTimeMillis();
         if(ConfigReader.Config.logTime) AdventureManager.consoleMessage("性能监测: 洒水器数据保存" + (time4-time3) + "ms");
     }
+
 
     /**
      * 所有世界的洒水器工作

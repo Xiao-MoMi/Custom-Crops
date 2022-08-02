@@ -82,13 +82,14 @@ public class InteractEntity implements Listener {
                     }
                     sprinkler.setWater(currentWater);
                 }else {
-                    String path = world + "." + x / 16 + "," + z / 16 + "." + x + "," + location.getBlockY() + "," + z + ".water";
-                    currentWater = plugin.getSprinklerManager().data.getInt(path);
+                    String path = world + "." + x / 16 + "," + z / 16 + "." + x + "," + location.getBlockY() + "," + z ;
+                    currentWater = plugin.getSprinklerManager().data.getInt(path+ ".water");
                     currentWater += ConfigReader.Config.sprinklerRefill;
                     if (currentWater > maxWater){
                         currentWater = maxWater;
                     }
-                    plugin.getSprinklerManager().data.set(path, currentWater);
+                    plugin.getSprinklerManager().data.set(path + ".water", currentWater);
+                    plugin.getSprinklerManager().data.set(path + ".range", config.getRange());
                 }
                 AdventureManager.playerSound(player, ConfigReader.Sounds.addWaterToSprinklerSource, ConfigReader.Sounds.addWaterToSprinklerKey);
             }
