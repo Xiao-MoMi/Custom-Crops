@@ -27,7 +27,7 @@ speed:
     times: 14
     item: customcrops:speed_3
     before-plant: true
-
+#=============================================================#
 #Pot have a small chance to retain its water after crops grow
 retaining:
   retaining_1:
@@ -50,7 +50,7 @@ retaining:
     times: 28
     item: customcrops:retaining_3
     before-plant: false
-
+#=============================================================#
 #When haveresting, players have a higher chance to get high quality crops.
 quality:
   quality_1:
@@ -73,3 +73,4 @@ quality:
     chance: 2/2/1
     item: customcrops:quality_3
     before-plant: true
+#=============================================================#

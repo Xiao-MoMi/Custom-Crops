@@ -37,6 +37,7 @@ public class IAFurniture {
 
     /**
      * 判断指定位置的盔甲架是不是洒水器
+     * 仅限加载中的区块
      * @param location 位置
      * @param world 世界
      * @return 是/否

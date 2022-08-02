@@ -21,10 +21,7 @@ import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.momirealms.customcrops.commands.Executor;
 import net.momirealms.customcrops.commands.Completer;
 import net.momirealms.customcrops.datamanager.*;
-import net.momirealms.customcrops.listener.BreakBlock;
-import net.momirealms.customcrops.listener.InteractEntity;
-import net.momirealms.customcrops.listener.ItemSpawn;
-import net.momirealms.customcrops.listener.RightClick;
+import net.momirealms.customcrops.listener.*;
 import net.momirealms.customcrops.timer.CropTimer;
 import net.momirealms.customcrops.utils.AdventureManager;
 import net.momirealms.customcrops.utils.BackUp;
@@ -77,6 +74,8 @@ public final class CustomCrops extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new ItemSpawn(), this);
         Bukkit.getPluginManager().registerEvents(new RightClick(), this);
         Bukkit.getPluginManager().registerEvents(new BreakBlock(), this);
+        Bukkit.getPluginManager().registerEvents(new JoinAndQuit(), this);
+        Bukkit.getPluginManager().registerEvents(new BreakFurniture(), this);
         Bukkit.getPluginManager().registerEvents(new InteractEntity(this), this);
 
         if (ConfigReader.Season.enable){
@@ -103,6 +102,7 @@ public final class CustomCrops extends JavaPlugin {
 
         if (this.cropManager != null){
             this.cropManager.cleanData();
+            this.cropManager.updateData();
             this.cropManager.saveData();
             this.cropManager = null;
         }
@@ -112,6 +112,7 @@ public final class CustomCrops extends JavaPlugin {
         }
         if (this.sprinklerManager != null){
             this.sprinklerManager.cleanData();
+            this.sprinklerManager.updateData();
             this.sprinklerManager.saveData();
             this.sprinklerManager = null;
         }

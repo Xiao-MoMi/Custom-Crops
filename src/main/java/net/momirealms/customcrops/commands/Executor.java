@@ -67,7 +67,12 @@ public class Executor implements CommandExecutor {
                     return true;
                 }
                 Bukkit.getScheduler().runTaskAsynchronously(CustomCrops.instance, ()-> {
-                    plugin.getCropManager().cropGrow(args[1]);
+                    switch (ConfigReader.Config.growMode){
+                        case 1 -> plugin.getCropManager().growModeOne(args[1]);
+                        case 2 -> plugin.getCropManager().growModeTwo(args[1]);
+                        case 3 -> plugin.getCropManager().growModeThree(args[1]);
+                        case 4 -> plugin.getCropManager().growModeFour(args[1]);
+                    }
                 });
                 if (sender instanceof Player player){
                     AdventureManager.playerMessage(player,ConfigReader.Message.prefix + ConfigReader.Message.forceGrow.replace("{world}",args[1]));
@@ -82,7 +87,12 @@ public class Executor implements CommandExecutor {
                     return true;
                 }
                 Bukkit.getScheduler().runTaskAsynchronously(CustomCrops.instance, ()-> {
-                    plugin.getSprinklerManager().sprinklerWork(args[1]);
+                    switch (ConfigReader.Config.growMode){
+                        case 1 -> plugin.getSprinklerManager().workModeOne(args[1]);
+                        case 2 -> plugin.getSprinklerManager().workModeTwo(args[1]);
+                        case 3 -> plugin.getSprinklerManager().workModeThree(args[1]);
+                        case 4 -> plugin.getSprinklerManager().workModeFour(args[1]);
+                    }
                 });
                 if (sender instanceof Player player){
                     AdventureManager.playerMessage(player,ConfigReader.Message.prefix + ConfigReader.Message.forceWater.replace("{world}",args[1]));

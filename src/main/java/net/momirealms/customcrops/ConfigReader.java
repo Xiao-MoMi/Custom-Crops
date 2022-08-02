@@ -58,13 +58,13 @@ public class ConfigReader {
     }
 
     public static void ReloadConfig(){
+        Sounds.loadSound();
         Config.loadConfig();
+        Season.loadSeason();
         Message.loadMessage();
         Basic.loadBasic();
-        cropLoad();
         fertilizerLoad();
-        Season.loadSeason();
-        Sounds.loadSound();
+        cropLoad();
     }
 
     public static class Config{
@@ -88,7 +88,7 @@ public class ConfigReader {
         public static int timeToGrow;
         public static int timeToWork;
         public static boolean logTime;
-        public static boolean onlyLoadedGrow;
+        public static int growMode;
         public static boolean quality;
         public static boolean canAddWater;
         public static boolean allWorld;
@@ -115,16 +115,16 @@ public class ConfigReader {
             cropGrowTimeList = config.getLongList("config.grow-time");
             cropGrowTimeList.forEach(time -> {
                 if(time < 0 || time > 23999){
-                    AdventureManager.consoleMessage("<red>[CustomCrops] time should be between 0 and 23999");
+                    AdventureManager.consoleMessage("<red>[CustomCrops] Grow time should be between 0 and 23999");
                 }
             });
 
             timeToGrow = config.getInt("config.time-to-grow",60)*20;
             timeToWork = config.getInt("config.time-to-work",30)*20;
-
             asyncCheck = config.getBoolean("config.async-time-check",false);
             logTime = config.getBoolean("config.log-time-consume",false);
-            onlyLoadedGrow = !config.getBoolean("config.only-grow-in-loaded-chunks",true);
+            growMode = config.getInt("config.grow-mode",3);
+            if (growMode > 4 || growMode < 1) growMode = 3;
             allWorld = config.getBoolean("config.all-world-grow",false);
             hasParticle = config.getBoolean("config.water-particles", true);
             rightClickHarvest = config.getBoolean("config.right-click-harvest", true);

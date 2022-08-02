@@ -1,5 +1,6 @@
 season:
 
+  #require a restart to apply
   enable: true
 
   auto-season-change:

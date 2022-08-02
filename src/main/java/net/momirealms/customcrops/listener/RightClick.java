@@ -138,7 +138,7 @@ public class RightClick implements Listener {
                                     return;
                                 }
                                 itemStack.setAmount(itemStack.getAmount() - 1);
-                                CropManager.Cache.put(location, cropName);
+                                CropManager.Cache.put(location, player.getName());
                                 CustomBlock.place((nbtCompound.getString("namespace") + ":" + cropName + "_stage_1"), location);
                                 AdventureManager.playerSound(player, ConfigReader.Sounds.plantSeedSource, ConfigReader.Sounds.plantSeedKey);
                                 return;
@@ -279,8 +279,11 @@ public class RightClick implements Listener {
                             return;
                         }
                         Sprinkler sprinklerData = new Sprinkler(sprinkler.getRange(), 0);
+                        sprinklerData.setPlayer(player.getName());
                         itemStack.setAmount(itemStack.getAmount() - 1);
-                        SprinklerManager.Cache.put(location.add(0,1,0), sprinklerData);
+                        SimpleLocation simpleLocation = SimpleLocation.fromLocation(location.add(0,1,0));
+                        SprinklerManager.Cache.put(simpleLocation, sprinklerData);
+                        SprinklerManager.RemoveCache.remove(simpleLocation);
                         IAFurniture.placeFurniture(sprinkler.getNamespacedID_2(),location);
                         AdventureManager.playerSound(player, ConfigReader.Sounds.placeSprinklerSource, ConfigReader.Sounds.placeSprinklerKey);
                         return;
@@ -420,7 +423,7 @@ public class RightClick implements Listener {
                 AdventureManager.playerSound(player, ConfigReader.Sounds.harvestSource, ConfigReader.Sounds.harvestKey);
                 if(cropInstance.getReturnStage() != null){
                     CustomBlock.place(cropInstance.getReturnStage(), location);
-                    CropManager.Cache.put(location, cropNameList[0]);
+                    CropManager.Cache.put(location, player.getName());
                 }
             }
         }
