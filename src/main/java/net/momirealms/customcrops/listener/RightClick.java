@@ -313,7 +313,7 @@ public class RightClick implements Listener {
                                 Fertilizer config = ConfigReader.FERTILIZERS.get(fertilizer.getKey());
                                 String name = config.getName();
                                 int max_times = config.getTimes();
-                                if(HoloUtil.cache.get(location.add(0.5, ConfigReader.Message.cropOffset, 0.5)) == null) {
+                                if(!HoloUtil.cache.contains(location.add(0.5, ConfigReader.Message.cropOffset, 0.5))) {
                                     HoloUtil.showHolo(ConfigReader.Message.cropText.replace("{fertilizer}", name).replace("{times}", String.valueOf(fertilizer.getTimes())).replace("{max_times}", String.valueOf(max_times)), player, location, ConfigReader.Message.cropTime);
                                 }
                             }
@@ -324,7 +324,7 @@ public class RightClick implements Listener {
                                 Fertilizer config = ConfigReader.FERTILIZERS.get(fertilizer.getKey());
                                 String name = config.getName();
                                 int max_times = config.getTimes();
-                                if(HoloUtil.cache.get(location.add(0.5,ConfigReader.Message.cropOffset,0.5)) == null){
+                                if(!HoloUtil.cache.contains(location.add(0.5,ConfigReader.Message.cropOffset,0.5))){
                                     HoloUtil.showHolo(ConfigReader.Message.cropText.replace("{fertilizer}", name).replace("{times}", String.valueOf(fertilizer.getTimes())).replace("{max_times}", String.valueOf(max_times)), player, location, ConfigReader.Message.cropTime);
                                 }
                             }

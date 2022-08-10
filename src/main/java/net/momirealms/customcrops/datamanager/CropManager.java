@@ -427,6 +427,7 @@ public class CropManager {
                         CustomBlock.remove(potLocation);
                         CustomBlock.place(ConfigReader.Basic.pot, potLocation);
                     }, random);
+                    return ConfigReader.Config.growMode == 4;
                 }
             }else {
                 //若无下一阶段，无巨大化，未启用季节，则移除无用数据

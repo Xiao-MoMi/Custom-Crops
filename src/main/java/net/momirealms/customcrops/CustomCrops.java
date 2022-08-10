@@ -104,9 +104,6 @@ public final class CustomCrops extends JavaPlugin {
 
     @Override
     public void onDisable() {
-
-        HoloUtil.cache.keySet().forEach(location -> HoloUtil.cache.get(location).remove());
-
         if (this.cropManager != null){
             this.cropManager.cleanData();
             this.cropManager.updateData();

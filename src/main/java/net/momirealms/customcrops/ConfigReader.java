@@ -380,7 +380,11 @@ public class ConfigReader {
             YamlConfiguration config = getConfig("season.yml");
 
             enable = config.getBoolean("season.enable",false);
+
             if (enable){
+                if (Config.growMode == 4){
+                    AdventureManager.consoleMessage("<red>[CustomCrops] Warining: It's not advised to enable season in mode 4</red>");
+                }
                 greenhouse = config.getBoolean("season.greenhouse.enable",false);
                 if (greenhouse) {
                     range = config.getInt("season.greenhouse.range",7);

@@ -28,17 +28,17 @@ import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.momirealms.customcrops.CustomCrops;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
-import java.util.HashMap;
-import java.util.Optional;
+import java.util.*;
 
 public class HoloUtil {
 
-    public static HashMap<Location, Entity> cache = new HashMap<>();
-
+    public static HashSet<Location> cache = new HashSet<>();
     /**
      * 对指定玩家展示在指定位置的盔甲架
      * @param text 文本
@@ -48,30 +48,35 @@ public class HoloUtil {
      */
     public static void showHolo(String text, Player player, Location location, int duration){
 
-        ArmorStand entity = location.getWorld().spawn(location, ArmorStand.class, a -> {
-            a.setInvisible(true);
-            a.setCollidable(false);
-            a.setInvulnerable(true);
-            a.setVisible(false);
-            a.setCustomNameVisible(false);
-            a.setSmall(true);
-            a.setGravity(false);
-        });
-        cache.put(location, entity);
+        PacketContainer packet1 = new PacketContainer(PacketType.Play.Server.SPAWN_ENTITY);
+
+        int id = new Random().nextInt(1000000000);
+        packet1.getModifier().write(0, id);
+        packet1.getModifier().write(1, UUID.randomUUID());
+        packet1.getEntityTypeModifier().write(0, EntityType.ARMOR_STAND);
+        packet1.getDoubles().write(0, location.getX());
+        packet1.getDoubles().write(1, location.getY());
+        packet1.getDoubles().write(2, location.getZ());
+
+        PacketContainer packet2 = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
 
         Component component = MiniMessage.miniMessage().deserialize(text);
-
         WrappedDataWatcher wrappedDataWatcher = new WrappedDataWatcher();
-        wrappedDataWatcher.setEntity(entity);
-        WrappedDataWatcher.Serializer serializer = WrappedDataWatcher.Registry.get(Boolean.class);
+        WrappedDataWatcher.Serializer serializer1 = WrappedDataWatcher.Registry.get(Boolean.class);
+        WrappedDataWatcher.Serializer serializer2 = WrappedDataWatcher.Registry.get(Byte.class);
         wrappedDataWatcher.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(2, WrappedDataWatcher.Registry.getChatComponentSerializer(true)), Optional.of(WrappedChatComponent.fromJson(GsonComponentSerializer.gson().serialize(component)).getHandle()));
-        wrappedDataWatcher.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(3, serializer), true);
-        PacketContainer packetContainer = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
-        packetContainer.getIntegers().write(0, entity.getEntityId());
-        packetContainer.getWatchableCollectionModifier().write(0, wrappedDataWatcher.getWatchableObjects());
-
+        wrappedDataWatcher.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(3, serializer1), true);
+        wrappedDataWatcher.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(5, serializer1), true);
+        byte mask1 = 0x20;
+        byte mask2 = 0x01;
+        wrappedDataWatcher.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(0, serializer2), mask1);
+        wrappedDataWatcher.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(15, serializer2), mask2);
+        packet2.getModifier().write(0,id);
+        packet2.getWatchableCollectionModifier().write(0, wrappedDataWatcher.getWatchableObjects());
+        cache.add(location);
         try {
-            ProtocolLibrary.getProtocolManager().sendServerPacket(player, packetContainer);
+            ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet1);
+            ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet2);
         }
         catch (Exception e) {
             AdventureManager.consoleMessage("<red>[CustomCrops] 无法为玩家 "+ player.getName()+" 展示悬浮信息!</red>");
@@ -79,8 +84,20 @@ public class HoloUtil {
         }
 
         Bukkit.getScheduler().runTaskLater(CustomCrops.instance, ()->{
-            entity.remove();
+            removeHolo(player, id);
             cache.remove(location);
         }, duration * 20L);
+    }
+
+    public static void removeHolo(Player player, int entityId){
+        PacketContainer packet = new PacketContainer(PacketType.Play.Server.ENTITY_DESTROY);
+        packet.getIntLists().write(0, List.of(entityId));
+        try {
+            ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
+        }
+        catch (Exception e) {
+            AdventureManager.consoleMessage("<red>[CustomCrops] 无法为玩家 "+ player.getName()+" 移除悬浮信息!</red>");
+            e.printStackTrace();
+        }
     }
 }

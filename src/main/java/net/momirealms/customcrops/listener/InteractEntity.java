@@ -149,7 +149,7 @@ public class InteractEntity implements Listener {
             if (ConfigReader.Message.hasSprinklerInfo){
                 String string = ConfigReader.Message.sprinklerLeft + ConfigReader.Message.sprinklerFull.repeat(currentWater) +
                         ConfigReader.Message.sprinklerEmpty.repeat(maxWater - currentWater) + ConfigReader.Message.sprinklerRight;
-                if(HoloUtil.cache.get(location.add(0, ConfigReader.Message.sprinklerOffset,0)) == null) {
+                if(!HoloUtil.cache.contains(location.add(0, ConfigReader.Message.sprinklerOffset,0))) {
                     HoloUtil.showHolo(string.replace("{max_water}", String.valueOf(maxWater)).replace("{water}", String.valueOf(currentWater)), player, location, ConfigReader.Message.sprinklerTime);
                 }
             }
