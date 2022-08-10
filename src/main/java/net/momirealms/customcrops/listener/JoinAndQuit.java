@@ -1,5 +1,6 @@
 package net.momirealms.customcrops.listener;
 
+import net.momirealms.customcrops.utils.JedisUtil;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -13,11 +14,19 @@ public class JoinAndQuit implements Listener {
 
     @EventHandler
     public void onJoin(PlayerJoinEvent event){
-        onlinePlayers.add(event.getPlayer().getName());
+        if (JedisUtil.useRedis){
+            JedisUtil.addPlayer(event.getPlayer().getName());
+        }else {
+            onlinePlayers.add(event.getPlayer().getName());
+        }
     }
 
     @EventHandler
     public void onQuit(PlayerQuitEvent event){
-        onlinePlayers.remove(event.getPlayer().getName());
+        if (JedisUtil.useRedis){
+            JedisUtil.remPlayer(event.getPlayer().getName());
+        }else {
+            onlinePlayers.remove(event.getPlayer().getName());
+        }
     }
 }

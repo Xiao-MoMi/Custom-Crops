@@ -654,4 +654,14 @@ public class ConfigReader {
             boneMealSource = net.kyori.adventure.sound.Sound.Source.valueOf(config.getString("bonemeal.type","player").toUpperCase());
         }
     }
+
+    public static void tryEnableJedis(){
+        YamlConfiguration configuration = ConfigReader.getConfig("redis.yml");
+        if (configuration.getBoolean("redis.enable")){
+            JedisUtil.initializeRedis(configuration);
+            JedisUtil.useRedis = true;
+        }else {
+            JedisUtil.useRedis = false;
+        }
+    }
 }

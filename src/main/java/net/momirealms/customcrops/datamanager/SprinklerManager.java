@@ -19,12 +19,9 @@ package net.momirealms.customcrops.datamanager;
 
 import dev.lone.itemsadder.api.CustomBlock;
 import net.momirealms.customcrops.listener.JoinAndQuit;
-import net.momirealms.customcrops.utils.AdventureManager;
+import net.momirealms.customcrops.utils.*;
 import net.momirealms.customcrops.ConfigReader;
 import net.momirealms.customcrops.CustomCrops;
-import net.momirealms.customcrops.utils.IAFurniture;
-import net.momirealms.customcrops.utils.SimpleLocation;
-import net.momirealms.customcrops.utils.Sprinkler;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -180,7 +177,8 @@ public class SprinklerManager {
         }
         Long time2 = System.currentTimeMillis();
         if (ConfigReader.Config.logTime) AdventureManager.consoleMessage("性能监测: 洒水器数据更新" + (time2-time1) + "ms");
-        HashSet<String> players = new HashSet<>(JoinAndQuit.onlinePlayers);
+        //HashSet<String> players = new HashSet<>(JoinAndQuit.onlinePlayers);
+        HashSet<String> players = getPlayers();
         if (data.contains(worldName)){
             World world = Bukkit.getWorld(worldName);
             data.getConfigurationSection(worldName).getKeys(false).forEach(chunk ->{
@@ -234,7 +232,8 @@ public class SprinklerManager {
         }
         Long time2 = System.currentTimeMillis();
         if (ConfigReader.Config.logTime) AdventureManager.consoleMessage("性能监测: 洒水器数据更新" + (time2-time1) + "ms");
-        HashSet<String> players = new HashSet<>(JoinAndQuit.onlinePlayers);
+        //HashSet<String> players = new HashSet<>(JoinAndQuit.onlinePlayers);
+        HashSet<String> players = getPlayers();
         if (data.contains(worldName)){
             World world = Bukkit.getWorld(worldName);
             data.getConfigurationSection(worldName).getKeys(false).forEach(chunk ->{
@@ -380,6 +379,14 @@ public class SprinklerManager {
                 CustomBlock.remove(potLoc);
                 CustomBlock.place(ConfigReader.Basic.watered_pot, potLoc);
             }
+        }
+    }
+
+    private HashSet<String> getPlayers(){
+        if (JedisUtil.useRedis){
+            return JedisUtil.getPlayers();
+        }else {
+            return new HashSet<>(JoinAndQuit.onlinePlayers);
         }
     }
 }

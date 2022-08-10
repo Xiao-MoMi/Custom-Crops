@@ -1,0 +1,11 @@
+# Sync online players list between servers
+# Designed for grow-mode 2 & 3
+redis:
+  enable: false
+  host: localhost
+  port: 6379
+  MaxTotal: 8
+  MaxIdle: 8
+  MinIdle: 1
+  MaxWaitMillis: 30000
+  MinEvictableIdleTimeMillis: 1800000
