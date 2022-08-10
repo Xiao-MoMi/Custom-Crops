@@ -150,6 +150,7 @@ public class Executor implements CommandExecutor {
             case "cleandata" -> {
                 plugin.getCropManager().cleanData();
                 plugin.getSprinklerManager().cleanData();
+                return true;
             }
             case "setseason" -> {
                 if (args.length < 3) {

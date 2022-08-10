@@ -24,6 +24,7 @@ import org.bukkit.command.TabCompleter;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -36,27 +37,58 @@ public class Completer implements TabCompleter {
             return null;
         }
         if (args.length == 1) {
-            return Arrays.asList("backup", "forcegrow", "forcesave", "forcewater", "reload", "setseason");
+            List<String> arrayList = new ArrayList<>();
+            for (String cmd : Arrays.asList("backup", "forcegrow", "forcesave", "forcewater", "reload", "setseason")) {
+                if (cmd.startsWith(args[0]))
+                    arrayList.add(cmd);
+            }
+            return arrayList;
         }
         if(args[0].equalsIgnoreCase("setseason") && args.length == 2){
-            return ConfigReader.Config.worldNames;
+            List<String> arrayList = new ArrayList<>();
+            for (String cmd : ConfigReader.Config.worldNames) {
+                if (cmd.startsWith(args[1]))
+                    arrayList.add(cmd);
+            }
+            return arrayList;
         }
         if(args[0].equalsIgnoreCase("forcesave") && args.length == 2){
+            List<String> arrayList = new ArrayList<>();
             if (ConfigReader.Season.enable){
                 if (ConfigReader.Season.seasonChange){
-                    return Arrays.asList("all","crop","pot","sprinkler");
+                    for (String cmd : Arrays.asList("all","crop","pot","sprinkler")) {
+                        if (cmd.startsWith(args[1]))
+                            arrayList.add(cmd);
+                    }
                 }else{
-                    return Arrays.asList("all","crop","pot","season","sprinkler");
+                    for (String cmd : Arrays.asList("all","crop","pot","season","sprinkler")) {
+                        if (cmd.startsWith(args[1]))
+                            arrayList.add(cmd);
+                    }
                 }
             }else {
-                return Arrays.asList("all","crop","pot","sprinkler");
+                for (String cmd : Arrays.asList("all","crop","pot","sprinkler")) {
+                    if (cmd.startsWith(args[1]))
+                        arrayList.add(cmd);
+                }
             }
+            return arrayList;
         }
         if(args[0].equalsIgnoreCase("setseason") && args.length == 3){
-            return Arrays.asList("spring","summer","autumn","winter");
+            List<String> arrayList = new ArrayList<>();
+            for (String cmd : Arrays.asList("spring","summer","autumn","winter")) {
+                if (cmd.startsWith(args[2]))
+                    arrayList.add(cmd);
+            }
+            return arrayList;
         }
         if(args[0].equalsIgnoreCase("forcegrow") || args[0].equalsIgnoreCase("forcewater")){
-            return ConfigReader.Config.worldNames;
+            List<String> arrayList = new ArrayList<>();
+            for (String cmd : ConfigReader.Config.worldNames) {
+                if (cmd.startsWith(args[1]))
+                    arrayList.add(cmd);
+            }
+            return arrayList;
         }
         return null;
     }

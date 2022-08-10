@@ -40,6 +40,7 @@ public final class CustomCrops extends JavaPlugin {
 
     public static JavaPlugin instance;
     public static BukkitAudiences adventure;
+    public static CustomCrops plugin;
 
     private CropTimer cropTimer;
     private CropManager cropManager;
@@ -63,6 +64,8 @@ public final class CustomCrops extends JavaPlugin {
 
     @Override
     public void onEnable() {
+
+        plugin = this;
 
         instance = this;
         adventure = BukkitAudiences.create(instance);
