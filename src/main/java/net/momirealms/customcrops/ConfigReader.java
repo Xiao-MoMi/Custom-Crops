@@ -17,11 +17,18 @@
 
 package net.momirealms.customcrops;
 
+import dev.dejvokep.boostedyaml.YamlDocument;
+import dev.dejvokep.boostedyaml.dvs.versioning.BasicVersioning;
+import dev.dejvokep.boostedyaml.settings.dumper.DumperSettings;
+import dev.dejvokep.boostedyaml.settings.general.GeneralSettings;
+import dev.dejvokep.boostedyaml.settings.loader.LoaderSettings;
+import dev.dejvokep.boostedyaml.settings.updater.UpdaterSettings;
 import net.kyori.adventure.key.Key;
 import net.momirealms.customcrops.fertilizer.Fertilizer;
 import net.momirealms.customcrops.fertilizer.QualityCrop;
 import net.momirealms.customcrops.fertilizer.RetainingSoil;
 import net.momirealms.customcrops.fertilizer.SpeedGrow;
+import net.momirealms.customcrops.helper.Log;
 import net.momirealms.customcrops.integrations.protection.*;
 import net.momirealms.customcrops.integrations.skill.Aurelium;
 import net.momirealms.customcrops.integrations.skill.MMOCore;
@@ -40,6 +47,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.*;
 
 public class ConfigReader {
@@ -103,6 +111,12 @@ public class ConfigReader {
         public static SkillXP skillXP;
 
         public static void loadConfig(){
+
+            try {
+                YamlDocument.create(new File(CustomCrops.instance.getDataFolder(), "config.yml"), CustomCrops.instance.getResource("config.yml"), GeneralSettings.DEFAULT, LoaderSettings.builder().setAutoUpdate(true).build(), DumperSettings.DEFAULT, UpdaterSettings.builder().setVersioning(new BasicVersioning("config-version")).build());
+            }catch (IOException e){
+                Log.warn(e.getMessage());
+            }
 
             //存读基本配置文件
             CustomCrops.instance.saveDefaultConfig();

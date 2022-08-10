@@ -22,3 +22,4 @@ softdepend:
 commands:
   customcrops:
     usage: /customcrops <args>
+    permission: customcrops.admin

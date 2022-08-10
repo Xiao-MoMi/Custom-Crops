@@ -21,6 +21,7 @@ import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.momirealms.customcrops.commands.Executor;
 import net.momirealms.customcrops.commands.Completer;
 import net.momirealms.customcrops.datamanager.*;
+import net.momirealms.customcrops.helper.LibraryLoader;
 import net.momirealms.customcrops.listener.*;
 import net.momirealms.customcrops.timer.CropTimer;
 import net.momirealms.customcrops.utils.AdventureManager;
@@ -51,6 +52,12 @@ public final class CustomCrops extends JavaPlugin {
     public SprinklerManager getSprinklerManager() { return sprinklerManager; }
     public SeasonManager getSeasonManager() { return seasonManager; }
     public PotManager getPotManager() { return potManager; }
+
+    @Override
+    public void onLoad(){
+        instance = this;
+        LibraryLoader.load("dev.dejvokep","boosted-yaml","1.3","https://repo.maven.apache.org/maven2/");
+    }
 
     @Override
     public void onEnable() {
@@ -106,15 +113,15 @@ public final class CustomCrops extends JavaPlugin {
             this.cropManager.saveData();
             this.cropManager = null;
         }
-        if (this.potManager != null){
-            this.potManager.saveData();
-            this.potManager = null;
-        }
         if (this.sprinklerManager != null){
             this.sprinklerManager.cleanData();
             this.sprinklerManager.updateData();
             this.sprinklerManager.saveData();
             this.sprinklerManager = null;
+        }
+        if (this.potManager != null){
+            this.potManager.saveData();
+            this.potManager = null;
         }
         if (ConfigReader.Season.enable && !ConfigReader.Season.seasonChange && this.seasonManager != null){
             this.seasonManager.saveData();

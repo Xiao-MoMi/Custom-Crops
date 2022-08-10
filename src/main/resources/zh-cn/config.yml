@@ -1,3 +1,6 @@
+#Don't change
+config-version: 1
+
 config:
   #插件兼容
   integration:
