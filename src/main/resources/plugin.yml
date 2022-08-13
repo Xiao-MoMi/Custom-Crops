@@ -19,6 +19,7 @@ softdepend:
   - mcMMO
   - AureliumSkills
   - MMOCore
+  - EcoSkills
 commands:
   customcrops:
     usage: /customcrops <args>

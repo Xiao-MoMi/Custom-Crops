@@ -19,6 +19,7 @@ config:
     AureliumSkills: false
     mcMMO: false
     MMOCore: false
+    EcoSkills: false
   #=============================================================#
   #Mode 1:
   #  Crops in loaded chunks will grow

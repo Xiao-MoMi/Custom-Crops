@@ -30,10 +30,7 @@ import net.momirealms.customcrops.fertilizer.RetainingSoil;
 import net.momirealms.customcrops.fertilizer.SpeedGrow;
 import net.momirealms.customcrops.helper.Log;
 import net.momirealms.customcrops.integrations.protection.*;
-import net.momirealms.customcrops.integrations.skill.Aurelium;
-import net.momirealms.customcrops.integrations.skill.MMOCore;
-import net.momirealms.customcrops.integrations.skill.SkillXP;
-import net.momirealms.customcrops.integrations.skill.mcMMO;
+import net.momirealms.customcrops.integrations.skill.*;
 import net.momirealms.customcrops.requirements.Biome;
 import net.momirealms.customcrops.requirements.Permission;
 import net.momirealms.customcrops.requirements.Requirement;
@@ -109,14 +106,9 @@ public class ConfigReader {
         public static double quality_1;
         public static double quality_2;
         public static SkillXP skillXP;
+        public static int version;
 
         public static void loadConfig(){
-
-            try {
-                YamlDocument.create(new File(CustomCrops.instance.getDataFolder(), "config.yml"), CustomCrops.instance.getResource("config.yml"), GeneralSettings.DEFAULT, LoaderSettings.builder().setAutoUpdate(true).build(), DumperSettings.DEFAULT, UpdaterSettings.builder().setVersioning(new BasicVersioning("config-version")).build());
-            }catch (IOException e){
-                Log.warn(e.getMessage());
-            }
 
             //存读基本配置文件
             CustomCrops.instance.saveDefaultConfig();
@@ -182,6 +174,7 @@ public class ConfigReader {
 
             sprinklerRefill = config.getInt("config.sprinkler-refill",2);
             waterCanRefill = config.getInt("config.water-can-refill",1);
+            version = config.getInt("config-version",1);
             canAddWater = config.getBoolean("config.water-can-add-water-to-sprinkler",true);
 
             if (allWorld){
@@ -295,6 +288,14 @@ public class ConfigReader {
                 }else {
                     skillXP = new MMOCore();
                     AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><gold>MMOCore <color:#FFEBCD>Hooked!");
+                }
+            }
+            if(config.getBoolean("config.integration.EcoSkills",false)){
+                if(Bukkit.getPluginManager().getPlugin("EcoSkills") == null){
+                    CustomCrops.instance.getLogger().warning("Failed to initialize EcoSkills!");
+                }else {
+                    skillXP = new EcoSkill();
+                    AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><gold>EcoSkills <color:#FFEBCD>Hooked!");
                 }
             }
         }

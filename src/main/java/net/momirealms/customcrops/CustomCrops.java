@@ -24,10 +24,7 @@ import net.momirealms.customcrops.datamanager.*;
 import net.momirealms.customcrops.helper.LibraryLoader;
 import net.momirealms.customcrops.listener.*;
 import net.momirealms.customcrops.timer.CropTimer;
-import net.momirealms.customcrops.utils.AdventureManager;
-import net.momirealms.customcrops.utils.BackUp;
-import net.momirealms.customcrops.utils.HoloUtil;
-import net.momirealms.customcrops.utils.Placeholders;
+import net.momirealms.customcrops.utils.*;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -64,16 +61,11 @@ public final class CustomCrops extends JavaPlugin {
 
     @Override
     public void onEnable() {
-
         plugin = this;
-
         instance = this;
         adventure = BukkitAudiences.create(instance);
-
         AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><color:#FFEBCD>Running on " + Bukkit.getVersion());
-
         ConfigReader.ReloadConfig();
-
         if(Bukkit.getPluginManager().getPlugin("PlaceHolderAPI") != null){
             placeholders = new Placeholders();
             placeholders.register();
@@ -96,7 +88,6 @@ public final class CustomCrops extends JavaPlugin {
             this.seasonManager = new SeasonManager();
             this.seasonManager.loadData();
         }
-
         this.cropManager = new CropManager();
         this.cropManager.loadData();
         this.sprinklerManager = new SprinklerManager();
@@ -104,9 +95,10 @@ public final class CustomCrops extends JavaPlugin {
         this.potManager = new PotManager();
         this.potManager.loadData();
         this.cropTimer = new CropTimer(this);
-
         checkIAConfig();
-
+        if (ConfigReader.Config.version != 1){
+            UpdateConfig.update();
+        }
         AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><color:#F5DEB3>Plugin Enabled!");
     }
 
