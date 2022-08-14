@@ -29,7 +29,6 @@ You can use greenhouse glass to allow them to grow all year.\
 Season change has two modes: Automatic and Command\
 You might use the command to change the season to sync another plugin's season, for example RealisticSeason.
 
-
 ### Fertilizer
 There are three templates of fertiziliers: \
 SpeedGrow: Crops have a small chance to grow two stages at a time\
@@ -39,24 +38,24 @@ QuailityCrops: When haveresting, players have a higher chance to get high qualit
 ### Sprinkler & WateringCan
 Sprinkler is a semi-automatic way of watering pot. You can add water to sprinkler with
 water bucket or watering can. Max storage and range can be customized.\
-Watering can also has its max storage and range. 1x1 1x3 3x3 and even 9x99 is supported!
+Watering-can also has its max storage and effective range. 1x1 1x3 3x3 and even 9x99 is supported!
 
 ### OverWeight
 If configurated, crops will still absorb water every day and have a very little chance to be OverWeight(gigantic) before it's dead.\
-I prefer the Stardrew Valley method but you can also set it to golden crops like OriginRealms. It's up to you.
 
 ### Quality
 Crops have three qualities, if you don't want this feature just disable it in config. 
 Quality is determined by the fertizilier players use and their luck!
 
 ### Harvest Repeatedly
-If configurated, crops can be harvested with hands repeatedly and return to a specified stage.
+If configurated, crops can be harvested repeatedly and return to a specified stage.\
+This is useful for crops like grape.
 
 ### Highly Optimizied
 1.Crops only grow at the specified time and won't impact the performance in other times.\
 2.Growing judge is async and only the last step ** replace blcoks ** is sync.\
 3.Crops will not actually grow at the same time. It's laggy to replace so many blocks at the same time. They will grow in a random time(in seconds) which you can specified in the config after "grow-time"(7am default)\
-4.Four grow modes to choose 
+4.Four grow modes to choose.
 
 ### Commands
 /customcrops setseason [world] [season] # set a specified world's season\
@@ -69,7 +68,6 @@ If configurated, crops can be harvested with hands repeatedly and return to a sp
 ### Placeholders
 %customcrops_season% show the season in the world\
 %customcrops_season_[world]%\
-==== these papi below will be accurate only in "Auto" mode ====\
 %customcrops_nextseason% show the days to the next season\
 %customcrops_nextseason_[world]%\
 %customcrops_current% show the days the current season has gone\
