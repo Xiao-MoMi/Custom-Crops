@@ -1,4 +1,4 @@
-![2](https://user-images.githubusercontent.com/70987828/179509189-0f609f88-170a-4fc1-8b1b-19f10ba40647.png)
+![2022-08-15_02 51 28](https://user-images.githubusercontent.com/70987828/184551011-7da1dca5-faab-473c-b6a5-d2489b135ca9.png)
 
 
 # Custom-Crops
@@ -56,9 +56,7 @@ If configurated, crops can be harvested with hands repeatedly and return to a sp
 1.Crops only grow at the specified time and won't impact the performance in other times.\
 2.Growing judge is async and only the last step ** replace blcoks ** is sync.\
 3.Crops will not actually grow at the same time. It's laggy to replace so many blocks at the same time. They will grow in a random time(in seconds) which you can specified in the config after "grow-time"(7am default)\
-4.Defaultly crops will only grow in loaded chunks. If you want a mechanic similar to OriginRealms just DISABLE SEASON and REPEATED HARVESTING.\
-In this way crops data will be removed from file after it comes to its max stage. In other words, plugin will only record the crops still on growing.\
-NEVER SET "only-grow-in-loaded-chunks" FALSE IF YOU DON'T DISABLE THE TWO FEATURES MENTIONED ABOVE.
+4.Four grow modes to choose 
 
 ### Commands
 /customcrops setseason [world] [season] # set a specified world's season\
