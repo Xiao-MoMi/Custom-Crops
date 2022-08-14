@@ -44,7 +44,7 @@ public final class CustomCrops extends JavaPlugin {
     private SprinklerManager sprinklerManager;
     private SeasonManager seasonManager;
     private PotManager potManager;
-    private Placeholders placeholders;
+    public static Placeholders placeholders;
 
     public CropManager getCropManager() { return this.cropManager; }
     public SprinklerManager getSprinklerManager() { return sprinklerManager; }
@@ -70,6 +70,7 @@ public final class CustomCrops extends JavaPlugin {
             placeholders = new Placeholders();
             placeholders.register();
             AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><gold>PlaceHolderAPI <color:#FFEBCD>Hooked!");
+            Bukkit.getPluginManager().registerEvents(new PapiReload(), this);
         }
 
         Objects.requireNonNull(Bukkit.getPluginCommand("customcrops")).setExecutor(new Executor(this));
