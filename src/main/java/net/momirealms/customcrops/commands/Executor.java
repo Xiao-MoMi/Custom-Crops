@@ -66,7 +66,7 @@ public class Executor implements CommandExecutor {
                     lackArgs(sender);
                     return true;
                 }
-                Bukkit.getScheduler().runTaskAsynchronously(CustomCrops.instance, ()-> {
+                Bukkit.getScheduler().runTaskAsynchronously(CustomCrops.plugin, ()-> {
                     switch (ConfigReader.Config.growMode){
                         case 1 -> plugin.getCropManager().growModeOne(args[1]);
                         case 2 -> plugin.getCropManager().growModeTwo(args[1]);
@@ -86,7 +86,7 @@ public class Executor implements CommandExecutor {
                     lackArgs(sender);
                     return true;
                 }
-                Bukkit.getScheduler().runTaskAsynchronously(CustomCrops.instance, ()-> {
+                Bukkit.getScheduler().runTaskAsynchronously(CustomCrops.plugin, ()-> {
                     switch (ConfigReader.Config.growMode){
                         case 1 -> plugin.getSprinklerManager().workModeOne(args[1]);
                         case 2 -> plugin.getSprinklerManager().workModeTwo(args[1]);

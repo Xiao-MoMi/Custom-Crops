@@ -41,13 +41,13 @@ public class BackUp {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
 
         files.forEach(fileName -> {
-            File data = new File(CustomCrops.instance.getDataFolder(), "data"+ File.separatorChar + fileName + ".yml");
-            File backUp = new File(CustomCrops.instance.getDataFolder(), "backups"+ File.separatorChar + format.format(date) + File.separatorChar + fileName + ".yml");
+            File data = new File(CustomCrops.plugin.getDataFolder(), "data"+ File.separatorChar + fileName + ".yml");
+            File backUp = new File(CustomCrops.plugin.getDataFolder(), "backups"+ File.separatorChar + format.format(date) + File.separatorChar + fileName + ".yml");
             try {
                 BackUp.backUp(data, backUp);
             } catch (IOException e) {
                 e.printStackTrace();
-                CustomCrops.instance.getLogger().warning(fileName + ".yml备份出错!");
+                CustomCrops.plugin.getLogger().warning(fileName + ".yml备份出错!");
             }
         });
     }

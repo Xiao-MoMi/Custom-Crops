@@ -35,7 +35,6 @@ import java.util.Objects;
 
 public final class CustomCrops extends JavaPlugin {
 
-    public static JavaPlugin instance;
     public static BukkitAudiences adventure;
     public static CustomCrops plugin;
 
@@ -53,7 +52,7 @@ public final class CustomCrops extends JavaPlugin {
 
     @Override
     public void onLoad(){
-        instance = this;
+        plugin = this;
         LibraryLoader.load("redis.clients","jedis","4.2.3","https://repo.maven.apache.org/maven2/");
         LibraryLoader.load("org.apache.commons","commons-pool2","2.11.1","https://repo.maven.apache.org/maven2/");
         LibraryLoader.load("dev.dejvokep","boosted-yaml","1.3","https://repo.maven.apache.org/maven2/");
@@ -62,8 +61,7 @@ public final class CustomCrops extends JavaPlugin {
     @Override
     public void onEnable() {
         plugin = this;
-        instance = this;
-        adventure = BukkitAudiences.create(instance);
+        adventure = BukkitAudiences.create(plugin);
         AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><color:#FFEBCD>Running on " + Bukkit.getVersion());
         ConfigReader.ReloadConfig();
         if(Bukkit.getPluginManager().getPlugin("PlaceHolderAPI") != null){
@@ -97,7 +95,7 @@ public final class CustomCrops extends JavaPlugin {
         this.potManager.loadData();
         this.cropTimer = new CropTimer(this);
         checkIAConfig();
-        if (ConfigReader.Config.version != 1){
+        if (ConfigReader.Config.version != 2){
             UpdateConfig.update();
         }
         AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><color:#F5DEB3>Plugin Enabled!");
@@ -125,7 +123,7 @@ public final class CustomCrops extends JavaPlugin {
             this.seasonManager.saveData();
             this.seasonManager = null;
         }
-        if (this.placeholders != null){
+        if (placeholders != null){
             placeholders.unregister();
             placeholders = null;
         }
@@ -140,8 +138,8 @@ public final class CustomCrops extends JavaPlugin {
         if (adventure != null) {
             adventure.close();
         }
-        if (instance != null) {
-            instance = null;
+        if (plugin != null) {
+            plugin = null;
         }
     }
 

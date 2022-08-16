@@ -47,7 +47,7 @@ import java.util.Objects;
 public final class LibraryLoader {
 
     @SuppressWarnings("Guava")
-    private static final Supplier<URLClassLoaderAccess> URL_INJECTOR = Suppliers.memoize(() -> URLClassLoaderAccess.create((URLClassLoader) CustomCrops.instance.getClass().getClassLoader()));
+    private static final Supplier<URLClassLoaderAccess> URL_INJECTOR = Suppliers.memoize(() -> URLClassLoaderAccess.create((URLClassLoader) CustomCrops.plugin.getClass().getClassLoader()));
 
     /**
      * Resolves all {@link MavenLibrary} annotations on the given object.
@@ -111,7 +111,7 @@ public final class LibraryLoader {
     }
 
     private static File getLibFolder(Dependency dependency) {
-        File pluginDataFolder = CustomCrops.instance.getDataFolder();
+        File pluginDataFolder = CustomCrops.plugin.getDataFolder();
         File serverDir = pluginDataFolder.getParentFile().getParentFile();
 
         File helperDir = new File(serverDir, "libraries");

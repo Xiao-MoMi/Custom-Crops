@@ -38,23 +38,23 @@ import javax.annotation.Nonnull;
 public final class Log {
 
     public static void info(@Nonnull String s) {
-        CustomCrops.instance.getLogger().info(s);
+        CustomCrops.plugin.getLogger().info(s);
     }
 
     public static void warn(@Nonnull String s) {
-        CustomCrops.instance.getLogger().warning(s);
+        CustomCrops.plugin.getLogger().warning(s);
     }
 
     public static void severe(@Nonnull String s) {
-        CustomCrops.instance.getLogger().severe(s);
+        CustomCrops.plugin.getLogger().severe(s);
     }
 
     public static void warn(@Nonnull String s, Throwable t) {
-        CustomCrops.instance.getLogger().log(Level.WARNING, s, t);
+        CustomCrops.plugin.getLogger().log(Level.WARNING, s, t);
     }
 
     public static void severe(@Nonnull String s, Throwable t) {
-        CustomCrops.instance.getLogger().log(Level.SEVERE, s, t);
+        CustomCrops.plugin.getLogger().log(Level.SEVERE, s, t);
     }
 
     private Log() {

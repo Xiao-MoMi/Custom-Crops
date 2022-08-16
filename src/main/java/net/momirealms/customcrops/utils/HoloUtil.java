@@ -83,7 +83,7 @@ public class HoloUtil {
             e.printStackTrace();
         }
 
-        Bukkit.getScheduler().runTaskLater(CustomCrops.instance, ()->{
+        Bukkit.getScheduler().runTaskLater(CustomCrops.plugin, ()->{
             removeHolo(player, id);
             cache.remove(location);
         }, duration * 20L);

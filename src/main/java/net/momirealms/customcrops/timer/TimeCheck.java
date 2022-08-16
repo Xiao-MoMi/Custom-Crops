@@ -41,14 +41,14 @@ public class TimeCheck extends BukkitRunnable {
                 }
                 if(time == cropGrowTime){
                     if (ConfigReader.Config.allWorld){
-                        Bukkit.getScheduler().runTaskAsynchronously(CustomCrops.instance, () -> {
+                        Bukkit.getScheduler().runTaskAsynchronously(CustomCrops.plugin, () -> {
                             plugin.getCropManager().cropGrowAll();
                         });
-                        Bukkit.getScheduler().runTaskLaterAsynchronously(CustomCrops.instance, ()->{
+                        Bukkit.getScheduler().runTaskLaterAsynchronously(CustomCrops.plugin, ()->{
                             plugin.getSprinklerManager().sprinklerWorkAll();
                         }, ConfigReader.Config.timeToGrow);
                     }else {
-                        Bukkit.getScheduler().runTaskAsynchronously(CustomCrops.instance, () -> {
+                        Bukkit.getScheduler().runTaskAsynchronously(CustomCrops.plugin, () -> {
                             switch (ConfigReader.Config.growMode){
                                 case 1 -> plugin.getCropManager().growModeOne(world.getName());
                                 case 2 -> plugin.getCropManager().growModeTwo(world.getName());
@@ -56,7 +56,7 @@ public class TimeCheck extends BukkitRunnable {
                                 case 4 -> plugin.getCropManager().growModeFour(world.getName());
                             }
                         });
-                        Bukkit.getScheduler().runTaskLaterAsynchronously(CustomCrops.instance, ()->{
+                        Bukkit.getScheduler().runTaskLaterAsynchronously(CustomCrops.plugin, ()->{
                             switch (ConfigReader.Config.growMode){
                                 case 1 -> plugin.getSprinklerManager().workModeOne(world.getName());
                                 case 2 -> plugin.getSprinklerManager().workModeTwo(world.getName());

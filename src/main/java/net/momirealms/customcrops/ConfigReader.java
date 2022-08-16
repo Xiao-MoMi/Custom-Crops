@@ -17,18 +17,11 @@
 
 package net.momirealms.customcrops;
 
-import dev.dejvokep.boostedyaml.YamlDocument;
-import dev.dejvokep.boostedyaml.dvs.versioning.BasicVersioning;
-import dev.dejvokep.boostedyaml.settings.dumper.DumperSettings;
-import dev.dejvokep.boostedyaml.settings.general.GeneralSettings;
-import dev.dejvokep.boostedyaml.settings.loader.LoaderSettings;
-import dev.dejvokep.boostedyaml.settings.updater.UpdaterSettings;
 import net.kyori.adventure.key.Key;
 import net.momirealms.customcrops.fertilizer.Fertilizer;
 import net.momirealms.customcrops.fertilizer.QualityCrop;
 import net.momirealms.customcrops.fertilizer.RetainingSoil;
 import net.momirealms.customcrops.fertilizer.SpeedGrow;
-import net.momirealms.customcrops.helper.Log;
 import net.momirealms.customcrops.integrations.protection.*;
 import net.momirealms.customcrops.integrations.skill.*;
 import net.momirealms.customcrops.requirements.Biome;
@@ -44,7 +37,6 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.*;
 
 public class ConfigReader {
@@ -55,9 +47,9 @@ public class ConfigReader {
     public static HashMap<String, Sprinkler> SPRINKLERS = new HashMap<>();
 
     public static YamlConfiguration getConfig(String configName) {
-        File file = new File(CustomCrops.instance.getDataFolder(), configName);
+        File file = new File(CustomCrops.plugin.getDataFolder(), configName);
         if (!file.exists()) {
-            CustomCrops.instance.saveResource(configName, false);
+            CustomCrops.plugin.saveResource(configName, false);
         }
         return YamlConfiguration.loadConfiguration(file);
     }
@@ -111,26 +103,19 @@ public class ConfigReader {
         public static void loadConfig(){
 
             //存读基本配置文件
-            CustomCrops.instance.saveDefaultConfig();
-            CustomCrops.instance.reloadConfig();
-            FileConfiguration config = CustomCrops.instance.getConfig();
+            CustomCrops.plugin.saveDefaultConfig();
+            CustomCrops.plugin.reloadConfig();
+            FileConfiguration config = CustomCrops.plugin.getConfig();
 
             lang = config.getString("config.lang","chinese");
 
-            //农作物生长时间点
             cropGrowTimeList = config.getLongList("config.grow-time");
-            cropGrowTimeList.forEach(time -> {
-                if(time < 0 || time > 23999){
-                    AdventureManager.consoleMessage("<red>[CustomCrops] Grow time should be between 0 and 23999");
-                }
-            });
-
+            cropGrowTimeList.forEach(time -> {if(time < 0 || time > 23999){AdventureManager.consoleMessage("<red>[CustomCrops] Grow time should be between 0 and 23999");}});
             timeToGrow = config.getInt("config.time-to-grow",60)*20;
             timeToWork = config.getInt("config.time-to-work",30)*20;
             asyncCheck = config.getBoolean("config.async-time-check",false);
             logTime = config.getBoolean("config.log-time-consume",false);
-            growMode = config.getInt("config.grow-mode",3);
-            if (growMode > 4 || growMode < 1) growMode = 3;
+            growMode = config.getInt("config.grow-mode",3); if (growMode > 4 || growMode < 1) growMode = 3;
             allWorld = config.getBoolean("config.all-world-grow",false);
             hasParticle = config.getBoolean("config.water-particles", true);
             rightClickHarvest = config.getBoolean("config.right-click-harvest", true);
@@ -201,7 +186,7 @@ public class ConfigReader {
             integration = new ArrayList<>();
             if(config.getBoolean("config.integration.Residence",false)){
                 if(Bukkit.getPluginManager().getPlugin("Residence") == null){
-                    CustomCrops.instance.getLogger().warning("Failed to initialize Residence!");
+                    CustomCrops.plugin.getLogger().warning("Failed to initialize Residence!");
                 }else {
                     integration.add(new Residence());
                     AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><gold>Residence <color:#FFEBCD>Hooked!");
@@ -209,7 +194,7 @@ public class ConfigReader {
             }
             if(config.getBoolean("config.integration.Kingdoms",false)){
                 if(Bukkit.getPluginManager().getPlugin("Kingdoms") == null){
-                    CustomCrops.instance.getLogger().warning("Failed to initialize Kingdoms!");
+                    CustomCrops.plugin.getLogger().warning("Failed to initialize Kingdoms!");
                 }else {
                     integration.add(new KingdomsX());
                     AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><gold>KingdomsX <color:#FFEBCD>Hooked!");
@@ -217,7 +202,7 @@ public class ConfigReader {
             }
             if(config.getBoolean("config.integration.WorldGuard",false)){
                 if(Bukkit.getPluginManager().getPlugin("WorldGuard") == null){
-                    CustomCrops.instance.getLogger().warning("Failed to initialize WorldGuard!");
+                    CustomCrops.plugin.getLogger().warning("Failed to initialize WorldGuard!");
                 }else {
                     integration.add(new WorldGuard());
                     AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><gold>WorldGuard <color:#FFEBCD>Hooked!");
@@ -225,7 +210,7 @@ public class ConfigReader {
             }
             if(config.getBoolean("config.integration.GriefDefender",false)){
                 if(Bukkit.getPluginManager().getPlugin("GriefDefender") == null){
-                    CustomCrops.instance.getLogger().warning("Failed to initialize GriefDefender!");
+                    CustomCrops.plugin.getLogger().warning("Failed to initialize GriefDefender!");
                 }else {
                     integration.add(new GriefDefender());
                     AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><gold>GriefDefender <color:#FFEBCD>Hooked!");
@@ -233,7 +218,7 @@ public class ConfigReader {
             }
             if(config.getBoolean("config.integration.PlotSquared",false)){
                 if(Bukkit.getPluginManager().getPlugin("PlotSquared") == null){
-                    CustomCrops.instance.getLogger().warning("Failed to initialize PlotSquared!");
+                    CustomCrops.plugin.getLogger().warning("Failed to initialize PlotSquared!");
                 }else {
                     integration.add(new PlotSquared());
                     AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><gold>PlotSquared <color:#FFEBCD>Hooked!");
@@ -241,7 +226,7 @@ public class ConfigReader {
             }
             if(config.getBoolean("config.integration.Towny",false)){
                 if(Bukkit.getPluginManager().getPlugin("Towny") == null){
-                    CustomCrops.instance.getLogger().warning("Failed to initialize Towny!");
+                    CustomCrops.plugin.getLogger().warning("Failed to initialize Towny!");
                 }else {
                     integration.add(new Towny());
                     AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><gold>Towny <color:#FFEBCD>Hooked!");
@@ -249,7 +234,7 @@ public class ConfigReader {
             }
             if(config.getBoolean("config.integration.Lands",false)){
                 if(Bukkit.getPluginManager().getPlugin("Lands") == null){
-                    CustomCrops.instance.getLogger().warning("Failed to initialize Lands!");
+                    CustomCrops.plugin.getLogger().warning("Failed to initialize Lands!");
                 }else {
                     integration.add(new Lands());
                     AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><gold>Lands <color:#FFEBCD>Hooked!");
@@ -257,10 +242,18 @@ public class ConfigReader {
             }
             if(config.getBoolean("config.integration.GriefPrevention",false)){
                 if(Bukkit.getPluginManager().getPlugin("GriefPrevention") == null){
-                    CustomCrops.instance.getLogger().warning("Failed to initialize GriefPrevention!");
+                    CustomCrops.plugin.getLogger().warning("Failed to initialize GriefPrevention!");
                 }else {
                     integration.add(new GriefPrevention());
                     AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><gold>GriefPrevention <color:#FFEBCD>Hooked!");
+                }
+            }
+            if(config.getBoolean("config.integration.CrashClaim",false)){
+                if(Bukkit.getPluginManager().getPlugin("CrashClaim") == null){
+                    CustomCrops.plugin.getLogger().warning("Failed to initialize CrashClaim!");
+                }else {
+                    integration.add(new CrashClaim());
+                    AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><gold>CrashClaim <color:#FFEBCD>Hooked!");
                 }
             }
 
@@ -268,7 +261,7 @@ public class ConfigReader {
 
             if(config.getBoolean("config.integration.mcMMO",false)){
                 if(Bukkit.getPluginManager().getPlugin("mcMMO") == null){
-                    CustomCrops.instance.getLogger().warning("Failed to initialize mcMMO!");
+                    CustomCrops.plugin.getLogger().warning("Failed to initialize mcMMO!");
                 }else {
                     skillXP = new mcMMO();
                     AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><gold>mcMMO <color:#FFEBCD>Hooked!");
@@ -276,7 +269,7 @@ public class ConfigReader {
             }
             if(config.getBoolean("config.integration.AureliumSkills",false)){
                 if(Bukkit.getPluginManager().getPlugin("AureliumSkills") == null){
-                    CustomCrops.instance.getLogger().warning("Failed to initialize AureliumSkills!");
+                    CustomCrops.plugin.getLogger().warning("Failed to initialize AureliumSkills!");
                 }else {
                     skillXP = new Aurelium();
                     AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><gold>AureliumSkills <color:#FFEBCD>Hooked!");
@@ -284,7 +277,7 @@ public class ConfigReader {
             }
             if(config.getBoolean("config.integration.MMOCore",false)){
                 if(Bukkit.getPluginManager().getPlugin("MMOCore") == null){
-                    CustomCrops.instance.getLogger().warning("Failed to initialize MMOCore!");
+                    CustomCrops.plugin.getLogger().warning("Failed to initialize MMOCore!");
                 }else {
                     skillXP = new MMOCore();
                     AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><gold>MMOCore <color:#FFEBCD>Hooked!");
@@ -292,7 +285,7 @@ public class ConfigReader {
             }
             if(config.getBoolean("config.integration.EcoSkills",false)){
                 if(Bukkit.getPluginManager().getPlugin("EcoSkills") == null){
-                    CustomCrops.instance.getLogger().warning("Failed to initialize EcoSkills!");
+                    CustomCrops.plugin.getLogger().warning("Failed to initialize EcoSkills!");
                 }else {
                     skillXP = new EcoSkill();
                     AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><gold>EcoSkills <color:#FFEBCD>Hooked!");

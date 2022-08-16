@@ -43,7 +43,7 @@ public class PotManager {
      * 载入数据
      */
     public void loadData(){
-        File file = new File(CustomCrops.instance.getDataFolder(), "data" + File.separator + "pot.yml");
+        File file = new File(CustomCrops.plugin.getDataFolder(), "data" + File.separator + "pot.yml");
         if(!file.exists()){
             try {
                 file.getParentFile().mkdirs();
@@ -79,7 +79,7 @@ public class PotManager {
      * 保存数据
      */
     public void saveData(){
-        File file = new File(CustomCrops.instance.getDataFolder(), "data" + File.separator + "pot.yml");
+        File file = new File(CustomCrops.plugin.getDataFolder(), "data" + File.separator + "pot.yml");
         YamlConfiguration data = new YamlConfiguration();
         Cache.forEach(((location, fertilizer) -> {
             String world = location.getWorldName();

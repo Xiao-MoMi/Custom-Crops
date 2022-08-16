@@ -30,9 +30,9 @@ public class CropTimer {
         TimeCheck tc = new TimeCheck(plugin);
         BukkitTask task;
         if (ConfigReader.Config.asyncCheck){
-            task = tc.runTaskTimerAsynchronously(CustomCrops.instance, 1,1);
+            task = tc.runTaskTimerAsynchronously(CustomCrops.plugin, 1,1);
         }else {
-            task = tc.runTaskTimer(CustomCrops.instance, 1,1);
+            task = tc.runTaskTimer(CustomCrops.plugin, 1,1);
         }
         this.taskID = task.getTaskId();
     }

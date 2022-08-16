@@ -20,7 +20,10 @@ softdepend:
   - AureliumSkills
   - MMOCore
   - EcoSkills
+  - CrashClaim
 commands:
   customcrops:
     usage: /customcrops <args>
     permission: customcrops.admin
+    aliases:
+      - ccrops

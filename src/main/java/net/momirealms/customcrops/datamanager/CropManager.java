@@ -55,7 +55,7 @@ public class CropManager {
      * 载入数据
      */
     public void loadData() {
-        File file = new File(CustomCrops.instance.getDataFolder(), "data" + File.separator + "crop.yml");
+        File file = new File(CustomCrops.plugin.getDataFolder(), "data" + File.separator + "crop.yml");
         if(!file.exists()){
             try {
                 file.getParentFile().mkdirs();
@@ -72,7 +72,7 @@ public class CropManager {
      * 保存数据
      */
     public void saveData() {
-        File file = new File(CustomCrops.instance.getDataFolder(), "data" + File.separator + "crop.yml");
+        File file = new File(CustomCrops.plugin.getDataFolder(), "data" + File.separator + "crop.yml");
         try{
             data.save(file);
         }catch (IOException e){
@@ -271,7 +271,7 @@ public class CropManager {
         List<World> worlds = Bukkit.getWorlds();
         for (int i = 0; i < worlds.size(); i++){
             String worldName = worlds.get(i).getName();
-            bukkitScheduler.runTaskLaterAsynchronously(CustomCrops.instance, () -> {
+            bukkitScheduler.runTaskLaterAsynchronously(CustomCrops.plugin, () -> {
                 switch (ConfigReader.Config.growMode){
                     case 1 -> growModeOne(worldName);
                     case 2 -> growModeTwo(worldName);
@@ -321,7 +321,7 @@ public class CropManager {
             if (ConfigReader.Season.enable && cropInstance.getSeasons() != null){
                 if (isWrongSeason(seedLocation, cropInstance.getSeasons(), worldName)){
 
-                    bukkitScheduler.runTaskLater(CustomCrops.instance, () -> {
+                    bukkitScheduler.runTaskLater(CustomCrops.plugin, () -> {
                         CustomBlock.remove(seedLocation);
                         CustomBlock.place(ConfigReader.Basic.dead, seedLocation);
                     }, random);
@@ -415,7 +415,7 @@ public class CropManager {
                 //巨大化判定
                 if (cropInstance.getGiantChance() > Math.random()){
                     //成功巨大化，移除数据
-                    bukkitScheduler.runTaskLater(CustomCrops.instance, () ->{
+                    bukkitScheduler.runTaskLater(CustomCrops.plugin, () ->{
                         CustomBlock.remove(seedLocation);
                         CustomBlock.place(cropInstance.getGiant(), seedLocation);
                         CustomBlock.remove(potLocation);
@@ -424,7 +424,7 @@ public class CropManager {
                     return true;
                 }else {
                     //失败，转湿为干
-                    bukkitScheduler.runTaskLater(CustomCrops.instance, () ->{
+                    bukkitScheduler.runTaskLater(CustomCrops.plugin, () ->{
                         CustomBlock.remove(potLocation);
                         CustomBlock.place(ConfigReader.Basic.pot, potLocation);
                     }, random);
@@ -433,7 +433,7 @@ public class CropManager {
             }else {
                 //若无下一阶段，无巨大化，未启用季节，则移除无用数据
                 if (!ConfigReader.Season.enable) return true;
-                bukkitScheduler.runTaskLater(CustomCrops.instance, () -> {
+                bukkitScheduler.runTaskLater(CustomCrops.plugin, () -> {
                     CustomBlock.remove(potLocation);
                     CustomBlock.place(ConfigReader.Basic.pot, potLocation);
                 }, random);
@@ -448,7 +448,7 @@ public class CropManager {
             if(seasons == null) return false;
             //错误季节
             if(isWrongSeason(seedLocation, seasons, worldName)){
-                bukkitScheduler.runTaskLater(CustomCrops.instance, () -> {
+                bukkitScheduler.runTaskLater(CustomCrops.plugin, () -> {
                     CustomBlock.remove(seedLocation);
                     CustomBlock.place(ConfigReader.Basic.dead, seedLocation);
                 }, new Random().nextInt(ConfigReader.Config.timeToGrow));
@@ -505,7 +505,7 @@ public class CropManager {
      */
     private void addStage(Location potLocation, Location seedLocation, String namespacedID, int nextStage, int random){
         String stage = StringUtils.chop(namespacedID) + nextStage;
-        bukkitScheduler.runTaskLater(CustomCrops.instance, () ->{
+        bukkitScheduler.runTaskLater(CustomCrops.plugin, () ->{
             CustomBlock.remove(potLocation);
             CustomBlock.place(ConfigReader.Basic.pot, potLocation);
             CustomBlock.remove(seedLocation);
@@ -522,7 +522,7 @@ public class CropManager {
      */
     private void addStage(Location seedLocation, String namespacedID, int nextStage, int random){
         String stage = StringUtils.chop(namespacedID) + nextStage;
-        bukkitScheduler.runTaskLater(CustomCrops.instance, () ->{
+        bukkitScheduler.runTaskLater(CustomCrops.plugin, () ->{
             CustomBlock.remove(seedLocation);
             CustomBlock.place(stage, seedLocation);
         }, random);
@@ -534,7 +534,7 @@ public class CropManager {
      * @param random 随机生长时间
      */
     private void notAddStage(Location potLocation, int random){
-        bukkitScheduler.runTaskLater(CustomCrops.instance, () ->{
+        bukkitScheduler.runTaskLater(CustomCrops.plugin, () ->{
             CustomBlock.remove(potLocation);
             CustomBlock.place(ConfigReader.Basic.pot, potLocation);
         }, random);

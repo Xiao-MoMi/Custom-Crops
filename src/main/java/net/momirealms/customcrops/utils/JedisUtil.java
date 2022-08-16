@@ -61,7 +61,7 @@ public class JedisUtil {
     }
 
     public static void addPlayer(String player){
-        Bukkit.getScheduler().runTaskLaterAsynchronously(CustomCrops.instance, ()->{
+        Bukkit.getScheduler().runTaskLaterAsynchronously(CustomCrops.plugin, ()->{
             Jedis jedis = getJedis();
             jedis.sadd("cc_players", player);
             jedis.close();
@@ -69,7 +69,7 @@ public class JedisUtil {
     }
 
     public static void remPlayer(String player){
-        Bukkit.getScheduler().runTaskAsynchronously(CustomCrops.instance, ()->{
+        Bukkit.getScheduler().runTaskAsynchronously(CustomCrops.plugin, ()->{
             Jedis jedis = getJedis();
             jedis.srem("cc_players", player);
             jedis.close();

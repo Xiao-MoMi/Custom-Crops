@@ -1,5 +1,5 @@
 #Don't change
-config-version: 1
+config-version: 2
 config:
   #=============================================================#
   #english spanish chinese
@@ -15,6 +15,7 @@ config:
     Towny: false
     Lands: false
     GriefPrevention: false
+    CrashClaim: false
     #integration to add players' farming skill xp
     AureliumSkills: false
     mcMMO: false
@@ -26,10 +27,11 @@ config:
   #Mode 2:
   #  Online players' crops will grow
   #Mode 3:
+  #  Recommended
   #  Mode 1 + Mode 2
   #Mode 4:
-  #  No support in this mode! Please disable season in this mode!
-  #  All the crops will grow (May cause lag)
+  #  Please disable season in this mode!
+  #  All the crops will grow
   grow-mode: 3
   #The time to start growing(ticks)
   #1000ticks is 7am in game. (0-23999)

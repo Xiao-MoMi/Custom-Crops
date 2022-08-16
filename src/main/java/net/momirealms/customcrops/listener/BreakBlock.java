@@ -67,7 +67,7 @@ public class BreakBlock implements Listener {
             String[] cropNameList = StringUtils.split(StringUtils.split(namespacedId, ":")[1], "_");
             int nextStage = Integer.parseInt(cropNameList[2]) + 1;
             if (CustomBlock.getInstance(StringUtils.chop(namespacedId) + nextStage) == null) {
-                Bukkit.getScheduler().runTaskAsynchronously(CustomCrops.instance, ()-> {
+                Bukkit.getScheduler().runTaskAsynchronously(CustomCrops.plugin, ()-> {
                     if (location.getBlock().getType() != Material.AIR) return;
                     CropInstance cropInstance = ConfigReader.CROPS.get(cropNameList[0]);
                     ThreadLocalRandom current = ThreadLocalRandom.current();
@@ -77,7 +77,7 @@ public class BreakBlock implements Listener {
                     Fertilizer fertilizer = PotManager.Cache.get(SimpleLocation.fromLocation(location.clone().subtract(0,1,0)));
                     List<String> commands = cropInstance.getCommands();
                     if (commands != null){
-                        Bukkit.getScheduler().callSyncMethod(CustomCrops.instance, ()-> {
+                        Bukkit.getScheduler().callSyncMethod(CustomCrops.plugin, ()-> {
                             for (String command : commands){
                                 Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), command.replace("{player}", player.getName()));
                             }
@@ -85,7 +85,7 @@ public class BreakBlock implements Listener {
                         });
                     }
                     if (ConfigReader.Config.skillXP != null && cropInstance.getSkillXP() != 0){
-                        Bukkit.getScheduler().callSyncMethod(CustomCrops.instance, ()-> {
+                        Bukkit.getScheduler().callSyncMethod(CustomCrops.plugin, ()-> {
                             ConfigReader.Config.skillXP.addXp(player, cropInstance.getSkillXP());
                             return null;
                         });
@@ -96,7 +96,7 @@ public class BreakBlock implements Listener {
                             double weightTotal = weights[0] + weights[1] + weights[2];
                             double rank_1 = weights[0]/(weightTotal);
                             double rank_2 = 1 - weights[1]/(weightTotal);
-                            Bukkit.getScheduler().callSyncMethod(CustomCrops.instance, ()-> {
+                            Bukkit.getScheduler().callSyncMethod(CustomCrops.plugin, ()-> {
                                 for (int i = 0; i < random; i++){
                                     double ran = Math.random();
                                     if (ran < rank_1){
@@ -111,13 +111,13 @@ public class BreakBlock implements Listener {
                             });
 
                         }else {
-                            Bukkit.getScheduler().callSyncMethod(CustomCrops.instance, ()-> {
+                            Bukkit.getScheduler().callSyncMethod(CustomCrops.plugin, ()-> {
                                 normalDrop(cropInstance, random, itemLoc, world);
                                 return null;
                             });
                         }
                     } else {
-                        Bukkit.getScheduler().callSyncMethod(CustomCrops.instance, ()-> {
+                        Bukkit.getScheduler().callSyncMethod(CustomCrops.plugin, ()-> {
                             normalDrop(cropInstance, random, itemLoc, world);
                             return null;
                         });

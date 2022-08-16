@@ -56,7 +56,7 @@ public class SeasonManager{
      */
     public void loadData() {
         SEASON.clear();
-        YamlConfiguration data = readData(new File(CustomCrops.instance.getDataFolder(), "data" + File.separator + "season.yml"));
+        YamlConfiguration data = readData(new File(CustomCrops.plugin.getDataFolder(), "data" + File.separator + "season.yml"));
         if (ConfigReader.Season.seasonChange) {
             autoSeason();
         } else {
@@ -95,7 +95,7 @@ public class SeasonManager{
      */
     public void saveData() {
         SEASON.forEach((key, value) -> {
-            File file = new File(CustomCrops.instance.getDataFolder(), "data" + File.separator + "season.yml");
+            File file = new File(CustomCrops.plugin.getDataFolder(), "data" + File.separator + "season.yml");
             YamlConfiguration data = readData(file);
             data.set(key, value);
             try {
