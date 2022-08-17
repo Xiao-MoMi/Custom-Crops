@@ -12,11 +12,11 @@ import net.momirealms.customcrops.helper.Log;
 import java.io.File;
 import java.io.IOException;
 
-public class UpdateConfig {
+public class ConfigUtil {
 
     public static void update(){
         try {
-            YamlDocument.create(new File(CustomCrops.instance.getDataFolder(), "config.yml"), CustomCrops.instance.getResource("config.yml"), GeneralSettings.DEFAULT, LoaderSettings.builder().setAutoUpdate(true).build(), DumperSettings.DEFAULT, UpdaterSettings.builder().setVersioning(new BasicVersioning("config-version")).build());
+            YamlDocument.create(new File(CustomCrops.plugin.getDataFolder(), "config.yml"), CustomCrops.plugin.getResource("config.yml"), GeneralSettings.DEFAULT, LoaderSettings.builder().setAutoUpdate(true).build(), DumperSettings.DEFAULT, UpdaterSettings.builder().setVersioning(new BasicVersioning("config-version")).build());
         }catch (IOException e){
             Log.warn(e.getMessage());
         }

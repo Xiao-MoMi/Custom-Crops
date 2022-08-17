@@ -21,7 +21,10 @@ import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.momirealms.customcrops.commands.Executor;
 import net.momirealms.customcrops.commands.Completer;
 import net.momirealms.customcrops.datamanager.*;
+import net.momirealms.customcrops.datamanager.CropManager;
+import net.momirealms.customcrops.datamanager.SprinklerManager;
 import net.momirealms.customcrops.helper.LibraryLoader;
+import net.momirealms.customcrops.hook.Placeholders;
 import net.momirealms.customcrops.listener.*;
 import net.momirealms.customcrops.timer.CropTimer;
 import net.momirealms.customcrops.utils.*;
@@ -60,10 +63,11 @@ public final class CustomCrops extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        plugin = this;
+
         adventure = BukkitAudiences.create(plugin);
         AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><color:#FFEBCD>Running on " + Bukkit.getVersion());
-        ConfigReader.ReloadConfig();
+        ConfigReader.reloadConfig();
+
         if(Bukkit.getPluginManager().getPlugin("PlaceHolderAPI") != null){
             placeholders = new Placeholders();
             placeholders.register();
@@ -74,10 +78,12 @@ public final class CustomCrops extends JavaPlugin {
         Objects.requireNonNull(Bukkit.getPluginCommand("customcrops")).setExecutor(new Executor(this));
         Objects.requireNonNull(Bukkit.getPluginCommand("customcrops")).setTabCompleter(new Completer());
 
+        //公用事件
         Bukkit.getPluginManager().registerEvents(new ItemSpawn(), this);
+        Bukkit.getPluginManager().registerEvents(new JoinAndQuit(), this);
+
         Bukkit.getPluginManager().registerEvents(new RightClick(), this);
         Bukkit.getPluginManager().registerEvents(new BreakBlock(), this);
-        Bukkit.getPluginManager().registerEvents(new JoinAndQuit(), this);
         Bukkit.getPluginManager().registerEvents(new BreakFurniture(), this);
         Bukkit.getPluginManager().registerEvents(new InteractEntity(this), this);
 
@@ -93,10 +99,10 @@ public final class CustomCrops extends JavaPlugin {
         this.sprinklerManager.loadData();
         this.potManager = new PotManager();
         this.potManager.loadData();
-        this.cropTimer = new CropTimer(this);
+        this.cropTimer = new CropTimer();
         checkIAConfig();
-        if (ConfigReader.Config.version != 2){
-            UpdateConfig.update();
+        if (!Objects.equals(ConfigReader.Config.version, "3")){
+            ConfigUtil.update();
         }
         AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><color:#F5DEB3>Plugin Enabled!");
     }
@@ -129,7 +135,7 @@ public final class CustomCrops extends JavaPlugin {
         }
 
         getLogger().info("Backing Up...");
-        BackUp.backUpData();
+        FileUtil.backUpData();
         getLogger().info("Done.");
 
         if (cropTimer != null) {

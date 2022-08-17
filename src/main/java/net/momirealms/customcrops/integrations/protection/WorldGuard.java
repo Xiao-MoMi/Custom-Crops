@@ -40,9 +40,8 @@ public class WorldGuard implements Integration {
         if (hasRegion(world, BukkitAdapter.asBlockVector(location))){
             RegionQuery query = platform.getRegionContainer().createQuery();
             return query.testBuild(BukkitAdapter.adapt(location), localPlayer, Flags.BUILD);
-        }else {
-            return true;
         }
+        else return true;
     }
 
     @Override
@@ -53,9 +52,8 @@ public class WorldGuard implements Integration {
         if (hasRegion(world, BukkitAdapter.asBlockVector(location))){
             RegionQuery query = platform.getRegionContainer().createQuery();
             return query.testBuild(BukkitAdapter.adapt(location), localPlayer, Flags.BLOCK_BREAK);
-        }else {
-            return true;
         }
+        else return true;
     }
 
     private boolean hasRegion(World world, BlockVector3 vector){

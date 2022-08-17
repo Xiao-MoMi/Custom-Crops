@@ -21,6 +21,7 @@ softdepend:
   - MMOCore
   - EcoSkills
   - CrashClaim
+  - RealisticSeasons
 commands:
   customcrops:
     usage: /customcrops <args>

@@ -20,7 +20,7 @@ package net.momirealms.customcrops.commands;
 import net.momirealms.customcrops.utils.AdventureManager;
 import net.momirealms.customcrops.ConfigReader;
 import net.momirealms.customcrops.CustomCrops;
-import net.momirealms.customcrops.utils.BackUp;
+import net.momirealms.customcrops.utils.FileUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -53,7 +53,7 @@ public class Executor implements CommandExecutor {
         switch (args[0]){
             case "reload" -> {
                 long time = System.currentTimeMillis();
-                ConfigReader.ReloadConfig();
+                ConfigReader.reloadConfig();
                 if(sender instanceof Player){
                     AdventureManager.playerMessage((Player) sender,ConfigReader.Message.prefix + ConfigReader.Message.reload.replace("{time}", String.valueOf(System.currentTimeMillis() - time)));
                 }else {
@@ -139,7 +139,7 @@ public class Executor implements CommandExecutor {
                 }
             }
             case "backup" -> {
-                BackUp.backUpData();
+                FileUtil.backUpData();
                 if (sender instanceof Player player){
                     AdventureManager.playerMessage(player,ConfigReader.Message.prefix + ConfigReader.Message.backUp);
                 }else {

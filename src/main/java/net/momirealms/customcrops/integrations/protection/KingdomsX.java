@@ -44,10 +44,9 @@ public class KingdomsX implements Integration {
             if (kp.getKingdom() != null) {
                 Kingdom kingdom = kp.getKingdom();
                 return kingdom != cropKingdom;
-            } else {
-                return false;
             }
+            else return false;
         }
-        return true;
+        else return true;
     }
 }

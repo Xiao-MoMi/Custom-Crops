@@ -27,13 +27,9 @@ public class ItemSpawn implements Listener {
 
     @EventHandler
     public void entitySpawn(EntitySpawnEvent event){
-        if(event.getEntity() instanceof Item item) {
-            if(CustomStack.byItemStack(item.getItemStack()) != null){
-                String id = CustomStack.byItemStack(item.getItemStack()).getId();
-                if(id.contains("_stage_")){
+        if(event.getEntity() instanceof Item item)
+            if(CustomStack.byItemStack(item.getItemStack()) != null)
+                if(CustomStack.byItemStack(item.getItemStack()).getId().contains("_stage_"))
                     item.remove();
-                }
-            }
-        }
     }
 }

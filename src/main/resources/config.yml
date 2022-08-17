@@ -1,10 +1,12 @@
 #Don't change
-config-version: 2
+config-version: 3
+
+
 config:
-  #=============================================================#
   #english spanish chinese
   lang: english
-  #=============================================================#
+
+
   integration:
     #integration to prevent other players' grief
     Residence: false
@@ -21,7 +23,11 @@ config:
     mcMMO: false
     MMOCore: false
     EcoSkills: false
-  #=============================================================#
+    #integration to sync seasons
+    RealisticSeasons: false
+
+
+
   #Mode 1:
   #  Crops in loaded chunks will grow
   #Mode 2:
@@ -55,13 +61,17 @@ config:
   #This is useful for per player per world server.
   #In this mode, whitelist world can only have one as the standard of time & season judgment.
   all-world-grow: false
-  #=============================================================#
+
+
+
   quality:
     #If disabled, you need to configurate the loot in ItemsAdder config
     enable: true
     #Default ratio
     default-ratio: 17/2/1
-  #=============================================================#
+
+
+
   #Water Amount to refill when using water bucket
   sprinkler-refill: 2
   #Water Amount to refill with a sigle click to water block 
@@ -70,13 +80,17 @@ config:
   water-can-add-water-to-sprinkler: true
   #Should particles be displayed when using watering can?
   water-particles: true
-  #=============================================================#
+
+
+
   #Will bone meal accelerate the growth of crop
   bone-meal:
     enable: true
     chance: 0.5
     success-particle: VILLAGER_HAPPY
-  #=============================================================#
+
+
+
   #Should we limit the max amount of crops and sprinkler in one chunk
   #Recommended to enable because ItemsAdder might throw StackOverFlow 
   #when there are too many custom blocks in one chunk
@@ -84,7 +98,9 @@ config:
     enable: true
     crop: 64
     sprinkler: 8
-  #=============================================================#
+
+
+
   #can player harvest crops with right click?
   #if set "false" crops can't be harvested repeatedly
   right-click-harvest: true
@@ -95,4 +111,3 @@ config:
   prevent-plant-if-wrong-season: true
   #Should notify player of the wrong season?
   should-notify-if-wrong-season: true
-  #=============================================================#

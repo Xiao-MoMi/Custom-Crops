@@ -15,7 +15,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.momirealms.customcrops.utils;
+package net.momirealms.customcrops.objects;
 
 public record WateringCan(int max, int width, int length) {
 

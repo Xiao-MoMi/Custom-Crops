@@ -4,8 +4,11 @@ season:
   enable: true
 
   auto-season-change:
+    #If you enabled RealisticSeasons Integration
+    #keep this true
     enable: true
     #duration of each season
+    #would not take effect if enabled RealisticSeasons Integration
     duration: 28
 
   greenhouse:

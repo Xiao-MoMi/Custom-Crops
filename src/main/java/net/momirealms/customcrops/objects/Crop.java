@@ -15,13 +15,13 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.momirealms.customcrops.utils;
+package net.momirealms.customcrops.objects;
 
 import net.momirealms.customcrops.requirements.Requirement;
 
 import java.util.List;
 
-public class CropInstance {
+public class Crop {
 
     private double giantChance;
     private String giant;
@@ -38,7 +38,7 @@ public class CropInstance {
     private List<String> commands;
     private double growChance;
 
-    public CropInstance(int min, int max){
+    public Crop(int min, int max){
         this.min = min;
         this.max = max;
     }

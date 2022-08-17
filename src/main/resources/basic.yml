@@ -1,4 +1,3 @@
-#=============================================================#
 #ItemsAdder items namespacedID
 basic:
   pot: customcrops:pot
@@ -6,7 +5,9 @@ basic:
   greenhouse-glass: customcrops:greenhouse_glass
   dead-crop: customcrops:crop_stage_death
   soil-detector: customcrops:soil_detector
-#=============================================================#
+
+
+
 water-can:
   watering_can_1:
     item: customcrops:watering_can_1
@@ -30,7 +31,9 @@ water-can:
     max: 6
     width: 3
     length: 5
-#=============================================================#
+
+
+
 lore:
   #Should lore be changed when using watering-can
   watering-can:
@@ -46,7 +49,9 @@ lore:
     full: '뀁뀃'
     empty: '뀁뀄'
     right: '뀁뀅</font>'
-#=============================================================#
+
+
+
 sprinkler:
   sprinkler_1:
     range: 1
@@ -59,4 +64,3 @@ sprinkler:
     max-water: 7
     3Ditem: customcrops:sprinkler_2
     2Ditem: customcrops:sprinkler_2_item
-#=============================================================#

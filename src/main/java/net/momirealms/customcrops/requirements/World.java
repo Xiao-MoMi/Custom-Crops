@@ -31,9 +31,7 @@ public record World(List<String> worlds) implements Requirement {
     @Override
     public boolean canPlant(PlantingCondition plantingCondition) {
         org.bukkit.World world = plantingCondition.getLocation().getWorld();
-        if (worlds.contains(world.getName())){
-            return true;
-        }
+        if (worlds.contains(world.getName())) return true;
         AdventureManager.playerMessage(plantingCondition.player(), ConfigReader.Message.prefix +ConfigReader.Message.badWorld);
         return false;
     }

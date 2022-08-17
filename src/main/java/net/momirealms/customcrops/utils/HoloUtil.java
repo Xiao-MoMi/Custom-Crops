@@ -38,7 +38,7 @@ import java.util.*;
 
 public class HoloUtil {
 
-    public static HashSet<Location> cache = new HashSet<>();
+    public static HashMap<Location, Integer> cache = new HashMap<>();
     /**
      * 对指定玩家展示在指定位置的盔甲架
      * @param text 文本
@@ -47,6 +47,10 @@ public class HoloUtil {
      * @param duration 持续时间
      */
     public static void showHolo(String text, Player player, Location location, int duration){
+
+        if (cache.get(location) != null){
+            removeHolo(player, cache.get(location));
+        }
 
         PacketContainer packet1 = new PacketContainer(PacketType.Play.Server.SPAWN_ENTITY);
 
@@ -73,7 +77,7 @@ public class HoloUtil {
         wrappedDataWatcher.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(15, serializer2), mask2);
         packet2.getModifier().write(0,id);
         packet2.getWatchableCollectionModifier().write(0, wrappedDataWatcher.getWatchableObjects());
-        cache.add(location);
+        cache.put(location, id);
         try {
             ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet1);
             ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet2);

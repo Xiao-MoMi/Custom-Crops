@@ -26,9 +26,9 @@ import net.momirealms.customcrops.CustomCrops;
 import net.momirealms.customcrops.fertilizer.Fertilizer;
 import net.momirealms.customcrops.fertilizer.RetainingSoil;
 import net.momirealms.customcrops.fertilizer.SpeedGrow;
-import net.momirealms.customcrops.utils.CropInstance;
+import net.momirealms.customcrops.objects.Crop;
 import net.momirealms.customcrops.utils.JedisUtil;
-import net.momirealms.customcrops.utils.SimpleLocation;
+import net.momirealms.customcrops.objects.SimpleLocation;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -309,7 +309,7 @@ public class CropManager {
         }
         //农作物实例不存在
         String[] cropNameList = StringUtils.split(id,"_");
-        CropInstance cropInstance = ConfigReader.CROPS.get(cropNameList[0]);
+        Crop cropInstance = ConfigReader.CROPS.get(cropNameList[0]);
         if (cropInstance == null){
             return true;
         }

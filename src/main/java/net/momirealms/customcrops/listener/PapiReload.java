@@ -8,10 +8,8 @@ public class PapiReload implements Listener {
 
     @EventHandler
     public void onReload(me.clip.placeholderapi.events.ExpansionUnregisterEvent event){
-        if (CustomCrops.placeholders != null){
-            if (event.getExpansion().equals(CustomCrops.placeholders)){
+        if (CustomCrops.placeholders != null)
+            if (event.getExpansion().equals(CustomCrops.placeholders))
                 CustomCrops.placeholders.register();
-            }
-        }
     }
 }

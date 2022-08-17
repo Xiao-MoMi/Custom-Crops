@@ -41,7 +41,7 @@ water bucket or watering can. Max storage and range can be customized.\
 Watering-can also has its max storage and effective range. 1x1 1x3 3x3 and even 9x99 is supported!
 
 ### OverWeight
-If configurated, crops will still absorb water every day and have a very little chance to be OverWeight(gigantic) before it's dead.\
+If configurated, crops will still absorb water every day and have a very little chance to be OverWeight(gigantic) before it's dead.
 
 ### Quality
 Crops have three qualities, if you don't want this feature just disable it in config. 

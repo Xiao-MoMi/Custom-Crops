@@ -28,7 +28,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-public class BackUp {
+public class FileUtil {
 
     /**
      * 备份全部文件
@@ -44,7 +44,7 @@ public class BackUp {
             File data = new File(CustomCrops.plugin.getDataFolder(), "data"+ File.separatorChar + fileName + ".yml");
             File backUp = new File(CustomCrops.plugin.getDataFolder(), "backups"+ File.separatorChar + format.format(date) + File.separatorChar + fileName + ".yml");
             try {
-                BackUp.backUp(data, backUp);
+                FileUtil.backUp(data, backUp);
             } catch (IOException e) {
                 e.printStackTrace();
                 CustomCrops.plugin.getLogger().warning(fileName + ".yml备份出错!");

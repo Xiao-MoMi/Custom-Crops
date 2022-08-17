@@ -17,6 +17,7 @@
 
 package net.momirealms.customcrops.datamanager;
 
+import net.momirealms.customcrops.hook.RealisticSeason;
 import net.momirealms.customcrops.utils.AdventureManager;
 import net.momirealms.customcrops.ConfigReader;
 import net.momirealms.customcrops.CustomCrops;
@@ -80,13 +81,17 @@ public class SeasonManager{
      * @param world 世界
      */
     public void getSeason(World world) {
-        int season = (int) ((world.getFullTime() / 24000L) % (ConfigReader.Season.duration * 4)) / ConfigReader.Season.duration;
-        switch (season) {
-            case 0 -> SEASON.put(world.getName(), "spring");
-            case 1 -> SEASON.put(world.getName(), "summer");
-            case 2 -> SEASON.put(world.getName(), "autumn");
-            case 3 -> SEASON.put(world.getName(), "winter");
-            default -> AdventureManager.consoleMessage("<red>[CustomCrops] 自动季节计算错误!</red>");
+        if (ConfigReader.Config.realisticSeason){
+            SEASON.put(world.getName(), RealisticSeason.getSeason(world));
+        }else {
+            int season = (int) ((world.getFullTime() / 24000L) % (ConfigReader.Season.duration * 4)) / ConfigReader.Season.duration;
+            switch (season) {
+                case 0 -> SEASON.put(world.getName(), "spring");
+                case 1 -> SEASON.put(world.getName(), "summer");
+                case 2 -> SEASON.put(world.getName(), "autumn");
+                case 3 -> SEASON.put(world.getName(), "winter");
+                default -> AdventureManager.consoleMessage("<red>[CustomCrops] 自动季节计算错误!</red>");
+            }
         }
     }
 

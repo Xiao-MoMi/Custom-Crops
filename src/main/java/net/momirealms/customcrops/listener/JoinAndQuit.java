@@ -14,19 +14,13 @@ public class JoinAndQuit implements Listener {
 
     @EventHandler
     public void onJoin(PlayerJoinEvent event){
-        if (JedisUtil.useRedis){
-            JedisUtil.addPlayer(event.getPlayer().getName());
-        }else {
-            onlinePlayers.add(event.getPlayer().getName());
-        }
+        if (JedisUtil.useRedis) JedisUtil.addPlayer(event.getPlayer().getName());
+        else onlinePlayers.add(event.getPlayer().getName());
     }
 
     @EventHandler
     public void onQuit(PlayerQuitEvent event){
-        if (JedisUtil.useRedis){
-            JedisUtil.remPlayer(event.getPlayer().getName());
-        }else {
-            onlinePlayers.remove(event.getPlayer().getName());
-        }
+        if (JedisUtil.useRedis) JedisUtil.remPlayer(event.getPlayer().getName());
+        else onlinePlayers.remove(event.getPlayer().getName());
     }
 }

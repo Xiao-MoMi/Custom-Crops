@@ -34,9 +34,7 @@ public record YPos(List<String> yPos) implements Requirement {
         int y = (int) plantingCondition.getLocation().getY();
         for (String range : yPos) {
             String[] yMinMax = StringUtils.split(range, "~");
-            if (y > Integer.parseInt(yMinMax[0]) && y < Integer.parseInt(yMinMax[1])) {
-                return true;
-            }
+            if (y > Integer.parseInt(yMinMax[0]) && y < Integer.parseInt(yMinMax[1])) return true;
         }
         AdventureManager.playerMessage(plantingCondition.player(), ConfigReader.Message.prefix +ConfigReader.Message.badY);
         return false;

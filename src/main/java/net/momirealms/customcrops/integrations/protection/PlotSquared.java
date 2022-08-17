@@ -35,10 +35,7 @@ public class PlotSquared implements Integration {
     private boolean isAllowed(org.bukkit.Location location, Player player) {
         Location plotLoc = Location.at(location.getWorld().getName(), location.getBlockX(), location.getBlockY(), location.getBlockZ());
         if (plotLoc.isPlotRoad()) return false;
-        if (plotLoc.getPlotArea() != null){
-            return plotLoc.getPlotArea().getPlot(plotLoc).isAdded(player.getUniqueId());
-        }else {
-            return true;
-        }
+        if (plotLoc.getPlotArea() != null) return plotLoc.getPlotArea().getPlot(plotLoc).isAdded(player.getUniqueId());
+        else return true;
     }
 }

@@ -19,6 +19,8 @@ package net.momirealms.customcrops.datamanager;
 
 import dev.lone.itemsadder.api.CustomBlock;
 import net.momirealms.customcrops.listener.JoinAndQuit;
+import net.momirealms.customcrops.objects.SimpleLocation;
+import net.momirealms.customcrops.objects.Sprinkler;
 import net.momirealms.customcrops.utils.*;
 import net.momirealms.customcrops.ConfigReader;
 import net.momirealms.customcrops.CustomCrops;
@@ -136,7 +138,7 @@ public class SprinklerManager {
                             bukkitScheduler.runTask(CustomCrops.plugin, ()->{
                                 int water = (int) map.get("water");
                                 int range = (int) Optional.ofNullable(map.get("range")).orElse(0);
-                                if(!IAFurniture.getFromLocation(location, world)){
+                                if(!IAFurnitureUtil.isSprinkler(location)){
                                     data.set(worldName + "." + chunk + "." + key, null);
                                     return;
                                 }
@@ -246,7 +248,7 @@ public class SprinklerManager {
                             String[] coordinate = StringUtils.split(key, ",");
                             Location location = new Location(world,Double.parseDouble(coordinate[0])+0.5,Double.parseDouble(coordinate[1])+0.5,Double.parseDouble(coordinate[2])+0.5);
                             bukkitScheduler.runTask(CustomCrops.plugin, ()->{
-                                if(!IAFurniture.getFromLocation(location, world)){
+                                if(!IAFurnitureUtil.isSprinkler(location)){
                                     data.set(worldName + "." + chunk + "." + key, null);
                                     return;
                                 }
