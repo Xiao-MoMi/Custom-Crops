@@ -39,7 +39,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class SprinklerManager {
 
-    public YamlConfiguration data;
+    public static YamlConfiguration data;
     public static ConcurrentHashMap<SimpleLocation, Sprinkler> Cache = new ConcurrentHashMap<>();
     public static HashSet<SimpleLocation> RemoveCache = new HashSet<>();
     private final BukkitScheduler bukkitScheduler;
@@ -62,7 +62,7 @@ public class SprinklerManager {
                 AdventureManager.consoleMessage("<red>[CustomCrops] 洒水器数据文件生成失败!</red>");
             }
         }
-        this.data = YamlConfiguration.loadConfiguration(file);
+        data = YamlConfiguration.loadConfiguration(file);
     }
 
     /**
@@ -120,12 +120,8 @@ public class SprinklerManager {
      * @param worldName 世界名
      */
     public void workModeOne(String worldName){
-        Long time1 = System.currentTimeMillis();
-        if(!ConfigReader.Config.allWorld){
-            updateData();
-        }
-        Long time2 = System.currentTimeMillis();
-        if (ConfigReader.Config.logTime) AdventureManager.consoleMessage("性能监测: 洒水器数据更新" + (time2-time1) + "ms");
+        if(!ConfigReader.Config.allWorld) updateData();
+        if(!ConfigReader.Config.allWorld) saveData();
         if (data.contains(worldName)){
             World world = Bukkit.getWorld(worldName);
             data.getConfigurationSection(worldName).getKeys(false).forEach(chunk ->{
@@ -138,7 +134,7 @@ public class SprinklerManager {
                             bukkitScheduler.runTask(CustomCrops.plugin, ()->{
                                 int water = (int) map.get("water");
                                 int range = (int) Optional.ofNullable(map.get("range")).orElse(0);
-                                if(!IAFurnitureUtil.isSprinkler(location)){
+                                if(!FurnitureUtil.isSprinkler(location)){
                                     data.set(worldName + "." + chunk + "." + key, null);
                                     return;
                                 }
@@ -159,13 +155,6 @@ public class SprinklerManager {
                 }
             });
         }
-        Long time3 = System.currentTimeMillis();
-        if(ConfigReader.Config.logTime) AdventureManager.consoleMessage("性能监测: 洒水器工作过程" + (time3-time2) + "ms");
-        if(!ConfigReader.Config.allWorld){
-            saveData();
-        }
-        Long time4 = System.currentTimeMillis();
-        if(ConfigReader.Config.logTime) AdventureManager.consoleMessage("性能监测: 洒水器数据保存" + (time4-time3) + "ms");
     }
 
     /**
@@ -173,13 +162,8 @@ public class SprinklerManager {
      * @param worldName 世界名
      */
     public void workModeTwo(String worldName){
-        Long time1 = System.currentTimeMillis();
-        if(!ConfigReader.Config.allWorld){
-            updateData();
-        }
-        Long time2 = System.currentTimeMillis();
-        if (ConfigReader.Config.logTime) AdventureManager.consoleMessage("性能监测: 洒水器数据更新" + (time2-time1) + "ms");
-        //HashSet<String> players = new HashSet<>(JoinAndQuit.onlinePlayers);
+        if(!ConfigReader.Config.allWorld) updateData();
+        if(!ConfigReader.Config.allWorld) saveData();
         HashSet<String> players = getPlayers();
         if (data.contains(worldName)){
             World world = Bukkit.getWorld(worldName);
@@ -194,7 +178,7 @@ public class SprinklerManager {
                         if (!players.contains(player)) return;
                         String[] coordinate = StringUtils.split(key, ",");
                         Location location = new Location(world,Double.parseDouble(coordinate[0])+0.5,Double.parseDouble(coordinate[1])+0.5,Double.parseDouble(coordinate[2])+0.5);
-                        bukkitScheduler.callSyncMethod(CustomCrops.plugin, ()->{
+                        bukkitScheduler.runTask(CustomCrops.plugin, ()->{
                             int water = (int) map.get("water");
                             int range = (int) Optional.ofNullable(map.get("range")).orElse(0);
                             if (water > 0){
@@ -208,19 +192,11 @@ public class SprinklerManager {
                                 }, new Random().nextInt(ConfigReader.Config.timeToWork));
                             }
                             if (range == 0) data.set(worldName + "." + chunk + "." + key, null);
-                            return null;
                         });
                     }
                 });
             });
         }
-        Long time3 = System.currentTimeMillis();
-        if(ConfigReader.Config.logTime) AdventureManager.consoleMessage("性能监测: 洒水器工作过程" + (time3-time2) + "ms");
-        if(!ConfigReader.Config.allWorld){
-            saveData();
-        }
-        Long time4 = System.currentTimeMillis();
-        if(ConfigReader.Config.logTime) AdventureManager.consoleMessage("性能监测: 洒水器数据保存" + (time4-time3) + "ms");
     }
 
     /**
@@ -228,13 +204,8 @@ public class SprinklerManager {
      * @param worldName 世界名
      */
     public void workModeThree(String worldName){
-        Long time1 = System.currentTimeMillis();
-        if(!ConfigReader.Config.allWorld){
-            updateData();
-        }
-        Long time2 = System.currentTimeMillis();
-        if (ConfigReader.Config.logTime) AdventureManager.consoleMessage("性能监测: 洒水器数据更新" + (time2-time1) + "ms");
-        //HashSet<String> players = new HashSet<>(JoinAndQuit.onlinePlayers);
+        if(!ConfigReader.Config.allWorld) updateData();
+        if(!ConfigReader.Config.allWorld) saveData();
         HashSet<String> players = getPlayers();
         if (data.contains(worldName)){
             World world = Bukkit.getWorld(worldName);
@@ -248,7 +219,7 @@ public class SprinklerManager {
                             String[] coordinate = StringUtils.split(key, ",");
                             Location location = new Location(world,Double.parseDouble(coordinate[0])+0.5,Double.parseDouble(coordinate[1])+0.5,Double.parseDouble(coordinate[2])+0.5);
                             bukkitScheduler.runTask(CustomCrops.plugin, ()->{
-                                if(!IAFurnitureUtil.isSprinkler(location)){
+                                if(!FurnitureUtil.isSprinkler(location)){
                                     data.set(worldName + "." + chunk + "." + key, null);
                                     return;
                                 }
@@ -296,13 +267,6 @@ public class SprinklerManager {
                 }
             });
         }
-        Long time3 = System.currentTimeMillis();
-        if(ConfigReader.Config.logTime) AdventureManager.consoleMessage("性能监测: 洒水器工作过程" + (time3-time2) + "ms");
-        if(!ConfigReader.Config.allWorld){
-            saveData();
-        }
-        Long time4 = System.currentTimeMillis();
-        if(ConfigReader.Config.logTime) AdventureManager.consoleMessage("性能监测: 洒水器数据保存" + (time4-time3) + "ms");
     }
 
     /**
@@ -310,12 +274,8 @@ public class SprinklerManager {
      * @param worldName 世界名
      */
     public void workModeFour(String worldName){
-        Long time1 = System.currentTimeMillis();
-        if(!ConfigReader.Config.allWorld){
-            updateData();
-        }
-        Long time2 = System.currentTimeMillis();
-        if (ConfigReader.Config.logTime) AdventureManager.consoleMessage("性能监测: 洒水器数据更新" + (time2-time1) + "ms");
+        if(!ConfigReader.Config.allWorld) updateData();
+        if(!ConfigReader.Config.allWorld) saveData();
         if (data.contains(worldName)){
             World world = Bukkit.getWorld(worldName);
             data.getConfigurationSection(worldName).getKeys(false).forEach(chunk ->{
@@ -340,13 +300,6 @@ public class SprinklerManager {
                 });
             });
         }
-        Long time3 = System.currentTimeMillis();
-        if(ConfigReader.Config.logTime) AdventureManager.consoleMessage("性能监测: 洒水器工作过程" + (time3-time2) + "ms");
-        if(!ConfigReader.Config.allWorld){
-            saveData();
-        }
-        Long time4 = System.currentTimeMillis();
-        if(ConfigReader.Config.logTime) AdventureManager.consoleMessage("性能监测: 洒水器数据保存" + (time4-time3) + "ms");
     }
 
 
@@ -390,5 +343,25 @@ public class SprinklerManager {
         }else {
             return new HashSet<>(JoinAndQuit.onlinePlayers);
         }
+    }
+
+
+    /**
+     * 获取某个洒水器的水量
+     * @param location 洒水器位置
+     * @param world 世界
+     * @param x 坐标
+     * @param z 坐标
+     * @param sprinkler 洒水器类型
+     * @return 水量
+     */
+    public static int getCurrentWater(Location location, String world, int x, int z, Sprinkler sprinkler) {
+        int currentWater;
+        if (sprinkler != null) currentWater = sprinkler.getWater();
+        else {
+            String path = world + "." + x / 16 + "," + z / 16 + "." + x + "," + location.getBlockY() + "," + z + ".water";
+            currentWater = data.getInt(path);
+        }
+        return currentWater;
     }
 }

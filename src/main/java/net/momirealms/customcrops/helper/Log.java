@@ -27,33 +27,32 @@ package net.momirealms.customcrops.helper;
 
 import net.momirealms.customcrops.CustomCrops;
 import org.bukkit.Bukkit;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.logging.Level;
-
-import javax.annotation.Nonnull;
 
 /**
  * Utility for quickly accessing a logger instance without using {@link Bukkit#getLogger()}
  */
 public final class Log {
 
-    public static void info(@Nonnull String s) {
+    public static void info(@NotNull String s) {
         CustomCrops.plugin.getLogger().info(s);
     }
 
-    public static void warn(@Nonnull String s) {
+    public static void warn(@NotNull String s) {
         CustomCrops.plugin.getLogger().warning(s);
     }
 
-    public static void severe(@Nonnull String s) {
+    public static void severe(@NotNull String s) {
         CustomCrops.plugin.getLogger().severe(s);
     }
 
-    public static void warn(@Nonnull String s, Throwable t) {
+    public static void warn(@NotNull String s, Throwable t) {
         CustomCrops.plugin.getLogger().log(Level.WARNING, s, t);
     }
 
-    public static void severe(@Nonnull String s, Throwable t) {
+    public static void severe(@NotNull String s, Throwable t) {
         CustomCrops.plugin.getLogger().log(Level.SEVERE, s, t);
     }
 

@@ -17,8 +17,6 @@
 
 package net.momirealms.customcrops.objects;
 
-import org.bukkit.Location;
-
 import java.util.Objects;
 
 public class SimpleLocation {
@@ -33,15 +31,6 @@ public class SimpleLocation {
         this.x = x;
         this.y = y;
         this.z = z;
-    }
-
-    /**
-     * 将Location转换为SimpleLocation
-     * @param location Location
-     * @return SimpleLocation
-     */
-    public static SimpleLocation fromLocation(Location location){
-        return new SimpleLocation(location.getWorld().getName(), location.getBlockX(), location.getBlockY(), location.getBlockZ());
     }
 
     public int getX() {return x;}

@@ -25,12 +25,12 @@
 
 package net.momirealms.customcrops.helper;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.lang.reflect.Field;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Collection;
-
-import javax.annotation.Nonnull;
 
 /**
  * Provides access to {@link URLClassLoader}#addURL.
@@ -63,7 +63,7 @@ public abstract class URLClassLoaderAccess {
      *
      * @param url the URL to add
      */
-    public abstract void addURL(@Nonnull URL url);
+    public abstract void addURL(@NotNull URL url);
 
     /**
      * Accesses using sun.misc.Unsafe, supported on Java 9+.
@@ -117,7 +117,7 @@ public abstract class URLClassLoaderAccess {
         }
 
         @Override
-        public void addURL(@Nonnull URL url) {
+        public void addURL(@NotNull URL url) {
             this.unopenedURLs.add(url);
             this.pathURLs.add(url);
         }
@@ -131,7 +131,7 @@ public abstract class URLClassLoaderAccess {
         }
 
         @Override
-        public void addURL(@Nonnull URL url) {
+        public void addURL(@NotNull URL url) {
             throw new UnsupportedOperationException();
         }
     }

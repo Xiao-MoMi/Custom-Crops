@@ -18,7 +18,7 @@
 package net.momirealms.customcrops.limits;
 
 import net.momirealms.customcrops.ConfigReader;
-import net.momirealms.customcrops.utils.IAFurnitureUtil;
+import net.momirealms.customcrops.utils.FurnitureUtil;
 import org.bukkit.Location;
 
 public class SprinklersPerChunk {
@@ -33,7 +33,7 @@ public class SprinklersPerChunk {
                 Location square = chunkLocation.clone().add(i + 0.5, 0.5, j + 0.5);
                 for (int k = ConfigReader.Config.yMin; k <= ConfigReader.Config.yMax; ++k) {
                     square.add(0.0, 1.0, 0.0);
-                    if(IAFurnitureUtil.isSprinkler(square))
+                    if(FurnitureUtil.isSprinkler(square))
                         if (n++ > ConfigReader.Config.sprinklerLimit)
                             break Label_out;
                 }

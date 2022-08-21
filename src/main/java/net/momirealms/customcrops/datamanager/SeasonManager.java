@@ -82,8 +82,11 @@ public class SeasonManager{
      */
     public void getSeason(World world) {
         if (ConfigReader.Config.realisticSeason){
-            SEASON.put(world.getName(), RealisticSeason.getSeason(world));
-        }else {
+            Bukkit.getScheduler().runTaskLater(CustomCrops.plugin, ()->{
+                SEASON.put(world.getName(), RealisticSeason.getSeason(world));
+            },60);
+        }
+        else {
             int season = (int) ((world.getFullTime() / 24000L) % (ConfigReader.Season.duration * 4)) / ConfigReader.Season.duration;
             switch (season) {
                 case 0 -> SEASON.put(world.getName(), "spring");

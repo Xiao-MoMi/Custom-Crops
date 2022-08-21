@@ -13,9 +13,17 @@ crops:
       2: customcrops:tomato_silver_star
       3: customcrops:tomato_golden_star
 
-    #When harvesting, should the crop drop the loots from ItemsAdder too
-    #This is useful for dropping seeds and other items
+    #When you break the crop, the event will be handled by ItemsAdder & Customcrops so IA loots would be certainly dropped
+    #When you right click the crop, the event will only be handled by Customcrops so IA loots would be optional
+
+    #**right click** harvest, should the crop drop the loots from ItemsAdder too
+    #This is useful for dropping seeds and other items(only works in tripwire mode, furnitures don't support loot at the moment)
     drop-ia-loots: false
+
+    #**right click** harvest, should the crop drop other loots
+    #This is useful for dropping seeds and other items(Works in both tripwire/item_frame mode)
+    drop-other-loots:
+      - customcrops:tomato_seeds
 
     #optional
     #The chance that a crop grow a stage at grow time
@@ -26,6 +34,12 @@ crops:
     gigantic:
       block: customcrops:gigantic_tomato
       chance: 0.01
+
+    #If you want to use item_frame/armor_stand for gigantic crops
+    #You should config like this
+    #gigantic:
+    #  furniture: customcrops:gigantic_tomato
+    #  chance: 0.01
 
     #optional
     commands:

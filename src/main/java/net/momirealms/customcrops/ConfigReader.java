@@ -75,10 +75,8 @@ public class ConfigReader {
         public static List<Integration> integration;
         public static String referenceWorld;
         public static String lang;
-        public static boolean asyncCheck;
-        public static boolean enableLimit;
-        public static boolean hasParticle;
-        public static boolean rightClickHarvest;
+        public static String version;
+        public static String cropMode;
         public static int cropLimit;
         public static int sprinklerLimit;
         public static int yMin;
@@ -87,8 +85,11 @@ public class ConfigReader {
         public static int waterCanRefill;
         public static int timeToGrow;
         public static int timeToWork;
-        public static boolean logTime;
         public static int growMode;
+        public static boolean asyncCheck;
+        public static boolean enableLimit;
+        public static boolean hasParticle;
+        public static boolean rightClickHarvest;
         public static boolean quality;
         public static boolean canAddWater;
         public static boolean allWorld;
@@ -97,12 +98,14 @@ public class ConfigReader {
         public static boolean needEmptyHand;
         public static boolean boneMeal;
         public static boolean realisticSeason;
-        public static Particle boneMealSuccess;
+        public static boolean rotation;
+        public static boolean variant4;
+        public static boolean oneTry;
         public static double boneMealChance;
         public static double quality_1;
         public static double quality_2;
         public static SkillXP skillXP;
-        public static String version;
+        public static Particle boneMealSuccess;
 
         public static void loadConfig(){
 
@@ -117,7 +120,6 @@ public class ConfigReader {
             timeToGrow = config.getInt("config.time-to-grow",60)*20;
             timeToWork = config.getInt("config.time-to-work",30)*20;
             asyncCheck = config.getBoolean("config.async-time-check",false);
-            logTime = config.getBoolean("config.log-time-consume",false);
             growMode = config.getInt("config.grow-mode",3); if (growMode > 4 || growMode < 1) growMode = 3;
             allWorld = config.getBoolean("config.all-world-grow",false);
             hasParticle = config.getBoolean("config.water-particles", true);
@@ -125,6 +127,9 @@ public class ConfigReader {
             needEmptyHand = config.getBoolean("config.harvest-with-empty-hand", true);
             pwSeason = config.getBoolean("config.prevent-plant-if-wrong-season", true);
             nwSeason = config.getBoolean("config.should-notify-if-wrong-season", true);
+            rotation = config.getBoolean("config.rotation.enable", false);
+            oneTry = config.getBoolean("config.gigantic-only-one-try", false);
+            variant4 = config.getInt("config.rotation.variant", 4) == 4;
 
             boneMeal = config.getBoolean("config.bone-meal.enable", true);
             if (boneMeal){
@@ -160,6 +165,7 @@ public class ConfigReader {
             sprinklerRefill = config.getInt("config.sprinkler-refill",2);
             waterCanRefill = config.getInt("config.water-can-refill",1);
             version = config.getString("config-version");
+            cropMode = config.getString("config.crop-mode","tripwire");
             canAddWater = config.getBoolean("config.water-can-add-water-to-sprinkler",true);
 
             if (allWorld){
@@ -438,12 +444,21 @@ public class ConfigReader {
             }
             cropInstance.setGrowChance(config.getDouble("crops." + key + ".grow-chance", 1));
             if (config.contains("crops." + key + ".gigantic"))
-                cropInstance.setGiant(config.getString("crops." + key + ".gigantic.block"));
-                cropInstance.setGiantChance(config.getDouble("crops." + key + ".gigantic.chance"));
+                if (config.contains("crops." + key + ".gigantic.block")){
+                    cropInstance.setGiant(config.getString("crops." + key + ".gigantic.block"));
+                    cropInstance.setIsBlock(true);
+                }
+                if (config.contains("crops." + key + ".gigantic.furniture")){
+                    cropInstance.setGiant(config.getString("crops." + key + ".gigantic.furniture"));
+                    cropInstance.setIsBlock(false);
+                }
+                cropInstance.setGiantChance(config.getDouble("crops." + key + ".gigantic.chance",0.01));
             if (Season.enable && config.contains("crops." + key + ".season"))
                 cropInstance.setSeasons(config.getStringList("crops." + key + ".season"));
             if (config.contains("crops." + key + ".return"))
                 cropInstance.setReturnStage(config.getString("crops." + key + ".return"));
+            if (config.contains("crops." + key + ".drop-other-loots"))
+                cropInstance.setOtherLoots(config.getStringList("crops." + key + ".drop-other-loots"));
             if (config.contains("crops." + key + ".commands"))
                 cropInstance.setCommands(config.getStringList("crops." + key + ".commands"));
             if (config.contains("crops." + key + ".skill-xp"))
@@ -555,8 +570,7 @@ public class ConfigReader {
     public static void tryEnableJedis(){
         YamlConfiguration configuration = ConfigReader.getConfig("redis.yml");
         JedisUtil.useRedis = configuration.getBoolean("redis.enable", false);
-        if (JedisUtil.useRedis)
-            JedisUtil.initializeRedis(configuration);
+        if (JedisUtil.useRedis) JedisUtil.initializeRedis(configuration);
     }
 
     private static void hookMessage(String plugin){

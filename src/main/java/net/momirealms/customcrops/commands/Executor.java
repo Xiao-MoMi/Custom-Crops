@@ -26,8 +26,8 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.ParametersAreNonnullByDefault;
 
 public class Executor implements CommandExecutor {
 
@@ -38,8 +38,7 @@ public class Executor implements CommandExecutor {
     }
 
     @Override
-    @ParametersAreNonnullByDefault
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
 
         if (!(sender.hasPermission("customcrops.admin") || sender.isOp())){
             AdventureManager.playerMessage((Player) sender, ConfigReader.Message.prefix + ConfigReader.Message.noPerm);
@@ -60,6 +59,12 @@ public class Executor implements CommandExecutor {
                     AdventureManager.consoleMessage(ConfigReader.Message.prefix + ConfigReader.Message.reload.replace("{time}", String.valueOf(System.currentTimeMillis() - time)));
                 }
                 return true;
+            }
+            case "test" -> {
+                CustomCrops.plugin.getCropManager().testData();
+            }
+            case "test2" -> {
+                CustomCrops.plugin.getCropManager().testData2();
             }
             case "forcegrow" -> {
                 if (args.length < 2) {
@@ -106,37 +111,39 @@ public class Executor implements CommandExecutor {
                     lackArgs(sender);
                     return true;
                 }
-                switch (args[1]){
-                    case "all" -> {
-                        plugin.getSprinklerManager().updateData();
-                        plugin.getSprinklerManager().saveData();
-                        if (ConfigReader.Season.enable && !ConfigReader.Season.seasonChange){
-                            plugin.getSeasonManager().saveData();
+                Bukkit.getScheduler().runTaskAsynchronously(CustomCrops.plugin, ()->{
+                    switch (args[1]){
+                        case "all" -> {
+                                plugin.getSprinklerManager().updateData();
+                                plugin.getSprinklerManager().saveData();
+                                if (ConfigReader.Season.enable && !ConfigReader.Season.seasonChange){
+                                    plugin.getSeasonManager().saveData();
+                                }
+                                plugin.getCropManager().updateData();
+                                plugin.getCropManager().saveData();
+                                plugin.getPotManager().saveData();
+                                forceSave(sender);
                         }
-                        plugin.getCropManager().updateData();
-                        plugin.getCropManager().saveData();
-                        plugin.getPotManager().saveData();
-                        forceSave(sender);
-                    }
-                    case "crop" -> {
-                        plugin.getCropManager().updateData();
-                        plugin.getCropManager().saveData();
-                        forceSave(sender);
-                    }
-                    case "pot" -> {
-                        plugin.getPotManager().saveData();
-                        forceSave(sender);
-                    }
-                    case "season" -> {
-                        plugin.getSeasonManager().saveData();
-                        forceSave(sender);
-                    }
-                    case "sprinkler" -> {
-                        plugin.getSprinklerManager().updateData();
-                        plugin.getSprinklerManager().saveData();
-                        forceSave(sender);
-                    }
-                }
+                        case "crop" -> {
+                            plugin.getCropManager().updateData();
+                            plugin.getCropManager().saveData();
+                            forceSave(sender);
+                        }
+                        case "pot" -> {
+                            plugin.getPotManager().saveData();
+                            forceSave(sender);
+                        }
+                        case "season" -> {
+                            plugin.getSeasonManager().saveData();
+                            forceSave(sender);
+                        }
+                        case "sprinkler" -> {
+                            plugin.getSprinklerManager().updateData();
+                            plugin.getSprinklerManager().saveData();
+                            forceSave(sender);
+                        }
+                     }
+                });
             }
             case "backup" -> {
                 FileUtil.backUpData();

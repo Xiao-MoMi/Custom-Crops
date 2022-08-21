@@ -15,19 +15,22 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.momirealms.customcrops.listener;
+package net.momirealms.customcrops.listener.tripwire;
 
 import dev.lone.itemsadder.api.CustomBlock;
 import dev.lone.itemsadder.api.CustomStack;
 import dev.lone.itemsadder.api.Events.CustomBlockBreakEvent;
 import net.momirealms.customcrops.ConfigReader;
 import net.momirealms.customcrops.CustomCrops;
+import net.momirealms.customcrops.datamanager.CropManager;
 import net.momirealms.customcrops.datamanager.PotManager;
 import net.momirealms.customcrops.fertilizer.Fertilizer;
 import net.momirealms.customcrops.fertilizer.QualityCrop;
 import net.momirealms.customcrops.integrations.protection.Integration;
 import net.momirealms.customcrops.objects.Crop;
 import net.momirealms.customcrops.objects.SimpleLocation;
+import net.momirealms.customcrops.utils.DropUtil;
+import net.momirealms.customcrops.utils.LocUtil;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -43,7 +46,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class BreakBlock implements Listener {
+public class BreakBlockT implements Listener {
 
     @EventHandler
     public void onBreak(CustomBlockBreakEvent event){
@@ -53,6 +56,10 @@ public class BreakBlock implements Listener {
             Location location = event.getBlock().getLocation();
             for (Integration integration : ConfigReader.Config.integration)
                 if(!integration.canBreak(location, player)) return;
+            SimpleLocation simpleLocation = LocUtil.fromLocation(location);
+            if (CropManager.Cache.remove(simpleLocation) == null){
+                CropManager.RemoveCache.add(simpleLocation);
+            }
             if (player.getInventory().getItemInMainHand().containsEnchantment(Enchantment.SILK_TOUCH) || player.getInventory().getItemInMainHand().getType() == Material.SHEARS){
                 event.setCancelled(true);
                 CustomBlock.place(namespacedId, location);
@@ -72,7 +79,7 @@ public class BreakBlock implements Listener {
                     Location itemLoc = location.clone().add(0.5,0.2,0.5);
                     World world = location.getWorld();
                     List<String> commands = cropInstance.getCommands();
-                    Fertilizer fertilizer = PotManager.Cache.get(SimpleLocation.fromLocation(location.clone().subtract(0,1,0)));
+                    Fertilizer fertilizer = PotManager.Cache.get(LocUtil.fromLocation(location.clone().subtract(0,1,0)));
                     if (commands != null)
                         Bukkit.getScheduler().runTask(CustomCrops.plugin, ()-> {
                             for (String command : commands)
@@ -93,15 +100,15 @@ public class BreakBlock implements Listener {
                                 }
                             });
                         }
-                        else Bukkit.getScheduler().runTask(CustomCrops.plugin, ()-> normalDrop(cropInstance, random, itemLoc, world));
+                        else Bukkit.getScheduler().runTask(CustomCrops.plugin, ()-> DropUtil.normalDrop(cropInstance, random, itemLoc, world));
                     }
-                    else Bukkit.getScheduler().runTask(CustomCrops.plugin, ()-> normalDrop(cropInstance, random, itemLoc, world));
+                    else Bukkit.getScheduler().runTask(CustomCrops.plugin, ()-> DropUtil.normalDrop(cropInstance, random, itemLoc, world));
                 });
             }
         }
         else if(namespacedId.equalsIgnoreCase(ConfigReader.Basic.watered_pot) || namespacedId.equalsIgnoreCase(ConfigReader.Basic.pot)){
             Location location = event.getBlock().getLocation();
-            PotManager.Cache.remove(SimpleLocation.fromLocation(location));
+            PotManager.Cache.remove(LocUtil.fromLocation(location));
             World world = location.getWorld();
             Block blockUp = location.add(0,1,0).getBlock();
             for (Integration integration : ConfigReader.Config.integration)
@@ -111,6 +118,10 @@ public class BreakBlock implements Listener {
                 String cropNamespacedId = customBlock.getNamespacedID();
                 if(cropNamespacedId.contains("_stage_")){
                     CustomBlock.remove(location);
+                    SimpleLocation simpleLocation = LocUtil.fromLocation(location);
+                    if (CropManager.Cache.remove(simpleLocation) == null){
+                        CropManager.RemoveCache.add(simpleLocation);
+                    }
                     if (cropNamespacedId.equals(ConfigReader.Basic.dead)) return;
                     if (ConfigReader.Config.quality){
                         String[] cropNameList = StringUtils.split(StringUtils.split(cropNamespacedId, ":")[1], "_");
@@ -120,7 +131,7 @@ public class BreakBlock implements Listener {
                             ThreadLocalRandom current = ThreadLocalRandom.current();
                             int random = current.nextInt(cropInstance.getMin(), cropInstance.getMax() + 1);
                             Location itemLoc = location.clone().add(0.5,0.2,0.5);
-                            Fertilizer fertilizer = PotManager.Cache.get(SimpleLocation.fromLocation(location.clone().subtract(0,1,0)));
+                            Fertilizer fertilizer = PotManager.Cache.get(LocUtil.fromLocation(location.clone().subtract(0,1,0)));
                             if (fertilizer != null){
                                 if (fertilizer instanceof QualityCrop qualityCrop){
                                     int[] weights = qualityCrop.getChance();
@@ -133,34 +144,13 @@ public class BreakBlock implements Listener {
                                     }
                                 }
                             }
-                            else normalDrop(cropInstance, random, itemLoc, world);
+                            else DropUtil.normalDrop(cropInstance, random, itemLoc, world);
                             return;
                         }
                     }
                     for (ItemStack itemStack : customBlock.getLoot())
                         world.dropItem(location.clone().add(0.5, 0.2, 0.5), itemStack);
-                    CustomBlock.remove(location);
                 }
-            }
-        }
-    }
-
-    /**
-     * 没有品质肥料下的普通掉落
-     * @param cropInstance 农作物
-     * @param random 随机农作物数量
-     * @param itemLoc 掉落物位置
-     * @param world 世界
-     */
-    static void normalDrop(Crop cropInstance, int random, Location itemLoc, World world) {
-        for (int i = 0; i < random; i++){
-            double ran = Math.random();
-            if (ran < ConfigReader.Config.quality_1){
-                world.dropItem(itemLoc, CustomStack.getInstance(cropInstance.getQuality_1()).getItemStack());
-            }else if(ran > ConfigReader.Config.quality_2){
-                world.dropItem(itemLoc, CustomStack.getInstance(cropInstance.getQuality_2()).getItemStack());
-            }else {
-                world.dropItem(itemLoc, CustomStack.getInstance(cropInstance.getQuality_3()).getItemStack());
             }
         }
     }

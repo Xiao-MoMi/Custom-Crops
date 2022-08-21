@@ -27,6 +27,7 @@ public class Crop {
     private String giant;
     private List<Requirement> requirements;
     private List<String> seasons;
+    private List<String> otherLoots;
     private String returnStage;
     private final int min;
     private final int max;
@@ -37,6 +38,7 @@ public class Crop {
     private boolean dropIALoot;
     private List<String> commands;
     private double growChance;
+    private boolean isBlock;
 
     public Crop(int min, int max){
         this.min = min;
@@ -61,6 +63,8 @@ public class Crop {
     public double getSkillXP() {return skillXP;}
     public boolean doesDropIALoot() {return dropIALoot;}
     public double getGrowChance() {return growChance;}
+    public boolean isBlock() {return isBlock;}
+    public List<String> getOtherLoots() {return otherLoots;}
 
     public void setReturnStage(String stage){ this.returnStage = stage; }
     public void setGiant(String giant) { this.giant = giant; }
@@ -74,4 +78,6 @@ public class Crop {
     public void setSkillXP(double skillXP) {this.skillXP = skillXP;}
     public void setDropIALoot(boolean dropIALoot) {this.dropIALoot = dropIALoot;}
     public void setGrowChance(double growChance) {this.growChance = growChance;}
+    public void setIsBlock(boolean isBlock) {this.isBlock = isBlock;}
+    public void setOtherLoots(List<String> otherLoots) {this.otherLoots = otherLoots;}
 }

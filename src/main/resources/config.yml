@@ -1,10 +1,52 @@
 #Don't change
-config-version: 3
+config-version: '4'
 
+#Want to sell the crops?
+#Try this plugin: https://www.spigotmc.org/resources/shipping-bin.104591/
+#You can use it with a command binding to an ItemsAdder furniture
+#Shipping Bin is similar to the way how players sell items in Stardrew Valley
 
 config:
-  #english spanish chinese
+  # lang: english / spanish / chinese
   lang: english
+
+
+  # mode: tripwire / item_frame
+  # This option requires a server restart
+  # ------------ tripwire ------------
+  # Advantage:
+  #      ● async check, less lag
+  #      ● Real block hitbox like vanilla
+  #
+  # Disadvantage:
+  #      ● limited amount
+  #      ● visual problem when breaking crops
+  #      ● Can't remove tripwire break sound
+  #
+  # ------------ item_frame ------------
+  # Advantage:
+  #      ● unlimited amount
+  #      ● No tripwire break sound
+  #      ● Rotation
+  #
+  # Disadvantage:
+  #      ● entities are very laggy(loading every 5 item frames need 0.01 mspt)
+  #      ● spigot optimized the view distance of entities
+  #      ● crops would go missing if server is lagging
+  #      ● No real block hitbox
+  #      ● itemsAdder loot system doesn't apply to furnitures.
+  #
+  crop-mode: tripwire
+
+
+
+  # Should crops be planted in random rotation?
+  # only works in item_frame mode
+  rotation:
+    enable: false
+    # 4 / 8
+    variant: 4
+
 
 
   integration:
@@ -28,62 +70,64 @@ config:
 
 
 
-  #Mode 1:
-  #  Crops in loaded chunks will grow
-  #Mode 2:
-  #  Online players' crops will grow
-  #Mode 3:
-  #  Recommended
-  #  Mode 1 + Mode 2
-  #Mode 4:
-  #  Please disable season in this mode!
-  #  All the crops will grow
+  # Mode 1:
+  #      ● Crops in loaded chunks will grow
+  # Mode 2:
+  #      ● Online players' crops will grow
+  # Mode 3:
+  #      ● Recommended Mode 1 + Mode 2
+  # Mode 4:
+  #      ● Please disable season in this mode!
+  #      ● All the crops will grow
   grow-mode: 3
-  #The time to start growing(ticks)
-  #1000ticks is 7am in game. (0-23999)
-  #Sprinklers will work after all crops finish growing
+  # The time to start growing(ticks)
+  # 1000ticks is 7am in game. (0-23999)
+  # Sprinklers will work after all crops finish growing
   grow-time:
     - 1000
-  #Time in random a single crop need to grow（seconds）
-  #This prevents a large amount of crops grow at the same time
-  #Large amount of block replacement would cause lag.
+  # Time in random a single crop need to grow（seconds）
+  # This prevents a large amount of crops grow at the same time
+  # Large amount of block replacement would cause lag.
   time-to-grow: 60
-  #Similar to "time-to-grow", this prevent all sprinklers work at the same time
+  # Similar to "time-to-grow", this prevent all sprinklers work at the same time
   time-to-work: 30
-  #Async Time Check (requires restart)
-  #Crops might not grow when using async.
-  #It is not really necessary to be Async
+  # Async Time Check (requires restart)
+  # Crops might not grow when using async.
+  # It is not really necessary to be Async
   async-time-check: false
-  #Worlds where crops would grow
+  # Worlds where crops would grow
   whitelist-worlds:
     - world
-  #Should all the worlds' crops grow?
-  #This is useful for per player per world server.
-  #In this mode, whitelist world can only have one as the standard of time & season judgment.
+  # Should all the worlds' crops grow?
+  # This is useful for per player per world server.
+  # In this mode, whitelist world can only have one for time & season judgment.
   all-world-grow: false
-
+  # How does gigantic work?
+  # In stardrew valley, crops will still absorb water every day after it is ripe to be gigantic
+  # But you can give it only one chance to be gigantic(This is also good for performance)
+  gigantic-only-one-try: false
 
 
   quality:
-    #If disabled, you need to configurate the loot in ItemsAdder config
+    # If disabled, you need to configurate the loots in ItemsAdder config
     enable: true
-    #Default ratio
+    # Default ratio
     default-ratio: 17/2/1
 
 
 
-  #Water Amount to refill when using water bucket
+  # Water Amount to refill when using water bucket
   sprinkler-refill: 2
-  #Water Amount to refill with a sigle click to water block 
+  # Water Amount to refill with a single click to water block
   water-can-refill: 1
-  #Can watering-can add water to sprinklers?
+  # Can watering-can add water to sprinklers?
   water-can-add-water-to-sprinkler: true
-  #Should particles be displayed when using watering can?
+  # Should particles be displayed when using watering can?
   water-particles: true
 
 
 
-  #Will bone meal accelerate the growth of crop
+  # Will bone meal accelerate the growth of crop
   bone-meal:
     enable: true
     chance: 0.5
@@ -91,9 +135,9 @@ config:
 
 
 
-  #Should we limit the max amount of crops and sprinkler in one chunk
-  #Recommended to enable because ItemsAdder might throw StackOverFlow 
-  #when there are too many custom blocks in one chunk
+  # Should we limit the max amount of crops and sprinkler in one chunk
+  # Recommended to enable because ItemsAdder might throw StackOverFlow
+  # when there are too many custom blocks in one chunk
   limit:
     enable: true
     crop: 64
@@ -101,13 +145,13 @@ config:
 
 
 
-  #can player harvest crops with right click?
-  #if set "false" crops can't be harvested repeatedly
+  # can player harvest crops with right click?
+  # if set "false" crops can't be harvested repeatedly
   right-click-harvest: true
-  #If "right-click-harvest" is true
-  #Should player be allowed to harvest with items in hand
+  # If "right-click-harvest" is true
+  # Should player must harvest with empty hands?
   harvest-with-empty-hand: true
-  #Should player be prevented from planting if wrong season
+  # Should player be prevented from planting if wrong season
   prevent-plant-if-wrong-season: true
-  #Should notify player of the wrong season?
+  # Should player be notified of the wrong season?
   should-notify-if-wrong-season: true
