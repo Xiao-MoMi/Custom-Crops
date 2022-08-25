@@ -19,14 +19,11 @@ package net.momirealms.customcrops.datamanager;
 
 import dev.lone.itemsadder.api.CustomBlock;
 import dev.lone.itemsadder.api.CustomFurniture;
-import net.momirealms.customcrops.fertilizer.QualityCrop;
 import net.momirealms.customcrops.listener.JoinAndQuit;
+import net.momirealms.customcrops.objects.fertilizer.*;
 import net.momirealms.customcrops.utils.AdventureManager;
 import net.momirealms.customcrops.ConfigReader;
 import net.momirealms.customcrops.CustomCrops;
-import net.momirealms.customcrops.fertilizer.Fertilizer;
-import net.momirealms.customcrops.fertilizer.RetainingSoil;
-import net.momirealms.customcrops.fertilizer.SpeedGrow;
 import net.momirealms.customcrops.objects.Crop;
 import net.momirealms.customcrops.utils.FurnitureUtil;
 import net.momirealms.customcrops.utils.JedisUtil;
@@ -106,25 +103,6 @@ public class CropManager{
             data.set(location.getWorldName() + "." + x / 16 + "," + z / 16 + "." + x + "," + location.getY() + "," + z, null);
         }
         RemoveCache.clear();
-    }
-
-    public void testData(){
-        for (int i = -100; i <= 100; i++){
-            for (int j = -100; j <= 100; j++){
-                SimpleLocation simpleLocation = new SimpleLocation("world",i,128,j);
-                Cache.put(simpleLocation, "XiaoMoMi");
-            }
-        }
-    }
-
-    public void testData2(){
-        World world = Bukkit.getWorld("world");
-        for (int i = -100; i <= 100; i++){
-            for (int j = -100; j <= 100; j++){
-                Location location = new Location(world, i, 128,j);
-                FurnitureUtil.placeCrop("customcrops:tomato_stage_1", location);
-            }
-        }
     }
 
     /**
@@ -417,8 +395,10 @@ public class CropManager{
                     int times = fertilizer.getTimes();
                     if (times > 0){
                         fertilizer.setTimes(times - 1);
+
+                        Fertilizer fertilizerConfig = ConfigReader.FERTILIZERS.get(fertilizer.getKey());
                         //生长激素
-                        if (fertilizer instanceof SpeedGrow speedGrow){
+                        if (fertilizerConfig instanceof SpeedGrow speedGrow){
                             if (cropInstance.getGrowChance() > Math.random()){
                                 //农作物存在下两个阶段
                                 if (Math.random() < speedGrow.getChance() && CustomBlock.getInstance(StringUtils.chop(namespacedID) + (nextStage + 1)) != null){
@@ -431,7 +411,7 @@ public class CropManager{
                             }
                         }
                         //保湿土壤
-                        else if(fertilizer instanceof RetainingSoil retainingSoil){
+                        else if(fertilizerConfig instanceof RetainingSoil retainingSoil){
                             if (Math.random() < retainingSoil.getChance()){
                                 if (cropInstance.getGrowChance() > Math.random()){
                                     addStage(seedLocation, namespacedID, nextStage);
@@ -445,7 +425,7 @@ public class CropManager{
                             }
                         }
                         //品质肥料
-                        else if(fertilizer instanceof QualityCrop){
+                        else if(fertilizerConfig instanceof QualityCrop || fertilizerConfig instanceof YieldIncreasing){
                             if (cropInstance.getGrowChance() > Math.random()){
                                 addStage(potLocation, seedLocation, namespacedID, nextStage);
                             }else {
@@ -643,9 +623,12 @@ public class CropManager{
                             //查询剩余使用次数
                             int times = fertilizer.getTimes();
                             if (times > 0){
+
                                 fertilizer.setTimes(times - 1);
+
+                                Fertilizer fertilizerConfig = ConfigReader.FERTILIZERS.get(fertilizer.getKey());
                                 //生长激素
-                                if (fertilizer instanceof SpeedGrow speedGrow){
+                                if (fertilizerConfig instanceof SpeedGrow speedGrow){
                                     if (cropInstance.getGrowChance() > Math.random()){
                                         //农作物存在下两个阶段
                                         if (Math.random() < speedGrow.getChance() && CustomBlock.getInstance(StringUtils.chop(namespacedID) + (nextStage + 1)) != null){
@@ -653,13 +636,14 @@ public class CropManager{
                                         }else {
                                             addStageEntity(potLocation, seedLocation, crop.getArmorstand(), StringUtils.chop(namespacedID) + nextStage);
                                         }
-                                    }else {
+                                    }
+                                    else {
                                         CustomBlock.remove(potLocation);
                                         CustomBlock.place(ConfigReader.Basic.pot, potLocation);
                                     }
                                 }
                                 //保湿土壤
-                                else if(fertilizer instanceof RetainingSoil retainingSoil){
+                                else if(fertilizerConfig instanceof RetainingSoil retainingSoil){
                                     if (Math.random() < retainingSoil.getChance()){
                                         if (cropInstance.getGrowChance() > Math.random()){
                                             addStageEntity(seedLocation, crop.getArmorstand(), StringUtils.chop(namespacedID) + nextStage);
@@ -674,7 +658,7 @@ public class CropManager{
                                     }
                                 }
                                 //品质肥料
-                                else if(fertilizer instanceof QualityCrop){
+                                else if(fertilizerConfig instanceof QualityCrop || fertilizerConfig instanceof YieldIncreasing){
                                     if (cropInstance.getGrowChance() > Math.random()){
                                         addStageEntity(potLocation, seedLocation, crop.getArmorstand(), StringUtils.chop(namespacedID) + nextStage);
                                     }else {

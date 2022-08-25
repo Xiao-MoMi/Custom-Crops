@@ -10,9 +10,9 @@ import net.momirealms.customcrops.datamanager.CropManager;
 import net.momirealms.customcrops.datamanager.PotManager;
 import net.momirealms.customcrops.datamanager.SeasonManager;
 import net.momirealms.customcrops.datamanager.SprinklerManager;
-import net.momirealms.customcrops.fertilizer.Fertilizer;
+import net.momirealms.customcrops.objects.fertilizer.Fertilizer;
 import net.momirealms.customcrops.integrations.protection.Integration;
-import net.momirealms.customcrops.limits.CropsPerChunk;
+import net.momirealms.customcrops.limits.CropsPerChunkEntity;
 import net.momirealms.customcrops.limits.SprinklersPerChunk;
 import net.momirealms.customcrops.listener.JoinAndQuit;
 import net.momirealms.customcrops.objects.Crop;
@@ -94,7 +94,7 @@ public class RightClickI implements Listener {
                                 }
                                 if (location.getBlock().getType() != Material.AIR) return;
                                 if (player.getGameMode() != GameMode.CREATIVE) itemStack.setAmount(itemStack.getAmount() - 1);
-                                if (CropsPerChunk.isLimited(location)){
+                                if (CropsPerChunkEntity.isLimited(location)){
                                     AdventureManager.playerMessage(player,ConfigReader.Message.prefix + ConfigReader.Message.crop_limit.replace("{max}", String.valueOf(ConfigReader.Config.cropLimit)));
                                     return;
                                 }
@@ -237,16 +237,18 @@ public class RightClickI implements Listener {
                         String namespacedID = customBlock.getNamespacedID();
                         if(namespacedID.equals(ConfigReader.Basic.pot) || namespacedID.equals(ConfigReader.Basic.watered_pot)){
                             Location location = block.getLocation();
-                            Fertilizer fertilizer = PotManager.Cache.get(LocUtil.fromLocation(block.getLocation()));
+                            Fertilizer fertilizer = PotManager.Cache.get(LocUtil.fromLocation(location));
                             if (fertilizer != null){
                                 Fertilizer config = ConfigReader.FERTILIZERS.get(fertilizer.getKey());
-                                String name = config.getName();
-                                int max_times = config.getTimes();
+                                if (config == null){
+                                    PotManager.Cache.remove(LocUtil.fromLocation(location));
+                                    return;
+                                }
                                 HoloUtil.showHolo(
                                         ConfigReader.Message.cropText
-                                                .replace("{fertilizer}", name)
+                                                .replace("{fertilizer}", config.getName())
                                                 .replace("{times}", String.valueOf(fertilizer.getTimes()))
-                                                .replace("{max_times}", String.valueOf(max_times)),
+                                                .replace("{max_times}", String.valueOf(config.getTimes())),
                                         player,
                                         location.add(0.5,ConfigReader.Message.cropOffset,0.5),
                                         ConfigReader.Message.cropTime);

@@ -11,14 +11,15 @@ import net.momirealms.customcrops.ConfigReader;
 import net.momirealms.customcrops.datamanager.CropManager;
 import net.momirealms.customcrops.datamanager.PotManager;
 import net.momirealms.customcrops.datamanager.SprinklerManager;
-import net.momirealms.customcrops.fertilizer.Fertilizer;
-import net.momirealms.customcrops.fertilizer.QualityCrop;
+import net.momirealms.customcrops.objects.fertilizer.Fertilizer;
+import net.momirealms.customcrops.objects.fertilizer.QualityCrop;
 import net.momirealms.customcrops.integrations.protection.Integration;
 import net.momirealms.customcrops.listener.JoinAndQuit;
 import net.momirealms.customcrops.objects.Crop;
 import net.momirealms.customcrops.objects.SimpleLocation;
 import net.momirealms.customcrops.objects.Sprinkler;
 import net.momirealms.customcrops.objects.WateringCan;
+import net.momirealms.customcrops.objects.fertilizer.YieldIncreasing;
 import net.momirealms.customcrops.utils.*;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.*;
@@ -196,13 +197,16 @@ public class InteractFurnitureI implements Listener {
                     if (ConfigReader.Message.hasCropInfo && nsID.equals(ConfigReader.Basic.soilDetector)){
                         Fertilizer fertilizer = PotManager.Cache.get(LocUtil.fromLocation(location.subtract(0,1,0)));
                         if (fertilizer != null){
-                            Fertilizer fertilizer1 = ConfigReader.FERTILIZERS.get(fertilizer.getKey());
-                            if (fertilizer1 == null) return;
+                            Fertilizer fConfig = ConfigReader.FERTILIZERS.get(fertilizer.getKey());
+                            if (fConfig == null) {
+                                PotManager.Cache.remove(LocUtil.fromLocation(location));
+                                return;
+                            }
                             HoloUtil.showHolo(
                                     ConfigReader.Message.cropText
-                                            .replace("{fertilizer}", fertilizer1.getName())
+                                            .replace("{fertilizer}", fConfig.getName())
                                             .replace("{times}", String.valueOf(fertilizer.getTimes()))
-                                            .replace("{max_times}", String.valueOf(fertilizer1.getTimes())),
+                                            .replace("{max_times}", String.valueOf(fConfig.getTimes())),
                                     player,
                                     location.add(0, ConfigReader.Message.cropOffset, 0),
                                     ConfigReader.Message.cropTime);
@@ -267,7 +271,9 @@ public class InteractFurnitureI implements Listener {
                 if (ConfigReader.Config.skillXP != null && cropInstance.getSkillXP() != 0) ConfigReader.Config.skillXP.addXp(player, cropInstance.getSkillXP());
                 if (cropInstance.getOtherLoots() != null) cropInstance.getOtherLoots().forEach(s -> location.getWorld().dropItem(itemLoc, CustomStack.getInstance(s).getItemStack()));
                 if (fertilizer != null){
-                    if (fertilizer instanceof QualityCrop qualityCrop){
+                    Fertilizer fConfig = ConfigReader.FERTILIZERS.get(fertilizer.getKey());
+                    if (fConfig == null) return;
+                    if (fConfig instanceof QualityCrop qualityCrop){
                         int[] weights = qualityCrop.getChance();
                         double weightTotal = weights[0] + weights[1] + weights[2];
                         for (int i = 0; i < random; i++){
@@ -276,6 +282,11 @@ public class InteractFurnitureI implements Listener {
                             else if(ran > 1 - weights[1]/(weightTotal)) world.dropItem(itemLoc, CustomStack.getInstance(cropInstance.getQuality_2()).getItemStack());
                             else world.dropItem(itemLoc, CustomStack.getInstance(cropInstance.getQuality_3()).getItemStack());
                         }
+                    }else if (fConfig instanceof YieldIncreasing yieldIncreasing){
+                        if (Math.random() < yieldIncreasing.getChance()){
+                            random += yieldIncreasing.getBonus();
+                        }
+                        DropUtil.normalDrop(cropInstance, random , itemLoc, world);
                     }
                     else DropUtil.normalDrop(cropInstance, random, itemLoc, world);
                 }

@@ -28,8 +28,8 @@ import net.momirealms.customcrops.datamanager.CropManager;
 import net.momirealms.customcrops.datamanager.PotManager;
 import net.momirealms.customcrops.datamanager.SeasonManager;
 import net.momirealms.customcrops.datamanager.SprinklerManager;
-import net.momirealms.customcrops.fertilizer.Fertilizer;
-import net.momirealms.customcrops.fertilizer.QualityCrop;
+import net.momirealms.customcrops.objects.fertilizer.Fertilizer;
+import net.momirealms.customcrops.objects.fertilizer.QualityCrop;
 import net.momirealms.customcrops.integrations.protection.Integration;
 import net.momirealms.customcrops.limits.CropsPerChunk;
 import net.momirealms.customcrops.limits.SprinklersPerChunk;
@@ -38,6 +38,7 @@ import net.momirealms.customcrops.objects.Crop;
 import net.momirealms.customcrops.objects.SimpleLocation;
 import net.momirealms.customcrops.objects.Sprinkler;
 import net.momirealms.customcrops.objects.WateringCan;
+import net.momirealms.customcrops.objects.fertilizer.YieldIncreasing;
 import net.momirealms.customcrops.requirements.PlantingCondition;
 import net.momirealms.customcrops.requirements.Requirement;
 import net.momirealms.customcrops.utils.*;
@@ -297,7 +298,10 @@ public class RightClickT implements Listener {
                             Fertilizer fertilizer = PotManager.Cache.get(LocUtil.fromLocation(location));
                             if (fertilizer != null){
                                 Fertilizer config = ConfigReader.FERTILIZERS.get(fertilizer.getKey());
-                                if (config == null) return;
+                                if (config == null){
+                                    PotManager.Cache.remove(LocUtil.fromLocation(location));
+                                    return;
+                                }
                                 HoloUtil.showHolo(
                                         ConfigReader.Message.cropText
                                         .replace("{fertilizer}", config.getName())
@@ -307,18 +311,21 @@ public class RightClickT implements Listener {
                                         location.add(0.5, ConfigReader.Message.cropOffset, 0.5),
                                         ConfigReader.Message.cropTime);
                             }
-                        }else if(namespacedID.equals(ConfigReader.Basic.pot) || namespacedID.equals(ConfigReader.Basic.watered_pot)){
+                        }
+                        else if(namespacedID.equals(ConfigReader.Basic.pot) || namespacedID.equals(ConfigReader.Basic.watered_pot)){
                             Location location = block.getLocation();
                             Fertilizer fertilizer = PotManager.Cache.get(LocUtil.fromLocation(block.getLocation()));
                             if (fertilizer != null){
                                 Fertilizer config = ConfigReader.FERTILIZERS.get(fertilizer.getKey());
-                                String name = config.getName();
-                                int max_times = config.getTimes();
+                                if (config == null){
+                                    PotManager.Cache.remove(LocUtil.fromLocation(location));
+                                    return;
+                                }
                                 HoloUtil.showHolo(
                                         ConfigReader.Message.cropText
-                                        .replace("{fertilizer}", name)
-                                        .replace("{times}", String.valueOf(fertilizer.getTimes()))
-                                        .replace("{max_times}", String.valueOf(max_times)),
+                                                .replace("{fertilizer}", config.getName())
+                                                .replace("{times}", String.valueOf(fertilizer.getTimes()))
+                                                .replace("{max_times}", String.valueOf(config.getTimes())),
                                         player,
                                         location.add(0.5,ConfigReader.Message.cropOffset,0.5),
                                         ConfigReader.Message.cropTime);
@@ -388,7 +395,9 @@ public class RightClickT implements Listener {
                     if (cropInstance.doesDropIALoot()) customBlock.getLoot().forEach(itemStack -> location.getWorld().dropItem(location.clone().add(0.5,0.2,0.5), itemStack));
                     if (cropInstance.getOtherLoots() != null) cropInstance.getOtherLoots().forEach(s -> location.getWorld().dropItem(location.clone().add(0.5,0.2,0.5), CustomStack.getInstance(s).getItemStack()));
                     if (fertilizer != null){
-                        if (fertilizer instanceof QualityCrop qualityCrop){
+                        Fertilizer fConfig = ConfigReader.FERTILIZERS.get(fertilizer.getKey());
+                        if (fConfig == null) return;
+                        if (fConfig instanceof QualityCrop qualityCrop){
                             int[] weights = qualityCrop.getChance();
                             double weightTotal = weights[0] + weights[1] + weights[2];
                             for (int i = 0; i < random; i++){
@@ -397,6 +406,11 @@ public class RightClickT implements Listener {
                                 else if(ran > 1 - weights[1]/(weightTotal)) world.dropItem(itemLoc, CustomStack.getInstance(cropInstance.getQuality_2()).getItemStack());
                                 else world.dropItem(itemLoc, CustomStack.getInstance(cropInstance.getQuality_3()).getItemStack());
                             }
+                        }else if (fConfig instanceof YieldIncreasing yieldIncreasing){
+                            if (Math.random() < yieldIncreasing.getChance()){
+                                random += yieldIncreasing.getBonus();
+                            }
+                            DropUtil.normalDrop(cropInstance, random, itemLoc, world);
                         }
                         else DropUtil.normalDrop(cropInstance, random, itemLoc, world);
                     }

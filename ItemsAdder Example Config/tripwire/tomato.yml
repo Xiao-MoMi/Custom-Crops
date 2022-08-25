@@ -1,12 +1,12 @@
 info:
   namespace: customcrops
 items:
-  pepper_stage_1:
+  tomato_stage_1:
     display_name: ""
     resource:
       generate: false
       material: PAPER
-      model_path: pepper/stage_1
+      model_path: tomato/stage_1
     specific_properties:
       block:
         placed_model:
@@ -17,12 +17,12 @@ items:
             name: block.azalea.place
           break:
             name: block.azalea.break
-  pepper_stage_2:
+  tomato_stage_2:
     display_name: ""
     resource:
       generate: false
       material: PAPER
-      model_path: pepper/stage_2
+      model_path: tomato/stage_2
     specific_properties:
       block:
         placed_model:
@@ -33,12 +33,12 @@ items:
             name: block.azalea.place
           break:
             name: block.azalea.break
-  pepper_stage_3:
+  tomato_stage_3:
     display_name: ""
     resource:
       generate: false
       material: PAPER
-      model_path: pepper/stage_3
+      model_path: tomato/stage_3
     specific_properties:
       block:
         placed_model:
@@ -49,12 +49,12 @@ items:
             name: block.azalea.place
           break:
             name: block.azalea.break
-  pepper_stage_4:
+  tomato_stage_4:
     display_name: ""
     resource:
       generate: false
       material: PAPER
-      model_path: pepper/stage_4
+      model_path: tomato/stage_4
     specific_properties:
       block:
         placed_model:
@@ -65,89 +65,79 @@ items:
             name: block.azalea.place
           break:
             name: block.azalea.break
-  pepper_stage_5:
-    display_name: ""
+  tomato_seeds:
+    display_name: "Tomato Seeds"
+    #display_name: 番茄种子
     resource:
       generate: false
       material: PAPER
-      model_path: pepper/stage_5
-    specific_properties:
-      block:
-        placed_model:
-          type: REAL_WIRE
-        cancel_drop: true
-        sound:
-          place:
-            name: block.azalea.place
-          break:
-            name: block.azalea.break
-  pepper_seeds:
-    display_name: "辣椒种子"
-    resource:
-      generate: false
-      material: PAPER
-      model_path: pepper/pepper_seeds
-  pepper:
-    display_name: "辣椒"
+      model_path: tomato/tomato_seeds
+  tomato:
+    display_name: "Tomato"
+    #display_name: 番茄
     resource:
       generate: false
       material: APPLE
-      model_path: pepper/pepper
-  pepper_silver_star:
-    display_name: "辣椒"
+      model_path: tomato/tomato
+  tomato_silver_star:
+    display_name: "Tomato (Silver Star)"
+    #display_name: 番茄(银星)
     resource:
       generate: false
       material: APPLE
-      model_path: pepper/pepper_silver_star
-  pepper_golden_star:
-    display_name: "辣椒"
+      model_path: tomato/tomato_silver_star
+  tomato_golden_star:
+    display_name: "Tomato (Golden Star)"
+    #display_name: 番茄(金星)
     resource:
       generate: false
       material: APPLE
-      model_path: pepper/pepper_golden_star
+      model_path: tomato/tomato_golden_star
+  gigantic_tomato:
+    display_name: "Overgrown Tomato"
+    #display_name: 巨型番茄
+    resource:
+      generate: false
+      material: PAPER
+      model_path: tomato/gigantic_tomato
+    specific_properties:
+      block:
+        placed_model:
+          type: REAL_TRANSPARENT
 loots:
   blocks:
-    pepper_stage_1:
-      type: customcrops:pepper_stage_1
+    tomato_stage_1:
+      type: customcrops:tomato_stage_1
       items:
         result_1:
-          item: customcrops:pepper_seeds
+          item: customcrops:tomato_seeds
           min_amount: 1
           max_amount: 1
           chance: 100
           ignore_fortune: true
-    pepper_stage_2:
-      type: customcrops:pepper_stage_2
+    tomato_stage_2:
+      type: customcrops:tomato_stage_2
       items:
         result_1:
-          item: customcrops:pepper_seeds
+          item: customcrops:tomato_seeds
           min_amount: 1
           max_amount: 1
           chance: 100
           ignore_fortune: true
-    pepper_stage_3:
-      type: customcrops:pepper_stage_3
+    tomato_stage_3:
+      type: customcrops:tomato_stage_3
       items:
         result_1:
-          item: customcrops:pepper_seeds
+          item: customcrops:tomato_seeds
           min_amount: 1
           max_amount: 1
           chance: 100
           ignore_fortune: true
-    pepper_stage_4:
-      type: customcrops:pepper_stage_4
-      items:
-        result_1:
-          item: customcrops:pepper_seeds
-          min_amount: 1
-          max_amount: 1
-          chance: 100
-          ignore_fortune: true
-#    pepper_stage_5:
-#      type: customcrops:pepper_stage_5
+#    tomato_stage_4:
+#      type: customcrops:tomato_stage_4
 #      items:
 #        result_1:
-#          item: customcrops:pepper
+#          item: customcrops:tomato
 #          min_amount: 1
 #          max_amount: 3
 #          chance: 100

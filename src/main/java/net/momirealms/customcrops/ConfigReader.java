@@ -19,16 +19,13 @@ package net.momirealms.customcrops;
 
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
-import net.momirealms.customcrops.fertilizer.Fertilizer;
-import net.momirealms.customcrops.fertilizer.QualityCrop;
-import net.momirealms.customcrops.fertilizer.RetainingSoil;
-import net.momirealms.customcrops.fertilizer.SpeedGrow;
 import net.momirealms.customcrops.helper.Log;
 import net.momirealms.customcrops.integrations.protection.*;
 import net.momirealms.customcrops.integrations.skill.*;
 import net.momirealms.customcrops.objects.Crop;
 import net.momirealms.customcrops.objects.Sprinkler;
 import net.momirealms.customcrops.objects.WateringCan;
+import net.momirealms.customcrops.objects.fertilizer.*;
 import net.momirealms.customcrops.requirements.Biome;
 import net.momirealms.customcrops.requirements.Permission;
 import net.momirealms.customcrops.requirements.Requirement;
@@ -492,8 +489,10 @@ public class ConfigReader {
         if (config.contains("speed")){
             config.getConfigurationSection("speed").getKeys(false).forEach(key -> {
                 String id = StringUtils.split(config.getString("speed." + key + ".item"), ":")[1];
-                SpeedGrow speedGrow = new SpeedGrow(id, config.getInt("speed." + key + ".times"), config.getDouble("speed." + key + ".chance"), config.getBoolean("speed." + key + ".before-plant"));
-                speedGrow.setName(config.getString("speed." + key + ".name"));
+                SpeedGrow speedGrow = new SpeedGrow(id, config.getInt("speed." + key + ".times"));
+                speedGrow.setName(config.getString("speed." + key + ".name",""));
+                speedGrow.setBefore(config.getBoolean("speed." + key + ".before-plant",false));
+                speedGrow.setChance(config.getDouble("speed." + key + ".chance"));
                 if (config.contains("speed." + key + ".particle"))
                     speedGrow.setParticle(Particle.valueOf(config.getString("speed." + key + ".particle").toUpperCase()));
                 FERTILIZERS.put(id, speedGrow);
@@ -502,8 +501,10 @@ public class ConfigReader {
         if (config.contains("retaining")){
             config.getConfigurationSection("retaining").getKeys(false).forEach(key -> {
                 String id = StringUtils.split(config.getString("retaining." + key + ".item"), ":")[1];
-                RetainingSoil retainingSoil = new RetainingSoil(id, config.getInt("retaining." + key + ".times"), config.getDouble("retaining." + key + ".chance"), config.getBoolean("retaining." + key + ".before-plant"));
-                retainingSoil.setName(config.getString("retaining." + key + ".name"));
+                RetainingSoil retainingSoil = new RetainingSoil(id, config.getInt("retaining." + key + ".times"));
+                retainingSoil.setBefore(config.getBoolean("retaining." + key + ".before-plant",false));
+                retainingSoil.setChance(config.getDouble("retaining." + key + ".chance"));
+                retainingSoil.setName(config.getString("retaining." + key + ".name",""));
                 if (config.contains("retaining." + key + ".particle"))
                     retainingSoil.setParticle(Particle.valueOf(config.getString("retaining." + key + ".particle").toUpperCase()));
                 FERTILIZERS.put(id, retainingSoil);
@@ -517,11 +518,26 @@ public class ConfigReader {
                 weight[0] = Integer.parseInt(split[0]);
                 weight[1] = Integer.parseInt(split[1]);
                 weight[2] = Integer.parseInt(split[2]);
-                QualityCrop qualityCrop = new QualityCrop(key, config.getInt("quality." + key + ".times"), weight, config.getBoolean("quality." + key + ".before-plant"));
-                qualityCrop.setName(config.getString("quality." + key + ".name"));
+                QualityCrop qualityCrop = new QualityCrop(key, config.getInt("quality." + key + ".times"));
+                qualityCrop.setChance(weight);
+                qualityCrop.setName(config.getString("quality." + key + ".name",""));
+                qualityCrop.setBefore(config.getBoolean("quality." + key + ".before-plant",false));
                 if (config.contains("quality." + key + ".particle"))
                     qualityCrop.setParticle(Particle.valueOf(config.getString("quality." + key + ".particle").toUpperCase()));
                 FERTILIZERS.put(id, qualityCrop);
+            });
+        }
+        if (config.contains("quantity")){
+            config.getConfigurationSection("quantity").getKeys(false).forEach(key -> {
+                String id = StringUtils.split(config.getString("quantity." + key + ".item"), ":")[1];
+                YieldIncreasing yieldIncreasing = new YieldIncreasing(key, config.getInt("quantity." + key + ".times",14));
+                yieldIncreasing.setBonus(config.getInt("quantity." + key + ".bonus",1));
+                yieldIncreasing.setName(config.getString("quantity." + key + ".name",""));
+                yieldIncreasing.setBefore(config.getBoolean("quantity." + key + ".before-plant",false));
+                yieldIncreasing.setChance(config.getDouble("quantity." + key + ".chance"));
+                if (config.contains("quantity." + key + ".particle"))
+                    yieldIncreasing.setParticle(Particle.valueOf(config.getString("quantity." + key + ".particle").toUpperCase()));
+                FERTILIZERS.put(id, yieldIncreasing);
             });
         }
         AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><white>" + FERTILIZERS.size() + " <color:#FFEBCD>fertilizers loaded!");

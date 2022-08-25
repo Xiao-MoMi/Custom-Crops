@@ -1,0 +1,156 @@
+info:
+  namespace: customcrops
+items:
+  tomato_stage_1:
+    display_name: ""
+    resource:
+      generate: false
+      material: PAPER
+      model_path: tomato/stage_1
+    behaviours:
+      furniture:
+        entity: item_frame
+        fixed_rotation: false
+        solid: false
+        cancel_drop: true
+        hitbox:
+          length: 1
+          width: 1
+          height: 1
+        placeable_on:
+          walls: false
+          ceiling: false
+          floor: true
+    events:
+      placed_itemframe:
+        break:
+          play_sound:
+            name: block.azalea.break
+            volume: 1
+            pitch: 1
+          drop_item:
+            item: tomato_seeds
+  tomato_stage_2:
+    display_name: ""
+    resource:
+      generate: false
+      material: PAPER
+      model_path: tomato/stage_2
+    behaviours:
+      furniture:
+        entity: item_frame
+        fixed_rotation: false
+        solid: false
+        cancel_drop: true
+        hitbox:
+          length: 1
+          width: 1
+          height: 1
+        placeable_on:
+          walls: false
+          ceiling: false
+          floor: true
+    events:
+      placed_itemframe:
+        break:
+          play_sound:
+            name: block.azalea.break
+            volume: 1
+            pitch: 1
+          drop_item:
+            item: tomato_seeds
+  tomato_stage_3:
+    display_name: ""
+    resource:
+      generate: false
+      material: PAPER
+      model_path: tomato/stage_3
+    behaviours:
+      furniture:
+        entity: item_frame
+        fixed_rotation: false
+        solid: false
+        cancel_drop: true
+        hitbox:
+          length: 1
+          width: 1
+          height: 1
+        placeable_on:
+          walls: false
+          ceiling: false
+          floor: true
+    events:
+      placed_itemframe:
+        break:
+          play_sound:
+            name: block.azalea.break
+            volume: 1
+            pitch: 1
+          drop_item:
+            item: tomato_seeds
+  tomato_stage_4:
+    display_name: ""
+    resource:
+      generate: false
+      material: PAPER
+      model_path: tomato/stage_4
+    behaviours:
+      furniture:
+        entity: item_frame
+        fixed_rotation: false
+        solid: false
+        cancel_drop: true
+        hitbox:
+          length: 1
+          width: 1
+          height: 1
+        placeable_on:
+          walls: false
+          ceiling: false
+          floor: true
+    events:
+      placed_itemframe:
+        break:
+          play_sound:
+            name: block.azalea.break
+            volume: 1
+            pitch: 1
+  tomato_seeds:
+    display_name: "Tomato Seeds"
+    #display_name: 番茄种子
+    resource:
+      generate: false
+      material: PAPER
+      model_path: tomato/tomato_seeds
+  tomato:
+    display_name: "Tomato"
+    #display_name: 番茄
+    resource:
+      generate: false
+      material: APPLE
+      model_path: tomato/tomato
+  tomato_silver_star:
+    display_name: "Tomato (Silver Star)"
+    #display_name: 番茄(银星)
+    resource:
+      generate: false
+      material: APPLE
+      model_path: tomato/tomato_silver_star
+  tomato_golden_star:
+    display_name: "Tomato (Golden Star)"
+    #display_name: 番茄(金星)
+    resource:
+      generate: false
+      material: APPLE
+      model_path: tomato/tomato_golden_star
+  gigantic_tomato:
+    display_name: "Overgrown Tomato"
+    #display_name: 巨型番茄
+    resource:
+      generate: false
+      material: PAPER
+      model_path: tomato/gigantic_tomato
+    specific_properties:
+      block:
+        placed_model:
+          type: REAL_TRANSPARENT

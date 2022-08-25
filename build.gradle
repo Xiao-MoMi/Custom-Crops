@@ -5,7 +5,7 @@ plugins {
 
 
 group = 'net.momirealms'
-version = '1.6.0'
+version = '1.6.1.0'
 
 repositories {
     mavenCentral()
@@ -57,15 +57,16 @@ dependencies {
     compileOnly 'com.github.Archy-X:AureliumSkills:Beta1.3.6'
     compileOnly 'com.github.angeschossen:LandsAPI:6.5.1'
     compileOnly 'com.github.TechFortress:GriefPrevention:16.18'
-    compileOnly 'com.destroystokyo.paper:paper-api:1.16.5-R0.1-SNAPSHOT'
+    compileOnly 'io.papermc.paper:paper-api:1.17.1-R0.1-SNAPSHOT'
     compileOnly 'com.comphenix.protocol:ProtocolLib:4.8.0'
     compileOnly 'me.clip:placeholderapi:2.11.2'
     compileOnly 'com.sk89q.worldguard:worldguard-bukkit:7.0.7'
     compileOnly 'com.github.LoneDev6:api-itemsadder:3.2.3c'
     compileOnly 'com.palmergames.bukkit.towny:towny:0.98.2.0'
     compileOnly fileTree(dir:'libs',includes:['*.jar'])
+    compileOnly 'com.github.Zrips:Jobs:4.17.2'
     implementation("net.kyori:adventure-api:4.11.0")
-    implementation("net.kyori:adventure-platform-bukkit:4.1.1")
+    implementation('net.kyori:adventure-platform-bukkit:4.1.2')
     implementation("net.kyori:adventure-text-minimessage:4.11.0")
     implementation("de.tr7zw:item-nbt-api:2.10.0")
 }
@@ -100,8 +101,8 @@ tasks.withType(JavaCompile) {
 }
 
 shadowJar {
-    relocate ('de.tr7zw', 'net.momirealms.customcrops.libs.tr7zw')
-    relocate ('net.kyori', 'net.momirealms.customcrops.libs.kyori')
+    relocate ('de.tr7zw', 'net.momirealms.customcrops.libs')
+    relocate ('net.kyori', 'net.momirealms.customcrops.libs')
 }
 
 tasks.register("delete", Delete).get().delete("build/libs/"+project.name+"-"+project.version+".jar")

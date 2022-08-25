@@ -60,12 +60,6 @@ public class Executor implements CommandExecutor {
                 }
                 return true;
             }
-            case "test" -> {
-                CustomCrops.plugin.getCropManager().testData();
-            }
-            case "test2" -> {
-                CustomCrops.plugin.getCropManager().testData2();
-            }
             case "forcegrow" -> {
                 if (args.length < 2) {
                     lackArgs(sender);

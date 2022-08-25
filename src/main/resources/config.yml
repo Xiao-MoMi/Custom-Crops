@@ -19,21 +19,23 @@ config:
   #      ● Real block hitbox like vanilla
   #
   # Disadvantage:
-  #      ● limited amount
+  #      ● limited amount(127) /iainfo to see how many slots available
   #      ● visual problem when breaking crops
   #      ● Can't remove tripwire break sound
   #
   # ------------ item_frame ------------
   # Advantage:
-  #      ● unlimited amount
+  #      ● unlimited amount, create as many as crop types as you want
   #      ● No tripwire break sound
   #      ● Rotation
   #
   # Disadvantage:
-  #      ● entities are very laggy(loading every 5 item frames need 0.01 mspt)
+  #      ● entities are very laggy(loading every 5~8 item frames need 0.01 mspt)
   #      ● spigot optimized the view distance of entities
-  #      ● crops would go missing if server is lagging
+  #      ● crops would go missing if there's a large amount of furniture replacing in the same tick(128 crops/tick)
+  #      ● And I can't fix this in my plugin because furniture replacing is handled by ItemsAdder.
   #      ● No real block hitbox
+  #      ● ItemsAdder furniture breaking sound
   #      ● itemsAdder loot system doesn't apply to furnitures.
   #
   crop-mode: tripwire
@@ -79,6 +81,8 @@ config:
   # Mode 4:
   #      ● Please disable season in this mode!
   #      ● All the crops will grow
+  #      ● If season not disabled, your server would be lagging when there's a lot of data
+  #      ● Crop data would be removed as soon as they are ripe when season disabled, so it would not cause lag!
   grow-mode: 3
   # The time to start growing(ticks)
   # 1000ticks is 7am in game. (0-23999)
@@ -125,6 +129,10 @@ config:
   # Should particles be displayed when using watering can?
   water-particles: true
 
+
+  # Should the pot be dry even there's no crop on it
+  # This would cost addition performance
+  pot-dry-always-dry: false
 
 
   # Will bone meal accelerate the growth of crop

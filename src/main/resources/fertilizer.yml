@@ -77,3 +77,29 @@ quality:
     chance: 2/2/1
     item: customcrops:quality_3
     before-plant: true
+
+
+
+#When haveresting, players have a higher chance to get more crops.
+quantity:
+  quantity_1:
+    name: '뀆'
+    times: 14
+    chance: 0.5
+    bonus: 1
+    item: customcrops:quantity_1
+    before-plant: true
+  quantity_2:
+    name: '뀐'
+    times: 14
+    chance: 0.5
+    bonus: 2
+    item: customcrops:quantity_2
+    before-plant: true
+  quantity_3:
+    name: '뀑'
+    times: 14
+    chance: 0.8
+    bonus: 2
+    item: customcrops:quantity_3
+    before-plant: true

@@ -17,13 +17,10 @@
 
 package net.momirealms.customcrops.datamanager;
 
-import net.momirealms.customcrops.utils.AdventureManager;
 import net.momirealms.customcrops.ConfigReader;
+import net.momirealms.customcrops.objects.fertilizer.*;
+import net.momirealms.customcrops.utils.AdventureManager;
 import net.momirealms.customcrops.CustomCrops;
-import net.momirealms.customcrops.fertilizer.Fertilizer;
-import net.momirealms.customcrops.fertilizer.QualityCrop;
-import net.momirealms.customcrops.fertilizer.RetainingSoil;
-import net.momirealms.customcrops.fertilizer.SpeedGrow;
 import net.momirealms.customcrops.objects.SimpleLocation;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.configuration.MemorySection;
@@ -53,18 +50,24 @@ public class PotManager {
         }
         YamlConfiguration data = YamlConfiguration.loadConfiguration(file);
         data.getKeys(false).forEach(worldName -> {
-            data.getConfigurationSection(worldName).getValues(false).forEach((key, value) ->{
-                String[] split = StringUtils.split(key, ",");
+            data.getConfigurationSection(worldName).getValues(false).forEach((keys, value) ->{
+                String[] split = StringUtils.split(keys, ",");
                 if (value instanceof MemorySection map){
-                    String name = (String) map.get("fertilizer");
-                    Fertilizer fertilizer = ConfigReader.FERTILIZERS.get(name);
+                    String key = map.getString("fertilizer");
+                    Fertilizer fertilizer = ConfigReader.FERTILIZERS.get(key);
                     if (fertilizer == null) return;
-                    if (fertilizer instanceof SpeedGrow speedGrow){
-                        Cache.put(new SimpleLocation(worldName, Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2])),  new SpeedGrow(name, (int) map.get("times"), speedGrow.getChance(), speedGrow.isBefore()));
-                    }else if (fertilizer instanceof QualityCrop qualityCrop){
-                        Cache.put(new SimpleLocation(worldName, Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2])), new QualityCrop(name, (int) map.get("times"), qualityCrop.getChance(), qualityCrop.isBefore()));
-                    }else if (fertilizer instanceof RetainingSoil retainingSoil){
-                        Cache.put(new SimpleLocation(worldName, Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2])), new RetainingSoil(name, (int) map.get("times"), retainingSoil.getChance(), retainingSoil.isBefore()));
+                    if (fertilizer instanceof SpeedGrow){
+                        SpeedGrow speedGrow = new SpeedGrow(key, map.getInt("times"));
+                        Cache.put(new SimpleLocation(worldName, Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2])), speedGrow);
+                    }else if (fertilizer instanceof QualityCrop){
+                        QualityCrop qualityCrop = new QualityCrop(key, map.getInt("times"));
+                        Cache.put(new SimpleLocation(worldName, Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2])), qualityCrop);
+                    }else if (fertilizer instanceof RetainingSoil){
+                        RetainingSoil retainingSoil = new RetainingSoil(key, map.getInt("times"));
+                        Cache.put(new SimpleLocation(worldName, Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2])), retainingSoil);
+                    }else if(fertilizer instanceof YieldIncreasing){
+                        YieldIncreasing yieldIncreasing = new YieldIncreasing(key, map.getInt("times"));
+                        Cache.put(new SimpleLocation(worldName, Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2])), yieldIncreasing);
                     }else {
                         AdventureManager.consoleMessage("<red>[CustomCrops] 未知肥料类型错误!</red>");
                     }

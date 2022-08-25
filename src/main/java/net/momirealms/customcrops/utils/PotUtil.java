@@ -3,11 +3,7 @@ package net.momirealms.customcrops.utils;
 import dev.lone.itemsadder.api.CustomBlock;
 import net.momirealms.customcrops.ConfigReader;
 import net.momirealms.customcrops.datamanager.PotManager;
-import net.momirealms.customcrops.fertilizer.Fertilizer;
-import net.momirealms.customcrops.fertilizer.QualityCrop;
-import net.momirealms.customcrops.fertilizer.RetainingSoil;
-import net.momirealms.customcrops.fertilizer.SpeedGrow;
-import net.momirealms.customcrops.objects.SimpleLocation;
+import net.momirealms.customcrops.objects.fertilizer.*;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 
@@ -97,14 +93,17 @@ public class PotUtil {
      */
     public static void addFertilizer(Fertilizer fertilizerConfig, Location location) {
         if (fertilizerConfig instanceof QualityCrop config){
-            QualityCrop qualityCrop = new QualityCrop(config.getKey(), config.getTimes(), config.getChance(), config.isBefore());
+            QualityCrop qualityCrop = new QualityCrop(config.getKey(), config.getTimes());
             PotManager.Cache.put(LocUtil.fromLocation(location), qualityCrop);
         }else if (fertilizerConfig instanceof SpeedGrow config){
-            SpeedGrow speedGrow = new SpeedGrow(config.getKey(), config.getTimes(),config.getChance(), config.isBefore());
+            SpeedGrow speedGrow = new SpeedGrow(config.getKey(), config.getTimes());
             PotManager.Cache.put(LocUtil.fromLocation(location), speedGrow);
         }else if (fertilizerConfig instanceof RetainingSoil config){
-            RetainingSoil retainingSoil = new RetainingSoil(config.getKey(), config.getTimes(),config.getChance(), config.isBefore());
+            RetainingSoil retainingSoil = new RetainingSoil(config.getKey(), config.getTimes());
             PotManager.Cache.put(LocUtil.fromLocation(location), retainingSoil);
+        }else if (fertilizerConfig instanceof YieldIncreasing config){
+            YieldIncreasing yieldIncreasing = new YieldIncreasing(config.getKey(), config.getTimes());
+            PotManager.Cache.put(LocUtil.fromLocation(location), yieldIncreasing);
         }
         if (fertilizerConfig.getParticle() != null) location.getWorld().spawnParticle(fertilizerConfig.getParticle(), location.add(0.5,1.3,0.5), 5,0.2,0.2,0.2);
     }

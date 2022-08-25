@@ -24,11 +24,12 @@ import net.momirealms.customcrops.ConfigReader;
 import net.momirealms.customcrops.CustomCrops;
 import net.momirealms.customcrops.datamanager.CropManager;
 import net.momirealms.customcrops.datamanager.PotManager;
-import net.momirealms.customcrops.fertilizer.Fertilizer;
-import net.momirealms.customcrops.fertilizer.QualityCrop;
+import net.momirealms.customcrops.objects.fertilizer.Fertilizer;
+import net.momirealms.customcrops.objects.fertilizer.QualityCrop;
 import net.momirealms.customcrops.integrations.protection.Integration;
 import net.momirealms.customcrops.objects.Crop;
 import net.momirealms.customcrops.objects.SimpleLocation;
+import net.momirealms.customcrops.objects.fertilizer.YieldIncreasing;
 import net.momirealms.customcrops.utils.DropUtil;
 import net.momirealms.customcrops.utils.LocUtil;
 import org.apache.commons.lang.StringUtils;
@@ -142,6 +143,11 @@ public class BreakBlockT implements Listener {
                                         else if(ran > 1 - weights[1]/(weightTotal)) world.dropItem(itemLoc, CustomStack.getInstance(cropInstance.getQuality_2()).getItemStack());
                                         else world.dropItem(itemLoc, CustomStack.getInstance(cropInstance.getQuality_3()).getItemStack());
                                     }
+                                }else if (fertilizer instanceof YieldIncreasing yieldIncreasing){
+                                    if (Math.random() < yieldIncreasing.getChance()){
+                                        random += yieldIncreasing.getBonus();
+                                    }
+                                    DropUtil.normalDrop(cropInstance, random , itemLoc, world);
                                 }
                             }
                             else DropUtil.normalDrop(cropInstance, random, itemLoc, world);

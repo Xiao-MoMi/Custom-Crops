@@ -85,7 +85,7 @@ crops:
       2: customcrops:grape_silver_star
       3: customcrops:grape_golden_star
     #optional
-    #The stage to return when havesting with empty hands
+    #The stage to return when harvesting with a single right click
     return: customcrops:grape_stage_4
     season:
       - autumn
@@ -117,3 +117,10 @@ crops:
       1: customcrops:garlic
       2: customcrops:garlic_silver_star
       3: customcrops:garlic_golden_star
+
+  redpacket:
+    amount: 3~4
+    quality:
+      1: customcrops:redpacket
+      2: customcrops:redpacket
+      3: customcrops:redpacket

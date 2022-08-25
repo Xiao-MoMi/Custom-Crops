@@ -15,15 +15,22 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.momirealms.customcrops.fertilizer;
+package net.momirealms.customcrops.objects.fertilizer;
 
-import org.bukkit.Particle;
 
-public interface Fertilizer {
-    String getKey();
-    int getTimes();
-    void setTimes(int times);
-    boolean isBefore();
-    String getName();
-    Particle getParticle();
+public class QualityCrop extends Fertilizer {
+
+    private int[] chance;
+
+    public QualityCrop(String key, int times) {
+        super(key, times);
+    }
+
+    public int[] getChance() {
+        return chance;
+    }
+
+    public void setChance(int[] chance) {
+        this.chance = chance;
+    }
 }
