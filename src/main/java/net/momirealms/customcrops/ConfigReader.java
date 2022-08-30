@@ -47,6 +47,7 @@ public class ConfigReader {
     public static HashMap<String, Fertilizer> FERTILIZERS = new HashMap<>();
     public static HashMap<String, WateringCan> CANS = new HashMap<>();
     public static HashMap<String, Sprinkler> SPRINKLERS = new HashMap<>();
+    public static boolean useRedis;
 
     public static YamlConfiguration getConfig(String configName) {
         File file = new File(CustomCrops.plugin.getDataFolder(), configName);
@@ -239,6 +240,10 @@ public class ConfigReader {
                 if(Bukkit.getPluginManager().getPlugin("EcoSkills") == null) Log.warn("Failed to initialize EcoSkills!");
                 else {skillXP = new EcoSkill();hookMessage("EcoSkills");}
             }
+            if(config.getBoolean("config.integration.JobsReborn",false)){
+                if(Bukkit.getPluginManager().getPlugin("Jobs") == null) Log.warn("Failed to initialize Jobs!");
+                else {skillXP = new JobsReborn();hookMessage("JobsReborn");}
+            }
         }
     }
 
@@ -288,7 +293,7 @@ public class ConfigReader {
                     CANS.put(namespacedID, wateringCan);
                 });
             }
-            AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><white>" + CANS.size() + " <color:#FFEBCD>cans loaded!");
+            AdventureManager.consoleMessage("[CustomCrops] Loaded <green>" + CANS.size() + " <gray>watering-cans");
 
             SPRINKLERS.clear();
             if (config.contains("sprinkler")){
@@ -302,7 +307,7 @@ public class ConfigReader {
                     SPRINKLERS.put(twoD, sprinklerData);
                 });
             }
-            AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><white>" + SPRINKLERS.size()/2 + "<color:#FFEBCD> sprinklers loaded!");
+            AdventureManager.consoleMessage("[CustomCrops] Loaded <green>" + SPRINKLERS.size()/2 + "<gray> sprinklers");
         }
     }
 
@@ -324,8 +329,8 @@ public class ConfigReader {
                 if (greenhouse) range = config.getInt("season.greenhouse.range",7);
                 seasonChange = config.getBoolean("season.auto-season-change.enable",false);
                 duration = config.getInt("season.auto-season-change.duration",28);
-                if (seasonChange) AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><color:#FFEBCD>Season Change mode: <gold>Auto");
-                else AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><color:#FFEBCD>Season Change mode: <gold>Command");
+                if (seasonChange) AdventureManager.consoleMessage("[CustomCrops] Season Change mode: <gold>Auto");
+                else AdventureManager.consoleMessage("[CustomCrops] Season Change mode: <gold>Command");
             }
         }
     }
@@ -480,7 +485,7 @@ public class ConfigReader {
             }else {cropInstance.setDropIALoot(false);}
             CROPS.put(key, cropInstance);
         });
-        AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><white>" + CROPS.size() + " <color:#FFEBCD>crops loaded!");
+        AdventureManager.consoleMessage("[CustomCrops] Loaded<green> " + CROPS.size() + " <gray>crops");
     }
 
     public static void fertilizerLoad(){
@@ -540,7 +545,7 @@ public class ConfigReader {
                 FERTILIZERS.put(id, yieldIncreasing);
             });
         }
-        AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><white>" + FERTILIZERS.size() + " <color:#FFEBCD>fertilizers loaded!");
+        AdventureManager.consoleMessage("[CustomCrops] Loaded <green>" + FERTILIZERS.size() + " <gray>fertilizers");
     }
 
     public static class Sounds{
@@ -585,11 +590,15 @@ public class ConfigReader {
 
     public static void tryEnableJedis(){
         YamlConfiguration configuration = ConfigReader.getConfig("redis.yml");
-        JedisUtil.useRedis = configuration.getBoolean("redis.enable", false);
-        if (JedisUtil.useRedis) JedisUtil.initializeRedis(configuration);
+        if (configuration.getBoolean("redis.enable", false)){
+            useRedis = true;
+            JedisUtil.initializeRedis(configuration);
+        }else {
+            useRedis = false;
+        }
     }
 
     private static void hookMessage(String plugin){
-        AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><gold>" + plugin + " <color:#FFEBCD>Hooked!");
+        AdventureManager.consoleMessage("[CustomCrops] <gold>" + plugin + " <color:#FFEBCD>Hooked!");
     }
 }

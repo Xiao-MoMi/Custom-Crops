@@ -24,7 +24,7 @@ import net.momirealms.customcrops.datamanager.*;
 import net.momirealms.customcrops.datamanager.CropManager;
 import net.momirealms.customcrops.datamanager.SprinklerManager;
 import net.momirealms.customcrops.helper.LibraryLoader;
-import net.momirealms.customcrops.hook.Placeholders;
+import net.momirealms.customcrops.integrations.Placeholders;
 import net.momirealms.customcrops.listener.*;
 import net.momirealms.customcrops.listener.itemframe.BreakBlockI;
 import net.momirealms.customcrops.listener.itemframe.BreakFurnitureI;
@@ -73,33 +73,31 @@ public final class CustomCrops extends JavaPlugin {
     public void onEnable() {
 
         adventure = BukkitAudiences.create(plugin);
-        AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><color:#FFEBCD>Running on " + Bukkit.getVersion());
+        AdventureManager.consoleMessage("[CustomCrops] Running on <white>" + Bukkit.getVersion());
 
         ConfigReader.reloadConfig();
-        if (!Objects.equals(ConfigReader.Config.version, "3")){
+        if (!Objects.equals(ConfigReader.Config.version, "5")){
             ConfigUtil.update();
         }
 
         if(Bukkit.getPluginManager().getPlugin("PlaceHolderAPI") != null){
             placeholders = new Placeholders();
             placeholders.register();
-            AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><gold>PlaceHolderAPI <color:#FFEBCD>Hooked!");
             Bukkit.getPluginManager().registerEvents(new PapiReload(), this);
         }
 
         Objects.requireNonNull(Bukkit.getPluginCommand("customcrops")).setExecutor(new Executor(this));
         Objects.requireNonNull(Bukkit.getPluginCommand("customcrops")).setTabCompleter(new Completer());
 
-        //公用事件
         Bukkit.getPluginManager().registerEvents(new ItemSpawn(), this);
         Bukkit.getPluginManager().registerEvents(new JoinAndQuit(), this);
 
         ConfigReader.tryEnableJedis();
+
         if (ConfigReader.Season.enable){
             this.seasonManager = new SeasonManager();
             this.seasonManager.loadData();
         }
-
         this.sprinklerManager = new SprinklerManager();
         this.sprinklerManager.loadData();
         this.potManager = new PotManager();
@@ -107,14 +105,14 @@ public final class CustomCrops extends JavaPlugin {
         this.cropTimer = new CropTimer();
         if (ConfigReader.Config.cropMode.equalsIgnoreCase("item_frame")){
             this.cropManager = new CropManager(true);
-            AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><color:#F5DEB3>Crop Mode: ItemFrame");
+            AdventureManager.consoleMessage("[CustomCrops] Crop Mode: <color:#F5DEB3>ItemFrame");
             Bukkit.getPluginManager().registerEvents(new RightClickI(), this);
             Bukkit.getPluginManager().registerEvents(new BreakBlockI(), this);
             Bukkit.getPluginManager().registerEvents(new BreakFurnitureI(), this);
             Bukkit.getPluginManager().registerEvents(new InteractFurnitureI(), this);
         }else{
             this.cropManager = new CropManager(false);
-            AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><color:#F5DEB3>Crop Mode: TripWire");
+            AdventureManager.consoleMessage("[CustomCrops] Crop Mode: <color:#F5DEB3>TripWire");
             Bukkit.getPluginManager().registerEvents(new RightClickT(), this);
             Bukkit.getPluginManager().registerEvents(new BreakBlockT(), this);
             Bukkit.getPluginManager().registerEvents(new BreakFurnitureT(), this);

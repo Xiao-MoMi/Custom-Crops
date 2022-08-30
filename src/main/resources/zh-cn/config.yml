@@ -1,5 +1,5 @@
 #请不要修改此值
-config-version: '4'
+config-version: '5'
 
 
 config:
@@ -59,6 +59,7 @@ config:
     mcMMO: false
     MMOCore: false
     EcoSkills: false
+    JobsReborn: false
     #季节同步
     RealisticSeasons: false
 

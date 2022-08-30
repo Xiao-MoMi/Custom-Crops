@@ -1,5 +1,5 @@
 #Don't change
-config-version: '4'
+config-version: '5'
 
 #Want to sell the crops?
 #Try this plugin: https://www.spigotmc.org/resources/shipping-bin.104591/
@@ -67,6 +67,7 @@ config:
     mcMMO: false
     MMOCore: false
     EcoSkills: false
+    JobsReborn: false
     #integration to sync seasons
     RealisticSeasons: false
 

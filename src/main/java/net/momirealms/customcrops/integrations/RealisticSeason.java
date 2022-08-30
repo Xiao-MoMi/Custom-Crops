@@ -15,7 +15,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.momirealms.customcrops.hook;
+package net.momirealms.customcrops.integrations;
 
 import me.casperge.realisticseasons.api.SeasonsAPI;
 import org.bukkit.World;

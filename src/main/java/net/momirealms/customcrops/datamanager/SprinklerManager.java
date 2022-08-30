@@ -338,7 +338,7 @@ public class SprinklerManager {
     }
 
     private HashSet<String> getPlayers(){
-        if (JedisUtil.useRedis){
+        if (ConfigReader.useRedis){
             return JedisUtil.getPlayers();
         }else {
             return new HashSet<>(JoinAndQuit.onlinePlayers);

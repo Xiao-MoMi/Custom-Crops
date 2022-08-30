@@ -17,7 +17,7 @@
 
 package net.momirealms.customcrops.datamanager;
 
-import net.momirealms.customcrops.hook.RealisticSeason;
+import net.momirealms.customcrops.integrations.RealisticSeason;
 import net.momirealms.customcrops.utils.AdventureManager;
 import net.momirealms.customcrops.ConfigReader;
 import net.momirealms.customcrops.CustomCrops;
