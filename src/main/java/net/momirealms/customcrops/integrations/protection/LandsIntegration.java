@@ -17,24 +17,25 @@
 
 package net.momirealms.customcrops.integrations.protection;
 
-import com.palmergames.bukkit.towny.object.TownyPermission;
-import com.palmergames.bukkit.towny.utils.PlayerCacheUtil;
+import me.angeschossen.lands.api.flags.Flags;
+import me.angeschossen.lands.api.land.Area;
+import net.momirealms.customcrops.CustomCrops;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-public class Towny implements Integration{
+public class LandsIntegration implements Integration{
 
     @Override
     public boolean canBreak(Location location, Player player) {
-        return TownyPermission(player, location, TownyPermission.ActionType.DESTROY);
+        Area area = new me.angeschossen.lands.api.integration.LandsIntegration(CustomCrops.plugin).getAreaByLoc(location);
+        if (area != null) return area.hasFlag(player, Flags.BLOCK_BREAK, false);
+        else return true;
     }
 
     @Override
     public boolean canPlace(Location location, Player player) {
-        return TownyPermission(player, location, TownyPermission.ActionType.BUILD);
-    }
-
-    private boolean TownyPermission(Player player, Location location, TownyPermission.ActionType actionType){
-        return PlayerCacheUtil.getCachePermission(player, location, location.getBlock().getType(), actionType);
+        Area area = new me.angeschossen.lands.api.integration.LandsIntegration(CustomCrops.plugin).getAreaByLoc(location);
+        if (area != null) return area.hasFlag(player, Flags.BLOCK_PLACE, false);
+        else return true;
     }
 }

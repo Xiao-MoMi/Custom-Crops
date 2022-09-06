@@ -76,10 +76,9 @@ public final class CustomCrops extends JavaPlugin {
         AdventureManager.consoleMessage("[CustomCrops] Running on <white>" + Bukkit.getVersion());
 
         ConfigReader.reloadConfig();
-        if (!Objects.equals(ConfigReader.Config.version, "5")){
+        if (!Objects.equals(ConfigReader.Config.version, "6")){
             ConfigUtil.update();
         }
-
         if(Bukkit.getPluginManager().getPlugin("PlaceHolderAPI") != null){
             placeholders = new Placeholders();
             placeholders.register();

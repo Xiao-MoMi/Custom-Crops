@@ -56,17 +56,22 @@ public class PotManager {
                     String key = map.getString("fertilizer");
                     Fertilizer fertilizer = ConfigReader.FERTILIZERS.get(key);
                     if (fertilizer == null) return;
-                    if (fertilizer instanceof SpeedGrow){
+                    if (fertilizer instanceof SpeedGrow speedGrowConfig){
                         SpeedGrow speedGrow = new SpeedGrow(key, map.getInt("times"));
+                        speedGrow.setChance(speedGrowConfig.getChance());
                         Cache.put(new SimpleLocation(worldName, Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2])), speedGrow);
-                    }else if (fertilizer instanceof QualityCrop){
+                    }else if (fertilizer instanceof QualityCrop qualityCropConfig){
                         QualityCrop qualityCrop = new QualityCrop(key, map.getInt("times"));
+                        qualityCrop.setChance(qualityCropConfig.getChance());
                         Cache.put(new SimpleLocation(worldName, Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2])), qualityCrop);
-                    }else if (fertilizer instanceof RetainingSoil){
+                    }else if (fertilizer instanceof RetainingSoil retainingSoilConfig){
                         RetainingSoil retainingSoil = new RetainingSoil(key, map.getInt("times"));
+                        retainingSoil.setChance(retainingSoilConfig.getChance());
                         Cache.put(new SimpleLocation(worldName, Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2])), retainingSoil);
-                    }else if(fertilizer instanceof YieldIncreasing){
+                    }else if(fertilizer instanceof YieldIncreasing yieldIncreasingConfig){
                         YieldIncreasing yieldIncreasing = new YieldIncreasing(key, map.getInt("times"));
+                        yieldIncreasing.setChance(yieldIncreasingConfig.getChance());
+                        yieldIncreasing.setBonus(yieldIncreasingConfig.getBonus());
                         Cache.put(new SimpleLocation(worldName, Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2])), yieldIncreasing);
                     }else {
                         AdventureManager.consoleMessage("<red>[CustomCrops] 未知肥料类型错误!</red>");

@@ -7,7 +7,9 @@ basic:
   soil-detector: customcrops:soil_detector
 
 
-
+# If you want watering-can has custom durability
+# Just set material to damageable items like wooden_sword
+# custom durability in itemsadder is compatible in CustomCrops
 water-can:
   watering_can_1:
     item: customcrops:watering_can_1

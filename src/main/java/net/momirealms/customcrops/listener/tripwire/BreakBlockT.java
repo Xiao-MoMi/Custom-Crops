@@ -24,6 +24,7 @@ import net.momirealms.customcrops.ConfigReader;
 import net.momirealms.customcrops.CustomCrops;
 import net.momirealms.customcrops.datamanager.CropManager;
 import net.momirealms.customcrops.datamanager.PotManager;
+import net.momirealms.customcrops.listener.JoinAndQuit;
 import net.momirealms.customcrops.objects.fertilizer.Fertilizer;
 import net.momirealms.customcrops.objects.fertilizer.QualityCrop;
 import net.momirealms.customcrops.integrations.protection.Integration;
@@ -51,9 +52,12 @@ public class BreakBlockT implements Listener {
 
     @EventHandler
     public void onBreak(CustomBlockBreakEvent event){
+        long time = System.currentTimeMillis();
+        Player player = event.getPlayer();
+        if (time - (JoinAndQuit.coolDown.getOrDefault(player, time - 150)) < 150) return;
+        JoinAndQuit.coolDown.put(player, time);
         String namespacedId = event.getNamespacedID();
         if(namespacedId.contains("_stage_")){
-            Player player = event.getPlayer();
             Location location = event.getBlock().getLocation();
             for (Integration integration : ConfigReader.Config.integration)
                 if(!integration.canBreak(location, player)) return;

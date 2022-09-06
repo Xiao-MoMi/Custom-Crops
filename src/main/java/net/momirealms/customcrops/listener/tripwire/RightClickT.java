@@ -21,6 +21,7 @@ import de.tr7zw.changeme.nbtapi.NBTCompound;
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import dev.lone.itemsadder.api.CustomBlock;
 import dev.lone.itemsadder.api.CustomStack;
+import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.momirealms.customcrops.ConfigReader;
@@ -28,6 +29,7 @@ import net.momirealms.customcrops.datamanager.CropManager;
 import net.momirealms.customcrops.datamanager.PotManager;
 import net.momirealms.customcrops.datamanager.SeasonManager;
 import net.momirealms.customcrops.datamanager.SprinklerManager;
+import net.momirealms.customcrops.listener.itemframe.InteractFurnitureI;
 import net.momirealms.customcrops.objects.fertilizer.Fertilizer;
 import net.momirealms.customcrops.objects.fertilizer.QualityCrop;
 import net.momirealms.customcrops.integrations.protection.Integration;
@@ -46,12 +48,14 @@ import org.apache.commons.lang.StringUtils;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.Damageable;
 
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -177,6 +181,18 @@ public class RightClickT implements Listener {
                                     nbtItem.setInteger("WaterAmount", --water);
                                     AdventureManager.playerSound(player, ConfigReader.Sounds.waterPotSource, ConfigReader.Sounds.waterPotKey);
                                     PotUtil.waterPot(wateringCan.getWidth(), wateringCan.getLength(), block.getLocation(), player.getLocation().getYaw());
+                                    if (nbtCompound.hasKey("custom_durability")){
+                                        int dur = nbtCompound.getInteger("custom_durability");
+                                        int max_dur = nbtCompound.getInteger("max_custom_durability");
+                                        if (dur > 0){
+                                            nbtCompound.setInteger("custom_durability", dur - 1);
+                                            nbtCompound.setDouble("fake_durability", (int) itemStack.getType().getMaxDurability() * (double) (dur/max_dur));
+                                            nbtItem.setInteger("Damage", (int) (itemStack.getType().getMaxDurability() * (1 - (double) dur/max_dur)));
+                                        } else {
+                                            AdventureManager.playerSound(player, net.kyori.adventure.sound.Sound.Source.PLAYER, Key.key("minecraft:item.shield.break"));
+                                            itemStack.setAmount(itemStack.getAmount() - 1);
+                                        }
+                                    }
                                 }
                                 if (ConfigReader.Message.hasWaterInfo)
                                     AdventureManager.playerActionbar(player,
@@ -205,6 +221,18 @@ public class RightClickT implements Listener {
                                     nbtItem.setInteger("WaterAmount", --water);
                                     AdventureManager.playerSound(player, ConfigReader.Sounds.waterPotSource, ConfigReader.Sounds.waterPotKey);
                                     PotUtil.waterPot(wateringCan.getWidth(), wateringCan.getLength(), block.getLocation().subtract(0, 1, 0), player.getLocation().getYaw());
+                                    if (nbtCompound.hasKey("custom_durability")){
+                                        int dur = nbtCompound.getInteger("custom_durability");
+                                        int max_dur = nbtCompound.getInteger("max_custom_durability");
+                                        if (dur > 0){
+                                            nbtCompound.setInteger("custom_durability", dur - 1);
+                                            nbtCompound.setDouble("fake_durability", (int) itemStack.getType().getMaxDurability() * (double) (dur/max_dur));
+                                            nbtItem.setInteger("Damage", (int) (itemStack.getType().getMaxDurability() * (1 - (double) dur/max_dur)));
+                                        } else {
+                                            AdventureManager.playerSound(player, net.kyori.adventure.sound.Sound.Source.PLAYER, Key.key("minecraft:item.shield.break"));
+                                            itemStack.setAmount(itemStack.getAmount() - 1);
+                                        }
+                                    }
                                 }
                                 if (ConfigReader.Message.hasWaterInfo)
                                     AdventureManager.playerActionbar(player,

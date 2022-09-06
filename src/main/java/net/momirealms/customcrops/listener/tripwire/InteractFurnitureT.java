@@ -20,6 +20,8 @@ package net.momirealms.customcrops.listener.tripwire;
 import de.tr7zw.changeme.nbtapi.NBTCompound;
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import dev.lone.itemsadder.api.Events.FurnitureInteractEvent;
+import net.kyori.adventure.key.Key;
+import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.momirealms.customcrops.ConfigReader;
@@ -89,6 +91,18 @@ public class InteractFurnitureT implements Listener {
                             int water = nbtItem.getInteger("WaterAmount");
                             if (water > 0){
                                 nbtItem.setInteger("WaterAmount", --water);
+                                if (nbtCompound.hasKey("custom_durability")){
+                                    int dur = nbtCompound.getInteger("custom_durability");
+                                    int max_dur = nbtCompound.getInteger("max_custom_durability");
+                                    if (dur > 0){
+                                        nbtCompound.setInteger("custom_durability", dur - 1);
+                                        nbtCompound.setDouble("fake_durability", (int) itemStack.getType().getMaxDurability() * (double) (dur/max_dur));
+                                        nbtItem.setInteger("Damage", (int) (itemStack.getType().getMaxDurability() * (1 - (double) dur/max_dur)));
+                                    } else {
+                                        AdventureManager.playerSound(player, net.kyori.adventure.sound.Sound.Source.PLAYER, Key.key("minecraft:item.shield.break"));
+                                        itemStack.setAmount(itemStack.getAmount() - 1);
+                                    }
+                                }
                                 AdventureManager.playerSound(player, ConfigReader.Sounds.addWaterToSprinklerSource, ConfigReader.Sounds.addWaterToSprinklerKey);
                                 if (sprinkler != null){
                                     currentWater = sprinkler.getWater();

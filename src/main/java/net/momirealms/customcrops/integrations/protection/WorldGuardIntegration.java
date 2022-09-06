@@ -30,10 +30,11 @@ import com.sk89q.worldguard.protection.regions.RegionQuery;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-public class WorldGuard implements Integration {
+public class WorldGuardIntegration implements Integration {
 
     @Override
     public boolean canPlace(Location location, Player player) {
+        if (player.isOp()) return true;
         LocalPlayer localPlayer = WorldGuardPlugin.inst().wrapPlayer(player);
         World world = BukkitAdapter.adapt(location.getWorld());
         WorldGuardPlatform platform = com.sk89q.worldguard.WorldGuard.getInstance().getPlatform();
@@ -46,6 +47,7 @@ public class WorldGuard implements Integration {
 
     @Override
     public boolean canBreak(Location location, Player player) {
+        if (player.isOp()) return true;
         LocalPlayer localPlayer = WorldGuardPlugin.inst().wrapPlayer(player);
         World world = BukkitAdapter.adapt(location.getWorld());
         WorldGuardPlatform platform = com.sk89q.worldguard.WorldGuard.getInstance().getPlatform();

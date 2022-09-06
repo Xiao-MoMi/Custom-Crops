@@ -15,20 +15,16 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.momirealms.customcrops.integrations.protection;
+package net.momirealms.customcrops.integrations.skill;
 
-import org.bukkit.Location;
+import com.willfp.ecoskills.api.EcoSkillsAPI;
+import com.willfp.ecoskills.skills.Skills;
 import org.bukkit.entity.Player;
 
-public class GriefDefender implements Integration {
+public class EcoSkillsIntegration implements SkillXP{
 
     @Override
-    public boolean canBreak(Location location, Player player) {
-        return com.griefdefender.api.GriefDefender.getCore().getUser(player.getUniqueId()).canBreak(location);
-    }
-
-    @Override
-    public boolean canPlace(Location location, Player player) {
-        return com.griefdefender.api.GriefDefender.getCore().getUser(player.getUniqueId()).canPlace(player.getInventory().getItemInMainHand(), location);
+    public void addXp(Player player, double amount) {
+        EcoSkillsAPI.getInstance().giveSkillExperience(player, Skills.FARMING, amount);
     }
 }

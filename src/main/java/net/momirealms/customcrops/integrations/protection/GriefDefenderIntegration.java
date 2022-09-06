@@ -15,20 +15,20 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.momirealms.customcrops.integrations.skill;
+package net.momirealms.customcrops.integrations.protection;
 
-import com.archyx.aureliumskills.api.AureliumAPI;
-import com.archyx.aureliumskills.leveler.Leveler;
-import com.archyx.aureliumskills.skills.Skill;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-public class Aurelium implements SkillXP {
-
-    private static final Leveler leveler = AureliumAPI.getPlugin().getLeveler();
-    private static final Skill skill = AureliumAPI.getPlugin().getSkillRegistry().getSkill("farming");
+public class GriefDefenderIntegration implements Integration {
 
     @Override
-    public void addXp(Player player, double amount) {
-        leveler.addXp(player, skill, amount);
+    public boolean canBreak(Location location, Player player) {
+        return com.griefdefender.api.GriefDefender.getCore().getUser(player.getUniqueId()).canBreak(location);
+    }
+
+    @Override
+    public boolean canPlace(Location location, Player player) {
+        return com.griefdefender.api.GriefDefender.getCore().getUser(player.getUniqueId()).canPlace(player.getInventory().getItemInMainHand(), location);
     }
 }

@@ -11,6 +11,9 @@ basic:
   #土质探测器，用于查看使用的肥料种类和残余量
   soil-detector: customcrops:soil_detector
 
+#如果你想要水壶有自定义耐久度
+#请在ia里将它设置为耐久度的物品（例如木剑）
+#IA的自定义耐久度对本插件生效
 water-can:
   watering_can_1:
     item: customcrops:watering_can_1
@@ -19,6 +22,8 @@ water-can:
     #水壶工作的范围
     width: 1
     length: 1
+    #水壶的最大耐久度，不填写则无限耐久
+    durability: 100
   watering_can_2:
     item: customcrops:watering_can_2
     max: 4
@@ -40,12 +45,11 @@ lore:
   watering-can:
     enable: true
     #Lore样式
+    #可用变量 {water}当前水量 {max_water}最大蓄水量
     lore:
       - '<italic:false><white>{water_info}'
       - '<italic:false><gray>右键水方块为水壶加水'
-
     #水量 {water_info}
-    #可用变量 {water}当前水量 {max_water}最大蓄水量
     left: '<font:customcrops:default>뀂'
     full: '뀁뀃'
     empty: '뀁뀄'

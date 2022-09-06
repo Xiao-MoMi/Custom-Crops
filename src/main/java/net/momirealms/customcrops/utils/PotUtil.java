@@ -94,15 +94,20 @@ public class PotUtil {
     public static void addFertilizer(Fertilizer fertilizerConfig, Location location) {
         if (fertilizerConfig instanceof QualityCrop config){
             QualityCrop qualityCrop = new QualityCrop(config.getKey(), config.getTimes());
+            qualityCrop.setChance(config.getChance());
             PotManager.Cache.put(LocUtil.fromLocation(location), qualityCrop);
         }else if (fertilizerConfig instanceof SpeedGrow config){
             SpeedGrow speedGrow = new SpeedGrow(config.getKey(), config.getTimes());
+            speedGrow.setChance(config.getChance());
             PotManager.Cache.put(LocUtil.fromLocation(location), speedGrow);
         }else if (fertilizerConfig instanceof RetainingSoil config){
             RetainingSoil retainingSoil = new RetainingSoil(config.getKey(), config.getTimes());
+            retainingSoil.setChance(config.getChance());
             PotManager.Cache.put(LocUtil.fromLocation(location), retainingSoil);
         }else if (fertilizerConfig instanceof YieldIncreasing config){
             YieldIncreasing yieldIncreasing = new YieldIncreasing(config.getKey(), config.getTimes());
+            yieldIncreasing.setBonus(config.getBonus());
+            yieldIncreasing.setChance(config.getChance());
             PotManager.Cache.put(LocUtil.fromLocation(location), yieldIncreasing);
         }
         if (fertilizerConfig.getParticle() != null) location.getWorld().spawnParticle(fertilizerConfig.getParticle(), location.add(0.5,1.3,0.5), 5,0.2,0.2,0.2);

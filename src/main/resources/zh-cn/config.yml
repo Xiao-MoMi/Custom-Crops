@@ -1,5 +1,5 @@
 #请不要修改此值
-config-version: '5'
+config-version: '6'
 
 
 config:
@@ -54,6 +54,7 @@ config:
     Lands: false
     GriefPrevention: false
     CrashClaim: false
+    BentoBox: false
     #增加技能经验
     AureliumSkills: false
     mcMMO: false

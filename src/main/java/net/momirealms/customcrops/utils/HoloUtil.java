@@ -78,6 +78,7 @@ public class HoloUtil {
         packet2.getModifier().write(0,id);
         packet2.getWatchableCollectionModifier().write(0, wrappedDataWatcher.getWatchableObjects());
         cache.put(location, id);
+
         try {
             ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet1);
             ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet2);

@@ -17,22 +17,25 @@
 
 package net.momirealms.customcrops.integrations.protection;
 
-import net.crashcraft.crashclaim.api.CrashClaimAPI;
-import net.crashcraft.crashclaim.permissions.PermissionRoute;
-import org.bukkit.Location;
+import com.plotsquared.core.location.Location;
 import org.bukkit.entity.Player;
 
-public class CrashClaim implements Integration{
+public class PlotSquaredIntegration implements Integration {
 
     @Override
-    public boolean canBreak(Location location, Player player) {
-        CrashClaimAPI crashClaimAPI = net.crashcraft.crashclaim.CrashClaim.getPlugin().getApi();
-        return crashClaimAPI.getPermissionHelper().hasPermission(player.getUniqueId(), location, PermissionRoute.BUILD);
+    public boolean canBreak(org.bukkit.Location location, Player player) {
+        return isAllowed(location, player);
     }
 
     @Override
-    public boolean canPlace(Location location, Player player) {
-        CrashClaimAPI crashClaimAPI = net.crashcraft.crashclaim.CrashClaim.getPlugin().getApi();
-        return crashClaimAPI.getPermissionHelper().hasPermission(player.getUniqueId(), location, PermissionRoute.BUILD);
+    public boolean canPlace(org.bukkit.Location location, Player player) {
+        return isAllowed(location, player);
+    }
+
+    private boolean isAllowed(org.bukkit.Location location, Player player) {
+        Location plotLoc = Location.at(location.getWorld().getName(), location.getBlockX(), location.getBlockY(), location.getBlockZ());
+        if (plotLoc.isPlotRoad()) return false;
+        if (plotLoc.getPlotArea() != null) return plotLoc.getPlotArea().getPlot(plotLoc).isAdded(player.getUniqueId());
+        else return true;
     }
 }

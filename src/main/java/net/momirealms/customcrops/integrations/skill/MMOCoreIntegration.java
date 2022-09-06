@@ -17,13 +17,14 @@
 
 package net.momirealms.customcrops.integrations.skill;
 
-import com.gmail.nossr50.api.ExperienceAPI;
+import net.Indyuce.mmocore.experience.EXPSource;
+import net.Indyuce.mmocore.experience.Profession;
 import org.bukkit.entity.Player;
 
-public class mcMMO implements SkillXP {
-
+public class MMOCoreIntegration implements SkillXP{
     @Override
     public void addXp(Player player, double amount) {
-        ExperienceAPI.addRawXP(player, "Herbalism", (float) amount, "UNKNOWN");
+        Profession profession = net.Indyuce.mmocore.MMOCore.plugin.professionManager.get("farming");
+        profession.giveExperience(net.Indyuce.mmocore.MMOCore.plugin.dataProvider.getDataManager().get(player), amount, null ,EXPSource.OTHER);
     }
 }
