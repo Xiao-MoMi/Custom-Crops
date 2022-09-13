@@ -21,6 +21,7 @@ messages:
   force-grow: '<white>¡Forzó a los cultivos de {world} a empezar a crecer!'
   force-water: '<white>¡Forzó a los aspersores del {world} a empezar a crecer!'
   force-save: '<white>¡Guardado con éxito la caché en un archivo!'
+  force-all: '<white>Forced {world}''s crops to start growing and sprinklers to start working!'
   back-up: '<white>Backed up!'
   set-season: '<white>¡Cambió la estación de {world} a {season}!'
   before-plant: '<white>Este abono debe utilizarse antes de la siembra.'

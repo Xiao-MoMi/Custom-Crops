@@ -59,6 +59,7 @@ public class RightClickI implements Listener {
 
     @EventHandler
     public void onInteract(PlayerInteractEvent event){
+        if (event.isCancelled()) return;
         long time = System.currentTimeMillis();
         Player player = event.getPlayer();
         if (time - (JoinAndQuit.coolDown.getOrDefault(player, time - 200)) < 200) return;

@@ -58,6 +58,7 @@ public class InteractFurnitureI implements Listener {
 
     @EventHandler
     public void onEntityInteract(FurnitureInteractEvent event){
+        if (event.isCancelled()) return;
         long time = System.currentTimeMillis();
         Player player = event.getPlayer();
         if (time - (JoinAndQuit.coolDown.getOrDefault(player, time - 200)) < 200) return;

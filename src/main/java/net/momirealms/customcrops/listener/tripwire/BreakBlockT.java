@@ -45,17 +45,21 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class BreakBlockT implements Listener {
 
+    private HashMap<Player, Long> coolDown = new HashMap<>();
+
     @EventHandler
     public void onBreak(CustomBlockBreakEvent event){
+        if (event.isCancelled()) return;
         long time = System.currentTimeMillis();
         Player player = event.getPlayer();
-        if (time - (JoinAndQuit.coolDown.getOrDefault(player, time - 150)) < 150) return;
-        JoinAndQuit.coolDown.put(player, time);
+        if (time - (coolDown.getOrDefault(player, time - 100)) < 80) return;
+        coolDown.put(player, time);
         String namespacedId = event.getNamespacedID();
         if(namespacedId.contains("_stage_")){
             Location location = event.getBlock().getLocation();

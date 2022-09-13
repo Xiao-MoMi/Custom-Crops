@@ -48,6 +48,7 @@ public class BreakFurnitureI implements Listener {
 
     @EventHandler
     public void onBreakFurniture(FurnitureBreakEvent event){
+        if (event.isCancelled()) return;
         String namespacedID = event.getNamespacedID();
         Sprinkler config = ConfigReader.SPRINKLERS.get(namespacedID);
         if (config != null){

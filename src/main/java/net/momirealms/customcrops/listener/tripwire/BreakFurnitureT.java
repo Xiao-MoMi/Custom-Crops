@@ -30,6 +30,7 @@ public class BreakFurnitureT implements Listener {
 
     @EventHandler
     public void onBreakFurniture(FurnitureBreakEvent event){
+        if (event.isCancelled()) return;
         Sprinkler config = ConfigReader.SPRINKLERS.get(event.getNamespacedID());
         if (config != null){
             SimpleLocation simpleLocation = LocUtil.fromLocation(event.getBukkitEntity().getLocation());

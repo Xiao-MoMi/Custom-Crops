@@ -100,6 +100,34 @@ public class Executor implements CommandExecutor {
                 }
                 return true;
             }
+            case "forceall" -> {
+                if (args.length < 2) {
+                    lackArgs(sender);
+                    return true;
+                }
+                Bukkit.getScheduler().runTaskAsynchronously(CustomCrops.plugin, ()-> {
+                    switch (ConfigReader.Config.growMode){
+                        case 1 -> plugin.getCropManager().growModeOne(args[1]);
+                        case 2 -> plugin.getCropManager().growModeTwo(args[1]);
+                        case 3 -> plugin.getCropManager().growModeThree(args[1]);
+                        case 4 -> plugin.getCropManager().growModeFour(args[1]);
+                    }
+                });
+                Bukkit.getScheduler().runTaskLaterAsynchronously(CustomCrops.plugin, ()-> {
+                    switch (ConfigReader.Config.growMode){
+                        case 1 -> plugin.getSprinklerManager().workModeOne(args[1]);
+                        case 2 -> plugin.getSprinklerManager().workModeTwo(args[1]);
+                        case 3 -> plugin.getSprinklerManager().workModeThree(args[1]);
+                        case 4 -> plugin.getSprinklerManager().workModeFour(args[1]);
+                    }
+                }, ConfigReader.Config.timeToGrow);
+                if (sender instanceof Player player){
+                    AdventureManager.playerMessage(player,ConfigReader.Message.prefix + ConfigReader.Message.forceAll.replace("{world}",args[1]));
+                }else {
+                    AdventureManager.consoleMessage(ConfigReader.Message.prefix + ConfigReader.Message.forceAll.replace("{world}",args[1]));
+                }
+                return true;
+            }
             case "forcesave" -> {
                 if (args.length < 2) {
                     lackArgs(sender);

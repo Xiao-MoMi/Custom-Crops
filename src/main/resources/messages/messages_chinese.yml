@@ -21,6 +21,7 @@ messages:
   force-grow: '<white>成功强制 {world} 的农作物生长!'
   force-water: '<white>成功强制 {world} 的洒水器洒水!'
   force-save: '<white>成功强制保存缓存信息!'
+  force-all: '<white>成功强制 {world} 的农作物生长和洒水器工作!'
   back-up: '<white>已完成数据备份!'
   set-season: '<white>成功切换世界 {world} 的季节为 {season}!'
   before-plant: '<white>这种肥料必须在种植前使用!'

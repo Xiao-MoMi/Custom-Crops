@@ -37,7 +37,7 @@ public class Completer implements TabCompleter {
         }
         if (args.length == 1) {
             List<String> arrayList = new ArrayList<>();
-            for (String cmd : Arrays.asList("backup", "forcegrow", "forcesave", "forcewater", "reload", "setseason")) {
+            for (String cmd : Arrays.asList("backup", "forcegrow", "forcesave", "forceall","forcewater", "reload", "setseason")) {
                 if (cmd.startsWith(args[0]))
                     arrayList.add(cmd);
             }
@@ -81,7 +81,7 @@ public class Completer implements TabCompleter {
             }
             return arrayList;
         }
-        if(args[0].equalsIgnoreCase("forcegrow") || args[0].equalsIgnoreCase("forcewater")){
+        if(args[0].equalsIgnoreCase("forcegrow") || args[0].equalsIgnoreCase("forcewater") || args[0].equalsIgnoreCase("forceall")){
             List<String> arrayList = new ArrayList<>();
             for (String cmd : ConfigReader.Config.worldNames) {
                 if (cmd.startsWith(args[1]))

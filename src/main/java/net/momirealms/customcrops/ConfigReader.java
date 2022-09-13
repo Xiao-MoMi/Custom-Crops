@@ -47,6 +47,7 @@ public class ConfigReader {
     public static HashMap<String, Fertilizer> FERTILIZERS = new HashMap<>();
     public static HashMap<String, WateringCan> CANS = new HashMap<>();
     public static HashMap<String, Sprinkler> SPRINKLERS = new HashMap<>();
+    public static HashSet<String> REALTIME = new HashSet<>();
     public static boolean useRedis;
 
     public static YamlConfiguration getConfig(String configName) {
@@ -128,6 +129,11 @@ public class ConfigReader {
             rotation = config.getBoolean("config.rotation.enable", false);
             oneTry = config.getBoolean("config.gigantic-only-one-try", false);
             variant4 = config.getInt("config.rotation.variant", 4) == 4;
+            if (config.contains("config.real-time")){
+
+                REALTIME.clear();
+                REALTIME.addAll(config.getStringList("config.real-time"));
+            }
 
             boneMeal = config.getBoolean("config.bone-meal.enable", true);
             if (boneMeal){
@@ -359,6 +365,7 @@ public class ConfigReader {
         public static String badSeason;
         public static String forceGrow;
         public static String forceWater;
+        public static String forceAll;
         public static String backUp;
         public static String setSeason;
         public static String wrongArgs;
@@ -403,6 +410,7 @@ public class ConfigReader {
             badSeason = config.getString("messages.bad-season");
             forceGrow = config.getString("messages.force-grow");
             forceWater = config.getString("messages.force-water");
+            forceAll = config.getString("messages.force-all","messages.force-all is missing");
             backUp = config.getString("messages.back-up");
             setSeason = config.getString("messages.set-season");
             wrongArgs = config.getString("messages.wrong-args");

@@ -47,6 +47,7 @@ public class InteractFurnitureT implements Listener {
 
     @EventHandler
     public void onEntityInteract(FurnitureInteractEvent event){
+        if (event.isCancelled()) return;
         Sprinkler config = ConfigReader.SPRINKLERS.get(event.getNamespacedID());
         if(config != null){
             long time = System.currentTimeMillis();

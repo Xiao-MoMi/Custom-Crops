@@ -1,5 +1,5 @@
 #Don't change
-config-version: '6'
+config-version: '7'
 
 #Want to sell the crops?
 #Try this plugin: https://www.spigotmc.org/resources/shipping-bin.104591/
@@ -91,6 +91,11 @@ config:
   # Sprinklers will work after all crops finish growing
   grow-time:
     - 1000
+
+  # Time in real life
+  #real-time:
+  #  - 06:30
+
   # Time in random a single crop need to grow（seconds）
   # This prevents a large amount of crops grow at the same time
   # Large amount of block replacement would cause lag.

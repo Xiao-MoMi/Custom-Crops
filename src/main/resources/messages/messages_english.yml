@@ -21,6 +21,7 @@ messages:
   force-grow: '<white>Forced {world}''s crops to start growing!'
   force-water: '<white>Forced {world}''s sprinklers to start working!'
   force-save: '<white>Successfully saved cache to file!'
+  force-all: '<white>Forced {world}''s crops to start growing and sprinklers to start working!'
   back-up: '<white>Backed up!'
   set-season: '<white>Changed {world}''s season to {season}!'
   before-plant: '<white>This fertilizer must be used befored planting!'

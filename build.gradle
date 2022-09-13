@@ -3,9 +3,8 @@ plugins {
     id 'com.github.johnrengelman.shadow' version '7.1.2'
 }
 
-
 group = 'net.momirealms'
-version = '1.6.3.2'
+version = '1.6.3.4'
 
 repositories {
     mavenCentral()

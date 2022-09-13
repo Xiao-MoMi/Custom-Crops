@@ -43,6 +43,7 @@ public class BreakBlockI implements Listener {
 
     @EventHandler
     public void onBreak(CustomBlockBreakEvent event){
+        if (event.isCancelled()) return;
         String namespacedId = event.getNamespacedID();
         if(namespacedId.equalsIgnoreCase(ConfigReader.Basic.watered_pot) || namespacedId.equalsIgnoreCase(ConfigReader.Basic.pot)){
             Location location = event.getBlock().getLocation();
