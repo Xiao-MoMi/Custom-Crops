@@ -1,12 +1,13 @@
 name: CustomCrops
 version: '${version}'
 main: net.momirealms.customcrops.CustomCrops
-api-version: 1.16
+api-version: 1.17
 authors: [ XiaoMoMi ]
 depend:
-  - ItemsAdder
   - ProtocolLib
 softdepend:
+  - ItemsAdder
+  - Oraxen
   - PlaceholderAPI
   - Residence
   - Kingdoms

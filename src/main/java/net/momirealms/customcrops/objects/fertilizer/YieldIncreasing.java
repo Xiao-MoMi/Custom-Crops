@@ -19,26 +19,19 @@ package net.momirealms.customcrops.objects.fertilizer;
 
 public class YieldIncreasing extends Fertilizer {
 
-    private int bonus;
-    private double chance;
+    private final int bonus;
 
-    public YieldIncreasing(String key, int times) {
-        super(key, times);
-    }
-
-    public double getChance() {
-        return chance;
-    }
-
-    public void setChance(double chance) {
-        this.chance = chance;
+    public YieldIncreasing(String key, int times, double chance ,int bonus, boolean before, String name) {
+        super(key, times, chance, before, name);
+        this.bonus = bonus;
     }
 
     public int getBonus() {
         return bonus;
     }
 
-    public void setBonus(int bonus) {
-        this.bonus = bonus;
+    @Override
+    public Fertilizer getWithTimes(int times) {
+        return new YieldIncreasing(this.key, times, this.chance, this.bonus, this.before, this.name);
     }
 }

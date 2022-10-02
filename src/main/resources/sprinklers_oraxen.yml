@@ -1,0 +1,10 @@
+sprinkler_1:
+  range: 1
+  max-water-storage: 5
+  3Ditem: sprinkler_1
+  2Ditem: sprinkler_1_item
+sprinkler_2:
+  range: 2
+  max-water-storage: 7
+  3Ditem: sprinkler_2
+  2Ditem: sprinkler_2_item

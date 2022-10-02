@@ -18,19 +18,23 @@
 package net.momirealms.customcrops.objects.fertilizer;
 
 
+import net.momirealms.customcrops.objects.QualityRatio;
+
 public class QualityCrop extends Fertilizer {
 
-    private int[] chance;
+    private final QualityRatio qualityRatio;
 
-    public QualityCrop(String key, int times) {
-        super(key, times);
+    public QualityCrop(String key, int times, double chance, QualityRatio qualityRatio, boolean before, String name) {
+        super(key, times, chance, before, name);
+        this.qualityRatio = qualityRatio;
     }
 
-    public int[] getChance() {
-        return chance;
+    public QualityRatio getQualityRatio() {
+        return qualityRatio;
     }
 
-    public void setChance(int[] chance) {
-        this.chance = chance;
+    @Override
+    public Fertilizer getWithTimes(int times) {
+        return new QualityCrop(this.key, times, this.chance, this.qualityRatio, this.before, this.name);
     }
 }

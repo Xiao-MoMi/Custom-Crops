@@ -19,18 +19,12 @@ package net.momirealms.customcrops.objects.fertilizer;
 
 public class RetainingSoil extends Fertilizer {
 
-    double chance;
-
-    public double getChance() {
-        return chance;
+    public RetainingSoil(String key, int times, double chance, boolean before, String name){
+        super(key, times, chance, before, name);
     }
 
-    public void setChance(double chance) {
-        this.chance = chance;
+    @Override
+    public Fertilizer getWithTimes(int times) {
+        return new RetainingSoil(this.key, times, this.chance, this.before, this.name);
     }
-
-    public RetainingSoil(String key, int times){
-        super(key, times);
-    }
-
 }

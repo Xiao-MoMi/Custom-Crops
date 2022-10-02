@@ -1,0 +1,21 @@
+watering_can_1:
+  item: watering_can_1
+  max-water-storage: 3
+  #Effective Range
+  width: 1
+  length: 1
+watering_can_2:
+  item: watering_can_2
+  max-water-storage: 4
+  width: 1
+  length: 3
+watering_can_3:
+  item: watering_can_3
+  max-water-storage: 5
+  width: 3
+  length: 3
+watering_can_4:
+  item: watering_can_4
+  max-water-storage: 6
+  width: 3
+  length: 5

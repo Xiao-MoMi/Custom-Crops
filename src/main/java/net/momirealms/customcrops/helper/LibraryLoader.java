@@ -27,7 +27,6 @@ package net.momirealms.customcrops.helper;
 
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
-
 import net.momirealms.customcrops.CustomCrops;
 import org.apache.commons.lang.StringUtils;
 

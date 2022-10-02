@@ -19,17 +19,12 @@ package net.momirealms.customcrops.objects.fertilizer;
 
 public class SpeedGrow extends Fertilizer {
 
-    private double chance;
-
-    public SpeedGrow(String key, int times){
-        super(key, times);
+    public SpeedGrow(String key, int times, double chance, boolean before, String name){
+        super(key, times, chance, before, name);
     }
 
-    public double getChance() {
-        return chance;
-    }
-
-    public void setChance(double chance) {
-        this.chance = chance;
+    @Override
+    public Fertilizer getWithTimes(int times) {
+        return new SpeedGrow(this.key, times, this.chance, this.before, this.name);
     }
 }

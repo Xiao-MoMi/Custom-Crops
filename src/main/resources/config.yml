@@ -1,172 +1,168 @@
 #Don't change
-config-version: '7'
-
-#Want to sell the crops?
-#Try this plugin: https://www.spigotmc.org/resources/shipping-bin.104591/
-#You can use it with a command binding to an ItemsAdder furniture
-#Shipping Bin is similar to the way how players sell items in Stardrew Valley
-
-config:
-  # lang: english / spanish / chinese
-  lang: english
-
-
-  # mode: tripwire / item_frame
-  # This option requires a server restart
-  # ------------ tripwire ------------
-  # Advantage:
-  #      ● async check, less lag
-  #      ● Real block hitbox like vanilla
-  #
-  # Disadvantage:
-  #      ● limited amount(127) /iainfo to see how many slots available
-  #      ● visual problem when breaking crops
-  #      ● Can't remove tripwire break sound
-  #
-  # ------------ item_frame ------------
-  # Advantage:
-  #      ● unlimited amount, create as many as crop types as you want
-  #      ● No tripwire break sound
-  #      ● Rotation
-  #
-  # Disadvantage:
-  #      ● entities are very laggy(loading every 5~8 item frames need 0.01 mspt)
-  #      ● spigot optimized the view distance of entities
-  #      ● crops would go missing if there's a large amount of furniture replacing in the same tick(128 crops/tick)
-  #      ● And I can't fix this in my plugin because furniture replacing is handled by ItemsAdder.
-  #      ● No real block hitbox
-  #      ● ItemsAdder furniture breaking sound
-  #      ● itemsAdder loot system doesn't apply to furnitures.
-  #
-  crop-mode: tripwire
+config-version: '9'
 
 
 
-  # Should crops be planted in random rotation?
-  # only works in item_frame mode
-  rotation:
-    enable: false
-    # 4 / 8
-    variant: 4
+# lang: english / spanish / chinese
+lang: chinese
 
 
 
-  integration:
-    #integration to prevent other players' grief
-    Residence: false
-    WorldGuard: false
-    Kingdoms: false
-    GriefDefender: false
-    PlotSquared: false
-    Towny: false
-    Lands: false
-    GriefPrevention: false
-    CrashClaim: false
-    BentoBox: false
-    #integration to add players' farming skill xp
-    AureliumSkills: false
-    mcMMO: false
-    MMOCore: false
-    EcoSkills: false
-    JobsReborn: false
-    #integration to sync seasons
-    RealisticSeasons: false
+integration:
+  # AntiGrief
+  Residence: false
+  WorldGuard: false
+  Kingdoms: false
+  GriefDefender: false
+  PlotSquared: false
+  Towny: false
+  Lands: false
+  GriefPrevention: false
+  CrashClaim: false
+  BentoBox: false
+  # Skill Xp
+  AureliumSkills: false
+  mcMMO: false
+  MMOCore: false
+  EcoSkills: false
+  JobsReborn: false
+  # Season
+  RealisticSeasons: false
 
 
 
-  # Mode 1:
-  #      ● Crops in loaded chunks will grow
-  # Mode 2:
-  #      ● Online players' crops will grow
-  # Mode 3:
-  #      ● If you enable season, mode 3 is recommended (Mode 1 + Mode 2)
-  # Mode 4:
-  #      ● If you disable season, mode 4 is recommended
-  #      ● All the crops will grow, this is good for offline crops
-  #      ● If season not disabled, your server would be lagging when there's a lot of data
-  #      ● Crop data would be removed as soon as they are ripe when season disabled, so it would not cause lag!
-  grow-mode: 3
-  # The time to start growing(ticks)
-  # 1000ticks is 7am in game. (0-23999)
-  # Sprinklers will work after all crops finish growing
-  grow-time:
-    - 1000
-
-  # Time in real life
-  #real-time:
-  #  - 06:30
-
-  # Time in random a single crop need to grow（seconds）
-  # This prevents a large amount of crops grow at the same time
-  # Large amount of block replacement would cause lag.
-  time-to-grow: 60
-  # Similar to "time-to-grow", this prevent all sprinklers work at the same time
-  time-to-work: 30
-  # Async Time Check (requires restart)
-  # Crops might not grow when using async.
-  # It is not really necessary to be Async
-  async-time-check: false
-  # Worlds where crops would grow
-  whitelist-worlds:
+worlds:
+  # Mode: whitelist/blacklist
+  mode: whitelist
+  list:
     - world
-  # Should all the worlds' crops grow?
-  # This is useful for per player per world server.
-  # In this mode, whitelist world can only have one for time & season judgment.
-  all-world-grow: false
-  # How does gigantic work?
-  # In stardrew valley, crops will still absorb water every day after it is ripe to be gigantic
-  # But you can give it only one chance to be gigantic(This is also good for performance)
-  gigantic-only-one-try: false
 
 
-  quality:
-    # If disabled, you need to configurate the loots in ItemsAdder config
+
+crops:
+  # Mode: tripwire/item_frame
+  mode: tripwire
+
+
+
+optimization:
+  # Recommend enabling this to prevent large quantities of crops/itemframes lagging the server
+  limitation:
     enable: true
-    # Default ratio
-    default-ratio: 17/2/1
+    tripwire-amount: 64
+    itemframe-amount: 64
+
+  # Async time check
+  async-time-check: false
 
 
 
-  # Water Amount to refill when using water bucket
-  sprinkler-refill: 2
-  # Water Amount to refill with a single click to water block
-  water-can-refill: 1
-  # Can watering-can add water to sprinklers?
-  water-can-add-water-to-sprinkler: true
-  # Should particles be displayed when using watering can?
-  water-particles: true
-
-
-  # Should the pot be dry even there's no crop on it
-  # This would cost addition performance
-  pot-dry-always-dry: false
-
+mechanics:
+  # Can player harvest crops with right click?
+  # if set "false" crops can't be harvested repeatedly
+  right-click-harvest:
+    enable: true
+    require-empty-hand: true
+  # Should player be prevented from planting if wrong season
+  prevent-plant-if-wrong-season: true
+  # Should player be notified of the wrong season?
+  should-notify-if-wrong-season: true
+  #
+  fill:
+    watering-can-to-sprinkler: 1
+    water-bucket-to-sprinkler: 3
+    waterblock-to-watering-can: 1
 
   # Will bone meal accelerate the growth of crop
   bone-meal:
     enable: true
     chance: 0.5
     success-particle: VILLAGER_HAPPY
-
-
-
-  # Should we limit the max amount of crops and sprinkler in one chunk
-  # Recommended to enable because ItemsAdder might throw StackOverFlow
-  # when there are too many custom blocks in one chunk
-  limit:
+  # Season mechanic
+  # Crops would go to death stage if growing in wrong seasons
+  # Season would not affect ripe crops(for better performance and friendly player's experience)
+  season:
     enable: true
-    crop: 64
-    sprinkler: 8
+    auto-season-change:
+      enable: true
+      #duration of each season
+      duration: 28
+    greenhouse:
+      enable: true
+      #effective range
+      range: 5
+  crow:
+    enable: true
+    chance: 0.001
+  default-quality-ratio: 17/2/1
 
 
 
-  # can player harvest crops with right click?
-  # if set "false" crops can't be harvested repeatedly
-  right-click-harvest: true
-  # If "right-click-harvest" is true
-  # Should player must harvest with empty hands?
-  harvest-with-empty-hand: true
-  # Should player be prevented from planting if wrong season
-  prevent-plant-if-wrong-season: true
-  # Should player be notified of the wrong season?
-  should-notify-if-wrong-season: true
+sounds:
+  water-pot:
+    enable: true
+    sound: minecraft:block.water.ambient
+    type: player
+  add-water-to-can:
+    enable: true
+    sound: minecraft:item.bucket.fill
+    type: player
+  add-water-to-sprinkler:
+    enable: true
+    sound: minecraft:item.bucket.fill
+    type: player
+  place-sprinkler:
+    enable: true
+    sound: minecraft:block.bone_block.place
+    type: player
+  plant-seed:
+    enable: true
+    sound: minecraft:item.hoe.till
+    type: player
+  use-fertilizer:
+    enable: true
+    sound: minecraft:item.hoe.till
+    type: player
+  harvest-crops:
+    enable: true
+    sound: minecraft:block.crop.break
+    type: player
+  bonemeal:
+    enable: true
+    sound: minecraft:item.hoe.till
+    type: player
+  surveyor:
+    enable: true
+    sound: minecraft:block.note_block.pling
+    type: player
+
+
+#Hologram information
+hologram:
+  #Pot infomation
+  fertilizer-info:
+    enable: true
+    y-offset: 0.8
+    duration: 1
+    text: '<font:customcrops:default>{fertilizer} </font><white>{times}<gray>/<white>{max_times}'
+  #Sprinkler infomation
+  sprinkler-info:
+    enable: true
+    y-offset: 0.8
+    duration: 1
+    #available variables {water} {max_water}
+    left: '<font:customcrops:default>뀂'
+    full: '뀁뀃'
+    empty: '뀁뀄'
+    right: '뀁뀅</font>'
+
+
+
+actionbar:
+  #Should actionbar be sent when using watering-can
+  enable: true
+  #available variables  {water} {max_water}
+  left: '<font:customcrops:default>뀂'
+  full: '뀁뀃'
+  empty: '뀁뀄'
+  right: '뀁뀅</font>'

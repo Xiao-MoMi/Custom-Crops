@@ -1,0 +1,52 @@
+tomato:
+  # If you don't need quality-loots just delete them
+  quality-loots:
+    amount: 1~4
+    quality:
+      1: customcrops:tomato
+      2: customcrops:tomato_silver_star
+      3: customcrops:tomato_golden_star
+
+  other-loots:
+    loot_1:
+      item: customcrops:tomato_seeds
+      min_amount: 1
+      max_amount: 2
+      chance: 0.8
+    loot_2:
+      item: customcrops:tomato
+      min_amount: 1
+      max_amount: 2
+      chance: 0.8
+
+  gigantic-crop:
+    block: customcrops:gigantic_tomato
+    #furniture: customcrops:gigantic_tomato(If you want gigantic crop to be a furniture)
+    chance: 0.01
+
+  harvest-actions:
+    messages:
+      - 'Test Message'
+    commands:
+      - 'say {player} harvested a tomato! lol'
+    xp: 10
+    #skill-xp: 100
+
+  return: customcrops:tomato_stage_1
+
+  #optional
+  season:
+    - summer
+    - autumn
+
+  requirements:
+    condition_1:
+      # available types:
+      # permission/biome/time/weather/world/yPos
+      type: permission
+      # Mode: && / ||
+      mode: '&&'
+      value:
+        - crops.plant.tomato
+      # The message to be shown when player doesn't fit the requirement
+      message: 'You don''t have permission to plant this seed!'

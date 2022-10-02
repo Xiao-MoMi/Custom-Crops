@@ -19,25 +19,25 @@ package net.momirealms.customcrops.objects.fertilizer;
 
 import org.bukkit.Particle;
 
-public class Fertilizer {
+public abstract class Fertilizer {
 
     String key;
     int times;
     boolean before;
     String name;
     Particle particle;
+    double chance;
 
-    protected Fertilizer(String key, int times) {
+    protected Fertilizer(String key, int times, double chance, boolean before, String name) {
         this.key = key;
         this.times = times;
+        this.chance = chance;
+        this.before = before;
+        this.name = name;
     }
 
     public String getKey() {
         return key;
-    }
-
-    public void setKey(String key) {
-        this.key = key;
     }
 
     public int getTimes() {
@@ -52,16 +52,8 @@ public class Fertilizer {
         return before;
     }
 
-    public void setBefore(boolean before) {
-        this.before = before;
-    }
-
     public String getName() {
         return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public Particle getParticle() {
@@ -70,5 +62,13 @@ public class Fertilizer {
 
     public void setParticle(Particle particle) {
         this.particle = particle;
+    }
+
+    public Fertilizer getWithTimes(int times) {
+        return null;
+    }
+
+    public double getChance() {
+        return chance;
     }
 }

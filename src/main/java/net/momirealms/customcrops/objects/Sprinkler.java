@@ -17,28 +17,65 @@
 
 package net.momirealms.customcrops.objects;
 
+import org.jetbrains.annotations.Nullable;
+
 public class Sprinkler {
 
-    private int water;
     private int range;
-    private String player;
-    private String namespacedID_1;
-    private String namespacedID_2;
+    private int water;
+    private final String key;
+    private String twoD;
+    private String threeD;
 
-    public Sprinkler(int range, int water){
+    public Sprinkler(String key, int range, int water) {
+        this.range = range;
         this.water = water;
+        this.key = key;
+    }
+
+    public int getRange() {
+        return range;
+    }
+
+    public void setRange(int range) {
         this.range = range;
     }
 
-    public int getWater() {return water;}
-    public String getNamespacedID_1() {return namespacedID_1;}
-    public String getNamespacedID_2() {return namespacedID_2;}
-    public int getRange() {return range;}
-    public String getPlayer() {return player;}
+    public int getWater() {
+        return water;
+    }
 
-    public void setRange(int range) {this.range = range;}
-    public void setNamespacedID_2(String namespacedID_2) {this.namespacedID_2 = namespacedID_2;}
-    public void setNamespacedID_1(String namespacedID_1) {this.namespacedID_1 = namespacedID_1;}
-    public void setWater(int water) {this.water = water;}
-    public void setPlayer(String player) {this.player = player;}
+    public void setWater(int water) {
+        this.water = water;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    /**
+     * Only needed in config
+     * @return twoD
+     */
+    @Nullable
+    public String getTwoD() {
+        return twoD;
+    }
+
+    public void setTwoD(String twoD) {
+        this.twoD = twoD;
+    }
+
+    /**
+     * Only needed in config
+     * @return threeD
+     */
+    @Nullable
+    public String getThreeD() {
+        return threeD;
+    }
+
+    public void setThreeD(String threeD) {
+        this.threeD = threeD;
+    }
 }

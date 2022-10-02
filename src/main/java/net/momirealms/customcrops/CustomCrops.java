@@ -18,30 +18,16 @@
 package net.momirealms.customcrops;
 
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
-import net.momirealms.customcrops.commands.Executor;
-import net.momirealms.customcrops.commands.Completer;
-import net.momirealms.customcrops.datamanager.*;
-import net.momirealms.customcrops.datamanager.CropManager;
-import net.momirealms.customcrops.datamanager.SprinklerManager;
+import net.momirealms.customcrops.commands.PluginCommand;
+import net.momirealms.customcrops.config.ConfigUtil;
+import net.momirealms.customcrops.config.MainConfig;
 import net.momirealms.customcrops.helper.LibraryLoader;
-import net.momirealms.customcrops.integrations.Placeholders;
-import net.momirealms.customcrops.listener.*;
-import net.momirealms.customcrops.listener.itemframe.BreakBlockI;
-import net.momirealms.customcrops.listener.itemframe.BreakFurnitureI;
-import net.momirealms.customcrops.listener.itemframe.InteractFurnitureI;
-import net.momirealms.customcrops.listener.itemframe.RightClickI;
-import net.momirealms.customcrops.listener.tripwire.BreakBlockT;
-import net.momirealms.customcrops.listener.tripwire.BreakFurnitureT;
-import net.momirealms.customcrops.listener.tripwire.InteractFurnitureT;
-import net.momirealms.customcrops.listener.tripwire.RightClickT;
-import net.momirealms.customcrops.timer.CropTimer;
-import net.momirealms.customcrops.utils.*;
+import net.momirealms.customcrops.integrations.papi.PlaceholderManager;
+import net.momirealms.customcrops.managers.CropManager;
+import net.momirealms.customcrops.utils.AdventureUtil;
 import org.bukkit.Bukkit;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.Objects;
 
 public final class CustomCrops extends JavaPlugin {
@@ -49,132 +35,76 @@ public final class CustomCrops extends JavaPlugin {
     public static BukkitAudiences adventure;
     public static CustomCrops plugin;
 
-    private CropTimer cropTimer;
+    private PlaceholderManager placeholderManager;
     private CropManager cropManager;
-    private SprinklerManager sprinklerManager;
-    private SeasonManager seasonManager;
-    private PotManager potManager;
-    public static Placeholders placeholders;
-
-    public CropManager getCropManager() { return this.cropManager; }
-    public SprinklerManager getSprinklerManager() { return sprinklerManager; }
-    public SeasonManager getSeasonManager() { return seasonManager; }
-    public PotManager getPotManager() { return potManager; }
+    private PluginCommand pluginCommand;
 
     @Override
     public void onLoad(){
         plugin = this;
-        LibraryLoader.load("redis.clients","jedis","4.2.3","https://repo.maven.apache.org/maven2/");
-        LibraryLoader.load("org.apache.commons","commons-pool2","2.11.1","https://repo.maven.apache.org/maven2/");
         LibraryLoader.load("dev.dejvokep","boosted-yaml","1.3","https://repo.maven.apache.org/maven2/");
+        LibraryLoader.load("commons-io","commons-io","2.11.0","https://repo.maven.apache.org/maven2/");
     }
 
     @Override
     public void onEnable() {
 
         adventure = BukkitAudiences.create(plugin);
-        AdventureManager.consoleMessage("[CustomCrops] Running on <white>" + Bukkit.getVersion());
+        AdventureUtil.consoleMessage("[CustomCrops] Running on <white>" + Bukkit.getVersion());
 
-        ConfigReader.reloadConfig();
-        if (!Objects.equals(ConfigReader.Config.version, "6")){
-            ConfigUtil.update();
+        if (Bukkit.getPluginManager().getPlugin("ItemsAdder") != null) {
+            MainConfig.customPlugin = "itemsadder";
+            MainConfig.OraxenHook = false;
+            AdventureUtil.consoleMessage("[CustomCrops] Custom Item Plugin Platform: <#BA55D3><u>ItemsAdder");
         }
-        if(Bukkit.getPluginManager().getPlugin("PlaceHolderAPI") != null){
-            placeholders = new Placeholders();
-            placeholders.register();
-            Bukkit.getPluginManager().registerEvents(new PapiReload(), this);
+        else if (Bukkit.getPluginManager().getPlugin("Oraxen") != null) {
+            MainConfig.customPlugin = "oraxen";
+            MainConfig.OraxenHook = true;
+            AdventureUtil.consoleMessage("[CustomCrops] Custom Item Plugin Platform: <#6495ED><u>Oraxen");
+        }
+        else {
+            AdventureUtil.consoleMessage("<red>[CustomCrops] You need either ItemsAdder or Oraxen as CustomCrops' dependency");
+            Bukkit.getPluginManager().disablePlugin(CustomCrops.plugin);
+            return;
         }
 
-        Objects.requireNonNull(Bukkit.getPluginCommand("customcrops")).setExecutor(new Executor(this));
-        Objects.requireNonNull(Bukkit.getPluginCommand("customcrops")).setTabCompleter(new Completer());
+        ConfigUtil.reloadConfigs();
 
-        Bukkit.getPluginManager().registerEvents(new ItemSpawn(), this);
-        Bukkit.getPluginManager().registerEvents(new JoinAndQuit(), this);
+        this.pluginCommand = new PluginCommand();
+        Objects.requireNonNull(Bukkit.getPluginCommand("customcrops")).setExecutor(pluginCommand);
+        Objects.requireNonNull(Bukkit.getPluginCommand("customcrops")).setTabCompleter(pluginCommand);
 
-        ConfigReader.tryEnableJedis();
+        this.cropManager = new CropManager();
 
-        if (ConfigReader.Season.enable){
-            this.seasonManager = new SeasonManager();
-            this.seasonManager.loadData();
+        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+            this.placeholderManager = new PlaceholderManager();
         }
-        this.sprinklerManager = new SprinklerManager();
-        this.sprinklerManager.loadData();
-        this.potManager = new PotManager();
-        this.potManager.loadData();
-        this.cropTimer = new CropTimer();
-        if (ConfigReader.Config.cropMode.equalsIgnoreCase("item_frame")){
-            this.cropManager = new CropManager(true);
-            AdventureManager.consoleMessage("[CustomCrops] Crop Mode: <color:#F5DEB3>ItemFrame");
-            Bukkit.getPluginManager().registerEvents(new RightClickI(), this);
-            Bukkit.getPluginManager().registerEvents(new BreakBlockI(), this);
-            Bukkit.getPluginManager().registerEvents(new BreakFurnitureI(), this);
-            Bukkit.getPluginManager().registerEvents(new InteractFurnitureI(), this);
-        }else{
-            this.cropManager = new CropManager(false);
-            AdventureManager.consoleMessage("[CustomCrops] Crop Mode: <color:#F5DEB3>TripWire");
-            Bukkit.getPluginManager().registerEvents(new RightClickT(), this);
-            Bukkit.getPluginManager().registerEvents(new BreakBlockT(), this);
-            Bukkit.getPluginManager().registerEvents(new BreakFurnitureT(), this);
-            Bukkit.getPluginManager().registerEvents(new InteractFurnitureT(), this);
-            checkIAConfig();
-        }
-        this.cropManager.loadData();
-        AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><color:#F5DEB3>Plugin Enabled!");
+
+        AdventureUtil.consoleMessage("[CustomCrops] Plugin Enabled!");
     }
 
     @Override
     public void onDisable() {
-        if (this.cropManager != null){
-            this.cropManager.cleanData();
-            this.cropManager.updateData();
-            this.cropManager.saveData();
-            this.cropManager = null;
-        }
-        if (this.sprinklerManager != null){
-            this.sprinklerManager.cleanData();
-            this.sprinklerManager.updateData();
-            this.sprinklerManager.saveData();
-            this.sprinklerManager = null;
-        }
-        if (this.potManager != null){
-            this.potManager.saveData();
-            this.potManager = null;
-        }
-        if (ConfigReader.Season.enable && !ConfigReader.Season.seasonChange && this.seasonManager != null){
-            this.seasonManager.saveData();
-            this.seasonManager = null;
-        }
-        if (placeholders != null){
-            placeholders.unregister();
-            placeholders = null;
-        }
-
-        getLogger().info("Backing Up...");
-        FileUtil.backUpData();
-        getLogger().info("Done.");
-
-        if (cropTimer != null) {
-            this.cropTimer.stopTimer(cropTimer.getTaskID());
-        }
         if (adventure != null) {
             adventure.close();
         }
-        if (plugin != null) {
-            plugin = null;
+        if (this.placeholderManager != null) {
+            this.placeholderManager.unload();
+        }
+        if (this.cropManager != null) {
+            this.cropManager.unload();
         }
     }
 
-    private void checkIAConfig(){
-        FileConfiguration fileConfiguration = Bukkit.getPluginManager().getPlugin("ItemsAdder").getConfig();
-        if (fileConfiguration.getBoolean("blocks.disable-REAL_WIRE")){
-            fileConfiguration.set("blocks.disable-REAL_WIRE", false);
-            try {
-                fileConfiguration.save(new File(Bukkit.getPluginManager().getPlugin("ItemsAdder").getDataFolder(), "config.yml"));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><red>Detected that you might have not set \"disable-REAL_WIRE\" false in ItemsAdder's config!");
-            AdventureManager.consoleMessage("<gradient:#ff206c:#fdee55>[CustomCrops] </gradient><red>You need a restart to apply that config :)");
-        }
+    public PlaceholderManager getPlaceholderManager() {
+        return placeholderManager;
+    }
+
+    public boolean hasPapi() {
+        return placeholderManager != null;
+    }
+
+    public CropManager getCropManager() {
+        return cropManager;
     }
 }
