@@ -48,7 +48,7 @@ public class SimulateCommand extends AbstractSubCommand {
                 return true;
             }
             Bukkit.getScheduler().runTaskAsynchronously(CustomCrops.plugin, () -> {
-                CustomCrops.plugin.getCropManager().grow(world, growTime, sprinklerTime, dryTime);
+                CustomCrops.plugin.getCropManager().grow(world, growTime, sprinklerTime, dryTime, false);
             });
             AdventureUtil.sendMessage(sender, MessageConfig.prefix + MessageConfig.growSimulation);
         }

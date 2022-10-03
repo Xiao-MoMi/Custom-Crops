@@ -48,7 +48,7 @@ import net.momirealms.customcrops.objects.fertilizer.Fertilizer;
 import net.momirealms.customcrops.objects.fertilizer.QualityCrop;
 import net.momirealms.customcrops.objects.fertilizer.RetainingSoil;
 import net.momirealms.customcrops.objects.fertilizer.YieldIncreasing;
-import net.momirealms.customcrops.utils.AdventureUtil;
+import net.momirealms.customcrops.utils.ArmorStandUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -71,6 +71,7 @@ public class CropManager extends Function {
     private CropModeInterface cropMode;
     private SeasonInterface seasonInterface;
     private CustomInterface customInterface;
+    private ArmorStandUtil armorStandUtil;
     private HandlerP handler;
 
     public CropManager() {
@@ -84,6 +85,7 @@ public class CropManager extends Function {
 
         this.itemSpawnListener = new ItemSpawnListener(this);
         this.worldListener = new WorldListener(this);
+        this.armorStandUtil = new ArmorStandUtil(this);
 
         //Custom Plugin
         if (MainConfig.customPlugin.equals("itemsadder")) {
@@ -145,7 +147,7 @@ public class CropManager extends Function {
             customWorlds.put(world, customWorld);
             if (MainConfig.autoGrow && MainConfig.enableCompensation) {
                 if (world.getTime() < 24000 - MainConfig.timeToWork - MainConfig.timeToDry - 1200 && world.getTime() > 1500) {
-                    Bukkit.getScheduler().runTaskLaterAsynchronously(CustomCrops.plugin, () -> grow(world, MainConfig.timeToGrow, MainConfig.timeToWork, MainConfig.timeToDry), 100);
+                    Bukkit.getScheduler().runTaskLaterAsynchronously(CustomCrops.plugin, () -> grow(world, MainConfig.timeToGrow, MainConfig.timeToWork, MainConfig.timeToDry, true), 100);
                 }
             }
         }
@@ -159,11 +161,11 @@ public class CropManager extends Function {
         seasonInterface.unloadWorld(world);
     }
 
-    public void grow(World world, int cropTime, int sprinklerTime, int dryTime) {
+    public void grow(World world, int cropTime, int sprinklerTime, int dryTime, boolean compensation) {
         CustomWorld customWorld = customWorlds.get(world);
         if (customWorld == null) return;
-        if (MainConfig.cropMode) customWorld.growWire(cropTime, sprinklerTime, dryTime);
-        else customWorld.growFrame(cropTime, sprinklerTime, dryTime);
+        if (MainConfig.cropMode) customWorld.growWire(cropTime, sprinklerTime, dryTime, compensation);
+        else customWorld.growFrame(cropTime, sprinklerTime, dryTime, compensation);
     }
 
     public CropModeInterface getCropMode() {
@@ -308,5 +310,9 @@ public class CropManager extends Function {
                 world.dropItem(location, drop);
             }
         }
+    }
+
+    public ArmorStandUtil getArmorStandUtil() {
+        return armorStandUtil;
     }
 }

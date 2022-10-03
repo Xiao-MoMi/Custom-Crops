@@ -3,6 +3,7 @@ wet-pot: customcrops:watered_pot
 greenhouse-glass: customcrops:greenhouse_glass
 dead-crop: customcrops:crop_stage_death
 soil-surveyor: customcrops:soil_surveyor
-crow: customcrops:crow
+crow-fly: customcrops:crow_fly
+crow-land: customcrops:crow_land
 scarecow: customcrops:scarecow
 water-effect: customcrops:water_effect

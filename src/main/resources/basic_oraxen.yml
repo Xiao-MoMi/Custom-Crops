@@ -3,6 +3,7 @@ wet-pot: watered_pot
 greenhouse-glass: greenhouse_glass
 dead-crop: crop_stage_death
 soil-surveyor: soil_surveyor
-crow: crow
+crow-fly: crow_fly
+crow-land: crow_land
 scarecow: scarecow
 water-effect: water_effect

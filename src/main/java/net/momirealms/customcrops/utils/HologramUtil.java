@@ -67,8 +67,8 @@ public class HologramUtil {
         metaPacket.getModifier().write(0,id);
         metaPacket.getWatchableCollectionModifier().write(0, wrappedDataWatcher.getWatchableObjects());
         try {
-            ProtocolLibrary.getProtocolManager().sendServerPacket(player, spawnPacket);
-            ProtocolLibrary.getProtocolManager().sendServerPacket(player, metaPacket);
+            CustomCrops.protocolManager.sendServerPacket(player, spawnPacket);
+            CustomCrops.protocolManager.sendServerPacket(player, metaPacket);
         }
         catch (Exception e) {
             AdventureUtil.consoleMessage("<red>[CustomCrops] Failed to display hologram for " + player.getName() + " !</red>");
@@ -84,7 +84,7 @@ public class HologramUtil {
         PacketContainer packet = new PacketContainer(PacketType.Play.Server.ENTITY_DESTROY);
         packet.getIntLists().write(0, List.of(entityId));
         try {
-            ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);
+            CustomCrops.protocolManager.sendServerPacket(player, packet);
         }
         catch (Exception e) {
             AdventureUtil.consoleMessage("<red>[CustomCrops] Failed to remove hologram for " + player.getName() + " !</red>");

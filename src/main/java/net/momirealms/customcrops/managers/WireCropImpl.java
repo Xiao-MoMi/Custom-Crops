@@ -26,7 +26,6 @@ import net.momirealms.customcrops.integrations.customplugin.CustomInterface;
 import net.momirealms.customcrops.objects.GiganticCrop;
 import net.momirealms.customcrops.objects.fertilizer.Fertilizer;
 import net.momirealms.customcrops.objects.fertilizer.Gigantic;
-import net.momirealms.customcrops.objects.fertilizer.RetainingSoil;
 import net.momirealms.customcrops.objects.fertilizer.SpeedGrow;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;

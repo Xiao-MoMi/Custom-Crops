@@ -5,6 +5,11 @@ sprinkler_1:
   2Ditem: sprinkler_1_item
 sprinkler_2:
   range: 2
-  max-water-storage: 7
+  max-water-storage: 6
   3Ditem: sprinkler_2
   2Ditem: sprinkler_2_item
+sprinkler_3:
+  range: 3
+  max-water-storage: 7
+  3Ditem: sprinkler_3
+  2Ditem: sprinkler_3_item

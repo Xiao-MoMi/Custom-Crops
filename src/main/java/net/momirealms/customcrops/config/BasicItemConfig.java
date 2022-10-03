@@ -26,7 +26,8 @@ public class BasicItemConfig {
     public static String deadCrop;
     public static String soilSurveyor;
     public static String greenHouseGlass;
-    public static String crow;
+    public static String crowLand;
+    public static String crowFly;
     public static String scarecrow;
     public static String waterEffect;
 
@@ -37,7 +38,8 @@ public class BasicItemConfig {
         greenHouseGlass = config.getString("greenhouse-glass");
         soilSurveyor = config.getString("soil-surveyor");
         deadCrop = config.getString("dead-crop");
-        crow = config.getString("crow");
+        crowLand = config.getString("crow-land");
+        crowFly = config.getString("crow-fly");
         scarecrow = config.getString("scarecrow");
         waterEffect = config.getString("water-effect");
     }

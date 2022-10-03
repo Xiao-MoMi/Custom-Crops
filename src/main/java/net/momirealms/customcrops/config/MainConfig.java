@@ -84,6 +84,8 @@ public class MainConfig {
     public static boolean enableAnimations;
     public static boolean autoGrow;
     public static boolean enableCompensation;
+    public static boolean requireLight;
+    public static byte lightLevel;
 
     public static void load() {
         ConfigUtil.update("config.yml");

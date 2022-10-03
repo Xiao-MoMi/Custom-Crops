@@ -120,18 +120,18 @@ gigantic:
     chance: 0.02
     item: gigantic_1
     before-plant: true
-    particle: SPELL_MOB
+    particle: SOUL
   gigantic_2:
     name: '뀐'
     times: 14
     chance: 0.04
     item: gigantic_2
     before-plant: true
-    particle: SPELL_MOB
+    particle: SOUL
   gigantic_3:
     name: '뀑'
     times: 14
     chance: 0.08
     item: gigantic_3
     before-plant: true
-    particle: SPELL_MOB
+    particle: SOUL

@@ -29,19 +29,11 @@ integration:
   # Season
   RealisticSeasons: false
 
-
-
 worlds:
   # Mode: whitelist/blacklist
   mode: whitelist
   list:
     - world
-
-
-
-
-
-
 
 optimization:
   # Recommend enabling this to prevent large quantities of crops/itemframes lagging the server
@@ -54,7 +46,6 @@ optimization:
   disable-water-particles: false
   # Disable the animation when sprinkler works
   disable-sprinkler-animation: false
-
 
 mechanics:
 
@@ -90,7 +81,7 @@ mechanics:
   prevent-plant-if-wrong-season: true
   # Should player be notified of the wrong season?
   should-notify-if-wrong-season: true
-  #
+
   fill:
     watering-can-to-sprinkler: 1
     water-bucket-to-sprinkler: 3

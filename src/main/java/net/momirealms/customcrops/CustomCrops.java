@@ -17,6 +17,8 @@
 
 package net.momirealms.customcrops;
 
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.ProtocolManager;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.momirealms.customcrops.commands.PluginCommand;
 import net.momirealms.customcrops.config.ConfigUtil;
@@ -34,6 +36,7 @@ public final class CustomCrops extends JavaPlugin {
 
     public static BukkitAudiences adventure;
     public static CustomCrops plugin;
+    public static ProtocolManager protocolManager;
 
     private PlaceholderManager placeholderManager;
     private CropManager cropManager;
@@ -50,6 +53,7 @@ public final class CustomCrops extends JavaPlugin {
     public void onEnable() {
 
         adventure = BukkitAudiences.create(plugin);
+        protocolManager = ProtocolLibrary.getProtocolManager();
         AdventureUtil.consoleMessage("[CustomCrops] Running on <white>" + Bukkit.getVersion());
 
         if (Bukkit.getPluginManager().getPlugin("ItemsAdder") != null) {
