@@ -33,6 +33,7 @@ public class WaterEvent extends PlayerEvent implements Cancellable {
     public WaterEvent(@NotNull Player who, ItemStack itemStack) {
         super(who);
         this.cancelled = false;
+        this.itemStack = itemStack;
     }
 
     @Override

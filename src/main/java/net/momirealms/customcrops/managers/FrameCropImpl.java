@@ -79,14 +79,7 @@ public class FrameCropImpl implements CropModeInterface {
             if (potID == null) return true;
 
             Fertilizer fertilizer = cropManager.getFertilizer(potLoc);
-
-            boolean certainGrow = false;
-            if (potID.equals(BasicItemConfig.wetPot)) {
-                if (!(fertilizer instanceof RetainingSoil retainingSoil && Math.random() < retainingSoil.getChance())) {
-                    cropManager.potDryJudge(potLoc);
-                }
-                certainGrow = true;
-            }
+            boolean certainGrow = potID.equals(BasicItemConfig.wetPot);
 
             int nextStage = Integer.parseInt(cropNameList[2]) + 1;
             String temp = StringUtils.chop(id);

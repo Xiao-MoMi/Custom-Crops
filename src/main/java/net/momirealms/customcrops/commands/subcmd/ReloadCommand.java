@@ -15,14 +15,6 @@ public final class ReloadCommand extends AbstractSubCommand {
 
     private ReloadCommand() {
         super("reload", null);
-        regSubCommand(new AbstractSubCommand("config", null) {
-            @Override
-            public boolean onCommand(CommandSender sender, List<String> args) {
-                ConfigUtil.reloadConfigs();
-                AdventureUtil.sendMessage(sender, MessageConfig.prefix + MessageConfig.reload);
-                return true;
-            }
-        });
     }
 
     @Override

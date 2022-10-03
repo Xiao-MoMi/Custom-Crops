@@ -45,6 +45,7 @@ public class MessageConfig {
     public static String noSeason;
     public static String worldNotExists;
     public static String seasonNotExists;
+    public static String wrongSeason;
 
     public static void load() {
         YamlConfiguration config = ConfigUtil.getConfig("messages" + File.separator + "messages_" + MainConfig.lang +".yml");
@@ -68,5 +69,6 @@ public class MessageConfig {
         noSeason = config.getString("messages.no-season");
         worldNotExists = config.getString("messages.world-not-exist");
         seasonNotExists = config.getString("messages.season-not-exist");
+        wrongSeason = config.getString("messages.wrong-season");
     }
 }

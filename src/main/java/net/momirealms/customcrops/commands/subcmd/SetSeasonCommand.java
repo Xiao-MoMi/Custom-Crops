@@ -10,6 +10,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class SetSeasonCommand extends AbstractSubCommand {
@@ -18,14 +19,6 @@ public class SetSeasonCommand extends AbstractSubCommand {
 
     public SetSeasonCommand() {
         super("setseason", null);
-        regSubCommand(new AbstractSubCommand("config", null) {
-            @Override
-            public boolean onCommand(CommandSender sender, List<String> args) {
-
-                AdventureUtil.sendMessage(sender, MessageConfig.prefix + MessageConfig.setSeason);
-                return true;
-            }
-        });
     }
 
     @Override
@@ -54,12 +47,21 @@ public class SetSeasonCommand extends AbstractSubCommand {
         return super.onCommand(sender, args);
     }
 
-    public static void setSeason() {
-        MainConfig.load();
-        FertilizerConfig.load();
-        MessageConfig.load();
-        SeasonConfig.load();
-        SprinklerConfig.load();
-        WaterCanConfig.load();
+    @Override
+    public List<String> onTabComplete(CommandSender sender, List<String> args) {
+        if (args.size() == 1) {
+            return getWorlds(args);
+        }
+        if (args.size() == 2) {
+            List<String> seasons = List.of("Spring","Summer","Autumn","Winter");
+            List<String> seasonList = new ArrayList<>();
+            for (String season : seasons) {
+                if (season.startsWith(args.get(1))) {
+                    seasonList.add(season);
+                }
+            }
+            return seasonList;
+        }
+        return super.onTabComplete(sender, args);
     }
 }

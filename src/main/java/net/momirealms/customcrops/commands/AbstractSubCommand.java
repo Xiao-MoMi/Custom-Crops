@@ -1,7 +1,9 @@
 package net.momirealms.customcrops.commands;
 
+import net.momirealms.customcrops.config.MainConfig;
 import net.momirealms.customcrops.config.MessageConfig;
 import net.momirealms.customcrops.utils.AdventureUtil;
+import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 
 import java.util.ArrayList;
@@ -65,6 +67,17 @@ public abstract class AbstractSubCommand implements SubCommand {
             subCommandMap = new ConcurrentHashMap<>();
         }
         subCommandMap.put(command.getSubCommand(), command);
+    }
+
+    public List<String> getWorlds(List<String> args) {
+        List<World> worlds = MainConfig.getWorldsList();
+        List<String> worldNames = new ArrayList<>();
+        for (World world : worlds) {
+            if (world.getName().startsWith(args.get(0))) {
+                worldNames.add(world.getName());
+            }
+        }
+        return worldNames;
     }
 
     public void setSubCommandMap(Map<String, SubCommand> subCommandMap) {

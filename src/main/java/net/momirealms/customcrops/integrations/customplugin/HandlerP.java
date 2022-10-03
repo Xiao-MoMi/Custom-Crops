@@ -34,10 +34,7 @@ import net.momirealms.customcrops.utils.FurnitureUtil;
 import net.momirealms.customcrops.utils.HologramUtil;
 import net.momirealms.customcrops.utils.LimitationUtil;
 import org.apache.commons.lang.StringUtils;
-import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
@@ -144,13 +141,13 @@ public abstract class HandlerP extends Function {
                         if (canConfig == null) return;
 
                         AdventureUtil.playerActionbar(
-                                player,
-                                (MainConfig.actionBarLeft +
-                                MainConfig.actionBarFull.repeat(canWater) +
-                                MainConfig.actionBarEmpty.repeat(canConfig.getMax() - canWater) +
-                                MainConfig.actionBarRight)
-                                .replace("{max_water}", String.valueOf(canConfig.getMax()))
-                                .replace("{water}", String.valueOf(canWater))
+                        player,
+                        (MainConfig.actionBarLeft +
+                        MainConfig.actionBarFull.repeat(canWater) +
+                        MainConfig.actionBarEmpty.repeat(canConfig.getMax() - canWater) +
+                        MainConfig.actionBarRight)
+                        .replace("{max_water}", String.valueOf(canConfig.getMax()))
+                        .replace("{water}", String.valueOf(canWater))
                         );
                     }
                 }
@@ -159,15 +156,15 @@ public abstract class HandlerP extends Function {
 
         if (MainConfig.enableSprinklerInfo)
             HologramUtil.showHolo(
-                    (MainConfig.sprinklerLeft +
-                    MainConfig.sprinklerFull.repeat(sprinkler.getWater()) +
-                    MainConfig.sprinklerEmpty.repeat(config.getWater() - sprinkler.getWater()) +
-                    MainConfig.sprinklerRight)
-                    .replace("{max_water}", String.valueOf(config.getWater()))
-                    .replace("{water}", String.valueOf(sprinkler.getWater())),
-                    player,
-                    location.add(0, MainConfig.sprinklerInfoY - 1,0),
-                    MainConfig.sprinklerInfoDuration);
+            (MainConfig.sprinklerLeft +
+            MainConfig.sprinklerFull.repeat(sprinkler.getWater()) +
+            MainConfig.sprinklerEmpty.repeat(config.getWater() - sprinkler.getWater()) +
+            MainConfig.sprinklerRight)
+            .replace("{max_water}", String.valueOf(config.getWater()))
+            .replace("{water}", String.valueOf(sprinkler.getWater())),
+            player,
+            location.add(0, MainConfig.sprinklerInfoY - 1,0),
+            MainConfig.sprinklerInfoDuration);
 
     }
 
@@ -199,13 +196,13 @@ public abstract class HandlerP extends Function {
             }
 
             HologramUtil.showHolo(
-                    MainConfig.fertilizerInfo
-                    .replace("{fertilizer}", fertilizer.getName())
-                    .replace("{times}", String.valueOf(fertilizer.getTimes()))
-                    .replace("{max_times}", String.valueOf(config.getTimes())),
-                    player,
-                    potLoc.add(0.5, MainConfig.fertilizerInfoY, 0.5),
-                    MainConfig.fertilizerInfoDuration);
+            MainConfig.fertilizerInfo
+            .replace("{fertilizer}", fertilizer.getName())
+            .replace("{times}", String.valueOf(fertilizer.getTimes()))
+            .replace("{max_times}", String.valueOf(config.getTimes())),
+            player,
+            potLoc.add(0.5, MainConfig.fertilizerInfoY, 0.5),
+            MainConfig.fertilizerInfoDuration);
         }
         return true;
     }
@@ -318,6 +315,11 @@ public abstract class HandlerP extends Function {
                             1,1
                             );
                         }
+
+                        if (MainConfig.enableParticles) {
+                            player.getWorld().spawnParticle(Particle.WATER_SPLASH, block.getLocation().add(0.5,1, 0.5),10,0.1,0.1,0.1);
+                        }
+
                     }
                     break;
                 }
@@ -363,6 +365,10 @@ public abstract class HandlerP extends Function {
             return true;
         }
 
+        if (fertilizer.getParticle() != null) {
+            potLoc.getWorld().spawnParticle(fertilizer.getParticle(), potLoc.clone().add(0.5,1.1,0.5), 5,0.25,0.1,0.25, 0);
+        }
+
         if (SoundConfig.useFertilizer.isEnable()) {
             AdventureUtil.playerSound(
             player,
@@ -373,7 +379,7 @@ public abstract class HandlerP extends Function {
         }
 
         if (player.getGameMode() != GameMode.CREATIVE) itemStack.setAmount(itemStack.getAmount() - 1);
-        customWorld.addFertilizer(potLoc, fertilizer);
+        customWorld.addFertilizer(potLoc, fertilizer.getWithTimes(fertilizer.getTimes()));
         return true;
     }
 
@@ -388,6 +394,7 @@ public abstract class HandlerP extends Function {
         if (customWorld == null) return;
         //remove fertilizer
         customWorld.removeFertilizer(location);
+        customWorld.removeWatered(location);
     }
 
     public void onQuit(Player player) {
@@ -395,6 +402,10 @@ public abstract class HandlerP extends Function {
     }
 
     public void waterPot(int width, int length, Location location, float yaw){
+        //TODO
+        CustomWorld customWorld = cropManager.getCustomWorld(location.getWorld());
+        if (customWorld == null) return;
+
         int extend = width / 2;
         if (yaw < 45 && yaw > -135) {
             if (yaw > -45) {
@@ -402,13 +413,8 @@ public abstract class HandlerP extends Function {
                     Location tempLoc = location.clone().add(i, 0, -1);
                     for (int j = 0; j < length; j++){
                         tempLoc.add(0,0,1);
-                        String blockID = customInterface.getBlockID(tempLoc);
-                        if(blockID != null){
-                            if(blockID.equals(BasicItemConfig.dryPot)){
-                                customInterface.removeBlock(tempLoc);
-                                customInterface.placeNoteBlock(tempLoc, BasicItemConfig.wetPot);
-                            }
-                        }
+                        customWorld.setPlayerWatered(tempLoc);
+                        waterPot(tempLoc);
                     }
                 }
             }
@@ -417,13 +423,8 @@ public abstract class HandlerP extends Function {
                     Location tempLoc = location.clone().add(-1, 0, i);
                     for (int j = 0; j < length; j++){
                         tempLoc.add(1,0,0);
-                        String blockID = customInterface.getBlockID(tempLoc);
-                        if(blockID != null){
-                            if(blockID.equals(BasicItemConfig.dryPot)){
-                                customInterface.removeBlock(tempLoc);
-                                customInterface.placeNoteBlock(tempLoc, BasicItemConfig.wetPot);
-                            }
-                        }
+                        customWorld.setPlayerWatered(tempLoc);
+                        waterPot(tempLoc);
                     }
                 }
             }
@@ -434,13 +435,8 @@ public abstract class HandlerP extends Function {
                     Location tempLoc = location.clone().add(1, 0, i);
                     for (int j = 0; j < length; j++){
                         tempLoc.subtract(1,0,0);
-                        String blockID = customInterface.getBlockID(tempLoc);
-                        if(blockID != null){
-                            if(blockID.equals(BasicItemConfig.dryPot)){
-                                customInterface.removeBlock(tempLoc);
-                                customInterface.placeNoteBlock(tempLoc, BasicItemConfig.wetPot);
-                            }
-                        }
+                        customWorld.setPlayerWatered(tempLoc);
+                        waterPot(tempLoc);
                     }
                 }
             }
@@ -449,14 +445,22 @@ public abstract class HandlerP extends Function {
                     Location tempLoc = location.clone().add(i, 0, 1);
                     for (int j = 0; j < length; j++){
                         tempLoc.subtract(0,0,1);
-                        String blockID = customInterface.getBlockID(tempLoc);
-                        if(blockID != null){
-                            if(blockID.equals(BasicItemConfig.dryPot)){
-                                customInterface.removeBlock(tempLoc);
-                                customInterface.placeNoteBlock(tempLoc, BasicItemConfig.wetPot);
-                            }
-                        }
+                        customWorld.setPlayerWatered(tempLoc);
+                        waterPot(tempLoc);
                     }
+                }
+            }
+        }
+    }
+
+    private void waterPot(Location tempLoc) {
+        String blockID = customInterface.getBlockID(tempLoc);
+        if(blockID != null){
+            if(blockID.equals(BasicItemConfig.dryPot)){
+                customInterface.removeBlock(tempLoc);
+                customInterface.placeNoteBlock(tempLoc, BasicItemConfig.wetPot);
+                if (MainConfig.enableParticles) {
+                    tempLoc.getWorld().spawnParticle(Particle.WATER_SPLASH, tempLoc.clone().add(0.5,1, 0.5),3,0.1,0.1,0.1);
                 }
             }
         }

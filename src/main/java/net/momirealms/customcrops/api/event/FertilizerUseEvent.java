@@ -36,6 +36,7 @@ public class FertilizerUseEvent extends PlayerEvent implements Cancellable {
         super(who);
         this.cancelled = false;
         this.potLoc = potLoc;
+        this.fertilizer = fertilizer;
     }
 
     @Override

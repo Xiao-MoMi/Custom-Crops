@@ -13,19 +13,21 @@ speed:
     before-plant: true
     #The particle to be displayed when using fertilizer
     #https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Particle.html
-    particle: VILLAGER_HAPPY
+    particle: SPELL_WITCH
   speed_2:
     name: '뀍'
     chance: 0.2
     times: 14
     item: customcrops:speed_2
     before-plant: true
+    particle: SPELL_WITCH
   speed_3:
     name: '뀎'
     chance: 0.3
     times: 14
     item: customcrops:speed_3
     before-plant: true
+    particle: SPELL_WITCH
 
 
 #Pot have a small chance to retain its water after crops grow
@@ -36,18 +38,21 @@ retaining:
     times: 28
     item: customcrops:retaining_1
     before-plant: false
+    particle: SPELL
   retaining_2:
     name: '뀊'
     chance: 0.2
     times: 28
     item: customcrops:retaining_2
     before-plant: false
+    particle: SPELL
   retaining_3:
     name: '뀋'
     chance: 0.3
     times: 28
     item: customcrops:retaining_3
     before-plant: false
+    particle: SPELL
 
 
 #When haveresting, players have a higher chance to get high quality crops.
@@ -59,6 +64,7 @@ quality:
     ratio: 7/2/1
     item: customcrops:quality_1
     before-plant: true
+    particle: SCRAPE
   quality_2:
     name: '뀇'
     chance: 1
@@ -66,6 +72,7 @@ quality:
     ratio: 11/6/3
     item: customcrops:quality_2
     before-plant: true
+    particle: SCRAPE
   quality_3:
     name: '뀈'
     chance: 1
@@ -73,6 +80,7 @@ quality:
     ratio: 2/2/1
     item: customcrops:quality_3
     before-plant: true
+    particle: SCRAPE
 
 
 #When haveresting, players have a higher chance to get more crops.
@@ -84,6 +92,7 @@ quantity:
     bonus: 1
     item: customcrops:quantity_1
     before-plant: true
+    particle: TOTEM
   quantity_2:
     name: '뀐'
     times: 14
@@ -91,6 +100,7 @@ quantity:
     bonus: 2
     item: customcrops:quantity_2
     before-plant: true
+    particle: TOTEM
   quantity_3:
     name: '뀑'
     times: 14
@@ -98,6 +108,7 @@ quantity:
     bonus: 2
     item: customcrops:quantity_3
     before-plant: true
+    particle: TOTEM
 
 
 #Crops have a higher chance to be gigantic
@@ -108,15 +119,18 @@ gigantic:
     chance: 0.5
     item: customcrops:gigantic_1
     before-plant: true
+    particle: SPELL_MOB
   gigantic_2:
     name: '뀐'
     times: 14
     chance: 0.5
     item: customcrops:gigantic_2
     before-plant: true
+    particle: SPELL_MOB
   gigantic_3:
     name: '뀑'
     times: 14
     chance: 0.8
     item: customcrops:gigantic_3
     before-plant: true
+    particle: SPELL_MOB

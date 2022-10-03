@@ -70,6 +70,9 @@ public final class CustomCrops extends JavaPlugin {
 
         ConfigUtil.reloadConfigs();
 
+        if (MainConfig.cropMode) AdventureUtil.consoleMessage("[CustomCrops] Crop Mode: Tripwire");
+        else AdventureUtil.consoleMessage("[CustomCrops] Crop Mode: ItemFrame");
+
         this.pluginCommand = new PluginCommand();
         Objects.requireNonNull(Bukkit.getPluginCommand("customcrops")).setExecutor(pluginCommand);
         Objects.requireNonNull(Bukkit.getPluginCommand("customcrops")).setTabCompleter(pluginCommand);

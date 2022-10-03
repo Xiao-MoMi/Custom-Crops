@@ -39,9 +39,7 @@ worlds:
 
 
 
-crops:
-  # Mode: tripwire/item_frame
-  mode: tripwire
+
 
 
 
@@ -52,12 +50,37 @@ optimization:
     tripwire-amount: 64
     itemframe-amount: 64
 
-  # Async time check
-  async-time-check: false
-
+  # Disable the water particles when using watering-cans
+  disable-water-particles: false
+  # Disable the animation when sprinkler works
+  disable-sprinkler-animation: false
 
 
 mechanics:
+
+  # Mode: tripwire/item_frame
+  crops-mode: tripwire
+
+  # If enabled, crops would start growing at about 7am(at most 5 seconds inaccuracy) and finish growing in the rest of the day
+  # Note: All the crops can only start growing when a world's time is about 7am, so when a world is loaded and its time is 8am,
+  #       crops would not grow in this day. You can enable time compensation make the crops grow when starting the server.
+  auto-grow:
+    enable: true
+    # For example, the time to start growing is 1000ticks(7am),
+    # sprinklers would finish their work in a random time between 1000~1300ticks,
+    # Pot would start drying in a random time between 1300~1500ticks
+    # and crops would grow in a random time between 1500~21300ticks
+    sprinkler-work-time: 300
+    pot-dry-time: 200
+    crops-grow-time: 20000
+    # Crops would start growing instantly when the world is loaded instead of waiting for the second day's 7am
+    time-compensation: true
+  # If the pot is wet, crop would 100% grow a stage per day
+  # Otherwise they would have a lower chance to grow.
+  # Recommend setting it to a value higher than 0 to make sure every crop can be ripe even if
+  # players don't take care of them, this is good for server performance because crop data would
+  # be removed from data file when the crop is ripe to avoid affecting server performance in the long term
+  dry-pot-grow-chance: 0.5
   # Can player harvest crops with right click?
   # if set "false" crops can't be harvested repeatedly
   right-click-harvest:

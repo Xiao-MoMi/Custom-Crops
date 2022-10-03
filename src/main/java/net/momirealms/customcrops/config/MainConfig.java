@@ -37,11 +37,10 @@ public class MainConfig {
     public static World[] worlds;
     public static List<World> worldList;
     public static boolean whiteOrBlack;
-    public static boolean asyncTimeCheck;
     public static String customPlugin;
     public static boolean OraxenHook;
     public static boolean realisticSeasonHook;
-    public static String cropMode;
+    public static boolean cropMode;
     public static List<AntiGrief> antiGriefs;
     public static SkillXP skillXP;
     public static double dryGrowChance;
@@ -55,6 +54,8 @@ public class MainConfig {
     public static int waterToWaterCan;
     public static int wateringCanToSprinkler;
     public static int timeToGrow;
+    public static int timeToWork;
+    public static int timeToDry;
     public static String lang;
     public static boolean preventInWrongSeason;
     public static boolean notifyInWrongSeason;
@@ -79,6 +80,10 @@ public class MainConfig {
     public static double fertilizerInfoY;
     public static int fertilizerInfoDuration;
     public static String fertilizerInfo;
+    public static boolean enableParticles;
+    public static boolean enableAnimations;
+    public static boolean autoGrow;
+    public static boolean enableCompensation;
 
     public static void load() {
         ConfigUtil.update("config.yml");
@@ -95,11 +100,17 @@ public class MainConfig {
             }
         }
         worldList = List.of(worlds);
-        cropMode = config.getString("crops.mode", "tripwire");
-        asyncTimeCheck = config.getBoolean("optimization.async-time-check", false);
+        cropMode = config.getString("crops.mode", "tripwire").equals("tripwire");
         limitation = config.getBoolean("optimization.limitation.enable", true);
         wireAmount = config.getInt("optimization.limitation.tripwire-amount", 64);
         frameAmount = config.getInt("optimization.limitation.itemframe-amount", 64);
+
+        autoGrow = config.getBoolean("mechanics.auto-grow.enable", true);
+        enableCompensation = config.getBoolean("mechanics.auto-grow.time-compensation", true);
+        timeToGrow = config.getInt("mechanics.auto-grow.crops-grow-time", 20000);
+        timeToWork = config.getInt("mechanics.auto-grow.sprinkler-work-time", 300);
+        timeToDry = config.getInt("mechanics.auto-grow.pot-dry-time", 200);
+        dryGrowChance = config.getDouble("mechanics.dry-pot-grow-chance", 0.5);
 
         waterBucketToSprinkler = config.getInt("mechanics.fill.water-bucket-to-sprinkler", 3);
         waterToWaterCan = config.getInt("mechanics.fill.waterblock-to-watering-can", 1);
@@ -112,6 +123,9 @@ public class MainConfig {
 
         enableBoneMeal = config.getBoolean("mechanics.bone-meal", true);
         boneMealChance = config.getDouble("mechanics.chance", 0.5);
+
+        enableParticles = !config.getBoolean("optimization.disable-water-particles", false);
+        enableAnimations = !config.getBoolean("optimization.disable-sprinkler-animation", false);
 
         try {
             boneMealSuccess = Particle.valueOf(config.getString("mechanics.success-particle", "VILLAGER_HAPPY"));

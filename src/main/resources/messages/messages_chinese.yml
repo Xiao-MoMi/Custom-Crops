@@ -16,6 +16,7 @@ messages:
   back-up: '<white>已完成数据备份!'
   set-season: '<white>成功切换世界 {world} 的季节为 {season}!'
   before-plant: '<white>这种肥料必须在种植前使用!'
+  wrong-season: '<white>当前季节不适合这个农作物生长'
 
   no-season: '此世界没有季节'
   season-disabled: '季节系统已被禁用'

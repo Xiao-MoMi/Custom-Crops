@@ -46,7 +46,9 @@ import net.momirealms.customcrops.objects.QualityRatio;
 import net.momirealms.customcrops.objects.actions.ActionInterface;
 import net.momirealms.customcrops.objects.fertilizer.Fertilizer;
 import net.momirealms.customcrops.objects.fertilizer.QualityCrop;
+import net.momirealms.customcrops.objects.fertilizer.RetainingSoil;
 import net.momirealms.customcrops.objects.fertilizer.YieldIncreasing;
+import net.momirealms.customcrops.utils.AdventureUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -83,25 +85,25 @@ public class CropManager extends Function {
         this.itemSpawnListener = new ItemSpawnListener(this);
         this.worldListener = new WorldListener(this);
 
-        //new Time Check task
-        this.timerTask = new TimerTask(this);
-        if (MainConfig.asyncTimeCheck) this.timerTask.runTaskTimerAsynchronously(CustomCrops.plugin, 1, 100);
-        else this.timerTask.runTaskTimer(CustomCrops.plugin, 1,100);
-
-        //Crop mode
-        if (MainConfig.cropMode.equalsIgnoreCase("tripwire")) this.cropMode = new WireCropImpl(this);
-        else this.cropMode = new FrameCropImpl(this);
-
+        //Custom Plugin
         if (MainConfig.customPlugin.equals("itemsadder")) {
             customInterface = new ItemsAdderHook();
-            if (MainConfig.cropMode.equalsIgnoreCase("tripwire")) this.handler = new ItemsAdderWireHandler(this);
+            if (MainConfig.cropMode) this.handler = new ItemsAdderWireHandler(this);
             else this.handler = new ItemsAdderFrameHandler(this);
         }
         else if (MainConfig.customPlugin.equals("oraxen")){
             customInterface = new OraxenHook();
-            if (MainConfig.cropMode.equalsIgnoreCase("tripwire")) this.handler = new OraxenWireHandler(this);
+            if (MainConfig.cropMode) this.handler = new OraxenWireHandler(this);
             else this.handler = new OraxenFrameHandler(this);
         }
+
+        //Crop mode
+        if (MainConfig.cropMode) this.cropMode = new WireCropImpl(this);
+        else this.cropMode = new FrameCropImpl(this);
+
+        //new Time Check task
+        this.timerTask = new TimerTask(this);
+        this.timerTask.runTaskTimerAsynchronously(CustomCrops.plugin, 1,100);
 
         handler.load();
 
@@ -141,6 +143,11 @@ public class CropManager extends Function {
         if (MainConfig.getWorldsList().contains(world)) {
             CustomWorld customWorld = new CustomWorld(world, this);
             customWorlds.put(world, customWorld);
+            if (MainConfig.autoGrow && MainConfig.enableCompensation) {
+                if (world.getTime() < 24000 - MainConfig.timeToWork - MainConfig.timeToDry - 1200 && world.getTime() > 1500) {
+                    Bukkit.getScheduler().runTaskLaterAsynchronously(CustomCrops.plugin, () -> grow(world, MainConfig.timeToGrow, MainConfig.timeToWork, MainConfig.timeToDry), 100);
+                }
+            }
         }
     }
 
@@ -152,11 +159,11 @@ public class CropManager extends Function {
         seasonInterface.unloadWorld(world);
     }
 
-    public void grow(World world, int time) {
+    public void grow(World world, int cropTime, int sprinklerTime, int dryTime) {
         CustomWorld customWorld = customWorlds.get(world);
         if (customWorld == null) return;
-        if (MainConfig.cropMode.equals("tripwire")) customWorld.growWire(time);
-        else customWorld.growFrame(time);
+        if (MainConfig.cropMode) customWorld.growWire(cropTime, sprinklerTime, dryTime);
+        else customWorld.growFrame(cropTime, sprinklerTime, dryTime);
     }
 
     public CropModeInterface getCropMode() {
@@ -199,15 +206,18 @@ public class CropManager extends Function {
     public void potDryJudge(Location potLoc) {
         World world = potLoc.getWorld();
         CustomWorld customWorld = customWorlds.get(world);
-        if (customWorld == null) {
+        if (customWorld == null) return;
+        if (!customWorld.isPotWet(potLoc)) {
             makePotDry(potLoc);
+            return;
         }
-        else if (!customWorld.isPotWet(potLoc)) {
+        Fertilizer fertilizer = customWorld.getFertilizer(potLoc);
+        if (!(fertilizer instanceof RetainingSoil retainingSoil && Math.random() < retainingSoil.getChance())) {
             makePotDry(potLoc);
         }
     }
 
-    private void makePotDry(Location potLoc) {
+    public void makePotDry(Location potLoc) {
         customInterface.removeBlock(potLoc);
         customInterface.placeNoteBlock(potLoc, BasicItemConfig.dryPot);
     }
@@ -216,8 +226,10 @@ public class CropManager extends Function {
         String potID = customInterface.getBlockID(potLoc);
         if (potID == null) return;
         if (!potID.equals(BasicItemConfig.dryPot)) return;
-        customInterface.removeBlock(potLoc);
-        customInterface.placeNoteBlock(potLoc, BasicItemConfig.wetPot);
+        Bukkit.getScheduler().runTask(CustomCrops.plugin, () -> {
+            customInterface.removeBlock(potLoc);
+            customInterface.placeNoteBlock(potLoc, BasicItemConfig.wetPot);
+        });
     }
 
     @Nullable

@@ -29,6 +29,7 @@ import net.momirealms.customcrops.api.crop.Crop;
 import net.momirealms.customcrops.api.event.SeedPlantEvent;
 import net.momirealms.customcrops.config.*;
 import net.momirealms.customcrops.integrations.AntiGrief;
+import net.momirealms.customcrops.integrations.season.CCSeason;
 import net.momirealms.customcrops.managers.CropManager;
 import net.momirealms.customcrops.managers.CustomWorld;
 import net.momirealms.customcrops.objects.Sprinkler;
@@ -104,20 +105,17 @@ public class ItemsAdderWireHandler extends ItemsAdderHandler {
         final String blockID = cb.getNamespacedID();
         //interact crop
         if (blockID.contains("_stage_")) {
+            //ripe crops
+            if (!blockID.equals(BasicItemConfig.deadCrop) && !hasNextStage(blockID) && MainConfig.canRightClickHarvest) {
+                if (MainConfig.emptyHand && event.hasItem()) return;
+                Location seedLoc = block.getLocation();
+                CustomBlock.remove(seedLoc);
+                this.onInteractRipeCrop(seedLoc, blockID, event.getPlayer());
+            }
 
-            if (!blockID.equals(BasicItemConfig.deadCrop)) {
-                //ripe crops
-                if (!hasNextStage(blockID) && MainConfig.canRightClickHarvest) {
-                    if (MainConfig.emptyHand && event.hasItem()) return;
-                    Location seedLoc = block.getLocation();
-                    CustomBlock.remove(seedLoc);
-                    this.onInteractRipeCrop(seedLoc, blockID, event.getPlayer());
-                }
-
-                else {
-                    Location potLoc = block.getLocation().clone().subtract(0,1,0);
-                    super.tryMisc(player, event.getItem(), potLoc);
-                }
+            else {
+                Location potLoc = block.getLocation().clone().subtract(0,1,0);
+                super.tryMisc(player, event.getItem(), potLoc);
             }
         }
 
@@ -160,6 +158,14 @@ public class ItemsAdderWireHandler extends ItemsAdderHandler {
                 if (MainConfig.limitation && LimitationUtil.reachWireLimit(potLoc)) {
                     AdventureUtil.playerMessage(player, MessageConfig.prefix + MessageConfig.limitWire.replace("{max}", String.valueOf(MainConfig.wireAmount)));
                     return;
+                }
+
+                CCSeason[] seasons = crop.getSeasons();
+                if (seasons != null) {
+                    if (cropManager.isWrongSeason(seedLoc, seasons)) {
+                        if (MainConfig.notifyInWrongSeason) AdventureUtil.playerMessage(player, MessageConfig.prefix + MessageConfig.wrongSeason);
+                        if (MainConfig.preventInWrongSeason) return;
+                    }
                 }
 
                 SeedPlantEvent seedPlantEvent = new SeedPlantEvent(player, seedLoc, crop);

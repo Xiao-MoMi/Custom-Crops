@@ -17,6 +17,7 @@
 
 package net.momirealms.customcrops.managers;
 
+import net.momirealms.customcrops.CustomCrops;
 import net.momirealms.customcrops.api.crop.Crop;
 import net.momirealms.customcrops.config.BasicItemConfig;
 import net.momirealms.customcrops.config.CropConfig;
@@ -28,6 +29,7 @@ import net.momirealms.customcrops.objects.fertilizer.Gigantic;
 import net.momirealms.customcrops.objects.fertilizer.RetainingSoil;
 import net.momirealms.customcrops.objects.fertilizer.SpeedGrow;
 import org.apache.commons.lang.StringUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 
@@ -58,8 +60,10 @@ public class WireCropImpl implements CropModeInterface{
         Crop crop = CropConfig.CROPS.get(cropKey);
         if (crop == null) return true;
         if (cropManager.isWrongSeason(location, crop.getSeasons())) {
-            customInterface.removeBlock(location);
-            customInterface.placeWire(location, BasicItemConfig.deadCrop);
+            Bukkit.getScheduler().runTask(CustomCrops.plugin, () -> {
+                customInterface.removeBlock(location);
+                customInterface.placeWire(location, BasicItemConfig.deadCrop);
+            });
             return true;
         }
         Location potLoc = location.clone().subtract(0,1,0);
@@ -68,13 +72,7 @@ public class WireCropImpl implements CropModeInterface{
 
         Fertilizer fertilizer = cropManager.getFertilizer(potLoc);
 
-        boolean certainGrow = false;
-        if (potID.equals(BasicItemConfig.wetPot)) {
-            if (!(fertilizer instanceof RetainingSoil retainingSoil && Math.random() < retainingSoil.getChance())) {
-                cropManager.potDryJudge(potLoc);
-            }
-            certainGrow = true;
-        }
+        boolean certainGrow = potID.equals(BasicItemConfig.wetPot);
 
         int nextStage = Integer.parseInt(cropNameList[2]) + 1;
         String temp = StringUtils.chop(blockID);
@@ -96,13 +94,15 @@ public class WireCropImpl implements CropModeInterface{
                     chance += gigantic.getChance();
                 }
                 if (Math.random() < chance) {
-                    customInterface.removeBlock(location);
-                    if (giganticCrop.isBlock()) {
-                        customInterface.placeWire(location, giganticCrop.getBlockID());
-                    }
-                    else {
-                        customInterface.placeFurniture(location, giganticCrop.getBlockID());
-                    }
+                    Bukkit.getScheduler().runTask(CustomCrops.plugin, () -> {
+                        customInterface.removeBlock(location);
+                        if (giganticCrop.isBlock()) {
+                            customInterface.placeWire(location, giganticCrop.getBlockID());
+                        }
+                        else {
+                            customInterface.placeFurniture(location, giganticCrop.getBlockID());
+                        }
+                    });
                 }
             }
             return true;
@@ -111,7 +111,9 @@ public class WireCropImpl implements CropModeInterface{
     }
 
     private void addStage(Location seedLoc, String stage) {
-        customInterface.removeBlock(seedLoc);
-        customInterface.placeWire(seedLoc, stage);
+        Bukkit.getScheduler().runTask(CustomCrops.plugin, () -> {
+            customInterface.removeBlock(seedLoc);
+            customInterface.placeWire(seedLoc, stage);
+        });
     }
 }
