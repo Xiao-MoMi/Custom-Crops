@@ -19,7 +19,6 @@ package net.momirealms.customcrops.managers.listener;
 
 import net.momirealms.customcrops.integrations.customplugin.HandlerP;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerQuitEvent;

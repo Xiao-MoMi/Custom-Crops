@@ -115,7 +115,7 @@ pepper:
       1: customcrops:pepper
       2: customcrops:pepper_silver_star
       3: customcrops:pepper_golden_star
-  return: customcrops:pepper_stage_4
+  return: customcrops:pepper_stage_3
   season:
     - Spring
     - Autumn

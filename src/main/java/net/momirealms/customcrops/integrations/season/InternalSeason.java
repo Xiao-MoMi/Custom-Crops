@@ -19,30 +19,20 @@ package net.momirealms.customcrops.integrations.season;
 
 import net.momirealms.customcrops.CustomCrops;
 import net.momirealms.customcrops.Function;
-import net.momirealms.customcrops.config.ConfigUtil;
 import net.momirealms.customcrops.config.MainConfig;
 import net.momirealms.customcrops.config.SeasonConfig;
-import net.momirealms.customcrops.utils.AdventureUtil;
-import org.bukkit.Bukkit;
 import org.bukkit.World;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class InternalSeason extends Function implements SeasonInterface {
 
     private ConcurrentHashMap<World, CCSeason> seasonHashMap;
     private BukkitTask task;
-    private YamlConfiguration data;
 
     public InternalSeason() {
         load();
@@ -52,33 +42,12 @@ public class InternalSeason extends Function implements SeasonInterface {
     public void load() {
         super.load();
         this.seasonHashMap = new ConcurrentHashMap<>();
-        this.data = ConfigUtil.readData(new File(CustomCrops.plugin.getDataFolder(), "data" + File.separator + "season.yml"));
-        for (String worldName : data.getKeys(false)) {
-            World world = Bukkit.getWorld(worldName);
-            if (world != null) {
-                if ((MainConfig.whiteOrBlack && MainConfig.worldList.contains(world)) || (!MainConfig.whiteOrBlack && !MainConfig.worldList.contains(world))) {
-                    seasonHashMap.put(world, CCSeason.valueOf(data.getString(worldName,"SPRING").toUpperCase()));
-                }
-            }
-        }
-        if (SeasonConfig.auto) {
-            startTimer();
-        }
+        startTimer();
     }
 
     @Override
     public void unload() {
         super.unload();
-        for (Map.Entry<World, CCSeason> season : seasonHashMap.entrySet()) {
-            data.set(season.getKey().getName(), season.getValue().name());
-        }
-        try {
-            data.save(new File(CustomCrops.plugin.getDataFolder(), "data" + File.separator + "season.yml"));
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-            AdventureUtil.consoleMessage("<red>[CustomCrops] Error occurs when saving season data</red>");
-        }
         this.seasonHashMap.clear();
         if (task != null) task.cancel();
     }
@@ -96,15 +65,15 @@ public class InternalSeason extends Function implements SeasonInterface {
 
     @Override
     public void unloadWorld(World world) {
-        CCSeason season = seasonHashMap.remove(world);
-        if (season == null) return;
-        data.set(world.getName(), season.name());
+        seasonHashMap.remove(world);
     }
 
     @Override
     @NotNull
     public CCSeason getSeason(World world) {
-        CCSeason season = seasonHashMap.get(world);
+        CCSeason season;
+        if (MainConfig.syncSeason) season = seasonHashMap.get(MainConfig.syncWorld);
+        else season = seasonHashMap.get(world);
         if (season == null) {
             season = countSeason(world);
             setSeason(season, world);
@@ -114,28 +83,22 @@ public class InternalSeason extends Function implements SeasonInterface {
 
     @Override
     public void setSeason(CCSeason season, World world) {
-        seasonHashMap.put(world, season);
+        if (season == CCSeason.UNKNOWN) {
+            setSeason(countSeason(world), world);
+        }
+        else {
+            seasonHashMap.put(world, season);
+        }
     }
 
     private void startTimer() {
         this.task = new BukkitRunnable() {
             @Override
             public void run() {
-                if (MainConfig.whiteOrBlack) {
-                    for (World world : MainConfig.worlds) {
-                        if (world.getTime() < 100) {
-                            setSeason(countSeason(world), world);
-                        }
-                    }
-                }
-                else {
-                    List<World> worlds = new ArrayList<>(Bukkit.getWorlds());
-                    List<World> blackWorlds = List.of(MainConfig.worlds);
-                    worlds.removeAll(blackWorlds);
-                    for (World world : worlds) {
-                        if (world.getTime() < 100) {
-                            setSeason(countSeason(world), world);
-                        }
+                if (!SeasonConfig.auto) return;
+                for (World world : MainConfig.getWorldsArray()) {
+                    if (world.getTime() < 100) {
+                        setSeason(countSeason(world), world);
                     }
                 }
             }

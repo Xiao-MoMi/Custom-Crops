@@ -29,7 +29,7 @@ public abstract class AbstractSubCommand implements SubCommand {
         }
         SubCommand subCommand = subCommandMap.get(args.get(0));
         if (subCommand == null) {
-            AdventureUtil.sendMessage(sender, MessageConfig.unavailableArgs);
+            AdventureUtil.sendMessage(sender, MessageConfig.prefix + MessageConfig.unavailableArgs);
         } else {
             subCommand.onCommand(sender, args.subList(1, args.size()));
         }

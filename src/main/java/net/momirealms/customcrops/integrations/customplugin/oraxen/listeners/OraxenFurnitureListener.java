@@ -33,9 +33,11 @@ public class OraxenFurnitureListener implements Listener {
 
     @EventHandler
     public void onInteract(OraxenFurnitureInteractEvent event) {
+        handler.onInteractFurniture(event);
     }
 
     @EventHandler
     public void onBreak(OraxenFurnitureBreakEvent event) {
+        handler.onBreakFurniture(event);
     }
 }

@@ -33,13 +33,11 @@ public class WorldListener implements Listener {
 
     @EventHandler
     public void onWorldUnload(WorldLoadEvent event) {
-        System.out.println("load");
         cropManager.onWorldLoad(event.getWorld());
     }
 
     @EventHandler
     public void onWorldUnload(WorldUnloadEvent event) {
-        System.out.println("unload");
         cropManager.onWorldUnload(event.getWorld(), false);
     }
 }

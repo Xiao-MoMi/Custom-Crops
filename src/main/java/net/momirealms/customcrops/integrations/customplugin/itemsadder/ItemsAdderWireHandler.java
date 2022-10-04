@@ -17,8 +17,6 @@
 
 package net.momirealms.customcrops.integrations.customplugin.itemsadder;
 
-import de.tr7zw.changeme.nbtapi.NBTCompound;
-import de.tr7zw.changeme.nbtapi.NBTItem;
 import dev.lone.itemsadder.api.CustomBlock;
 import dev.lone.itemsadder.api.CustomStack;
 import dev.lone.itemsadder.api.Events.CustomBlockBreakEvent;
@@ -46,6 +44,7 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -61,15 +60,21 @@ public class ItemsAdderWireHandler extends ItemsAdderHandler {
     public void onInteractFurniture(FurnitureInteractEvent event) {
         if (event.isCancelled()) return;
 
+        final Player player = event.getPlayer();
+
         long time = System.currentTimeMillis();
         if (time - (coolDown.getOrDefault(event.getPlayer(), time - 100)) < 100) return;
-        coolDown.put(event.getPlayer(), time);
+        coolDown.put(player, time);
+
+        Entity entity = event.getBukkitEntity();
+
+        if (!AntiGrief.testPlace(player, entity.getLocation())) return;
 
         String namespacedID = event.getNamespacedID();
         if (namespacedID == null) return;
         Sprinkler sprinkler = SprinklerConfig.SPRINKLERS_3D.get(namespacedID);
         if (sprinkler != null) {
-            super.onInteractSprinkler(event.getBukkitEntity().getLocation(), event.getPlayer(), event.getPlayer().getInventory().getItemInMainHand(), sprinkler);
+            super.onInteractSprinkler(entity.getLocation(), event.getPlayer(), player.getInventory().getItemInMainHand(), sprinkler);
         }
     }
 
@@ -101,36 +106,42 @@ public class ItemsAdderWireHandler extends ItemsAdderHandler {
         if (block == null) return;
         CustomBlock cb = CustomBlock.byAlreadyPlaced(block);
         if (cb == null) return;
+        Location seedLoc = block.getLocation().clone().add(0,1,0);
 
         final String blockID = cb.getNamespacedID();
+
         //interact crop
         if (blockID.contains("_stage_")) {
+
             //ripe crops
             if (!blockID.equals(BasicItemConfig.deadCrop) && !hasNextStage(blockID) && MainConfig.canRightClickHarvest) {
-                if (MainConfig.emptyHand && event.hasItem()) return;
-                Location seedLoc = block.getLocation();
-                CustomBlock.remove(seedLoc);
-                this.onInteractRipeCrop(seedLoc, blockID, event.getPlayer());
+                if (!(MainConfig.emptyHand && event.hasItem())) {
+
+                    if (!AntiGrief.testBreak(player, seedLoc)) return;
+
+                    CustomBlock.remove(seedLoc);
+                    this.onInteractRipeCrop(seedLoc, blockID, player);
+                    return;
+                }
             }
 
-            else {
-                Location potLoc = block.getLocation().clone().subtract(0,1,0);
-                super.tryMisc(player, event.getItem(), potLoc);
-            }
+            if (!AntiGrief.testPlace(player, seedLoc)) return;
+
+            Location potLoc = block.getLocation().clone().subtract(0,1,0);
+            super.tryMisc(player, event.getItem(), potLoc);
         }
 
         //interact pot (must have an item)
         else if (blockID.equals(BasicItemConfig.wetPot) || blockID.equals(BasicItemConfig.dryPot)) {
 
-            Location seedLoc = block.getLocation().clone().add(0,1,0);
             if (!AntiGrief.testPlace(player, seedLoc)) return;
 
             ItemStack itemInHand = event.getItem();
             Location potLoc = block.getLocation();
-            super.tryMisc(player, itemInHand, potLoc);
+            if (super.tryMisc(player, itemInHand, potLoc)) return;
 
             if (event.getBlockFace() != BlockFace.UP) return;
-            if (itemInHand == null || itemInHand.getType() == Material.AIR) return;
+
             CustomStack customStack = CustomStack.byItemStack(itemInHand);
             if (customStack == null) return;
             String namespacedID = customStack.getNamespacedID();
@@ -142,7 +153,7 @@ public class ItemsAdderWireHandler extends ItemsAdderHandler {
                 CustomWorld customWorld = cropManager.getCustomWorld(seedLoc.getWorld());
                 if (customWorld == null) return;
 
-                if (FurnitureUtil.hasFurniture(seedLoc)) return;
+                if (FurnitureUtil.hasFurniture(seedLoc.clone().add(0.5,0.5,0.5))) return;
                 if (seedLoc.getBlock().getType() != Material.AIR) return;
 
                 PlantingCondition plantingCondition = new PlantingCondition(seedLoc, player);
@@ -161,7 +172,7 @@ public class ItemsAdderWireHandler extends ItemsAdderHandler {
                 }
 
                 CCSeason[] seasons = crop.getSeasons();
-                if (seasons != null) {
+                if (SeasonConfig.enable && seasons != null) {
                     if (cropManager.isWrongSeason(seedLoc, seasons)) {
                         if (MainConfig.notifyInWrongSeason) AdventureUtil.playerMessage(player, MessageConfig.prefix + MessageConfig.wrongSeason);
                         if (MainConfig.preventInWrongSeason) return;
@@ -319,6 +330,7 @@ public class ItemsAdderWireHandler extends ItemsAdderHandler {
                     CustomBlock.byAlreadyPlaced(location.getBlock()).getLoot().forEach(itemStack -> location.getWorld().dropItem(location.clone().add(0.5,0.2,0.5), itemStack));
                 CustomBlock.remove(location);
             }
+
             if (namespacedId.equals(BasicItemConfig.deadCrop)) return;
             if (hasNextStage(namespacedId)) {
                 super.onBreakUnripeCrop(location);
@@ -344,16 +356,20 @@ public class ItemsAdderWireHandler extends ItemsAdderHandler {
             CustomBlock customBlock = CustomBlock.byAlreadyPlaced(seedLocation.getBlock());
             if (customBlock == null) return;
             String seedID = customBlock.getNamespacedID();
+
             if (seedID.contains("_stage_")) {
+
                 CustomBlock.remove(seedLocation);
                 if (seedID.equals(BasicItemConfig.deadCrop)) return;
                 //ripe or not
                 if (hasNextStage(seedID)) {
+                    if (player.getGameMode() == GameMode.CREATIVE) return;
                     customBlock.getLoot().forEach(loot -> location.getWorld().dropItemNaturally(seedLocation.getBlock().getLocation(), loot));
                 }
                 else {
                     super.onBreakRipeCrop(seedLocation, seedID, player, false, true);
                 }
+
             }
         }
     }

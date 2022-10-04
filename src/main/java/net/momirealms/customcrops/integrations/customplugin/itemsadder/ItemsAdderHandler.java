@@ -33,6 +33,7 @@ import net.momirealms.customcrops.config.CropConfig;
 import net.momirealms.customcrops.config.MainConfig;
 import net.momirealms.customcrops.config.SoundConfig;
 import net.momirealms.customcrops.config.WaterCanConfig;
+import net.momirealms.customcrops.integrations.AntiGrief;
 import net.momirealms.customcrops.integrations.customplugin.HandlerP;
 import net.momirealms.customcrops.integrations.customplugin.itemsadder.listeners.ItemsAdderBlockListener;
 import net.momirealms.customcrops.integrations.customplugin.itemsadder.listeners.ItemsAdderFurnitureListener;
@@ -103,6 +104,7 @@ public abstract class ItemsAdderHandler extends HandlerP {
             }
 
             if (block == null) return;
+            if (!AntiGrief.testPlace(player, block.getLocation())) return;
 
             if (event.getBlockFace() == BlockFace.UP && placeSprinkler(namespacedID, event.getClickedBlock().getLocation(), player, item)) {
                 return;
@@ -110,22 +112,23 @@ public abstract class ItemsAdderHandler extends HandlerP {
         }
     }
 
-    public void tryMisc(Player player, ItemStack itemInHand, Location potLoc) {
-        if (itemInHand == null || itemInHand.getType() == Material.AIR) return;
+    public boolean tryMisc(Player player, ItemStack itemInHand, Location potLoc) {
+        if (itemInHand == null || itemInHand.getType() == Material.AIR) return true;
         CustomStack customStack = CustomStack.byItemStack(itemInHand);
 
-        if (customStack == null) return;
+        if (customStack == null) return false;
         String itemID = customStack.getNamespacedID();
 
         if (useSurveyor(potLoc, itemID, player)) {
-            return;
+            return true;
         }
         if (useFertilizer(potLoc, itemID, player, itemInHand)){
-            return;
+            return true;
         }
         if (useWateringCan(potLoc, itemID, player, customStack)) {
-            return;
+            return true;
         }
+        return false;
         //for future misc
     }
 

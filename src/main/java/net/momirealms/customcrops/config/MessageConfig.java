@@ -30,7 +30,6 @@ public class MessageConfig {
     public static String seasonDisabled;
     public static String autoSeasonDisabled;
     public static String prefix;
-    public static String nonArgs;
     public static String wrongArgs;
     public static String unavailableArgs;
     public static String lackArgs;
@@ -46,6 +45,7 @@ public class MessageConfig {
     public static String worldNotExists;
     public static String seasonNotExists;
     public static String wrongSeason;
+    public static String nonArgs;
 
     public static void load() {
         YamlConfiguration config = ConfigUtil.getConfig("messages" + File.separator + "messages_" + MainConfig.lang +".yml");
@@ -53,7 +53,9 @@ public class MessageConfig {
         reload = config.getString("messages.reload");
         noPerm = config.getString("messages.no-perm");
         lackArgs = config.getString("messages.lack-args");
+        unavailableArgs = config.getString("messages.invalid-args");
         wrongArgs = config.getString("messages.wrong-args");
+        nonArgs = config.getString("messages.none-args");
         spring = config.getString("messages.spring");
         summer = config.getString("messages.summer");
         autumn = config.getString("messages.autumn");

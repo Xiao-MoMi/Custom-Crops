@@ -348,7 +348,9 @@ public abstract class HandlerP extends Function {
         if (customWorld == null) return false;
 
         if (fertilizer.isBefore()) {
-            Location above = potLoc.clone().add(0,1,0);
+            Location above = potLoc.clone().add(0.5,1.5,0.5);
+            if (MainConfig.OraxenHook) above.subtract(0, 0.46875, 0);
+
             if (FurnitureUtil.hasFurniture(above)) {
                 AdventureUtil.playerMessage(player, MessageConfig.prefix + MessageConfig.beforePlant);
                 return true;

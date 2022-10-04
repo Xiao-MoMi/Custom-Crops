@@ -17,6 +17,7 @@
 
 package net.momirealms.customcrops.managers;
 
+import net.momirealms.customcrops.CustomCrops;
 import net.momirealms.customcrops.api.crop.Crop;
 import net.momirealms.customcrops.config.BasicItemConfig;
 import net.momirealms.customcrops.config.CropConfig;
@@ -25,10 +26,11 @@ import net.momirealms.customcrops.integrations.customplugin.CustomInterface;
 import net.momirealms.customcrops.integrations.customplugin.oraxen.OraxenHook;
 import net.momirealms.customcrops.objects.GiganticCrop;
 import net.momirealms.customcrops.objects.fertilizer.Fertilizer;
-import net.momirealms.customcrops.objects.fertilizer.RetainingSoil;
+import net.momirealms.customcrops.objects.fertilizer.Gigantic;
 import net.momirealms.customcrops.objects.fertilizer.SpeedGrow;
 import net.momirealms.customcrops.utils.FurnitureUtil;
 import org.apache.commons.lang.StringUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.entity.ItemFrame;
@@ -57,7 +59,10 @@ public class FrameCropImpl implements CropModeInterface {
 
         if (chunk.isEntitiesLoaded()) {
 
-            ItemFrame itemFrame = FurnitureUtil.getItemFrame(location);
+            Location cropLoc = location.clone().add(0.5,0.5,0.5);
+            if (MainConfig.OraxenHook) cropLoc.subtract(0, 0.46875, 0);
+
+            ItemFrame itemFrame = FurnitureUtil.getItemFrame(cropLoc);
             if (itemFrame == null) return true;
             String id = customInterface.getItemID(itemFrame.getItem());
             if (id == null) return true;
@@ -95,13 +100,22 @@ public class FrameCropImpl implements CropModeInterface {
             }
             else {
                 GiganticCrop giganticCrop = crop.getGiganticCrop();
-                if (giganticCrop != null && Math.random() < giganticCrop.getChance()) {
-                    customInterface.removeFurniture(itemFrame);
-                    if (giganticCrop.isBlock()) {
-                        customInterface.placeWire(location, giganticCrop.getBlockID());
+                if (giganticCrop != null) {
+                    double chance = giganticCrop.getChance();
+                    if (fertilizer instanceof Gigantic gigantic) {
+                        chance += gigantic.getChance();
                     }
-                    else {
-                        customInterface.placeFurniture(location, giganticCrop.getBlockID());
+                    System.out.println(chance);
+                    if (Math.random() < chance) {
+                        Bukkit.getScheduler().runTask(CustomCrops.plugin, () -> {
+                            customInterface.removeFurniture(itemFrame);
+                            if (giganticCrop.isBlock()) {
+                                customInterface.placeWire(location, giganticCrop.getBlockID());
+                            }
+                            else {
+                                customInterface.placeFurniture(location, giganticCrop.getBlockID());
+                            }
+                        });
                     }
                 }
                 return true;
@@ -112,6 +126,6 @@ public class FrameCropImpl implements CropModeInterface {
 
     private void addStage(ItemFrame itemFrame, String stage) {
         itemFrame.setItem(customInterface.getItemStack(stage));
-        if (!MainConfig.OraxenHook) itemFrame.getPersistentDataContainer().set(OraxenHook.FURNITURE, PersistentDataType.STRING, stage);
+        if (MainConfig.OraxenHook) itemFrame.getPersistentDataContainer().set(OraxenHook.FURNITURE, PersistentDataType.STRING, stage);
     }
 }

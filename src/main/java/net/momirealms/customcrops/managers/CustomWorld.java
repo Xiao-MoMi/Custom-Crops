@@ -17,32 +17,31 @@
 
 package net.momirealms.customcrops.managers;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.google.gson.stream.JsonReader;
+import com.google.gson.*;
 import net.momirealms.customcrops.CustomCrops;
 import net.momirealms.customcrops.api.event.CustomWorldEvent;
+import net.momirealms.customcrops.api.utils.SeasonUtils;
 import net.momirealms.customcrops.config.*;
+import net.momirealms.customcrops.integrations.season.CCSeason;
 import net.momirealms.customcrops.objects.SimpleLocation;
 import net.momirealms.customcrops.objects.Sprinkler;
 import net.momirealms.customcrops.objects.WorldState;
 import net.momirealms.customcrops.objects.fertilizer.Fertilizer;
 import net.momirealms.customcrops.utils.AdventureUtil;
 import net.momirealms.customcrops.utils.MiscUtils;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.*;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -71,6 +70,7 @@ public class CustomWorld {
         this.playerWatered = new HashSet<>();
         this.tempWatered = new HashSet<>();
         Bukkit.getScheduler().runTaskAsynchronously(CustomCrops.plugin, () -> {
+            loadSeason();
             loadCropCache();
             loadSprinklerCache();
             loadFertilizerCache();
@@ -84,17 +84,21 @@ public class CustomWorld {
 
     public void unload(boolean disable) {
         if (disable) {
+            unloadSeason();
             unloadCrop();
             unloadSprinkler();
             unloadFertilizer();
             unloadPot();
+            backUp(world.getName());
         }
         else {
             Bukkit.getScheduler().runTaskAsynchronously(CustomCrops.plugin, () -> {
+                unloadSeason();
                 unloadCrop();
                 unloadSprinkler();
                 unloadFertilizer();
                 unloadPot();
+                backUp(world.getName());
                 for (BukkitTask task : tasksCache) {
                     task.cancel();
                 }
@@ -105,6 +109,56 @@ public class CustomWorld {
                 });
             });
         }
+    }
+
+    private void backUp(String worldName) {
+        Date date = new Date();
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+        try {
+            File file = new File(CustomCrops.plugin.getDataFolder().getParentFile().getParentFile(), worldName + File.separator + "customcrops_data");
+            File[] files = file.listFiles();
+            if (files == null) return;
+            for (File data : files) {
+                FileUtils.copyFileToDirectory(data, new File(CustomCrops.plugin.getDataFolder(), "backup" + File.separator + worldName + "_" + format.format(date)));
+            }
+        }
+        catch (IOException e){
+            e.printStackTrace();
+            AdventureUtil.consoleMessage("<red>[CustomCrops] Error! Failed to back up data for </red>");
+        }
+    }
+
+    public void loadSeason() {
+        try {
+            JsonParser jsonParser = new JsonParser();
+            JsonElement json= jsonParser.parse(new FileReader(new File(CustomCrops.plugin.getDataFolder().getParentFile().getParentFile(), world.getName() + File.separator + "customcrops_data" + File.separator + "season.json")));
+            if (json.isJsonObject()) {
+                JsonObject jsonObject = json.getAsJsonObject();
+                if (jsonObject.has("season")) {
+                    JsonPrimitive jsonPrimitive = jsonObject.getAsJsonPrimitive("season");
+                    String season = jsonPrimitive.getAsString();
+                    if (MainConfig.realisticSeasonHook) return;
+                    SeasonUtils.setSeason(world, CCSeason.valueOf(season));
+                    return;
+                }
+            }
+            SeasonUtils.setSeason(world, CCSeason.UNKNOWN);
+        }
+        catch (FileNotFoundException e) {
+            //bypass
+        }
+    }
+
+    public void unloadSeason() {
+        JsonObject jsonObject = new JsonObject();
+        JsonPrimitive jsonPrimitive = new JsonPrimitive(SeasonUtils.getSeason(world).name());
+        jsonObject.add("season", jsonPrimitive);
+        try (FileWriter fileWriter = new FileWriter(new File(CustomCrops.plugin.getDataFolder().getParentFile().getParentFile(), world.getName() + File.separator + "customcrops_data" + File.separator + "season.json"))){
+            fileWriter.write(jsonObject.toString().replace("\\\\", "\\"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        SeasonUtils.unloadSeason(world);
     }
 
     public void loadPot() {

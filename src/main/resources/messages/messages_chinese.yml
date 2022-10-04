@@ -6,6 +6,8 @@ messages:
   no-perm: '<red>权限不足!'
   lack-args: '<white>参数不足!'
   wrong-args: '<white>参数错误!'
+  none-args: '<white>非空参数!'
+  invalid-args: '<white>无效参数!'
   spring: '春'
   summer: '夏'
   autumn: '秋'

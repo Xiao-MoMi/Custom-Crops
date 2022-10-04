@@ -40,6 +40,7 @@ public class OraxenBlockListener implements Listener {
 
     @EventHandler
     public void onInteractNote(OraxenNoteBlockInteractEvent event) {
+        handler.onInteractNoteBlock(event);
     }
 
     @EventHandler
@@ -49,5 +50,6 @@ public class OraxenBlockListener implements Listener {
 
     @EventHandler
     public void onInteractString(OraxenStringBlockInteractEvent event) {
+        handler.onInteractStringBlock(event);
     }
 }

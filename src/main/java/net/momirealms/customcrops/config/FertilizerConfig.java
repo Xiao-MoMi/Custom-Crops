@@ -34,6 +34,7 @@ public class FertilizerConfig {
     public static void load() {
         FERTILIZERS = new HashMap<>(16);
         YamlConfiguration config = ConfigUtil.getConfig("fertilizers_" + MainConfig.customPlugin + ".yml");
+        int amount = 0;
         for (String key : config.getKeys(false)) {
             switch (key) {
                 case "speed" -> {
@@ -50,6 +51,7 @@ public class FertilizerConfig {
                         }
                         FERTILIZERS.put(config.getString(key + "." + fertilizer + ".item"), speedGrow);
                         FERTILIZERS.put(fertilizer, speedGrow);
+                        amount++;
                     }
                 }
                 case "gigantic" -> {
@@ -66,6 +68,7 @@ public class FertilizerConfig {
                         }
                         FERTILIZERS.put(config.getString(key + "." + fertilizer + ".item"), gigantic);
                         FERTILIZERS.put(fertilizer, gigantic);
+                        amount++;
                     }
                 }
                 case "retaining" -> {
@@ -82,6 +85,7 @@ public class FertilizerConfig {
                         }
                         FERTILIZERS.put(config.getString(key + "." + fertilizer + ".item"), retainingSoil);
                         FERTILIZERS.put(fertilizer, retainingSoil);
+                        amount++;
                     }
                 }
                 case "quantity" -> {
@@ -99,6 +103,7 @@ public class FertilizerConfig {
                         }
                         FERTILIZERS.put(config.getString(key + "." + fertilizer + ".item"), yieldIncreasing);
                         FERTILIZERS.put(fertilizer, yieldIncreasing);
+                        amount++;
                     }
                 }
                 case "quality" -> {
@@ -123,10 +128,11 @@ public class FertilizerConfig {
                         }
                         FERTILIZERS.put(config.getString(key + "." + fertilizer + ".item"), qualityCrop);
                         FERTILIZERS.put(fertilizer, qualityCrop);
+                        amount++;
                     }
                 }
             }
         }
-        AdventureUtil.consoleMessage("[CustomCrops] Loaded <green>" + FERTILIZERS.size() / 2 + "<gray> fertilizers");
+        AdventureUtil.consoleMessage("[CustomCrops] Loaded <green>" + amount + "<gray> fertilizers");
     }
 }

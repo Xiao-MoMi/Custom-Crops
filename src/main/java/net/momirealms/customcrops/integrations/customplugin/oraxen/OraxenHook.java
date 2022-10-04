@@ -46,8 +46,6 @@ import static io.th0rgal.oraxen.mechanics.provided.gameplay.furniture.FurnitureM
 
 public class OraxenHook implements CustomInterface {
 
-    static Rotation[] rotations4 = {Rotation.NONE, Rotation.FLIPPED, Rotation.CLOCKWISE, Rotation.COUNTER_CLOCKWISE};
-
     public static NamespacedKey FURNITURE = new NamespacedKey(OraxenPlugin.get(), "furniture");
 
     @Override
@@ -107,7 +105,6 @@ public class OraxenHook implements CustomInterface {
             frame.setPersistent(true);
             frame.setItemDropChance(0);
             frame.setItem(itemBuilder.build(), false);
-            frame.setRotation(rotations4[new Random().nextInt(rotations4.length-1)]);
             frame.setFacingDirection(BlockFace.UP, true);
             PersistentDataContainer pdc = frame.getPersistentDataContainer();
             pdc.set(FURNITURE_KEY, PersistentDataType.STRING, id);

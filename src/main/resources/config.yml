@@ -46,6 +46,8 @@ optimization:
   disable-water-particles: false
   # Disable the animation when sprinkler works
   disable-sprinkler-animation: false
+  # Auto back up the data for when a world is unloaded
+  auto-back-up: true
 
 mechanics:
 
@@ -97,6 +99,12 @@ mechanics:
   # Season would not affect ripe crops(for better performance and friendly player's experience)
   season:
     enable: true
+
+    # If you want all the worlds share the same season
+    sync-seasons:
+      enable: false
+      world: world
+
     auto-season-change:
       enable: true
       #duration of each season

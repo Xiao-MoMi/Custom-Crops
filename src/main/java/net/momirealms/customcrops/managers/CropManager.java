@@ -17,7 +17,6 @@
 
 package net.momirealms.customcrops.managers;
 
-import dev.lone.itemsadder.api.CustomStack;
 import net.momirealms.customcrops.CustomCrops;
 import net.momirealms.customcrops.Function;
 import net.momirealms.customcrops.api.crop.Crop;
@@ -131,6 +130,9 @@ public class CropManager extends Function {
             customWorld.unload(true);
         }
         customWorlds.clear();
+        if (this.seasonInterface != null) {
+            seasonInterface.unload();
+        }
     }
 
     public void onItemSpawn(Item item) {
@@ -178,7 +180,7 @@ public class CropManager extends Function {
 
     public boolean hasGlass(Location location) {
         for(int i = 1; i <= SeasonConfig.effectiveRange; i++){
-            String blockID = customInterface.getBlockID(location);
+            String blockID = customInterface.getBlockID(location.clone().add(0,i,0));
             if (blockID != null && blockID.equals(BasicItemConfig.greenHouseGlass)) return true;
         }
         return false;
@@ -220,6 +222,9 @@ public class CropManager extends Function {
     }
 
     public void makePotDry(Location potLoc) {
+        String potID = customInterface.getBlockID(potLoc);
+        if (potID == null) return;
+        if (!potID.equals(BasicItemConfig.wetPot)) return;
         customInterface.removeBlock(potLoc);
         customInterface.placeNoteBlock(potLoc, BasicItemConfig.dryPot);
     }
@@ -250,8 +255,6 @@ public class CropManager extends Function {
 
         if (player.getGameMode() == GameMode.CREATIVE) return;
 
-        Location itemLoc = location.clone().add(0.5,0.2,0.5);
-
         QualityLoot qualityLoot = crop.getQualityLoot();
         if (qualityLoot != null) {
             int amount = ThreadLocalRandom.current().nextInt(qualityLoot.getMin(), qualityLoot.getMax() + 1);
@@ -266,10 +269,10 @@ public class CropManager extends Function {
                     qualityRatio = qualityCrop.getQualityRatio();
                 }
             }
-            dropQualityLoots(qualityLoot, amount, itemLoc, qualityRatio);
+            dropQualityLoots(qualityLoot, amount, location.getBlock().getLocation(), qualityRatio);
         }
         OtherLoot[] otherLoots = crop.getOtherLoots();
-        if (otherLoots != null) dropOtherLoots(otherLoots, itemLoc);
+        if (otherLoots != null) dropOtherLoots(otherLoots, location.getBlock().getLocation());
     }
 
     public void performActions(ActionInterface[] actions, Player player) {
@@ -282,9 +285,10 @@ public class CropManager extends Function {
         for (OtherLoot otherLoot : otherLoots) {
             if (Math.random() < otherLoot.getChance()) {
                 int random = ThreadLocalRandom.current().nextInt(otherLoot.getMin(), otherLoot.getMax() + 1);
-                ItemStack drop = CustomStack.getInstance(otherLoot.getItemID()).getItemStack();
+                ItemStack drop = customInterface.getItemStack(otherLoot.getItemID());
+                if (drop == null) continue;
                 drop.setAmount(random);
-                location.getWorld().dropItem(location, drop);
+                location.getWorld().dropItemNaturally(location, drop);
             }
         }
     }
@@ -297,17 +301,17 @@ public class CropManager extends Function {
             if (random < qualityRatio.getQuality_1()) {
                 ItemStack drop = customInterface.getItemStack(qualityLoot.getQuality_1());
                 if (drop == null) continue;
-                world.dropItem(location, drop);
+                world.dropItemNaturally(location, drop);
             }
             else if(random > qualityRatio.getQuality_2()){
                 ItemStack drop = customInterface.getItemStack(qualityLoot.getQuality_2());
                 if (drop == null) continue;
-                world.dropItem(location, drop);
+                world.dropItemNaturally(location, drop);
             }
             else {
                 ItemStack drop = customInterface.getItemStack(qualityLoot.getQuality_3());
                 if (drop == null) continue;
-                world.dropItem(location, drop);
+                world.dropItemNaturally(location, drop);
             }
         }
     }

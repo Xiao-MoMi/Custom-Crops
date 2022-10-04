@@ -84,8 +84,9 @@ public class MainConfig {
     public static boolean enableAnimations;
     public static boolean autoGrow;
     public static boolean enableCompensation;
-    public static boolean requireLight;
-    public static byte lightLevel;
+    public static boolean syncSeason;
+    public static World syncWorld;
+    public static boolean autoBackUp;
 
     public static void load() {
         ConfigUtil.update("config.yml");
@@ -102,7 +103,7 @@ public class MainConfig {
             }
         }
         worldList = List.of(worlds);
-        cropMode = config.getString("crops.mode", "tripwire").equals("tripwire");
+        cropMode = config.getString("mechanics.crops-mode", "tripwire").equals("tripwire");
         limitation = config.getBoolean("optimization.limitation.enable", true);
         wireAmount = config.getInt("optimization.limitation.tripwire-amount", 64);
         frameAmount = config.getInt("optimization.limitation.itemframe-amount", 64);
@@ -125,6 +126,11 @@ public class MainConfig {
 
         enableBoneMeal = config.getBoolean("mechanics.bone-meal", true);
         boneMealChance = config.getDouble("mechanics.chance", 0.5);
+
+        syncSeason = config.getBoolean("mechanics.season.sync-seasons.enable", false);
+        syncWorld = Bukkit.getWorld(config.getString("mechanics.season.sync-seasons.world", "world"));
+
+        autoBackUp = config.getBoolean("optimization.auto-back-up", true);
 
         enableParticles = !config.getBoolean("optimization.disable-water-particles", false);
         enableAnimations = !config.getBoolean("optimization.disable-sprinkler-animation", false);

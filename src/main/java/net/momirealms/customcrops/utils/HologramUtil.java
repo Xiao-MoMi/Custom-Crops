@@ -18,7 +18,6 @@
 package net.momirealms.customcrops.utils;
 
 import com.comphenix.protocol.PacketType;
-import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
@@ -26,6 +25,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.momirealms.customcrops.CustomCrops;
+import net.momirealms.customcrops.objects.SimpleLocation;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
@@ -35,17 +35,17 @@ import java.util.*;
 
 public class HologramUtil {
 
-    public static HashMap<Location, Integer> cache = new HashMap<>();
+    public static HashMap<SimpleLocation, Integer> cache = new HashMap<>();
 
     public static void showHolo(String text, Player player, Location location, int duration){
 
-        Integer entityID = cache.remove(location);
+        Integer entityID = cache.remove(MiscUtils.getSimpleLocation(location));
         if (entityID != null) {
             removeHolo(player, entityID);
         }
         PacketContainer spawnPacket = new PacketContainer(PacketType.Play.Server.SPAWN_ENTITY);
         int id = new Random().nextInt(1000000000);
-        cache.put(location, id);
+        cache.put(MiscUtils.getSimpleLocation(location), id);
         spawnPacket.getModifier().write(0, id);
         spawnPacket.getModifier().write(1, UUID.randomUUID());
         spawnPacket.getEntityTypeModifier().write(0, EntityType.ARMOR_STAND);
@@ -76,7 +76,7 @@ public class HologramUtil {
         }
         Bukkit.getScheduler().runTaskLater(CustomCrops.plugin, ()->{
             removeHolo(player, id);
-            cache.remove(location);
+            cache.remove(MiscUtils.getSimpleLocation(location));
         }, duration * 20L);
     }
 

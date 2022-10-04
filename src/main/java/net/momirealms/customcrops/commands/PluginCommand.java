@@ -26,14 +26,14 @@ public class PluginCommand implements TabExecutor {
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
         List<String> argList = Arrays.asList(args);
         if (argList.size() < 1) {
-            AdventureUtil.sendMessage(sender, MessageConfig.nonArgs);
+            AdventureUtil.sendMessage(sender, MessageConfig.prefix + MessageConfig.nonArgs);
             return true;
         }
         SubCommand subCommand = subCommandMap.get(argList.get(0));
         if (subCommand != null)
             return subCommand.onCommand(sender, argList.subList(1, argList.size()));
         else {
-            AdventureUtil.sendMessage(sender, MessageConfig.unavailableArgs);
+            AdventureUtil.sendMessage(sender, MessageConfig.prefix + MessageConfig.unavailableArgs);
             return true;
         }
     }

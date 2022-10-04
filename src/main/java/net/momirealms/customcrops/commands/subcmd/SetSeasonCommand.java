@@ -3,7 +3,7 @@ package net.momirealms.customcrops.commands.subcmd;
 import net.momirealms.customcrops.api.utils.SeasonUtils;
 import net.momirealms.customcrops.commands.AbstractSubCommand;
 import net.momirealms.customcrops.commands.SubCommand;
-import net.momirealms.customcrops.config.*;
+import net.momirealms.customcrops.config.MessageConfig;
 import net.momirealms.customcrops.integrations.season.CCSeason;
 import net.momirealms.customcrops.utils.AdventureUtil;
 import org.bukkit.Bukkit;
@@ -42,7 +42,7 @@ public class SetSeasonCommand extends AbstractSubCommand {
                 return true;
             }
             SeasonUtils.setSeason(world, ccSeason);
-            AdventureUtil.sendMessage(sender, MessageConfig.prefix + MessageConfig.setSeason);
+            AdventureUtil.sendMessage(sender, MessageConfig.prefix + MessageConfig.setSeason.replace("{world}", args.get(0)).replace("{season}", args.get(1)));
         }
         return super.onCommand(sender, args);
     }

@@ -86,7 +86,7 @@ quality:
 #When haveresting, players have a higher chance to get more crops.
 quantity:
   quantity_1:
-    name: '뀆'
+    name: '뀏'
     times: 14
     chance: 0.5
     bonus: 1
@@ -114,7 +114,7 @@ quantity:
 #Crops have a higher chance to be gigantic
 gigantic:
   gigantic_1:
-    name: '뀆'
+    name: '뀒'
     times: 14
     # If a crop's default gigantic chance is 0.01, now it's 0.03
     chance: 0.02
@@ -122,14 +122,14 @@ gigantic:
     before-plant: true
     particle: SOUL
   gigantic_2:
-    name: '뀐'
+    name: '뀓'
     times: 14
     chance: 0.04
     item: gigantic_2
     before-plant: true
     particle: SOUL
   gigantic_3:
-    name: '뀑'
+    name: '뀔'
     times: 14
     chance: 0.08
     item: gigantic_3

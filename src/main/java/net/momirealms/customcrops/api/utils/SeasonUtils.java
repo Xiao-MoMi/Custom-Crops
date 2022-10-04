@@ -32,4 +32,8 @@ public class SeasonUtils {
     public static CCSeason getSeason(World world) {
         return CustomCrops.plugin.getCropManager().getSeasonAPI().getSeason(world);
     }
+
+    public static void unloadSeason(World world) {
+        CustomCrops.plugin.getCropManager().getSeasonAPI().unloadWorld(world);
+    }
 }

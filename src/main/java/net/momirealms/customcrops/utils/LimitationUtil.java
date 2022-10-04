@@ -20,7 +20,6 @@ package net.momirealms.customcrops.utils;
 import net.momirealms.customcrops.config.MainConfig;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.entity.ItemFrame;
 
 public class LimitationUtil {
 

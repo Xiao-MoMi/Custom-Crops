@@ -31,6 +31,7 @@ public interface CustomInterface {
 
     void placeNoteBlock(Location location, String blockID);
 
+    @Nullable
     String getBlockID(Location location);
 
     @Nullable
