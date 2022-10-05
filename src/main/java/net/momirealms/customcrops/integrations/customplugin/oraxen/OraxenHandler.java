@@ -21,17 +21,16 @@ import de.tr7zw.changeme.nbtapi.NBTCompound;
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import io.th0rgal.oraxen.events.*;
 import io.th0rgal.oraxen.items.OraxenItems;
+import io.th0rgal.oraxen.mechanics.provided.gameplay.furniture.FurnitureMechanic;
 import net.momirealms.customcrops.CustomCrops;
 import net.momirealms.customcrops.api.crop.Crop;
 import net.momirealms.customcrops.api.event.WaterEvent;
-import net.momirealms.customcrops.config.CropConfig;
-import net.momirealms.customcrops.config.MainConfig;
-import net.momirealms.customcrops.config.SoundConfig;
-import net.momirealms.customcrops.config.WaterCanConfig;
+import net.momirealms.customcrops.config.*;
 import net.momirealms.customcrops.integrations.customplugin.HandlerP;
 import net.momirealms.customcrops.integrations.customplugin.oraxen.listeners.OraxenBlockListener;
 import net.momirealms.customcrops.integrations.customplugin.oraxen.listeners.OraxenFurnitureListener;
 import net.momirealms.customcrops.managers.CropManager;
+import net.momirealms.customcrops.managers.CustomWorld;
 import net.momirealms.customcrops.objects.WaterCan;
 import net.momirealms.customcrops.utils.AdventureUtil;
 import org.apache.commons.lang.StringUtils;
@@ -71,6 +70,24 @@ public abstract class OraxenHandler extends HandlerP {
         super.unload();
         HandlerList.unregisterAll(this.oraxenBlockListener);
         HandlerList.unregisterAll(this.oraxenFurnitureListener);
+    }
+
+    //scarecrow place
+    public void placeScarecrow(OraxenFurniturePlaceEvent event) {
+        if (!MainConfig.enableCrow) return;
+        FurnitureMechanic mechanic = event.getFurnitureMechanic();
+        String id = mechanic.getItemID();
+        if (!id.equals(BasicItemConfig.scarecrow)) return;
+        Location location = event.getItemFrame().getLocation();
+        CustomWorld customWorld = cropManager.getCustomWorld(location.getWorld());
+        if (customWorld == null) return;
+        customWorld.addScarecrow(location);
+    }
+
+    public void removeScarecrow(Location location) {
+        CustomWorld customWorld = cropManager.getCustomWorld(location.getWorld());
+        if (customWorld == null) return;
+        customWorld.removeScarecrow(location);
     }
 
     public boolean tryMisc(Player player, ItemStack itemInHand, Location potLoc) {

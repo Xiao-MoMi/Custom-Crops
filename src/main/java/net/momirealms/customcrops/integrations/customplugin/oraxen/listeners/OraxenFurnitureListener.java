@@ -19,6 +19,7 @@ package net.momirealms.customcrops.integrations.customplugin.oraxen.listeners;
 
 import io.th0rgal.oraxen.events.OraxenFurnitureBreakEvent;
 import io.th0rgal.oraxen.events.OraxenFurnitureInteractEvent;
+import io.th0rgal.oraxen.events.OraxenFurniturePlaceEvent;
 import net.momirealms.customcrops.integrations.customplugin.oraxen.OraxenHandler;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -32,12 +33,17 @@ public class OraxenFurnitureListener implements Listener {
     }
 
     @EventHandler
-    public void onInteract(OraxenFurnitureInteractEvent event) {
+    public void onInteractFurniture(OraxenFurnitureInteractEvent event) {
         handler.onInteractFurniture(event);
     }
 
     @EventHandler
-    public void onBreak(OraxenFurnitureBreakEvent event) {
+    public void onBreakFurniture(OraxenFurnitureBreakEvent event) {
         handler.onBreakFurniture(event);
+    }
+
+    @EventHandler
+    public void onPlaceFurniture(OraxenFurniturePlaceEvent event) {
+        handler.placeScarecrow(event);
     }
 }

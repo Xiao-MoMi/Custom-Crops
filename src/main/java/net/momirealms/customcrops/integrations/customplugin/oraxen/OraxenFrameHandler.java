@@ -110,7 +110,11 @@ public class OraxenFrameHandler extends OraxenHandler {
             super.onBreakSprinkler(event.getBlock().getLocation());
             return;
         }
-
+        if (MainConfig.enableCrow && id.equals(BasicItemConfig.scarecrow)) {
+            super.removeScarecrow(event.getBlock().getLocation());
+            return;
+        }
+        //TODO check if event.getBlock()
         if (id.contains("_stage_")) {
             if (id.equals(BasicItemConfig.deadCrop)) return;
             if (hasNextStage(id)) {

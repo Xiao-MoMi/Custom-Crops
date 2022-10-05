@@ -17,11 +17,15 @@
 
 package net.momirealms.customcrops.managers;
 
+import org.bukkit.Chunk;
 import org.bukkit.Location;
 
 public interface CropModeInterface {
 
     boolean growJudge(Location location);
-    void loadChunk(Location location);
 
+    default void loadChunk(Location location) {
+        Chunk chunk = location.getChunk();
+        chunk.load();
+    }
 }

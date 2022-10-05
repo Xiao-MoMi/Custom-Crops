@@ -32,6 +32,7 @@ import net.momirealms.customcrops.utils.MiscUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -51,6 +52,7 @@ public class CustomWorld {
     private final ConcurrentHashMap<SimpleLocation, String> cropCache;
     private final ConcurrentHashMap<SimpleLocation, Sprinkler> sprinklerCache;
     private final ConcurrentHashMap<SimpleLocation, Fertilizer> fertilizerCache;
+    private final ConcurrentHashMap<String, HashSet<SimpleLocation>> scarecrowCache;
     private final Set<SimpleLocation> watered;
     private HashSet<SimpleLocation> tempWatered;
     private final HashSet<SimpleLocation> playerWatered;
@@ -64,17 +66,14 @@ public class CustomWorld {
         this.fertilizerCache = new ConcurrentHashMap<>(2048);
         this.sprinklerCache = new ConcurrentHashMap<>(1024);
         this.tasksCache = new HashSet<>(4096);
+        this.scarecrowCache = new ConcurrentHashMap<>(256);
         this.cropManager = cropManager;
         this.bukkitScheduler = Bukkit.getScheduler();
         this.watered = Collections.synchronizedSet(new HashSet<>());
         this.playerWatered = new HashSet<>();
         this.tempWatered = new HashSet<>();
         Bukkit.getScheduler().runTaskAsynchronously(CustomCrops.plugin, () -> {
-            loadSeason();
-            loadCropCache();
-            loadSprinklerCache();
-            loadFertilizerCache();
-            loadPot();
+            loadData();
             Bukkit.getScheduler().runTask(CustomCrops.plugin, () -> {
                 CustomWorldEvent customWorldEvent = new CustomWorldEvent(world, WorldState.LOAD);
                 Bukkit.getPluginManager().callEvent(customWorldEvent);
@@ -84,21 +83,11 @@ public class CustomWorld {
 
     public void unload(boolean disable) {
         if (disable) {
-            unloadSeason();
-            unloadCrop();
-            unloadSprinkler();
-            unloadFertilizer();
-            unloadPot();
-            backUp(world.getName());
+            unloadData();
         }
         else {
             Bukkit.getScheduler().runTaskAsynchronously(CustomCrops.plugin, () -> {
-                unloadSeason();
-                unloadCrop();
-                unloadSprinkler();
-                unloadFertilizer();
-                unloadPot();
-                backUp(world.getName());
+                unloadData();
                 for (BukkitTask task : tasksCache) {
                     task.cancel();
                 }
@@ -111,7 +100,27 @@ public class CustomWorld {
         }
     }
 
+    private void loadData() {
+        loadSeason();
+        loadCropCache();
+        loadSprinklerCache();
+        loadFertilizerCache();
+        loadPot();
+        loadScarecrow();
+    }
+
+    private void unloadData() {
+        unloadSeason();
+        unloadCrop();
+        unloadSprinkler();
+        unloadFertilizer();
+        unloadPot();
+        unloadScarecrow();
+        backUp(world.getName());
+    }
+
     private void backUp(String worldName) {
+        if (!MainConfig.autoBackUp) return;
         Date date = new Date();
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
         try {
@@ -128,7 +137,53 @@ public class CustomWorld {
         }
     }
 
-    public void loadSeason() {
+    private void loadScarecrow() {
+        if (!MainConfig.enableCrow) return;
+        try {
+            JsonParser jsonParser = new JsonParser();
+            JsonElement json= jsonParser.parse(new FileReader(new File(CustomCrops.plugin.getDataFolder().getParentFile().getParentFile(), world.getName() + File.separator + "customcrops_data" + File.separator + "scarecrow.json")));
+            if (json.isJsonObject()) {
+                JsonObject jsonObject = json.getAsJsonObject();
+                for (Map.Entry<String, JsonElement> en : jsonObject.entrySet()) {
+                    JsonArray jsonArray = en.getValue().getAsJsonArray();
+                    int size = jsonArray.size();
+                    HashSet<SimpleLocation> simpleLocations = new HashSet<>();
+                    for (int i = 0; i < size; i++) {
+                        simpleLocations.add(MiscUtils.getSimpleLocation(jsonArray.get(i).getAsString(), world.getName()));
+                    }
+                    scarecrowCache.put(en.getKey(), simpleLocations);
+                }
+
+            }
+            SeasonUtils.setSeason(world, CCSeason.UNKNOWN);
+        }
+        catch (FileNotFoundException e) {
+            //bypass
+        }
+    }
+
+    private void unloadScarecrow() {
+        if (!MainConfig.enableCrow) return;
+        JsonObject jsonObject = new JsonObject();
+        for (Map.Entry<String, HashSet<SimpleLocation>> entry : scarecrowCache.entrySet()) {
+            HashSet<SimpleLocation> locations = entry.getValue();
+            JsonArray jsonArray = new JsonArray();
+            for (SimpleLocation simpleLocation : locations) {
+                String loc = simpleLocation.getX() + "," + simpleLocation.getY() + "," + simpleLocation.getZ();
+                jsonArray.add(new JsonPrimitive(loc));
+            }
+            jsonObject.add(entry.getKey(), jsonArray);
+        }
+        try (FileWriter fileWriter = new FileWriter(new File(CustomCrops.plugin.getDataFolder().getParentFile().getParentFile(), world.getName() + File.separator + "customcrops_data" + File.separator + "scarecrow.json"))){
+            fileWriter.write(jsonObject.toString().replace("\\\\", "\\"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        SeasonUtils.unloadSeason(world);
+    }
+
+    private void loadSeason() {
+        if (!SeasonConfig.enable) return;
         try {
             JsonParser jsonParser = new JsonParser();
             JsonElement json= jsonParser.parse(new FileReader(new File(CustomCrops.plugin.getDataFolder().getParentFile().getParentFile(), world.getName() + File.separator + "customcrops_data" + File.separator + "season.json")));
@@ -149,7 +204,8 @@ public class CustomWorld {
         }
     }
 
-    public void unloadSeason() {
+    private void unloadSeason() {
+        if (!SeasonConfig.enable) return;
         JsonObject jsonObject = new JsonObject();
         JsonPrimitive jsonPrimitive = new JsonPrimitive(SeasonUtils.getSeason(world).name());
         jsonObject.add("season", jsonPrimitive);
@@ -161,7 +217,7 @@ public class CustomWorld {
         SeasonUtils.unloadSeason(world);
     }
 
-    public void loadPot() {
+    private void loadPot() {
         try {
             JsonParser jsonParser = new JsonParser();
             JsonElement json= jsonParser.parse(new FileReader(new File(CustomCrops.plugin.getDataFolder().getParentFile().getParentFile(), world.getName() + File.separator + "customcrops_data" + File.separator + "pot.json")));
@@ -183,7 +239,7 @@ public class CustomWorld {
         }
     }
 
-    public void unloadPot() {
+    private void unloadPot() {
         JsonObject jsonObject = new JsonObject();
         JsonArray jsonArray = new JsonArray();
         watered.addAll(playerWatered);
@@ -469,5 +525,31 @@ public class CustomWorld {
 
     public void setPlayerWatered(Location location) {
         playerWatered.add(MiscUtils.getSimpleLocation(location));
+    }
+
+    public boolean hasScarecrow(Location location) {
+        Chunk chunk = location.getChunk();
+        return scarecrowCache.containsKey(chunk.getX() + "," + chunk.getZ());
+    }
+
+    public void addScarecrow(Location location) {
+        Chunk chunk = location.getChunk();
+        HashSet<SimpleLocation> old = scarecrowCache.get(chunk.getX() + "," + chunk.getZ());
+        if (old == null) {
+            HashSet<SimpleLocation> young = new HashSet<>(4);
+            young.add(new SimpleLocation(world.getName(), location.getBlockX(), location.getBlockY(), location.getBlockZ()));
+            scarecrowCache.put(chunk.getX() + "," + chunk.getZ(), young);
+        }
+        else {
+            old.add(new SimpleLocation(world.getName(), location.getBlockX(), location.getBlockY(), location.getBlockZ()));
+        }
+    }
+
+    public void removeScarecrow(Location location) {
+        Chunk chunk = location.getChunk();
+        HashSet<SimpleLocation> old = scarecrowCache.get(chunk.getX() + "," + chunk.getZ());
+        if (old == null) return;
+        old.remove(new SimpleLocation(world.getName(), location.getBlockX(), location.getBlockY(), location.getBlockZ()));
+        if (old.size() == 0) scarecrowCache.remove(chunk.getX() + "," + chunk.getZ());
     }
 }

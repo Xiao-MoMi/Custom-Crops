@@ -29,23 +29,16 @@ import net.momirealms.customcrops.objects.fertilizer.Gigantic;
 import net.momirealms.customcrops.objects.fertilizer.SpeedGrow;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.Chunk;
 import org.bukkit.Location;
 
-public class WireCropImpl implements CropModeInterface{
+public class OraxenWireCropImpl implements CropModeInterface{
 
     private final CropManager cropManager;
     private final CustomInterface customInterface;
 
-    public WireCropImpl(CropManager cropManager) {
+    public OraxenWireCropImpl(CropManager cropManager) {
         this.cropManager = cropManager;
         this.customInterface = cropManager.getCustomInterface();
-    }
-
-    @Override
-    public void loadChunk(Location location) {
-        Chunk chunk = location.getChunk();
-        chunk.load();
     }
 
     @Override
@@ -55,7 +48,6 @@ public class WireCropImpl implements CropModeInterface{
         if (!blockID.contains("_stage_")) return true;
         String[] cropNameList = StringUtils.split(blockID,"_");
         String cropKey = cropNameList[0];
-        if (cropKey.contains(":")) cropKey = StringUtils.split(cropKey, ":")[1];
         Crop crop = CropConfig.CROPS.get(cropKey);
         if (crop == null) return true;
         if (cropManager.isWrongSeason(location, crop.getSeasons())) {
@@ -73,7 +65,6 @@ public class WireCropImpl implements CropModeInterface{
         boolean certainGrow = potID.equals(BasicItemConfig.wetPot);
         int nextStage = Integer.parseInt(cropNameList[2]) + 1;
         String temp = StringUtils.chop(blockID);
-
         if (customInterface.doesExist(temp + nextStage)) {
             if (fertilizer instanceof SpeedGrow speedGrow && Math.random() < speedGrow.getChance()) {
                 if (customInterface.doesExist(temp + (nextStage+1))) {
@@ -109,9 +100,6 @@ public class WireCropImpl implements CropModeInterface{
     }
 
     private void addStage(Location seedLoc, String stage) {
-        Bukkit.getScheduler().runTask(CustomCrops.plugin, () -> {
-            if (!MainConfig.OraxenHook) customInterface.removeBlock(seedLoc);
-            customInterface.placeWire(seedLoc, stage);
-        });
+        Bukkit.getScheduler().runTask(CustomCrops.plugin, () -> customInterface.placeWire(seedLoc, stage));
     }
 }

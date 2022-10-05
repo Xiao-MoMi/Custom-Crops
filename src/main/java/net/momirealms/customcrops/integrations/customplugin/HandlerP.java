@@ -292,6 +292,12 @@ public abstract class HandlerP extends Function {
         return StringUtils.chop(id) + nextStage;
     }
 
+    public void placeScareCrow(Location location) {
+        CustomWorld customWorld = cropManager.getCustomWorld(location.getWorld());
+        if (customWorld == null) return;
+
+    }
+
     public boolean fillWaterCan(String id, NBTItem nbtItem, ItemStack itemStack, Player player) {
         WaterCan config = WaterCanConfig.CANS.get(id);
         if (config != null) {

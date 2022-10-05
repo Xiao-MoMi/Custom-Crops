@@ -89,18 +89,26 @@ public class CropManager extends Function {
         //Custom Plugin
         if (MainConfig.customPlugin.equals("itemsadder")) {
             customInterface = new ItemsAdderHook();
-            if (MainConfig.cropMode) this.handler = new ItemsAdderWireHandler(this);
-            else this.handler = new ItemsAdderFrameHandler(this);
+            if (MainConfig.cropMode) {
+                this.handler = new ItemsAdderWireHandler(this);
+                this.cropMode = new ItemsAdderWireCropImpl(this);
+            }
+            else {
+                this.handler = new ItemsAdderFrameHandler(this);
+                this.cropMode = new ItemsAdderFrameCropImpl(this);
+            }
         }
         else if (MainConfig.customPlugin.equals("oraxen")){
             customInterface = new OraxenHook();
-            if (MainConfig.cropMode) this.handler = new OraxenWireHandler(this);
-            else this.handler = new OraxenFrameHandler(this);
+            if (MainConfig.cropMode) {
+                this.handler = new OraxenWireHandler(this);
+                this.cropMode = new OraxenWireCropImpl(this);
+            }
+            else {
+                this.handler = new OraxenFrameHandler(this);
+                this.cropMode = new OraxenFrameCropImpl(this);
+            }
         }
-
-        //Crop mode
-        if (MainConfig.cropMode) this.cropMode = new WireCropImpl(this);
-        else this.cropMode = new FrameCropImpl(this);
 
         //new Time Check task
         this.timerTask = new TimerTask(this);
@@ -125,14 +133,12 @@ public class CropManager extends Function {
         HandlerList.unregisterAll(this.itemSpawnListener);
         HandlerList.unregisterAll(this.worldListener);
         if (this.handler != null) handler.unload();
-        this.timerTask.cancel();
+        if (this.timerTask != null) this.timerTask.cancel();
         for (CustomWorld customWorld : customWorlds.values()) {
             customWorld.unload(true);
         }
         customWorlds.clear();
-        if (this.seasonInterface != null) {
-            seasonInterface.unload();
-        }
+        if (this.seasonInterface != null) seasonInterface.unload();
     }
 
     public void onItemSpawn(Item item) {
@@ -148,7 +154,7 @@ public class CropManager extends Function {
             CustomWorld customWorld = new CustomWorld(world, this);
             customWorlds.put(world, customWorld);
             if (MainConfig.autoGrow && MainConfig.enableCompensation) {
-                if (world.getTime() < 24000 - MainConfig.timeToWork - MainConfig.timeToDry - 1200 && world.getTime() > 1500) {
+                if (world.getTime() < 24000 - MainConfig.timeToWork - MainConfig.timeToDry - 1200 && world.getTime() > 1200) {
                     Bukkit.getScheduler().runTaskLaterAsynchronously(CustomCrops.plugin, () -> grow(world, MainConfig.timeToGrow, MainConfig.timeToWork, MainConfig.timeToDry, true), 100);
                 }
             }

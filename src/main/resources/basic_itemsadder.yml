@@ -5,5 +5,5 @@ dead-crop: customcrops:crop_stage_death
 soil-surveyor: customcrops:soil_surveyor
 crow-fly: customcrops:crow_fly
 crow-land: customcrops:crow_land
-scarecow: customcrops:scarecow
+scarecrow: customcrops:scarecrow
 water-effect: customcrops:water_effect

@@ -1,5 +1,5 @@
 #Don't change
-config-version: '9'
+config-version: '10'
 
 # lang: english / spanish / chinese
 lang: chinese
@@ -58,7 +58,7 @@ mechanics:
     # For example, the time to start growing is 1000ticks(7am),
     # sprinklers would finish their work in a random time between 1000~1300ticks,
     # Pot would start drying in a random time between 1300~1500ticks
-    # and crops would grow in a random time between 1500~21300ticks
+    # and crops would grow in a random time between 1500~21500ticks
     sprinkler-work-time: 300
     pot-dry-time: 200
     crops-grow-time: 20000

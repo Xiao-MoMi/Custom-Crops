@@ -138,13 +138,17 @@ public class OraxenWireHandler extends OraxenHandler{
         if (event.isCancelled()) return;
 
         //TODO Check if triggered in res
-        //System.out.println(1);
 
         FurnitureMechanic mechanic = event.getFurnitureMechanic();
         if (mechanic == null) return;
-        Sprinkler sprinkler = SprinklerConfig.SPRINKLERS_3D.get(mechanic.getItemID());
+        String id = mechanic.getItemID();
+        Sprinkler sprinkler = SprinklerConfig.SPRINKLERS_3D.get(id);
         if (sprinkler != null) {
             super.onBreakSprinkler(event.getBlock().getLocation());
+            return;
+        }
+        if (MainConfig.enableCrow && id.equals(BasicItemConfig.scarecrow)) {
+            super.removeScarecrow(event.getBlock().getLocation());
         }
     }
 
@@ -239,8 +243,6 @@ public class OraxenWireHandler extends OraxenHandler{
     @Override
     public void onInteractStringBlock(OraxenStringBlockInteractEvent event) {
         if (event.isCancelled()) return;
-
-
         final Player player = event.getPlayer();
 
         long time = System.currentTimeMillis();
@@ -253,7 +255,6 @@ public class OraxenWireHandler extends OraxenHandler{
         if (id.contains("_stage_")) {
 
             Location seedLoc = block.getLocation();
-
             ItemStack itemInHand = event.getItemInHand();
             //ripe crops
             if (!id.equals(BasicItemConfig.deadCrop)) {

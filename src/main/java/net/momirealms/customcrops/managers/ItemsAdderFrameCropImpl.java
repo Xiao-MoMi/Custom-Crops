@@ -23,7 +23,6 @@ import net.momirealms.customcrops.config.BasicItemConfig;
 import net.momirealms.customcrops.config.CropConfig;
 import net.momirealms.customcrops.config.MainConfig;
 import net.momirealms.customcrops.integrations.customplugin.CustomInterface;
-import net.momirealms.customcrops.integrations.customplugin.oraxen.OraxenHook;
 import net.momirealms.customcrops.objects.GiganticCrop;
 import net.momirealms.customcrops.objects.fertilizer.Fertilizer;
 import net.momirealms.customcrops.objects.fertilizer.Gigantic;
@@ -34,22 +33,15 @@ import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.entity.ItemFrame;
-import org.bukkit.persistence.PersistentDataType;
 
-public class FrameCropImpl implements CropModeInterface {
+public class ItemsAdderFrameCropImpl implements CropModeInterface {
 
     private final CropManager cropManager;
     private final CustomInterface customInterface;
 
-    public FrameCropImpl(CropManager cropManager) {
+    public ItemsAdderFrameCropImpl(CropManager cropManager) {
         this.cropManager = cropManager;
         this.customInterface = cropManager.getCustomInterface();
-    }
-
-    @Override
-    public void loadChunk(Location location) {
-        Chunk chunk = location.getChunk();
-        chunk.load();
     }
 
     @Override
@@ -59,10 +51,7 @@ public class FrameCropImpl implements CropModeInterface {
 
         if (chunk.isEntitiesLoaded()) {
 
-            Location cropLoc;
-            if (MainConfig.OraxenHook) cropLoc = location.clone().add(0.5,0.03125,0.5);
-            else cropLoc = location.clone().add(0.5,0.5,0.5);
-
+            Location cropLoc = location.clone().add(0.5,0.5,0.5);
             ItemFrame itemFrame = FurnitureUtil.getItemFrame(cropLoc);
             if (itemFrame == null) return true;
             String id = customInterface.getItemID(itemFrame.getItem());
@@ -70,13 +59,11 @@ public class FrameCropImpl implements CropModeInterface {
             if (id.equals(BasicItemConfig.deadCrop)) return true;
 
             String[] cropNameList = StringUtils.split(id,"_");
-            String cropKey = cropNameList[0];
-            if (cropKey.contains(":")) cropKey = StringUtils.split(cropKey, ":")[1];
+            String cropKey = StringUtils.split(cropNameList[0], ":")[1];
             Crop crop = CropConfig.CROPS.get(cropKey);
             if (crop == null) return true;
             if (cropManager.isWrongSeason(location, crop.getSeasons())) {
-                itemFrame.setItem(customInterface.getItemStack(BasicItemConfig.deadCrop));
-                if (MainConfig.OraxenHook) itemFrame.getPersistentDataContainer().set(OraxenHook.FURNITURE, PersistentDataType.STRING, BasicItemConfig.deadCrop);
+                itemFrame.setItem(customInterface.getItemStack(BasicItemConfig.deadCrop), false);
                 return true;
             }
 
@@ -125,7 +112,6 @@ public class FrameCropImpl implements CropModeInterface {
     }
 
     private void addStage(ItemFrame itemFrame, String stage) {
-        itemFrame.setItem(customInterface.getItemStack(stage));
-        if (MainConfig.OraxenHook) itemFrame.getPersistentDataContainer().set(OraxenHook.FURNITURE, PersistentDataType.STRING, stage);
+        itemFrame.setItem(customInterface.getItemStack(stage), false);
     }
 }
