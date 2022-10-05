@@ -70,11 +70,10 @@ public class WireCropImpl implements CropModeInterface{
         if (potID == null) return true;
 
         Fertilizer fertilizer = cropManager.getFertilizer(potLoc);
-
         boolean certainGrow = potID.equals(BasicItemConfig.wetPot);
-
         int nextStage = Integer.parseInt(cropNameList[2]) + 1;
         String temp = StringUtils.chop(blockID);
+
         if (customInterface.doesExist(temp + nextStage)) {
             if (fertilizer instanceof SpeedGrow speedGrow && Math.random() < speedGrow.getChance()) {
                 if (customInterface.doesExist(temp + (nextStage+1))) {
@@ -111,7 +110,7 @@ public class WireCropImpl implements CropModeInterface{
 
     private void addStage(Location seedLoc, String stage) {
         Bukkit.getScheduler().runTask(CustomCrops.plugin, () -> {
-            customInterface.removeBlock(seedLoc);
+            if (!MainConfig.OraxenHook) customInterface.removeBlock(seedLoc);
             customInterface.placeWire(seedLoc, stage);
         });
     }

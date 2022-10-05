@@ -59,8 +59,9 @@ public class FrameCropImpl implements CropModeInterface {
 
         if (chunk.isEntitiesLoaded()) {
 
-            Location cropLoc = location.clone().add(0.5,0.5,0.5);
-            if (MainConfig.OraxenHook) cropLoc.subtract(0, 0.46875, 0);
+            Location cropLoc;
+            if (MainConfig.OraxenHook) cropLoc = location.clone().add(0.5,0.03125,0.5);
+            else cropLoc = location.clone().add(0.5,0.5,0.5);
 
             ItemFrame itemFrame = FurnitureUtil.getItemFrame(cropLoc);
             if (itemFrame == null) return true;
@@ -105,7 +106,6 @@ public class FrameCropImpl implements CropModeInterface {
                     if (fertilizer instanceof Gigantic gigantic) {
                         chance += gigantic.getChance();
                     }
-                    System.out.println(chance);
                     if (Math.random() < chance) {
                         Bukkit.getScheduler().runTask(CustomCrops.plugin, () -> {
                             customInterface.removeFurniture(itemFrame);

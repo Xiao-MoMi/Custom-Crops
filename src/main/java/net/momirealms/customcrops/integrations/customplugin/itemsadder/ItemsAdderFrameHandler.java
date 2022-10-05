@@ -21,7 +21,6 @@ import dev.lone.itemsadder.api.CustomBlock;
 import dev.lone.itemsadder.api.CustomFurniture;
 import dev.lone.itemsadder.api.CustomStack;
 import dev.lone.itemsadder.api.Events.CustomBlockBreakEvent;
-import dev.lone.itemsadder.api.Events.CustomBlockInteractEvent;
 import dev.lone.itemsadder.api.Events.FurnitureBreakEvent;
 import dev.lone.itemsadder.api.Events.FurnitureInteractEvent;
 import net.momirealms.customcrops.api.crop.Crop;
@@ -38,7 +37,10 @@ import net.momirealms.customcrops.objects.requirements.RequirementInterface;
 import net.momirealms.customcrops.utils.AdventureUtil;
 import net.momirealms.customcrops.utils.FurnitureUtil;
 import net.momirealms.customcrops.utils.LimitationUtil;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
+import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
@@ -63,27 +65,41 @@ public class ItemsAdderFrameHandler extends ItemsAdderHandler {
 
         final Player player = event.getPlayer();
         final Entity entity = event.getBukkitEntity();
+        final Location location = entity.getLocation();;
 
         Sprinkler sprinkler = SprinklerConfig.SPRINKLERS_3D.get(namespacedID);
         if (sprinkler != null) {
-
             if (!AntiGrief.testPlace(player, entity.getLocation())) return;
-
             super.onInteractSprinkler(entity.getLocation(), player, player.getInventory().getItemInMainHand(), sprinkler);
             return;
         }
 
         if (namespacedID.contains("_stage_")) {
-            if (!namespacedID.equals(BasicItemConfig.deadCrop) && !hasNextStage(namespacedID) && MainConfig.canRightClickHarvest) {
-                if (!(MainConfig.emptyHand && player.getInventory().getItemInMainHand().getType() != Material.AIR)) {
-                    if (!AntiGrief.testBreak(player, entity.getLocation())) return;
-                    CustomFurniture.remove(entity, false);
-                    this.onInteractRipeCrop(entity.getLocation(), namespacedID, player);
+            if (!namespacedID.equals(BasicItemConfig.deadCrop)) {
+                ItemStack itemInHand = player.getInventory().getItemInMainHand();
+                if (!hasNextStage(namespacedID)) {
+                    if (MainConfig.canRightClickHarvest && !(MainConfig.emptyHand && itemInHand.getType() != Material.AIR)) {
+                        if (!AntiGrief.testBreak(player, entity.getLocation())) return;
+                        CustomFurniture.remove(entity, false);
+                        this.onInteractRipeCrop(location, namespacedID, player);
+                        return;
+                    }
+                }
+                //has next stage
+                else if (MainConfig.enableBoneMeal && itemInHand.getType() == Material.BONE_MEAL) {
+                    if (!AntiGrief.testPlace(player, location)) return;
+                    if (player.getGameMode() != GameMode.CREATIVE) itemInHand.setAmount(itemInHand.getAmount() - 1);
+                    if (Math.random() < MainConfig.boneMealChance) {
+                        entity.getWorld().spawnParticle(MainConfig.boneMealSuccess, location.clone().add(0,0.5, 0),3,0.2,0.2,0.2);
+                        CustomFurniture.remove(entity, false);
+                        CustomFurniture.spawn(getNextStage(namespacedID), location.getBlock());
+                    }
+                    return;
                 }
             }
 
-            if (!AntiGrief.testPlace(player, entity.getLocation())) return;
-            Location potLoc = entity.getLocation().clone().subtract(0, 1, 0).getBlock().getLocation();
+            if (!AntiGrief.testPlace(player, location)) return;
+            Location potLoc = location.clone().subtract(0, 1, 0).getBlock().getLocation();
             super.tryMisc(player, player.getInventory().getItemInMainHand(), potLoc);
         }
     }
@@ -182,7 +198,7 @@ public class ItemsAdderFrameHandler extends ItemsAdderHandler {
                 }
 
                 if (MainConfig.limitation && LimitationUtil.reachFrameLimit(potLoc)) {
-                    AdventureUtil.playerMessage(player, MessageConfig.prefix + MessageConfig.limitWire.replace("{max}", String.valueOf(MainConfig.wireAmount)));
+                    AdventureUtil.playerMessage(player, MessageConfig.prefix + MessageConfig.limitFrame.replace("{max}", String.valueOf(MainConfig.frameAmount)));
                     return;
                 }
 

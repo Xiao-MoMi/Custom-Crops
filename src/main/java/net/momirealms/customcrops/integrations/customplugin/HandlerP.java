@@ -244,8 +244,9 @@ public abstract class HandlerP extends Function {
 
         Sprinkler config = SprinklerConfig.SPRINKLERS_2D.get(id);
         if (config != null) {
-
-            Location sprinklerLoc = location.clone().add(0.5, 1.5, 0.5);
+            Location sprinklerLoc;
+            if (MainConfig.OraxenHook) sprinklerLoc = location.clone().add(0.5, 1.03125, 0.5);
+            else sprinklerLoc = location.clone().add(0.5, 1.5, 0.5);
 
             if (FurnitureUtil.hasFurniture(sprinklerLoc)) return false;
             Sprinkler sprinkler = new Sprinkler(config.getKey(), config.getRange(), 0);
@@ -284,6 +285,11 @@ public abstract class HandlerP extends Function {
     public boolean hasNextStage(String id) {
         int nextStage = Integer.parseInt(id.substring(id.length()-1)) + 1;
         return customInterface.doesExist(StringUtils.chop(id) + nextStage);
+    }
+
+    public String getNextStage(String id) {
+        int nextStage = Integer.parseInt(id.substring(id.length()-1)) + 1;
+        return StringUtils.chop(id) + nextStage;
     }
 
     public boolean fillWaterCan(String id, NBTItem nbtItem, ItemStack itemStack, Player player) {
@@ -348,8 +354,9 @@ public abstract class HandlerP extends Function {
         if (customWorld == null) return false;
 
         if (fertilizer.isBefore()) {
-            Location above = potLoc.clone().add(0.5,1.5,0.5);
-            if (MainConfig.OraxenHook) above.subtract(0, 0.46875, 0);
+            Location above;
+            if (MainConfig.OraxenHook) above = potLoc.clone().add(0.5,1.03125,0.5);
+            else above = potLoc.clone().add(0.5,1.5,0.5);
 
             if (FurnitureUtil.hasFurniture(above)) {
                 AdventureUtil.playerMessage(player, MessageConfig.prefix + MessageConfig.beforePlant);

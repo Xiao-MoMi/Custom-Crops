@@ -49,7 +49,9 @@ public class LimitationUtil {
         int n = 0;
         for (int i = 0; i < 16; ++i) {
             for (int j = 0; j < 16; ++j) {
-                Location square = chunkLocation.clone().add(i + 0.5, 0.5, j + 0.5);
+                Location square;
+                if (MainConfig.OraxenHook) square = chunkLocation.clone().add(i + 0.5, 0.03125, j + 0.5);
+                else square = chunkLocation.clone().add(i + 0.5, 0.5, j + 0.5);
                 for (int k = minHeight; k <= maxHeight; ++k) {
                     square.add(0.0, 1.0, 0.0);
                     if (FurnitureUtil.hasFurniture(square) && ++n > MainConfig.frameAmount) {

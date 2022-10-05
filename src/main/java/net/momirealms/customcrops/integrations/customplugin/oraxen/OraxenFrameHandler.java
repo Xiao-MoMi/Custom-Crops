@@ -19,18 +19,12 @@ package net.momirealms.customcrops.integrations.customplugin.oraxen;
 
 import de.tr7zw.changeme.nbtapi.NBTCompound;
 import de.tr7zw.changeme.nbtapi.NBTItem;
-import dev.lone.itemsadder.api.CustomFurniture;
-import io.th0rgal.oraxen.OraxenPlugin;
 import io.th0rgal.oraxen.events.OraxenFurnitureBreakEvent;
 import io.th0rgal.oraxen.events.OraxenFurnitureInteractEvent;
 import io.th0rgal.oraxen.events.OraxenNoteBlockBreakEvent;
 import io.th0rgal.oraxen.events.OraxenNoteBlockInteractEvent;
-import io.th0rgal.oraxen.items.OraxenItems;
-import io.th0rgal.oraxen.mechanics.MechanicFactory;
-import io.th0rgal.oraxen.mechanics.MechanicsManager;
 import io.th0rgal.oraxen.mechanics.provided.gameplay.furniture.FurnitureFactory;
 import io.th0rgal.oraxen.mechanics.provided.gameplay.furniture.FurnitureMechanic;
-import io.th0rgal.oraxen.mechanics.provided.gameplay.stringblock.StringBlockMechanic;
 import io.th0rgal.oraxen.utils.drops.Drop;
 import net.momirealms.customcrops.api.crop.Crop;
 import net.momirealms.customcrops.api.event.SeedPlantEvent;
@@ -169,7 +163,7 @@ public class OraxenFrameHandler extends OraxenHandler {
                 }
             }
             if (MainConfig.limitation && LimitationUtil.reachFrameLimit(potLoc)) {
-                AdventureUtil.playerMessage(player, MessageConfig.prefix + MessageConfig.limitWire.replace("{max}", String.valueOf(MainConfig.wireAmount)));
+                AdventureUtil.playerMessage(player, MessageConfig.prefix + MessageConfig.limitFrame.replace("{max}", String.valueOf(MainConfig.frameAmount)));
                 return;
             }
             CCSeason[] seasons = crop.getSeasons();
@@ -213,24 +207,42 @@ public class OraxenFrameHandler extends OraxenHandler {
 
         final Player player = event.getPlayer();
         final ItemFrame itemFrame = event.getItemFrame();
+        final Location location = itemFrame.getLocation();
 
         Sprinkler sprinkler = SprinklerConfig.SPRINKLERS_3D.get(id);
         if (sprinkler != null) {
             if (!AntiGrief.testPlace(player, itemFrame.getLocation())) return;
-            super.onInteractSprinkler(itemFrame.getLocation(), player, player.getInventory().getItemInMainHand(), sprinkler);
+            super.onInteractSprinkler(location, player, player.getInventory().getItemInMainHand(), sprinkler);
             return;
         }
 
         if (id.contains("_stage_")) {
-            if (!id.equals(BasicItemConfig.deadCrop) && !hasNextStage(id) && MainConfig.canRightClickHarvest) {
-                if (!(MainConfig.emptyHand && player.getInventory().getItemInMainHand().getType() != Material.AIR)) {
-                    if (!AntiGrief.testBreak(player, itemFrame.getLocation())) return;
-                    itemFrame.remove();
-                    this.onInteractRipeCrop(itemFrame.getLocation(), id, player);
+            if (!id.equals(BasicItemConfig.deadCrop)) {
+                ItemStack itemInHand = player.getInventory().getItemInMainHand();
+                if (!hasNextStage(id)) {
+                    if (MainConfig.canRightClickHarvest && !(MainConfig.emptyHand && itemInHand.getType() != Material.AIR)) {
+                        if (!AntiGrief.testBreak(player, location)) return;
+                        itemFrame.remove();
+                        this.onInteractRipeCrop(location, id, player);
+                        return;
+                    }
+                }
+                //has next stage
+                else if (MainConfig.enableBoneMeal && itemInHand.getType() == Material.BONE_MEAL) {
+                    if (!AntiGrief.testPlace(player, location)) return;
+                    if (player.getGameMode() != GameMode.CREATIVE) itemInHand.setAmount(itemInHand.getAmount() - 1);
+                    if (Math.random() < MainConfig.boneMealChance) {
+                        itemFrame.getWorld().spawnParticle(MainConfig.boneMealSuccess, location.clone().add(0,0.5, 0),3,0.2,0.2,0.2);
+                        String nextStage = getNextStage(id);
+                        itemFrame.setItem(customInterface.getItemStack(nextStage));
+                        itemFrame.getPersistentDataContainer().set(OraxenHook.FURNITURE, PersistentDataType.STRING, nextStage);
+                    }
+                    return;
                 }
             }
-            if (!AntiGrief.testPlace(player, itemFrame.getLocation())) return;
-            Location potLoc = itemFrame.getLocation().clone().subtract(0,1,0).getBlock().getLocation();
+
+            if (!AntiGrief.testPlace(player, location)) return;
+            Location potLoc = location.clone().subtract(0,1,0).getBlock().getLocation();
             super.tryMisc(player, player.getInventory().getItemInMainHand(), potLoc);
         }
     }

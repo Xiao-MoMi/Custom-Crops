@@ -1,12 +1,8 @@
 #Don't change
 config-version: '9'
 
-
-
 # lang: english / spanish / chinese
 lang: chinese
-
-
 
 integration:
   # AntiGrief
@@ -50,7 +46,7 @@ optimization:
   auto-back-up: true
 
 mechanics:
-
+  # Requires a restart tp change mode
   # Mode: tripwire/item_frame
   crops-mode: tripwire
 
@@ -99,7 +95,6 @@ mechanics:
   # Season would not affect ripe crops(for better performance and friendly player's experience)
   season:
     enable: true
-
     # If you want all the worlds share the same season
     sync-seasons:
       enable: false

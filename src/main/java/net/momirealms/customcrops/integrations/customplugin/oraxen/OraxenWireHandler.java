@@ -22,7 +22,6 @@ import io.th0rgal.oraxen.items.OraxenItems;
 import io.th0rgal.oraxen.mechanics.provided.gameplay.furniture.FurnitureMechanic;
 import io.th0rgal.oraxen.mechanics.provided.gameplay.stringblock.StringBlockMechanic;
 import io.th0rgal.oraxen.mechanics.provided.gameplay.stringblock.StringBlockMechanicFactory;
-import io.th0rgal.oraxen.mechanics.provided.gameplay.stringblock.StringBlockMechanicListener;
 import io.th0rgal.oraxen.utils.drops.Drop;
 import net.momirealms.customcrops.api.crop.Crop;
 import net.momirealms.customcrops.api.event.SeedPlantEvent;
@@ -58,39 +57,41 @@ public class OraxenWireHandler extends OraxenHandler{
     public void onBreakNoteBlock(OraxenNoteBlockBreakEvent event) {
         if (event.isCancelled()) return;
 
-        String id = event.getNoteBlockMechanic().getItemID();
-        if (id.equals(BasicItemConfig.dryPot) || id.equals(BasicItemConfig.wetPot)) {
+        // not necessary because string break event would be triggered too
 
-            Location location = event.getBlock().getLocation();
-            Player player = event.getPlayer();
+//        String id = event.getNoteBlockMechanic().getItemID();
+//        if (id.equals(BasicItemConfig.dryPot) || id.equals(BasicItemConfig.wetPot)) {
+//
+//            Location location = event.getBlock().getLocation();
+//            Player player = event.getPlayer();
+//
+//            if (!AntiGrief.testBreak(player, location)) {
+//                event.setCancelled(true);
+//                return;
+//            }
+//            super.onBreakPot(location);
+//
+//            Location seedLocation = location.clone().add(0,1,0);
+//            StringBlockMechanic mechanic = StringBlockMechanicListener.getStringMechanic(seedLocation.getBlock());
+//            if (mechanic == null) return;
+//            String seedID = mechanic.getItemID();
+//
+//            if (seedID.contains("_stage_")) {
 
-            if (!AntiGrief.testBreak(player, location)) {
-                event.setCancelled(true);
-                return;
-            }
-            super.onBreakPot(location);
-
-            Location seedLocation = location.clone().add(0,1,0);
-            StringBlockMechanic mechanic = StringBlockMechanicListener.getStringMechanic(seedLocation.getBlock());
-            if (mechanic == null) return;
-            String seedID = mechanic.getItemID();
-
-            if (seedID.contains("_stage_")) {
-
-                seedLocation.getBlock().setType(Material.AIR);
-                if (seedID.equals(BasicItemConfig.deadCrop)) return;
+//                seedLocation.getBlock().setType(Material.AIR);
+//                if (seedID.equals(BasicItemConfig.deadCrop)) return;
                 //ripe or not
-                if (hasNextStage(seedID)) {
-                    Drop drop = mechanic.getDrop();
-                    if (drop != null && player.getGameMode() != GameMode.CREATIVE) {
-                        drop.spawns(location, new ItemStack(Material.AIR));
-                    }
-                    super.onBreakUnripeCrop(location);
-                    return;
-                }
-                super.onBreakRipeCrop(seedLocation, seedID, player, false, false);
-            }
-        }
+//                if (hasNextStage(seedID)) {
+//                    Drop drop = mechanic.getDrop();
+//                    if (drop != null && player.getGameMode() != GameMode.CREATIVE) {
+//                        drop.spawns(location, new ItemStack(Material.AIR));
+//                    }
+//                    super.onBreakUnripeCrop(location);
+//                    return;
+//                }
+//                super.onBreakRipeCrop(seedLocation, seedID, player, false, false);
+//            }
+//        }
     }
 
     @Override
@@ -152,18 +153,16 @@ public class OraxenWireHandler extends OraxenHandler{
         if (event.isCancelled()) return;
 
         final Player player = event.getPlayer();
+        final Location blockLoc = event.getItemFrame().getLocation();
 
-        //TODO Check if air is block
-        final Block block = event.getBlock();
-
-        if (!AntiGrief.testPlace(player, block.getLocation())) return;
+        if (!AntiGrief.testPlace(player, blockLoc)) return;
 
         FurnitureMechanic mechanic = event.getFurnitureMechanic();
         if (mechanic == null) return;
         String id = mechanic.getItemID();
         Sprinkler sprinkler = SprinklerConfig.SPRINKLERS_3D.get(id);
         if (sprinkler != null) {
-            super.onInteractSprinkler(block.getLocation(), player, player.getInventory().getItemInMainHand(), sprinkler);
+            super.onInteractSprinkler(blockLoc, player, player.getInventory().getItemInMainHand(), sprinkler);
         }
     }
 
@@ -180,6 +179,7 @@ public class OraxenWireHandler extends OraxenHandler{
         if (event.getBlockFace() != BlockFace.UP) return;
 
         String id = OraxenItems.getIdByItem(itemInHand);
+        if (id == null) return;
         if (id.endsWith("_seeds")) {
             String cropName = id.substring(0, id.length() - 6);
             Crop crop = CropConfig.CROPS.get(cropName);
@@ -189,7 +189,7 @@ public class OraxenWireHandler extends OraxenHandler{
             CustomWorld customWorld = cropManager.getCustomWorld(seedLoc.getWorld());
             if (customWorld == null) return;
 
-            if (FurnitureUtil.hasFurniture(seedLoc.clone().add(0.5,0.5,0.5))) return;
+            if (FurnitureUtil.hasFurniture(seedLoc.clone().add(0.5,0.03125,0.5))) return;
             if (seedLoc.getBlock().getType() != Material.AIR) return;
 
             PlantingCondition plantingCondition = new PlantingCondition(seedLoc, player);
@@ -240,22 +240,41 @@ public class OraxenWireHandler extends OraxenHandler{
     public void onInteractStringBlock(OraxenStringBlockInteractEvent event) {
         if (event.isCancelled()) return;
 
-        final String id = event.getStringBlockMechanic().getItemID();
+
         final Player player = event.getPlayer();
+
+        long time = System.currentTimeMillis();
+        if (time - (coolDown.getOrDefault(player, time - 50)) < 50) return;
+        coolDown.put(player, time);
+
         final Block block = event.getBlock();
+        final String id = event.getStringBlockMechanic().getItemID();
 
         if (id.contains("_stage_")) {
 
             Location seedLoc = block.getLocation();
+
+            ItemStack itemInHand = event.getItemInHand();
             //ripe crops
-            if (!id.equals(BasicItemConfig.deadCrop) && !hasNextStage(id) && MainConfig.canRightClickHarvest) {
+            if (!id.equals(BasicItemConfig.deadCrop)) {
 
-                if (!(MainConfig.emptyHand && (event.getItemInHand() != null && event.getItemInHand().getType() != Material.AIR))) {
+                if (!hasNextStage(id)) {
+                    if (MainConfig.canRightClickHarvest && !(MainConfig.emptyHand && itemInHand != null && itemInHand.getType() != Material.AIR)) {
+                        if (!AntiGrief.testBreak(player, seedLoc)) return;
 
-                    if (!AntiGrief.testBreak(player, seedLoc)) return;
-
-                    block.setType(Material.AIR);
-                    this.onInteractRipeCrop(seedLoc, id, player);
+                        block.setType(Material.AIR);
+                        this.onInteractRipeCrop(seedLoc, id, player);
+                        return;
+                    }
+                }
+                //has next stage
+                else if (MainConfig.enableBoneMeal && itemInHand != null && itemInHand.getType() == Material.BONE_MEAL) {
+                    if (!AntiGrief.testPlace(player, seedLoc)) return;
+                    if (player.getGameMode() != GameMode.CREATIVE) itemInHand.setAmount(itemInHand.getAmount() - 1);
+                    if (Math.random() < MainConfig.boneMealChance) {
+                        seedLoc.getWorld().spawnParticle(MainConfig.boneMealSuccess, seedLoc.clone().add(0.5,0.5, 0.5),3,0.2,0.2,0.2);
+                        StringBlockMechanicFactory.setBlockModel(block, getNextStage(id));
+                    }
                     return;
                 }
             }

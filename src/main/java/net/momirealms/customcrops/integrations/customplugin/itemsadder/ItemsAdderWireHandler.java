@@ -106,39 +106,45 @@ public class ItemsAdderWireHandler extends ItemsAdderHandler {
         if (block == null) return;
         CustomBlock cb = CustomBlock.byAlreadyPlaced(block);
         if (cb == null) return;
-        Location seedLoc = block.getLocation().clone().add(0,1,0);
+        Location location = block.getLocation();
 
         final String blockID = cb.getNamespacedID();
 
         //interact crop
         if (blockID.contains("_stage_")) {
-
-            //ripe crops
-            if (!blockID.equals(BasicItemConfig.deadCrop) && !hasNextStage(blockID) && MainConfig.canRightClickHarvest) {
-                if (!(MainConfig.emptyHand && event.hasItem())) {
-
-                    if (!AntiGrief.testBreak(player, seedLoc)) return;
-
-                    CustomBlock.remove(seedLoc);
-                    this.onInteractRipeCrop(seedLoc, blockID, player);
+            ItemStack itemInHand = event.getItem();
+            if (!blockID.equals(BasicItemConfig.deadCrop)) {
+                if (!hasNextStage(blockID)) {
+                    if (MainConfig.canRightClickHarvest && !(MainConfig.emptyHand && itemInHand != null && itemInHand.getType() != Material.AIR)) {
+                        if (!AntiGrief.testBreak(player, location)) return;
+                        CustomBlock.remove(location);
+                        this.onInteractRipeCrop(location, blockID, player);
+                        return;
+                    }
+                }
+                //has next stage
+                else if (MainConfig.enableBoneMeal && itemInHand != null && itemInHand.getType() == Material.BONE_MEAL) {
+                    if (!AntiGrief.testPlace(player, location)) return;
+                    if (player.getGameMode() != GameMode.CREATIVE) itemInHand.setAmount(itemInHand.getAmount() - 1);
+                    if (Math.random() < MainConfig.boneMealChance) {
+                        location.getWorld().spawnParticle(MainConfig.boneMealSuccess, location.clone().add(0.5,0.5, 0.5),3,0.2,0.2,0.2);
+                        CustomBlock.remove(location);
+                        CustomBlock.place(getNextStage(blockID), location);
+                    }
                     return;
                 }
             }
-
-            if (!AntiGrief.testPlace(player, seedLoc)) return;
-
-            Location potLoc = block.getLocation().clone().subtract(0,1,0);
-            super.tryMisc(player, event.getItem(), potLoc);
+            if (!AntiGrief.testPlace(player, location)) return;
+            Location potLoc = location.clone().subtract(0,1,0);
+            super.tryMisc(player, itemInHand, potLoc);
         }
 
         //interact pot (must have an item)
         else if (blockID.equals(BasicItemConfig.wetPot) || blockID.equals(BasicItemConfig.dryPot)) {
-
-            if (!AntiGrief.testPlace(player, seedLoc)) return;
+            if (!AntiGrief.testPlace(player, location)) return;
 
             ItemStack itemInHand = event.getItem();
-            Location potLoc = block.getLocation();
-            if (super.tryMisc(player, itemInHand, potLoc)) return;
+            if (super.tryMisc(player, itemInHand, location)) return;
 
             if (event.getBlockFace() != BlockFace.UP) return;
 
@@ -150,6 +156,7 @@ public class ItemsAdderWireHandler extends ItemsAdderHandler {
                 Crop crop = CropConfig.CROPS.get(cropName);
                 if (crop == null) return;
 
+                Location seedLoc = location.clone().add(0,1,0);
                 CustomWorld customWorld = cropManager.getCustomWorld(seedLoc.getWorld());
                 if (customWorld == null) return;
 
@@ -166,7 +173,7 @@ public class ItemsAdderWireHandler extends ItemsAdderHandler {
                     }
                 }
 
-                if (MainConfig.limitation && LimitationUtil.reachWireLimit(potLoc)) {
+                if (MainConfig.limitation && LimitationUtil.reachWireLimit(location)) {
                     AdventureUtil.playerMessage(player, MessageConfig.prefix + MessageConfig.limitWire.replace("{max}", String.valueOf(MainConfig.wireAmount)));
                     return;
                 }
