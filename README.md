@@ -22,9 +22,7 @@ Crops in watered pot would definitely grow a stage every day while those in dry 
 Season is now an important part of StardewValley Farming System.
 Crops only grow in a suitable season and inproper
 seasons will make crops into a dead stage. 
-You can use greenhouse glass to allow them to grow all year.\
-Season change has two modes: Automatic and Command\
-You might use the command to change the season to sync another plugin's season, for example RealisticSeason.
+You can use greenhouse glass to allow them to grow all year.
 
 ### Fertilizer
 There are five templates of fertiziliers: \
