@@ -23,7 +23,6 @@ import net.momirealms.customcrops.config.MainConfig;
 import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.mozilla.javascript.tools.jsc.Main;
 
 public class RealisticSeasonsHook extends Function implements SeasonInterface {
 

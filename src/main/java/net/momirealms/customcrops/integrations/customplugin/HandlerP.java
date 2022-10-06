@@ -240,6 +240,12 @@ public abstract class HandlerP extends Function {
         }
     }
 
+    public void removeScarecrow(Location location) {
+        CustomWorld customWorld = cropManager.getCustomWorld(location.getWorld());
+        if (customWorld == null) return;
+        customWorld.removeScarecrow(location);
+    }
+
     public boolean placeSprinkler(String id, Location location, Player player, ItemStack item) {
 
         Sprinkler config = SprinklerConfig.SPRINKLERS_2D.get(id);
@@ -290,12 +296,6 @@ public abstract class HandlerP extends Function {
     public String getNextStage(String id) {
         int nextStage = Integer.parseInt(id.substring(id.length()-1)) + 1;
         return StringUtils.chop(id) + nextStage;
-    }
-
-    public void placeScareCrow(Location location) {
-        CustomWorld customWorld = cropManager.getCustomWorld(location.getWorld());
-        if (customWorld == null) return;
-
     }
 
     public boolean fillWaterCan(String id, NBTItem nbtItem, ItemStack itemStack, Player player) {

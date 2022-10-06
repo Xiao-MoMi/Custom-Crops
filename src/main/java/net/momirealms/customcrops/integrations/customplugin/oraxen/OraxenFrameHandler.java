@@ -237,6 +237,14 @@ public class OraxenFrameHandler extends OraxenHandler {
                     if (player.getGameMode() != GameMode.CREATIVE) itemInHand.setAmount(itemInHand.getAmount() - 1);
                     if (Math.random() < MainConfig.boneMealChance) {
                         itemFrame.getWorld().spawnParticle(MainConfig.boneMealSuccess, location.clone().add(0,0.5, 0),3,0.2,0.2,0.2);
+                        if (SoundConfig.boneMeal.isEnable()) {
+                            AdventureUtil.playerSound(
+                                    player,
+                                    SoundConfig.boneMeal.getSource(),
+                                    SoundConfig.boneMeal.getKey(),
+                                    1,1
+                            );
+                        }
                         String nextStage = getNextStage(id);
                         itemFrame.setItem(customInterface.getItemStack(nextStage));
                         itemFrame.getPersistentDataContainer().set(OraxenHook.FURNITURE, PersistentDataType.STRING, nextStage);

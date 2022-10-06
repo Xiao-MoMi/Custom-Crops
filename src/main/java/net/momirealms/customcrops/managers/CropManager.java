@@ -24,6 +24,7 @@ import net.momirealms.customcrops.api.event.CropHarvestEvent;
 import net.momirealms.customcrops.config.BasicItemConfig;
 import net.momirealms.customcrops.config.MainConfig;
 import net.momirealms.customcrops.config.SeasonConfig;
+import net.momirealms.customcrops.config.SoundConfig;
 import net.momirealms.customcrops.integrations.customplugin.CustomInterface;
 import net.momirealms.customcrops.integrations.customplugin.HandlerP;
 import net.momirealms.customcrops.integrations.customplugin.itemsadder.ItemsAdderFrameHandler;
@@ -48,6 +49,7 @@ import net.momirealms.customcrops.objects.fertilizer.Fertilizer;
 import net.momirealms.customcrops.objects.fertilizer.QualityCrop;
 import net.momirealms.customcrops.objects.fertilizer.RetainingSoil;
 import net.momirealms.customcrops.objects.fertilizer.YieldIncreasing;
+import net.momirealms.customcrops.utils.AdventureUtil;
 import net.momirealms.customcrops.utils.ArmorStandUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -268,6 +270,15 @@ public class CropManager extends Function {
 
         ActionInterface[] actions = crop.getActions();
         if (actions != null) performActions(actions, player);
+
+        if (SoundConfig.harvestCrop.isEnable()) {
+            AdventureUtil.playerSound(
+                    player,
+                    SoundConfig.harvestCrop.getSource(),
+                    SoundConfig.harvestCrop.getKey(),
+                    1,1
+            );
+        }
 
         if (player.getGameMode() == GameMode.CREATIVE) return;
 

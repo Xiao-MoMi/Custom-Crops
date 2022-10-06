@@ -274,6 +274,14 @@ public class OraxenWireHandler extends OraxenHandler{
                     if (player.getGameMode() != GameMode.CREATIVE) itemInHand.setAmount(itemInHand.getAmount() - 1);
                     if (Math.random() < MainConfig.boneMealChance) {
                         seedLoc.getWorld().spawnParticle(MainConfig.boneMealSuccess, seedLoc.clone().add(0.5,0.5, 0.5),3,0.2,0.2,0.2);
+                        if (SoundConfig.boneMeal.isEnable()) {
+                            AdventureUtil.playerSound(
+                                    player,
+                                    SoundConfig.boneMeal.getSource(),
+                                    SoundConfig.boneMeal.getKey(),
+                                    1,1
+                            );
+                        }
                         StringBlockMechanicFactory.setBlockModel(block, getNextStage(id));
                     }
                     return;

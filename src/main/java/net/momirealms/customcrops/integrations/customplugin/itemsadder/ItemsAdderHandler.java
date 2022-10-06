@@ -21,23 +21,18 @@ import de.tr7zw.changeme.nbtapi.NBTCompound;
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import dev.lone.itemsadder.api.CustomBlock;
 import dev.lone.itemsadder.api.CustomStack;
-import dev.lone.itemsadder.api.Events.CustomBlockBreakEvent;
-import dev.lone.itemsadder.api.Events.CustomBlockInteractEvent;
-import dev.lone.itemsadder.api.Events.FurnitureBreakEvent;
-import dev.lone.itemsadder.api.Events.FurnitureInteractEvent;
+import dev.lone.itemsadder.api.Events.*;
 import net.kyori.adventure.key.Key;
 import net.momirealms.customcrops.CustomCrops;
 import net.momirealms.customcrops.api.crop.Crop;
 import net.momirealms.customcrops.api.event.WaterEvent;
-import net.momirealms.customcrops.config.CropConfig;
-import net.momirealms.customcrops.config.MainConfig;
-import net.momirealms.customcrops.config.SoundConfig;
-import net.momirealms.customcrops.config.WaterCanConfig;
+import net.momirealms.customcrops.config.*;
 import net.momirealms.customcrops.integrations.AntiGrief;
 import net.momirealms.customcrops.integrations.customplugin.HandlerP;
 import net.momirealms.customcrops.integrations.customplugin.itemsadder.listeners.ItemsAdderBlockListener;
 import net.momirealms.customcrops.integrations.customplugin.itemsadder.listeners.ItemsAdderFurnitureListener;
 import net.momirealms.customcrops.managers.CropManager;
+import net.momirealms.customcrops.managers.CustomWorld;
 import net.momirealms.customcrops.objects.WaterCan;
 import net.momirealms.customcrops.utils.AdventureUtil;
 import org.apache.commons.lang.StringUtils;
@@ -76,6 +71,16 @@ public abstract class ItemsAdderHandler extends HandlerP {
         super.unload();
         HandlerList.unregisterAll(this.itemsAdderBlockListener);
         HandlerList.unregisterAll(this.itemsAdderFurnitureListener);
+    }
+
+    public void placeScarecrow(FurniturePlaceSuccessEvent event) {
+        if (!MainConfig.enableCrow) return;
+        String id = event.getNamespacedID();
+        if (id == null || !id.equals(BasicItemConfig.scarecrow)) return;
+        Location location = event.getBukkitEntity().getLocation();
+        CustomWorld customWorld = cropManager.getCustomWorld(location.getWorld());
+        if (customWorld == null) return;
+        customWorld.addScarecrow(location);
     }
 
     @Override
@@ -191,7 +196,7 @@ public abstract class ItemsAdderHandler extends HandlerP {
             }
 
             itemStack.setItemMeta(nbtItem.getItem().getItemMeta());
-            super.waterPot(waterCan.width(), waterCan.getLength(), potLoc, player.getLocation().getYaw());
+            super.waterPot(waterCan.getWidth(), waterCan.getLength(), potLoc, player.getLocation().getYaw());
         }
 
         return true;

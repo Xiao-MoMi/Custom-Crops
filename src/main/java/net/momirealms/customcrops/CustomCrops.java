@@ -27,6 +27,7 @@ import net.momirealms.customcrops.helper.LibraryLoader;
 import net.momirealms.customcrops.integrations.papi.PlaceholderManager;
 import net.momirealms.customcrops.managers.CropManager;
 import net.momirealms.customcrops.utils.AdventureUtil;
+import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -88,6 +89,7 @@ public final class CustomCrops extends JavaPlugin {
         }
 
         AdventureUtil.consoleMessage("[CustomCrops] Plugin Enabled!");
+        new Metrics(this, 16593);
     }
 
     @Override

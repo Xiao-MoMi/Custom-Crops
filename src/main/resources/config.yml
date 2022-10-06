@@ -35,6 +35,7 @@ optimization:
   # Recommend enabling this to prevent large quantities of crops/itemframes lagging the server
   limitation:
     enable: true
+    # max amount per chunk
     tripwire-amount: 64
     itemframe-amount: 64
 
@@ -42,7 +43,7 @@ optimization:
   disable-water-particles: false
   # Disable the animation when sprinkler works
   disable-sprinkler-animation: false
-  # Auto back up the data for when a world is unloaded
+  # Auto back up the data when a world is unloaded
   auto-back-up: true
 
 mechanics:
@@ -108,6 +109,8 @@ mechanics:
       enable: true
       #effective range
       range: 5
+  # During the crop grow progress, crops have little chance to be eaten by a crow
+  # Place a scarecrow would protect the crops in this chunk
   crow:
     enable: true
     chance: 0.005

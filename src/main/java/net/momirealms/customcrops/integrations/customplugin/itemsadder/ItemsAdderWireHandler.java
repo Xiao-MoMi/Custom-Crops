@@ -87,6 +87,11 @@ public class ItemsAdderWireHandler extends ItemsAdderHandler {
         Sprinkler sprinkler = SprinklerConfig.SPRINKLERS_3D.get(namespacedID);
         if (sprinkler != null) {
             super.onBreakSprinkler(event.getBukkitEntity().getLocation());
+            return;
+        }
+
+        if (MainConfig.enableCrow && namespacedID.equals(BasicItemConfig.scarecrow)) {
+            super.removeScarecrow(event.getBukkitEntity().getLocation());
         }
     }
 
@@ -128,6 +133,14 @@ public class ItemsAdderWireHandler extends ItemsAdderHandler {
                     if (player.getGameMode() != GameMode.CREATIVE) itemInHand.setAmount(itemInHand.getAmount() - 1);
                     if (Math.random() < MainConfig.boneMealChance) {
                         location.getWorld().spawnParticle(MainConfig.boneMealSuccess, location.clone().add(0.5,0.5, 0.5),3,0.2,0.2,0.2);
+                        if (SoundConfig.boneMeal.isEnable()) {
+                            AdventureUtil.playerSound(
+                                    player,
+                                    SoundConfig.boneMeal.getSource(),
+                                    SoundConfig.boneMeal.getKey(),
+                                    1,1
+                            );
+                        }
                         CustomBlock.remove(location);
                         CustomBlock.place(getNextStage(blockID), location);
                     }

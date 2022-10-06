@@ -84,12 +84,6 @@ public abstract class OraxenHandler extends HandlerP {
         customWorld.addScarecrow(location);
     }
 
-    public void removeScarecrow(Location location) {
-        CustomWorld customWorld = cropManager.getCustomWorld(location.getWorld());
-        if (customWorld == null) return;
-        customWorld.removeScarecrow(location);
-    }
-
     public boolean tryMisc(Player player, ItemStack itemInHand, Location potLoc) {
         if (itemInHand == null || itemInHand.getType() == Material.AIR) return true;
         String id = OraxenItems.getIdByItem(itemInHand);
@@ -182,7 +176,7 @@ public abstract class OraxenHandler extends HandlerP {
             }
 
             can.setItemMeta(nbtItem.getItem().getItemMeta());
-            super.waterPot(waterCan.width(), waterCan.getLength(), potLoc, player.getLocation().getYaw());
+            super.waterPot(waterCan.getWidth(), waterCan.getLength(), potLoc, player.getLocation().getYaw());
         }
         return true;
     }

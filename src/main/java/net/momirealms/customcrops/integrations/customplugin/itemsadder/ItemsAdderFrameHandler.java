@@ -91,6 +91,14 @@ public class ItemsAdderFrameHandler extends ItemsAdderHandler {
                     if (player.getGameMode() != GameMode.CREATIVE) itemInHand.setAmount(itemInHand.getAmount() - 1);
                     if (Math.random() < MainConfig.boneMealChance) {
                         entity.getWorld().spawnParticle(MainConfig.boneMealSuccess, location.clone().add(0,0.5, 0),3,0.2,0.2,0.2);
+                        if (SoundConfig.boneMeal.isEnable()) {
+                            AdventureUtil.playerSound(
+                                    player,
+                                    SoundConfig.boneMeal.getSource(),
+                                    SoundConfig.boneMeal.getKey(),
+                                    1,1
+                            );
+                        }
                         CustomFurniture.remove(entity, false);
                         CustomFurniture.spawn(getNextStage(namespacedID), location.getBlock());
                     }
@@ -116,6 +124,11 @@ public class ItemsAdderFrameHandler extends ItemsAdderHandler {
         Sprinkler sprinkler = SprinklerConfig.SPRINKLERS_3D.get(namespacedId);
         if (sprinkler != null) {
             super.onBreakSprinkler(location);
+            return;
+        }
+
+        if (MainConfig.enableCrow && namespacedId.equals(BasicItemConfig.scarecrow)) {
+            super.removeScarecrow(event.getBukkitEntity().getLocation());
             return;
         }
 

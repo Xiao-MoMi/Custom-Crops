@@ -24,7 +24,6 @@ import net.momirealms.customcrops.config.CropConfig;
 import net.momirealms.customcrops.config.MainConfig;
 import net.momirealms.customcrops.integrations.customplugin.CustomInterface;
 import net.momirealms.customcrops.integrations.customplugin.oraxen.OraxenHook;
-import net.momirealms.customcrops.managers.timer.CrowTask;
 import net.momirealms.customcrops.objects.GiganticCrop;
 import net.momirealms.customcrops.objects.fertilizer.Fertilizer;
 import net.momirealms.customcrops.objects.fertilizer.Gigantic;
@@ -35,7 +34,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.entity.ItemFrame;
-import org.bukkit.entity.Player;
 import org.bukkit.persistence.PersistentDataType;
 
 public class OraxenFrameCropImpl implements CropModeInterface {

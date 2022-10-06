@@ -19,7 +19,7 @@ package net.momirealms.customcrops.integrations.customplugin.itemsadder.listener
 
 import dev.lone.itemsadder.api.Events.FurnitureBreakEvent;
 import dev.lone.itemsadder.api.Events.FurnitureInteractEvent;
-import dev.lone.itemsadder.api.Events.FurniturePlaceEvent;
+import dev.lone.itemsadder.api.Events.FurniturePlaceSuccessEvent;
 import net.momirealms.customcrops.integrations.customplugin.itemsadder.ItemsAdderHandler;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -43,7 +43,7 @@ public class ItemsAdderFurnitureListener implements Listener {
     }
 
     @EventHandler
-    public void onPlaceFurniture(FurniturePlaceEvent event) {
-        //TODO scarecrow
+    public void onPlaceFurniture(FurniturePlaceSuccessEvent event) {
+        handler.placeScarecrow(event);
     }
 }
