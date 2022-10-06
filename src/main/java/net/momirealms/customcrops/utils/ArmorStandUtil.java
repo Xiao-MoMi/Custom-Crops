@@ -31,7 +31,6 @@ import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.util.Vector;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -42,15 +41,13 @@ import java.util.UUID;
 public class ArmorStandUtil {
 
     private final CropManager cropManager;
-    private static final Vector[] vectors =
-            {new Vector(10,10,10), new Vector(0,10,-15)
-            , new Vector(10,10,-10), new Vector(15,10,0)
-            , new Vector(-15,10,0), new Vector(-10,10,10)
-            , new Vector(0,10,15), new Vector(-10,10,-10)};
-    private static final float[] yaws = {135f, 180f, -135f, -90f, -45f, 0f, 45f, 90f};
 
     public ArmorStandUtil(CropManager cropManager) {
         this.cropManager = cropManager;
+    }
+
+    public CropManager getCropManager() {
+        return cropManager;
     }
 
     public void playWaterAnimation(Player player, Location location) {
@@ -72,19 +69,7 @@ public class ArmorStandUtil {
         }, MainConfig.timeToWork/2);
     }
 
-    public void playCrowAnimation(Player player, Location location) {
-        int id = new Random().nextInt(1000000000);
-        Location startLoc = location.clone().add(vectors[new Random().nextInt(vectors.length - 1)]);
-        try {
-            CustomCrops.protocolManager.sendServerPacket(player, getSpawnPacket(id, startLoc));
-            CustomCrops.protocolManager.sendServerPacket(player, getMetaPacket(id));
-            CustomCrops.protocolManager.sendServerPacket(player, getEquipPacket(id, cropManager.getCustomInterface().getItemStack(BasicItemConfig.crowLand)));
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private WrappedDataWatcher createDataWatcher() {
+    public WrappedDataWatcher createDataWatcher() {
         WrappedDataWatcher wrappedDataWatcher = new WrappedDataWatcher();
         WrappedDataWatcher.Serializer serializer1 = WrappedDataWatcher.Registry.get(Boolean.class);
         WrappedDataWatcher.Serializer serializer2 = WrappedDataWatcher.Registry.get(Byte.class);
@@ -94,13 +79,13 @@ public class ArmorStandUtil {
         return wrappedDataWatcher;
     }
 
-    private PacketContainer getDestroyPacket(int id) {
+    public PacketContainer getDestroyPacket(int id) {
         PacketContainer destroyPacket = new PacketContainer(PacketType.Play.Server.ENTITY_DESTROY);
         destroyPacket.getIntLists().write(0, List.of(id));
         return destroyPacket;
     }
 
-    private PacketContainer getSpawnPacket(int id, Location location) {
+    public PacketContainer getSpawnPacket(int id, Location location) {
         PacketContainer entityPacket = new PacketContainer(PacketType.Play.Server.SPAWN_ENTITY);
         entityPacket.getModifier().write(0, id);
         entityPacket.getModifier().write(1, UUID.randomUUID());
@@ -111,14 +96,14 @@ public class ArmorStandUtil {
         return entityPacket;
     }
 
-    private PacketContainer getMetaPacket(int id) {
+    public PacketContainer getMetaPacket(int id) {
         PacketContainer metaPacket = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
         metaPacket.getIntegers().write(0, id);
         metaPacket.getWatchableCollectionModifier().write(0, createDataWatcher().getWatchableObjects());
         return metaPacket;
     }
 
-    private PacketContainer getEquipPacket(int id, ItemStack itemStack) {
+    public PacketContainer getEquipPacket(int id, ItemStack itemStack) {
         PacketContainer equipPacket = new PacketContainer(PacketType.Play.Server.ENTITY_EQUIPMENT);
         equipPacket.getIntegers().write(0, id);
         List<Pair<EnumWrappers.ItemSlot, ItemStack>> pairs = new ArrayList<>();
@@ -127,19 +112,19 @@ public class ArmorStandUtil {
         return equipPacket;
     }
 
-    private PacketContainer getTeleportPacket(int id, Location location) {
+    public PacketContainer getTeleportPacket(int id, Location location, float yaw) {
         PacketContainer packet = new PacketContainer(PacketType.Play.Server.ENTITY_TELEPORT);
         packet.getIntegers().write(0, id);
         packet.getDoubles().write(0, location.getX());
         packet.getDoubles().write(1, location.getY());
         packet.getDoubles().write(2, location.getZ());
+        packet.getBytes().write(0, (byte) (yaw * (128.0 / 180)));
         return packet;
     }
 
-    private PacketContainer getRotationPacket(int id, float yaw) {
+    public PacketContainer getRotationPacket(int id, float yaw) {
         PacketContainer rotationPacket = new PacketContainer(PacketType.Play.Server.ENTITY_HEAD_ROTATION);
         rotationPacket.getIntegers().write(0, id);
-        rotationPacket.getBytes().write(0, (byte) yaw);
         return rotationPacket;
     }
 }

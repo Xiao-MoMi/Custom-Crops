@@ -38,6 +38,7 @@ import net.momirealms.customcrops.integrations.season.RealisticSeasonsHook;
 import net.momirealms.customcrops.integrations.season.SeasonInterface;
 import net.momirealms.customcrops.managers.listener.ItemSpawnListener;
 import net.momirealms.customcrops.managers.listener.WorldListener;
+import net.momirealms.customcrops.managers.timer.CrowTask;
 import net.momirealms.customcrops.managers.timer.TimerTask;
 import net.momirealms.customcrops.objects.OtherLoot;
 import net.momirealms.customcrops.objects.QualityLoot;
@@ -53,6 +54,7 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Item;
+import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.inventory.ItemStack;
@@ -194,6 +196,12 @@ public class CropManager extends Function {
         return false;
     }
 
+    public boolean hasScarecrow(Location location) {
+        CustomWorld customWorld = customWorlds.get(location.getWorld());
+        if (customWorld == null) return true;
+        return customWorld.hasScarecrow(location);
+    }
+
     public CustomInterface getCustomInterface() {
         return customInterface;
     }
@@ -322,6 +330,36 @@ public class CropManager extends Function {
                 world.dropItemNaturally(location, drop);
             }
         }
+    }
+
+    public boolean crowJudge(Location location, ItemFrame itemFrame) {
+        if (Math.random() < MainConfig.crowChance && !hasScarecrow(location)) {
+            for (Player player : location.getNearbyPlayers(48)) {
+                CrowTask crowTask = new CrowTask(player, location.clone().add(0.4,0,0.4), getArmorStandUtil());
+                crowTask.runTaskTimerAsynchronously(CustomCrops.plugin, 1, 1);
+            }
+            Bukkit.getScheduler().runTaskLater(CustomCrops.plugin, () -> {
+                customInterface.removeFurniture(itemFrame);
+            }, 125);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean crowJudge(Location location) {
+        if (Math.random() < MainConfig.crowChance && !hasScarecrow(location)) {
+            Bukkit.getScheduler().runTask(CustomCrops.plugin, () -> {
+                for (Player player : location.getNearbyPlayers(48)) {
+                    CrowTask crowTask = new CrowTask(player, location.clone().add(0.4,0,0.4), getArmorStandUtil());
+                    crowTask.runTaskTimerAsynchronously(CustomCrops.plugin, 1, 1);
+                }
+            });
+            Bukkit.getScheduler().runTaskLater(CustomCrops.plugin, () -> {
+                customInterface.removeBlock(location);
+            }, 125);
+            return true;
+        }
+        return false;
     }
 
     public ArmorStandUtil getArmorStandUtil() {

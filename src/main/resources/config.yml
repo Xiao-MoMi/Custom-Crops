@@ -110,7 +110,7 @@ mechanics:
       range: 5
   crow:
     enable: true
-    chance: 0.001
+    chance: 0.005
   default-quality-ratio: 17/2/1
 
 

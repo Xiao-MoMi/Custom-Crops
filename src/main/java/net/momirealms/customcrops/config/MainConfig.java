@@ -136,8 +136,6 @@ public class MainConfig {
         enableParticles = !config.getBoolean("optimization.disable-water-particles", false);
         enableAnimations = !config.getBoolean("optimization.disable-sprinkler-animation", false);
 
-        realisticSeasonHook = config.getBoolean("integration.RealisticSeasons");
-
         try {
             boneMealSuccess = Particle.valueOf(config.getString("mechanics.success-particle", "VILLAGER_HAPPY"));
         }
@@ -237,6 +235,11 @@ public class MainConfig {
         if (config.getBoolean("integration.JobsReborn")) {
             if (Bukkit.getPluginManager().getPlugin("JobsReborn") == null) Log.warn("Failed to initialize JobsReborn!");
             else {skillXP = new JobsRebornHook();}
+        }
+        realisticSeasonHook = false;
+        if (config.getBoolean("integration.RealisticSeasons")) {
+            if (Bukkit.getPluginManager().getPlugin("RealisticSeasons") == null) Log.warn("Failed to initialize RealisticSeasons!");
+            else {realisticSeasonHook = true;}
         }
     }
 

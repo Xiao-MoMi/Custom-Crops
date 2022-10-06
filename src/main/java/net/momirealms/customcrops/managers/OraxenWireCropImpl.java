@@ -66,6 +66,7 @@ public class OraxenWireCropImpl implements CropModeInterface{
         int nextStage = Integer.parseInt(cropNameList[2]) + 1;
         String temp = StringUtils.chop(blockID);
         if (customInterface.doesExist(temp + nextStage)) {
+            if (MainConfig.enableCrow && cropManager.crowJudge(location)) return true;
             if (fertilizer instanceof SpeedGrow speedGrow && Math.random() < speedGrow.getChance()) {
                 if (customInterface.doesExist(temp + (nextStage+1))) {
                     addStage(location, temp + (nextStage+1));
@@ -76,6 +77,7 @@ public class OraxenWireCropImpl implements CropModeInterface{
             }
         }
         else {
+            if (MainConfig.enableCrow && cropManager.crowJudge(location)) return true;
             GiganticCrop giganticCrop = crop.getGiganticCrop();
             if (giganticCrop != null) {
                 double chance = giganticCrop.getChance();

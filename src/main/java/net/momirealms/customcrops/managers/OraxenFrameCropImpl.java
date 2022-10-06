@@ -24,6 +24,7 @@ import net.momirealms.customcrops.config.CropConfig;
 import net.momirealms.customcrops.config.MainConfig;
 import net.momirealms.customcrops.integrations.customplugin.CustomInterface;
 import net.momirealms.customcrops.integrations.customplugin.oraxen.OraxenHook;
+import net.momirealms.customcrops.managers.timer.CrowTask;
 import net.momirealms.customcrops.objects.GiganticCrop;
 import net.momirealms.customcrops.objects.fertilizer.Fertilizer;
 import net.momirealms.customcrops.objects.fertilizer.Gigantic;
@@ -34,6 +35,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.entity.ItemFrame;
+import org.bukkit.entity.Player;
 import org.bukkit.persistence.PersistentDataType;
 
 public class OraxenFrameCropImpl implements CropModeInterface {
@@ -80,6 +82,7 @@ public class OraxenFrameCropImpl implements CropModeInterface {
             int nextStage = Integer.parseInt(cropNameList[2]) + 1;
             String temp = StringUtils.chop(id);
             if (customInterface.doesExist(temp + nextStage)) {
+                if (MainConfig.enableCrow && cropManager.crowJudge(location, itemFrame)) return true;
                 if (fertilizer instanceof SpeedGrow speedGrow && Math.random() < speedGrow.getChance()) {
                     if (customInterface.doesExist(temp + (nextStage+1))) {
                         addStage(itemFrame, temp + (nextStage+1));
@@ -90,6 +93,7 @@ public class OraxenFrameCropImpl implements CropModeInterface {
                 }
             }
             else {
+                if (MainConfig.enableCrow && cropManager.crowJudge(location, itemFrame)) return true;
                 GiganticCrop giganticCrop = crop.getGiganticCrop();
                 if (giganticCrop != null) {
                     double chance = giganticCrop.getChance();
