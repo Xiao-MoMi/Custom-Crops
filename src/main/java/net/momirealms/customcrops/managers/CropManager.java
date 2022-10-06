@@ -121,6 +121,8 @@ public class CropManager extends Function {
             else seasonInterface = new InternalSeason();
         }
 
+        seasonInterface.load();
+
         //load Worlds
         for (World world : Bukkit.getWorlds()) {
             onWorldLoad(world);

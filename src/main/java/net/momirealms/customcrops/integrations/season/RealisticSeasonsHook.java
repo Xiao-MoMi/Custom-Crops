@@ -19,9 +19,11 @@ package net.momirealms.customcrops.integrations.season;
 
 import me.casperge.realisticseasons.api.SeasonsAPI;
 import net.momirealms.customcrops.Function;
+import net.momirealms.customcrops.config.MainConfig;
 import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.mozilla.javascript.tools.jsc.Main;
 
 public class RealisticSeasonsHook extends Function implements SeasonInterface {
 
@@ -46,7 +48,7 @@ public class RealisticSeasonsHook extends Function implements SeasonInterface {
                 return false;
             }
         }
-        return false;
+        return true;
     }
 
     @Override
@@ -61,29 +63,26 @@ public class RealisticSeasonsHook extends Function implements SeasonInterface {
     @Override
     @NotNull
     public CCSeason getSeason(World world){
-        switch (api.getSeason(world)){
-            case SPRING -> {return CCSeason.SPRING;}
-            case SUMMER -> {return CCSeason.SUMMER;}
-            case WINTER -> {return CCSeason.WINTER;}
-            case FALL -> {return CCSeason.AUTUMN;}
+        if (!MainConfig.syncSeason) {
+            switch (api.getSeason(world)){
+                case SPRING -> {return CCSeason.SPRING;}
+                case SUMMER -> {return CCSeason.SUMMER;}
+                case WINTER -> {return CCSeason.WINTER;}
+                case FALL -> {return CCSeason.AUTUMN;}
+            }
+        }
+        else {
+            switch (api.getSeason(MainConfig.syncWorld)){
+                case SPRING -> {return CCSeason.SPRING;}
+                case SUMMER -> {return CCSeason.SUMMER;}
+                case WINTER -> {return CCSeason.WINTER;}
+                case FALL -> {return CCSeason.AUTUMN;}
+            }
         }
         return CCSeason.UNKNOWN;
     }
 
-    /**
-     * Set season for RealisticSeasons
-     * @param season season
-     * @param world world
-     */
     @Override
     public void setSeason(CCSeason season, World world) {
-        me.casperge.realisticseasons.season.Season rsSeason = switch (season) {
-            case SPRING -> me.casperge.realisticseasons.season.Season.SPRING;
-            case SUMMER -> me.casperge.realisticseasons.season.Season.SUMMER;
-            case AUTUMN -> me.casperge.realisticseasons.season.Season.FALL;
-            case WINTER -> me.casperge.realisticseasons.season.Season.WINTER;
-            default -> throw new IllegalStateException("Unexpected value: " + season);
-        };
-        api.setSeason(world, rsSeason);
     }
 }

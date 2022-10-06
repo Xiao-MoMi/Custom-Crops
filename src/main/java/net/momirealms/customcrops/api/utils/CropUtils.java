@@ -23,6 +23,11 @@ import org.jetbrains.annotations.Nullable;
 
 public class CropUtils {
 
+    /**
+     * get a crop config
+     * @param crop crop
+     * @return crop config
+     */
     @Nullable
     public static Crop getCrop(String crop) {
         return CropConfig.CROPS.get(crop);

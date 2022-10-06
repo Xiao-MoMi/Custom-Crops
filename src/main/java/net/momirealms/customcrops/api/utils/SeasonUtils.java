@@ -24,15 +24,29 @@ import org.jetbrains.annotations.NotNull;
 
 public class SeasonUtils {
 
+    /**
+     * Set season for a specified world
+     * @param world world
+     * @param season season
+     */
     public static void setSeason(World world, CCSeason season) {
         CustomCrops.plugin.getCropManager().getSeasonAPI().setSeason(season, world);
     }
 
+    /**
+     * return a world's season, if it has no season, it would return a new season
+     * @param world world
+     * @return season
+     */
     @NotNull
     public static CCSeason getSeason(World world) {
         return CustomCrops.plugin.getCropManager().getSeasonAPI().getSeason(world);
     }
 
+    /**
+     * remove a world's season data from cache
+     * @param world world
+     */
     public static void unloadSeason(World world) {
         CustomCrops.plugin.getCropManager().getSeasonAPI().unloadWorld(world);
     }

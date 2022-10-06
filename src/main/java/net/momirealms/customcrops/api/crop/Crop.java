@@ -26,21 +26,21 @@ import net.momirealms.customcrops.objects.requirements.RequirementInterface;
 
 public interface Crop {
 
-    public CCSeason[] getSeasons();
+    CCSeason[] getSeasons();
 
-    public RequirementInterface[] getRequirements();
+    RequirementInterface[] getRequirements();
 
-    public String getReturnStage();
+    String getReturnStage();
 
-    public QualityLoot getQualityLoot();
+    QualityLoot getQualityLoot();
 
-    public GiganticCrop getGiganticCrop();
+    GiganticCrop getGiganticCrop();
 
-    public double getSkillXP();
+    double getSkillXP();
 
-    public OtherLoot[] getOtherLoots();
+    OtherLoot[] getOtherLoots();
 
-    public ActionInterface[] getActions();
+    ActionInterface[] getActions();
 
-    public String getKey();
+    String getKey();
 }

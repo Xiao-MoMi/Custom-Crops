@@ -56,7 +56,7 @@ public class SeasonPapi extends PlaceholderExpansion {
         if (!SeasonConfig.enable) return MessageConfig.seasonDisabled;
         switch (params) {
             case "current" -> {
-                if (!MainConfig.getWorldsList().contains(player.getWorld())) return MessageConfig.autoSeasonDisabled;
+                if (!MainConfig.getWorldsList().contains(player.getWorld())) return MessageConfig.noSeason;
                 return getSeasonText(player.getWorld());
             }
             case "days_left" -> {
@@ -73,7 +73,7 @@ public class SeasonPapi extends PlaceholderExpansion {
                 if (params.startsWith("current_")) {
                     World world = Bukkit.getWorld(params.substring(8));
                     if (world == null) return MessageConfig.noSeason;
-                    if (!MainConfig.getWorldsList().contains(world)) return MessageConfig.autoSeasonDisabled;
+                    if (!MainConfig.getWorldsList().contains(world)) return MessageConfig.noSeason;
                     return getSeasonText(world);
                 }
                 if (params.startsWith("days_left_")) {

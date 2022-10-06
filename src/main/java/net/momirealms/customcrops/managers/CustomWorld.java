@@ -84,6 +84,10 @@ public class CustomWorld {
     public void unload(boolean disable) {
         if (disable) {
             unloadData();
+            for (BukkitTask task : tasksCache) {
+                task.cancel();
+            }
+            tasksCache.clear();
         }
         else {
             Bukkit.getScheduler().runTaskAsynchronously(CustomCrops.plugin, () -> {

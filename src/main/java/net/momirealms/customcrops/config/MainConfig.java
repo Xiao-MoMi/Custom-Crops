@@ -21,6 +21,7 @@ import net.momirealms.customcrops.helper.Log;
 import net.momirealms.customcrops.integrations.AntiGrief;
 import net.momirealms.customcrops.integrations.SkillXP;
 import net.momirealms.customcrops.integrations.protection.*;
+import net.momirealms.customcrops.integrations.skill.*;
 import net.momirealms.customcrops.objects.QualityRatio;
 import net.momirealms.customcrops.utils.AdventureUtil;
 import org.apache.commons.lang.StringUtils;
@@ -135,6 +136,8 @@ public class MainConfig {
         enableParticles = !config.getBoolean("optimization.disable-water-particles", false);
         enableAnimations = !config.getBoolean("optimization.disable-sprinkler-animation", false);
 
+        realisticSeasonHook = config.getBoolean("integration.RealisticSeasons");
+
         try {
             boneMealSuccess = Particle.valueOf(config.getString("mechanics.success-particle", "VILLAGER_HAPPY"));
         }
@@ -213,6 +216,27 @@ public class MainConfig {
         if (config.getBoolean("config.integration.BentoBox",false)){
             if (Bukkit.getPluginManager().getPlugin("BentoBox") == null) Log.warn("Failed to initialize BentoBox!");
             else {antiGriefs.add(new BentoBoxHook());hookMessage("BentoBox");}
+        }
+
+        if (config.getBoolean("integration.AureliumSkills")) {
+            if (Bukkit.getPluginManager().getPlugin("AureliumSkills") == null) Log.warn("Failed to initialize AureliumSkills!");
+            else {skillXP = new AureliumsHook();}
+        }
+        if (config.getBoolean("integration.mcMMO")) {
+            if (Bukkit.getPluginManager().getPlugin("mcMMO") == null) Log.warn("Failed to initialize mcMMO!");
+            else {skillXP = new mcMMOHook();}
+        }
+        if (config.getBoolean("integration.MMOCore")) {
+            if (Bukkit.getPluginManager().getPlugin("MMOCore") == null) Log.warn("Failed to initialize MMOCore!");
+            else {skillXP = new MMOCoreHook();}
+        }
+        if (config.getBoolean("integration.EcoSkills")) {
+            if (Bukkit.getPluginManager().getPlugin("EcoSkills") == null) Log.warn("Failed to initialize EcoSkills!");
+            else {skillXP = new EcoSkillsHook();}
+        }
+        if (config.getBoolean("integration.JobsReborn")) {
+            if (Bukkit.getPluginManager().getPlugin("JobsReborn") == null) Log.warn("Failed to initialize JobsReborn!");
+            else {skillXP = new JobsRebornHook();}
         }
     }
 
