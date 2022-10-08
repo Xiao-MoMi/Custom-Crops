@@ -157,9 +157,7 @@ public class CustomWorld {
                     }
                     scarecrowCache.put(en.getKey(), simpleLocations);
                 }
-
             }
-            SeasonUtils.setSeason(world, CCSeason.UNKNOWN);
         }
         catch (FileNotFoundException e) {
             //bypass
@@ -183,7 +181,6 @@ public class CustomWorld {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        SeasonUtils.unloadSeason(world);
     }
 
     private void loadSeason() {

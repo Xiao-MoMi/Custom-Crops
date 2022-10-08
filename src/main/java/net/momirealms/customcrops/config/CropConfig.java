@@ -141,7 +141,7 @@ public class CropConfig {
                                     config.getString(key + ".requirements." + requirement + ".message")
                             ));
                             case "papi-condition" -> requirementList.add(new CustomPapi(
-                                    Objects.requireNonNull(config.getConfigurationSection(key + ".requirements." + requirement + ".papi-condition")).getValues(false),
+                                    Objects.requireNonNull(config.getConfigurationSection(key + ".requirements." + requirement + ".value")).getValues(false),
                                     config.getString(key + ".requirements." + requirement + ".message")
                             ));
                         }

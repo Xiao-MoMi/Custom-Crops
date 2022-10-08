@@ -85,10 +85,28 @@ public class CropManager extends Function {
     public void load() {
         super.load();
         this.customWorlds = new ConcurrentHashMap<>();
-
         this.itemSpawnListener = new ItemSpawnListener(this);
         this.worldListener = new WorldListener(this);
         this.armorStandUtil = new ArmorStandUtil(this);
+
+        loadMode();
+        loadSeason();
+
+        //load Worlds
+        for (World world : Bukkit.getWorlds()) {
+            onWorldLoad(world);
+        }
+        //new Time Check task
+        this.timerTask = new TimerTask(this);
+        this.timerTask.runTaskTimerAsynchronously(CustomCrops.plugin, 1,100);
+    }
+
+    public void loadMode() {
+
+        if (this.handler != null) {
+            handler.unload();
+            handler = null;
+        }
 
         //Custom Plugin
         if (MainConfig.customPlugin.equals("itemsadder")) {
@@ -96,10 +114,12 @@ public class CropManager extends Function {
             if (MainConfig.cropMode) {
                 this.handler = new ItemsAdderWireHandler(this);
                 this.cropMode = new ItemsAdderWireCropImpl(this);
+                this.handler.load();
             }
             else {
                 this.handler = new ItemsAdderFrameHandler(this);
                 this.cropMode = new ItemsAdderFrameCropImpl(this);
+                this.handler.load();
             }
         }
         else if (MainConfig.customPlugin.equals("oraxen")){
@@ -107,29 +127,25 @@ public class CropManager extends Function {
             if (MainConfig.cropMode) {
                 this.handler = new OraxenWireHandler(this);
                 this.cropMode = new OraxenWireCropImpl(this);
+                this.handler.load();
             }
             else {
                 this.handler = new OraxenFrameHandler(this);
                 this.cropMode = new OraxenFrameCropImpl(this);
+                this.handler.load();
             }
         }
+    }
 
-        //new Time Check task
-        this.timerTask = new TimerTask(this);
-        this.timerTask.runTaskTimerAsynchronously(CustomCrops.plugin, 1,100);
-
-        handler.load();
-
+    public void loadSeason() {
         if (SeasonConfig.enable) {
             if (MainConfig.realisticSeasonHook) seasonInterface = new RealisticSeasonsHook();
             else seasonInterface = new InternalSeason();
+            seasonInterface.load();
         }
-
-        seasonInterface.load();
-
-        //load Worlds
-        for (World world : Bukkit.getWorlds()) {
-            onWorldLoad(world);
+        else if (this.seasonInterface != null) {
+            this.seasonInterface.unload();
+            this.seasonInterface = null;
         }
     }
 

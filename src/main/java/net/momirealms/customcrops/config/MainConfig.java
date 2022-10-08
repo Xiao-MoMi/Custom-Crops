@@ -88,6 +88,8 @@ public class MainConfig {
     public static boolean syncSeason;
     public static World syncWorld;
     public static boolean autoBackUp;
+    public static boolean needSkyLight;
+    public static int skyLightLevel;
 
     public static void load() {
         ConfigUtil.update("config.yml");
@@ -145,6 +147,9 @@ public class MainConfig {
 
         enableCrow = config.getBoolean("mechanics.crow.enable", false);
         crowChance = config.getDouble("mechanics.crow.chance", 0.001);
+
+        skyLightLevel = config.getInt("mechanics.dead-if-no-sky-light.level", 10);
+        needSkyLight = config.getBoolean("mechanics.dead-if-no-sky-light.enable", true);
 
         String[] split = StringUtils.split(config.getString("mechanics.default-quality-ratio", "17/2/1"), "/");
         double[] weight = new double[3];

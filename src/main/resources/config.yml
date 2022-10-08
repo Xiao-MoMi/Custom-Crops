@@ -2,7 +2,7 @@
 config-version: '10'
 
 # lang: english / spanish / chinese
-lang: chinese
+lang: english
 
 integration:
   # AntiGrief
@@ -33,6 +33,7 @@ worlds:
 
 optimization:
   # Recommend enabling this to prevent large quantities of crops/itemframes lagging the server
+  # When you are using both item_frame mode and ItemsAdder, you should set "max-furniture-vehicles-per-chunk" in ItemsAdder's config.yml to a higher value
   limitation:
     enable: true
     # max amount per chunk
@@ -47,7 +48,6 @@ optimization:
   auto-back-up: true
 
 mechanics:
-  # Requires a restart tp change mode
   # Mode: tripwire/item_frame
   crops-mode: tripwire
 
@@ -102,6 +102,7 @@ mechanics:
       world: world
 
     auto-season-change:
+      # If enabled, setseason command would only work for only one day
       enable: true
       #duration of each season
       duration: 28
@@ -114,8 +115,15 @@ mechanics:
   crow:
     enable: true
     chance: 0.005
+
+  # 17/2/1 means 85%/10%/5%
+  # 2/2/1 means 40%/40%/20%
   default-quality-ratio: 17/2/1
 
+  # A crop would go to dead stage if the sky-light level is lower than a value.
+  dead-if-no-sky-light:
+    enable: true
+    level: 10
 
 
 sounds:

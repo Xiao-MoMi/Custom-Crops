@@ -64,6 +64,13 @@ public class OraxenFrameCropImpl implements CropModeInterface {
             String cropKey = cropNameList[0];
             Crop crop = CropConfig.CROPS.get(cropKey);
             if (crop == null) return true;
+
+            if (MainConfig.needSkyLight && location.getBlock().getLightFromSky() < MainConfig.skyLightLevel) {
+                itemFrame.setItem(customInterface.getItemStack(BasicItemConfig.deadCrop), false);
+                itemFrame.getPersistentDataContainer().set(OraxenHook.FURNITURE, PersistentDataType.STRING, BasicItemConfig.deadCrop);
+                return true;
+            }
+
             if (cropManager.isWrongSeason(location, crop.getSeasons())) {
                 itemFrame.setItem(customInterface.getItemStack(BasicItemConfig.deadCrop), false);
                 itemFrame.getPersistentDataContainer().set(OraxenHook.FURNITURE, PersistentDataType.STRING, BasicItemConfig.deadCrop);

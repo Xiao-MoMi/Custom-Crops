@@ -21,6 +21,7 @@ import net.momirealms.customcrops.api.utils.SeasonUtils;
 import net.momirealms.customcrops.commands.AbstractSubCommand;
 import net.momirealms.customcrops.commands.SubCommand;
 import net.momirealms.customcrops.config.MessageConfig;
+import net.momirealms.customcrops.config.SeasonConfig;
 import net.momirealms.customcrops.integrations.season.CCSeason;
 import net.momirealms.customcrops.utils.AdventureUtil;
 import org.bukkit.Bukkit;
@@ -40,6 +41,10 @@ public class SetSeasonCommand extends AbstractSubCommand {
 
     @Override
     public boolean onCommand(CommandSender sender, List<String> args) {
+        if (!SeasonConfig.enable) {
+            AdventureUtil.sendMessage(sender, MessageConfig.prefix + MessageConfig.seasonDisabled);
+            return true;
+        }
         if (args.size() < 2) {
             AdventureUtil.sendMessage(sender, MessageConfig.prefix + MessageConfig.lackArgs);
             return true;
@@ -66,6 +71,7 @@ public class SetSeasonCommand extends AbstractSubCommand {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, List<String> args) {
+        if (!SeasonConfig.enable) return null;
         if (args.size() == 1) {
             return getWorlds(args);
         }

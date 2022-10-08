@@ -75,7 +75,7 @@ public class CustomPapi implements RequirementInterface {
     @Override
     public boolean isConditionMet(PlantingCondition plantingCondition) {
         if (!papiRequirement.isMet(plantingCondition.getPapiMap())) {
-            AdventureUtil.playerMessage(plantingCondition.getPlayer(), msg);
+            if (msg != null) AdventureUtil.playerMessage(plantingCondition.getPlayer(), msg);
             return false;
         }
         return true;

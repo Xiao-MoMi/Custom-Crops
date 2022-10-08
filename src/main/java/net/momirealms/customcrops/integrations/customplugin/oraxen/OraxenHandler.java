@@ -148,7 +148,7 @@ public abstract class OraxenHandler extends HandlerP {
             if (waterEvent.isCancelled()) {
                 return true;
             }
-            nbtItem.setInteger("WaterAmount", water - 1);
+            nbtItem.setInteger("WaterAmount", --water);
 
             if (SoundConfig.waterPot.isEnable()) {
                 AdventureUtil.playerSound(

@@ -50,9 +50,16 @@ public class OraxenWireCropImpl implements CropModeInterface{
         String cropKey = cropNameList[0];
         Crop crop = CropConfig.CROPS.get(cropKey);
         if (crop == null) return true;
+
+        if (MainConfig.needSkyLight && location.getBlock().getLightFromSky() < MainConfig.skyLightLevel) {
+            Bukkit.getScheduler().runTask(CustomCrops.plugin, () -> {
+                customInterface.placeWire(location, BasicItemConfig.deadCrop);
+            });
+            return true;
+        }
+
         if (cropManager.isWrongSeason(location, crop.getSeasons())) {
             Bukkit.getScheduler().runTask(CustomCrops.plugin, () -> {
-                customInterface.removeBlock(location);
                 customInterface.placeWire(location, BasicItemConfig.deadCrop);
             });
             return true;

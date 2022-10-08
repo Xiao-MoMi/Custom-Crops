@@ -62,6 +62,12 @@ public class ItemsAdderFrameCropImpl implements CropModeInterface {
             String cropKey = StringUtils.split(cropNameList[0], ":")[1];
             Crop crop = CropConfig.CROPS.get(cropKey);
             if (crop == null) return true;
+
+            if (MainConfig.needSkyLight && location.getBlock().getLightFromSky() < MainConfig.skyLightLevel) {
+                itemFrame.setItem(customInterface.getItemStack(BasicItemConfig.deadCrop), false);
+                return true;
+            }
+
             if (cropManager.isWrongSeason(location, crop.getSeasons())) {
                 itemFrame.setItem(customInterface.getItemStack(BasicItemConfig.deadCrop), false);
                 return true;
