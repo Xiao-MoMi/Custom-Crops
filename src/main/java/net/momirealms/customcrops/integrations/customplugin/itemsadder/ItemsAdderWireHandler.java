@@ -100,9 +100,6 @@ public class ItemsAdderWireHandler extends ItemsAdderHandler {
     public void onPlayerInteract(PlayerInteractEvent event) {
 
         final Player player = event.getPlayer();
-        long time = System.currentTimeMillis();
-        if (time - (coolDown.getOrDefault(player, time - 50)) < 50) return;
-        coolDown.put(player, time);
 
         super.onPlayerInteract(event);
 
@@ -154,6 +151,7 @@ public class ItemsAdderWireHandler extends ItemsAdderHandler {
 
         //interact pot (must have an item)
         else if (blockID.equals(BasicItemConfig.wetPot) || blockID.equals(BasicItemConfig.dryPot)) {
+
             if (!AntiGrief.testPlace(player, location)) return;
 
             ItemStack itemInHand = event.getItem();

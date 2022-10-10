@@ -105,7 +105,12 @@ public class MainConfig {
                 worlds[i] = Bukkit.getWorld(worldsName.get(i));
             }
         }
-        worldList = List.of(worlds);
+        if (worlds != null) {
+            worldList = List.of(worlds);
+        }
+        else {
+            worldList = new ArrayList<>();
+        }
         cropMode = config.getString("mechanics.crops-mode", "tripwire").equals("tripwire");
         limitation = config.getBoolean("optimization.limitation.enable", true);
         wireAmount = config.getInt("optimization.limitation.tripwire-amount", 64);
