@@ -17,7 +17,10 @@
 
 package net.momirealms.customcrops.integrations.customplugin;
 
+import de.tr7zw.changeme.nbtapi.NBTCompound;
 import de.tr7zw.changeme.nbtapi.NBTItem;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.momirealms.customcrops.CustomCrops;
 import net.momirealms.customcrops.Function;
 import net.momirealms.customcrops.api.crop.Crop;
@@ -74,6 +77,13 @@ public abstract class HandlerP extends Function {
         //null
     }
 
+    public boolean coolDownJudge(Player player) {
+        long time = System.currentTimeMillis();
+        if (time - (coolDown.getOrDefault(player, time - 50)) < 50) return false;
+        coolDown.put(player, time);
+        return true;
+    }
+
     public void onInteractSprinkler(Location location, Player player, @Nullable ItemStack itemStack, Sprinkler config) {
 
         CustomWorld customWorld = cropManager.getCustomWorld(location.getWorld());
@@ -110,45 +120,57 @@ public abstract class HandlerP extends Function {
                 }
             }
             else if (itemStack.getType() != Material.AIR) {
-                NBTItem nbtItem = new NBTItem(itemStack);
-                int canWater = nbtItem.getInteger("WaterAmount");
-                if (canWater > 0) {
 
-                    SprinklerFillEvent sprinklerFillEvent = new SprinklerFillEvent(player, itemStack);
-                    Bukkit.getPluginManager().callEvent(sprinklerFillEvent);
-                    if (sprinklerFillEvent.isCancelled()) {
-                        return;
-                    }
+                String canID = customInterface.getItemID(itemStack);
+                WaterCan canConfig = WaterCanConfig.CANS.get(canID);
+                if (canConfig != null) {
 
-                    nbtItem.setInteger("WaterAmount", --canWater);
-                    itemStack.setItemMeta(nbtItem.getItem().getItemMeta());
-                    int water = sprinkler.getWater() + MainConfig.wateringCanToSprinkler;
-                    if (water > config.getWater()) water = config.getWater();
-                    sprinkler.setWater(water);
+                    NBTItem nbtItem = new NBTItem(itemStack);
+                    int canWater = nbtItem.getInteger("WaterAmount");
+                    if (canWater > 0) {
 
-                    if (SoundConfig.addWaterToSprinkler.isEnable()) {
-                        AdventureUtil.playerSound(
-                        player,
-                        SoundConfig.addWaterToSprinkler.getSource(),
-                        SoundConfig.addWaterToSprinkler.getKey(),
-                        1,1
-                        );
-                    }
+                        SprinklerFillEvent sprinklerFillEvent = new SprinklerFillEvent(player, itemStack);
+                        Bukkit.getPluginManager().callEvent(sprinklerFillEvent);
+                        if (sprinklerFillEvent.isCancelled()) {
+                            return;
+                        }
 
-                    if (MainConfig.enableActionBar) {
-                        String canID = customInterface.getItemID(itemStack);
-                        WaterCan canConfig = WaterCanConfig.CANS.get(canID);
-                        if (canConfig == null) return;
+                        nbtItem.setInteger("WaterAmount", --canWater);
 
-                        AdventureUtil.playerActionbar(
-                        player,
-                        (MainConfig.actionBarLeft +
-                        MainConfig.actionBarFull.repeat(canWater) +
-                        MainConfig.actionBarEmpty.repeat(canConfig.getMax() - canWater) +
-                        MainConfig.actionBarRight)
-                        .replace("{max_water}", String.valueOf(canConfig.getMax()))
-                        .replace("{water}", String.valueOf(canWater))
-                        );
+                        int water = sprinkler.getWater() + MainConfig.wateringCanToSprinkler;
+                        if (water > config.getWater()) water = config.getWater();
+                        sprinkler.setWater(water);
+
+                        if (SoundConfig.addWaterToSprinkler.isEnable()) {
+                            AdventureUtil.playerSound(
+                                    player,
+                                    SoundConfig.addWaterToSprinkler.getSource(),
+                                    SoundConfig.addWaterToSprinkler.getKey(),
+                                    1,1
+                            );
+                        }
+
+                        if (MainConfig.enableActionBar) {
+                            AdventureUtil.playerActionbar(
+                                    player,
+                                    (MainConfig.actionBarLeft +
+                                            MainConfig.actionBarFull.repeat(canWater) +
+                                            MainConfig.actionBarEmpty.repeat(canConfig.getMax() - canWater) +
+                                            MainConfig.actionBarRight)
+                                            .replace("{max_water}", String.valueOf(canConfig.getMax()))
+                                            .replace("{water}", String.valueOf(canWater))
+                            );
+                        }
+
+                        if (MainConfig.enableWaterCanLore && !MainConfig.enablePacketLore) {
+                            addWaterLore(nbtItem, canConfig, canWater);
+                        }
+
+                        itemStack.setItemMeta(nbtItem.getItem().getItemMeta());
+
+                        if (MainConfig.enableWaterCanLore && MainConfig.enablePacketLore) {
+                            player.updateInventory();
+                        }
                     }
                 }
             }
@@ -317,7 +339,7 @@ public abstract class HandlerP extends Function {
                         water += MainConfig.waterToWaterCan;
                         if (water > config.getMax()) water = config.getMax();
                         nbtItem.setInteger("WaterAmount", water);
-                        itemStack.setItemMeta(nbtItem.getItem().getItemMeta());
+
 
                         if (SoundConfig.addWaterToCan.isEnable()) {
                             AdventureUtil.playerSound(
@@ -332,7 +354,17 @@ public abstract class HandlerP extends Function {
                             player.getWorld().spawnParticle(Particle.WATER_SPLASH, block.getLocation().add(0.5,1, 0.5),10,0.1,0.1,0.1);
                         }
 
+                        if (MainConfig.enableWaterCanLore && !MainConfig.enablePacketLore) {
+                            addWaterLore(nbtItem, config, water);
+                        }
+
+                        itemStack.setItemMeta(nbtItem.getItem().getItemMeta());
+
+                        if (MainConfig.enableWaterCanLore && MainConfig.enablePacketLore) {
+                            player.updateInventory();
+                        }
                     }
+
                     break;
                 }
             }
@@ -351,6 +383,24 @@ public abstract class HandlerP extends Function {
             return true;
         }
         return false;
+    }
+
+    protected void addWaterLore(NBTItem nbtItem, WaterCan config, int water) {
+        NBTCompound display = nbtItem.getCompound("display");
+        List<String> lore = display.getStringList("Lore");
+        lore.clear();
+        for (String text : MainConfig.waterCanLore) {
+            lore.add(GsonComponentSerializer.gson().serialize(MiniMessage.miniMessage().deserialize(
+                    text.replace("{water_bar}",
+                                    MainConfig.waterBarLeft +
+                                            MainConfig.waterBarFull.repeat(water) +
+                                            MainConfig.waterBarEmpty.repeat(config.getMax() - water) +
+                                            MainConfig.waterBarRight
+                            )
+                            .replace("{water}", String.valueOf(water))
+                            .replace("{max_water}", String.valueOf(config.getMax()))
+            )));
+        }
     }
 
     public boolean useFertilizer(Location potLoc, String id, Player player, ItemStack itemStack) {

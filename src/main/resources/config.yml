@@ -1,5 +1,5 @@
 #Don't change
-config-version: '10'
+config-version: '11'
 
 # lang: english / spanish / chinese
 lang: english
@@ -165,20 +165,20 @@ sounds:
     type: player
 
 
-#Hologram information
+# Hologram information
 hologram:
-  #Pot infomation
+  # Pot infomation
   fertilizer-info:
     enable: true
     y-offset: 0.8
     duration: 1
     text: '<font:customcrops:default>{fertilizer} </font><white>{times}<gray>/<white>{max_times}'
-  #Sprinkler infomation
+  # Sprinkler infomation
   sprinkler-info:
     enable: true
     y-offset: 0.8
     duration: 1
-    #available variables {water} {max_water}
+    # available variables {water} {max_water}
     left: '<font:customcrops:default>뀂'
     full: '뀁뀃'
     empty: '뀁뀄'
@@ -187,10 +187,34 @@ hologram:
 
 
 actionbar:
-  #Should actionbar be sent when using watering-can
+  # Should actionbar be sent when using watering-can
   enable: true
-  #available variables  {water} {max_water}
+  # Available variables  {water} {max_water}
   left: '<font:customcrops:default>뀂'
   full: '뀁뀃'
   empty: '뀁뀄'
   right: '뀁뀅</font>'
+
+
+
+watering-can-lore:
+  # Should watering-can has dynamic lore according to the water amount
+  enable: true
+  # Only packets can remain the former lore, otherwise the lore would be replaced
+  packets:
+    # Should watering-can's lore be sent by packets
+    # Wouldn't work in creative mode for safety
+    enable: true
+    # true: top / false: bottom
+    top-or-bottom: true
+  # Lore format
+  # Available variables: {water_bar}
+  # {water}current water {max_water}max storage
+  lore:
+    - '<italic:false><white>{water_bar}'
+    - '<italic:false><gray>Right click water to add water to the can.'
+  water-bar:
+    left: '<font:customcrops:default>뀂'
+    full: '뀁뀃'
+    empty: '뀁뀄'
+    right: '뀁뀅</font>'

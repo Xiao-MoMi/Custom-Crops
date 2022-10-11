@@ -15,7 +15,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.momirealms.customcrops.managers;
+package net.momirealms.customcrops.integrations.customplugin.itemsadder;
 
 import net.momirealms.customcrops.CustomCrops;
 import net.momirealms.customcrops.api.crop.Crop;
@@ -23,6 +23,8 @@ import net.momirealms.customcrops.config.BasicItemConfig;
 import net.momirealms.customcrops.config.CropConfig;
 import net.momirealms.customcrops.config.MainConfig;
 import net.momirealms.customcrops.integrations.customplugin.CustomInterface;
+import net.momirealms.customcrops.managers.CropManager;
+import net.momirealms.customcrops.managers.CropModeInterface;
 import net.momirealms.customcrops.objects.GiganticCrop;
 import net.momirealms.customcrops.objects.fertilizer.Fertilizer;
 import net.momirealms.customcrops.objects.fertilizer.Gigantic;
@@ -31,12 +33,12 @@ import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
-public class OraxenWireCropImpl implements CropModeInterface{
+public class ItemsAdderWireCropImpl implements CropModeInterface {
 
     private final CropManager cropManager;
     private final CustomInterface customInterface;
 
-    public OraxenWireCropImpl(CropManager cropManager) {
+    public ItemsAdderWireCropImpl(CropManager cropManager) {
         this.cropManager = cropManager;
         this.customInterface = cropManager.getCustomInterface();
     }
@@ -47,12 +49,13 @@ public class OraxenWireCropImpl implements CropModeInterface{
         if (blockID == null) return true;
         if (!blockID.contains("_stage_")) return true;
         String[] cropNameList = StringUtils.split(blockID,"_");
-        String cropKey = cropNameList[0];
+        String cropKey = StringUtils.split(cropNameList[0], ":")[1];
         Crop crop = CropConfig.CROPS.get(cropKey);
         if (crop == null) return true;
 
         if (MainConfig.needSkyLight && location.getBlock().getLightFromSky() < MainConfig.skyLightLevel) {
             Bukkit.getScheduler().runTask(CustomCrops.plugin, () -> {
+                customInterface.removeBlock(location);
                 customInterface.placeWire(location, BasicItemConfig.deadCrop);
             });
             return true;
@@ -60,6 +63,7 @@ public class OraxenWireCropImpl implements CropModeInterface{
 
         if (cropManager.isWrongSeason(location, crop.getSeasons())) {
             Bukkit.getScheduler().runTask(CustomCrops.plugin, () -> {
+                customInterface.removeBlock(location);
                 customInterface.placeWire(location, BasicItemConfig.deadCrop);
             });
             return true;
@@ -72,6 +76,7 @@ public class OraxenWireCropImpl implements CropModeInterface{
         boolean certainGrow = potID.equals(BasicItemConfig.wetPot);
         int nextStage = Integer.parseInt(cropNameList[2]) + 1;
         String temp = StringUtils.chop(blockID);
+
         if (customInterface.doesExist(temp + nextStage)) {
             if (MainConfig.enableCrow && cropManager.crowJudge(location)) return true;
             if (fertilizer instanceof SpeedGrow speedGrow && Math.random() < speedGrow.getChance()) {
@@ -109,6 +114,9 @@ public class OraxenWireCropImpl implements CropModeInterface{
     }
 
     private void addStage(Location seedLoc, String stage) {
-        Bukkit.getScheduler().runTask(CustomCrops.plugin, () -> customInterface.placeWire(seedLoc, stage));
+        Bukkit.getScheduler().runTask(CustomCrops.plugin, () -> {
+            customInterface.removeBlock(seedLoc);
+            customInterface.placeWire(seedLoc, stage);
+        });
     }
 }

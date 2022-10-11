@@ -27,18 +27,13 @@ import net.momirealms.customcrops.config.SeasonConfig;
 import net.momirealms.customcrops.config.SoundConfig;
 import net.momirealms.customcrops.integrations.customplugin.CustomInterface;
 import net.momirealms.customcrops.integrations.customplugin.HandlerP;
-import net.momirealms.customcrops.integrations.customplugin.itemsadder.ItemsAdderFrameHandler;
-import net.momirealms.customcrops.integrations.customplugin.itemsadder.ItemsAdderHook;
-import net.momirealms.customcrops.integrations.customplugin.itemsadder.ItemsAdderWireHandler;
-import net.momirealms.customcrops.integrations.customplugin.oraxen.OraxenFrameHandler;
-import net.momirealms.customcrops.integrations.customplugin.oraxen.OraxenHook;
-import net.momirealms.customcrops.integrations.customplugin.oraxen.OraxenWireHandler;
+import net.momirealms.customcrops.integrations.customplugin.itemsadder.*;
+import net.momirealms.customcrops.integrations.customplugin.oraxen.*;
 import net.momirealms.customcrops.integrations.season.CCSeason;
 import net.momirealms.customcrops.integrations.season.InternalSeason;
 import net.momirealms.customcrops.integrations.season.RealisticSeasonsHook;
 import net.momirealms.customcrops.integrations.season.SeasonInterface;
-import net.momirealms.customcrops.managers.listener.ItemSpawnListener;
-import net.momirealms.customcrops.managers.listener.WorldListener;
+import net.momirealms.customcrops.managers.listener.*;
 import net.momirealms.customcrops.managers.timer.CrowTask;
 import net.momirealms.customcrops.managers.timer.TimerTask;
 import net.momirealms.customcrops.objects.OtherLoot;
@@ -75,6 +70,9 @@ public class CropManager extends Function {
     private SeasonInterface seasonInterface;
     private CustomInterface customInterface;
     private ArmorStandUtil armorStandUtil;
+    private ContainerListener containerListener;
+    private PlayerModeListener playerModeListener;
+    private PlayerContainerListener playerContainerListener;
     private HandlerP handler;
 
     public CropManager() {
@@ -91,6 +89,7 @@ public class CropManager extends Function {
 
         loadMode();
         loadSeason();
+        loadPacket();
 
         //load Worlds
         for (World world : Bukkit.getWorlds()) {
@@ -149,6 +148,28 @@ public class CropManager extends Function {
         }
     }
 
+    public void loadPacket() {
+        if (this.containerListener != null) {
+            CustomCrops.protocolManager.removePacketListener(containerListener);
+            this.containerListener = null;
+        }
+        if (this.playerModeListener != null) {
+            HandlerList.unregisterAll(playerModeListener);
+            this.playerModeListener = null;
+        }
+        if (this.playerContainerListener != null) {
+            CustomCrops.protocolManager.removePacketListener(playerContainerListener);
+            this.playerContainerListener = null;
+        }
+        if (!MainConfig.enableWaterCanLore || !MainConfig.enablePacketLore) return;
+        containerListener = new ContainerListener(this);
+        CustomCrops.protocolManager.addPacketListener(containerListener);
+        playerContainerListener = new PlayerContainerListener(handler);
+        CustomCrops.protocolManager.addPacketListener(playerContainerListener);
+        playerModeListener = new PlayerModeListener();
+        Bukkit.getPluginManager().registerEvents(playerModeListener, CustomCrops.plugin);
+    }
+
     @Override
     public void unload() {
         super.unload();
@@ -161,6 +182,7 @@ public class CropManager extends Function {
         }
         customWorlds.clear();
         if (this.seasonInterface != null) seasonInterface.unload();
+        if (this.containerListener != null) CustomCrops.protocolManager.removePacketListener(containerListener);
     }
 
     public void onItemSpawn(Item item) {

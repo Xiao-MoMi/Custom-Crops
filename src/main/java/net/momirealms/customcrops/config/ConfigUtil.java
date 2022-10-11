@@ -77,6 +77,7 @@ public class ConfigUtil {
         if (CustomCrops.plugin.getCropManager() != null) {
             CustomCrops.plugin.getCropManager().loadMode();
             CustomCrops.plugin.getCropManager().loadSeason();
+            CustomCrops.plugin.getCropManager().loadPacket();
         }
     }
 }

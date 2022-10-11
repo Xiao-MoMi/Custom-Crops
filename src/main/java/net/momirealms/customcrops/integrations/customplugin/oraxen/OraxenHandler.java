@@ -136,8 +136,9 @@ public abstract class OraxenHandler extends HandlerP {
     }
 
     private boolean useWateringCan(Location potLoc, String id, Player player, @NotNull ItemStack can) {
-        WaterCan waterCan = WaterCanConfig.CANS.get(id);
-        if (waterCan == null) return false;
+
+        WaterCan canConfig = WaterCanConfig.CANS.get(id);
+        if (canConfig == null) return false;
 
         NBTItem nbtItem = new NBTItem(can);
         int water = nbtItem.getInteger("WaterAmount");
@@ -160,10 +161,6 @@ public abstract class OraxenHandler extends HandlerP {
             }
 
             if (MainConfig.enableActionBar) {
-                String canID = customInterface.getItemID(can);
-                WaterCan canConfig = WaterCanConfig.CANS.get(canID);
-                if (canConfig == null) return true;
-
                 AdventureUtil.playerActionbar(
                         player,
                         (MainConfig.actionBarLeft +
@@ -175,8 +172,17 @@ public abstract class OraxenHandler extends HandlerP {
                 );
             }
 
+            if (MainConfig.enableWaterCanLore && !MainConfig.enablePacketLore) {
+                addWaterLore(nbtItem, canConfig, water);
+            }
+
             can.setItemMeta(nbtItem.getItem().getItemMeta());
-            super.waterPot(waterCan.getWidth(), waterCan.getLength(), potLoc, player.getLocation().getYaw());
+
+            if (MainConfig.enableWaterCanLore && MainConfig.enablePacketLore) {
+                player.updateInventory();
+            }
+
+            super.waterPot(canConfig.getWidth(), canConfig.getLength(), potLoc, player.getLocation().getYaw());
         }
         return true;
     }

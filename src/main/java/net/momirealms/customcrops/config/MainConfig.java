@@ -90,6 +90,14 @@ public class MainConfig {
     public static boolean autoBackUp;
     public static boolean needSkyLight;
     public static int skyLightLevel;
+    public static boolean enableWaterCanLore;
+    public static boolean enablePacketLore;
+    public static List<String> waterCanLore;
+    public static String waterBarLeft;
+    public static String waterBarFull;
+    public static String waterBarEmpty;
+    public static String waterBarRight;
+    public static boolean topOrBottom;
 
     public static void load() {
         ConfigUtil.update("config.yml");
@@ -105,12 +113,15 @@ public class MainConfig {
                 worlds[i] = Bukkit.getWorld(worldsName.get(i));
             }
         }
-        if (worlds != null) {
-            worldList = List.of(worlds);
+
+        worldList = new ArrayList<>();
+        for (World world : worlds) {
+            if (world == null) continue;
+            worldList.add(world);
         }
-        else {
-            worldList = new ArrayList<>();
-        }
+
+        worlds = worldList.toArray(new World[0]);
+
         cropMode = config.getString("mechanics.crops-mode", "tripwire").equals("tripwire");
         limitation = config.getBoolean("optimization.limitation.enable", true);
         wireAmount = config.getInt("optimization.limitation.tripwire-amount", 64);
@@ -132,8 +143,8 @@ public class MainConfig {
         preventInWrongSeason = config.getBoolean("mechanics.prevent-plant-if-wrong-season", true);
         notifyInWrongSeason = config.getBoolean("mechanics.should-notify-if-wrong-season", true);
 
-        enableBoneMeal = config.getBoolean("mechanics.bone-meal", true);
-        boneMealChance = config.getDouble("mechanics.chance", 0.5);
+        enableBoneMeal = config.getBoolean("mechanics.bone-meal.enable", true);
+        boneMealChance = config.getDouble("mechanics.bone-meal.chance", 0.5);
 
         syncSeason = config.getBoolean("mechanics.season.sync-seasons.enable", false);
         syncWorld = Bukkit.getWorld(config.getString("mechanics.season.sync-seasons.world", "world"));
@@ -144,7 +155,7 @@ public class MainConfig {
         enableAnimations = !config.getBoolean("optimization.disable-sprinkler-animation", false);
 
         try {
-            boneMealSuccess = Particle.valueOf(config.getString("mechanics.success-particle", "VILLAGER_HAPPY"));
+            boneMealSuccess = Particle.valueOf(config.getString("mechanics.bone-meal.success-particle", "VILLAGER_HAPPY"));
         }
         catch (IllegalArgumentException e) {
             AdventureUtil.consoleMessage("<red>[CustomCrops] Illegal Particle Argument for Bone Meal</red>");
@@ -184,44 +195,53 @@ public class MainConfig {
         fertilizerInfoDuration = config.getInt("hologram.fertilizer-info.duration", 1);
         fertilizerInfo = config.getString("hologram.fertilizer-info.text", "<font:customcrops:default>{fertilizer}</font> <white>{times}<gray>/<white>{max_times}");
 
+        enableWaterCanLore = config.getBoolean("watering-can-lore.enable", true);
+        enablePacketLore = config.getBoolean("watering-can-lore.packets.enable", true);
+        topOrBottom = config.getBoolean("watering-can-lore.packets.top-or-bottom", true);
+        waterCanLore = config.getStringList("watering-can-lore.lore");
+        waterBarLeft = config.getString("watering-can-lore.water-bar.left", "<font:customcrops:default>뀂");
+        waterBarFull = config.getString("watering-can-lore.water-bar.full", "뀁뀃");
+        waterBarEmpty = config.getString("watering-can-lore.water-bar.empty", "뀁뀄");
+        waterBarRight = config.getString("watering-can-lore.water-bar.right", "뀁뀅</font>");
+
         antiGriefs = new ArrayList<>();
-        if (config.getBoolean("config.integration.Residence",false)){
+        if (config.getBoolean("integration.Residence",false)){
             if (Bukkit.getPluginManager().getPlugin("Residence") == null) Log.warn("Failed to initialize Residence!");
             else {antiGriefs.add(new ResidenceHook());hookMessage("Residence");}
         }
-        if (config.getBoolean("config.integration.Kingdoms",false)){
+        if (config.getBoolean("integration.Kingdoms",false)){
             if (Bukkit.getPluginManager().getPlugin("Kingdoms") == null) Log.warn("Failed to initialize Kingdoms!");
             else {antiGriefs.add(new KingdomsXHook());hookMessage("Kingdoms");}
         }
-        if (config.getBoolean("config.integration.WorldGuard",false)){
+        if (config.getBoolean("integration.WorldGuard",false)){
             if (Bukkit.getPluginManager().getPlugin("WorldGuard") == null) Log.warn("Failed to initialize WorldGuard!");
             else {antiGriefs.add(new WorldGuardHook());hookMessage("WorldGuard");}
         }
-        if (config.getBoolean("config.integration.GriefDefender",false)){
+        if (config.getBoolean("integration.GriefDefender",false)){
             if(Bukkit.getPluginManager().getPlugin("GriefDefender") == null) Log.warn("Failed to initialize GriefDefender!");
             else {antiGriefs.add(new GriefDefenderHook());hookMessage("GriefDefender");}
         }
-        if (config.getBoolean("config.integration.PlotSquared",false)){
+        if (config.getBoolean("integration.PlotSquared",false)){
             if(Bukkit.getPluginManager().getPlugin("PlotSquared") == null) Log.warn("Failed to initialize PlotSquared!");
             else {antiGriefs.add(new PlotSquaredHook());hookMessage("PlotSquared");}
         }
-        if (config.getBoolean("config.integration.Towny",false)){
+        if (config.getBoolean("integration.Towny",false)){
             if (Bukkit.getPluginManager().getPlugin("Towny") == null) Log.warn("Failed to initialize Towny!");
             else {antiGriefs.add(new TownyHook());hookMessage("Towny");}
         }
-        if (config.getBoolean("config.integration.Lands",false)){
+        if (config.getBoolean("integration.Lands",false)){
             if (Bukkit.getPluginManager().getPlugin("Lands") == null) Log.warn("Failed to initialize Lands!");
             else {antiGriefs.add(new LandsHook());hookMessage("Lands");}
         }
-        if (config.getBoolean("config.integration.GriefPrevention",false)){
+        if (config.getBoolean("integration.GriefPrevention",false)){
             if (Bukkit.getPluginManager().getPlugin("GriefPrevention") == null) Log.warn("Failed to initialize GriefPrevention!");
             else {antiGriefs.add(new GriefPreventionHook());hookMessage("GriefPrevention");}
         }
-        if (config.getBoolean("config.integration.CrashClaim",false)){
+        if (config.getBoolean("integration.CrashClaim",false)){
             if (Bukkit.getPluginManager().getPlugin("CrashClaim") == null) Log.warn("Failed to initialize CrashClaim!");
             else {antiGriefs.add(new CrashClaimHook());hookMessage("CrashClaim");}
         }
-        if (config.getBoolean("config.integration.BentoBox",false)){
+        if (config.getBoolean("integration.BentoBox",false)){
             if (Bukkit.getPluginManager().getPlugin("BentoBox") == null) Log.warn("Failed to initialize BentoBox!");
             else {antiGriefs.add(new BentoBoxHook());hookMessage("BentoBox");}
         }
@@ -276,6 +296,6 @@ public class MainConfig {
     }
 
     private static void hookMessage(String plugin){
-        AdventureUtil.consoleMessage("[CustomCrops] <gold>" + plugin + " <color:#FFEBCD>Hooked!");
+        AdventureUtil.consoleMessage("[CustomCrops] <white>" + plugin + " Hooked!");
     }
 }

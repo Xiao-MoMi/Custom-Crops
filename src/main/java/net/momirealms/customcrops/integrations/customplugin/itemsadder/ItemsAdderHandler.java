@@ -138,9 +138,9 @@ public abstract class ItemsAdderHandler extends HandlerP {
     }
 
     private boolean useWateringCan(Location potLoc, String namespacedID, Player player, @NotNull CustomStack can) {
-        WaterCan waterCan = WaterCanConfig.CANS.get(namespacedID);
 
-        if (waterCan == null) return false;
+        WaterCan canConfig = WaterCanConfig.CANS.get(namespacedID);
+        if (canConfig == null) return false;
 
         ItemStack itemStack = can.getItemStack();
         NBTItem nbtItem = new NBTItem(itemStack);
@@ -180,10 +180,6 @@ public abstract class ItemsAdderHandler extends HandlerP {
             }
 
             if (MainConfig.enableActionBar) {
-                String canID = customInterface.getItemID(itemStack);
-                WaterCan canConfig = WaterCanConfig.CANS.get(canID);
-                if (canConfig == null) return true;
-
                 AdventureUtil.playerActionbar(
                         player,
                         (MainConfig.actionBarLeft +
@@ -195,8 +191,17 @@ public abstract class ItemsAdderHandler extends HandlerP {
                 );
             }
 
+            if (MainConfig.enableWaterCanLore && !MainConfig.enablePacketLore) {
+                addWaterLore(nbtItem, canConfig, water);
+            }
+
             itemStack.setItemMeta(nbtItem.getItem().getItemMeta());
-            super.waterPot(waterCan.getWidth(), waterCan.getLength(), potLoc, player.getLocation().getYaw());
+
+            if (MainConfig.enableWaterCanLore && MainConfig.enablePacketLore) {
+                player.updateInventory();
+            }
+
+            super.waterPot(canConfig.getWidth(), canConfig.getLength(), potLoc, player.getLocation().getYaw());
         }
 
         return true;

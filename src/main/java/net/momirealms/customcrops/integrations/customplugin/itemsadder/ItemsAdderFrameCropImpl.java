@@ -15,7 +15,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.momirealms.customcrops.managers;
+package net.momirealms.customcrops.integrations.customplugin.itemsadder;
 
 import net.momirealms.customcrops.CustomCrops;
 import net.momirealms.customcrops.api.crop.Crop;
@@ -23,6 +23,8 @@ import net.momirealms.customcrops.config.BasicItemConfig;
 import net.momirealms.customcrops.config.CropConfig;
 import net.momirealms.customcrops.config.MainConfig;
 import net.momirealms.customcrops.integrations.customplugin.CustomInterface;
+import net.momirealms.customcrops.managers.CropManager;
+import net.momirealms.customcrops.managers.CropModeInterface;
 import net.momirealms.customcrops.objects.GiganticCrop;
 import net.momirealms.customcrops.objects.fertilizer.Fertilizer;
 import net.momirealms.customcrops.objects.fertilizer.Gigantic;
