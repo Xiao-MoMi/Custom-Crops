@@ -1,5 +1,5 @@
 #Don't change
-config-version: '11'
+config-version: '12'
 
 # lang: english / spanish / chinese
 lang: english
@@ -194,6 +194,19 @@ actionbar:
   full: '뀁뀃'
   empty: '뀁뀄'
   right: '뀁뀅</font>'
+
+
+
+season-broadcast:
+  enable: true
+  spring:
+    - '<#3CB371>Spring is coming!'
+  summer:
+    - '<#FFFFE0>Summer is coming!'
+  autumn:
+    - '<#FF8C00>Autumn is coming!'
+  winter:
+    - '<#87CEFA>Winter is coming!'
 
 
 

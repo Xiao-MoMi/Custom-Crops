@@ -21,12 +21,16 @@ import net.momirealms.customcrops.CustomCrops;
 import net.momirealms.customcrops.Function;
 import net.momirealms.customcrops.config.MainConfig;
 import net.momirealms.customcrops.config.SeasonConfig;
+import net.momirealms.customcrops.utils.AdventureUtil;
+import org.bukkit.Bukkit;
 import org.bukkit.World;
+import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class InternalSeason extends Function implements SeasonInterface {
@@ -87,7 +91,42 @@ public class InternalSeason extends Function implements SeasonInterface {
             setSeason(countSeason(world), world);
         }
         else {
-            seasonHashMap.put(world, season);
+            if (MainConfig.syncSeason && world != MainConfig.syncWorld) {
+                seasonHashMap.put(world, getSeason(MainConfig.syncWorld));
+                return;
+            }
+            CCSeason oldSeason = seasonHashMap.put(world, season);
+            if (!MainConfig.enableSeasonBroadcast) return;
+            if (oldSeason == null) return;
+            // season changed
+            if (oldSeason != season) {
+                Collection<? extends Player> players;
+                if (MainConfig.syncSeason) players = Bukkit.getOnlinePlayers();
+                else players = world.getPlayers();
+
+                switch (season) {
+                    case SPRING -> players.forEach(player -> {
+                        for (String msg : MainConfig.springMsg) {
+                            AdventureUtil.playerMessage(player, msg);
+                        }
+                    });
+                    case SUMMER -> players.forEach(player -> {
+                        for (String msg : MainConfig.summerMsg) {
+                            AdventureUtil.playerMessage(player, msg);
+                        }
+                    });
+                    case AUTUMN -> players.forEach(player -> {
+                        for (String msg : MainConfig.autumnMsg) {
+                            AdventureUtil.playerMessage(player, msg);
+                        }
+                    });
+                    case WINTER -> players.forEach(player -> {
+                        for (String msg : MainConfig.winterMsg) {
+                            AdventureUtil.playerMessage(player, msg);
+                        }
+                    });
+                }
+            }
         }
     }
 

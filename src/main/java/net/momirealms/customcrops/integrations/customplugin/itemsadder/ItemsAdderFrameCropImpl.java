@@ -22,6 +22,7 @@ import net.momirealms.customcrops.api.crop.Crop;
 import net.momirealms.customcrops.config.BasicItemConfig;
 import net.momirealms.customcrops.config.CropConfig;
 import net.momirealms.customcrops.config.MainConfig;
+import net.momirealms.customcrops.helper.Log;
 import net.momirealms.customcrops.integrations.customplugin.CustomInterface;
 import net.momirealms.customcrops.managers.CropManager;
 import net.momirealms.customcrops.managers.CropModeInterface;
@@ -56,6 +57,7 @@ public class ItemsAdderFrameCropImpl implements CropModeInterface {
             Location cropLoc = location.clone().add(0.5,0.5,0.5);
             ItemFrame itemFrame = FurnitureUtil.getItemFrame(cropLoc);
             if (itemFrame == null) return true;
+
             String id = customInterface.getItemID(itemFrame.getItem());
             if (id == null) return true;
             if (id.equals(BasicItemConfig.deadCrop)) return true;
@@ -64,7 +66,6 @@ public class ItemsAdderFrameCropImpl implements CropModeInterface {
             String cropKey = StringUtils.split(cropNameList[0], ":")[1];
             Crop crop = CropConfig.CROPS.get(cropKey);
             if (crop == null) return true;
-
             if (MainConfig.needSkyLight && location.getBlock().getLightFromSky() < MainConfig.skyLightLevel) {
                 itemFrame.setItem(customInterface.getItemStack(BasicItemConfig.deadCrop), false);
                 return true;
@@ -74,21 +75,18 @@ public class ItemsAdderFrameCropImpl implements CropModeInterface {
                 itemFrame.setItem(customInterface.getItemStack(BasicItemConfig.deadCrop), false);
                 return true;
             }
-
             Location potLoc = location.clone().subtract(0,1,0);
             String potID = customInterface.getBlockID(potLoc);
             if (potID == null) return true;
-
             Fertilizer fertilizer = cropManager.getFertilizer(potLoc);
             boolean certainGrow = potID.equals(BasicItemConfig.wetPot);
-
             int nextStage = Integer.parseInt(cropNameList[2]) + 1;
             String temp = StringUtils.chop(id);
             if (customInterface.doesExist(temp + nextStage)) {
                 if (MainConfig.enableCrow && cropManager.crowJudge(location, itemFrame)) return true;
                 if (fertilizer instanceof SpeedGrow speedGrow && Math.random() < speedGrow.getChance()) {
                     if (customInterface.doesExist(temp + (nextStage+1))) {
-                        addStage(itemFrame, temp + (nextStage+1));
+                        addStage(itemFrame, temp + (nextStage + 1));
                     }
                 }
                 else if (certainGrow || Math.random() < MainConfig.dryGrowChance) {

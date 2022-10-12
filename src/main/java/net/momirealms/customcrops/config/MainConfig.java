@@ -98,6 +98,11 @@ public class MainConfig {
     public static String waterBarEmpty;
     public static String waterBarRight;
     public static boolean topOrBottom;
+    public static boolean enableSeasonBroadcast;
+    public static String[] springMsg;
+    public static String[] summerMsg;
+    public static String[] autumnMsg;
+    public static String[] winterMsg;
 
     public static void load() {
         ConfigUtil.update("config.yml");
@@ -153,6 +158,12 @@ public class MainConfig {
 
         enableParticles = !config.getBoolean("optimization.disable-water-particles", false);
         enableAnimations = !config.getBoolean("optimization.disable-sprinkler-animation", false);
+
+        enableSeasonBroadcast = config.getBoolean("season-broadcast.enable", true);
+        springMsg = config.getStringList("season-broadcast.spring").toArray(new String[0]);
+        summerMsg = config.getStringList("season-broadcast.summer").toArray(new String[0]);
+        autumnMsg = config.getStringList("season-broadcast.autumn").toArray(new String[0]);
+        winterMsg = config.getStringList("season-broadcast.winter").toArray(new String[0]);
 
         try {
             boneMealSuccess = Particle.valueOf(config.getString("mechanics.bone-meal.success-particle", "VILLAGER_HAPPY"));
