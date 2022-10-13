@@ -17,6 +17,7 @@
 
 package net.momirealms.customcrops.integrations.customplugin.itemsadder;
 
+import dev.lone.itemsadder.api.CustomFurniture;
 import net.momirealms.customcrops.CustomCrops;
 import net.momirealms.customcrops.api.crop.Crop;
 import net.momirealms.customcrops.config.BasicItemConfig;
@@ -53,15 +54,12 @@ public class ItemsAdderFrameCropImpl implements CropModeInterface {
         Chunk chunk = location.getChunk();
 
         if (chunk.isEntitiesLoaded()) {
-
             Location cropLoc = location.clone().add(0.5,0.5,0.5);
             ItemFrame itemFrame = FurnitureUtil.getItemFrame(cropLoc);
             if (itemFrame == null) return true;
-
             String id = customInterface.getItemID(itemFrame.getItem());
             if (id == null) return true;
             if (id.equals(BasicItemConfig.deadCrop)) return true;
-
             String[] cropNameList = StringUtils.split(id,"_");
             String cropKey = StringUtils.split(cropNameList[0], ":")[1];
             Crop crop = CropConfig.CROPS.get(cropKey);
@@ -70,7 +68,6 @@ public class ItemsAdderFrameCropImpl implements CropModeInterface {
                 itemFrame.setItem(customInterface.getItemStack(BasicItemConfig.deadCrop), false);
                 return true;
             }
-
             if (cropManager.isWrongSeason(location, crop.getSeasons())) {
                 itemFrame.setItem(customInterface.getItemStack(BasicItemConfig.deadCrop), false);
                 return true;
@@ -120,6 +117,10 @@ public class ItemsAdderFrameCropImpl implements CropModeInterface {
     }
 
     private void addStage(ItemFrame itemFrame, String stage) {
-        itemFrame.setItem(customInterface.getItemStack(stage), false);
+        CustomFurniture.remove(itemFrame, false);
+        CustomFurniture customFurniture = CustomFurniture.spawn(stage, itemFrame.getLocation().getBlock());
+        if (customFurniture.getArmorstand() instanceof ItemFrame frame) {
+            frame.setRotation(FurnitureUtil.getRandomRotation());
+        }
     }
 }
