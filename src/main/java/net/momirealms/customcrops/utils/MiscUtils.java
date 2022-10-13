@@ -41,4 +41,13 @@ public class MiscUtils {
         String[] loc = StringUtils.split(location, ",");
         return new SimpleLocation(world, Integer.parseInt(loc[0]), Integer.parseInt(loc[1]), Integer.parseInt(loc[2]));
     }
+
+    public static Location getLocation(String location, World world) {
+        String[] loc = StringUtils.split(location, ",");
+        return new Location(world, Integer.parseInt(loc[0]), Integer.parseInt(loc[1]), Integer.parseInt(loc[2]));
+    }
+
+    public static String getStringLocation(Location location) {
+        return location.getBlockX() + "," + location.getBlockY() + "," + location.getBlockZ();
+    }
 }

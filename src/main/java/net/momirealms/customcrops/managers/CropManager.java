@@ -198,7 +198,7 @@ public class CropManager extends Function {
             CustomWorld customWorld = new CustomWorld(world, this);
             customWorlds.put(world, customWorld);
             if (MainConfig.autoGrow && MainConfig.enableCompensation) {
-                if (world.getTime() < 24000 - MainConfig.timeToWork - MainConfig.timeToDry - 1200 && world.getTime() > 1200) {
+                if (world.getTime() > 1200) {
                     Bukkit.getScheduler().runTaskLaterAsynchronously(CustomCrops.plugin, () -> grow(world, MainConfig.timeToGrow, MainConfig.timeToWork, MainConfig.timeToDry, true), 100);
                 }
             }

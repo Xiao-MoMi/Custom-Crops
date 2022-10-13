@@ -27,7 +27,7 @@ public class LimitationUtil {
         int minHeight = location.getWorld().getMinHeight();
         int maxHeight = location.getWorld().getMaxHeight();
         Location chunkLocation = new Location(location.getWorld(), location.getChunk().getX() * 16, minHeight, location.getChunk().getZ() * 16);
-        int n = 0;
+        int n = 1;
         for (int i = 0; i < 16; ++i){
             for (int j = 0; j < 16; ++j) {
                 Location square = chunkLocation.clone().add(i, 0, j);
@@ -46,7 +46,7 @@ public class LimitationUtil {
         int minHeight = location.getWorld().getMinHeight();
         int maxHeight = location.getWorld().getMaxHeight();
         Location chunkLocation = new Location(location.getWorld(), location.getChunk().getX() * 16, minHeight, location.getChunk().getZ() * 16);
-        int n = 0;
+        int n = 1;
         for (int i = 0; i < 16; ++i) {
             for (int j = 0; j < 16; ++j) {
                 Location square;
