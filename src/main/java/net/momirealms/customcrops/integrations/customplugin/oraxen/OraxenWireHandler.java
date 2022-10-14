@@ -304,7 +304,7 @@ public class OraxenWireHandler extends OraxenHandler{
         if (customWorld == null) return;
 
         Fertilizer fertilizer = customWorld.getFertilizer(location.clone().subtract(0,1,0));
-        cropManager.proceedHarvest(crop, player, location, fertilizer);
+        cropManager.proceedHarvest(crop, player, location, fertilizer, true);
 
         if (crop.getReturnStage() == null) {
             customWorld.removeCrop(location);

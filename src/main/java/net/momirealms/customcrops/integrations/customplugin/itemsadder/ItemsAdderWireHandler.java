@@ -117,7 +117,9 @@ public class ItemsAdderWireHandler extends ItemsAdderHandler {
             ItemStack itemInHand = event.getItem();
             if (!blockID.equals(BasicItemConfig.deadCrop)) {
                 if (!hasNextStage(blockID)) {
-                    if (MainConfig.canRightClickHarvest && !(MainConfig.emptyHand && itemInHand != null && itemInHand.getType() != Material.AIR)) {
+                    ItemStack mainHand = player.getInventory().getItemInMainHand();
+                    ItemStack offHand = player.getInventory().getItemInOffHand();
+                    if (MainConfig.canRightClickHarvest && !(MainConfig.emptyHand && (mainHand.getType() != Material.AIR || offHand.getType() != Material.AIR))) {
                         if (!AntiGrief.testBreak(player, location)) return;
                         CustomBlock.remove(location);
                         this.onInteractRipeCrop(location, blockID, player);
@@ -307,7 +309,7 @@ public class ItemsAdderWireHandler extends ItemsAdderHandler {
         if (customWorld == null) return;
 
         Fertilizer fertilizer = customWorld.getFertilizer(location.clone().subtract(0,1,0));
-        cropManager.proceedHarvest(crop, player, location, fertilizer);
+        cropManager.proceedHarvest(crop, player, location, fertilizer, true);
 
         if (crop.getReturnStage() == null) {
             customWorld.removeCrop(location);

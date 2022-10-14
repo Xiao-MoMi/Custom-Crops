@@ -254,11 +254,11 @@ public abstract class HandlerP extends Function {
         if (instant) {
             Bukkit.getScheduler().runTaskLater(CustomCrops.plugin, ()-> {
                 if (location.getBlock().getType() != Material.AIR) return;
-                cropManager.proceedHarvest(crop, player, location, fertilizer);
+                cropManager.proceedHarvest(crop, player, location, fertilizer, false);
             },1);
         }
         else {
-            cropManager.proceedHarvest(crop, player, location, fertilizer);
+            cropManager.proceedHarvest(crop, player, location, fertilizer, false);
         }
     }
 

@@ -138,12 +138,23 @@ public class CropManager extends Function {
 
     public void loadSeason() {
         if (SeasonConfig.enable) {
+            for (CustomWorld customWorld : customWorlds.values()) {
+                customWorld.unloadSeason();
+            }
+            if (seasonInterface != null) {
+                seasonInterface.unload();
+                this.seasonInterface = null;
+            }
             if (MainConfig.realisticSeasonHook) seasonInterface = new RealisticSeasonsHook();
             else seasonInterface = new InternalSeason();
-            seasonInterface.load();
+            //empty when enabling
+            for (CustomWorld customWorld : customWorlds.values()) {
+                customWorld.loadSeason();
+            }
+            return;
         }
-        else if (this.seasonInterface != null) {
-            this.seasonInterface.unload();
+        if (seasonInterface != null) {
+            seasonInterface.unload();
             this.seasonInterface = null;
         }
     }
@@ -300,12 +311,12 @@ public class CropManager extends Function {
         return customWorlds.get(world);
     }
 
-    public void proceedHarvest(Crop crop, Player player, Location location, @Nullable Fertilizer fertilizer) {
+    public void proceedHarvest(Crop crop, Player player, Location location, @Nullable Fertilizer fertilizer, boolean isRightClick) {
         //Call harvest event
         CropHarvestEvent cropHarvestEvent = new CropHarvestEvent(player, crop, location, fertilizer);
         Bukkit.getPluginManager().callEvent(cropHarvestEvent);
         if (cropHarvestEvent.isCancelled()) return;
-
+        if (!isRightClick && player.getGameMode() == GameMode.CREATIVE) return;
         ActionInterface[] actions = crop.getActions();
         if (actions != null) performActions(actions, player);
 
@@ -317,9 +328,6 @@ public class CropManager extends Function {
                     1,1
             );
         }
-
-        if (player.getGameMode() == GameMode.CREATIVE) return;
-
         QualityLoot qualityLoot = crop.getQualityLoot();
         if (qualityLoot != null) {
             int amount = ThreadLocalRandom.current().nextInt(qualityLoot.getMin(), qualityLoot.getMax() + 1);

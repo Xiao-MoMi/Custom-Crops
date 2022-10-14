@@ -120,7 +120,7 @@ public class CustomWorld {
         backUp(world.getName());
     }
 
-    private void backUp(String worldName) {
+    public void backUp(String worldName) {
         if (!MainConfig.autoBackUp) return;
         Date date = new Date();
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
@@ -138,7 +138,7 @@ public class CustomWorld {
         }
     }
 
-    private void loadScarecrow() {
+    public void loadScarecrow() {
         if (!MainConfig.enableCrow) return;
         try {
             JsonParser jsonParser = new JsonParser();
@@ -161,7 +161,7 @@ public class CustomWorld {
         }
     }
 
-    private void unloadScarecrow() {
+    public void unloadScarecrow() {
         if (!MainConfig.enableCrow) return;
         JsonObject jsonObject = new JsonObject();
         for (Map.Entry<String, HashSet<SimpleLocation>> entry : scarecrowCache.entrySet()) {
@@ -180,7 +180,7 @@ public class CustomWorld {
         }
     }
 
-    private void loadSeason() {
+    public void loadSeason() {
         if (!SeasonConfig.enable) return;
         try {
             JsonParser jsonParser = new JsonParser();
@@ -203,7 +203,7 @@ public class CustomWorld {
         }
     }
 
-    private void unloadSeason() {
+    public void unloadSeason() {
         if (!SeasonConfig.enable) return;
         JsonObject jsonObject = new JsonObject();
         JsonPrimitive jsonPrimitive = new JsonPrimitive(SeasonUtils.getSeason(world).name());
@@ -216,7 +216,7 @@ public class CustomWorld {
         SeasonUtils.unloadSeason(world);
     }
 
-    private void loadPot() {
+    public void loadPot() {
         try {
             JsonParser jsonParser = new JsonParser();
             JsonElement json= jsonParser.parse(new FileReader(new File(CustomCrops.plugin.getDataFolder().getParentFile().getParentFile(), world.getName() + File.separator + "customcrops_data" + File.separator + "pot.json")));
@@ -238,7 +238,7 @@ public class CustomWorld {
         }
     }
 
-    private void unloadPot() {
+    public void unloadPot() {
         JsonObject jsonObject = new JsonObject();
         JsonArray jsonArray = new JsonArray();
         watered.addAll(playerWatered);
@@ -254,7 +254,7 @@ public class CustomWorld {
         }
     }
 
-    private void loadFertilizerCache() {
+    public void loadFertilizerCache() {
         YamlConfiguration data = loadData("fertilizers", world.getName());
         for (String key : data.getKeys(false)) {
             String[] loc = StringUtils.split(key, ",");
@@ -268,7 +268,7 @@ public class CustomWorld {
         }
     }
 
-    private void unloadFertilizer() {
+    public void unloadFertilizer() {
         YamlConfiguration data = new YamlConfiguration();
         for (Map.Entry<SimpleLocation, Fertilizer> en : fertilizerCache.entrySet()) {
             SimpleLocation location = en.getKey();
@@ -285,7 +285,7 @@ public class CustomWorld {
         }
     }
 
-    private void loadSprinklerCache() {
+    public void loadSprinklerCache() {
         YamlConfiguration data = loadData("sprinklers", world.getName());
         for (String key : data.getKeys(false)) {
             String[] loc = StringUtils.split(key, ",");
@@ -301,7 +301,7 @@ public class CustomWorld {
         }
     }
 
-    private void unloadSprinkler() {
+    public void unloadSprinkler() {
         YamlConfiguration data = new YamlConfiguration();
         for (Map.Entry<SimpleLocation, Sprinkler> en : sprinklerCache.entrySet()) {
             SimpleLocation location = en.getKey();
@@ -318,11 +318,11 @@ public class CustomWorld {
         }
     }
 
-    private void loadCropCache() {
+    public void loadCropCache() {
         cropData = loadData("crops", world.getName());
     }
 
-    private void unloadCrop() {
+    public void unloadCrop() {
         try {
             cropData.save(new File(CustomCrops.plugin.getDataFolder().getParentFile().getParentFile(), world.getName() + File.separator + "customcrops_data" + File.separator + "crops.yml"));
         }

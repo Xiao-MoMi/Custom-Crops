@@ -70,6 +70,7 @@ public class ConfigUtil {
         SprinklerConfig.load();
         WaterCanConfig.load();
         SoundConfig.load();
+        // would not be activated when enabling
         if (CustomCrops.plugin.getPlaceholderManager() != null) {
             CustomCrops.plugin.getPlaceholderManager().unload();
             CustomCrops.plugin.getPlaceholderManager().load();
