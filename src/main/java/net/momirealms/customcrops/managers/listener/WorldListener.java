@@ -23,13 +23,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.event.world.WorldUnloadEvent;
 
-public class WorldListener implements Listener {
-
-    private final CropManager cropManager;
-
-    public WorldListener(CropManager cropManager) {
-        this.cropManager = cropManager;
-    }
+public record WorldListener(CropManager cropManager) implements Listener {
 
     @EventHandler
     public void onWorldUnload(WorldLoadEvent event) {

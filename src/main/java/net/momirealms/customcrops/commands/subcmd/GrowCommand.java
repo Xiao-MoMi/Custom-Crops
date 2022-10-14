@@ -28,17 +28,17 @@ import org.bukkit.command.CommandSender;
 
 import java.util.List;
 
-public class SimulateCommand extends AbstractSubCommand {
+public class GrowCommand extends AbstractSubCommand {
 
-    public static final SubCommand INSTANCE = new SimulateCommand();
+    public static final SubCommand INSTANCE = new GrowCommand();
 
-    private SimulateCommand() {
-        super("simulate", null);
+    public GrowCommand() {
+        super("grow", null);
     }
 
     @Override
     public boolean onCommand(CommandSender sender, List<String> args) {
-        if (args.size() < 4) {
+        if (args.size() < 2) {
             AdventureUtil.sendMessage(sender, MessageConfig.prefix + MessageConfig.lackArgs);
         }
         else {
@@ -47,14 +47,10 @@ public class SimulateCommand extends AbstractSubCommand {
                 AdventureUtil.sendMessage(sender, MessageConfig.prefix + MessageConfig.worldNotExists);
                 return true;
             }
-            int sprinklerTime;
             int growTime;
-            int dryTime;
             try {
-                sprinklerTime = Integer.parseInt(args.get(1));
-                growTime = Integer.parseInt(args.get(3));
-                dryTime = Integer.parseInt(args.get(2));
-                if (sprinklerTime <= 0 || growTime <= 0 || dryTime <= 0 || (sprinklerTime + growTime + dryTime) > 23999) {
+                growTime = Integer.parseInt(args.get(1));
+                if (growTime <= 0  || growTime > 23999) {
                     AdventureUtil.sendMessage(sender, MessageConfig.prefix + "Time should be a positive number between 1-23999");
                     return true;
                 }
@@ -65,7 +61,7 @@ public class SimulateCommand extends AbstractSubCommand {
                 return true;
             }
             Bukkit.getScheduler().runTaskAsynchronously(CustomCrops.plugin, () -> {
-                CustomCrops.plugin.getCropManager().grow(world, growTime, sprinklerTime, dryTime, false, false);
+                CustomCrops.plugin.getCropManager().grow(world, growTime, 0, 0, false, true);
             });
             AdventureUtil.sendMessage(sender, MessageConfig.prefix + MessageConfig.growSimulation);
         }
@@ -78,12 +74,6 @@ public class SimulateCommand extends AbstractSubCommand {
             return getWorlds(args);
         }
         if (args.size() == 2) {
-            return List.of("<SprinklerWorkTime>");
-        }
-        if (args.size() == 3) {
-            return List.of("<PotDryTime>");
-        }
-        if (args.size() == 4) {
             return List.of("<CropGrowTime>");
         }
         return super.onTabComplete(sender, args);

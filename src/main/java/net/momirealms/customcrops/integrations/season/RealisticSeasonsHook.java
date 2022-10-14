@@ -18,8 +18,8 @@
 package net.momirealms.customcrops.integrations.season;
 
 import me.casperge.realisticseasons.api.SeasonsAPI;
-import net.momirealms.customcrops.Function;
 import net.momirealms.customcrops.config.MainConfig;
+import net.momirealms.customcrops.objects.Function;
 import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

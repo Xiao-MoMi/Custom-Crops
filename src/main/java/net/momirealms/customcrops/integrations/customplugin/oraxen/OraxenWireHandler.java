@@ -24,20 +24,16 @@ import io.th0rgal.oraxen.mechanics.provided.gameplay.stringblock.StringBlockMech
 import io.th0rgal.oraxen.mechanics.provided.gameplay.stringblock.StringBlockMechanicFactory;
 import io.th0rgal.oraxen.utils.drops.Drop;
 import net.momirealms.customcrops.api.crop.Crop;
-import net.momirealms.customcrops.api.event.SeedPlantEvent;
-import net.momirealms.customcrops.config.*;
+import net.momirealms.customcrops.config.BasicItemConfig;
+import net.momirealms.customcrops.config.MainConfig;
+import net.momirealms.customcrops.config.SoundConfig;
+import net.momirealms.customcrops.config.SprinklerConfig;
 import net.momirealms.customcrops.integrations.AntiGrief;
-import net.momirealms.customcrops.integrations.season.CCSeason;
 import net.momirealms.customcrops.managers.CropManager;
 import net.momirealms.customcrops.managers.CustomWorld;
 import net.momirealms.customcrops.objects.Sprinkler;
 import net.momirealms.customcrops.objects.fertilizer.Fertilizer;
-import net.momirealms.customcrops.objects.requirements.PlantingCondition;
-import net.momirealms.customcrops.objects.requirements.RequirementInterface;
 import net.momirealms.customcrops.utils.AdventureUtil;
-import net.momirealms.customcrops.utils.FurnitureUtil;
-import net.momirealms.customcrops.utils.LimitationUtil;
-import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -182,61 +178,19 @@ public class OraxenWireHandler extends OraxenHandler{
         if (super.tryMisc(event.getPlayer(), itemInHand, potLoc)) return;
         if (event.getBlockFace() != BlockFace.UP) return;
 
+        Location seedLoc = potLoc.clone().add(0,1,0);
+
         String id = OraxenItems.getIdByItem(itemInHand);
-        if (id == null) return;
-        if (id.endsWith("_seeds")) {
-            String cropName = id.substring(0, id.length() - 6);
-            Crop crop = CropConfig.CROPS.get(cropName);
-            if (crop == null) return;
-
-            Location seedLoc = potLoc.clone().add(0,1,0);
-            CustomWorld customWorld = cropManager.getCustomWorld(seedLoc.getWorld());
-            if (customWorld == null) return;
-
-            if (FurnitureUtil.hasFurniture(seedLoc.clone().add(0.5,0.03125,0.5))) return;
-            if (seedLoc.getBlock().getType() != Material.AIR) return;
-
-            PlantingCondition plantingCondition = new PlantingCondition(seedLoc, player);
-
-            if (crop.getRequirements() != null) {
-                for (RequirementInterface requirement : crop.getRequirements()) {
-                    if (!requirement.isConditionMet(plantingCondition)) {
-                        return;
-                    }
-                }
+        if (id != null) {
+            if (id.endsWith("_seeds")) {
+                String cropName = id.substring(0, id.length() - 6);
+                plantSeed(seedLoc, cropName, player, itemInHand, true, true);
             }
-
-            if (MainConfig.limitation && LimitationUtil.reachWireLimit(potLoc)) {
-                AdventureUtil.playerMessage(player, MessageConfig.prefix + MessageConfig.limitWire.replace("{max}", String.valueOf(MainConfig.wireAmount)));
-                return;
-            }
-
-            CCSeason[] seasons = crop.getSeasons();
-            if (SeasonConfig.enable && seasons != null) {
-                if (cropManager.isWrongSeason(seedLoc, seasons)) {
-                    if (MainConfig.notifyInWrongSeason) AdventureUtil.playerMessage(player, MessageConfig.prefix + MessageConfig.wrongSeason);
-                    if (MainConfig.preventInWrongSeason) return;
-                }
-            }
-
-            SeedPlantEvent seedPlantEvent = new SeedPlantEvent(player, seedLoc, crop);
-            Bukkit.getPluginManager().callEvent(seedPlantEvent);
-            if (seedPlantEvent.isCancelled()) {
-                return;
-            }
-
-            if (SoundConfig.plantSeed.isEnable()) {
-                AdventureUtil.playerSound(
-                        player,
-                        SoundConfig.plantSeed.getSource(),
-                        SoundConfig.plantSeed.getKey(),
-                        1,1
-                );
-            }
-
-            if (player.getGameMode() != GameMode.CREATIVE) itemInHand.setAmount(itemInHand.getAmount() - 1);
-            StringBlockMechanicFactory.setBlockModel(seedLoc.getBlock(), id.substring(0, id.length() - 5) + "stage_1");
-            customWorld.addCrop(seedLoc, cropName);
+        }
+        else if (MainConfig.enableConvert) {
+            String cropName = MainConfig.vanilla2Crops.get(itemInHand.getType());
+            if (cropName == null) return;
+            plantSeed(seedLoc, cropName, player, itemInHand, true, true);
         }
     }
 

@@ -18,9 +18,9 @@
 package net.momirealms.customcrops.managers;
 
 import net.momirealms.customcrops.CustomCrops;
-import net.momirealms.customcrops.Function;
 import net.momirealms.customcrops.api.crop.Crop;
 import net.momirealms.customcrops.api.event.CropHarvestEvent;
+import net.momirealms.customcrops.api.event.CrowAttackEvent;
 import net.momirealms.customcrops.config.BasicItemConfig;
 import net.momirealms.customcrops.config.MainConfig;
 import net.momirealms.customcrops.config.SeasonConfig;
@@ -36,6 +36,7 @@ import net.momirealms.customcrops.integrations.season.SeasonInterface;
 import net.momirealms.customcrops.managers.listener.*;
 import net.momirealms.customcrops.managers.timer.CrowTask;
 import net.momirealms.customcrops.managers.timer.TimerTask;
+import net.momirealms.customcrops.objects.Function;
 import net.momirealms.customcrops.objects.OtherLoot;
 import net.momirealms.customcrops.objects.QualityLoot;
 import net.momirealms.customcrops.objects.QualityRatio;
@@ -46,10 +47,8 @@ import net.momirealms.customcrops.objects.fertilizer.RetainingSoil;
 import net.momirealms.customcrops.objects.fertilizer.YieldIncreasing;
 import net.momirealms.customcrops.utils.AdventureUtil;
 import net.momirealms.customcrops.utils.ArmorStandUtil;
-import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.World;
+import net.momirealms.customcrops.utils.MiscUtils;
+import org.bukkit.*;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
@@ -73,6 +72,8 @@ public class CropManager extends Function {
     private ContainerListener containerListener;
     private PlayerModeListener playerModeListener;
     private PlayerContainerListener playerContainerListener;
+    private VanillaCropPlaceListener vanillaCropPlaceListener;
+    private VanillaCropHarvestListener vanillaCropHarvestListener;
     private HandlerP handler;
 
     public CropManager() {
@@ -90,6 +91,7 @@ public class CropManager extends Function {
         loadMode();
         loadSeason();
         loadPacket();
+        loadVanillaMechanic();
 
         //load Worlds
         for (World world : Bukkit.getWorlds()) {
@@ -98,6 +100,23 @@ public class CropManager extends Function {
         //new Time Check task
         this.timerTask = new TimerTask(this);
         this.timerTask.runTaskTimerAsynchronously(CustomCrops.plugin, 1,100);
+    }
+
+    public void loadVanillaMechanic() {
+        if (this.vanillaCropHarvestListener != null) {
+            HandlerList.unregisterAll(vanillaCropHarvestListener);
+        }
+        if (this.vanillaCropPlaceListener != null) {
+            HandlerList.unregisterAll(vanillaCropPlaceListener);
+        }
+        if (MainConfig.preventPlantVanilla) {
+            this.vanillaCropPlaceListener = new VanillaCropPlaceListener();
+            Bukkit.getPluginManager().registerEvents(vanillaCropPlaceListener, CustomCrops.plugin);
+        }
+        if (MainConfig.rightHarvestVanilla) {
+            this.vanillaCropHarvestListener = new VanillaCropHarvestListener();
+            Bukkit.getPluginManager().registerEvents(vanillaCropHarvestListener, CustomCrops.plugin);
+        }
     }
 
     public void loadMode() {
@@ -210,7 +229,7 @@ public class CropManager extends Function {
             customWorlds.put(world, customWorld);
             if (MainConfig.autoGrow && MainConfig.enableCompensation) {
                 if (world.getTime() > 1200) {
-                    Bukkit.getScheduler().runTaskLaterAsynchronously(CustomCrops.plugin, () -> grow(world, MainConfig.timeToGrow, MainConfig.timeToWork, MainConfig.timeToDry, true), 100);
+                    Bukkit.getScheduler().runTaskLaterAsynchronously(CustomCrops.plugin, () -> grow(world, MainConfig.timeToGrow, 0, 0, true, false), 100);
                 }
             }
         }
@@ -224,11 +243,11 @@ public class CropManager extends Function {
         seasonInterface.unloadWorld(world);
     }
 
-    public void grow(World world, int cropTime, int sprinklerTime, int dryTime, boolean compensation) {
+    public void grow(World world, int cropTime, int sprinklerTime, int dryTime, boolean compensation, boolean force) {
         CustomWorld customWorld = customWorlds.get(world);
         if (customWorld == null) return;
-        if (MainConfig.cropMode) customWorld.growWire(cropTime, sprinklerTime, dryTime, compensation);
-        else customWorld.growFrame(cropTime, sprinklerTime, dryTime, compensation);
+        if (MainConfig.cropMode) customWorld.growWire(cropTime, sprinklerTime, dryTime, compensation, force);
+        else customWorld.growFrame(cropTime, sprinklerTime, dryTime, compensation, force);
     }
 
     public CropModeInterface getCropMode() {
@@ -358,7 +377,7 @@ public class CropManager extends Function {
         for (OtherLoot otherLoot : otherLoots) {
             if (Math.random() < otherLoot.getChance()) {
                 int random = ThreadLocalRandom.current().nextInt(otherLoot.getMin(), otherLoot.getMax() + 1);
-                ItemStack drop = customInterface.getItemStack(otherLoot.getItemID());
+                ItemStack drop = getLoot(otherLoot.getItemID());
                 if (drop == null) continue;
                 drop.setAmount(random);
                 location.getWorld().dropItemNaturally(location, drop);
@@ -372,21 +391,26 @@ public class CropManager extends Function {
             double random = Math.random();
             World world = location.getWorld();
             if (random < qualityRatio.getQuality_1()) {
-                ItemStack drop = customInterface.getItemStack(qualityLoot.getQuality_1());
+                ItemStack drop = getLoot(qualityLoot.getQuality_1());
                 if (drop == null) continue;
                 world.dropItemNaturally(location, drop);
             }
             else if(random > qualityRatio.getQuality_2()){
-                ItemStack drop = customInterface.getItemStack(qualityLoot.getQuality_2());
+                ItemStack drop = getLoot(qualityLoot.getQuality_2());
                 if (drop == null) continue;
                 world.dropItemNaturally(location, drop);
             }
             else {
-                ItemStack drop = customInterface.getItemStack(qualityLoot.getQuality_3());
+                ItemStack drop = getLoot(qualityLoot.getQuality_3());
                 if (drop == null) continue;
                 world.dropItemNaturally(location, drop);
             }
         }
+    }
+
+    private ItemStack getLoot(String id) {
+        if (MiscUtils.isVanillaItem(id)) return new ItemStack(Material.valueOf(id));
+        else return customInterface.getItemStack(id);
     }
 
     public boolean crowJudge(Location location, ItemFrame itemFrame) {
@@ -405,15 +429,24 @@ public class CropManager extends Function {
 
     public boolean crowJudge(Location location) {
         if (Math.random() < MainConfig.crowChance && !hasScarecrow(location)) {
+
+            CrowAttackEvent crowAttackEvent = new CrowAttackEvent(location);
+            Bukkit.getPluginManager().callEvent(crowAttackEvent);
+            if (crowAttackEvent.isCancelled()) {
+                return false;
+            }
+
             Bukkit.getScheduler().runTask(CustomCrops.plugin, () -> {
                 for (Player player : location.getNearbyPlayers(48)) {
                     CrowTask crowTask = new CrowTask(player, location.clone().add(0.4,0,0.4), getArmorStandUtil());
                     crowTask.runTaskTimerAsynchronously(CustomCrops.plugin, 1, 1);
                 }
             });
+
             Bukkit.getScheduler().runTaskLater(CustomCrops.plugin, () -> {
                 customInterface.removeBlock(location);
             }, 125);
+
             return true;
         }
         return false;

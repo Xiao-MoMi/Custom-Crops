@@ -17,6 +17,7 @@
 
 package net.momirealms.customcrops.commands;
 
+import net.momirealms.customcrops.commands.subcmd.GrowCommand;
 import net.momirealms.customcrops.commands.subcmd.ReloadCommand;
 import net.momirealms.customcrops.commands.subcmd.SetSeasonCommand;
 import net.momirealms.customcrops.commands.subcmd.SimulateCommand;
@@ -59,6 +60,7 @@ public class PluginCommand implements TabExecutor {
         regSubCommand(ReloadCommand.INSTANCE);
         regSubCommand(SetSeasonCommand.INSTANCE);
         regSubCommand(SimulateCommand.INSTANCE);
+        regSubCommand(GrowCommand.INSTANCE);
     }
 
     public void regSubCommand(SubCommand executor) {

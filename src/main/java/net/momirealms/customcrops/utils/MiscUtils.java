@@ -50,4 +50,14 @@ public class MiscUtils {
     public static String getStringLocation(Location location) {
         return location.getBlockX() + "," + location.getBlockY() + "," + location.getBlockZ();
     }
+
+    public static boolean isVanillaItem(String item) {
+        char[] chars = item.toCharArray();
+        for (char character : chars) {
+            if ((character < 65 || character > 90) && character != 95) {
+                return false;
+            }
+        }
+        return true;
+    }
 }

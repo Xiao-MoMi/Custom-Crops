@@ -18,9 +18,9 @@
 package net.momirealms.customcrops.integrations.season;
 
 import net.momirealms.customcrops.CustomCrops;
-import net.momirealms.customcrops.Function;
 import net.momirealms.customcrops.config.MainConfig;
 import net.momirealms.customcrops.config.SeasonConfig;
+import net.momirealms.customcrops.objects.Function;
 import net.momirealms.customcrops.utils.AdventureUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.World;

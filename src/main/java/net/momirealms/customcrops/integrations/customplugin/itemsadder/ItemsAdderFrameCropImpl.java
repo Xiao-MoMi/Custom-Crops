@@ -23,7 +23,6 @@ import net.momirealms.customcrops.api.crop.Crop;
 import net.momirealms.customcrops.config.BasicItemConfig;
 import net.momirealms.customcrops.config.CropConfig;
 import net.momirealms.customcrops.config.MainConfig;
-import net.momirealms.customcrops.helper.Log;
 import net.momirealms.customcrops.integrations.customplugin.CustomInterface;
 import net.momirealms.customcrops.managers.CropManager;
 import net.momirealms.customcrops.managers.CropModeInterface;

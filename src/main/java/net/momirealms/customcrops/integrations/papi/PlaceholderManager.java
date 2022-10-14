@@ -18,8 +18,8 @@
 package net.momirealms.customcrops.integrations.papi;
 
 import me.clip.placeholderapi.PlaceholderAPI;
-import net.momirealms.customcrops.Function;
 import net.momirealms.customcrops.config.SeasonConfig;
+import net.momirealms.customcrops.objects.Function;
 import org.bukkit.entity.Player;
 
 public class PlaceholderManager extends Function {

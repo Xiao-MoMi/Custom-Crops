@@ -27,9 +27,9 @@ tomato:
     chance: 0.01
 
   harvest-actions:
+    # https://docs.adventure.kyori.net/minimessage/format.html
     messages:
-      - 'Hello, {player}! <u><click:open_url:xxx.xxx>Click here to read the CustomCrops wiki'
-      - '<u>This plugin uses MiniMessage Format, check it here</u><click:open_url:https://docs.adventure.kyori.net/minimessage/format.html> <gold>[Click Me]'
+      - 'Hello, {player}! <u><click:open_url:https://www.yuque.com/docs/share/3e23f953-ccf0-4de5-bfe6-23868380c599>Click here to read the CustomCrops wiki'
     commands:
       - 'say {player} harvested a tomato! lol'
     xp: 10

@@ -33,6 +33,7 @@ public class ItemSpawnListener implements Listener {
 
     @EventHandler
     public void onItemSpawn(EntitySpawnEvent event) {
+        if (event.isCancelled()) return;
         if (event.getEntity() instanceof Item item) {
             cropManager.onItemSpawn(item);
         }

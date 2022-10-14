@@ -1,5 +1,5 @@
 #Don't change
-config-version: '12'
+config-version: '13'
 
 # lang: english / spanish / chinese
 lang: english
@@ -26,7 +26,10 @@ integration:
   RealisticSeasons: false
 
 worlds:
+  # This is designed for servers that using a separate folder for worlds
+  worlds-folder: ''
   # Mode: whitelist/blacklist
+  # Requires a restart when changing this
   mode: whitelist
   list:
     - world
@@ -124,6 +127,28 @@ mechanics:
   dead-if-no-sky-light:
     enable: true
     level: 10
+
+  vanilla-crops:
+    # Can vanilla crops be harvest with right clicks
+    right-click-harvest: false
+    # Totally prevent player from planting these vanilla crops in farmland
+    prevent-plant:
+      enable: false
+      list:
+        - WHEAT
+        - CARROTS
+        - POTATOES
+        - BEETROOTS
+    # Convert vanilla items into CustomCrops crops
+    # You need to make extra CustomCrops/IA/Oraxen configs/models for these crops
+    # This makes it possible to make vanilla crops have a better mechanic
+    convert-to-customcrops:
+      enable: false
+      list:
+        WHEAT_SEEDS: wheat
+        CARROT: carrot
+        POTATO: potato
+        BEETROOT_SEEDS: beetroot
 
 
 sounds:

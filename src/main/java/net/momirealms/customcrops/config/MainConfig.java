@@ -26,11 +26,14 @@ import net.momirealms.customcrops.objects.QualityRatio;
 import net.momirealms.customcrops.utils.AdventureUtil;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.World;
 import org.bukkit.configuration.file.YamlConfiguration;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class MainConfig {
@@ -103,6 +106,12 @@ public class MainConfig {
     public static String[] summerMsg;
     public static String[] autumnMsg;
     public static String[] winterMsg;
+    public static String worldFolder;
+    public static boolean rightHarvestVanilla;
+    public static boolean preventPlantVanilla;
+    public static Material[] preventPlantVanillaArray;
+    public static boolean enableConvert;
+    public static HashMap<Material, String> vanilla2Crops;
 
     public static void load() {
         ConfigUtil.update("config.yml");
@@ -126,6 +135,7 @@ public class MainConfig {
         }
 
         worlds = worldList.toArray(new World[0]);
+        worldFolder = StringUtils.replace(config.getString("worlds.worlds-folder",""), "\\", File.separator);
 
         cropMode = config.getString("mechanics.crops-mode", "tripwire").equals("tripwire");
         limitation = config.getBoolean("optimization.limitation.enable", true);
@@ -214,6 +224,36 @@ public class MainConfig {
         waterBarFull = config.getString("watering-can-lore.water-bar.full", "뀁뀃");
         waterBarEmpty = config.getString("watering-can-lore.water-bar.empty", "뀁뀄");
         waterBarRight = config.getString("watering-can-lore.water-bar.right", "뀁뀅</font>");
+
+        rightHarvestVanilla = config.getBoolean("mechanics.vanilla-crops.right-click-harvest", false);
+        preventPlantVanilla = config.getBoolean("mechanics.vanilla-crops.prevent-plant.enable", false);
+
+        List<Material> preventPlantVanillaList = new ArrayList<>();
+        for (String key : config.getStringList("mechanics.vanilla-crops.prevent-plant.list")) {
+            try {
+                preventPlantVanillaList.add(Material.valueOf(key.toUpperCase()));
+            }
+            catch (Exception e) {
+                AdventureUtil.consoleMessage("<red>[CustomCrops] Vanilla Block " + key + " doesn't exist");
+            }
+        }
+        preventPlantVanillaArray = preventPlantVanillaList.toArray(new Material[0]);
+
+        enableConvert = config.getBoolean("mechanics.vanilla-crops.convert-to-customcrops.enable", false);
+        if (enableConvert) {
+            vanilla2Crops = new HashMap<>();
+            for (String key : config.getConfigurationSection("mechanics.vanilla-crops.convert-to-customcrops.list").getKeys(false)) {
+                try {
+                    Material material = Material.valueOf(key.toUpperCase());
+                    vanilla2Crops.put(material, config.getString("mechanics.vanilla-crops.convert-to-customcrops.list." + key));
+                }
+                catch (Exception e) {
+                    AdventureUtil.consoleMessage("<red>[CustomCrops] Vanilla Item " + key + " doesn't exist");
+                }
+            }
+        } else {
+            vanilla2Crops = null;
+        }
 
         antiGriefs = new ArrayList<>();
         if (config.getBoolean("integration.Residence",false)){

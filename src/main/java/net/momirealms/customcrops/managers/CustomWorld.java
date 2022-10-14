@@ -22,7 +22,6 @@ import net.momirealms.customcrops.CustomCrops;
 import net.momirealms.customcrops.api.event.CustomWorldEvent;
 import net.momirealms.customcrops.api.utils.SeasonUtils;
 import net.momirealms.customcrops.config.*;
-import net.momirealms.customcrops.helper.Log;
 import net.momirealms.customcrops.integrations.season.CCSeason;
 import net.momirealms.customcrops.objects.SimpleLocation;
 import net.momirealms.customcrops.objects.Sprinkler;
@@ -39,7 +38,6 @@ import org.bukkit.World;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitScheduler;
-import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.*;
@@ -125,7 +123,7 @@ public class CustomWorld {
         Date date = new Date();
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
         try {
-            File file = new File(CustomCrops.plugin.getDataFolder().getParentFile().getParentFile(), worldName + File.separator + "customcrops_data");
+            File file = new File(CustomCrops.plugin.getDataFolder().getParentFile().getParentFile(), MainConfig.worldFolder + worldName + File.separator + "customcrops_data");
             File[] files = file.listFiles();
             if (files == null) return;
             for (File data : files) {
@@ -142,7 +140,7 @@ public class CustomWorld {
         if (!MainConfig.enableCrow) return;
         try {
             JsonParser jsonParser = new JsonParser();
-            JsonElement json= jsonParser.parse(new FileReader(new File(CustomCrops.plugin.getDataFolder().getParentFile().getParentFile(), world.getName() + File.separator + "customcrops_data" + File.separator + "scarecrow.json")));
+            JsonElement json= jsonParser.parse(new FileReader(new File(CustomCrops.plugin.getDataFolder().getParentFile().getParentFile(), MainConfig.worldFolder + world.getName() + File.separator + "customcrops_data" + File.separator + "scarecrow.json")));
             if (json.isJsonObject()) {
                 JsonObject jsonObject = json.getAsJsonObject();
                 for (Map.Entry<String, JsonElement> en : jsonObject.entrySet()) {
@@ -173,7 +171,7 @@ public class CustomWorld {
             }
             jsonObject.add(entry.getKey(), jsonArray);
         }
-        try (FileWriter fileWriter = new FileWriter(new File(CustomCrops.plugin.getDataFolder().getParentFile().getParentFile(), world.getName() + File.separator + "customcrops_data" + File.separator + "scarecrow.json"))){
+        try (FileWriter fileWriter = new FileWriter(new File(CustomCrops.plugin.getDataFolder().getParentFile().getParentFile(), MainConfig.worldFolder + world.getName() + File.separator + "customcrops_data" + File.separator + "scarecrow.json"))){
             fileWriter.write(jsonObject.toString().replace("\\\\", "\\"));
         } catch (IOException e) {
             e.printStackTrace();
@@ -184,7 +182,7 @@ public class CustomWorld {
         if (!SeasonConfig.enable) return;
         try {
             JsonParser jsonParser = new JsonParser();
-            JsonElement json= jsonParser.parse(new FileReader(new File(CustomCrops.plugin.getDataFolder().getParentFile().getParentFile(), world.getName() + File.separator + "customcrops_data" + File.separator + "season.json")));
+            JsonElement json= jsonParser.parse(new FileReader(new File(CustomCrops.plugin.getDataFolder().getParentFile().getParentFile(), MainConfig.worldFolder + world.getName() + File.separator + "customcrops_data" + File.separator + "season.json")));
             if (json.isJsonObject()) {
                 JsonObject jsonObject = json.getAsJsonObject();
                 if (jsonObject.has("season")) {
@@ -208,7 +206,7 @@ public class CustomWorld {
         JsonObject jsonObject = new JsonObject();
         JsonPrimitive jsonPrimitive = new JsonPrimitive(SeasonUtils.getSeason(world).name());
         jsonObject.add("season", jsonPrimitive);
-        try (FileWriter fileWriter = new FileWriter(new File(CustomCrops.plugin.getDataFolder().getParentFile().getParentFile(), world.getName() + File.separator + "customcrops_data" + File.separator + "season.json"))){
+        try (FileWriter fileWriter = new FileWriter(new File(CustomCrops.plugin.getDataFolder().getParentFile().getParentFile(), MainConfig.worldFolder + world.getName() + File.separator + "customcrops_data" + File.separator + "season.json"))){
             fileWriter.write(jsonObject.toString().replace("\\\\", "\\"));
         } catch (IOException e) {
             e.printStackTrace();
@@ -219,7 +217,7 @@ public class CustomWorld {
     public void loadPot() {
         try {
             JsonParser jsonParser = new JsonParser();
-            JsonElement json= jsonParser.parse(new FileReader(new File(CustomCrops.plugin.getDataFolder().getParentFile().getParentFile(), world.getName() + File.separator + "customcrops_data" + File.separator + "pot.json")));
+            JsonElement json= jsonParser.parse(new FileReader(new File(CustomCrops.plugin.getDataFolder().getParentFile().getParentFile(), MainConfig.worldFolder + world.getName() + File.separator + "customcrops_data" + File.separator + "pot.json")));
             if (json.isJsonObject()) {
                 JsonObject jsonObject = json.getAsJsonObject();
                 if (jsonObject.has("pot")) {
@@ -247,7 +245,7 @@ public class CustomWorld {
         }
         watered.clear();
         jsonObject.add("pot", jsonArray);
-        try (FileWriter fileWriter = new FileWriter(new File(CustomCrops.plugin.getDataFolder().getParentFile().getParentFile(), world.getName() + File.separator + "customcrops_data" + File.separator + "pot.json"))){
+        try (FileWriter fileWriter = new FileWriter(new File(CustomCrops.plugin.getDataFolder().getParentFile().getParentFile(), MainConfig.worldFolder + world.getName() + File.separator + "customcrops_data" + File.separator + "pot.json"))){
             fileWriter.write(jsonObject.toString().replace("\\\\", "\\"));
         } catch (IOException e) {
             e.printStackTrace();
@@ -277,7 +275,7 @@ public class CustomWorld {
             data.set(loc + ".type", en.getValue().getKey());
         }
         try {
-            data.save(new File(CustomCrops.plugin.getDataFolder().getParentFile().getParentFile(), world.getName() + File.separator + "customcrops_data" + File.separator + "fertilizers.yml"));
+            data.save(new File(CustomCrops.plugin.getDataFolder().getParentFile().getParentFile(), MainConfig.worldFolder + world.getName() + File.separator + "customcrops_data" + File.separator + "fertilizers.yml"));
         }
         catch (IOException e) {
             e.printStackTrace();
@@ -310,7 +308,7 @@ public class CustomWorld {
             data.set(loc + ".type", en.getValue().getKey());
         }
         try {
-            data.save(new File(CustomCrops.plugin.getDataFolder().getParentFile().getParentFile(), world.getName() + File.separator + "customcrops_data" + File.separator + "sprinklers.yml"));
+            data.save(new File(CustomCrops.plugin.getDataFolder().getParentFile().getParentFile(), MainConfig.worldFolder + world.getName() + File.separator + "customcrops_data" + File.separator + "sprinklers.yml"));
         }
         catch (IOException e) {
             e.printStackTrace();
@@ -324,7 +322,7 @@ public class CustomWorld {
 
     public void unloadCrop() {
         try {
-            cropData.save(new File(CustomCrops.plugin.getDataFolder().getParentFile().getParentFile(), world.getName() + File.separator + "customcrops_data" + File.separator + "crops.yml"));
+            cropData.save(new File(CustomCrops.plugin.getDataFolder().getParentFile().getParentFile(), MainConfig.worldFolder + world.getName() + File.separator + "customcrops_data" + File.separator + "crops.yml"));
         }
         catch (IOException e) {
             e.printStackTrace();
@@ -332,11 +330,16 @@ public class CustomWorld {
         }
     }
 
-    public void growWire(int cropTime, int sprinklerTime, int dryTime, boolean compensation) {
+    public void growWire(int cropTime, int sprinklerTime, int dryTime, boolean compensation, boolean force) {
 
         Random randomGenerator = new Random();
-
-        if (!compensation) {
+        if (force) {
+            cropData.getKeys(false).forEach(key -> {
+                Location location = MiscUtils.getLocation(key, world);
+                growSingleWire(location, randomGenerator.nextInt(cropTime), key);
+            });
+        }
+        else if (!compensation) {
             route(sprinklerTime);
             potDryJudge(sprinklerTime + randomGenerator.nextInt(dryTime));
             cropData.getKeys(false).forEach(key -> {
@@ -364,11 +367,16 @@ public class CustomWorld {
         }, delay);
     }
 
-    public void growFrame(int cropTime, int sprinklerTime, int dryTime, boolean compensation) {
+    public void growFrame(int cropTime, int sprinklerTime, int dryTime, boolean compensation, boolean force) {
 
         Random randomGenerator = new Random();
-
-        if (!compensation) {
+        if (force) {
+            cropData.getKeys(false).forEach(key -> {
+                Location location = MiscUtils.getLocation(key, world);
+                growSingleFrame(location, randomGenerator.nextInt(cropTime), key);
+            });
+        }
+        else if (!compensation) {
             route(sprinklerTime);
             potDryJudge(sprinklerTime + randomGenerator.nextInt(dryTime));
             cropData.getKeys(false).forEach(key -> {
@@ -428,7 +436,7 @@ public class CustomWorld {
     }
 
     public YamlConfiguration loadData(String data, String worldName) {
-        return ConfigUtil.readData(new File(CustomCrops.plugin.getDataFolder().getParentFile().getParentFile(), worldName + File.separator + "customcrops_data" + File.separator + data +".yml"));
+        return ConfigUtil.readData(new File(CustomCrops.plugin.getDataFolder().getParentFile().getParentFile(), MainConfig.worldFolder + worldName + File.separator + "customcrops_data" + File.separator + data +".yml"));
     }
 
     /**

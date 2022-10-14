@@ -15,7 +15,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.momirealms.customcrops;
+package net.momirealms.customcrops.objects;
 
 public class Function {
 
