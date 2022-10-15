@@ -106,6 +106,11 @@ public class MainConfig {
     public static String[] summerMsg;
     public static String[] autumnMsg;
     public static String[] winterMsg;
+    public static boolean enableSeasonChangeCmd;
+    public static String[] winterCmd;
+    public static String[] springCmd;
+    public static String[] summerCmd;
+    public static String[] autumnCmd;
     public static String worldFolder;
     public static boolean rightHarvestVanilla;
     public static boolean preventPlantVanilla;
@@ -174,6 +179,11 @@ public class MainConfig {
         summerMsg = config.getStringList("season-broadcast.summer").toArray(new String[0]);
         autumnMsg = config.getStringList("season-broadcast.autumn").toArray(new String[0]);
         winterMsg = config.getStringList("season-broadcast.winter").toArray(new String[0]);
+        enableSeasonChangeCmd = config.getBoolean("season-change-command.enable", false);
+        springCmd = config.getStringList("season-change-command.spring").toArray(new String[0]);
+        summerCmd = config.getStringList("season-change-command.summer").toArray(new String[0]);
+        autumnCmd = config.getStringList("season-change-command.autumn").toArray(new String[0]);
+        winterCmd = config.getStringList("season-change-command.winter").toArray(new String[0]);
 
         try {
             boneMealSuccess = Particle.valueOf(config.getString("mechanics.bone-meal.success-particle", "VILLAGER_HAPPY"));
@@ -314,7 +324,7 @@ public class MainConfig {
             else {skillXP = new EcoSkillsHook();}
         }
         if (config.getBoolean("integration.JobsReborn")) {
-            if (Bukkit.getPluginManager().getPlugin("JobsReborn") == null) Log.warn("Failed to initialize JobsReborn!");
+            if (Bukkit.getPluginManager().getPlugin("Jobs") == null) Log.warn("Failed to initialize JobsReborn!");
             else {skillXP = new JobsRebornHook();}
         }
         realisticSeasonHook = false;

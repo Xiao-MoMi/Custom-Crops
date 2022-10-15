@@ -88,6 +88,9 @@ public class CropManager extends Function {
         this.worldListener = new WorldListener(this);
         this.armorStandUtil = new ArmorStandUtil(this);
 
+        Bukkit.getPluginManager().registerEvents(itemSpawnListener, CustomCrops.plugin);
+        Bukkit.getPluginManager().registerEvents(worldListener, CustomCrops.plugin);
+
         loadMode();
         loadSeason();
         loadPacket();
@@ -408,7 +411,9 @@ public class CropManager extends Function {
         }
     }
 
+    @Nullable
     private ItemStack getLoot(String id) {
+        if (id == null) return null;
         if (MiscUtils.isVanillaItem(id)) return new ItemStack(Material.valueOf(id));
         else return customInterface.getItemStack(id);
     }

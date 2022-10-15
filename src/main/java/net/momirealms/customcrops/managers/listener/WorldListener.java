@@ -26,7 +26,7 @@ import org.bukkit.event.world.WorldUnloadEvent;
 public record WorldListener(CropManager cropManager) implements Listener {
 
     @EventHandler
-    public void onWorldUnload(WorldLoadEvent event) {
+    public void onWorldLoad(WorldLoadEvent event) {
         cropManager.onWorldLoad(event.getWorld());
     }
 

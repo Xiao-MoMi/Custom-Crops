@@ -96,35 +96,57 @@ public class InternalSeason extends Function implements SeasonInterface {
                 return;
             }
             CCSeason oldSeason = seasonHashMap.put(world, season);
-            if (!MainConfig.enableSeasonBroadcast) return;
+            if (!MainConfig.enableSeasonBroadcast && !MainConfig.enableSeasonChangeCmd) return;
             if (oldSeason == null) return;
             // season changed
             if (oldSeason != season) {
-                Collection<? extends Player> players;
-                if (MainConfig.syncSeason) players = Bukkit.getOnlinePlayers();
-                else players = world.getPlayers();
+                if (MainConfig.enableSeasonBroadcast) {
+                    Collection<? extends Player> players;
+                    if (MainConfig.syncSeason) players = Bukkit.getOnlinePlayers();
+                    else players = world.getPlayers();
 
-                switch (season) {
-                    case SPRING -> players.forEach(player -> {
-                        for (String msg : MainConfig.springMsg) {
-                            AdventureUtil.playerMessage(player, msg);
+                    switch (season) {
+                        case SPRING -> players.forEach(player -> {
+                            for (String msg : MainConfig.springMsg) {
+                                AdventureUtil.playerMessage(player, msg);
+                            }
+                        });
+                        case SUMMER -> players.forEach(player -> {
+                            for (String msg : MainConfig.summerMsg) {
+                                AdventureUtil.playerMessage(player, msg);
+                            }
+                        });
+                        case AUTUMN -> players.forEach(player -> {
+                            for (String msg : MainConfig.autumnMsg) {
+                                AdventureUtil.playerMessage(player, msg);
+                            }
+                        });
+                        case WINTER -> players.forEach(player -> {
+                            for (String msg : MainConfig.winterMsg) {
+                                AdventureUtil.playerMessage(player, msg);
+                            }
+                        });
+                    }
+                }
+                if (MainConfig.enableSeasonChangeCmd) {
+                    switch (season) {
+                        case SPRING -> {
+                            for (String cmd : MainConfig.springCmd)
+                                Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), cmd);
                         }
-                    });
-                    case SUMMER -> players.forEach(player -> {
-                        for (String msg : MainConfig.summerMsg) {
-                            AdventureUtil.playerMessage(player, msg);
+                        case SUMMER -> {
+                            for (String cmd : MainConfig.summerCmd)
+                                Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), cmd);
                         }
-                    });
-                    case AUTUMN -> players.forEach(player -> {
-                        for (String msg : MainConfig.autumnMsg) {
-                            AdventureUtil.playerMessage(player, msg);
+                        case AUTUMN -> {
+                            for (String cmd : MainConfig.autumnCmd)
+                                Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), cmd);
                         }
-                    });
-                    case WINTER -> players.forEach(player -> {
-                        for (String msg : MainConfig.winterMsg) {
-                            AdventureUtil.playerMessage(player, msg);
+                        case WINTER -> {
+                            for (String cmd : MainConfig.winterCmd)
+                                Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), cmd);
                         }
-                    });
+                    }
                 }
             }
         }

@@ -301,7 +301,7 @@ public class ItemsAdderWireHandler extends ItemsAdderHandler {
                 event.setCancelled(true);
                 CustomBlock.place(namespacedId, location);
                 if (player.getGameMode() != GameMode.CREATIVE)
-                    CustomBlock.byAlreadyPlaced(location.getBlock()).getLoot().forEach(itemStack -> location.getWorld().dropItem(location.clone().add(0.5,0.2,0.5), itemStack));
+                    CustomBlock.byAlreadyPlaced(location.getBlock()).getLoot().forEach(itemStack -> location.getWorld().dropItemNaturally(location, itemStack));
                 CustomBlock.remove(location);
             }
 

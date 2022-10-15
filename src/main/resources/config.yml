@@ -1,5 +1,5 @@
 #Don't change
-config-version: '13'
+config-version: '14'
 
 # lang: english / spanish / chinese
 lang: english
@@ -99,7 +99,7 @@ mechanics:
   # Season would not affect ripe crops(for better performance and friendly player's experience)
   season:
     enable: true
-    # If you want all the worlds share the same season
+    # If you want all the worlds to share the same season
     sync-seasons:
       enable: false
       world: world
@@ -192,7 +192,7 @@ sounds:
 
 # Hologram information
 hologram:
-  # Pot infomation
+  # Fertilizer infomation
   fertilizer-info:
     enable: true
     y-offset: 0.8
@@ -233,6 +233,10 @@ season-broadcast:
   winter:
     - '<#87CEFA>Winter is coming!'
 
+season-change-command:
+  enable: false
+  spring:
+    - 'say spring is coming!'
 
 
 watering-can-lore:
