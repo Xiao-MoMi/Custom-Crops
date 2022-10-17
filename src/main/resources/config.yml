@@ -1,5 +1,5 @@
 #Don't change
-config-version: '14'
+config-version: '15'
 
 # lang: english / spanish / chinese
 lang: english
@@ -150,6 +150,11 @@ mechanics:
         POTATO: potato
         BEETROOT_SEEDS: beetroot
 
+  # This option requires a skill-plugin hook
+  # Which would increase the amount of crops player get
+  skill-bonus:
+    enable: false
+    bonus-per-level: 0.001
 
 sounds:
   water-pot:

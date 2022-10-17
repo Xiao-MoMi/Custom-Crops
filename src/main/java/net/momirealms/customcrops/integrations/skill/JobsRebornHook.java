@@ -31,16 +31,27 @@ public class JobsRebornHook implements SkillXP {
     @Override
     public void addXp(Player player, double amount) {
         JobsPlayer jobsPlayer = Jobs.getPlayerManager().getJobsPlayer(player);
-
         if (jobsPlayer != null) {
             List<JobProgression> jobs = jobsPlayer.getJobProgression();
-
             Job job = Jobs.getJob("Farmer");
-
             for (JobProgression progression : jobs)
                 if (progression.getJob().equals(job)){
                     progression.addExperience(amount);
                 }
         }
+    }
+
+    @Override
+    public int getLevel(Player player) {
+        JobsPlayer jobsPlayer = Jobs.getPlayerManager().getJobsPlayer(player);
+        if (jobsPlayer != null) {
+            List<JobProgression> jobs = jobsPlayer.getJobProgression();
+            Job job = Jobs.getJob("Farmer");
+            for (JobProgression progression : jobs)
+                if (progression.getJob().equals(job)){
+                    return progression.getLevel();
+                }
+        }
+        return 0;
     }
 }

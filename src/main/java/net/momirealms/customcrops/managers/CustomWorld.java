@@ -203,6 +203,7 @@ public class CustomWorld {
 
     public void unloadSeason() {
         if (!SeasonConfig.enable) return;
+        if (MainConfig.realisticSeasonHook) return;
         JsonObject jsonObject = new JsonObject();
         JsonPrimitive jsonPrimitive = new JsonPrimitive(SeasonUtils.getSeason(world).name());
         jsonObject.add("season", jsonPrimitive);

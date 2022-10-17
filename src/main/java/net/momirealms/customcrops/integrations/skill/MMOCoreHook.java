@@ -29,4 +29,9 @@ public class MMOCoreHook implements SkillXP {
         Profession profession = MMOCore.plugin.professionManager.get("farming");
         profession.giveExperience(MMOCore.plugin.dataProvider.getDataManager().get(player), amount, null ,EXPSource.OTHER);
     }
+
+    @Override
+    public int getLevel(Player player) {
+        return 0;
+    }
 }

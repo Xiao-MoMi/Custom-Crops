@@ -28,4 +28,9 @@ public class EcoSkillsHook implements SkillXP {
     public void addXp(Player player, double amount) {
         EcoSkillsAPI.getInstance().giveSkillExperience(player, Skills.FARMING, amount);
     }
+
+    @Override
+    public int getLevel(Player player) {
+        return EcoSkillsAPI.getInstance().getSkillLevel(player, Skills.FARMING);
+    }
 }

@@ -18,6 +18,7 @@
 package net.momirealms.customcrops.integrations.skill;
 
 import com.gmail.nossr50.api.ExperienceAPI;
+import com.gmail.nossr50.datatypes.skills.PrimarySkillType;
 import net.momirealms.customcrops.integrations.SkillXP;
 import org.bukkit.entity.Player;
 
@@ -26,5 +27,10 @@ public class mcMMOHook implements SkillXP {
     @Override
     public void addXp(Player player, double amount) {
         ExperienceAPI.addRawXP(player, "Herbalism", (float) amount, "UNKNOWN");
+    }
+
+    @Override
+    public int getLevel(Player player) {
+        return ExperienceAPI.getLevel(player, PrimarySkillType.HERBALISM);
     }
 }

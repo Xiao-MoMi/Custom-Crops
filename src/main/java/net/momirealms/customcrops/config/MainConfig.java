@@ -116,6 +116,8 @@ public class MainConfig {
     public static boolean preventPlantVanilla;
     public static Material[] preventPlantVanillaArray;
     public static boolean enableConvert;
+    public static boolean enableSkillBonus;
+    public static double bonusPerLevel;
     public static HashMap<Material, String> vanilla2Crops;
 
     public static void load() {
@@ -234,6 +236,9 @@ public class MainConfig {
         waterBarFull = config.getString("watering-can-lore.water-bar.full", "뀁뀃");
         waterBarEmpty = config.getString("watering-can-lore.water-bar.empty", "뀁뀄");
         waterBarRight = config.getString("watering-can-lore.water-bar.right", "뀁뀅</font>");
+
+        enableSkillBonus = config.getBoolean("mechanics.skill-bonus.enable", false);
+        bonusPerLevel = config.getDouble("mechanics.skill-bonus.bonus-per-level", 0.001);
 
         rightHarvestVanilla = config.getBoolean("mechanics.vanilla-crops.right-click-harvest", false);
         preventPlantVanilla = config.getBoolean("mechanics.vanilla-crops.prevent-plant.enable", false);

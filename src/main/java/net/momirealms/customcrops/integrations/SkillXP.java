@@ -23,4 +23,6 @@ public interface SkillXP {
 
     void addXp(Player player, double amount);
 
+    int getLevel(Player player);
+
 }

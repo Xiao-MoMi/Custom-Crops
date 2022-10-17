@@ -57,6 +57,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Future;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class CropManager extends Function {
@@ -364,10 +365,14 @@ public class CropManager extends Function {
                     qualityRatio = qualityCrop.getQualityRatio();
                 }
             }
+            if (MainConfig.enableSkillBonus) {
+                double bonus_chance = MainConfig.skillXP.getLevel(player) * MainConfig.bonusPerLevel;
+                amount *= (bonus_chance + 1);
+            }
             dropQualityLoots(qualityLoot, amount, location.getBlock().getLocation(), qualityRatio);
         }
         OtherLoot[] otherLoots = crop.getOtherLoots();
-        if (otherLoots != null) dropOtherLoots(otherLoots, location.getBlock().getLocation());
+        if (otherLoots != null) dropOtherLoots(otherLoots, location.getBlock().getLocation(), player);
     }
 
     public void performActions(ActionInterface[] actions, Player player) {
@@ -376,10 +381,14 @@ public class CropManager extends Function {
         }
     }
 
-    public void dropOtherLoots(OtherLoot[] otherLoots, Location location) {
+    public void dropOtherLoots(OtherLoot[] otherLoots, Location location, Player player) {
         for (OtherLoot otherLoot : otherLoots) {
             if (Math.random() < otherLoot.getChance()) {
                 int random = ThreadLocalRandom.current().nextInt(otherLoot.getMin(), otherLoot.getMax() + 1);
+                if (MainConfig.enableSkillBonus) {
+                    double bonus_chance = MainConfig.skillXP.getLevel(player) * MainConfig.bonusPerLevel;
+                    random *= (bonus_chance + 1);
+                }
                 ItemStack drop = getLoot(otherLoot.getItemID());
                 if (drop == null) continue;
                 drop.setAmount(random);
@@ -435,13 +444,9 @@ public class CropManager extends Function {
     public boolean crowJudge(Location location) {
         if (Math.random() < MainConfig.crowChance && !hasScarecrow(location)) {
 
-            CrowAttackEvent crowAttackEvent = new CrowAttackEvent(location);
-            Bukkit.getPluginManager().callEvent(crowAttackEvent);
-            if (crowAttackEvent.isCancelled()) {
-                return false;
-            }
-
             Bukkit.getScheduler().runTask(CustomCrops.plugin, () -> {
+                CrowAttackEvent crowAttackEvent = new CrowAttackEvent(location);
+                Bukkit.getPluginManager().callEvent(crowAttackEvent);
                 for (Player player : location.getNearbyPlayers(48)) {
                     CrowTask crowTask = new CrowTask(player, location.clone().add(0.4,0,0.4), getArmorStandUtil());
                     crowTask.runTaskTimerAsynchronously(CustomCrops.plugin, 1, 1);
