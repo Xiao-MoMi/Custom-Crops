@@ -24,8 +24,9 @@ import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.momirealms.customcrops.CustomCrops;
 import net.momirealms.customcrops.api.crop.Crop;
 import net.momirealms.customcrops.api.event.*;
+import net.momirealms.customcrops.api.utils.SeasonUtils;
 import net.momirealms.customcrops.config.*;
-import net.momirealms.customcrops.integrations.season.CCSeason;
+import net.momirealms.customcrops.api.utils.CCSeason;
 import net.momirealms.customcrops.managers.CropManager;
 import net.momirealms.customcrops.managers.CustomWorld;
 import net.momirealms.customcrops.managers.listener.InteractListener;
@@ -535,53 +536,54 @@ public abstract class HandlerP extends Function {
         }
     }
 
-    protected void plantSeed(Location seedLoc, String cropName, Player player, ItemStack itemInHand, boolean isOraxen, boolean isWire) {
+    public boolean plantSeed(Location seedLoc, String cropName, @Nullable Player player, @Nullable ItemStack itemInHand) {
         Crop crop = CropConfig.CROPS.get(cropName);
-        if (crop == null) return;
+        if (crop == null) return false;
 
         CustomWorld customWorld = cropManager.getCustomWorld(seedLoc.getWorld());
-        if (customWorld == null) return;
+        if (customWorld == null) return false;
 
-        if (!isOraxen && FurnitureUtil.hasFurniture(seedLoc.clone().add(0.5,0.5,0.5))) return;
-        if (isOraxen && FurnitureUtil.hasFurniture(seedLoc.clone().add(0.5,0.03125,0.5))) return;
-        if (seedLoc.getBlock().getType() != Material.AIR) return;
-
-        PlantingCondition plantingCondition = new PlantingCondition(seedLoc, player);
+        if (!MainConfig.OraxenHook && FurnitureUtil.hasFurniture(seedLoc.clone().add(0.5,0.5,0.5))) return false;
+        if (MainConfig.OraxenHook && FurnitureUtil.hasFurniture(seedLoc.clone().add(0.5,0.03125,0.5))) return false;
+        if (seedLoc.getBlock().getType() != Material.AIR) return false;
 
         CCSeason[] seasons = crop.getSeasons();
         if (SeasonConfig.enable && seasons != null) {
             if (cropManager.isWrongSeason(seedLoc, seasons)) {
-                if (MainConfig.notifyInWrongSeason) AdventureUtil.playerMessage(player, MessageConfig.prefix + MessageConfig.wrongSeason);
-                if (MainConfig.preventInWrongSeason) return;
+                if (MainConfig.notifyInWrongSeason) AdventureUtil.playerMessage(player, MessageConfig.prefix + MessageConfig.wrongSeason.replace("{season}", SeasonUtils.getSeasonText(SeasonUtils.getSeason(seedLoc.getWorld()))));
+                if (MainConfig.preventInWrongSeason) return false;
             }
         }
 
-        if (crop.getRequirements() != null) {
-            for (RequirementInterface requirement : crop.getRequirements()) {
-                if (!requirement.isConditionMet(plantingCondition)) {
-                    return;
+        if (player != null) {
+            PlantingCondition plantingCondition = new PlantingCondition(seedLoc, player);
+            if (crop.getRequirements() != null) {
+                for (RequirementInterface requirement : crop.getRequirements()) {
+                    if (!requirement.isConditionMet(plantingCondition)) {
+                        return false;
+                    }
                 }
             }
         }
 
-        if (MainConfig.limitation ) {
-            if (isWire && LimitationUtil.reachWireLimit(seedLoc)) {
-                AdventureUtil.playerMessage(player, MessageConfig.prefix + MessageConfig.limitWire.replace("{max}", String.valueOf(MainConfig.wireAmount)));
-                return;
+        if (MainConfig.limitation) {
+            if (MainConfig.cropMode && LimitationUtil.reachWireLimit(seedLoc)) {
+                if (player != null) AdventureUtil.playerMessage(player, MessageConfig.prefix + MessageConfig.limitWire.replace("{max}", String.valueOf(MainConfig.wireAmount)));
+                return false;
             }
-            if (!isWire && LimitationUtil.reachFrameLimit(seedLoc)) {
-                AdventureUtil.playerMessage(player, MessageConfig.prefix + MessageConfig.limitFrame.replace("{max}", String.valueOf(MainConfig.frameAmount)));
-                return;
+            if (!MainConfig.cropMode && LimitationUtil.reachFrameLimit(seedLoc)) {
+                if (player != null) AdventureUtil.playerMessage(player, MessageConfig.prefix + MessageConfig.limitFrame.replace("{max}", String.valueOf(MainConfig.frameAmount)));
+                return false;
             }
         }
 
         SeedPlantEvent seedPlantEvent = new SeedPlantEvent(player, seedLoc, crop);
         Bukkit.getPluginManager().callEvent(seedPlantEvent);
         if (seedPlantEvent.isCancelled()) {
-            return;
+            return false;
         }
 
-        if (SoundConfig.plantSeed.isEnable()) {
+        if (SoundConfig.plantSeed.isEnable() && player != null) {
             AdventureUtil.playerSound(
                     player,
                     SoundConfig.plantSeed.getSource(),
@@ -590,13 +592,14 @@ public abstract class HandlerP extends Function {
             );
         }
 
-        if (player.getGameMode() != GameMode.CREATIVE) itemInHand.setAmount(itemInHand.getAmount() - 1);
-        if (isWire) customInterface.placeWire(seedLoc, cropName + "_stage_1");
+        if (itemInHand != null && player != null && player.getGameMode() != GameMode.CREATIVE) itemInHand.setAmount(itemInHand.getAmount() - 1);
+        if (MainConfig.cropMode) customInterface.placeWire(seedLoc, cropName + "_stage_1");
         else {
             ItemFrame itemFrame = customInterface.placeFurniture(seedLoc, cropName + "_stage_1");
-            if (itemFrame == null) return;
+            if (itemFrame == null) return false;
             itemFrame.setRotation(FurnitureUtil.getRandomRotation());
         }
         customWorld.addCrop(seedLoc, cropName);
+        return true;
     }
 }

@@ -22,7 +22,7 @@ import net.momirealms.customcrops.api.utils.SeasonUtils;
 import net.momirealms.customcrops.config.MainConfig;
 import net.momirealms.customcrops.config.MessageConfig;
 import net.momirealms.customcrops.config.SeasonConfig;
-import net.momirealms.customcrops.integrations.season.CCSeason;
+import net.momirealms.customcrops.api.utils.CCSeason;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -97,12 +97,6 @@ public class SeasonPapi extends PlaceholderExpansion {
 
     private String getSeasonText(World world) {
         CCSeason season = SeasonUtils.getSeason(world);
-        return switch (season) {
-            case SPRING -> MessageConfig.spring;
-            case SUMMER -> MessageConfig.summer;
-            case AUTUMN -> MessageConfig.autumn;
-            case WINTER -> MessageConfig.winter;
-            default -> throw new IllegalStateException("Unexpected value: " + season);
-        };
+        return SeasonUtils.getSeasonText(season);
     }
 }

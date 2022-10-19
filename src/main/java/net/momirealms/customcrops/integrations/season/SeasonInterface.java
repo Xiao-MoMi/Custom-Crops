@@ -17,6 +17,7 @@
 
 package net.momirealms.customcrops.integrations.season;
 
+import net.momirealms.customcrops.api.utils.CCSeason;
 import org.bukkit.World;
 
 public interface SeasonInterface {

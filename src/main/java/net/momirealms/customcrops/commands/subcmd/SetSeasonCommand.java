@@ -22,7 +22,7 @@ import net.momirealms.customcrops.commands.AbstractSubCommand;
 import net.momirealms.customcrops.commands.SubCommand;
 import net.momirealms.customcrops.config.MessageConfig;
 import net.momirealms.customcrops.config.SeasonConfig;
-import net.momirealms.customcrops.integrations.season.CCSeason;
+import net.momirealms.customcrops.api.utils.CCSeason;
 import net.momirealms.customcrops.utils.AdventureUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.World;

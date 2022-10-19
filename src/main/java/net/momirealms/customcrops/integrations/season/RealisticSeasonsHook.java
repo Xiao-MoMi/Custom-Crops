@@ -18,6 +18,7 @@
 package net.momirealms.customcrops.integrations.season;
 
 import me.casperge.realisticseasons.api.SeasonsAPI;
+import net.momirealms.customcrops.api.utils.CCSeason;
 import net.momirealms.customcrops.config.MainConfig;
 import net.momirealms.customcrops.objects.Function;
 import org.bukkit.World;
@@ -27,6 +28,10 @@ import org.jetbrains.annotations.Nullable;
 public class RealisticSeasonsHook extends Function implements SeasonInterface {
 
     private SeasonsAPI api;
+
+    public RealisticSeasonsHook() {
+        load();
+    }
 
     @Override
     public void load() {

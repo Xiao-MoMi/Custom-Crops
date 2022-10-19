@@ -184,13 +184,13 @@ public class OraxenWireHandler extends OraxenHandler{
         if (id != null) {
             if (id.endsWith("_seeds")) {
                 String cropName = id.substring(0, id.length() - 6);
-                plantSeed(seedLoc, cropName, player, itemInHand, true, true);
+                plantSeed(seedLoc, cropName, player, itemInHand);
             }
         }
         else if (MainConfig.enableConvert) {
             String cropName = MainConfig.vanilla2Crops.get(itemInHand.getType());
             if (cropName == null) return;
-            plantSeed(seedLoc, cropName, player, itemInHand, true, true);
+            plantSeed(seedLoc, cropName, player, itemInHand);
         }
     }
 

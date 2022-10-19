@@ -15,7 +15,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.momirealms.customcrops.integrations.season;
+package net.momirealms.customcrops.api.utils;
 
 public enum CCSeason {
 

@@ -29,7 +29,7 @@ import net.momirealms.customcrops.integrations.customplugin.CustomInterface;
 import net.momirealms.customcrops.integrations.customplugin.HandlerP;
 import net.momirealms.customcrops.integrations.customplugin.itemsadder.*;
 import net.momirealms.customcrops.integrations.customplugin.oraxen.*;
-import net.momirealms.customcrops.integrations.season.CCSeason;
+import net.momirealms.customcrops.api.utils.CCSeason;
 import net.momirealms.customcrops.integrations.season.InternalSeason;
 import net.momirealms.customcrops.integrations.season.RealisticSeasonsHook;
 import net.momirealms.customcrops.integrations.season.SeasonInterface;
@@ -57,7 +57,6 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Future;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class CropManager extends Function {
@@ -464,5 +463,9 @@ public class CropManager extends Function {
 
     public ArmorStandUtil getArmorStandUtil() {
         return armorStandUtil;
+    }
+
+    public HandlerP getHandler() {
+        return handler;
     }
 }

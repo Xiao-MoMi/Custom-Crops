@@ -17,7 +17,7 @@
 
 package net.momirealms.customcrops.api.crop;
 
-import net.momirealms.customcrops.integrations.season.CCSeason;
+import net.momirealms.customcrops.api.utils.CCSeason;
 import net.momirealms.customcrops.objects.GiganticCrop;
 import net.momirealms.customcrops.objects.OtherLoot;
 import net.momirealms.customcrops.objects.QualityLoot;

@@ -22,7 +22,7 @@ import net.momirealms.customcrops.CustomCrops;
 import net.momirealms.customcrops.api.event.CustomWorldEvent;
 import net.momirealms.customcrops.api.utils.SeasonUtils;
 import net.momirealms.customcrops.config.*;
-import net.momirealms.customcrops.integrations.season.CCSeason;
+import net.momirealms.customcrops.api.utils.CCSeason;
 import net.momirealms.customcrops.objects.SimpleLocation;
 import net.momirealms.customcrops.objects.Sprinkler;
 import net.momirealms.customcrops.objects.WorldState;
@@ -59,7 +59,6 @@ public class CustomWorld {
     private final BukkitScheduler bukkitScheduler;
     private final HashSet<SimpleLocation> plantedToday;
     private final CropModeInterface cropMode;
-
     private YamlConfiguration cropData;
 
     public CustomWorld(World world, CropManager cropManager) {
@@ -332,6 +331,7 @@ public class CustomWorld {
     }
 
     public void growWire(int cropTime, int sprinklerTime, int dryTime, boolean compensation, boolean force) {
+        if (cropData == null) return;
 
         Random randomGenerator = new Random();
         if (force) {

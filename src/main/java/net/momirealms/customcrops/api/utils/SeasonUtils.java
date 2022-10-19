@@ -18,7 +18,7 @@
 package net.momirealms.customcrops.api.utils;
 
 import net.momirealms.customcrops.CustomCrops;
-import net.momirealms.customcrops.integrations.season.CCSeason;
+import net.momirealms.customcrops.config.MessageConfig;
 import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
 
@@ -49,5 +49,15 @@ public class SeasonUtils {
      */
     public static void unloadSeason(World world) {
         CustomCrops.plugin.getCropManager().getSeasonAPI().unloadWorld(world);
+    }
+
+    public static String getSeasonText(CCSeason season) {
+        return switch (season) {
+            case SPRING -> MessageConfig.spring;
+            case SUMMER -> MessageConfig.summer;
+            case AUTUMN -> MessageConfig.autumn;
+            case WINTER -> MessageConfig.winter;
+            default -> throw new IllegalStateException("Unexpected value: " + season);
+        };
     }
 }

@@ -22,19 +22,22 @@ import net.momirealms.customcrops.api.crop.Crop;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
+import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerEvent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public class SeedPlantEvent extends PlayerEvent implements Cancellable {
+public class SeedPlantEvent extends Event implements Cancellable {
 
     private static final HandlerList handlers = new HandlerList();
     private boolean cancelled;
     private final Location seedLoc;
     private final Crop crop;
+    private final Player player;
 
-    public SeedPlantEvent(@NotNull Player who, Location seedLoc, Crop crop) {
-        super(who);
+    public SeedPlantEvent(@Nullable Player who, Location seedLoc, Crop crop) {
+        this.player = who;
         this.cancelled = false;
         this.seedLoc = seedLoc;
         this.crop = crop;
@@ -61,5 +64,13 @@ public class SeedPlantEvent extends PlayerEvent implements Cancellable {
 
     public Crop getCrop() {
         return crop;
+    }
+
+    /**
+     * return null if this is not triggered by a player
+     */
+    @Nullable
+    public Player getPlayer() {
+        return player;
     }
 }

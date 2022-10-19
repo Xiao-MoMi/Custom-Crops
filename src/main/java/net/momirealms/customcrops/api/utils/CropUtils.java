@@ -17,8 +17,10 @@
 
 package net.momirealms.customcrops.api.utils;
 
+import net.momirealms.customcrops.CustomCrops;
 import net.momirealms.customcrops.api.crop.Crop;
 import net.momirealms.customcrops.config.CropConfig;
+import org.bukkit.Location;
 import org.jetbrains.annotations.Nullable;
 
 public class CropUtils {
@@ -31,5 +33,15 @@ public class CropUtils {
     @Nullable
     public static Crop getCrop(String crop) {
         return CropConfig.CROPS.get(crop);
+    }
+
+    /**
+     * whether planting succeeds
+     * @param location location
+     * @param crop crop
+     * @return
+     */
+    public static boolean plantCrop(Location location, String crop) {
+        return CustomCrops.plugin.getCropManager().getHandler().plantSeed(location, crop, null, null);
     }
 }

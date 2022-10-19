@@ -18,7 +18,7 @@
 package net.momirealms.customcrops.objects;
 
 import net.momirealms.customcrops.api.crop.Crop;
-import net.momirealms.customcrops.integrations.season.CCSeason;
+import net.momirealms.customcrops.api.utils.CCSeason;
 import net.momirealms.customcrops.objects.actions.ActionInterface;
 import net.momirealms.customcrops.objects.requirements.RequirementInterface;
 

@@ -188,13 +188,13 @@ public class ItemsAdderFrameHandler extends ItemsAdderHandler {
                 String namespacedID = customStack.getNamespacedID();
                 if (namespacedID.endsWith("_seeds")) {
                     String cropName = customStack.getId().substring(0, customStack.getId().length() - 6);
-                    plantSeed(seedLoc, cropName, player, itemInHand, false, false);
+                    plantSeed(seedLoc, cropName, player, itemInHand);
                 }
             }
             else if (MainConfig.enableConvert) {
                 String cropName = MainConfig.vanilla2Crops.get(itemInHand.getType());
                 if (cropName == null) return;
-                plantSeed(seedLoc, cropName, player, itemInHand, false, false);
+                plantSeed(seedLoc, cropName, player, itemInHand);
             }
         }
     }
