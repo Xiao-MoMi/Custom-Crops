@@ -20,6 +20,7 @@ package net.momirealms.customcrops.api.utils;
 import net.momirealms.customcrops.CustomCrops;
 import net.momirealms.customcrops.api.crop.Crop;
 import net.momirealms.customcrops.config.CropConfig;
+import net.momirealms.customcrops.managers.CropManager;
 import org.bukkit.Location;
 import org.jetbrains.annotations.Nullable;
 
@@ -43,5 +44,13 @@ public class CropUtils {
      */
     public static boolean plantCrop(Location location, String crop) {
         return CustomCrops.plugin.getCropManager().getHandler().plantSeed(location, crop, null, null);
+    }
+
+    /**
+     * get the cropManager
+     * @return cropManager
+     */
+    public static CropManager getCropManager() {
+        return CustomCrops.plugin.getCropManager();
     }
 }
