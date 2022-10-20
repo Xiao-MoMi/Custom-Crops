@@ -48,7 +48,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class CustomWorld {
 
     private final World world;
-
     private final ConcurrentHashMap<SimpleLocation, Sprinkler> sprinklerCache;
     private final ConcurrentHashMap<SimpleLocation, Fertilizer> fertilizerCache;
     private final ConcurrentHashMap<String, HashSet<SimpleLocation>> scarecrowCache;
@@ -63,7 +62,6 @@ public class CustomWorld {
 
     public CustomWorld(World world, CropManager cropManager) {
         this.world = world;
-
         this.fertilizerCache = new ConcurrentHashMap<>(2048);
         this.sprinklerCache = new ConcurrentHashMap<>(1024);
         this.scarecrowCache = new ConcurrentHashMap<>(256);
@@ -83,8 +81,8 @@ public class CustomWorld {
         });
     }
 
-    public void unload(boolean disable) {
-        if (disable) {
+    public void unload(boolean sync) {
+        if (sync) {
             unloadData();
         }
         else {

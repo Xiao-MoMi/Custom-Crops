@@ -227,7 +227,7 @@ public class CropManager extends Function {
     public void onWorldLoad(World world) {
         CustomWorld cw = customWorlds.get(world);
         if (cw != null) return;
-        if (MainConfig.getWorldsList().contains(world)) {
+        if (MainConfig.getWorldNameList().contains(world.getName())) {
             CustomWorld customWorld = new CustomWorld(world, this);
             customWorlds.put(world, customWorld);
             if (MainConfig.autoGrow && MainConfig.enableCompensation) {

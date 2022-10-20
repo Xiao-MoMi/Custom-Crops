@@ -39,7 +39,9 @@ import java.util.List;
 public class MainConfig {
 
     public static World[] worlds;
+    public static String[] worldNames;
     public static List<World> worldList;
+    public static List<String> worldNameList;
     public static boolean whiteOrBlack;
     public static String customPlugin;
     public static boolean OraxenHook;
@@ -127,11 +129,11 @@ public class MainConfig {
         lang = config.getString("lang","english");
 
         whiteOrBlack = config.getString("worlds.mode","whitelist").equals("whitelist");
-        List<String> worldsName = config.getStringList("worlds.list");
-        worlds = new World[worldsName.size()];
-        for (int i = 0; i < worldsName.size(); i++) {
-            if (Bukkit.getWorld(worldsName.get(i)) != null) {
-                worlds[i] = Bukkit.getWorld(worldsName.get(i));
+        worldNameList = config.getStringList("worlds.list");
+        worlds = new World[worldNameList.size()];
+        for (int i = 0; i < worldNameList.size(); i++) {
+            if (Bukkit.getWorld(worldNameList.get(i)) != null) {
+                worlds[i] = Bukkit.getWorld(worldNameList.get(i));
             }
         }
 
@@ -142,6 +144,7 @@ public class MainConfig {
         }
 
         worlds = worldList.toArray(new World[0]);
+        worldNames = worldNameList.toArray(new String[0]);
         worldFolder = StringUtils.replace(config.getString("worlds.worlds-folder",""), "\\", File.separator);
 
         cropMode = config.getString("mechanics.crops-mode", "tripwire").equals("tripwire");
@@ -358,6 +361,20 @@ public class MainConfig {
             List<World> worldList = new ArrayList<>(Bukkit.getWorlds());
             worldList.removeAll(MainConfig.worldList);
             return worldList;
+        }
+    }
+
+    public static List<String> getWorldNameList() {
+        if (whiteOrBlack) {
+            return worldNameList;
+        }
+        else {
+            List<String> allWorldNames = new ArrayList<>();
+            for (World world : Bukkit.getWorlds()) {
+                allWorldNames.add(world.getName());
+            }
+            allWorldNames.removeAll(worldNameList);
+            return allWorldNames;
         }
     }
 

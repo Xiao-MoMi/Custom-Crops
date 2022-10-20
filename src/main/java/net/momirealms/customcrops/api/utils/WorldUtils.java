@@ -34,9 +34,9 @@ public class WorldUtils {
     /**
      * unload a world's crop data
      * @param world world
-     * @param disable whether the server is stopping
+     * @param sync whether unload is sync or async
      */
-    public static void unloadCropWorld(World world, boolean disable) {
-        CustomCrops.plugin.getCropManager().onWorldUnload(world, disable);
+    public static void unloadCropWorld(World world, boolean sync) {
+        CustomCrops.plugin.getCropManager().onWorldUnload(world, sync);
     }
 }

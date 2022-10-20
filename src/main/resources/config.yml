@@ -1,4 +1,5 @@
-#Don't change
+# Don't change
+# 请不要修改
 config-version: '15'
 
 # lang: english / spanish / chinese
@@ -6,6 +7,7 @@ lang: english
 
 integration:
   # AntiGrief
+  # 防熊
   Residence: false
   WorldGuard: false
   Kingdoms: false
@@ -17,19 +19,25 @@ integration:
   CrashClaim: false
   BentoBox: false
   # Skill Xp
+  # 技能经验
   AureliumSkills: false
   mcMMO: false
   MMOCore: false
   EcoSkills: false
   JobsReborn: false
   # Season
+  # 季节
   RealisticSeasons: false
 
 worlds:
   # This is designed for servers that using a separate folder for worlds
+  # 如果你的服务器使用独立文件夹存储世界，请在此填入根目录下的文件地址
   worlds-folder: ''
   # Mode: whitelist/blacklist
-  # Requires a restart when changing this
+  # Requires a restart when changing mode or world list
+  # Because reloading world data might cause unexpected problems and lag
+  # 模式：白名单/黑名单
+  # 为了避免重载时候造成服务器卡顿，修改本栏需要重启服务器
   mode: whitelist
   list:
     - world
@@ -37,51 +45,69 @@ worlds:
 optimization:
   # Recommend enabling this to prevent large quantities of crops/itemframes lagging the server
   # When you are using both item_frame mode and ItemsAdder, you should set "max-furniture-vehicles-per-chunk" in ItemsAdder's config.yml to a higher value
+  # 推荐启用区块限制来防止玩家种植大量农作物
+  # 如果你使用ItemsAdder的展示框模式，你需要在ItemsAdder的配置文件中设置"max-furniture-vehicles-per-chunk"到较高值，否则农作物种植后会消失
   limitation:
     enable: true
     # max amount per chunk
+    # 每个区块的限制数量
     tripwire-amount: 64
     itemframe-amount: 64
 
   # Disable the water particles when using watering-cans
+  # 关闭水粒子效果
   disable-water-particles: false
   # Disable the animation when sprinkler works
+  # 关闭洒水器动画
   disable-sprinkler-animation: false
   # Auto back up the data when a world is unloaded
+  # 自动备份
   auto-back-up: true
 
 mechanics:
   # Mode: tripwire/item_frame
+  # 模式：拌线/展示框
   crops-mode: tripwire
 
   # If enabled, crops would start growing at about 7am(at most 5 seconds inaccuracy) and finish growing in the rest of the day
   # Note: All the crops can only start growing when a world's time is about 7am, so when a world is loaded and its time is 8am,
   #       crops would not grow in this day. You can enable time compensation make the crops grow when starting the server.
+  # 如果启用自动生长，农作物将在上午7点左右完成当日生长任务安排并且在接下来的时间里完成生长
+  # 请注意：农作物只有在生长点前种植才能在当日生长，否则需要等待下一个生长点，你可以开启下方的生长补偿功能
   auto-grow:
     enable: true
     # For example, the time to start growing is 1000ticks(7am),
     # sprinklers would finish their work in a random time between 1000~1300ticks,
     # Pot would start drying in a random time between 1300~1500ticks
     # and crops would grow in a random time between 1500~21500ticks
+    # 洒水器工作时间/种植盆干湿判断时间/农作物生长时间  不建议修改
     sprinkler-work-time: 300
     pot-dry-time: 200
     crops-grow-time: 20000
     # Crops would start growing instantly when the world is loaded instead of waiting for the second day's 7am
+    # 生长补偿：当你种下农作物或刚加载世界且恰好错过生长点时候，进行补偿计算分配生长任务
     time-compensation: true
   # If the pot is wet, crop would 100% grow a stage per day
   # Otherwise they would have a lower chance to grow.
   # Recommend setting it to a value higher than 0 to make sure every crop can be ripe even if
   # players don't take care of them, this is good for server performance because crop data would
   # be removed from data file when the crop is ripe to avoid affecting server performance in the long term
+  # 如果种植盆是干燥的，每天生长一个阶段的概率是多少
+  # 建议设置高于0的数值，这样每个农作物都能得到生长，最后从数据中移除
+  # 长远来看，这样不会造成数据堆积，对服务器性能友好
   dry-pot-grow-chance: 0.5
   # Can player harvest crops with right click?
   # if set "false" crops can't be harvested repeatedly
+  # 玩家是否能右键收获农作物，禁用此项则重复收获机制也无法使用
   right-click-harvest:
     enable: true
+    # 是否需要空手
     require-empty-hand: true
   # Should player be prevented from planting if wrong season
+  # 是否阻止玩家在错误季节种植
   prevent-plant-if-wrong-season: true
   # Should player be notified of the wrong season?
+  # 是否提示玩家错误的季节
   should-notify-if-wrong-season: true
 
   fill:
@@ -90,6 +116,7 @@ mechanics:
     waterblock-to-watering-can: 1
 
   # Will bone meal accelerate the growth of crop
+  # 骨粉是否能加快农作物生长
   bone-meal:
     enable: true
     chance: 0.5
@@ -97,24 +124,29 @@ mechanics:
   # Season mechanic
   # Crops would go to death stage if growing in wrong seasons
   # Season would not affect ripe crops(for better performance and friendly player's experience)
+  # 生长中的农作物会在错误的季节死去，但是不会影响已成熟的农作物
   season:
     enable: true
     # If you want all the worlds to share the same season
+    # 是否全世界同步季节
     sync-seasons:
       enable: false
       world: world
 
     auto-season-change:
       # If enabled, setseason command would only work for only one day
+      # 自动切换季节，如果启用则setseason指令仅对当天有效
       enable: true
-      #duration of each season
+      # duration of each season
+      # 每个季节的时长
       duration: 28
     greenhouse:
       enable: true
-      #effective range
+      # effective range
       range: 5
   # During the crop grow progress, crops have little chance to be eaten by a crow
   # Place a scarecrow would protect the crops in this chunk
+  # 在生长过程中，农作物有小概率被乌鸦袭击，在当前区块放置稻草人可以驱赶乌鸦
   crow:
     enable: true
     chance: 0.005
@@ -124,14 +156,17 @@ mechanics:
   default-quality-ratio: 17/2/1
 
   # A crop would go to dead stage if the sky-light level is lower than a value.
+  # 在自然光照不足时，农作物是否会死亡
   dead-if-no-sky-light:
     enable: true
     level: 10
 
   vanilla-crops:
-    # Can vanilla crops be harvest with right clicks
+    # Can vanilla crops be harvested with right clicks
+    # 是否可以右键重复收获原版农作物
     right-click-harvest: false
     # Totally prevent player from planting these vanilla crops in farmland
+    # 阻止玩家种植原版农作物
     prevent-plant:
       enable: false
       list:
@@ -142,6 +177,8 @@ mechanics:
     # Convert vanilla items into CustomCrops crops
     # You need to make extra CustomCrops/IA/Oraxen configs/models for these crops
     # This makes it possible to make vanilla crops have a better mechanic
+    # 将原版物品转换为customcrops插件农作物
+    # 你需要为此制作额外的模型和配置
     convert-to-customcrops:
       enable: false
       list:
@@ -152,6 +189,7 @@ mechanics:
 
   # This option requires a skill-plugin hook
   # Which would increase the amount of crops player get
+  # 这需要一个技能插件才能生效，可以根据玩家种植技能等级提供增益
   skill-bonus:
     enable: false
     bonus-per-level: 0.001
@@ -246,13 +284,18 @@ season-change-command:
 
 watering-can-lore:
   # Should watering-can has dynamic lore according to the water amount
+  # 水壶是否有根据水量变化的动态lore
   enable: true
   # Only packets can remain the former lore, otherwise the lore would be replaced
+  # 只有发包描述才能保持原有的物品描述，否则会被强制替换
   packets:
     # Should watering-can's lore be sent by packets
     # Wouldn't work in creative mode for safety
+    # 是否启用发包模式
+    # 安全起见，创造模式下这不会生效
     enable: true
     # true: top / false: bottom
+    # 发包描述位于描述的顶部还是底部
     top-or-bottom: true
   # Lore format
   # Available variables: {water_bar}
