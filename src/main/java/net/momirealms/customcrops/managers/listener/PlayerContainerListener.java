@@ -20,7 +20,7 @@ public class PlayerContainerListener extends PacketAdapter {
     public void onPacketReceiving(PacketEvent event) {
         final Player player = event.getPlayer();
         if (handlerP.coolDownJudge(player)) {
-            player.updateInventory();
+//            player.updateInventory();
         }
     }
 }

@@ -21,6 +21,7 @@ import net.momirealms.customcrops.CustomCrops;
 import net.momirealms.customcrops.api.crop.Crop;
 import net.momirealms.customcrops.api.event.CropHarvestEvent;
 import net.momirealms.customcrops.api.event.CrowAttackEvent;
+import net.momirealms.customcrops.api.utils.CCSeason;
 import net.momirealms.customcrops.config.BasicItemConfig;
 import net.momirealms.customcrops.config.MainConfig;
 import net.momirealms.customcrops.config.SeasonConfig;
@@ -29,7 +30,6 @@ import net.momirealms.customcrops.integrations.customplugin.CustomInterface;
 import net.momirealms.customcrops.integrations.customplugin.HandlerP;
 import net.momirealms.customcrops.integrations.customplugin.itemsadder.*;
 import net.momirealms.customcrops.integrations.customplugin.oraxen.*;
-import net.momirealms.customcrops.api.utils.CCSeason;
 import net.momirealms.customcrops.integrations.season.InternalSeason;
 import net.momirealms.customcrops.integrations.season.RealisticSeasonsHook;
 import net.momirealms.customcrops.integrations.season.SeasonInterface;
@@ -71,7 +71,6 @@ public class CropManager extends Function {
     private ArmorStandUtil armorStandUtil;
     private ContainerListener containerListener;
     private PlayerModeListener playerModeListener;
-    private PlayerContainerListener playerContainerListener;
     private VanillaCropPlaceListener vanillaCropPlaceListener;
     private VanillaCropHarvestListener vanillaCropHarvestListener;
     private HandlerP handler;
@@ -190,15 +189,9 @@ public class CropManager extends Function {
             HandlerList.unregisterAll(playerModeListener);
             this.playerModeListener = null;
         }
-        if (this.playerContainerListener != null) {
-            CustomCrops.protocolManager.removePacketListener(playerContainerListener);
-            this.playerContainerListener = null;
-        }
         if (!MainConfig.enableWaterCanLore || !MainConfig.enablePacketLore) return;
         containerListener = new ContainerListener(this);
         CustomCrops.protocolManager.addPacketListener(containerListener);
-        playerContainerListener = new PlayerContainerListener(handler);
-        CustomCrops.protocolManager.addPacketListener(playerContainerListener);
         playerModeListener = new PlayerModeListener();
         Bukkit.getPluginManager().registerEvents(playerModeListener, CustomCrops.plugin);
     }

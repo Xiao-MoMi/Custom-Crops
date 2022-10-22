@@ -34,9 +34,14 @@ public class CustomWorldEvent extends WorldEvent {
         this.state = worldState;
     }
 
-    @Override
-    public @NotNull HandlerList getHandlers() {
+    public static HandlerList getHandlerList() {
         return handlers;
+    }
+
+    @NotNull
+    @Override
+    public HandlerList getHandlers() {
+        return getHandlerList();
     }
 
     public WorldState getState() {

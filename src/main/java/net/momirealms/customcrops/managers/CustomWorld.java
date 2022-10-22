@@ -20,9 +20,9 @@ package net.momirealms.customcrops.managers;
 import com.google.gson.*;
 import net.momirealms.customcrops.CustomCrops;
 import net.momirealms.customcrops.api.event.CustomWorldEvent;
+import net.momirealms.customcrops.api.utils.CCSeason;
 import net.momirealms.customcrops.api.utils.SeasonUtils;
 import net.momirealms.customcrops.config.*;
-import net.momirealms.customcrops.api.utils.CCSeason;
 import net.momirealms.customcrops.objects.SimpleLocation;
 import net.momirealms.customcrops.objects.Sprinkler;
 import net.momirealms.customcrops.objects.WorldState;
@@ -443,7 +443,9 @@ public class CustomWorld {
      * @param location sprinkler location
      */
     public void sprinklerWork(SimpleLocation location, Sprinkler sprinkler) {
-        if (sprinkler.getWater() <= 0) return;
+        if (sprinkler.getWater() <= 1) {
+            sprinklerCache.remove(location);
+        }
         Location sprinklerLoc = MiscUtils.getLocation(location);
         if (sprinklerLoc == null) return;
 

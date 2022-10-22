@@ -18,7 +18,6 @@
 package net.momirealms.customcrops.api.event;
 
 import org.bukkit.Location;
-import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
@@ -32,9 +31,14 @@ public class CrowAttackEvent extends Event {
         this.location = location;
     }
 
-    @Override
-    public @NotNull HandlerList getHandlers() {
+    public static HandlerList getHandlerList() {
         return handlers;
+    }
+
+    @NotNull
+    @Override
+    public HandlerList getHandlers() {
+        return getHandlerList();
     }
 
     public Location getLocation() {

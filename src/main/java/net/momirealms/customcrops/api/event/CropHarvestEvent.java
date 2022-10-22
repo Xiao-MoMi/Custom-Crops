@@ -53,9 +53,14 @@ public class CropHarvestEvent extends PlayerEvent implements Cancellable {
         this.cancelled = cancel;
     }
 
-    @Override
-    public @NotNull HandlerList getHandlers() {
+    public static HandlerList getHandlerList() {
         return handlers;
+    }
+
+    @NotNull
+    @Override
+    public HandlerList getHandlers() {
+        return getHandlerList();
     }
 
     /**
