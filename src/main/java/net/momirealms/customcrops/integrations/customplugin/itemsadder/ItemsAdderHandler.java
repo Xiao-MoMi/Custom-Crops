@@ -34,6 +34,7 @@ import net.momirealms.customcrops.integrations.customplugin.itemsadder.listeners
 import net.momirealms.customcrops.managers.CropManager;
 import net.momirealms.customcrops.managers.CustomWorld;
 import net.momirealms.customcrops.objects.WaterCan;
+import net.momirealms.customcrops.objects.fertilizer.Fertilizer;
 import net.momirealms.customcrops.utils.AdventureUtil;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
@@ -109,7 +110,9 @@ public abstract class ItemsAdderHandler extends HandlerP {
             }
 
             if (block == null) return;
-            if (!AntiGrief.testPlace(player, block.getLocation())) return;
+            Location location = block.getLocation();
+            if (!AntiGrief.testPlace(player, location)) return;
+            if (!canProceedAction(player, location)) return;
 
             if (event.getBlockFace() == BlockFace.UP && placeSprinkler(namespacedID, event.getClickedBlock().getLocation(), player, item)) {
                 return;
@@ -147,10 +150,12 @@ public abstract class ItemsAdderHandler extends HandlerP {
         int water = nbtItem.getInteger("WaterAmount");
         if (water > 0) {
 
-            WaterEvent waterEvent = new WaterEvent(player, can.getItemStack());
-            Bukkit.getPluginManager().callEvent(waterEvent);
-            if (waterEvent.isCancelled()) {
-                return true;
+            if (MainConfig.enableEvents) {
+                WaterEvent waterEvent = new WaterEvent(player, can.getItemStack());
+                Bukkit.getPluginManager().callEvent(waterEvent);
+                if (waterEvent.isCancelled()) {
+                    return true;
+                }
             }
 
             NBTCompound nbtCompound = nbtItem.getCompound("itemsadder");
@@ -207,6 +212,7 @@ public abstract class ItemsAdderHandler extends HandlerP {
         return true;
     }
 
+    @Override
     public Crop getCropFromID(String namespacedID) {
         String[] cropNameList = StringUtils.split(StringUtils.split(namespacedID, ":")[1], "_");
         return CropConfig.CROPS.get(cropNameList[0]);

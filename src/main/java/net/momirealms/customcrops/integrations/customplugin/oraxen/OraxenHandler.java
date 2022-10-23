@@ -144,11 +144,14 @@ public abstract class OraxenHandler extends HandlerP {
         int water = nbtItem.getInteger("WaterAmount");
         if (water > 0) {
 
-            WaterEvent waterEvent = new WaterEvent(player, can);
-            Bukkit.getPluginManager().callEvent(waterEvent);
-            if (waterEvent.isCancelled()) {
-                return true;
+            if (MainConfig.enableEvents) {
+                WaterEvent waterEvent = new WaterEvent(player, can);
+                Bukkit.getPluginManager().callEvent(waterEvent);
+                if (waterEvent.isCancelled()) {
+                    return true;
+                }
             }
+
             nbtItem.setInteger("WaterAmount", --water);
 
             if (SoundConfig.waterPot.isEnable()) {
@@ -176,18 +179,19 @@ public abstract class OraxenHandler extends HandlerP {
                 addWaterLore(nbtItem, canConfig, water);
             }
 
-            can.setItemMeta(nbtItem.getItem().getItemMeta());
-
             if (MainConfig.enableWaterCanLore && MainConfig.enablePacketLore) {
                 player.updateInventory();
             }
 
             super.waterPot(canConfig.getWidth(), canConfig.getLength(), potLoc, player.getLocation().getYaw());
+
+            can.setItemMeta(nbtItem.getItem().getItemMeta());
         }
         return true;
     }
 
     @Nullable
+    @Override
     public Crop getCropFromID(String id) {
         return CropConfig.CROPS.get(StringUtils.split(id, "_")[0]);
     }

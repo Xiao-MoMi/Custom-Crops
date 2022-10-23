@@ -121,6 +121,7 @@ public class MainConfig {
     public static boolean enableSkillBonus;
     public static double bonusPerLevel;
     public static HashMap<Material, String> vanilla2Crops;
+    public static boolean enableEvents;
 
     public static void load() {
         ConfigUtil.update("config.yml");
@@ -202,6 +203,7 @@ public class MainConfig {
 
         skyLightLevel = config.getInt("mechanics.dead-if-no-sky-light.level", 10);
         needSkyLight = config.getBoolean("mechanics.dead-if-no-sky-light.enable", true);
+        enableEvents = config.getBoolean("other-settings.enable-events", false);
 
         String[] split = StringUtils.split(config.getString("mechanics.default-quality-ratio", "17/2/1"), "/");
         double[] weight = new double[3];
@@ -276,69 +278,99 @@ public class MainConfig {
         antiGriefs = new ArrayList<>();
         if (config.getBoolean("integration.Residence",false)){
             if (Bukkit.getPluginManager().getPlugin("Residence") == null) Log.warn("Failed to initialize Residence!");
-            else {antiGriefs.add(new ResidenceHook());hookMessage("Residence");}
+            else {
+                antiGriefs.add(new ResidenceHook());
+                hookMessage("Residence");
+            }
         }
         if (config.getBoolean("integration.Kingdoms",false)){
             if (Bukkit.getPluginManager().getPlugin("Kingdoms") == null) Log.warn("Failed to initialize Kingdoms!");
-            else {antiGriefs.add(new KingdomsXHook());hookMessage("Kingdoms");}
+            else {
+                antiGriefs.add(new KingdomsXHook());
+                hookMessage("Kingdoms");
+            }
         }
         if (config.getBoolean("integration.WorldGuard",false)){
             if (Bukkit.getPluginManager().getPlugin("WorldGuard") == null) Log.warn("Failed to initialize WorldGuard!");
-            else {antiGriefs.add(new WorldGuardHook());hookMessage("WorldGuard");}
+            else {
+                antiGriefs.add(new WorldGuardHook());
+                hookMessage("WorldGuard");
+            }
         }
         if (config.getBoolean("integration.GriefDefender",false)){
             if(Bukkit.getPluginManager().getPlugin("GriefDefender") == null) Log.warn("Failed to initialize GriefDefender!");
-            else {antiGriefs.add(new GriefDefenderHook());hookMessage("GriefDefender");}
+            else {
+                antiGriefs.add(new GriefDefenderHook());
+                hookMessage("GriefDefender");
+            }
         }
         if (config.getBoolean("integration.PlotSquared",false)){
             if(Bukkit.getPluginManager().getPlugin("PlotSquared") == null) Log.warn("Failed to initialize PlotSquared!");
-            else {antiGriefs.add(new PlotSquaredHook());hookMessage("PlotSquared");}
+            else {
+                antiGriefs.add(new PlotSquaredHook());
+                hookMessage("PlotSquared");
+            }
         }
         if (config.getBoolean("integration.Towny",false)){
             if (Bukkit.getPluginManager().getPlugin("Towny") == null) Log.warn("Failed to initialize Towny!");
-            else {antiGriefs.add(new TownyHook());hookMessage("Towny");}
+            else {
+                antiGriefs.add(new TownyHook());
+                hookMessage("Towny");
+            }
         }
         if (config.getBoolean("integration.Lands",false)){
             if (Bukkit.getPluginManager().getPlugin("Lands") == null) Log.warn("Failed to initialize Lands!");
-            else {antiGriefs.add(new LandsHook());hookMessage("Lands");}
+            else {
+                antiGriefs.add(new LandsHook());
+                hookMessage("Lands");
+            }
         }
         if (config.getBoolean("integration.GriefPrevention",false)){
             if (Bukkit.getPluginManager().getPlugin("GriefPrevention") == null) Log.warn("Failed to initialize GriefPrevention!");
-            else {antiGriefs.add(new GriefPreventionHook());hookMessage("GriefPrevention");}
+            else {
+                antiGriefs.add(new GriefPreventionHook());
+                hookMessage("GriefPrevention");
+            }
         }
         if (config.getBoolean("integration.CrashClaim",false)){
             if (Bukkit.getPluginManager().getPlugin("CrashClaim") == null) Log.warn("Failed to initialize CrashClaim!");
-            else {antiGriefs.add(new CrashClaimHook());hookMessage("CrashClaim");}
+            else {
+                antiGriefs.add(new CrashClaimHook());
+                hookMessage("CrashClaim");
+            }
         }
         if (config.getBoolean("integration.BentoBox",false)){
             if (Bukkit.getPluginManager().getPlugin("BentoBox") == null) Log.warn("Failed to initialize BentoBox!");
-            else {antiGriefs.add(new BentoBoxHook());hookMessage("BentoBox");}
+            else {
+                antiGriefs.add(new BentoBoxHook());
+                hookMessage("BentoBox");
+            }
         }
 
         if (config.getBoolean("integration.AureliumSkills")) {
             if (Bukkit.getPluginManager().getPlugin("AureliumSkills") == null) Log.warn("Failed to initialize AureliumSkills!");
-            else {skillXP = new AureliumsHook();}
+            else skillXP = new AureliumsHook();
         }
         if (config.getBoolean("integration.mcMMO")) {
             if (Bukkit.getPluginManager().getPlugin("mcMMO") == null) Log.warn("Failed to initialize mcMMO!");
-            else {skillXP = new mcMMOHook();}
+            else skillXP = new mcMMOHook();
         }
         if (config.getBoolean("integration.MMOCore")) {
             if (Bukkit.getPluginManager().getPlugin("MMOCore") == null) Log.warn("Failed to initialize MMOCore!");
-            else {skillXP = new MMOCoreHook();}
+            else skillXP = new MMOCoreHook();
         }
         if (config.getBoolean("integration.EcoSkills")) {
             if (Bukkit.getPluginManager().getPlugin("EcoSkills") == null) Log.warn("Failed to initialize EcoSkills!");
-            else {skillXP = new EcoSkillsHook();}
+            else skillXP = new EcoSkillsHook();
         }
         if (config.getBoolean("integration.JobsReborn")) {
             if (Bukkit.getPluginManager().getPlugin("Jobs") == null) Log.warn("Failed to initialize JobsReborn!");
-            else {skillXP = new JobsRebornHook();}
+            else skillXP = new JobsRebornHook();
         }
         realisticSeasonHook = false;
         if (config.getBoolean("integration.RealisticSeasons")) {
             if (Bukkit.getPluginManager().getPlugin("RealisticSeasons") == null) Log.warn("Failed to initialize RealisticSeasons!");
-            else {realisticSeasonHook = true;}
+            else realisticSeasonHook = true;
         }
     }
 

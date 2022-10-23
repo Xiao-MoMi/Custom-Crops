@@ -24,17 +24,17 @@ import dev.lone.itemsadder.api.Events.CustomBlockBreakEvent;
 import dev.lone.itemsadder.api.Events.FurnitureBreakEvent;
 import dev.lone.itemsadder.api.Events.FurnitureInteractEvent;
 import net.momirealms.customcrops.api.crop.Crop;
+import net.momirealms.customcrops.api.event.PreActionEvent;
 import net.momirealms.customcrops.config.BasicItemConfig;
 import net.momirealms.customcrops.config.MainConfig;
 import net.momirealms.customcrops.config.SoundConfig;
 import net.momirealms.customcrops.config.SprinklerConfig;
 import net.momirealms.customcrops.integrations.AntiGrief;
 import net.momirealms.customcrops.managers.CropManager;
-import net.momirealms.customcrops.managers.CustomWorld;
 import net.momirealms.customcrops.objects.Sprinkler;
-import net.momirealms.customcrops.objects.fertilizer.Fertilizer;
 import net.momirealms.customcrops.utils.AdventureUtil;
 import net.momirealms.customcrops.utils.FurnitureUtil;
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -72,11 +72,13 @@ public class ItemsAdderFrameHandler extends ItemsAdderHandler {
         }
 
         if (namespacedID.contains("_stage_")) {
+            if (!canProceedAction(player, location)) return;
             if (!namespacedID.equals(BasicItemConfig.deadCrop)) {
                 ItemStack itemInHand = player.getInventory().getItemInMainHand();
                 if (!hasNextStage(namespacedID)) {
                     if (MainConfig.canRightClickHarvest && !(MainConfig.emptyHand && itemInHand.getType() != Material.AIR)) {
                         if (!AntiGrief.testBreak(player, entity.getLocation())) return;
+                        if (!canProceedAction(player, entity.getLocation())) return;
                         CustomFurniture.remove(entity, false);
                         this.onInteractRipeCrop(location, namespacedID, player);
                         return;
@@ -117,7 +119,7 @@ public class ItemsAdderFrameHandler extends ItemsAdderHandler {
 
         final Location location = event.getBukkitEntity().getLocation();
         final Player player = event.getPlayer();
-        //No need for antiGrief checks
+
         Sprinkler sprinkler = SprinklerConfig.SPRINKLERS_3D.get(namespacedId);
         if (sprinkler != null) {
             super.onBreakSprinkler(location);
@@ -176,6 +178,7 @@ public class ItemsAdderFrameHandler extends ItemsAdderHandler {
             Location seedLoc = block.getLocation().clone().add(0,1,0);
 
             if (!AntiGrief.testPlace(player, seedLoc)) return;
+            if (!canProceedAction(player, seedLoc)) return;
 
             ItemStack itemInHand = event.getItem();
             Location potLoc = block.getLocation();
@@ -208,9 +211,10 @@ public class ItemsAdderFrameHandler extends ItemsAdderHandler {
         Location location = event.getBlock().getLocation();
 
         if (!AntiGrief.testBreak(player, location)) {
-            event.setCancelled(true);
             return;
         }
+
+        if (!canProceedAction(player, location)) return;
 
         //fix buggy chorus duplication
         chorusFix(event.getBlock());
@@ -241,20 +245,9 @@ public class ItemsAdderFrameHandler extends ItemsAdderHandler {
     }
 
     private void onInteractRipeCrop(Location location, String id, Player player) {
-
         Crop crop = getCropFromID(id);
         if (crop == null) return;
-        CustomWorld customWorld = cropManager.getCustomWorld(location.getWorld());
-        if (customWorld == null) return;
-
-        Fertilizer fertilizer = customWorld.getFertilizer(location.clone().subtract(0,1,0));
-        cropManager.proceedHarvest(crop, player, location, fertilizer, true);
-
-        if (crop.getReturnStage() == null) {
-            customWorld.removeCrop(location);
-            return;
-        }
-        customWorld.addCrop(location, crop.getKey());
+        if (super.onInteractRipeCrop(location, crop, player)) return;
         CustomFurniture customFurniture = CustomFurniture.spawn(crop.getReturnStage(), location.getBlock());
         if (customFurniture != null) {
             if (customFurniture instanceof ItemFrame itemFrame) {

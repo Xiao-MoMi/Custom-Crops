@@ -1,6 +1,6 @@
 # Don't change
 # 请不要修改
-config-version: '15'
+config-version: '16'
 
 # lang: english / spanish / chinese
 lang: english
@@ -308,3 +308,7 @@ watering-can-lore:
     full: '뀁뀃'
     empty: '뀁뀄'
     right: '뀁뀅</font>'
+
+other-settings:
+  # API events
+  enable-events: false

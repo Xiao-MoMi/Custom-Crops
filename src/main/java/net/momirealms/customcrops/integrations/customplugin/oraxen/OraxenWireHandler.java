@@ -105,35 +105,36 @@ public class OraxenWireHandler extends OraxenHandler{
         if (id.contains("_stage_")) {
 
             final Block block = event.getBlock();
+            Location location = block.getLocation();
 
-            if (!AntiGrief.testBreak(player, block.getLocation())) {
+            if (!AntiGrief.testBreak(player, location)) {
                 event.setCancelled(true);
                 return;
             }
+
+            if (!canProceedAction(player, location)) return;
 
             //Drop seeds
             if (player.getInventory().getItemInMainHand().containsEnchantment(Enchantment.SILK_TOUCH) || player.getInventory().getItemInMainHand().getType() == Material.SHEARS){
                 event.setCancelled(true);
                 Drop drop = mechanic.getDrop();
                 if (player.getGameMode() != GameMode.CREATIVE && drop != null)
-                    drop.spawns(block.getLocation(), new ItemStack(Material.AIR));
+                    drop.spawns(location, new ItemStack(Material.AIR));
                 block.setType(Material.AIR);
             }
 
             if (id.equals(BasicItemConfig.deadCrop)) return;
             if (hasNextStage(id)) {
-                super.onBreakUnripeCrop(block.getLocation());
+                super.onBreakUnripeCrop(location);
                 return;
             }
-            super.onBreakRipeCrop(block.getLocation(), id, player, true, false);
+            super.onBreakRipeCrop(location, id, player, true, false);
         }
     }
 
     @Override
     public void onBreakFurniture(OraxenFurnitureBreakEvent event) {
         if (event.isCancelled()) return;
-
-        //TODO Check if triggered in res
 
         FurnitureMechanic mechanic = event.getFurnitureMechanic();
         if (mechanic == null) return;
@@ -156,6 +157,7 @@ public class OraxenWireHandler extends OraxenHandler{
         final Location blockLoc = event.getItemFrame().getLocation();
 
         if (!AntiGrief.testPlace(player, blockLoc)) return;
+        if (!canProceedAction(player, blockLoc)) return;
 
         FurnitureMechanic mechanic = event.getFurnitureMechanic();
         if (mechanic == null) return;
@@ -179,6 +181,7 @@ public class OraxenWireHandler extends OraxenHandler{
         if (event.getBlockFace() != BlockFace.UP) return;
 
         Location seedLoc = potLoc.clone().add(0,1,0);
+        if (!canProceedAction(player, seedLoc)) return;
 
         String id = OraxenItems.getIdByItem(itemInHand);
         if (id != null) {
@@ -209,6 +212,7 @@ public class OraxenWireHandler extends OraxenHandler{
         if (id.contains("_stage_")) {
 
             Location seedLoc = block.getLocation();
+            if (!canProceedAction(player, seedLoc)) return;
             ItemStack itemInHand = event.getItemInHand();
             //ripe crops
             if (!id.equals(BasicItemConfig.deadCrop)) {
@@ -251,20 +255,9 @@ public class OraxenWireHandler extends OraxenHandler{
     }
 
     private void onInteractRipeCrop(Location location, String id, Player player) {
-
         Crop crop = getCropFromID(id);
         if (crop == null) return;
-        CustomWorld customWorld = cropManager.getCustomWorld(location.getWorld());
-        if (customWorld == null) return;
-
-        Fertilizer fertilizer = customWorld.getFertilizer(location.clone().subtract(0,1,0));
-        cropManager.proceedHarvest(crop, player, location, fertilizer, true);
-
-        if (crop.getReturnStage() == null) {
-            customWorld.removeCrop(location);
-            return;
-        }
-        customWorld.addCrop(location, crop.getKey());
+        if (super.onInteractRipeCrop(location, crop, player)) return;
         StringBlockMechanicFactory.setBlockModel(location.getBlock(), crop.getReturnStage());
     }
 }

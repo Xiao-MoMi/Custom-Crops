@@ -30,9 +30,7 @@ import net.momirealms.customcrops.config.SoundConfig;
 import net.momirealms.customcrops.config.SprinklerConfig;
 import net.momirealms.customcrops.integrations.AntiGrief;
 import net.momirealms.customcrops.managers.CropManager;
-import net.momirealms.customcrops.managers.CustomWorld;
 import net.momirealms.customcrops.objects.Sprinkler;
-import net.momirealms.customcrops.objects.fertilizer.Fertilizer;
 import net.momirealms.customcrops.utils.AdventureUtil;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -65,6 +63,7 @@ public class ItemsAdderWireHandler extends ItemsAdderHandler {
         Entity entity = event.getBukkitEntity();
 
         if (!AntiGrief.testPlace(player, entity.getLocation())) return;
+        if (!canProceedAction(player, entity.getLocation())) return;
 
         String namespacedID = event.getNamespacedID();
         if (namespacedID == null) return;
@@ -110,6 +109,9 @@ public class ItemsAdderWireHandler extends ItemsAdderHandler {
 
         //interact crop
         if (blockID.contains("_stage_")) {
+
+            if (!canProceedAction(player, location)) return;
+
             ItemStack itemInHand = event.getItem();
             if (!blockID.equals(BasicItemConfig.deadCrop)) {
                 if (!hasNextStage(blockID)) {
@@ -117,6 +119,7 @@ public class ItemsAdderWireHandler extends ItemsAdderHandler {
                     ItemStack offHand = player.getInventory().getItemInOffHand();
                     if (MainConfig.canRightClickHarvest && !(MainConfig.emptyHand && (mainHand.getType() != Material.AIR || offHand.getType() != Material.AIR))) {
                         if (!AntiGrief.testBreak(player, location)) return;
+
                         CustomBlock.remove(location);
                         this.onInteractRipeCrop(location, blockID, player);
                         return;
@@ -151,6 +154,7 @@ public class ItemsAdderWireHandler extends ItemsAdderHandler {
         else if (blockID.equals(BasicItemConfig.wetPot) || blockID.equals(BasicItemConfig.dryPot)) {
 
             if (!AntiGrief.testPlace(player, location)) return;
+            if (!canProceedAction(player, location)) return;
 
             ItemStack itemInHand = event.getItem();
             if (super.tryMisc(player, itemInHand, location)) return;
@@ -254,22 +258,10 @@ public class ItemsAdderWireHandler extends ItemsAdderHandler {
 //        }
     }
 
-
     private void onInteractRipeCrop(Location location, String id, Player player) {
-
         Crop crop = getCropFromID(id);
         if (crop == null) return;
-        CustomWorld customWorld = cropManager.getCustomWorld(location.getWorld());
-        if (customWorld == null) return;
-
-        Fertilizer fertilizer = customWorld.getFertilizer(location.clone().subtract(0,1,0));
-        cropManager.proceedHarvest(crop, player, location, fertilizer, true);
-
-        if (crop.getReturnStage() == null) {
-            customWorld.removeCrop(location);
-            return;
-        }
-        customWorld.addCrop(location, crop.getKey());
+        if (super.onInteractRipeCrop(location, crop, player)) return;
         CustomBlock.place(crop.getReturnStage(), location);
     }
 
@@ -296,6 +288,7 @@ public class ItemsAdderWireHandler extends ItemsAdderHandler {
                 return;
             }
 
+            if (!canProceedAction(player, location)) return;
             //Drop seeds
             if (player.getInventory().getItemInMainHand().containsEnchantment(Enchantment.SILK_TOUCH) || player.getInventory().getItemInMainHand().getType() == Material.SHEARS){
                 event.setCancelled(true);
@@ -323,6 +316,8 @@ public class ItemsAdderWireHandler extends ItemsAdderHandler {
                 return;
             }
 
+            if (!canProceedAction(player, location)) return;
+
             super.onBreakPot(location);
 
             //Check if there's crop above
@@ -343,7 +338,6 @@ public class ItemsAdderWireHandler extends ItemsAdderHandler {
                 else {
                     super.onBreakRipeCrop(seedLocation, seedID, player, false, true);
                 }
-
             }
         }
     }

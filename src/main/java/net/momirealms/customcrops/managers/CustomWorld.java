@@ -84,10 +84,12 @@ public class CustomWorld {
     public void unload(boolean sync) {
         if (sync) {
             unloadData();
+            backUp(world.getName());
         }
         else {
             Bukkit.getScheduler().runTaskAsynchronously(CustomCrops.plugin, () -> {
                 unloadData();
+                backUp(world.getName());
                 Bukkit.getScheduler().runTask(CustomCrops.plugin, () -> {
                     CustomWorldEvent customWorldEvent = new CustomWorldEvent(world, WorldState.UNLOAD);
                     Bukkit.getPluginManager().callEvent(customWorldEvent);
@@ -112,7 +114,6 @@ public class CustomWorld {
         unloadFertilizer();
         unloadPot();
         unloadScarecrow();
-        backUp(world.getName());
     }
 
     public void backUp(String worldName) {

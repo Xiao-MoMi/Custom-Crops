@@ -48,6 +48,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.ShapedRecipe;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
@@ -104,10 +105,12 @@ public abstract class HandlerP extends Function {
 
             if (itemStack.getType() == Material.WATER_BUCKET) {
 
-                SprinklerFillEvent sprinklerFillEvent = new SprinklerFillEvent(player, itemStack);
-                Bukkit.getPluginManager().callEvent(sprinklerFillEvent);
-                if (sprinklerFillEvent.isCancelled()) {
-                    return;
+                if (MainConfig.enableEvents) {
+                    SprinklerFillEvent sprinklerFillEvent = new SprinklerFillEvent(player, itemStack);
+                    Bukkit.getPluginManager().callEvent(sprinklerFillEvent);
+                    if (sprinklerFillEvent.isCancelled()) {
+                        return;
+                    }
                 }
 
                 itemStack.setType(Material.BUCKET);
@@ -134,10 +137,12 @@ public abstract class HandlerP extends Function {
                     int canWater = nbtItem.getInteger("WaterAmount");
                     if (canWater > 0) {
 
-                        SprinklerFillEvent sprinklerFillEvent = new SprinklerFillEvent(player, itemStack);
-                        Bukkit.getPluginManager().callEvent(sprinklerFillEvent);
-                        if (sprinklerFillEvent.isCancelled()) {
-                            return;
+                        if (MainConfig.enableEvents) {
+                            SprinklerFillEvent sprinklerFillEvent = new SprinklerFillEvent(player, itemStack);
+                            Bukkit.getPluginManager().callEvent(sprinklerFillEvent);
+                            if (sprinklerFillEvent.isCancelled()) {
+                                return;
+                            }
                         }
 
                         nbtItem.setInteger("WaterAmount", --canWater);
@@ -202,10 +207,12 @@ public abstract class HandlerP extends Function {
         if (customWorld == null) return false;
         Fertilizer fertilizer = customWorld.getFertilizer(potLoc);
 
-        SurveyorUseEvent surveyorUseEvent = new SurveyorUseEvent(player, fertilizer, potLoc);
-        Bukkit.getPluginManager().callEvent(surveyorUseEvent);
-        if (surveyorUseEvent.isCancelled()) {
-            return true;
+        if (MainConfig.enableEvents) {
+            SurveyorUseEvent surveyorUseEvent = new SurveyorUseEvent(player, fertilizer, potLoc);
+            Bukkit.getPluginManager().callEvent(surveyorUseEvent);
+            if (surveyorUseEvent.isCancelled()) {
+                return true;
+            }
         }
 
         if (fertilizer != null) {
@@ -291,10 +298,12 @@ public abstract class HandlerP extends Function {
                 return true;
             }
 
-            SprinklerPlaceEvent sprinklerPlaceEvent = new SprinklerPlaceEvent(player, sprinklerLoc);
-            Bukkit.getPluginManager().callEvent(sprinklerPlaceEvent);
-            if (sprinklerPlaceEvent.isCancelled()) {
-                return true;
+            if (MainConfig.enableEvents) {
+                SprinklerPlaceEvent sprinklerPlaceEvent = new SprinklerPlaceEvent(player, sprinklerLoc);
+                Bukkit.getPluginManager().callEvent(sprinklerPlaceEvent);
+                if (sprinklerPlaceEvent.isCancelled()) {
+                    return true;
+                }
             }
 
             if (SoundConfig.placeSprinkler.isEnable()) {
@@ -335,10 +344,12 @@ public abstract class HandlerP extends Function {
                 if (block.getType() == Material.WATER) {
                     if (config.getMax() > water) {
 
-                        WateringCanFillEvent wateringCanFillEvent = new WateringCanFillEvent(player, itemStack);
-                        Bukkit.getPluginManager().callEvent(wateringCanFillEvent);
-                        if (wateringCanFillEvent.isCancelled()) {
-                            return true;
+                        if (MainConfig.enableEvents) {
+                            WateringCanFillEvent wateringCanFillEvent = new WateringCanFillEvent(player, itemStack);
+                            Bukkit.getPluginManager().callEvent(wateringCanFillEvent);
+                            if (wateringCanFillEvent.isCancelled()) {
+                                return true;
+                            }
                         }
 
                         water += MainConfig.waterToWaterCan;
@@ -429,10 +440,12 @@ public abstract class HandlerP extends Function {
             }
         }
 
-        FertilizerUseEvent fertilizerUseEvent = new FertilizerUseEvent(player, fertilizer, potLoc);
-        Bukkit.getPluginManager().callEvent(fertilizerUseEvent);
-        if (fertilizerUseEvent.isCancelled()) {
-            return true;
+        if (MainConfig.enableEvents) {
+            FertilizerUseEvent fertilizerUseEvent = new FertilizerUseEvent(player, fertilizer, potLoc);
+            Bukkit.getPluginManager().callEvent(fertilizerUseEvent);
+            if (fertilizerUseEvent.isCancelled()) {
+                return true;
+            }
         }
 
         if (fertilizer.getParticle() != null) {
@@ -472,7 +485,7 @@ public abstract class HandlerP extends Function {
     }
 
     public void waterPot(int width, int length, Location location, float yaw){
-        //TODO
+
         CustomWorld customWorld = cropManager.getCustomWorld(location.getWorld());
         if (customWorld == null) return;
 
@@ -543,17 +556,14 @@ public abstract class HandlerP extends Function {
         CustomWorld customWorld = cropManager.getCustomWorld(seedLoc.getWorld());
         if (customWorld == null) return false;
 
-        if (!MainConfig.OraxenHook && FurnitureUtil.hasFurniture(seedLoc.clone().add(0.5,0.5,0.5))) return false;
-        if (MainConfig.OraxenHook && FurnitureUtil.hasFurniture(seedLoc.clone().add(0.5,0.03125,0.5))) return false;
-        if (seedLoc.getBlock().getType() != Material.AIR) return false;
-
-        CCSeason[] seasons = crop.getSeasons();
-        if (SeasonConfig.enable && seasons != null) {
-            if (cropManager.isWrongSeason(seedLoc, seasons)) {
-                if (MainConfig.notifyInWrongSeason) AdventureUtil.playerMessage(player, MessageConfig.prefix + MessageConfig.wrongSeason.replace("{season}", SeasonUtils.getSeasonText(SeasonUtils.getSeason(seedLoc.getWorld()))));
-                if (MainConfig.preventInWrongSeason) return false;
-            }
+        if (MainConfig.OraxenHook) {
+            if (FurnitureUtil.hasFurniture(seedLoc.clone().add(0.5,0.5,0.5))) return false;
         }
+        else {
+            if (FurnitureUtil.hasFurniture(seedLoc.clone().add(0.5,0.03125,0.5))) return false;
+        }
+
+        if (seedLoc.getBlock().getType() != Material.AIR) return false;
 
         if (player != null) {
             PlantingCondition plantingCondition = new PlantingCondition(seedLoc, player);
@@ -563,6 +573,20 @@ public abstract class HandlerP extends Function {
                         return false;
                     }
                 }
+            }
+        }
+
+        CCSeason[] seasons = crop.getSeasons();
+        if (SeasonConfig.enable && seasons != null) {
+            if (cropManager.isWrongSeason(seedLoc, seasons)) {
+                StringBuilder stringBuilder = new StringBuilder();
+                for (int i = 0; i < seasons.length; i++) {
+                    if (i < seasons.length - 1) stringBuilder.append(SeasonUtils.getSeasonText(seasons[i])).append(", ");
+                    else stringBuilder.append(SeasonUtils.getSeasonText(seasons[i]));
+                }
+                if (MainConfig.notifyInWrongSeason) AdventureUtil.playerMessage(player, MessageConfig.prefix + MessageConfig.wrongSeason.replace("{season}", SeasonUtils.getSeasonText(SeasonUtils.getSeason(seedLoc.getWorld())))
+                        .replace("{suitable}", stringBuilder.toString()));
+                if (MainConfig.preventInWrongSeason) return false;
             }
         }
 
@@ -577,10 +601,12 @@ public abstract class HandlerP extends Function {
             }
         }
 
-        SeedPlantEvent seedPlantEvent = new SeedPlantEvent(player, seedLoc, crop);
-        Bukkit.getPluginManager().callEvent(seedPlantEvent);
-        if (seedPlantEvent.isCancelled()) {
-            return false;
+        if (MainConfig.enableEvents) {
+            SeedPlantEvent seedPlantEvent = new SeedPlantEvent(player, seedLoc, crop);
+            Bukkit.getPluginManager().callEvent(seedPlantEvent);
+            if (seedPlantEvent.isCancelled()) {
+                return false;
+            }
         }
 
         if (SoundConfig.plantSeed.isEnable() && player != null) {
@@ -601,5 +627,43 @@ public abstract class HandlerP extends Function {
         }
         customWorld.addCrop(seedLoc, cropName);
         return true;
+    }
+
+    protected boolean canProceedAction(Player player, Location location) {
+        if (MainConfig.enableEvents) return true;
+        PreActionEvent preActionEvent = new PreActionEvent(player, location);
+        Bukkit.getPluginManager().callEvent(preActionEvent);
+        return !preActionEvent.isCancelled();
+    }
+
+    public Crop getCropFromID(String id) {
+        String crop;
+        if (id.contains(":")) {
+            crop = id.split(":")[1].split("_")[0];
+        }
+        else {
+            crop = id.split("_")[0];
+        }
+        return CropConfig.CROPS.get(crop);
+    }
+
+    protected boolean onInteractRipeCrop(Location location, Crop crop, Player player) {
+
+        CustomWorld customWorld = cropManager.getCustomWorld(location.getWorld());
+        if (customWorld == null) return true;
+
+        Fertilizer fertilizer = customWorld.getFertilizer(location.clone().subtract(0,1,0));
+        cropManager.proceedHarvest(crop, player, location, fertilizer, true);
+
+        if (crop.getReturnStage() == null) {
+            customWorld.removeCrop(location);
+            return true;
+        }
+        customWorld.addCrop(location, crop.getKey());
+        return false;
+    }
+
+    protected void waterCanSoundsActionBar() {
+
     }
 }

@@ -328,9 +328,12 @@ public class CropManager extends Function {
 
     public void proceedHarvest(Crop crop, Player player, Location location, @Nullable Fertilizer fertilizer, boolean isRightClick) {
         //Call harvest event
-        CropHarvestEvent cropHarvestEvent = new CropHarvestEvent(player, crop, location, fertilizer);
-        Bukkit.getPluginManager().callEvent(cropHarvestEvent);
-        if (cropHarvestEvent.isCancelled()) return;
+        if (MainConfig.enableEvents) {
+            CropHarvestEvent cropHarvestEvent = new CropHarvestEvent(player, crop, location, fertilizer);
+            Bukkit.getPluginManager().callEvent(cropHarvestEvent);
+            if (cropHarvestEvent.isCancelled()) return;
+        }
+
         if (!isRightClick && player.getGameMode() == GameMode.CREATIVE) return;
         ActionInterface[] actions = crop.getActions();
         if (actions != null) performActions(actions, player);
@@ -357,7 +360,7 @@ public class CropManager extends Function {
                     qualityRatio = qualityCrop.getQualityRatio();
                 }
             }
-            if (MainConfig.enableSkillBonus) {
+            if (MainConfig.enableSkillBonus && MainConfig.skillXP != null) {
                 double bonus_chance = MainConfig.skillXP.getLevel(player) * MainConfig.bonusPerLevel;
                 amount *= (bonus_chance + 1);
             }
@@ -437,8 +440,10 @@ public class CropManager extends Function {
         if (Math.random() < MainConfig.crowChance && !hasScarecrow(location)) {
 
             Bukkit.getScheduler().runTask(CustomCrops.plugin, () -> {
-                CrowAttackEvent crowAttackEvent = new CrowAttackEvent(location);
-                Bukkit.getPluginManager().callEvent(crowAttackEvent);
+                if (MainConfig.enableEvents) {
+                    CrowAttackEvent crowAttackEvent = new CrowAttackEvent(location);
+                    Bukkit.getPluginManager().callEvent(crowAttackEvent);
+                }
                 for (Player player : location.getNearbyPlayers(48)) {
                     CrowTask crowTask = new CrowTask(player, location.clone().add(0.4,0,0.4), getArmorStandUtil());
                     crowTask.runTaskTimerAsynchronously(CustomCrops.plugin, 1, 1);

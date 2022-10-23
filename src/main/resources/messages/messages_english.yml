@@ -17,7 +17,7 @@ messages:
   grow-simulation: '<white>Growing simulation has started'
   set-season: '<white>Successfully set {world}''s season to {season}!'
   before-plant: '<white>This fertilizer must be used before planting!'
-  wrong-season: '<white>Current season is not suitable for planting this seed. Suitable season: {season}'
+  wrong-season: '<white>Current season is not suitable for planting this seed. Current season: {season} Suitable seasons: {suitable}'
 
   no-season: 'No season'
   season-disabled: 'Season is disabled'

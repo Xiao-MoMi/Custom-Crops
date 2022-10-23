@@ -69,6 +69,8 @@ public class OraxenFrameHandler extends OraxenHandler {
                 return;
             }
 
+            if (!canProceedAction(player, location)) return;
+
             super.onBreakPot(location);
 
             Location seedLocation = location.clone().add(0.5,1.03125,0.5);
@@ -100,7 +102,7 @@ public class OraxenFrameHandler extends OraxenHandler {
 
         String id = event.getFurnitureMechanic().getItemID();
         if (id == null) return;
-        //TODO check if needs anti grief
+
         Sprinkler sprinkler = SprinklerConfig.SPRINKLERS_3D.get(id);
         if (sprinkler != null) {
             super.onBreakSprinkler(event.getBlock().getLocation());
@@ -135,6 +137,7 @@ public class OraxenFrameHandler extends OraxenHandler {
             Location potLoc = block.getLocation();
 
             if (!AntiGrief.testPlace(player, seedLoc)) return;
+            if (!canProceedAction(player, seedLoc)) return;
             if (super.tryMisc(player, itemInHand, potLoc)) return;
             if (event.getBlockFace() != BlockFace.UP) return;
 
@@ -163,6 +166,7 @@ public class OraxenFrameHandler extends OraxenHandler {
         final Player player = event.getPlayer();
         final ItemFrame itemFrame = event.getItemFrame();
         final Location location = itemFrame.getLocation();
+        if (!canProceedAction(player, location)) return;
 
         Sprinkler sprinkler = SprinklerConfig.SPRINKLERS_3D.get(id);
         if (sprinkler != null) {
@@ -213,16 +217,7 @@ public class OraxenFrameHandler extends OraxenHandler {
     private void onInteractRipeCrop(Location location, String id, Player player) {
         Crop crop = getCropFromID(id);
         if (crop == null) return;
-        CustomWorld customWorld = cropManager.getCustomWorld(location.getWorld());
-        if (customWorld == null) return;
-
-        Fertilizer fertilizer = customWorld.getFertilizer(location.clone().subtract(0,1,0));
-        cropManager.proceedHarvest(crop, player, location, fertilizer, true);
-        if (crop.getReturnStage() == null) {
-            customWorld.removeCrop(location);
-            return;
-        }
-        customWorld.addCrop(location, crop.getKey());
+        if (super.onInteractRipeCrop(location, crop, player)) return;
         ItemFrame itemFrame = cropManager.getCustomInterface().placeFurniture(location, crop.getReturnStage());
         if (itemFrame != null) {
             itemFrame.setRotation(FurnitureUtil.getRandomRotation());
