@@ -56,6 +56,7 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -215,6 +216,9 @@ public class CropManager extends Function {
         String id = customInterface.getItemID(item.getItemStack());
         if (id == null) return;
         if (id.contains("_stage_")) item.remove();
+        if (id.equals(BasicItemConfig.wetPot)) {
+            item.setItemStack(Objects.requireNonNull(customInterface.getItemStack(BasicItemConfig.dryPot)));
+        }
     }
 
     public void onWorldLoad(World world) {
