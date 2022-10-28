@@ -178,7 +178,6 @@ public class ItemsAdderWireHandler extends ItemsAdderHandler {
         }
     }
 
-
     public void onInteractBlock(CustomBlockInteractEvent event) {
 
         // A broken API Event
@@ -276,9 +275,6 @@ public class ItemsAdderWireHandler extends ItemsAdderHandler {
 
         String namespacedId = event.getNamespacedID();
         Location location = event.getBlock().getLocation();
-
-        //fix buggy chorus duplication
-        super.chorusFix(event.getBlock());
 
         //break crop
         if (namespacedId.contains("_stage_")) {

@@ -122,6 +122,7 @@ public class MainConfig {
     public static double bonusPerLevel;
     public static HashMap<Material, String> vanilla2Crops;
     public static boolean enableEvents;
+    public static int saveInterval;
 
     public static void load() {
         ConfigUtil.update("config.yml");
@@ -274,6 +275,8 @@ public class MainConfig {
         } else {
             vanilla2Crops = null;
         }
+
+        saveInterval = config.getInt("other-settings.data-save-interval", 3);
 
         antiGriefs = new ArrayList<>();
         if (config.getBoolean("integration.Residence",false)){

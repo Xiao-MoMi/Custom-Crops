@@ -384,7 +384,7 @@ public class CropManager extends Function {
         for (OtherLoot otherLoot : otherLoots) {
             if (Math.random() < otherLoot.getChance()) {
                 int random = ThreadLocalRandom.current().nextInt(otherLoot.getMin(), otherLoot.getMax() + 1);
-                if (MainConfig.enableSkillBonus) {
+                if (MainConfig.enableSkillBonus && MainConfig.skillXP != null) {
                     double bonus_chance = MainConfig.skillXP.getLevel(player) * MainConfig.bonusPerLevel;
                     random *= (bonus_chance + 1);
                 }
@@ -461,6 +461,12 @@ public class CropManager extends Function {
             return true;
         }
         return false;
+    }
+
+    public void saveData(World world) {
+        CustomWorld customWorld = getCustomWorld(world);
+        if (customWorld == null) return;
+        customWorld.tryToSaveData();
     }
 
     public ArmorStandUtil getArmorStandUtil() {

@@ -40,7 +40,7 @@ public class CropUtils {
      * whether planting succeeds
      * @param location location
      * @param crop crop
-     * @return
+     * @return success or not
      */
     public static boolean plantCrop(Location location, String crop) {
         return CustomCrops.plugin.getCropManager().getHandler().plantSeed(location, crop, null, null);

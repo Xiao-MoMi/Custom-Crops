@@ -233,9 +233,4 @@ public abstract class ItemsAdderHandler extends HandlerP {
     public void onBreakFurniture(FurnitureBreakEvent event) {
         //null
     }
-
-    public void chorusFix(Block block) {
-        if (block.getType() != Material.CHORUS_PLANT) return;
-        CustomBlock.remove(block.getLocation());
-    }
 }

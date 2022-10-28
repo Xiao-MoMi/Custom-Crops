@@ -28,6 +28,7 @@ public class PreActionEvent extends PlayerEvent implements Cancellable {
         cancelled = cancel;
     }
 
+    @NotNull
     public static HandlerList getHandlerList() {
         return handlers;
     }

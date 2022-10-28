@@ -34,6 +34,7 @@ public class CustomWorldEvent extends WorldEvent {
         this.state = worldState;
     }
 
+    @NotNull
     public static HandlerList getHandlerList() {
         return handlers;
     }

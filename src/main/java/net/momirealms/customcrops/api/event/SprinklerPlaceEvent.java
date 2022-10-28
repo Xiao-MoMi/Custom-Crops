@@ -47,6 +47,7 @@ public class SprinklerPlaceEvent extends PlayerEvent implements Cancellable {
         this.cancelled = cancel;
     }
 
+    @NotNull
     public static HandlerList getHandlerList() {
         return handlers;
     }

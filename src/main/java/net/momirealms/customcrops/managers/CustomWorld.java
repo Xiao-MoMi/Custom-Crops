@@ -51,6 +51,7 @@ public class CustomWorld {
     private final ConcurrentHashMap<SimpleLocation, Sprinkler> sprinklerCache;
     private final ConcurrentHashMap<SimpleLocation, Fertilizer> fertilizerCache;
     private final ConcurrentHashMap<String, HashSet<SimpleLocation>> scarecrowCache;
+    private final ConcurrentHashMap<SimpleLocation, String> cropData;
     private final Set<SimpleLocation> watered;
     private HashSet<SimpleLocation> tempWatered;
     private final HashSet<SimpleLocation> playerWatered;
@@ -58,19 +59,21 @@ public class CustomWorld {
     private final BukkitScheduler bukkitScheduler;
     private final HashSet<SimpleLocation> plantedToday;
     private final CropModeInterface cropMode;
-    private YamlConfiguration cropData;
+    private int timer;
 
     public CustomWorld(World world, CropManager cropManager) {
         this.world = world;
         this.fertilizerCache = new ConcurrentHashMap<>(2048);
-        this.sprinklerCache = new ConcurrentHashMap<>(1024);
-        this.scarecrowCache = new ConcurrentHashMap<>(256);
+        this.sprinklerCache = new ConcurrentHashMap<>(512);
+        this.scarecrowCache = new ConcurrentHashMap<>(128);
+        this.cropData = new ConcurrentHashMap<>(2048);
         this.cropManager = cropManager;
         this.bukkitScheduler = Bukkit.getScheduler();
         this.watered = Collections.synchronizedSet(new HashSet<>());
         this.playerWatered = new HashSet<>();
         this.tempWatered = new HashSet<>();
         this.plantedToday = new HashSet<>();
+        this.timer = 0;
         this.cropMode = cropManager.getCropMode();
         Bukkit.getScheduler().runTaskAsynchronously(CustomCrops.plugin, () -> {
             loadData();
@@ -84,12 +87,12 @@ public class CustomWorld {
     public void unload(boolean sync) {
         if (sync) {
             unloadData();
-            backUp(world.getName());
+            backUp();
         }
         else {
             Bukkit.getScheduler().runTaskAsynchronously(CustomCrops.plugin, () -> {
                 unloadData();
-                backUp(world.getName());
+                backUp();
                 Bukkit.getScheduler().runTask(CustomCrops.plugin, () -> {
                     CustomWorldEvent customWorldEvent = new CustomWorldEvent(world, WorldState.UNLOAD);
                     Bukkit.getPluginManager().callEvent(customWorldEvent);
@@ -98,7 +101,7 @@ public class CustomWorld {
         }
     }
 
-    private void loadData() {
+    public void loadData() {
         loadSeason();
         loadCropCache();
         loadSprinklerCache();
@@ -107,7 +110,7 @@ public class CustomWorld {
         loadScarecrow();
     }
 
-    private void unloadData() {
+    public void unloadData() {
         unloadSeason();
         unloadCrop();
         unloadSprinkler();
@@ -116,16 +119,24 @@ public class CustomWorld {
         unloadScarecrow();
     }
 
-    public void backUp(String worldName) {
+    public void tryToSaveData() {
+        timer++;
+        if (timer >= MainConfig.saveInterval) {
+            timer = 0;
+            unloadData();
+        }
+    }
+
+    public void backUp() {
         if (!MainConfig.autoBackUp) return;
         Date date = new Date();
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
         try {
-            File file = new File(CustomCrops.plugin.getDataFolder().getParentFile().getParentFile(), MainConfig.worldFolder + worldName + File.separator + "customcrops_data");
+            File file = new File(CustomCrops.plugin.getDataFolder().getParentFile().getParentFile(), MainConfig.worldFolder + world.getName() + File.separator + "customcrops_data");
             File[] files = file.listFiles();
             if (files == null) return;
             for (File data : files) {
-                FileUtils.copyFileToDirectory(data, new File(CustomCrops.plugin.getDataFolder(), "backup" + File.separator + worldName + "_" + format.format(date)));
+                FileUtils.copyFileToDirectory(data, new File(CustomCrops.plugin.getDataFolder(), "backup" + File.separator + world.getName() + "_" + format.format(date)));
             }
         }
         catch (IOException e){
@@ -316,12 +327,22 @@ public class CustomWorld {
     }
 
     public void loadCropCache() {
-        cropData = loadData("crops", world.getName());
+        YamlConfiguration data = loadData("crops", world.getName());
+        String worldName = world.getName();
+        for (Map.Entry<String, Object> entry : data.getValues(false).entrySet()) {
+            cropData.put(MiscUtils.getSimpleLocation(entry.getKey(), worldName), (String) entry.getValue());
+        }
     }
 
     public void unloadCrop() {
+        YamlConfiguration data = new YamlConfiguration();
+        for (Map.Entry<SimpleLocation, String> en : cropData.entrySet()) {
+            SimpleLocation location = en.getKey();
+            String loc = location.getX() + "," + location.getY() + "," + location.getZ();
+            data.set(loc, en.getValue());
+        }
         try {
-            cropData.save(new File(CustomCrops.plugin.getDataFolder().getParentFile().getParentFile(), MainConfig.worldFolder + world.getName() + File.separator + "customcrops_data" + File.separator + "crops.yml"));
+            data.save(new File(CustomCrops.plugin.getDataFolder().getParentFile().getParentFile(), MainConfig.worldFolder + world.getName() + File.separator + "customcrops_data" + File.separator + "crops.yml"));
         }
         catch (IOException e) {
             e.printStackTrace();
@@ -334,75 +355,61 @@ public class CustomWorld {
 
         Random randomGenerator = new Random();
         if (force) {
-            cropData.getKeys(false).forEach(key -> {
-                Location location = MiscUtils.getLocation(key, world);
-                growSingleWire(location, randomGenerator.nextInt(cropTime), key);
-            });
+            cropData.keySet().forEach(key -> growSingleWire(key, randomGenerator.nextInt(cropTime)));
         }
         else if (!compensation) {
             route(sprinklerTime);
             potDryJudge(sprinklerTime + randomGenerator.nextInt(dryTime));
-            cropData.getKeys(false).forEach(key -> {
-                Location location = MiscUtils.getLocation(key, world);
-                growSingleWire(location, sprinklerTime + dryTime + randomGenerator.nextInt(cropTime), key);
-            });
+            cropData.keySet().forEach(key -> growSingleWire(key, sprinklerTime + dryTime + randomGenerator.nextInt(cropTime)));
         }
         else {
             int delay = (int)(24000 - world.getTime());
             double chance = (double) (24000 - world.getTime()) / 24000;
-            cropData.getKeys(false).forEach(key -> {
+            cropData.keySet().forEach(key -> {
                 if (Math.random() < chance) {
-                    Location location = MiscUtils.getLocation(key, world);
-                    growSingleWire(location, randomGenerator.nextInt(delay), key);
+                    growSingleWire(key, randomGenerator.nextInt(delay));
                 }
             });
         }
     }
 
-    private void growSingleWire(Location location, long delay, String key) {
+    private void growSingleWire(SimpleLocation simpleLocation, long delay) {
         bukkitScheduler.runTaskLaterAsynchronously(CustomCrops.plugin, () -> {
+            Location location = MiscUtils.getLocation(simpleLocation);
             if (cropMode.growJudge(location)) {
-                cropData.set(key, null);
+                cropData.remove(simpleLocation);
             }
         }, delay);
     }
 
     public void growFrame(int cropTime, int sprinklerTime, int dryTime, boolean compensation, boolean force) {
-
         Random randomGenerator = new Random();
         if (force) {
-            cropData.getKeys(false).forEach(key -> {
-                Location location = MiscUtils.getLocation(key, world);
-                growSingleFrame(location, randomGenerator.nextInt(cropTime), key);
-            });
+            cropData.keySet().forEach(key -> growSingleFrame(key, randomGenerator.nextInt(cropTime)));
         }
         else if (!compensation) {
             route(sprinklerTime);
             potDryJudge(sprinklerTime + randomGenerator.nextInt(dryTime));
-            cropData.getKeys(false).forEach(key -> {
-                Location location = MiscUtils.getLocation(key, world);
-                growSingleFrame(location, sprinklerTime + dryTime + randomGenerator.nextInt(cropTime), key);
-            });
+            cropData.keySet().forEach(key -> growSingleFrame(key, sprinklerTime + dryTime + randomGenerator.nextInt(cropTime)));
         }
         else {
-            int delay = (int)(24000 - world.getTime());
+            int delay = (int) (24000 - world.getTime());
             double chance = (double) (24000 - world.getTime()) / 24000;
-            cropData.getKeys(false).forEach(key -> {
+            cropData.keySet().forEach(key -> {
                 if (Math.random() < chance) {
-                    Location location = MiscUtils.getLocation(key, world);
-                    growSingleFrame(location, randomGenerator.nextInt(delay), key);
+                    growSingleFrame(key, randomGenerator.nextInt(delay));
                 }
             });
         }
     }
 
-    private void growSingleFrame(Location location, long delay, String key) {
-        bukkitScheduler.runTaskLater(CustomCrops.plugin, () -> {
-            cropMode.loadChunk(location);
-        }, delay);
+    private void growSingleFrame(SimpleLocation simpleLocation, long delay) {
+        Location location = MiscUtils.getLocation(simpleLocation);
+        if (location == null) return;
+        bukkitScheduler.runTaskLater(CustomCrops.plugin, () -> cropMode.loadChunk(location), delay);
         bukkitScheduler.runTaskLater(CustomCrops.plugin, () -> {
             if (cropMode.growJudge(location)) {
-                cropData.set(key, null);
+                cropData.remove(simpleLocation);
             }
         }, delay + 5);
     }
@@ -502,7 +509,7 @@ public class CustomWorld {
     }
 
     public void removeCrop(Location cropLoc) {
-        cropData.set(MiscUtils.getStringLocation(cropLoc), null);
+        cropData.remove(MiscUtils.getSimpleLocation(cropLoc));
     }
 
     @Nullable
@@ -512,18 +519,17 @@ public class CustomWorld {
 
     public void addCrop(Location cropLoc, String crop) {
         SimpleLocation simpleLocation = MiscUtils.getSimpleLocation(cropLoc);
-        String key = MiscUtils.getStringLocation(cropLoc);
-        cropData.set(key, crop);
+        cropData.put(simpleLocation, crop);
         if (MainConfig.enableCompensation && !plantedToday.contains(simpleLocation) && world.getTime() > 1500) {
             int delay = (int)(24000 - world.getTime());
             double chance = (double) (24000 - world.getTime()) / 24000;
             plantedToday.add(simpleLocation);
             if (Math.random() > chance) return;
             if (MainConfig.cropMode) {
-                growSingleWire(cropLoc, new Random().nextInt(delay), key);
+                growSingleWire(simpleLocation, new Random().nextInt(delay));
             }
             else {
-                growSingleFrame(cropLoc, new Random().nextInt(delay), key);
+                growSingleFrame(simpleLocation, new Random().nextInt(delay));
             }
         }
     }

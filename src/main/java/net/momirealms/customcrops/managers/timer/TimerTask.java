@@ -38,6 +38,9 @@ public class TimerTask extends BukkitRunnable {
             if (time > 950 && time < 1051) {
                 cropManager.grow(world, MainConfig.timeToGrow, MainConfig.timeToWork, MainConfig.timeToDry, false, false);
             }
+            if (time > 0 && time < 101) {
+                cropManager.saveData(world);
+            }
         }
     }
 }

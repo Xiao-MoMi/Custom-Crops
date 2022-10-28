@@ -216,9 +216,6 @@ public class ItemsAdderFrameHandler extends ItemsAdderHandler {
 
         if (!canProceedAction(player, location)) return;
 
-        //fix buggy chorus duplication
-        chorusFix(event.getBlock());
-
         if (namespacedId.equals(BasicItemConfig.dryPot)
                 || namespacedId.equals(BasicItemConfig.wetPot)) {
 

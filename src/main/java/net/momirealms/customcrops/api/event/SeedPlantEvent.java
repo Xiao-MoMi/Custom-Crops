@@ -52,6 +52,7 @@ public class SeedPlantEvent extends Event implements Cancellable {
         this.cancelled = cancel;
     }
 
+    @NotNull
     public static HandlerList getHandlerList() {
         return handlers;
     }

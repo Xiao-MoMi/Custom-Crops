@@ -17,10 +17,7 @@
 
 package net.momirealms.customcrops.commands;
 
-import net.momirealms.customcrops.commands.subcmd.GrowCommand;
-import net.momirealms.customcrops.commands.subcmd.ReloadCommand;
-import net.momirealms.customcrops.commands.subcmd.SetSeasonCommand;
-import net.momirealms.customcrops.commands.subcmd.SimulateCommand;
+import net.momirealms.customcrops.commands.subcmd.*;
 import net.momirealms.customcrops.config.MessageConfig;
 import net.momirealms.customcrops.utils.AdventureUtil;
 import org.bukkit.command.Command;
@@ -61,6 +58,8 @@ public class PluginCommand implements TabExecutor {
         regSubCommand(SetSeasonCommand.INSTANCE);
         regSubCommand(SimulateCommand.INSTANCE);
         regSubCommand(GrowCommand.INSTANCE);
+        regSubCommand(SaveCacheCommand.INSTANCE);
+        regSubCommand(BackUpCommand.INSTANCE);
     }
 
     public void regSubCommand(SubCommand executor) {

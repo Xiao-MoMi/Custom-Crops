@@ -31,6 +31,7 @@ public class CrowAttackEvent extends Event {
         this.location = location;
     }
 
+    @NotNull
     public static HandlerList getHandlerList() {
         return handlers;
     }

@@ -310,5 +310,8 @@ watering-can-lore:
     right: '뀁뀅</font>'
 
 other-settings:
+  # 3 days = 1 hour
+  # Save the cache to file
+  data-save-interval: 3
   # API events
   enable-events: false
