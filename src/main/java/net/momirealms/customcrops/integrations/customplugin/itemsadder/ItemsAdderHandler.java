@@ -19,13 +19,12 @@ package net.momirealms.customcrops.integrations.customplugin.itemsadder;
 
 import de.tr7zw.changeme.nbtapi.NBTCompound;
 import de.tr7zw.changeme.nbtapi.NBTItem;
-import dev.lone.itemsadder.api.CustomBlock;
 import dev.lone.itemsadder.api.CustomStack;
 import dev.lone.itemsadder.api.Events.*;
 import net.kyori.adventure.key.Key;
 import net.momirealms.customcrops.CustomCrops;
 import net.momirealms.customcrops.api.crop.Crop;
-import net.momirealms.customcrops.api.event.WaterEvent;
+import net.momirealms.customcrops.api.event.WaterPotEvent;
 import net.momirealms.customcrops.config.*;
 import net.momirealms.customcrops.integrations.AntiGrief;
 import net.momirealms.customcrops.integrations.customplugin.HandlerP;
@@ -34,7 +33,6 @@ import net.momirealms.customcrops.integrations.customplugin.itemsadder.listeners
 import net.momirealms.customcrops.managers.CropManager;
 import net.momirealms.customcrops.managers.CustomWorld;
 import net.momirealms.customcrops.objects.WaterCan;
-import net.momirealms.customcrops.objects.fertilizer.Fertilizer;
 import net.momirealms.customcrops.utils.AdventureUtil;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
@@ -150,12 +148,10 @@ public abstract class ItemsAdderHandler extends HandlerP {
         int water = nbtItem.getInteger("WaterAmount");
         if (water > 0) {
 
-            if (MainConfig.enableEvents) {
-                WaterEvent waterEvent = new WaterEvent(player, can.getItemStack());
-                Bukkit.getPluginManager().callEvent(waterEvent);
-                if (waterEvent.isCancelled()) {
-                    return true;
-                }
+            WaterPotEvent waterPotEvent = new WaterPotEvent(player, potLoc, nbtItem, --water);
+            Bukkit.getPluginManager().callEvent(waterPotEvent);
+            if (waterPotEvent.isCancelled()) {
+                return true;
             }
 
             NBTCompound nbtCompound = nbtItem.getCompound("itemsadder");
@@ -173,7 +169,7 @@ public abstract class ItemsAdderHandler extends HandlerP {
                 }
             }
 
-            nbtItem.setInteger("WaterAmount", --water);
+            nbtItem.setInteger("WaterAmount", waterPotEvent.getCurrentWater());
 
             if (SoundConfig.waterPot.isEnable()) {
                 AdventureUtil.playerSound(

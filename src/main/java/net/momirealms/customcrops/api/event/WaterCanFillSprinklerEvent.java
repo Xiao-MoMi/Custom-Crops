@@ -22,21 +22,18 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerEvent;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-public class WateringCanFillEvent extends PlayerEvent implements Cancellable {
+public class WaterCanFillSprinklerEvent extends PlayerEvent implements Cancellable {
 
     private static final HandlerList handlers = new HandlerList();
     private boolean cancelled;
     private final NBTItem nbtItem;
-    private int currentWater;
 
-    public WateringCanFillEvent(@NotNull Player who, NBTItem nbtItem, int currentWater) {
+    public WaterCanFillSprinklerEvent(@NotNull Player who, NBTItem nbtItem) {
         super(who);
         this.cancelled = false;
         this.nbtItem = nbtItem;
-        this.currentWater = currentWater;
     }
 
     @Override
@@ -62,13 +59,5 @@ public class WateringCanFillEvent extends PlayerEvent implements Cancellable {
 
     public NBTItem getNbtItem() {
         return nbtItem;
-    }
-
-    public int getCurrentWater() {
-        return currentWater;
-    }
-
-    public void setCurrentWater(int currentWater) {
-        this.currentWater = currentWater;
     }
 }

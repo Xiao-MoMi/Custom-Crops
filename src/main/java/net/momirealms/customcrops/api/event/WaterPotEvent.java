@@ -18,25 +18,27 @@
 package net.momirealms.customcrops.api.event;
 
 import de.tr7zw.changeme.nbtapi.NBTItem;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerEvent;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-public class WateringCanFillEvent extends PlayerEvent implements Cancellable {
+public class WaterPotEvent extends PlayerEvent implements Cancellable {
 
     private static final HandlerList handlers = new HandlerList();
     private boolean cancelled;
     private final NBTItem nbtItem;
     private int currentWater;
+    private final Location location;
 
-    public WateringCanFillEvent(@NotNull Player who, NBTItem nbtItem, int currentWater) {
+    public WaterPotEvent(@NotNull Player who, Location location, NBTItem nbtItem, int currentWater) {
         super(who);
         this.cancelled = false;
         this.nbtItem = nbtItem;
         this.currentWater = currentWater;
+        this.location = location;
     }
 
     @Override
@@ -70,5 +72,9 @@ public class WateringCanFillEvent extends PlayerEvent implements Cancellable {
 
     public void setCurrentWater(int currentWater) {
         this.currentWater = currentWater;
+    }
+
+    public Location getLocation() {
+        return location;
     }
 }

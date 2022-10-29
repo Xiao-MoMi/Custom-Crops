@@ -1,6 +1,6 @@
 # Don't change
 # 请不要修改
-config-version: '16'
+config-version: '17'
 
 # lang: english / spanish / chinese
 lang: english
@@ -313,5 +313,7 @@ other-settings:
   # 3 days = 1 hour
   # Save the cache to file
   data-save-interval: 3
-  # API events
-  enable-events: false
+  # PreAction events.
+  # It's useful if your anti grief plugin is not supported
+  # You can listen to PreActionEvent and cancel all the CustomCrops related events
+  enable-additional-events: false

@@ -48,7 +48,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.ShapedRecipe;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
@@ -105,12 +104,10 @@ public abstract class HandlerP extends Function {
 
             if (itemStack.getType() == Material.WATER_BUCKET) {
 
-                if (MainConfig.enableEvents) {
-                    SprinklerFillEvent sprinklerFillEvent = new SprinklerFillEvent(player, itemStack);
-                    Bukkit.getPluginManager().callEvent(sprinklerFillEvent);
-                    if (sprinklerFillEvent.isCancelled()) {
-                        return;
-                    }
+                WaterBucketFillSprinklerEvent waterBucketFillSprinklerEvent = new WaterBucketFillSprinklerEvent(player, itemStack);
+                Bukkit.getPluginManager().callEvent(waterBucketFillSprinklerEvent);
+                if (waterBucketFillSprinklerEvent.isCancelled()) {
+                    return;
                 }
 
                 itemStack.setType(Material.BUCKET);
@@ -137,12 +134,10 @@ public abstract class HandlerP extends Function {
                     int canWater = nbtItem.getInteger("WaterAmount");
                     if (canWater > 0) {
 
-                        if (MainConfig.enableEvents) {
-                            SprinklerFillEvent sprinklerFillEvent = new SprinklerFillEvent(player, itemStack);
-                            Bukkit.getPluginManager().callEvent(sprinklerFillEvent);
-                            if (sprinklerFillEvent.isCancelled()) {
-                                return;
-                            }
+                        WaterCanFillSprinklerEvent waterCanFillSprinklerEvent = new WaterCanFillSprinklerEvent(player, nbtItem);
+                        Bukkit.getPluginManager().callEvent(waterCanFillSprinklerEvent);
+                        if (waterCanFillSprinklerEvent.isCancelled()) {
+                            return;
                         }
 
                         nbtItem.setInteger("WaterAmount", --canWater);
@@ -207,12 +202,10 @@ public abstract class HandlerP extends Function {
         if (customWorld == null) return false;
         Fertilizer fertilizer = customWorld.getFertilizer(potLoc);
 
-        if (MainConfig.enableEvents) {
-            SurveyorUseEvent surveyorUseEvent = new SurveyorUseEvent(player, fertilizer, potLoc);
-            Bukkit.getPluginManager().callEvent(surveyorUseEvent);
-            if (surveyorUseEvent.isCancelled()) {
-                return true;
-            }
+        SurveyorUseEvent surveyorUseEvent = new SurveyorUseEvent(player, fertilizer, potLoc);
+        Bukkit.getPluginManager().callEvent(surveyorUseEvent);
+        if (surveyorUseEvent.isCancelled()) {
+            return true;
         }
 
         if (fertilizer != null) {
@@ -298,12 +291,10 @@ public abstract class HandlerP extends Function {
                 return true;
             }
 
-            if (MainConfig.enableEvents) {
-                SprinklerPlaceEvent sprinklerPlaceEvent = new SprinklerPlaceEvent(player, sprinklerLoc);
-                Bukkit.getPluginManager().callEvent(sprinklerPlaceEvent);
-                if (sprinklerPlaceEvent.isCancelled()) {
-                    return true;
-                }
+            SprinklerPlaceEvent sprinklerPlaceEvent = new SprinklerPlaceEvent(player, sprinklerLoc);
+            Bukkit.getPluginManager().callEvent(sprinklerPlaceEvent);
+            if (sprinklerPlaceEvent.isCancelled()) {
+                return true;
             }
 
             if (SoundConfig.placeSprinkler.isEnable()) {
@@ -344,18 +335,14 @@ public abstract class HandlerP extends Function {
                 if (block.getType() == Material.WATER) {
                     if (config.getMax() > water) {
 
-                        if (MainConfig.enableEvents) {
-                            WateringCanFillEvent wateringCanFillEvent = new WateringCanFillEvent(player, itemStack);
-                            Bukkit.getPluginManager().callEvent(wateringCanFillEvent);
-                            if (wateringCanFillEvent.isCancelled()) {
-                                return true;
-                            }
+                        WateringCanFillEvent wateringCanFillEvent = new WateringCanFillEvent(player, nbtItem, water += MainConfig.waterToWaterCan);
+                        Bukkit.getPluginManager().callEvent(wateringCanFillEvent);
+                        if (wateringCanFillEvent.isCancelled()) {
+                            return true;
                         }
 
-                        water += MainConfig.waterToWaterCan;
-                        if (water > config.getMax()) water = config.getMax();
-                        nbtItem.setInteger("WaterAmount", water);
-
+                        if (wateringCanFillEvent.getCurrentWater() > config.getMax()) water = config.getMax();
+                        nbtItem.setInteger("WaterAmount", wateringCanFillEvent.getCurrentWater());
 
                         if (SoundConfig.addWaterToCan.isEnable()) {
                             AdventureUtil.playerSound(
@@ -371,7 +358,7 @@ public abstract class HandlerP extends Function {
                         }
 
                         if (MainConfig.enableWaterCanLore && !MainConfig.enablePacketLore) {
-                            addWaterLore(nbtItem, config, water);
+                            addWaterLore(nbtItem, config, wateringCanFillEvent.getCurrentWater());
                         }
 
                         itemStack.setItemMeta(nbtItem.getItem().getItemMeta());
@@ -440,12 +427,10 @@ public abstract class HandlerP extends Function {
             }
         }
 
-        if (MainConfig.enableEvents) {
-            FertilizerUseEvent fertilizerUseEvent = new FertilizerUseEvent(player, fertilizer, potLoc);
-            Bukkit.getPluginManager().callEvent(fertilizerUseEvent);
-            if (fertilizerUseEvent.isCancelled()) {
-                return true;
-            }
+        FertilizerUseEvent fertilizerUseEvent = new FertilizerUseEvent(player, fertilizer, potLoc);
+        Bukkit.getPluginManager().callEvent(fertilizerUseEvent);
+        if (fertilizerUseEvent.isCancelled()) {
+            return true;
         }
 
         if (fertilizer.getParticle() != null) {
@@ -601,12 +586,10 @@ public abstract class HandlerP extends Function {
             }
         }
 
-        if (MainConfig.enableEvents) {
-            SeedPlantEvent seedPlantEvent = new SeedPlantEvent(player, seedLoc, crop);
-            Bukkit.getPluginManager().callEvent(seedPlantEvent);
-            if (seedPlantEvent.isCancelled()) {
-                return false;
-            }
+        SeedPlantEvent seedPlantEvent = new SeedPlantEvent(player, seedLoc, crop);
+        Bukkit.getPluginManager().callEvent(seedPlantEvent);
+        if (seedPlantEvent.isCancelled()) {
+            return false;
         }
 
         if (SoundConfig.plantSeed.isEnable() && player != null) {

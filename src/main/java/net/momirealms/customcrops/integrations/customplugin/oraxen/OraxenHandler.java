@@ -24,7 +24,7 @@ import io.th0rgal.oraxen.items.OraxenItems;
 import io.th0rgal.oraxen.mechanics.provided.gameplay.furniture.FurnitureMechanic;
 import net.momirealms.customcrops.CustomCrops;
 import net.momirealms.customcrops.api.crop.Crop;
-import net.momirealms.customcrops.api.event.WaterEvent;
+import net.momirealms.customcrops.api.event.WaterPotEvent;
 import net.momirealms.customcrops.config.*;
 import net.momirealms.customcrops.integrations.customplugin.HandlerP;
 import net.momirealms.customcrops.integrations.customplugin.oraxen.listeners.OraxenBlockListener;
@@ -144,15 +144,13 @@ public abstract class OraxenHandler extends HandlerP {
         int water = nbtItem.getInteger("WaterAmount");
         if (water > 0) {
 
-            if (MainConfig.enableEvents) {
-                WaterEvent waterEvent = new WaterEvent(player, can);
-                Bukkit.getPluginManager().callEvent(waterEvent);
-                if (waterEvent.isCancelled()) {
-                    return true;
-                }
+            WaterPotEvent waterPotEvent = new WaterPotEvent(player, potLoc, nbtItem, --water);
+            Bukkit.getPluginManager().callEvent(waterPotEvent);
+            if (waterPotEvent.isCancelled()) {
+                return true;
             }
 
-            nbtItem.setInteger("WaterAmount", --water);
+            nbtItem.setInteger("WaterAmount", waterPotEvent.getCurrentWater());
 
             if (SoundConfig.waterPot.isEnable()) {
                 AdventureUtil.playerSound(

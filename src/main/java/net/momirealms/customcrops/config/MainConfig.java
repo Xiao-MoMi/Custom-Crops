@@ -204,7 +204,7 @@ public class MainConfig {
 
         skyLightLevel = config.getInt("mechanics.dead-if-no-sky-light.level", 10);
         needSkyLight = config.getBoolean("mechanics.dead-if-no-sky-light.enable", true);
-        enableEvents = config.getBoolean("other-settings.enable-events", false);
+        enableEvents = config.getBoolean("other-settings.enable-additional-events", false);
 
         String[] split = StringUtils.split(config.getString("mechanics.default-quality-ratio", "17/2/1"), "/");
         double[] weight = new double[3];
