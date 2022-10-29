@@ -37,7 +37,7 @@ public class CrowTask extends BukkitRunnable {
     private final Vector vectorUp;
     private final Location from;
     private final Player player;
-    private float yaw;
+    private final float yaw;
 
 
     public CrowTask(Player player, Location crop, ArmorStandUtil armorStandUtil) {

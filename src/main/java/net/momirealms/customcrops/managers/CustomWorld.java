@@ -87,11 +87,13 @@ public class CustomWorld {
     public void unload(boolean sync) {
         if (sync) {
             unloadData();
+            unloadSeason();
             backUp();
         }
         else {
             Bukkit.getScheduler().runTaskAsynchronously(CustomCrops.plugin, () -> {
                 unloadData();
+                unloadSeason();
                 backUp();
                 Bukkit.getScheduler().runTask(CustomCrops.plugin, () -> {
                     CustomWorldEvent customWorldEvent = new CustomWorldEvent(world, WorldState.UNLOAD);
@@ -111,7 +113,6 @@ public class CustomWorld {
     }
 
     public void unloadData() {
-        unloadSeason();
         unloadCrop();
         unloadSprinkler();
         unloadFertilizer();
@@ -131,17 +132,11 @@ public class CustomWorld {
         if (!MainConfig.autoBackUp) return;
         Date date = new Date();
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
-        try {
-            File file = new File(CustomCrops.plugin.getDataFolder().getParentFile().getParentFile(), MainConfig.worldFolder + world.getName() + File.separator + "customcrops_data");
-            File[] files = file.listFiles();
-            if (files == null) return;
-            for (File data : files) {
-                FileUtils.copyFileToDirectory(data, new File(CustomCrops.plugin.getDataFolder(), "backup" + File.separator + world.getName() + "_" + format.format(date)));
-            }
-        }
-        catch (IOException e){
-            e.printStackTrace();
-            AdventureUtil.consoleMessage("<red>[CustomCrops] Error! Failed to back up data for </red>");
+        File file = new File(CustomCrops.plugin.getDataFolder().getParentFile().getParentFile(), MainConfig.worldFolder + world.getName() + File.separator + "customcrops_data");
+        File[] files = file.listFiles();
+        if (files == null) return;
+        for (File data : files) {
+            FileUtils.copyFileToDirectory(data, new File(CustomCrops.plugin.getDataFolder(), "backup" + File.separator + world.getName() + "_" + format.format(date)));
         }
     }
 
