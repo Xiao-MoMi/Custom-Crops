@@ -217,7 +217,7 @@ public class OraxenFrameHandler extends OraxenHandler {
         if (crop == null) return;
         if (super.onInteractRipeCrop(location, crop, player)) return;
         ItemFrame itemFrame = cropManager.getCustomInterface().placeFurniture(location, crop.getReturnStage());
-        if (itemFrame != null) {
+        if (crop.canRotate() && itemFrame != null) {
             itemFrame.setRotation(FurnitureUtil.getRandomRotation());
         }
     }

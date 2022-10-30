@@ -130,3 +130,77 @@ corn:
   season:
     - Summer
     - Autumn
+
+
+apple:
+  other-loots:
+    loot_1:
+      item: APPLE
+      min_amount: 1
+      max_amount: 2
+      chance: 0.8
+    loot_2:
+      item: APPLE
+      min_amount: 1
+      max_amount: 2
+      chance: 1
+  return: apple_stage_4
+
+
+pineapple:
+  quality-loots:
+    amount: 1~1
+    quality:
+      1: pineapple
+      2: pineapple_silver_star
+      3: pineapple_golden_star
+  gigantic-crop:
+    block: gigantic_pineapple
+    chance: 0.01
+  season:
+    - Summer
+
+
+pitaya:
+  quality-loots:
+    amount: 2~5
+    quality:
+      1: pitaya
+      2: pitaya_silver_star
+      3: pitaya_golden_star
+  return: pitaya_stage_4
+
+
+eggplant:
+  quality-loots:
+    amount: 3~7
+    quality:
+      1: eggplant
+      2: eggplant_silver_star
+      3: eggplant_golden_star
+  season:
+    - Summer
+
+
+chinesecabbage:
+  quality-loots:
+    amount: 1~1
+    quality:
+      1: chinese_cabbage
+      2: chinese_cabbage_silver_star
+      3: chinese_cabbage_golden_star
+  season:
+    - Autumn
+    - Winter
+
+
+hop:
+  quality-loots:
+    amount: 2~5
+    quality:
+      1: hop
+      2: hop_silver_star
+      3: hop_golden_star
+  return: hop_stage_1
+  season:
+    - Summer

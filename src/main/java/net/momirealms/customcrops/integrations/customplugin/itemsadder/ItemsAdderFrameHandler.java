@@ -244,7 +244,7 @@ public class ItemsAdderFrameHandler extends ItemsAdderHandler {
         if (crop == null) return;
         if (super.onInteractRipeCrop(location, crop, player)) return;
         CustomFurniture customFurniture = CustomFurniture.spawn(crop.getReturnStage(), location.getBlock());
-        if (customFurniture != null) {
+        if (crop.canRotate() && customFurniture != null) {
             if (customFurniture instanceof ItemFrame itemFrame) {
                 itemFrame.setRotation(FurnitureUtil.getRandomRotation());
             }

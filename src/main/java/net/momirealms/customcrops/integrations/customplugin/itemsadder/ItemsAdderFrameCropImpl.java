@@ -82,11 +82,11 @@ public class ItemsAdderFrameCropImpl implements CropModeInterface {
                 if (MainConfig.enableCrow && cropManager.crowJudge(location, itemFrame)) return true;
                 if (fertilizer instanceof SpeedGrow speedGrow && Math.random() < speedGrow.getChance()) {
                     if (customInterface.doesExist(temp + (nextStage+1))) {
-                        addStage(itemFrame, temp + (nextStage + 1));
+                        addStage(itemFrame, temp + (nextStage + 1), crop.canRotate());
                     }
                 }
                 else if (certainGrow || Math.random() < MainConfig.dryGrowChance) {
-                    addStage(itemFrame, temp + nextStage);
+                    addStage(itemFrame, temp + nextStage, crop.canRotate());
                 }
             }
             else {
@@ -115,10 +115,10 @@ public class ItemsAdderFrameCropImpl implements CropModeInterface {
         return false;
     }
 
-    private void addStage(ItemFrame itemFrame, String stage) {
+    private void addStage(ItemFrame itemFrame, String stage, boolean rotate) {
         CustomFurniture.remove(itemFrame, false);
         CustomFurniture customFurniture = CustomFurniture.spawn(stage, itemFrame.getLocation().getBlock());
-        if (customFurniture.getArmorstand() instanceof ItemFrame frame) {
+        if (rotate && customFurniture.getArmorstand() instanceof ItemFrame frame) {
             frame.setRotation(FurnitureUtil.getRandomRotation());
         }
     }

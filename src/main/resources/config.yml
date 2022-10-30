@@ -180,12 +180,13 @@ mechanics:
     # 将原版物品转换为customcrops插件农作物
     # 你需要为此制作额外的模型和配置
     convert-to-customcrops:
-      enable: false
+      enable: true
       list:
-        WHEAT_SEEDS: wheat
-        CARROT: carrot
-        POTATO: potato
-        BEETROOT_SEEDS: beetroot
+        APPLE: apple
+        #WHEAT_SEEDS: wheat
+        #CARROT: carrot
+        #POTATO: potato
+        #BEETROOT_SEEDS: beetroot
 
   # This option requires a skill-plugin hook
   # Which would increase the amount of crops player get

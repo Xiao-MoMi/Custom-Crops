@@ -130,3 +130,80 @@ corn:
   season:
     - Summer
     - Autumn
+
+
+apple:
+  other-loots:
+    loot_1:
+      item: APPLE
+      min_amount: 1
+      max_amount: 2
+      chance: 0.8
+    loot_2:
+      item: APPLE
+      min_amount: 1
+      max_amount: 2
+      chance: 1
+  return: customcrops:apple_stage_4
+
+
+pineapple:
+  quality-loots:
+    amount: 1~1
+    quality:
+      1: customcrops:pineapple
+      2: customcrops:pineapple_silver_star
+      3: customcrops:pineapple_golden_star
+  gigantic-crop:
+    block: customcrops:gigantic_pineapple
+    chance: 0.01
+  season:
+    - Summer
+
+
+pitaya:
+  quality-loots:
+    amount: 2~5
+    quality:
+      1: customcrops:pitaya
+      2: customcrops:pitaya_silver_star
+      3: customcrops:pitaya_golden_star
+  return: customcrops:pitaya_stage_4
+
+
+eggplant:
+  quality-loots:
+    amount: 3~7
+    quality:
+      1: customcrops:eggplant
+      2: customcrops:eggplant_silver_star
+      3: customcrops:eggplant_golden_star
+  season:
+    - Summer
+
+
+chinesecabbage:
+  quality-loots:
+    amount: 1~1
+    quality:
+      1: customcrops:chinese_cabbage
+      2: customcrops:chinese_cabbage_silver_star
+      3: customcrops:chinese_cabbage_golden_star
+  season:
+    - Autumn
+    - Winter
+
+
+hop:
+  # Only works in item_frame mode
+  # To prevent rotation
+  rotation: false
+  quality-loots:
+    amount: 2~5
+    quality:
+      1: customcrops:hop
+      2: customcrops:hop_silver_star
+      3: customcrops:hop_golden_star
+  return: customcrops:hop_stage_1
+  season:
+    - Summer

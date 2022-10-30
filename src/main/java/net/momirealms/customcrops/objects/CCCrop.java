@@ -29,10 +29,10 @@ public class CCCrop implements Crop {
     private String returnStage;
     private QualityLoot qualityLoot;
     private GiganticCrop giganticCrop;
-    private double skillXP;
     private OtherLoot[] otherLoots;
     private ActionInterface[] actions;
     private final String key;
+    private boolean rotation;
 
     public CCCrop(String key) {
         this.key = key;
@@ -66,10 +66,6 @@ public class CCCrop implements Crop {
         return giganticCrop;
     }
 
-    public double getSkillXP() {
-        return skillXP;
-    }
-
     public OtherLoot[] getOtherLoots() {
         return otherLoots;
     }
@@ -94,15 +90,19 @@ public class CCCrop implements Crop {
         this.giganticCrop = giganticCrop;
     }
 
-    public void setSkillXP(double skillXP) {
-        this.skillXP = skillXP;
-    }
-
     public void setOtherLoots(OtherLoot[] otherLoots) {
         this.otherLoots = otherLoots;
     }
 
     public void setActions(ActionInterface[] actions) {
         this.actions = actions;
+    }
+
+    public boolean canRotate() {
+        return rotation;
+    }
+
+    public void setCanRotate(boolean rotation) {
+        this.rotation = rotation;
     }
 }

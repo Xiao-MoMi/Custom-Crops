@@ -541,7 +541,7 @@ public abstract class HandlerP extends Function {
         CustomWorld customWorld = cropManager.getCustomWorld(seedLoc.getWorld());
         if (customWorld == null) return false;
 
-        if (MainConfig.OraxenHook) {
+        if (!MainConfig.OraxenHook) {
             if (FurnitureUtil.hasFurniture(seedLoc.clone().add(0.5,0.5,0.5))) return false;
         }
         else {
@@ -606,7 +606,7 @@ public abstract class HandlerP extends Function {
         else {
             ItemFrame itemFrame = customInterface.placeFurniture(seedLoc, cropName + "_stage_1");
             if (itemFrame == null) return false;
-            itemFrame.setRotation(FurnitureUtil.getRandomRotation());
+            if (crop.canRotate()) itemFrame.setRotation(FurnitureUtil.getRandomRotation());
         }
         customWorld.addCrop(seedLoc, cropName);
         return true;
@@ -644,9 +644,5 @@ public abstract class HandlerP extends Function {
         }
         customWorld.addCrop(location, crop.getKey());
         return false;
-    }
-
-    protected void waterCanSoundsActionBar() {
-
     }
 }

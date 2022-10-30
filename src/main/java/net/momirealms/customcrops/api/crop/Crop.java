@@ -36,11 +36,11 @@ public interface Crop {
 
     GiganticCrop getGiganticCrop();
 
-    double getSkillXP();
-
     OtherLoot[] getOtherLoots();
 
     ActionInterface[] getActions();
 
     String getKey();
+
+    boolean canRotate();
 }

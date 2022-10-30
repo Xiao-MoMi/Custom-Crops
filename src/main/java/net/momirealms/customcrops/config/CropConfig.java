@@ -104,6 +104,7 @@ public class CropConfig {
                 if (option.equals("return")) {
                     crop.setReturnStage(config.getString(key + ".return"));
                 }
+                crop.setCanRotate(config.getBoolean(key + ".rotation", true));
                 if (option.equals("requirements")) {
                     List<RequirementInterface> requirementList = new ArrayList<>();
                     for (String requirement : Objects.requireNonNull(config.getConfigurationSection(key + ".requirements")).getKeys(false)) {
