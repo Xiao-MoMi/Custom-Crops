@@ -135,8 +135,13 @@ public class CustomWorld {
         File file = new File(CustomCrops.plugin.getDataFolder().getParentFile().getParentFile(), MainConfig.worldFolder + world.getName() + File.separator + "customcrops_data");
         File[] files = file.listFiles();
         if (files == null) return;
-        for (File data : files) {
-            FileUtils.copyFileToDirectory(data, new File(CustomCrops.plugin.getDataFolder(), "backup" + File.separator + world.getName() + "_" + format.format(date)));
+        try {
+            for (File data : files) {
+                FileUtils.copyFileToDirectory(data, new File(CustomCrops.plugin.getDataFolder(), "backup" + File.separator + world.getName() + "_" + format.format(date)));
+            }
+        }
+        catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -446,8 +451,9 @@ public class CustomWorld {
      * @param location sprinkler location
      */
     public void sprinklerWork(SimpleLocation location, Sprinkler sprinkler) {
-        if (sprinkler.getWater() <= 1) {
+        if (sprinkler.getWater() < 1) {
             sprinklerCache.remove(location);
+            return;
         }
         Location sprinklerLoc = MiscUtils.getLocation(location);
         if (sprinklerLoc == null) return;

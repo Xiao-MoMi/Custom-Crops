@@ -261,7 +261,7 @@ public class ItemsAdderWireHandler extends ItemsAdderHandler {
         Crop crop = getCropFromID(id);
         if (crop == null) return;
         if (super.onInteractRipeCrop(location, crop, player)) return;
-        CustomBlock.place(crop.getReturnStage(), location);
+        if (crop.getReturnStage() != null) CustomBlock.place(crop.getReturnStage(), location);
     }
 
     @Override

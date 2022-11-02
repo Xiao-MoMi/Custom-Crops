@@ -335,14 +335,19 @@ public abstract class HandlerP extends Function {
                 if (block.getType() == Material.WATER) {
                     if (config.getMax() > water) {
 
-                        WateringCanFillEvent wateringCanFillEvent = new WateringCanFillEvent(player, nbtItem, water += MainConfig.waterToWaterCan);
+                        water += MainConfig.waterToWaterCan;
+                        if (water > config.getMax()) water = config.getMax();
+
+                        WateringCanFillEvent wateringCanFillEvent = new WateringCanFillEvent(player, nbtItem, water);
                         Bukkit.getPluginManager().callEvent(wateringCanFillEvent);
                         if (wateringCanFillEvent.isCancelled()) {
                             return true;
                         }
 
-                        if (wateringCanFillEvent.getCurrentWater() > config.getMax()) water = config.getMax();
-                        nbtItem.setInteger("WaterAmount", wateringCanFillEvent.getCurrentWater());
+                        water = wateringCanFillEvent.getCurrentWater();
+
+                        if (water > config.getMax()) water = config.getMax();
+                        nbtItem.setInteger("WaterAmount", water);
 
                         if (SoundConfig.addWaterToCan.isEnable()) {
                             AdventureUtil.playerSound(
@@ -358,7 +363,7 @@ public abstract class HandlerP extends Function {
                         }
 
                         if (MainConfig.enableWaterCanLore && !MainConfig.enablePacketLore) {
-                            addWaterLore(nbtItem, config, wateringCanFillEvent.getCurrentWater());
+                            addWaterLore(nbtItem, config, water);
                         }
 
                         itemStack.setItemMeta(nbtItem.getItem().getItemMeta());
@@ -534,6 +539,41 @@ public abstract class HandlerP extends Function {
         }
     }
 
+    protected boolean canProceedAction(Player player, Location location) {
+        if (MainConfig.enableEvents) return true;
+        PreActionEvent preActionEvent = new PreActionEvent(player, location);
+        Bukkit.getPluginManager().callEvent(preActionEvent);
+        return !preActionEvent.isCancelled();
+    }
+
+    public Crop getCropFromID(String id) {
+        String crop;
+        if (id.contains(":")) {
+            crop = id.split(":")[1].split("_")[0];
+        }
+        else {
+            crop = id.split("_")[0];
+        }
+        return CropConfig.CROPS.get(crop);
+    }
+
+    protected boolean onInteractRipeCrop(Location location, Crop crop, Player player) {
+
+        CustomWorld customWorld = cropManager.getCustomWorld(location.getWorld());
+        if (customWorld == null) return true;
+
+        Fertilizer fertilizer = customWorld.getFertilizer(location.clone().subtract(0,1,0));
+        cropManager.proceedHarvest(crop, player, location, fertilizer, true);
+
+        if (crop.getReturnStage() == null) {
+            customWorld.removeCrop(location);
+            return true;
+        }
+        customWorld.addCrop(location, crop.getKey());
+        return false;
+    }
+
+
     public boolean plantSeed(Location seedLoc, String cropName, @Nullable Player player, @Nullable ItemStack itemInHand) {
         Crop crop = CropConfig.CROPS.get(cropName);
         if (crop == null) return false;
@@ -610,39 +650,5 @@ public abstract class HandlerP extends Function {
         }
         customWorld.addCrop(seedLoc, cropName);
         return true;
-    }
-
-    protected boolean canProceedAction(Player player, Location location) {
-        if (MainConfig.enableEvents) return true;
-        PreActionEvent preActionEvent = new PreActionEvent(player, location);
-        Bukkit.getPluginManager().callEvent(preActionEvent);
-        return !preActionEvent.isCancelled();
-    }
-
-    public Crop getCropFromID(String id) {
-        String crop;
-        if (id.contains(":")) {
-            crop = id.split(":")[1].split("_")[0];
-        }
-        else {
-            crop = id.split("_")[0];
-        }
-        return CropConfig.CROPS.get(crop);
-    }
-
-    protected boolean onInteractRipeCrop(Location location, Crop crop, Player player) {
-
-        CustomWorld customWorld = cropManager.getCustomWorld(location.getWorld());
-        if (customWorld == null) return true;
-
-        Fertilizer fertilizer = customWorld.getFertilizer(location.clone().subtract(0,1,0));
-        cropManager.proceedHarvest(crop, player, location, fertilizer, true);
-
-        if (crop.getReturnStage() == null) {
-            customWorld.removeCrop(location);
-            return true;
-        }
-        customWorld.addCrop(location, crop.getKey());
-        return false;
     }
 }

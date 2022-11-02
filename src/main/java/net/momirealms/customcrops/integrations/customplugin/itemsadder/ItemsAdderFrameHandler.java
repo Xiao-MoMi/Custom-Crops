@@ -33,6 +33,7 @@ import net.momirealms.customcrops.managers.CropManager;
 import net.momirealms.customcrops.objects.Sprinkler;
 import net.momirealms.customcrops.utils.AdventureUtil;
 import net.momirealms.customcrops.utils.FurnitureUtil;
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -230,11 +231,11 @@ public class ItemsAdderFrameHandler extends ItemsAdderHandler {
             if (seedID.contains("_stage_")) {
                 CustomFurniture.remove(itemFrame, false);
                 if (seedID.equals(BasicItemConfig.deadCrop)) return;
-                if (hasNextStage(namespacedId)) {
+                if (hasNextStage(seedID)) {
                     super.onBreakUnripeCrop(location);
                     return;
                 }
-                super.onBreakRipeCrop(location, namespacedId, player, true, true);
+                super.onBreakRipeCrop(location, seedID, player, true, true);
             }
         }
     }

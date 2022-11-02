@@ -48,8 +48,11 @@ public class ItemsAdderWireCropImpl implements CropModeInterface {
         String blockID = customInterface.getBlockID(location);
         if (blockID == null) return true;
         if (!blockID.contains("_stage_")) return true;
-        String[] cropNameList = StringUtils.split(blockID,"_");
-        String cropKey = StringUtils.split(cropNameList[0], ":")[1];
+
+        String cropId = StringUtils.split(blockID, ":")[1];
+        String[] cropNameList = StringUtils.split(cropId, "_");
+        String cropKey = cropNameList[0];
+
         Crop crop = CropConfig.CROPS.get(cropKey);
         if (crop == null) return true;
 

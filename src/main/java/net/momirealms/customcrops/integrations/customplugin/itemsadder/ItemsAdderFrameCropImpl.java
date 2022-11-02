@@ -59,8 +59,11 @@ public class ItemsAdderFrameCropImpl implements CropModeInterface {
             String id = customInterface.getItemID(itemFrame.getItem());
             if (id == null) return true;
             if (id.equals(BasicItemConfig.deadCrop)) return true;
-            String[] cropNameList = StringUtils.split(id,"_");
-            String cropKey = StringUtils.split(cropNameList[0], ":")[1];
+
+            String cropId = StringUtils.split(id, ":")[1];
+            String[] cropNameList = StringUtils.split(cropId, "_");
+            String cropKey = cropNameList[0];
+
             Crop crop = CropConfig.CROPS.get(cropKey);
             if (crop == null) return true;
             if (MainConfig.needSkyLight && location.getBlock().getLightFromSky() < MainConfig.skyLightLevel) {
