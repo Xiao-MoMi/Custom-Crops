@@ -61,6 +61,7 @@ public class ConfigUtil {
     }
 
     public static void reloadConfigs() {
+
         MainConfig.load();
         BasicItemConfig.load();
         CropConfig.load();

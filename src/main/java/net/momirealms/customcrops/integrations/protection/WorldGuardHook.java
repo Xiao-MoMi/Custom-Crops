@@ -35,7 +35,6 @@ public class WorldGuardHook implements AntiGrief {
 
     @Override
     public boolean canPlace(Location location, Player player) {
-        if (player.isOp()) return true;
         LocalPlayer localPlayer = WorldGuardPlugin.inst().wrapPlayer(player);
         World world = BukkitAdapter.adapt(location.getWorld());
         WorldGuardPlatform platform = com.sk89q.worldguard.WorldGuard.getInstance().getPlatform();
@@ -48,7 +47,6 @@ public class WorldGuardHook implements AntiGrief {
 
     @Override
     public boolean canBreak(Location location, Player player) {
-        if (player.isOp()) return true;
         LocalPlayer localPlayer = WorldGuardPlugin.inst().wrapPlayer(player);
         World world = BukkitAdapter.adapt(location.getWorld());
         WorldGuardPlatform platform = com.sk89q.worldguard.WorldGuard.getInstance().getPlatform();

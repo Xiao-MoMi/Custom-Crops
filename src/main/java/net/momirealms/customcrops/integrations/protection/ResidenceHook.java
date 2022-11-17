@@ -29,7 +29,7 @@ public class ResidenceHook implements AntiGrief {
     @Override
     public boolean canBreak(Location location, Player player) {
         ClaimedResidence res = com.bekvon.bukkit.residence.Residence.getInstance().getResidenceManager().getByLoc(location);
-        if(res!=null){
+        if (res != null) {
             ResidencePermissions perms = res.getPermissions();
             return perms.playerHas(player, Flags.destroy, true);
         }
@@ -39,7 +39,7 @@ public class ResidenceHook implements AntiGrief {
     @Override
     public boolean canPlace(Location location, Player player) {
         ClaimedResidence res = com.bekvon.bukkit.residence.Residence.getInstance().getResidenceManager().getByLoc(location);
-        if(res!=null){
+        if (res != null) {
             ResidencePermissions perms = res.getPermissions();
             return perms.playerHas(player, Flags.build, true);
         }

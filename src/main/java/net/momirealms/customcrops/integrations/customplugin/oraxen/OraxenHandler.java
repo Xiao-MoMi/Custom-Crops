@@ -19,15 +19,12 @@ package net.momirealms.customcrops.integrations.customplugin.oraxen;
 
 import de.tr7zw.changeme.nbtapi.NBTCompound;
 import de.tr7zw.changeme.nbtapi.NBTItem;
-import io.th0rgal.oraxen.events.*;
-import io.th0rgal.oraxen.items.OraxenItems;
+import io.th0rgal.oraxen.api.OraxenItems;
+import io.th0rgal.oraxen.api.events.*;
 import io.th0rgal.oraxen.mechanics.provided.gameplay.furniture.FurnitureMechanic;
 import net.momirealms.customcrops.CustomCrops;
 import net.momirealms.customcrops.api.crop.Crop;
-import net.momirealms.customcrops.api.event.SeedPlantEvent;
 import net.momirealms.customcrops.api.event.WaterPotEvent;
-import net.momirealms.customcrops.api.utils.CCSeason;
-import net.momirealms.customcrops.api.utils.SeasonUtils;
 import net.momirealms.customcrops.config.*;
 import net.momirealms.customcrops.integrations.customplugin.HandlerP;
 import net.momirealms.customcrops.integrations.customplugin.oraxen.listeners.OraxenBlockListener;
@@ -35,19 +32,13 @@ import net.momirealms.customcrops.integrations.customplugin.oraxen.listeners.Ora
 import net.momirealms.customcrops.managers.CropManager;
 import net.momirealms.customcrops.managers.CustomWorld;
 import net.momirealms.customcrops.objects.WaterCan;
-import net.momirealms.customcrops.objects.requirements.PlantingCondition;
-import net.momirealms.customcrops.objects.requirements.RequirementInterface;
 import net.momirealms.customcrops.utils.AdventureUtil;
-import net.momirealms.customcrops.utils.FurnitureUtil;
-import net.momirealms.customcrops.utils.LimitationUtil;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.block.Action;
@@ -84,7 +75,7 @@ public abstract class OraxenHandler extends HandlerP {
     //scarecrow place
     public void placeScarecrow(OraxenFurniturePlaceEvent event) {
         if (!MainConfig.enableCrow) return;
-        FurnitureMechanic mechanic = event.getFurnitureMechanic();
+        FurnitureMechanic mechanic = event.getMechanic();
         String id = mechanic.getItemID();
         if (!id.equals(BasicItemConfig.scarecrow)) return;
         Location location = event.getItemFrame().getLocation();

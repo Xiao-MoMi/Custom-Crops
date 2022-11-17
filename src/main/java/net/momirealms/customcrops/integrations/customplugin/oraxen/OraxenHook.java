@@ -18,28 +18,27 @@
 package net.momirealms.customcrops.integrations.customplugin.oraxen;
 
 import io.th0rgal.oraxen.OraxenPlugin;
+import io.th0rgal.oraxen.api.OraxenBlocks;
+import io.th0rgal.oraxen.api.OraxenItems;
 import io.th0rgal.oraxen.items.ItemBuilder;
-import io.th0rgal.oraxen.items.OraxenItems;
+import io.th0rgal.oraxen.mechanics.provided.gameplay.furniture.FurnitureFactory;
+import io.th0rgal.oraxen.mechanics.provided.gameplay.furniture.FurnitureMechanic;
 import io.th0rgal.oraxen.mechanics.provided.gameplay.noteblock.NoteBlockMechanic;
 import io.th0rgal.oraxen.mechanics.provided.gameplay.noteblock.NoteBlockMechanicFactory;
-import io.th0rgal.oraxen.mechanics.provided.gameplay.noteblock.NoteBlockMechanicListener;
 import io.th0rgal.oraxen.mechanics.provided.gameplay.stringblock.StringBlockMechanic;
 import io.th0rgal.oraxen.mechanics.provided.gameplay.stringblock.StringBlockMechanicFactory;
-import io.th0rgal.oraxen.mechanics.provided.gameplay.stringblock.StringBlockMechanicListener;
 import net.momirealms.customcrops.integrations.customplugin.CustomInterface;
+import net.momirealms.customcrops.utils.FurnitureUtil;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.Rotation;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.persistence.PersistentDataContainer;
-import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.Nullable;
-
-import static io.th0rgal.oraxen.mechanics.provided.gameplay.furniture.FurnitureMechanic.FURNITURE_KEY;
 
 public class OraxenHook implements CustomInterface {
 
@@ -65,12 +64,12 @@ public class OraxenHook implements CustomInterface {
     public String getBlockID(Location location) {
         Block block = location.getBlock();
         if (block.getType() == Material.TRIPWIRE) {
-            StringBlockMechanic mechanic = StringBlockMechanicListener.getStringMechanic(block);
+            StringBlockMechanic mechanic = OraxenBlocks.getStringMechanic(block);
             if (mechanic == null) return null;
             else return mechanic.getItemID();
         }
         else if (block.getType() == Material.NOTE_BLOCK) {
-            NoteBlockMechanic mechanic = NoteBlockMechanicListener.getNoteBlockMechanic(block);
+            NoteBlockMechanic mechanic = OraxenBlocks.getNoteBlockMechanic(block);
             if (mechanic == null) return null;
             else return mechanic.getItemID();
         }
@@ -94,18 +93,8 @@ public class OraxenHook implements CustomInterface {
     @Override
     @Nullable
     public ItemFrame placeFurniture(Location location, String id) {
-        ItemBuilder itemBuilder = OraxenItems.getItemById(id);
-        if (itemBuilder == null) return null;
-        return location.getWorld().spawn(location, ItemFrame.class, (ItemFrame frame) -> {
-            frame.setVisible(false);
-            frame.setFixed(false);
-            frame.setPersistent(true);
-            frame.setItemDropChance(0);
-            frame.setItem(itemBuilder.build(), false);
-            frame.setFacingDirection(BlockFace.UP, true);
-            PersistentDataContainer pdc = frame.getPersistentDataContainer();
-            pdc.set(FURNITURE_KEY, PersistentDataType.STRING, id);
-        });
+        FurnitureMechanic mechanic = (FurnitureMechanic) FurnitureFactory.getInstance().getMechanic(id);
+        return mechanic.place(Rotation.NONE, 0, BlockFace.UP, location, null);
     }
 
     @Override

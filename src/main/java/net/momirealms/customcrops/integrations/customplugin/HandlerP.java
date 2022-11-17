@@ -192,7 +192,6 @@ public abstract class HandlerP extends Function {
             player,
             location.add(0, MainConfig.sprinklerInfoY - 1,0),
             MainConfig.sprinklerInfoDuration);
-
     }
 
     public boolean useSurveyor(Location potLoc, String id, Player player) {

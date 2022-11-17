@@ -17,10 +17,10 @@
 
 package net.momirealms.customcrops.integrations.customplugin.oraxen.listeners;
 
-import io.th0rgal.oraxen.events.OraxenNoteBlockBreakEvent;
-import io.th0rgal.oraxen.events.OraxenNoteBlockInteractEvent;
-import io.th0rgal.oraxen.events.OraxenStringBlockBreakEvent;
-import io.th0rgal.oraxen.events.OraxenStringBlockInteractEvent;
+import io.th0rgal.oraxen.api.events.OraxenNoteBlockBreakEvent;
+import io.th0rgal.oraxen.api.events.OraxenNoteBlockInteractEvent;
+import io.th0rgal.oraxen.api.events.OraxenStringBlockBreakEvent;
+import io.th0rgal.oraxen.api.events.OraxenStringBlockInteractEvent;
 import net.momirealms.customcrops.integrations.customplugin.oraxen.OraxenHandler;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

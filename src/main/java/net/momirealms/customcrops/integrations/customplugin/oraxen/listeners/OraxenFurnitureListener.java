@@ -17,9 +17,9 @@
 
 package net.momirealms.customcrops.integrations.customplugin.oraxen.listeners;
 
-import io.th0rgal.oraxen.events.OraxenFurnitureBreakEvent;
-import io.th0rgal.oraxen.events.OraxenFurnitureInteractEvent;
-import io.th0rgal.oraxen.events.OraxenFurniturePlaceEvent;
+import io.th0rgal.oraxen.api.events.OraxenFurnitureBreakEvent;
+import io.th0rgal.oraxen.api.events.OraxenFurnitureInteractEvent;
+import io.th0rgal.oraxen.api.events.OraxenFurniturePlaceEvent;
 import net.momirealms.customcrops.integrations.customplugin.oraxen.OraxenHandler;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

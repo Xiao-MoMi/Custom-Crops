@@ -17,11 +17,11 @@
 
 package net.momirealms.customcrops.integrations.customplugin.oraxen;
 
-import io.th0rgal.oraxen.events.OraxenFurnitureBreakEvent;
-import io.th0rgal.oraxen.events.OraxenFurnitureInteractEvent;
-import io.th0rgal.oraxen.events.OraxenNoteBlockBreakEvent;
-import io.th0rgal.oraxen.events.OraxenNoteBlockInteractEvent;
-import io.th0rgal.oraxen.items.OraxenItems;
+import io.th0rgal.oraxen.api.OraxenItems;
+import io.th0rgal.oraxen.api.events.OraxenFurnitureBreakEvent;
+import io.th0rgal.oraxen.api.events.OraxenFurnitureInteractEvent;
+import io.th0rgal.oraxen.api.events.OraxenNoteBlockBreakEvent;
+import io.th0rgal.oraxen.api.events.OraxenNoteBlockInteractEvent;
 import io.th0rgal.oraxen.mechanics.provided.gameplay.furniture.FurnitureFactory;
 import io.th0rgal.oraxen.mechanics.provided.gameplay.furniture.FurnitureMechanic;
 import io.th0rgal.oraxen.utils.drops.Drop;
@@ -55,7 +55,7 @@ public class OraxenFrameHandler extends OraxenHandler {
     public void onBreakNoteBlock(OraxenNoteBlockBreakEvent event) {
         if (event.isCancelled()) return;
 
-        String id = event.getNoteBlockMechanic().getItemID();
+        String id = event.getMechanic().getItemID();
         Player player = event.getPlayer();
         Location location = event.getBlock().getLocation();
 
@@ -98,7 +98,7 @@ public class OraxenFrameHandler extends OraxenHandler {
     public void onBreakFurniture(OraxenFurnitureBreakEvent event) {
         if (event.isCancelled()) return;
 
-        String id = event.getFurnitureMechanic().getItemID();
+        String id = event.getMechanic().getItemID();
         if (id == null) return;
 
         Sprinkler sprinkler = SprinklerConfig.SPRINKLERS_3D.get(id);
@@ -128,7 +128,11 @@ public class OraxenFrameHandler extends OraxenHandler {
         final ItemStack itemInHand = event.getItemInHand();
         final Block block = event.getBlock();
 
-        String blockID = event.getNoteBlockMechanic().getItemID();
+        long time = System.currentTimeMillis();
+        if (time - (coolDown.getOrDefault(player, time - 50)) < 50) return;
+        coolDown.put(player, time);
+
+        String blockID = event.getMechanic().getItemID();
         if (blockID.equals(BasicItemConfig.dryPot) || blockID.equals(BasicItemConfig.wetPot)) {
 
             Location seedLoc = block.getLocation().clone().add(0,1,0);
@@ -158,7 +162,7 @@ public class OraxenFrameHandler extends OraxenHandler {
     public void onInteractFurniture(OraxenFurnitureInteractEvent event) {
         if (event.isCancelled()) return;
 
-        String id = event.getFurnitureMechanic().getItemID();
+        String id = event.getMechanic().getItemID();
         if (id == null) return;
 
         final Player player = event.getPlayer();

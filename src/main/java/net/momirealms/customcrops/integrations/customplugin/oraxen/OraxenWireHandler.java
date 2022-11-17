@@ -17,8 +17,8 @@
 
 package net.momirealms.customcrops.integrations.customplugin.oraxen;
 
-import io.th0rgal.oraxen.events.*;
-import io.th0rgal.oraxen.items.OraxenItems;
+import io.th0rgal.oraxen.api.OraxenItems;
+import io.th0rgal.oraxen.api.events.*;
 import io.th0rgal.oraxen.mechanics.provided.gameplay.furniture.FurnitureMechanic;
 import io.th0rgal.oraxen.mechanics.provided.gameplay.stringblock.StringBlockMechanic;
 import io.th0rgal.oraxen.mechanics.provided.gameplay.stringblock.StringBlockMechanicFactory;
@@ -49,50 +49,14 @@ public class OraxenWireHandler extends OraxenHandler{
 
     @Override
     public void onBreakNoteBlock(OraxenNoteBlockBreakEvent event) {
-        if (event.isCancelled()) return;
-
         // not necessary because string break event would be triggered too
-
-//        String id = event.getNoteBlockMechanic().getItemID();
-//        if (id.equals(BasicItemConfig.dryPot) || id.equals(BasicItemConfig.wetPot)) {
-//
-//            Location location = event.getBlock().getLocation();
-//            Player player = event.getPlayer();
-//
-//            if (!AntiGrief.testBreak(player, location)) {
-//                event.setCancelled(true);
-//                return;
-//            }
-//            super.onBreakPot(location);
-//
-//            Location seedLocation = location.clone().add(0,1,0);
-//            StringBlockMechanic mechanic = StringBlockMechanicListener.getStringMechanic(seedLocation.getBlock());
-//            if (mechanic == null) return;
-//            String seedID = mechanic.getItemID();
-//
-//            if (seedID.contains("_stage_")) {
-
-//                seedLocation.getBlock().setType(Material.AIR);
-//                if (seedID.equals(BasicItemConfig.deadCrop)) return;
-                //ripe or not
-//                if (hasNextStage(seedID)) {
-//                    Drop drop = mechanic.getDrop();
-//                    if (drop != null && player.getGameMode() != GameMode.CREATIVE) {
-//                        drop.spawns(location, new ItemStack(Material.AIR));
-//                    }
-//                    super.onBreakUnripeCrop(location);
-//                    return;
-//                }
-//                super.onBreakRipeCrop(seedLocation, seedID, player, false, false);
-//            }
-//        }
     }
 
     @Override
     public void onBreakStringBlock(OraxenStringBlockBreakEvent event) {
         if (event.isCancelled()) return;
 
-        StringBlockMechanic mechanic = event.getStringBlockMechanic();
+        StringBlockMechanic mechanic = event.getMechanic();
         String id = mechanic.getItemID();
 
         final Player player = event.getPlayer();
@@ -134,7 +98,7 @@ public class OraxenWireHandler extends OraxenHandler{
     public void onBreakFurniture(OraxenFurnitureBreakEvent event) {
         if (event.isCancelled()) return;
 
-        FurnitureMechanic mechanic = event.getFurnitureMechanic();
+        FurnitureMechanic mechanic = event.getMechanic();
         if (mechanic == null) return;
         String id = mechanic.getItemID();
         Sprinkler sprinkler = SprinklerConfig.SPRINKLERS_3D.get(id);
@@ -157,7 +121,7 @@ public class OraxenWireHandler extends OraxenHandler{
         if (!AntiGrief.testPlace(player, blockLoc)) return;
         if (!canProceedAction(player, blockLoc)) return;
 
-        FurnitureMechanic mechanic = event.getFurnitureMechanic();
+        FurnitureMechanic mechanic = event.getMechanic();
         if (mechanic == null) return;
         String id = mechanic.getItemID();
         Sprinkler sprinkler = SprinklerConfig.SPRINKLERS_3D.get(id);
@@ -173,6 +137,10 @@ public class OraxenWireHandler extends OraxenHandler{
         ItemStack itemInHand = event.getItemInHand();
         Location potLoc = event.getBlock().getLocation();
         Player player = event.getPlayer();
+
+        long time = System.currentTimeMillis();
+        if (time - (coolDown.getOrDefault(player, time - 50)) < 50) return;
+        coolDown.put(player, time);
 
         if (!AntiGrief.testPlace(player, potLoc)) return;
         if (super.tryMisc(event.getPlayer(), itemInHand, potLoc)) return;
@@ -205,7 +173,7 @@ public class OraxenWireHandler extends OraxenHandler{
         coolDown.put(player, time);
 
         final Block block = event.getBlock();
-        final String id = event.getStringBlockMechanic().getItemID();
+        final String id = event.getMechanic().getItemID();
 
         if (id.contains("_stage_")) {
 

@@ -28,6 +28,7 @@ public interface AntiGrief {
     boolean canPlace(Location location, Player player);
 
     static boolean testBreak(Player player, Location location) {
+        if (player.isOp()) return true;
         for (AntiGrief antiGrief : MainConfig.antiGriefs) {
             if(!antiGrief.canBreak(location, player)) {
                 return false;
@@ -37,6 +38,7 @@ public interface AntiGrief {
     }
 
     static boolean testPlace(Player player, Location location) {
+        if (player.isOp()) return true;
         for (AntiGrief antiGrief : MainConfig.antiGriefs) {
             if(!antiGrief.canPlace(location, player)) {
                 return false;
