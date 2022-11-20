@@ -315,13 +315,15 @@ public abstract class HandlerP extends Function {
     }
 
     public boolean hasNextStage(String id) {
-        int nextStage = Integer.parseInt(id.substring(id.length()-1)) + 1;
-        return customInterface.doesExist(StringUtils.chop(id) + nextStage);
+        String[] crop = StringUtils.split(id,"_");
+        int nextStage = Integer.parseInt(crop[2]) + 1;
+        return customInterface.doesExist(crop[0] + "_" + crop[1] + "_" + nextStage);
     }
 
     public String getNextStage(String id) {
-        int nextStage = Integer.parseInt(id.substring(id.length()-1)) + 1;
-        return StringUtils.chop(id) + nextStage;
+        String[] crop = StringUtils.split(id,"_");
+        int nextStage = Integer.parseInt(crop[2]) + 1;
+        return crop[0] + "_" + crop[1] + "_" + nextStage;
     }
 
     public boolean fillWaterCan(String id, NBTItem nbtItem, ItemStack itemStack, Player player) {

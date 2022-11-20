@@ -54,18 +54,15 @@ public class OraxenWireCropImpl implements CropModeInterface {
         if (crop == null) return true;
 
         if (MainConfig.needSkyLight && location.getBlock().getLightFromSky() < MainConfig.skyLightLevel) {
-            Bukkit.getScheduler().runTask(CustomCrops.plugin, () -> {
-                customInterface.placeWire(location, BasicItemConfig.deadCrop);
-            });
+            Bukkit.getScheduler().runTask(CustomCrops.plugin, () -> customInterface.placeWire(location, BasicItemConfig.deadCrop));
             return true;
         }
 
         if (cropManager.isWrongSeason(location, crop.getSeasons())) {
-            Bukkit.getScheduler().runTask(CustomCrops.plugin, () -> {
-                customInterface.placeWire(location, BasicItemConfig.deadCrop);
-            });
+            Bukkit.getScheduler().runTask(CustomCrops.plugin, () -> customInterface.placeWire(location, BasicItemConfig.deadCrop));
             return true;
         }
+
         Location potLoc = location.clone().subtract(0,1,0);
         String potID = customInterface.getBlockID(potLoc);
         if (potID == null) return true;
@@ -73,7 +70,7 @@ public class OraxenWireCropImpl implements CropModeInterface {
         Fertilizer fertilizer = cropManager.getFertilizer(potLoc);
         boolean certainGrow = potID.equals(BasicItemConfig.wetPot);
         int nextStage = Integer.parseInt(cropNameList[2]) + 1;
-        String temp = StringUtils.chop(blockID);
+        String temp = cropNameList[0] + "_" + cropNameList[1] + "_";
         if (customInterface.doesExist(temp + nextStage)) {
             if (MainConfig.enableCrow && cropManager.crowJudge(location)) return true;
             if (fertilizer instanceof SpeedGrow speedGrow && Math.random() < speedGrow.getChance()) {
