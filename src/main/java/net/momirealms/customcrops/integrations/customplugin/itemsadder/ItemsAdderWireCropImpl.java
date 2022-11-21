@@ -78,7 +78,7 @@ public class ItemsAdderWireCropImpl implements CropModeInterface {
         Fertilizer fertilizer = cropManager.getFertilizer(potLoc);
         boolean certainGrow = potID.equals(BasicItemConfig.wetPot);
         int nextStage = Integer.parseInt(cropNameList[2]) + 1;
-        String temp = blockID.substring(blockID.length() - String.valueOf(nextStage).length());
+        String temp = blockID.substring(0, blockID.length() - cropNameList[2].length());
 
         if (customInterface.doesExist(temp + nextStage)) {
             if (MainConfig.enableCrow && cropManager.crowJudge(location)) return true;

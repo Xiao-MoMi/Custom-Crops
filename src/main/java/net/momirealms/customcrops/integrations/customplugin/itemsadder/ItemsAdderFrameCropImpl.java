@@ -80,12 +80,13 @@ public class ItemsAdderFrameCropImpl implements CropModeInterface {
             Fertilizer fertilizer = cropManager.getFertilizer(potLoc);
             boolean certainGrow = potID.equals(BasicItemConfig.wetPot);
             int nextStage = Integer.parseInt(cropNameList[2]) + 1;
-            String temp = StringUtils.chop(id);
+            String temp = id.substring(0, id.length() - cropNameList[2].length());
+
             if (customInterface.doesExist(temp + nextStage)) {
                 if (MainConfig.enableCrow && cropManager.crowJudge(location, itemFrame)) return true;
                 if (fertilizer instanceof SpeedGrow speedGrow && Math.random() < speedGrow.getChance()) {
                     if (customInterface.doesExist(temp + (nextStage+1))) {
-                        addStage(itemFrame, temp + (nextStage + 1), crop.canRotate());
+                        addStage(itemFrame, temp + (nextStage+1), crop.canRotate());
                     }
                 }
                 else if (certainGrow || Math.random() < MainConfig.dryGrowChance) {
