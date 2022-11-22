@@ -78,6 +78,7 @@ public class ItemsAdderFrameHandler extends ItemsAdderHandler {
                         if (!AntiGrief.testBreak(player, entity.getLocation())) return;
                         if (!canProceedAction(player, entity.getLocation())) return;
                         CustomFurniture.remove(entity, false);
+                        if (entity.isValid()) entity.remove();
                         this.onInteractRipeCrop(location, namespacedID, player);
                         return;
                     }
@@ -229,6 +230,7 @@ public class ItemsAdderFrameHandler extends ItemsAdderHandler {
             String seedID = customFurniture.getNamespacedID();
             if (seedID.contains("_stage_")) {
                 CustomFurniture.remove(itemFrame, false);
+                if (itemFrame.isValid()) itemFrame.remove();
                 if (seedID.equals(BasicItemConfig.deadCrop)) return;
                 if (hasNextStage(seedID)) {
                     super.onBreakUnripeCrop(location);
