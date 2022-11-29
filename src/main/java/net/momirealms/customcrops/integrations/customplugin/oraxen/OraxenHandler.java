@@ -23,9 +23,11 @@ import io.th0rgal.oraxen.api.OraxenItems;
 import io.th0rgal.oraxen.api.events.*;
 import io.th0rgal.oraxen.mechanics.provided.gameplay.furniture.FurnitureMechanic;
 import net.momirealms.customcrops.CustomCrops;
-import net.momirealms.customcrops.api.crop.Crop;
 import net.momirealms.customcrops.api.event.WaterPotEvent;
-import net.momirealms.customcrops.config.*;
+import net.momirealms.customcrops.config.BasicItemConfig;
+import net.momirealms.customcrops.config.MainConfig;
+import net.momirealms.customcrops.config.SoundConfig;
+import net.momirealms.customcrops.config.WaterCanConfig;
 import net.momirealms.customcrops.integrations.customplugin.HandlerP;
 import net.momirealms.customcrops.integrations.customplugin.oraxen.listeners.OraxenBlockListener;
 import net.momirealms.customcrops.integrations.customplugin.oraxen.listeners.OraxenFurnitureListener;
@@ -33,7 +35,6 @@ import net.momirealms.customcrops.managers.CropManager;
 import net.momirealms.customcrops.managers.CustomWorld;
 import net.momirealms.customcrops.objects.WaterCan;
 import net.momirealms.customcrops.utils.AdventureUtil;
-import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -45,7 +46,6 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public abstract class OraxenHandler extends HandlerP {
 
@@ -186,12 +186,6 @@ public abstract class OraxenHandler extends HandlerP {
             can.setItemMeta(nbtItem.getItem().getItemMeta());
         }
         return true;
-    }
-
-    @Nullable
-    @Override
-    public Crop getCropFromID(String id) {
-        return CropConfig.CROPS.get(StringUtils.split(id, "_")[0]);
     }
 
     public void onBreakNoteBlock(OraxenNoteBlockBreakEvent event) {

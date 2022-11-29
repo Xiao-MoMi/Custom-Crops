@@ -46,65 +46,53 @@ public class OraxenWireCropImpl implements CropModeInterface {
     @Override
     public boolean growJudge(Location location) {
         String blockID = customInterface.getBlockID(location);
-        if (blockID == null) return true;
-        if (!blockID.contains("_stage_")) return true;
+        if (blockID == null || !blockID.contains("_stage_")) return true;
+
         String[] cropNameList = StringUtils.split(blockID,"_");
-        String cropKey = cropNameList[0];
-        Crop crop = CropConfig.CROPS.get(cropKey);
+        Crop crop = CropConfig.CROPS.get(cropNameList[0]);
         if (crop == null) return true;
 
-        if (MainConfig.needSkyLight && location.getBlock().getLightFromSky() < MainConfig.skyLightLevel) {
-            Bukkit.getScheduler().runTask(CustomCrops.plugin, () -> customInterface.placeWire(location, BasicItemConfig.deadCrop));
-            return true;
-        }
-
-        if (cropManager.isWrongSeason(location, crop.getSeasons())) {
+        if ((MainConfig.needSkyLight && location.getBlock().getLightFromSky() < MainConfig.skyLightLevel) || cropManager.isWrongSeason(location, crop.getSeasons())) {
             Bukkit.getScheduler().runTask(CustomCrops.plugin, () -> customInterface.placeWire(location, BasicItemConfig.deadCrop));
             return true;
         }
 
         Location potLoc = location.clone().subtract(0,1,0);
         String potID = customInterface.getBlockID(potLoc);
-        if (potID == null) return true;
+        if (potID == null || (!potID.equals(BasicItemConfig.wetPot) && !potID.equals(BasicItemConfig.dryPot))) return true;
+
+        if (MainConfig.enableCrow && cropManager.crowJudge(location)) return true;
 
         Fertilizer fertilizer = cropManager.getFertilizer(potLoc);
         boolean certainGrow = potID.equals(BasicItemConfig.wetPot);
         int nextStage = Integer.parseInt(cropNameList[2]) + 1;
+
         String temp = cropNameList[0] + "_" + cropNameList[1] + "_";
         if (customInterface.doesExist(temp + nextStage)) {
-            if (MainConfig.enableCrow && cropManager.crowJudge(location)) return true;
-            if (fertilizer instanceof SpeedGrow speedGrow && Math.random() < speedGrow.getChance()) {
-                if (customInterface.doesExist(temp + (nextStage+1))) {
-                    addStage(location, temp + (nextStage+1));
-                }
-            }
-            else if (certainGrow || Math.random() < MainConfig.dryGrowChance) {
+            if (fertilizer instanceof SpeedGrow speedGrow
+                    && Math.random() < speedGrow.getChance()
+                    && customInterface.doesExist(temp + (nextStage+1))
+            )
+                addStage(location, temp + (nextStage+1));
+            else if (certainGrow || Math.random() < MainConfig.dryGrowChance)
                 addStage(location, temp + nextStage);
-            }
+            return false;
         }
         else {
-            if (MainConfig.enableCrow && cropManager.crowJudge(location)) return true;
             GiganticCrop giganticCrop = crop.getGiganticCrop();
             if (giganticCrop != null) {
                 double chance = giganticCrop.getChance();
-                if (fertilizer instanceof Gigantic gigantic) {
-                    chance += gigantic.getChance();
-                }
+                if (fertilizer instanceof Gigantic gigantic) chance += gigantic.getChance();
                 if (Math.random() < chance) {
                     Bukkit.getScheduler().runTask(CustomCrops.plugin, () -> {
                         customInterface.removeBlock(location);
-                        if (giganticCrop.isBlock()) {
-                            customInterface.placeWire(location, giganticCrop.getBlockID());
-                        }
-                        else {
-                            customInterface.placeFurniture(location, giganticCrop.getBlockID());
-                        }
+                        if (giganticCrop.isBlock()) customInterface.placeWire(location, giganticCrop.getBlockID());
+                        else customInterface.placeFurniture(location, giganticCrop.getBlockID());
                     });
                 }
             }
             return true;
         }
-        return false;
     }
 
     private void addStage(Location seedLoc, String stage) {

@@ -27,8 +27,10 @@ import io.th0rgal.oraxen.mechanics.provided.gameplay.noteblock.NoteBlockMechanic
 import io.th0rgal.oraxen.mechanics.provided.gameplay.noteblock.NoteBlockMechanicFactory;
 import io.th0rgal.oraxen.mechanics.provided.gameplay.stringblock.StringBlockMechanic;
 import io.th0rgal.oraxen.mechanics.provided.gameplay.stringblock.StringBlockMechanicFactory;
+import net.momirealms.customcrops.api.crop.Crop;
+import net.momirealms.customcrops.config.CropConfig;
 import net.momirealms.customcrops.integrations.customplugin.CustomInterface;
-import net.momirealms.customcrops.utils.FurnitureUtil;
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -105,5 +107,27 @@ public class OraxenHook implements CustomInterface {
     @Override
     public boolean doesExist(String itemID) {
         return OraxenItems.getItemById(itemID) != null;
+    }
+
+    @Override
+    public boolean hasNextStage(String id) {
+        return doesExist(getNextStage(id));
+    }
+
+    @Override
+    public String getNextStage(String id) {
+        String[] crop = StringUtils.split(id,"_");
+        int nextStage = Integer.parseInt(crop[2]) + 1;
+        return crop[0] + "_" + crop[1] + "_" + nextStage;
+    }
+
+    @Override
+    public @Nullable Crop getCropFromID(String id) {
+        return CropConfig.CROPS.get(StringUtils.split(id, "_")[0]);
+    }
+
+    @Override
+    public Location getFrameCropLocation(Location seedLoc) {
+        return seedLoc.clone().add(0.5,0.03125,0.5);
     }
 }

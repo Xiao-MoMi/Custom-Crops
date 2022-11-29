@@ -17,6 +17,7 @@
 
 package net.momirealms.customcrops.integrations.customplugin;
 
+import net.momirealms.customcrops.api.crop.Crop;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.ItemFrame;
@@ -47,4 +48,12 @@ public interface CustomInterface {
 
     boolean doesExist(String itemID);
 
+    boolean hasNextStage(String id);
+
+    String getNextStage(String id);
+
+    @Nullable
+    Crop getCropFromID(String id);
+
+    Location getFrameCropLocation(Location seedLoc);
 }

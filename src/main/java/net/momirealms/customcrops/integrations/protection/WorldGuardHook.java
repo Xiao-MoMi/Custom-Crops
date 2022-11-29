@@ -41,7 +41,7 @@ public class WorldGuardHook implements AntiGrief {
         WorldGuardPlatform platform = WorldGuard.getInstance().getPlatform();
         if (hasRegion(world, BukkitAdapter.asBlockVector(location))){
             RegionQuery query = platform.getRegionContainer().createQuery();
-            return query.testState(BukkitAdapter.adapt(location), localPlayer, Flags.BUILD);
+            return query.testBuild(BukkitAdapter.adapt(location), localPlayer, Flags.BUILD);
         }
         else return true;
     }
@@ -53,7 +53,7 @@ public class WorldGuardHook implements AntiGrief {
         WorldGuardPlatform platform = WorldGuard.getInstance().getPlatform();
         if (hasRegion(world, BukkitAdapter.asBlockVector(location))){
             RegionQuery query = platform.getRegionContainer().createQuery();
-            return query.testState(BukkitAdapter.adapt(location), localPlayer, Flags.BLOCK_BREAK);
+            return query.testBuild(BukkitAdapter.adapt(location), localPlayer, Flags.BLOCK_BREAK);
         }
         else return true;
     }

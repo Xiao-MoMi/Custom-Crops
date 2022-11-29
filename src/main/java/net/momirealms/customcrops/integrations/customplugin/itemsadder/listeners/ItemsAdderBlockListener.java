@@ -36,8 +36,4 @@ public class ItemsAdderBlockListener implements Listener {
         handler.onBreakBlock(event);
     }
 
-    @EventHandler
-    public void onInteractBlock(CustomBlockInteractEvent event) {
-        handler.onInteractBlock(event);
-    }
 }

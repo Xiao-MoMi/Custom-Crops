@@ -52,76 +52,60 @@ public class OraxenFrameCropImpl implements CropModeInterface {
 
         Chunk chunk = location.getChunk();
 
-        if (chunk.isEntitiesLoaded()) {
+        if (chunk.isEntitiesLoaded()) return false;
 
-            Location cropLoc = location.clone().add(0.5,0.03125,0.5);
-            ItemFrame itemFrame = FurnitureUtil.getItemFrame(cropLoc);
-            if (itemFrame == null) return true;
-            String id = customInterface.getItemID(itemFrame.getItem());
-            if (id == null) return true;
-            if (id.equals(BasicItemConfig.deadCrop)) return true;
+        ItemFrame itemFrame = FurnitureUtil.getItemFrame(customInterface.getFrameCropLocation(location));
+        if (itemFrame == null) return true;
 
-            String[] cropNameList = StringUtils.split(id,"_");
-            String cropKey = cropNameList[0];
-            Crop crop = CropConfig.CROPS.get(cropKey);
-            if (crop == null) return true;
+        String id = customInterface.getItemID(itemFrame.getItem());
+        if (id == null || id.equals(BasicItemConfig.deadCrop)) return true;
 
-            if (MainConfig.needSkyLight && location.getBlock().getLightFromSky() < MainConfig.skyLightLevel) {
-                itemFrame.setItem(customInterface.getItemStack(BasicItemConfig.deadCrop), false);
-                itemFrame.getPersistentDataContainer().set(OraxenHook.FURNITURE, PersistentDataType.STRING, BasicItemConfig.deadCrop);
-                return true;
-            }
+        String[] cropNameList = StringUtils.split(id,"_");
+        Crop crop = CropConfig.CROPS.get(cropNameList[0]);
+        if (crop == null) return true;
 
-            if (cropManager.isWrongSeason(location, crop.getSeasons())) {
-                itemFrame.setItem(customInterface.getItemStack(BasicItemConfig.deadCrop), false);
-                itemFrame.getPersistentDataContainer().set(OraxenHook.FURNITURE, PersistentDataType.STRING, BasicItemConfig.deadCrop);
-                return true;
-            }
-
-            Location potLoc = location.clone().subtract(0,1,0);
-            String potID = customInterface.getBlockID(potLoc);
-            if (potID == null) return true;
-
-            Fertilizer fertilizer = cropManager.getFertilizer(potLoc);
-            boolean certainGrow = potID.equals(BasicItemConfig.wetPot);
-
-            int nextStage = Integer.parseInt(cropNameList[2]) + 1;
-            String temp = StringUtils.chop(id);
-            if (customInterface.doesExist(temp + nextStage)) {
-                if (MainConfig.enableCrow && cropManager.crowJudge(location, itemFrame)) return true;
-                if (fertilizer instanceof SpeedGrow speedGrow && Math.random() < speedGrow.getChance()) {
-                    if (customInterface.doesExist(temp + (nextStage+1))) {
-                        addStage(itemFrame, temp + (nextStage+1));
-                    }
-                }
-                else if (certainGrow || Math.random() < MainConfig.dryGrowChance) {
-                    addStage(itemFrame, temp + nextStage);
-                }
-            }
-            else {
-                if (MainConfig.enableCrow && cropManager.crowJudge(location, itemFrame)) return true;
-                GiganticCrop giganticCrop = crop.getGiganticCrop();
-                if (giganticCrop != null) {
-                    double chance = giganticCrop.getChance();
-                    if (fertilizer instanceof Gigantic gigantic) {
-                        chance += gigantic.getChance();
-                    }
-                    if (Math.random() < chance) {
-                        Bukkit.getScheduler().runTask(CustomCrops.plugin, () -> {
-                            customInterface.removeFurniture(itemFrame);
-                            if (giganticCrop.isBlock()) {
-                                customInterface.placeWire(location, giganticCrop.getBlockID());
-                            }
-                            else {
-                                customInterface.placeFurniture(location, giganticCrop.getBlockID());
-                            }
-                        });
-                    }
-                }
-                return true;
-            }
+        if ((MainConfig.needSkyLight && location.getBlock().getLightFromSky() < MainConfig.skyLightLevel) || cropManager.isWrongSeason(location, crop.getSeasons())) {
+            itemFrame.setItem(customInterface.getItemStack(BasicItemConfig.deadCrop), false);
+            itemFrame.getPersistentDataContainer().set(OraxenHook.FURNITURE, PersistentDataType.STRING, BasicItemConfig.deadCrop);
+            return true;
         }
-        return false;
+
+        Location potLoc = location.clone().subtract(0,1,0);
+        String potID = customInterface.getBlockID(potLoc);
+        if (potID == null || (!potID.equals(BasicItemConfig.wetPot) && !potID.equals(BasicItemConfig.dryPot))) return true;
+
+        Fertilizer fertilizer = cropManager.getFertilizer(potLoc);
+        boolean certainGrow = potID.equals(BasicItemConfig.wetPot);
+
+        int nextStage = Integer.parseInt(cropNameList[2]) + 1;
+        String temp = StringUtils.chop(id);
+
+        if (MainConfig.enableCrow && cropManager.crowJudge(location, itemFrame)) return true;
+        if (customInterface.doesExist(temp + nextStage)) {
+            if (fertilizer instanceof SpeedGrow speedGrow
+                    && Math.random() < speedGrow.getChance()
+                    && customInterface.doesExist(temp + (nextStage+1))
+            )
+                addStage(itemFrame, temp + (nextStage+1));
+            else if (certainGrow || Math.random() < MainConfig.dryGrowChance)
+                addStage(itemFrame, temp + nextStage);
+            return false;
+        }
+        else {
+            GiganticCrop giganticCrop = crop.getGiganticCrop();
+            if (giganticCrop != null) {
+                double chance = giganticCrop.getChance();
+                if (fertilizer instanceof Gigantic gigantic) chance += gigantic.getChance();
+                if (Math.random() < chance) {
+                    Bukkit.getScheduler().runTask(CustomCrops.plugin, () -> {
+                        customInterface.removeFurniture(itemFrame);
+                        if (giganticCrop.isBlock()) customInterface.placeWire(location, giganticCrop.getBlockID());
+                        else customInterface.placeFurniture(location, giganticCrop.getBlockID());
+                    });
+                }
+            }
+            return true;
+        }
     }
 
     private void addStage(ItemFrame itemFrame, String stage) {

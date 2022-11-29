@@ -79,7 +79,7 @@ public class OraxenFrameHandler extends OraxenHandler {
             if (furnitureID.contains("_stage_")) {
                 itemFrame.remove();
                 if (furnitureID.equals(BasicItemConfig.deadCrop)) return;
-                if (hasNextStage(furnitureID)) {
+                if (customInterface.hasNextStage(furnitureID)) {
                     FurnitureMechanic mechanic = (FurnitureMechanic) FurnitureFactory.instance.getMechanic(furnitureID);
                     if (mechanic == null) return;
                     Drop drop = mechanic.getDrop();
@@ -113,7 +113,7 @@ public class OraxenFrameHandler extends OraxenHandler {
 
         if (id.contains("_stage_")) {
             if (id.equals(BasicItemConfig.deadCrop)) return;
-            if (hasNextStage(id)) {
+            if (customInterface.hasNextStage(id)) {
                 super.onBreakUnripeCrop(event.getBlock().getLocation());
                 return;
             }
@@ -177,52 +177,51 @@ public class OraxenFrameHandler extends OraxenHandler {
             return;
         }
 
-        if (id.contains("_stage_")) {
-            if (!id.equals(BasicItemConfig.deadCrop)) {
-                ItemStack itemInHand = player.getInventory().getItemInMainHand();
-                if (!hasNextStage(id)) {
-                    if (MainConfig.canRightClickHarvest && !(MainConfig.emptyHand && itemInHand.getType() != Material.AIR)) {
-                        if (!AntiGrief.testBreak(player, location)) return;
-                        itemFrame.remove();
-                        this.onInteractRipeCrop(location, id, player);
-                        return;
-                    }
-                }
-                //has next stage
-                else if (MainConfig.enableBoneMeal && itemInHand.getType() == Material.BONE_MEAL) {
-                    if (!AntiGrief.testPlace(player, location)) return;
-                    if (player.getGameMode() != GameMode.CREATIVE) itemInHand.setAmount(itemInHand.getAmount() - 1);
-                    if (Math.random() < MainConfig.boneMealChance) {
-                        itemFrame.getWorld().spawnParticle(MainConfig.boneMealSuccess, location.clone().add(0,0.5, 0),3,0.2,0.2,0.2);
-                        if (SoundConfig.boneMeal.isEnable()) {
-                            AdventureUtil.playerSound(
-                                    player,
-                                    SoundConfig.boneMeal.getSource(),
-                                    SoundConfig.boneMeal.getKey(),
-                                    1,1
-                            );
-                        }
-                        String nextStage = getNextStage(id);
-                        itemFrame.setItem(customInterface.getItemStack(nextStage));
-                        itemFrame.getPersistentDataContainer().set(OraxenHook.FURNITURE, PersistentDataType.STRING, nextStage);
-                    }
+        if (!id.contains("_stage_")) return;
+        if (!id.equals(BasicItemConfig.deadCrop)) {
+            ItemStack itemInHand = player.getInventory().getItemInMainHand();
+            if (!customInterface.hasNextStage(id)) {
+                if (MainConfig.canRightClickHarvest && !(MainConfig.emptyHand && itemInHand.getType() != Material.AIR)) {
+                    if (!AntiGrief.testBreak(player, location)) return;
+                    itemFrame.remove();
+                    this.onInteractRipeCrop(location, id, player);
                     return;
                 }
             }
-
-            if (!AntiGrief.testPlace(player, location)) return;
-            Location potLoc = location.clone().subtract(0,1,0).getBlock().getLocation();
-            super.tryMisc(player, player.getInventory().getItemInMainHand(), potLoc);
+            //has next stage
+            else if (MainConfig.enableBoneMeal && itemInHand.getType() == Material.BONE_MEAL) {
+                if (!AntiGrief.testPlace(player, location)) return;
+                if (player.getGameMode() != GameMode.CREATIVE) itemInHand.setAmount(itemInHand.getAmount() - 1);
+                if (Math.random() < MainConfig.boneMealChance) {
+                    itemFrame.getWorld().spawnParticle(MainConfig.boneMealSuccess, location.clone().add(0,0.5, 0),3,0.2,0.2,0.2);
+                    if (SoundConfig.boneMeal.isEnable()) {
+                        AdventureUtil.playerSound(
+                                player,
+                                SoundConfig.boneMeal.getSource(),
+                                SoundConfig.boneMeal.getKey(),
+                                1,1
+                        );
+                    }
+                    String nextStage = customInterface.getNextStage(id);
+                    itemFrame.setItem(customInterface.getItemStack(nextStage));
+                    itemFrame.getPersistentDataContainer().set(OraxenHook.FURNITURE, PersistentDataType.STRING, nextStage);
+                }
+                return;
+            }
         }
+
+        if (!AntiGrief.testPlace(player, location)) return;
+        Location potLoc = location.clone().subtract(0,1,0).getBlock().getLocation();
+        super.tryMisc(player, player.getInventory().getItemInMainHand(), potLoc);
     }
 
     private void onInteractRipeCrop(Location location, String id, Player player) {
-        Crop crop = getCropFromID(id);
+        Crop crop = customInterface.getCropFromID(id);
         if (crop == null) return;
         if (super.onInteractRipeCrop(location, crop, player)) return;
-        ItemFrame itemFrame = cropManager.getCustomInterface().placeFurniture(location, crop.getReturnStage());
-        if (crop.canRotate() && itemFrame != null) {
-            itemFrame.setRotation(FurnitureUtil.getRandomRotation());
+        if (crop.getReturnStage() != null) {
+            ItemFrame itemFrame = cropManager.getCustomInterface().placeFurniture(location, crop.getReturnStage());
+            if (crop.canRotate() && itemFrame != null) itemFrame.setRotation(FurnitureUtil.getRandomRotation());
         }
     }
 }

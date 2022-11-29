@@ -48,11 +48,6 @@ public class OraxenWireHandler extends OraxenHandler{
     }
 
     @Override
-    public void onBreakNoteBlock(OraxenNoteBlockBreakEvent event) {
-        // not necessary because string break event would be triggered too
-    }
-
-    @Override
     public void onBreakStringBlock(OraxenStringBlockBreakEvent event) {
         if (event.isCancelled()) return;
 
@@ -86,7 +81,7 @@ public class OraxenWireHandler extends OraxenHandler{
             }
 
             if (id.equals(BasicItemConfig.deadCrop)) return;
-            if (hasNextStage(id)) {
+            if (customInterface.hasNextStage(id)) {
                 super.onBreakUnripeCrop(location);
                 return;
             }
@@ -183,7 +178,7 @@ public class OraxenWireHandler extends OraxenHandler{
             //ripe crops
             if (!id.equals(BasicItemConfig.deadCrop)) {
 
-                if (!hasNextStage(id)) {
+                if (!customInterface.hasNextStage(id)) {
                     if (MainConfig.canRightClickHarvest && !(MainConfig.emptyHand && itemInHand != null && itemInHand.getType() != Material.AIR)) {
                         if (!AntiGrief.testBreak(player, seedLoc)) return;
 
@@ -206,7 +201,7 @@ public class OraxenWireHandler extends OraxenHandler{
                                     1,1
                             );
                         }
-                        StringBlockMechanicFactory.setBlockModel(block, getNextStage(id));
+                        StringBlockMechanicFactory.setBlockModel(block, customInterface.getNextStage(id));
                     }
                     return;
                 }
@@ -221,9 +216,9 @@ public class OraxenWireHandler extends OraxenHandler{
     }
 
     private void onInteractRipeCrop(Location location, String id, Player player) {
-        Crop crop = getCropFromID(id);
+        Crop crop = customInterface.getCropFromID(id);
         if (crop == null) return;
         if (super.onInteractRipeCrop(location, crop, player)) return;
-        StringBlockMechanicFactory.setBlockModel(location.getBlock(), crop.getReturnStage());
+        if (crop.getReturnStage() != null) StringBlockMechanicFactory.setBlockModel(location.getBlock(), crop.getReturnStage());
     }
 }

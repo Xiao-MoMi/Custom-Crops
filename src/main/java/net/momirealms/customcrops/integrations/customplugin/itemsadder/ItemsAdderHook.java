@@ -22,7 +22,10 @@ import de.tr7zw.changeme.nbtapi.NBTItem;
 import dev.lone.itemsadder.api.CustomBlock;
 import dev.lone.itemsadder.api.CustomFurniture;
 import dev.lone.itemsadder.api.CustomStack;
+import net.momirealms.customcrops.api.crop.Crop;
+import net.momirealms.customcrops.config.CropConfig;
 import net.momirealms.customcrops.integrations.customplugin.CustomInterface;
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
@@ -98,4 +101,27 @@ public class ItemsAdderHook implements CustomInterface {
         return CustomStack.getInstance(itemID) != null;
     }
 
+    @Override
+    public boolean hasNextStage(String id) {
+        return doesExist(getNextStage(id));
+    }
+
+    @Override
+    public String getNextStage(String id) {
+        String[] split = StringUtils.split(id, ":");
+        String[] crop = StringUtils.split(split[1], "_");
+        int nextStage = Integer.parseInt(crop[2]) + 1;
+        return split[0] + ":" + crop[0] + "_" + crop[1] + "_" + nextStage;
+    }
+
+    @Override
+    public @Nullable Crop getCropFromID(String id) {
+        String[] cropNameList = StringUtils.split(StringUtils.split(id, ":")[1], "_");
+        return CropConfig.CROPS.get(cropNameList[0]);
+    }
+
+    @Override
+    public Location getFrameCropLocation(Location seedLoc) {
+        return seedLoc.clone().add(0.5,0.5,0.5);
+    }
 }

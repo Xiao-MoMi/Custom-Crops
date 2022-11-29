@@ -314,18 +314,6 @@ public abstract class HandlerP extends Function {
         return false;
     }
 
-    public boolean hasNextStage(String id) {
-        String[] crop = StringUtils.split(id,"_");
-        int nextStage = Integer.parseInt(crop[2]) + 1;
-        return customInterface.doesExist(crop[0] + "_" + crop[1] + "_" + nextStage);
-    }
-
-    public String getNextStage(String id) {
-        String[] crop = StringUtils.split(id,"_");
-        int nextStage = Integer.parseInt(crop[2]) + 1;
-        return crop[0] + "_" + crop[1] + "_" + nextStage;
-    }
-
     public boolean fillWaterCan(String id, NBTItem nbtItem, ItemStack itemStack, Player player) {
         WaterCan config = WaterCanConfig.CANS.get(id);
         if (config != null) {
@@ -547,17 +535,6 @@ public abstract class HandlerP extends Function {
         return !preActionEvent.isCancelled();
     }
 
-    public Crop getCropFromID(String id) {
-        String crop;
-        if (id.contains(":")) {
-            crop = id.split(":")[1].split("_")[0];
-        }
-        else {
-            crop = id.split("_")[0];
-        }
-        return CropConfig.CROPS.get(crop);
-    }
-
     protected boolean onInteractRipeCrop(Location location, Crop crop, Player player) {
 
         CustomWorld customWorld = cropManager.getCustomWorld(location.getWorld());
@@ -582,16 +559,15 @@ public abstract class HandlerP extends Function {
         CustomWorld customWorld = cropManager.getCustomWorld(seedLoc.getWorld());
         if (customWorld == null) return false;
 
-        if (!MainConfig.OraxenHook) {
-            if (FurnitureUtil.hasFurniture(seedLoc.clone().add(0.5,0.5,0.5))) return false;
-        }
-        else {
-            if (FurnitureUtil.hasFurniture(seedLoc.clone().add(0.5,0.03125,0.5))) return false;
-        }
-
+        if (FurnitureUtil.hasFurniture(customInterface.getFrameCropLocation(seedLoc))) return false;
         if (seedLoc.getBlock().getType() != Material.AIR) return false;
 
         if (player != null) {
+
+            long time = System.currentTimeMillis();
+            if (time - (coolDown.getOrDefault(player, time - 100)) < 100) return false;
+            coolDown.put(player, time);
+
             PlantingCondition plantingCondition = new PlantingCondition(seedLoc, player);
             if (crop.getRequirements() != null) {
                 for (RequirementInterface requirement : crop.getRequirements()) {
@@ -617,13 +593,17 @@ public abstract class HandlerP extends Function {
         }
 
         if (MainConfig.limitation) {
-            if (MainConfig.cropMode && LimitationUtil.reachWireLimit(seedLoc)) {
-                if (player != null) AdventureUtil.playerMessage(player, MessageConfig.prefix + MessageConfig.limitWire.replace("{max}", String.valueOf(MainConfig.wireAmount)));
-                return false;
+            if (MainConfig.cropMode) {
+                if (LimitationUtil.reachWireLimit(seedLoc)) {
+                    if (player != null) AdventureUtil.playerMessage(player, MessageConfig.prefix + MessageConfig.limitWire.replace("{max}", String.valueOf(MainConfig.wireAmount)));
+                    return false;
+                }
             }
-            if (!MainConfig.cropMode && LimitationUtil.reachFrameLimit(seedLoc)) {
-                if (player != null) AdventureUtil.playerMessage(player, MessageConfig.prefix + MessageConfig.limitFrame.replace("{max}", String.valueOf(MainConfig.frameAmount)));
-                return false;
+            else {
+                if (LimitationUtil.reachFrameLimit(seedLoc)) {
+                    if (player != null) AdventureUtil.playerMessage(player, MessageConfig.prefix + MessageConfig.limitFrame.replace("{max}", String.valueOf(MainConfig.frameAmount)));
+                    return false;
+                }
             }
         }
 

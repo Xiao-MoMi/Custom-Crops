@@ -20,12 +20,17 @@ package net.momirealms.customcrops.integrations.customplugin.itemsadder;
 import de.tr7zw.changeme.nbtapi.NBTCompound;
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import dev.lone.itemsadder.api.CustomStack;
-import dev.lone.itemsadder.api.Events.*;
+import dev.lone.itemsadder.api.Events.CustomBlockBreakEvent;
+import dev.lone.itemsadder.api.Events.FurnitureBreakEvent;
+import dev.lone.itemsadder.api.Events.FurnitureInteractEvent;
+import dev.lone.itemsadder.api.Events.FurniturePlaceSuccessEvent;
 import net.kyori.adventure.key.Key;
 import net.momirealms.customcrops.CustomCrops;
-import net.momirealms.customcrops.api.crop.Crop;
 import net.momirealms.customcrops.api.event.WaterPotEvent;
-import net.momirealms.customcrops.config.*;
+import net.momirealms.customcrops.config.BasicItemConfig;
+import net.momirealms.customcrops.config.MainConfig;
+import net.momirealms.customcrops.config.SoundConfig;
+import net.momirealms.customcrops.config.WaterCanConfig;
 import net.momirealms.customcrops.integrations.AntiGrief;
 import net.momirealms.customcrops.integrations.customplugin.HandlerP;
 import net.momirealms.customcrops.integrations.customplugin.itemsadder.listeners.ItemsAdderBlockListener;
@@ -34,7 +39,6 @@ import net.momirealms.customcrops.managers.CropManager;
 import net.momirealms.customcrops.managers.CustomWorld;
 import net.momirealms.customcrops.objects.WaterCan;
 import net.momirealms.customcrops.utils.AdventureUtil;
-import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -208,17 +212,7 @@ public abstract class ItemsAdderHandler extends HandlerP {
         return true;
     }
 
-    @Override
-    public Crop getCropFromID(String namespacedID) {
-        String[] cropNameList = StringUtils.split(StringUtils.split(namespacedID, ":")[1], "_");
-        return CropConfig.CROPS.get(cropNameList[0]);
-    }
-
     public void onBreakBlock(CustomBlockBreakEvent event) {
-        //null
-    }
-
-    public void onInteractBlock(CustomBlockInteractEvent event) {
         //null
     }
 
