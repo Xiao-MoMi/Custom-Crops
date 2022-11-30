@@ -95,6 +95,10 @@ public class ItemsAdderWireHandler extends ItemsAdderHandler {
 
         final Player player = event.getPlayer();
 
+        long time = System.currentTimeMillis();
+        if (time - (coolDown.getOrDefault(player, time - 50)) < 50) return;
+        coolDown.put(player, time);
+
         super.onPlayerInteract(event);
 
         if (event.getAction() != Action.RIGHT_CLICK_BLOCK) return;

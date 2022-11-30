@@ -563,11 +563,6 @@ public abstract class HandlerP extends Function {
         if (seedLoc.getBlock().getType() != Material.AIR) return false;
 
         if (player != null) {
-
-            long time = System.currentTimeMillis();
-            if (time - (coolDown.getOrDefault(player, time - 100)) < 100) return false;
-            coolDown.put(player, time);
-
             PlantingCondition plantingCondition = new PlantingCondition(seedLoc, player);
             if (crop.getRequirements() != null) {
                 for (RequirementInterface requirement : crop.getRequirements()) {

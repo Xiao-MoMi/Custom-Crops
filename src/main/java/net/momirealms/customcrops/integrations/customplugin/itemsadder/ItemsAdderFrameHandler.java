@@ -143,6 +143,7 @@ public class ItemsAdderFrameHandler extends ItemsAdderHandler {
     public void onPlayerInteract(PlayerInteractEvent event) {
 
         final Player player = event.getPlayer();
+
         long time = System.currentTimeMillis();
         if (time - (coolDown.getOrDefault(player, time - 50)) < 50) return;
         coolDown.put(player, time);
