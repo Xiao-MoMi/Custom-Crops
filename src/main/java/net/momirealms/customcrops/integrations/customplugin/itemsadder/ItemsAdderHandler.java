@@ -83,7 +83,7 @@ public abstract class ItemsAdderHandler extends HandlerP {
         Location location = event.getBukkitEntity().getLocation();
         CustomWorld customWorld = cropManager.getCustomWorld(location.getWorld());
         if (customWorld == null) return;
-        customWorld.addScarecrow(location);
+        customWorld.addScarecrowCache(location);
     }
 
     @Override
@@ -112,17 +112,18 @@ public abstract class ItemsAdderHandler extends HandlerP {
             }
 
             if (block == null) return;
+
             Location location = block.getLocation();
             if (!AntiGrief.testPlace(player, location)) return;
             if (!canProceedAction(player, location)) return;
-
-            if (event.getBlockFace() == BlockFace.UP && placeSprinkler(namespacedID, event.getClickedBlock().getLocation(), player, item)) {
-                return;
+            if (event.getBlockFace() == BlockFace.UP) {
+                placeSprinkler(namespacedID, event.getClickedBlock().getLocation(), player, item);
             }
         }
     }
 
     public boolean tryMisc(Player player, ItemStack itemInHand, Location potLoc) {
+        if (!AntiGrief.testPlace(player, potLoc)) return true;
         if (itemInHand == null || itemInHand.getType() == Material.AIR) return true;
         CustomStack customStack = CustomStack.byItemStack(itemInHand);
 
@@ -138,8 +139,8 @@ public abstract class ItemsAdderHandler extends HandlerP {
         if (useWateringCan(potLoc, itemID, player, customStack)) {
             return true;
         }
+
         return false;
-        //for future misc
     }
 
     private boolean useWateringCan(Location potLoc, String namespacedID, Player player, @NotNull CustomStack can) {

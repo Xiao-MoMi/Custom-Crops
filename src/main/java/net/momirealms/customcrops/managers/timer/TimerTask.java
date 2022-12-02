@@ -35,7 +35,7 @@ public class TimerTask extends BukkitRunnable {
         if (!MainConfig.autoGrow) return;
         for (World world : MainConfig.getWorldsList()) {
             long time = world.getTime();
-            if (time > 950 && time < 1051) {
+            if (time > 900 && time < 1001) {
                 cropManager.grow(world, MainConfig.timeToGrow, MainConfig.timeToWork, MainConfig.timeToDry, false, false);
             }
             if (time > 0 && time < 101) {

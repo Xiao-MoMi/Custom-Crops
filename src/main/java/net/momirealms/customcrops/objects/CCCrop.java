@@ -33,9 +33,11 @@ public class CCCrop implements Crop {
     private ActionInterface[] actions;
     private final String key;
     private boolean rotation;
+    private final int max_stage;
 
-    public CCCrop(String key) {
+    public CCCrop(String key, int max_stage) {
         this.key = key;
+        this.max_stage = max_stage;
     }
 
     public QualityLoot getQualityLoot() {
@@ -104,5 +106,9 @@ public class CCCrop implements Crop {
 
     public void setCanRotate(boolean rotation) {
         this.rotation = rotation;
+    }
+
+    public int getMax_stage() {
+        return max_stage;
     }
 }

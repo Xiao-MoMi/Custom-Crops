@@ -22,10 +22,13 @@ import de.tr7zw.changeme.nbtapi.NBTItem;
 import dev.lone.itemsadder.api.CustomBlock;
 import dev.lone.itemsadder.api.CustomFurniture;
 import dev.lone.itemsadder.api.CustomStack;
+import net.momirealms.customcrops.CustomCrops;
 import net.momirealms.customcrops.api.crop.Crop;
 import net.momirealms.customcrops.config.CropConfig;
 import net.momirealms.customcrops.integrations.customplugin.CustomInterface;
+import net.momirealms.customcrops.utils.FurnitureUtil;
 import org.apache.commons.lang.StringUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
@@ -108,20 +111,36 @@ public class ItemsAdderHook implements CustomInterface {
 
     @Override
     public String getNextStage(String id) {
-        String[] split = StringUtils.split(id, ":");
-        String[] crop = StringUtils.split(split[1], "_");
-        int nextStage = Integer.parseInt(crop[2]) + 1;
-        return split[0] + ":" + crop[0] + "_" + crop[1] + "_" + nextStage;
+        String stageStr = id.substring(id.indexOf("_stage_") + 7);
+        int nextStage = Integer.parseInt(stageStr) + 1;
+        return id.substring(0, id.length() - stageStr.length()) + nextStage;
     }
 
     @Override
     public @Nullable Crop getCropFromID(String id) {
-        String[] cropNameList = StringUtils.split(StringUtils.split(id, ":")[1], "_");
-        return CropConfig.CROPS.get(cropNameList[0]);
+        String cropNameWithoutNS = StringUtils.split(id, ":")[1];
+        return CropConfig.CROPS.get(cropNameWithoutNS.substring(0, cropNameWithoutNS.indexOf("_stage_")));
     }
 
     @Override
     public Location getFrameCropLocation(Location seedLoc) {
         return seedLoc.clone().add(0.5,0.5,0.5);
+    }
+
+    @Override
+    public void addFrameStage(ItemFrame itemFrame, String stage, boolean rotate) {
+        CustomFurniture.remove(itemFrame, false);
+        CustomFurniture customFurniture = CustomFurniture.spawn(stage, itemFrame.getLocation().getBlock());
+        if (rotate && customFurniture.getArmorstand() instanceof ItemFrame frame) {
+            frame.setRotation(FurnitureUtil.getRandomRotation());
+        }
+    }
+
+    @Override
+    public void addWireStage(Location seedLoc, String stage) {
+        Bukkit.getScheduler().runTask(CustomCrops.plugin, () -> {
+            removeBlock(seedLoc);
+            placeWire(seedLoc, stage);
+        });
     }
 }

@@ -12,7 +12,6 @@ import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.momirealms.customcrops.CustomCrops;
 import net.momirealms.customcrops.config.MainConfig;
 import net.momirealms.customcrops.config.WaterCanConfig;
-import net.momirealms.customcrops.integrations.customplugin.CustomInterface;
 import net.momirealms.customcrops.managers.CropManager;
 import net.momirealms.customcrops.objects.WaterCan;
 import org.bukkit.GameMode;
@@ -24,11 +23,11 @@ import java.util.List;
 
 public class ContainerListener extends PacketAdapter {
 
-    private final CustomInterface customInterface;
+    private CropManager cropManager;
 
     public ContainerListener(CropManager cropManager) {
         super(CustomCrops.plugin, ListenerPriority.HIGHEST, PacketType.Play.Server.WINDOW_ITEMS);
-        this.customInterface = cropManager.getCustomInterface();
+        this.cropManager = cropManager;
     }
 
     public void onPacketSending(PacketEvent event) {
@@ -42,7 +41,7 @@ public class ContainerListener extends PacketAdapter {
             ItemStack fake = itemStack.clone();
             itemStacksClone.add(fake);
             if (fake.getType() == Material.AIR) continue;
-            String id = customInterface.getItemID(fake);
+            String id = cropManager.getCustomInterface().getItemID(fake);
             WaterCan config = WaterCanConfig.CANS.get(id);
             if (config == null) continue;
             NBTItem nbtItem = new NBTItem(fake);

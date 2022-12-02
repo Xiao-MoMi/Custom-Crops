@@ -56,4 +56,8 @@ public interface CustomInterface {
     Crop getCropFromID(String id);
 
     Location getFrameCropLocation(Location seedLoc);
+
+    void addFrameStage(ItemFrame itemFrame, String stage, boolean rotate);
+
+    void addWireStage(Location seedLoc, String stage);
 }

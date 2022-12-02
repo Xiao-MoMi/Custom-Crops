@@ -33,6 +33,7 @@ import net.momirealms.customcrops.managers.CropManager;
 import net.momirealms.customcrops.objects.Sprinkler;
 import net.momirealms.customcrops.utils.AdventureUtil;
 import net.momirealms.customcrops.utils.FurnitureUtil;
+import net.momirealms.customcrops.utils.MiscUtils;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -51,7 +52,6 @@ public class ItemsAdderFrameHandler extends ItemsAdderHandler {
         super(cropManager);
     }
 
-    //maybe crop or sprinkler
     public void onInteractFurniture(FurnitureInteractEvent event) {
         if (event.isCancelled()) return;
 
@@ -62,6 +62,8 @@ public class ItemsAdderFrameHandler extends ItemsAdderHandler {
         final Entity entity = event.getBukkitEntity();
         final Location location = entity.getLocation();;
 
+        if (!canProceedAction(player, location)) return;
+
         Sprinkler sprinkler = SprinklerConfig.SPRINKLERS_3D.get(namespacedID);
         if (sprinkler != null) {
             if (!AntiGrief.testPlace(player, entity.getLocation())) return;
@@ -70,10 +72,9 @@ public class ItemsAdderFrameHandler extends ItemsAdderHandler {
         }
 
         if (!namespacedID.contains("_stage_")) return;
-        if (!canProceedAction(player, location)) return;
         if (!namespacedID.equals(BasicItemConfig.deadCrop)) {
             ItemStack itemInHand = player.getInventory().getItemInMainHand();
-            if (!customInterface.hasNextStage(namespacedID)) {
+            if (isRipe(namespacedID)) {
                 if (MainConfig.canRightClickHarvest && !(MainConfig.emptyHand && itemInHand.getType() != Material.AIR)) {
                     if (!AntiGrief.testBreak(player, entity.getLocation())) return;
                     if (!canProceedAction(player, entity.getLocation())) return;
@@ -83,7 +84,6 @@ public class ItemsAdderFrameHandler extends ItemsAdderHandler {
                     return;
                 }
             }
-            //has next stage
             else if (MainConfig.enableBoneMeal && itemInHand.getType() == Material.BONE_MEAL) {
                 if (!AntiGrief.testPlace(player, location)) return;
                 if (player.getGameMode() != GameMode.CREATIVE) itemInHand.setAmount(itemInHand.getAmount() - 1);
@@ -103,10 +103,7 @@ public class ItemsAdderFrameHandler extends ItemsAdderHandler {
                 return;
             }
         }
-
-        if (!AntiGrief.testPlace(player, location)) return;
-        Location potLoc = location.clone().subtract(0, 1, 0).getBlock().getLocation();
-        super.tryMisc(player, player.getInventory().getItemInMainHand(), potLoc);
+        super.tryMisc(player, player.getInventory().getItemInMainHand(), MiscUtils.getItemFrameBlockLocation(location.clone().subtract(0,1,0)));
     }
 
     public void onBreakFurniture(FurnitureBreakEvent event) {
@@ -131,11 +128,8 @@ public class ItemsAdderFrameHandler extends ItemsAdderHandler {
 
         if (namespacedId.contains("_stage_")) {
             if (namespacedId.equals(BasicItemConfig.deadCrop)) return;
-            if (customInterface.hasNextStage(namespacedId)) {
-                super.onBreakUnripeCrop(location);
-                return;
-            }
-            super.onBreakRipeCrop(location, namespacedId, player, false, true);
+            if (!isRipe(namespacedId)) super.onBreakUnripeCrop(location);
+            else super.onBreakRipeCrop(location, namespacedId, player, false);
         }
     }
 
@@ -143,10 +137,6 @@ public class ItemsAdderFrameHandler extends ItemsAdderHandler {
     public void onPlayerInteract(PlayerInteractEvent event) {
 
         final Player player = event.getPlayer();
-
-        long time = System.currentTimeMillis();
-        if (time - (coolDown.getOrDefault(player, time - 50)) < 50) return;
-        coolDown.put(player, time);
 
         super.onPlayerInteract(event);
 
@@ -158,35 +148,27 @@ public class ItemsAdderFrameHandler extends ItemsAdderHandler {
 
         final String blockID = cb.getNamespacedID();
 
-        if (!AntiGrief.testPlace(player, block.getLocation())) return;
+        if (!blockID.equals(BasicItemConfig.wetPot) && !blockID.equals(BasicItemConfig.dryPot)) return;
+        Location seedLoc = block.getLocation().clone().add(0,1,0);
+        if (!canProceedAction(player, seedLoc)) return;
 
-        //interact crop
-        if (blockID.equals(BasicItemConfig.wetPot) || blockID.equals(BasicItemConfig.dryPot)) {
+        ItemStack itemInHand = event.getItem();
+        Location potLoc = block.getLocation();
+        if (super.tryMisc(player, itemInHand, potLoc)) return;
+        if (event.getBlockFace() != BlockFace.UP) return;
 
-            Location seedLoc = block.getLocation().clone().add(0,1,0);
-
-            if (!AntiGrief.testPlace(player, seedLoc)) return;
-            if (!canProceedAction(player, seedLoc)) return;
-
-            ItemStack itemInHand = event.getItem();
-            Location potLoc = block.getLocation();
-            if (super.tryMisc(player, itemInHand, potLoc)) return;
-
-            if (event.getBlockFace() != BlockFace.UP) return;
-
-            CustomStack customStack = CustomStack.byItemStack(itemInHand);
-            if (customStack != null) {
-                String namespacedID = customStack.getNamespacedID();
-                if (namespacedID.endsWith("_seeds")) {
-                    String cropName = customStack.getId().substring(0, customStack.getId().length() - 6);
-                    plantSeed(seedLoc, cropName, player, itemInHand);
-                }
-            }
-            else if (MainConfig.enableConvert) {
-                String cropName = MainConfig.vanilla2Crops.get(itemInHand.getType());
-                if (cropName == null) return;
+        CustomStack customStack = CustomStack.byItemStack(itemInHand);
+        if (customStack != null) {
+            String id = customStack.getId();
+            if (id.endsWith("_seeds")) {
+                String cropName = customStack.getId().substring(0, customStack.getId().length() - 6);
                 plantSeed(seedLoc, cropName, player, itemInHand);
             }
+        }
+        else if (MainConfig.enableConvert) {
+            String cropName = MainConfig.vanilla2Crops.get(itemInHand.getType());
+            if (cropName == null) return;
+            plantSeed(seedLoc, cropName, player, itemInHand);
         }
     }
 
@@ -194,21 +176,16 @@ public class ItemsAdderFrameHandler extends ItemsAdderHandler {
     public void onBreakBlock(CustomBlockBreakEvent event) {
         if (event.isCancelled()) return;
 
-        String namespacedId = event.getNamespacedID();
-        Player player = event.getPlayer();
-        Location location = event.getBlock().getLocation();
+        final String namespacedId = event.getNamespacedID();
+        final Player player = event.getPlayer();
+        final Location location = event.getBlock().getLocation();
 
         if (!AntiGrief.testBreak(player, location)) return;
         if (!canProceedAction(player, location)) return;
 
-        if (namespacedId.equals(BasicItemConfig.dryPot)
-                || namespacedId.equals(BasicItemConfig.wetPot)
-        ) {
+        if (namespacedId.equals(BasicItemConfig.dryPot) || namespacedId.equals(BasicItemConfig.wetPot)) {
             super.onBreakPot(location);
-            //Check if there's crop above
-            Location seedLocation = location.clone().add(0.5,1.5,0.5);
-
-            ItemFrame itemFrame = FurnitureUtil.getItemFrame(seedLocation);
+            ItemFrame itemFrame = FurnitureUtil.getItemFrame(customInterface.getFrameCropLocation(location.clone().add(0,1,0)));
             if (itemFrame == null) return;
             CustomFurniture customFurniture = CustomFurniture.byAlreadySpawned(itemFrame);
             if (customFurniture == null) return;
@@ -217,11 +194,8 @@ public class ItemsAdderFrameHandler extends ItemsAdderHandler {
                 CustomFurniture.remove(itemFrame, false);
                 if (itemFrame.isValid()) itemFrame.remove();
                 if (seedID.equals(BasicItemConfig.deadCrop)) return;
-                if (customInterface.hasNextStage(seedID)) {
-                    super.onBreakUnripeCrop(location);
-                    return;
-                }
-                super.onBreakRipeCrop(location, seedID, player, true, true);
+                if (!isRipe(seedID)) super.onBreakUnripeCrop(location.clone().add(0,1,0));
+                else super.onBreakRipeCrop(location.clone().add(0,1,0), seedID, player, true);
             }
         }
     }

@@ -1,6 +1,10 @@
+namespace: customcrops
+
 # Crop Name
 # Your seeds should end with "_seeds" and stage model should end with "_stage_x"
 tomato:
+
+  max-stage: 4
 
   quality-loots:
     amount: 1~4
@@ -53,6 +57,7 @@ tomato:
       message: 'You don''t have permission to plant this seed!'
 
 grape:
+  max-stage: 6
   quality-loots:
     amount: 3~4
     quality:
@@ -66,6 +71,7 @@ grape:
     - Autumn
 
 garlic:
+  max-stage: 4
   quality-loots:
     amount: 1~4
     quality:
@@ -77,6 +83,7 @@ garlic:
     - Winter
 
 redpacket:
+  max-stage: 6
   other-loots:
     loot_1:
       item: customcrops:redpacket
@@ -95,6 +102,7 @@ redpacket:
       chance: 0.4
 
 cabbage:
+  max-stage: 4
   quality-loots:
     amount: 1~1
     quality:
@@ -109,6 +117,7 @@ cabbage:
     chance: 0.02
 
 pepper:
+  max-stage: 5
   quality-loots:
     amount: 3~6
     quality:
@@ -121,6 +130,7 @@ pepper:
     - Autumn
 
 corn:
+  max-stage: 4
   quality-loots:
     amount: 1~3
     quality:
@@ -133,6 +143,7 @@ corn:
 
 
 apple:
+  max-stage: 6
   other-loots:
     loot_1:
       item: APPLE
@@ -148,6 +159,7 @@ apple:
 
 
 pineapple:
+  max-stage: 4
   quality-loots:
     amount: 1~1
     quality:
@@ -162,6 +174,7 @@ pineapple:
 
 
 pitaya:
+  max-stage: 6
   quality-loots:
     amount: 2~5
     quality:
@@ -172,6 +185,7 @@ pitaya:
 
 
 eggplant:
+  max-stage: 4
   quality-loots:
     amount: 3~7
     quality:
@@ -183,6 +197,7 @@ eggplant:
 
 
 chinesecabbage:
+  max-stage: 4
   quality-loots:
     amount: 1~1
     quality:
@@ -195,6 +210,7 @@ chinesecabbage:
 
 
 hop:
+  max-stage: 4
   # Only works in item_frame mode
   # To prevent rotation
   rotation: false

@@ -43,6 +43,7 @@ public class MainConfig {
     public static List<World> worldList;
     public static List<String> worldNameList;
     public static boolean whiteOrBlack;
+    public static boolean dropLootsInAllWorlds;
     public static String customPlugin;
     public static boolean OraxenHook;
     public static boolean realisticSeasonHook;
@@ -160,6 +161,7 @@ public class MainConfig {
         timeToWork = config.getInt("mechanics.auto-grow.sprinkler-work-time", 300);
         timeToDry = config.getInt("mechanics.auto-grow.pot-dry-time", 200);
         dryGrowChance = config.getDouble("mechanics.dry-pot-grow-chance", 0.5);
+        dropLootsInAllWorlds = config.getBoolean("mechanics.drop-loots-in-all-worlds", false);
 
         waterBucketToSprinkler = config.getInt("mechanics.fill.water-bucket-to-sprinkler", 3);
         waterToWaterCan = config.getInt("mechanics.fill.waterblock-to-watering-can", 1);

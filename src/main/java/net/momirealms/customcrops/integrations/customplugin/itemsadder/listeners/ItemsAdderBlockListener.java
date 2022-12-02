@@ -18,7 +18,6 @@
 package net.momirealms.customcrops.integrations.customplugin.itemsadder.listeners;
 
 import dev.lone.itemsadder.api.Events.CustomBlockBreakEvent;
-import dev.lone.itemsadder.api.Events.CustomBlockInteractEvent;
 import net.momirealms.customcrops.integrations.customplugin.itemsadder.ItemsAdderHandler;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

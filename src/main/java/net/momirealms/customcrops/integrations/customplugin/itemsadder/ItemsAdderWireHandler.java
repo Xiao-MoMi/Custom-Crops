@@ -55,9 +55,7 @@ public class ItemsAdderWireHandler extends ItemsAdderHandler {
 
         final Player player = event.getPlayer();
 
-        long time = System.currentTimeMillis();
-        if (time - (coolDown.getOrDefault(event.getPlayer(), time - 100)) < 100) return;
-        coolDown.put(player, time);
+        if (isInCoolDown(player, 100)) return;
 
         Entity entity = event.getBukkitEntity();
 
@@ -95,10 +93,6 @@ public class ItemsAdderWireHandler extends ItemsAdderHandler {
 
         final Player player = event.getPlayer();
 
-        long time = System.currentTimeMillis();
-        if (time - (coolDown.getOrDefault(player, time - 50)) < 50) return;
-        coolDown.put(player, time);
-
         super.onPlayerInteract(event);
 
         if (event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
@@ -110,14 +104,11 @@ public class ItemsAdderWireHandler extends ItemsAdderHandler {
 
         final String blockID = cb.getNamespacedID();
 
-        //interact crop
+        if (!canProceedAction(player, location)) return;
         if (blockID.contains("_stage_")) {
-
-            if (!canProceedAction(player, location)) return;
-
             ItemStack itemInHand = event.getItem();
             if (!blockID.equals(BasicItemConfig.deadCrop)) {
-                if (!customInterface.hasNextStage(blockID)) {
+                if (isRipe(blockID)) {
                     ItemStack mainHand = player.getInventory().getItemInMainHand();
                     ItemStack offHand = player.getInventory().getItemInOffHand();
                     if (MainConfig.canRightClickHarvest && !(MainConfig.emptyHand && (mainHand.getType() != Material.AIR || offHand.getType() != Material.AIR))) {
@@ -147,28 +138,21 @@ public class ItemsAdderWireHandler extends ItemsAdderHandler {
                     return;
                 }
             }
-            if (!AntiGrief.testPlace(player, location)) return;
-            Location potLoc = location.clone().subtract(0,1,0);
-            super.tryMisc(player, itemInHand, potLoc);
+            super.tryMisc(player, itemInHand, location.clone().subtract(0,1,0));
         }
 
         //interact pot (must have an item)
         else if (blockID.equals(BasicItemConfig.wetPot) || blockID.equals(BasicItemConfig.dryPot)) {
-
-            if (!AntiGrief.testPlace(player, location)) return;
-            if (!canProceedAction(player, location)) return;
-
             ItemStack itemInHand = event.getItem();
             if (super.tryMisc(player, itemInHand, location)) return;
-
             if (event.getBlockFace() != BlockFace.UP) return;
 
             Location seedLoc = location.clone().add(0,1,0);
             CustomStack customStack = CustomStack.byItemStack(itemInHand);
             if (customStack != null) {
-                String namespacedID = customStack.getNamespacedID();
-                if (namespacedID.endsWith("_seeds")) {
-                    String cropName = customStack.getId().substring(0, customStack.getId().length() - 6);
+                String id = customStack.getId();
+                if (id.endsWith("_seeds")) {
+                    String cropName = customStack.getId().substring(0, id.length() - 6);
                     plantSeed(seedLoc, cropName, player, itemInHand);
                 }
             }
@@ -191,71 +175,55 @@ public class ItemsAdderWireHandler extends ItemsAdderHandler {
     public void onBreakBlock(CustomBlockBreakEvent event) {
         if (event.isCancelled()) return;
 
-        Player player = event.getPlayer();
-        long time = System.currentTimeMillis();
-        if (time - (coolDown.getOrDefault(player, time - 50)) < 50) return;
-        coolDown.put(player, time);
+        final Player player = event.getPlayer();
+        if (isInCoolDown(player, 50)) return;
 
-        String namespacedId = event.getNamespacedID();
-        Location location = event.getBlock().getLocation();
+        final String namespacedId = event.getNamespacedID();
+        final Location location = event.getBlock().getLocation();
 
-        //break crop
+        if (!canProceedAction(player, location)) return;
+
         if (namespacedId.contains("_stage_")) {
-
             if (!AntiGrief.testBreak(player, location)) {
                 event.setCancelled(true);
                 return;
             }
 
-            if (!canProceedAction(player, location)) return;
-            //Drop seeds
             if (player.getInventory().getItemInMainHand().containsEnchantment(Enchantment.SILK_TOUCH) || player.getInventory().getItemInMainHand().getType() == Material.SHEARS){
                 event.setCancelled(true);
                 CustomBlock.place(namespacedId, location);
-                if (player.getGameMode() != GameMode.CREATIVE)
-                    CustomBlock.byAlreadyPlaced(location.getBlock()).getLoot().forEach(itemStack -> location.getWorld().dropItemNaturally(location, itemStack));
+                if (player.getGameMode() != GameMode.CREATIVE) CustomBlock.byAlreadyPlaced(location.getBlock()).getLoot().forEach(itemStack -> location.getWorld().dropItemNaturally(location, itemStack));
                 CustomBlock.remove(location);
             }
 
             if (namespacedId.equals(BasicItemConfig.deadCrop)) return;
-            if (customInterface.hasNextStage(namespacedId)) {
-                super.onBreakUnripeCrop(location);
-                return;
-            }
-            super.onBreakRipeCrop(location, namespacedId, player, true, true);
-
+            if (!isRipe(namespacedId)) super.onBreakUnripeCrop(location);
+            else super.onBreakRipeCrop(location, namespacedId, player, true);
         }
 
-        //break pot
-        else if (namespacedId.equals(BasicItemConfig.dryPot)
-                || namespacedId.equals(BasicItemConfig.wetPot)) {
+        else if (namespacedId.equals(BasicItemConfig.dryPot) || namespacedId.equals(BasicItemConfig.wetPot)) {
 
             if (!AntiGrief.testBreak(player, location)) {
                 event.setCancelled(true);
                 return;
             }
 
-            if (!canProceedAction(player, location)) return;
-
             super.onBreakPot(location);
 
-            //Check if there's crop above
             Location seedLocation = location.clone().add(0,1,0);
             CustomBlock customBlock = CustomBlock.byAlreadyPlaced(seedLocation.getBlock());
             if (customBlock == null) return;
             String seedID = customBlock.getNamespacedID();
 
             if (seedID.contains("_stage_")) {
-
                 CustomBlock.remove(seedLocation);
                 if (seedID.equals(BasicItemConfig.deadCrop)) return;
-                //ripe or not
-                if (customInterface.hasNextStage(seedID)) {
+                if (!isRipe(seedID)) {
                     if (player.getGameMode() == GameMode.CREATIVE) return;
                     customBlock.getLoot().forEach(loot -> location.getWorld().dropItemNaturally(seedLocation.getBlock().getLocation(), loot));
                 }
                 else {
-                    super.onBreakRipeCrop(seedLocation, seedID, player, false, true);
+                    super.onBreakRipeCrop(seedLocation, seedID, player, false);
                 }
             }
         }

@@ -24,9 +24,10 @@ import org.bukkit.entity.Player;
 
 public class PlaceholderManager extends Function {
 
-    private SeasonPapi seasonPapi;
+    private final SeasonPapi seasonPapi;
 
     public PlaceholderManager() {
+        this.seasonPapi = new SeasonPapi();
         load();
     }
 
@@ -34,7 +35,6 @@ public class PlaceholderManager extends Function {
     public void load() {
         super.load();
         if (SeasonConfig.enable) {
-            this.seasonPapi = new SeasonPapi();
             this.seasonPapi.register();
         }
     }
@@ -42,9 +42,7 @@ public class PlaceholderManager extends Function {
     @Override
     public void unload() {
         super.unload();
-        if (this.seasonPapi != null) {
-            this.seasonPapi.unregister();
-        }
+        this.seasonPapi.unregister();
     }
 
     public String parse(Player player, String text) {

@@ -28,6 +28,7 @@ import net.momirealms.customcrops.config.BasicItemConfig;
 import net.momirealms.customcrops.config.MainConfig;
 import net.momirealms.customcrops.config.SoundConfig;
 import net.momirealms.customcrops.config.WaterCanConfig;
+import net.momirealms.customcrops.integrations.AntiGrief;
 import net.momirealms.customcrops.integrations.customplugin.HandlerP;
 import net.momirealms.customcrops.integrations.customplugin.oraxen.listeners.OraxenBlockListener;
 import net.momirealms.customcrops.integrations.customplugin.oraxen.listeners.OraxenFurnitureListener;
@@ -81,10 +82,11 @@ public abstract class OraxenHandler extends HandlerP {
         Location location = event.getItemFrame().getLocation();
         CustomWorld customWorld = cropManager.getCustomWorld(location.getWorld());
         if (customWorld == null) return;
-        customWorld.addScarecrow(location);
+        customWorld.addScarecrowCache(location);
     }
 
     public boolean tryMisc(Player player, ItemStack itemInHand, Location potLoc) {
+        if (!AntiGrief.testPlace(player, potLoc)) return true;
         if (itemInHand == null || itemInHand.getType() == Material.AIR) return true;
         String id = OraxenItems.getIdByItem(itemInHand);
         if (id == null) return false;

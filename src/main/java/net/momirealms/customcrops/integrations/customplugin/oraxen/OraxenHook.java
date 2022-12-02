@@ -27,19 +27,17 @@ import io.th0rgal.oraxen.mechanics.provided.gameplay.noteblock.NoteBlockMechanic
 import io.th0rgal.oraxen.mechanics.provided.gameplay.noteblock.NoteBlockMechanicFactory;
 import io.th0rgal.oraxen.mechanics.provided.gameplay.stringblock.StringBlockMechanic;
 import io.th0rgal.oraxen.mechanics.provided.gameplay.stringblock.StringBlockMechanicFactory;
+import net.momirealms.customcrops.CustomCrops;
 import net.momirealms.customcrops.api.crop.Crop;
 import net.momirealms.customcrops.config.CropConfig;
 import net.momirealms.customcrops.integrations.customplugin.CustomInterface;
-import org.apache.commons.lang.StringUtils;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
-import org.bukkit.Rotation;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.Nullable;
 
 public class OraxenHook implements CustomInterface {
@@ -116,18 +114,29 @@ public class OraxenHook implements CustomInterface {
 
     @Override
     public String getNextStage(String id) {
-        String[] crop = StringUtils.split(id,"_");
-        int nextStage = Integer.parseInt(crop[2]) + 1;
-        return crop[0] + "_" + crop[1] + "_" + nextStage;
+        String stageStr = id.substring(id.indexOf("_stage_") + 7);
+        int nextStage = Integer.parseInt(stageStr) + 1;
+        return id.substring(0, id.length() - stageStr.length()) + nextStage;
     }
 
     @Override
     public @Nullable Crop getCropFromID(String id) {
-        return CropConfig.CROPS.get(StringUtils.split(id, "_")[0]);
+        return CropConfig.CROPS.get(id.substring(0, id.indexOf("_stage_")));
     }
 
     @Override
     public Location getFrameCropLocation(Location seedLoc) {
         return seedLoc.clone().add(0.5,0.03125,0.5);
+    }
+
+    @Override
+    public void addFrameStage(ItemFrame itemFrame, String stage, boolean rotate) {
+        itemFrame.setItem(getItemStack(stage), false);
+        itemFrame.getPersistentDataContainer().set(OraxenHook.FURNITURE, PersistentDataType.STRING, stage);
+    }
+
+    @Override
+    public void addWireStage(Location seedLoc, String stage) {
+        Bukkit.getScheduler().runTask(CustomCrops.plugin, () -> placeWire(seedLoc, stage));
     }
 }

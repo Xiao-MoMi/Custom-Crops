@@ -45,7 +45,7 @@ public class CrowTask extends BukkitRunnable {
         this.player = player;
         this.armorStandUtil = armorStandUtil;
         this.entityID = new Random().nextInt(10000000);
-        yaw = new Random().nextInt(361) - 180;
+        this.yaw = new Random().nextInt(361) - 180;
         this.from = crop.clone().add(10 * Math.sin((Math.PI * yaw)/180), 10, - 10 * Math.cos((Math.PI * yaw)/180));
         Location relative = crop.clone().subtract(from);
         this.vectorDown = new Vector(relative.getX() / 100, -0.1, relative.getZ() / 100);
@@ -55,8 +55,7 @@ public class CrowTask extends BukkitRunnable {
             CustomCrops.protocolManager.sendServerPacket(player, armorStandUtil.getMetaPacket(entityID));
             CustomCrops.protocolManager.sendServerPacket(player, armorStandUtil.getEquipPacket(entityID, armorStandUtil.getCropManager().getCustomInterface().getItemStack(BasicItemConfig.crowFly)));
         }
-        catch (InvocationTargetException e) {
-            //release
+        catch (InvocationTargetException ignore) {
         }
     }
 
@@ -75,32 +74,28 @@ public class CrowTask extends BukkitRunnable {
             try {
                 CustomCrops.protocolManager.sendServerPacket(player, armorStandUtil.getEquipPacket(entityID, armorStandUtil.getCropManager().getCustomInterface().getItemStack(BasicItemConfig.crowLand)));
             }
-            catch (InvocationTargetException e) {
-                //release
+            catch (InvocationTargetException ignore) {
             }
         }
         else if (timer == 150) {
             try {
                 CustomCrops.protocolManager.sendServerPacket(player, armorStandUtil.getEquipPacket(entityID, armorStandUtil.getCropManager().getCustomInterface().getItemStack(BasicItemConfig.crowFly)));
             }
-            catch (InvocationTargetException e) {
-                //release
+            catch (InvocationTargetException ignore) {
             }
         }
         else if (timer > 150) {
             try {
                 CustomCrops.protocolManager.sendServerPacket(player, armorStandUtil.getTeleportPacket(entityID, from.add(vectorUp), yaw));
             }
-            catch (InvocationTargetException e) {
-                //release
+            catch (InvocationTargetException ignore) {
             }
         }
         if (timer > 300) {
             try {
                 CustomCrops.protocolManager.sendServerPacket(player, armorStandUtil.getDestroyPacket(entityID));
             }
-            catch (InvocationTargetException e) {
-                //release
+            catch (InvocationTargetException ignore) {
             }
             cancel();
         }

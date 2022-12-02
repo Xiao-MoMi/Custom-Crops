@@ -30,6 +30,10 @@ public class MiscUtils {
         return new SimpleLocation(location.getWorld().getName(), location.getBlockX(), location.getBlockY(), location.getBlockZ());
     }
 
+    public static Location getItemFrameBlockLocation(Location frameLoc) {
+        return new Location(frameLoc.getWorld(), frameLoc.getBlockX(), frameLoc.getBlockY(), frameLoc.getBlockZ());
+    }
+
     @Nullable
     public static Location getLocation(SimpleLocation location) {
         World world = Bukkit.getWorld(location.getWorldName());

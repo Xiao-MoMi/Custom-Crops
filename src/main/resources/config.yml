@@ -1,6 +1,6 @@
 # Don't change
 # 请不要修改
-config-version: '17'
+config-version: '18'
 
 # lang: english / spanish / chinese
 lang: english
@@ -109,6 +109,9 @@ mechanics:
   # Should player be notified of the wrong season?
   # 是否提示玩家错误的季节
   should-notify-if-wrong-season: true
+  # Should crops drop loot only in whitelist worlds or in all the worlds
+  # 农作物是否只在白名单世界掉落农产品
+  drop-loots-in-all-worlds: false
 
   fill:
     watering-can-to-sprinkler: 1

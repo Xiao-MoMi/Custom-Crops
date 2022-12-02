@@ -17,6 +17,7 @@
 
 package net.momirealms.customcrops.config;
 
+import net.momirealms.customcrops.CustomCrops;
 import net.momirealms.customcrops.api.crop.Crop;
 import net.momirealms.customcrops.api.utils.CCSeason;
 import net.momirealms.customcrops.objects.CCCrop;
@@ -28,6 +29,8 @@ import net.momirealms.customcrops.objects.requirements.*;
 import net.momirealms.customcrops.utils.AdventureUtil;
 import org.bukkit.configuration.file.YamlConfiguration;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -36,12 +39,58 @@ import java.util.Objects;
 public class CropConfig {
 
     public static HashMap<String, Crop> CROPS;
+    public static String namespace = "";
 
     public static void load() {
+
         CROPS = new HashMap<>(16);
         YamlConfiguration config = ConfigUtil.getConfig("crops_" + MainConfig.customPlugin + ".yml");
+
+        if (config.contains("tomato") && !config.contains("tomato.max-stage")) config.set("tomato.max-stage", 4);
+        if (config.contains("grape") && !config.contains("grape.max-stage")) config.set("grape.max-stage", 6);
+        if (config.contains("garlic") && !config.contains("garlic.max-stage")) config.set("garlic.max-stage", 4);
+        if (config.contains("redpacket") && !config.contains("redpacket.max-stage")) config.set("redpacket.max-stage", 6);
+        if (config.contains("cabbage") && !config.contains("cabbage.max-stage")) config.set("cabbage.max-stage", 4);
+        if (config.contains("pepper") && !config.contains("pepper.max-stage")) config.set("pepper.max-stage", 5);
+        if (config.contains("corn") && !config.contains("corn.max-stage")) config.set("corn.max-stage", 4);
+        if (config.contains("apple") && !config.contains("apple.max-stage")) config.set("apple.max-stage", 6);
+        if (config.contains("pineapple") && !config.contains("pineapple.max-stage")) config.set("pineapple.max-stage", 4);
+        if (config.contains("pitaya") && !config.contains("pitaya.max-stage")) config.set("pitaya.max-stage", 6);
+        if (config.contains("eggplant") && !config.contains("eggplant.max-stage")) config.set("eggplant.max-stage", 4);
+        if (config.contains("chinesecabbage") && !config.contains("chinesecabbage.max-stage")) config.set("chinesecabbage.max-stage", 4);
+        if (config.contains("hop") && !config.contains("hop.max-stage")) config.set("hop.max-stage", 4);
+
+        if (MainConfig.customPlugin.equals("itemsadder")) {
+            namespace = config.getString("namespace");
+            if (namespace == null) {
+                namespace = "customcrops:";
+                config.set("namespace", "customcrops");
+            }
+            else {
+                namespace = namespace + ":";
+            }
+        }
+
+        try {
+            config.save(new File(CustomCrops.plugin.getDataFolder(), "crops_" + MainConfig.customPlugin + ".yml"));
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+
         for (String key : config.getKeys(false)) {
-            CCCrop crop = new CCCrop(key);
+            if (key.equals("namespace")) continue;
+            int max_stage;
+            if (config.contains(key + ".max-stage")) {
+                max_stage = config.getInt(key + ".max-stage");
+            }
+            else {
+                AdventureUtil.consoleMessage("<red>[CustomCrops] No \"max-stage\" set for crop: " + key);
+                AdventureUtil.consoleMessage("<red>[CustomCrops] Please read the update log (v2.1.0), this is for better performance :)");
+                continue;
+            }
+
+            CCCrop crop = new CCCrop(key, max_stage);
             for (String option : config.getConfigurationSection(key).getKeys(false)) {
                 if (option.equals("quality-loots")) {
                     String amount = config.getString(key + ".quality-loots.amount", "1~2");

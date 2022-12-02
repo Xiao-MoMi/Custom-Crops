@@ -43,4 +43,6 @@ public interface Crop {
     String getKey();
 
     boolean canRotate();
+
+    int getMax_stage();
 }

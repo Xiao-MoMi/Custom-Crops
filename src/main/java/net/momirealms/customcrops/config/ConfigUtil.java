@@ -77,10 +77,7 @@ public class ConfigUtil {
             CustomCrops.plugin.getPlaceholderManager().load();
         }
         if (CustomCrops.plugin.getCropManager() != null) {
-            CustomCrops.plugin.getCropManager().loadMode();
-            CustomCrops.plugin.getCropManager().loadSeason();
-            CustomCrops.plugin.getCropManager().loadPacket();
-            CustomCrops.plugin.getCropManager().loadVanillaMechanic();
+            CustomCrops.plugin.getCropManager().reload();
         }
     }
 }

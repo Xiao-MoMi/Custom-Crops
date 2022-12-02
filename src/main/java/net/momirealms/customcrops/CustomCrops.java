@@ -41,7 +41,6 @@ public final class CustomCrops extends JavaPlugin {
 
     private PlaceholderManager placeholderManager;
     private CropManager cropManager;
-    private PluginCommand pluginCommand;
 
 //                              _ooOoo_
 //                             o8888888o
@@ -79,12 +78,10 @@ public final class CustomCrops extends JavaPlugin {
 
         if (Bukkit.getPluginManager().getPlugin("ItemsAdder") != null) {
             MainConfig.customPlugin = "itemsadder";
-            MainConfig.OraxenHook = false;
             AdventureUtil.consoleMessage("[CustomCrops] Custom Item Plugin Platform: <#BA55D3><u>ItemsAdder");
         }
         else if (Bukkit.getPluginManager().getPlugin("Oraxen") != null) {
             MainConfig.customPlugin = "oraxen";
-            MainConfig.OraxenHook = true;
             AdventureUtil.consoleMessage("[CustomCrops] Custom Item Plugin Platform: <#6495ED><u>Oraxen");
         }
         else {
@@ -98,7 +95,7 @@ public final class CustomCrops extends JavaPlugin {
         if (MainConfig.cropMode) AdventureUtil.consoleMessage("[CustomCrops] Crop Mode: Tripwire");
         else AdventureUtil.consoleMessage("[CustomCrops] Crop Mode: ItemFrame");
 
-        this.pluginCommand = new PluginCommand();
+        PluginCommand pluginCommand = new PluginCommand();
         Objects.requireNonNull(Bukkit.getPluginCommand("customcrops")).setExecutor(pluginCommand);
         Objects.requireNonNull(Bukkit.getPluginCommand("customcrops")).setTabCompleter(pluginCommand);
 
