@@ -80,6 +80,7 @@ public class CropConfig {
 
         for (String key : config.getKeys(false)) {
             if (key.equals("namespace")) continue;
+
             int max_stage;
             if (config.contains(key + ".max-stage")) {
                 max_stage = config.getInt(key + ".max-stage");
@@ -91,115 +92,116 @@ public class CropConfig {
             }
 
             CCCrop crop = new CCCrop(key, max_stage);
-            for (String option : config.getConfigurationSection(key).getKeys(false)) {
-                if (option.equals("quality-loots")) {
-                    String amount = config.getString(key + ".quality-loots.amount", "1~2");
-                    QualityLoot qualityLoot = new QualityLoot(
-                            Integer.parseInt(amount.split("~")[0]),
-                            Integer.parseInt(amount.split("~")[1]),
-                            config.getString(key + ".quality-loots.quality.1"),
-                            config.getString(key + ".quality-loots.quality.2"),
-                            config.getString(key + ".quality-loots.quality.3")
-                    );
-                    crop.setQualityLoot(qualityLoot);
-                }
-                if (option.equals("other-loots")) {
-                    List<OtherLoot> otherLoots = new ArrayList<>();
-                    for (String loot : Objects.requireNonNull(config.getConfigurationSection(key + ".other-loots")).getKeys(false)) {
-                        OtherLoot otherLoot = new OtherLoot(
-                                config.getInt(key + ".other-loots." + loot + ".min_amount", 1),
-                                config.getInt(key + ".other-loots." + loot + ".max_amount", 1),
-                                config.getString(key + ".other-loots." + loot + ".item"),
-                                config.getDouble(key + ".other-loots." + loot + ".chance", 1d)
+            for (String option : Objects.requireNonNull(config.getConfigurationSection(key)).getKeys(false)) {
+                switch (option) {
+                    case "quality-loots" -> {
+                        String amount = config.getString(key + ".quality-loots.amount", "1~2");
+                        QualityLoot qualityLoot = new QualityLoot(
+                                Integer.parseInt(amount.split("~")[0]),
+                                Integer.parseInt(amount.split("~")[1]),
+                                config.getString(key + ".quality-loots.quality.1"),
+                                config.getString(key + ".quality-loots.quality.2"),
+                                config.getString(key + ".quality-loots.quality.3")
                         );
-                        otherLoots.add(otherLoot);
+                        crop.setQualityLoot(qualityLoot);
                     }
-                    crop.setOtherLoots(otherLoots.toArray(new OtherLoot[0]));
-                }
-                if (option.equals("harvest-actions")) {
-                    List<ActionInterface> actions = new ArrayList<>();
-                    for (String action : Objects.requireNonNull(config.getConfigurationSection(key + ".harvest-actions")).getKeys(false)) {
-                        switch (action) {
-                            case "xp" -> actions.add(new ActionXP(config.getInt(key + ".harvest-actions." + action)));
-                            case "skill-xp" -> actions.add(new ActionSkillXP(config.getDouble(key + ".harvest-actions." + action)));
-                            case "commands" -> actions.add(new ActionCommand(config.getStringList(key + ".harvest-actions." + action).toArray(new String[0])));
-                            case "messages" -> actions.add(new ActionMessage(config.getStringList(key + ".harvest-actions." + action).toArray(new String[0])));
+                    case "harvest-actions" -> {
+                        List<ActionInterface> actions = new ArrayList<>();
+                        for (String action : Objects.requireNonNull(config.getConfigurationSection(key + ".harvest-actions")).getKeys(false)) {
+                            switch (action) {
+                                case "xp" -> actions.add(new ActionXP(config.getInt(key + ".harvest-actions." + action)));
+                                case "skill-xp" -> actions.add(new ActionSkillXP(config.getDouble(key + ".harvest-actions." + action)));
+                                case "commands" -> actions.add(new ActionCommand(config.getStringList(key + ".harvest-actions." + action).toArray(new String[0])));
+                                case "messages" -> actions.add(new ActionMessage(config.getStringList(key + ".harvest-actions." + action).toArray(new String[0])));
+                            }
                         }
+                        crop.setActions(actions.toArray(new ActionInterface[0]));
                     }
-                    crop.setActions(actions.toArray(new ActionInterface[0]));
-                }
-                if (option.equals("season")) {
-                    List<String> seasonList = config.getStringList(key + ".season");
-                    CCSeason[] seasons = new CCSeason[seasonList.size()];
-                    for (int i = 0; i < seasonList.size(); i++) {
-                        seasons[i] = CCSeason.valueOf(seasonList.get(i).toUpperCase());
-                    }
-                    crop.setSeasons(seasons);
-                }
-                if (option.equals("gigantic-crop")) {
-                    boolean isBlock = true;
-                    String blockID = config.getString(key + ".gigantic-crop.block");
-                    if (blockID == null) {
-                        blockID = config.getString(key + ".gigantic-crop.furniture");
-                        isBlock = false;
-                    }
-                    GiganticCrop giganticCrop = new GiganticCrop(
-                            config.getDouble(key + ".gigantic-crop.chance"),
-                            isBlock,
-                            blockID
-                    );
-                    crop.setGiganticCrop(giganticCrop);
-                }
-                if (option.equals("return")) {
-                    crop.setReturnStage(config.getString(key + ".return"));
-                }
-                crop.setCanRotate(config.getBoolean(key + ".rotation", true));
-                if (option.equals("requirements")) {
-                    List<RequirementInterface> requirementList = new ArrayList<>();
-                    for (String requirement : Objects.requireNonNull(config.getConfigurationSection(key + ".requirements")).getKeys(false)) {
-                        String type = config.getString(key + ".requirements." + requirement + ".type");
-                        if (type == null) continue;
-                        switch (type) {
-                            case "time" -> requirementList.add(new RequirementTime(
-                                    config.getStringList(key + ".requirements." + requirement + ".value").toArray(new String[0]),
-                                    Objects.equals(config.getString(key + ".requirements." + requirement + ".mode"), "&&"),
-                                    config.getString(key + ".requirements." + requirement + ".message")
-                            ));
-                            case "weather" -> requirementList.add(new RequirementWeather(
-                                    config.getStringList(key + ".requirements." + requirement + ".value").toArray(new String[0]),
-                                    Objects.equals(config.getString(key + ".requirements." + requirement + ".mode"), "&&"),
-                                    config.getString(key + ".requirements." + requirement + ".message")
-                            ));
-                            case "yPos" -> requirementList.add(new RequirementYPos(
-                                    config.getStringList(key + ".requirements." + requirement + ".value").toArray(new String[0]),
-                                    Objects.equals(config.getString(key + ".requirements." + requirement + ".mode"), "&&"),
-                                    config.getString(key + ".requirements." + requirement + ".message")
-                            ));
-                            case "biome" -> requirementList.add(new RequirementBiome(
-                                    config.getStringList(key + ".requirements." + requirement + ".value").toArray(new String[0]),
-                                    Objects.equals(config.getString(key + ".requirements." + requirement + ".mode"), "&&"),
-                                    config.getString(key + ".requirements." + requirement + ".message")
-                            ));
-                            case "world" -> requirementList.add(new RequirementWorld(
-                                    config.getStringList(key + ".requirements." + requirement + ".value").toArray(new String[0]),
-                                    Objects.equals(config.getString(key + ".requirements." + requirement + ".mode"), "&&"),
-                                    config.getString(key + ".requirements." + requirement + ".message")
-                            ));
-                            case "permission" -> requirementList.add(new RequirementPermission(
-                                    config.getStringList(key + ".requirements." + requirement + ".value").toArray(new String[0]),
-                                    Objects.equals(config.getString(key + ".requirements." + requirement + ".mode"), "&&"),
-                                    config.getString(key + ".requirements." + requirement + ".message")
-                            ));
-                            case "papi-condition" -> requirementList.add(new CustomPapi(
-                                    Objects.requireNonNull(config.getConfigurationSection(key + ".requirements." + requirement + ".value")).getValues(false),
-                                    config.getString(key + ".requirements." + requirement + ".message")
-                            ));
+                    case "other-loots" -> {
+                        List<OtherLoot> otherLoots = new ArrayList<>();
+                        for (String loot : Objects.requireNonNull(config.getConfigurationSection(key + ".other-loots")).getKeys(false)) {
+                            OtherLoot otherLoot = new OtherLoot(
+                                    config.getInt(key + ".other-loots." + loot + ".min_amount", 1),
+                                    config.getInt(key + ".other-loots." + loot + ".max_amount", 1),
+                                    config.getString(key + ".other-loots." + loot + ".item"),
+                                    config.getDouble(key + ".other-loots." + loot + ".chance", 1d)
+                            );
+                            otherLoots.add(otherLoot);
                         }
+                        crop.setOtherLoots(otherLoots.toArray(new OtherLoot[0]));
                     }
-                    crop.setRequirements(requirementList.toArray(new RequirementInterface[0]));
+                    case "season" -> {
+                        List<String> seasonList = config.getStringList(key + ".season");
+                        CCSeason[] seasons = new CCSeason[seasonList.size()];
+                        for (int i = 0; i < seasonList.size(); i++) {
+                            seasons[i] = CCSeason.valueOf(seasonList.get(i).toUpperCase());
+                        }
+                        crop.setSeasons(seasons);
+                    }
+                    case "gigantic-crop" -> {
+                        boolean isBlock = true;
+                        String blockID = config.getString(key + ".gigantic-crop.block");
+                        if (blockID == null) {
+                            blockID = config.getString(key + ".gigantic-crop.furniture");
+                            isBlock = false;
+                        }
+                        GiganticCrop giganticCrop = new GiganticCrop(
+                                config.getDouble(key + ".gigantic-crop.chance"),
+                                isBlock,
+                                blockID
+                        );
+                        crop.setGiganticCrop(giganticCrop);
+                    }
+                    case "return" -> {
+                        crop.setReturnStage(config.getString(key + ".return"));
+                    }
+                    case "requirements" -> {
+                        List<RequirementInterface> requirementList = new ArrayList<>();
+                        for (String requirement : Objects.requireNonNull(config.getConfigurationSection(key + ".requirements")).getKeys(false)) {
+                            String type = config.getString(key + ".requirements." + requirement + ".type");
+                            if (type == null) continue;
+                            switch (type) {
+                                case "time" -> requirementList.add(new RequirementTime(
+                                        config.getStringList(key + ".requirements." + requirement + ".value").toArray(new String[0]),
+                                        Objects.equals(config.getString(key + ".requirements." + requirement + ".mode"), "&&"),
+                                        config.getString(key + ".requirements." + requirement + ".message")
+                                ));
+                                case "weather" -> requirementList.add(new RequirementWeather(
+                                        config.getStringList(key + ".requirements." + requirement + ".value").toArray(new String[0]),
+                                        Objects.equals(config.getString(key + ".requirements." + requirement + ".mode"), "&&"),
+                                        config.getString(key + ".requirements." + requirement + ".message")
+                                ));
+                                case "yPos" -> requirementList.add(new RequirementYPos(
+                                        config.getStringList(key + ".requirements." + requirement + ".value").toArray(new String[0]),
+                                        Objects.equals(config.getString(key + ".requirements." + requirement + ".mode"), "&&"),
+                                        config.getString(key + ".requirements." + requirement + ".message")
+                                ));
+                                case "biome" -> requirementList.add(new RequirementBiome(
+                                        config.getStringList(key + ".requirements." + requirement + ".value").toArray(new String[0]),
+                                        Objects.equals(config.getString(key + ".requirements." + requirement + ".mode"), "&&"),
+                                        config.getString(key + ".requirements." + requirement + ".message")
+                                ));
+                                case "world" -> requirementList.add(new RequirementWorld(
+                                        config.getStringList(key + ".requirements." + requirement + ".value").toArray(new String[0]),
+                                        Objects.equals(config.getString(key + ".requirements." + requirement + ".mode"), "&&"),
+                                        config.getString(key + ".requirements." + requirement + ".message")
+                                ));
+                                case "permission" -> requirementList.add(new RequirementPermission(
+                                        config.getStringList(key + ".requirements." + requirement + ".value").toArray(new String[0]),
+                                        Objects.equals(config.getString(key + ".requirements." + requirement + ".mode"), "&&"),
+                                        config.getString(key + ".requirements." + requirement + ".message")
+                                ));
+                                case "papi-condition" -> requirementList.add(new CustomPapi(
+                                        Objects.requireNonNull(config.getConfigurationSection(key + ".requirements." + requirement + ".value")).getValues(false),
+                                        config.getString(key + ".requirements." + requirement + ".message")
+                                ));
+                            }
+                        }
+                        crop.setRequirements(requirementList.toArray(new RequirementInterface[0]));
+                    }
                 }
             }
-
+            crop.setCanRotate(config.getBoolean(key + ".rotation", true));
             CROPS.put(key, crop);
         }
         AdventureUtil.consoleMessage("[CustomCrops] Loaded <green>" + CROPS.size() + "<gray> crops");

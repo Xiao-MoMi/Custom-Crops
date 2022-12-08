@@ -53,10 +53,6 @@ public class Sprinkler {
         return key;
     }
 
-    /**
-     * Only needed in config
-     * @return twoD
-     */
     @Nullable
     public String getTwoD() {
         return twoD;
@@ -66,10 +62,6 @@ public class Sprinkler {
         this.twoD = twoD;
     }
 
-    /**
-     * Only needed in config
-     * @return threeD
-     */
     @Nullable
     public String getThreeD() {
         return threeD;

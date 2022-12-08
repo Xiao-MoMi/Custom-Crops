@@ -155,6 +155,9 @@ public class MainConfig {
         wireAmount = config.getInt("optimization.limitation.tripwire-amount", 64);
         frameAmount = config.getInt("optimization.limitation.itemframe-amount", 64);
 
+        if (MainConfig.cropMode) AdventureUtil.consoleMessage("[CustomCrops] Crop Mode: Tripwire");
+        else AdventureUtil.consoleMessage("[CustomCrops] Crop Mode: ItemFrame");
+
         autoGrow = config.getBoolean("mechanics.auto-grow.enable", true);
         enableCompensation = config.getBoolean("mechanics.auto-grow.time-compensation", true);
         timeToGrow = config.getInt("mechanics.auto-grow.crops-grow-time", 20000);

@@ -504,6 +504,8 @@ public class CropManager extends Function {
         Crop crop = CropConfig.CROPS.get(growingCrop.getType());
         if (crop == null) return true;
 
+        if (!location.getChunk().isEntitiesLoaded()) return false;
+
         Location potLoc = location.clone().subtract(0,1,0);
         Fertilizer fertilizer = getFertilizer(potLoc);
 

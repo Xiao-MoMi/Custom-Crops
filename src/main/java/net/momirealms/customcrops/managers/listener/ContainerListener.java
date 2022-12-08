@@ -23,7 +23,7 @@ import java.util.List;
 
 public class ContainerListener extends PacketAdapter {
 
-    private CropManager cropManager;
+    private final CropManager cropManager;
 
     public ContainerListener(CropManager cropManager) {
         super(CustomCrops.plugin, ListenerPriority.HIGHEST, PacketType.Play.Server.WINDOW_ITEMS);

@@ -60,7 +60,7 @@ public class SetSeasonCommand extends AbstractSubCommand {
                 ccSeason = CCSeason.valueOf(args.get(1).toUpperCase());
             }
             catch (IllegalArgumentException e) {
-                AdventureUtil.sendMessage(sender, MessageConfig.prefix + MessageConfig.seasonNotExists);
+                AdventureUtil.sendMessage(sender, MessageConfig.prefix + MessageConfig.seasonNotExists.replace("{season}", args.get(1)));
                 return true;
             }
             SeasonUtils.setSeason(world, ccSeason);
