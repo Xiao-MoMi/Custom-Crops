@@ -25,6 +25,7 @@ import net.momirealms.customcrops.config.ConfigUtil;
 import net.momirealms.customcrops.config.MainConfig;
 import net.momirealms.customcrops.helper.LibraryLoader;
 import net.momirealms.customcrops.integrations.papi.PlaceholderManager;
+import net.momirealms.customcrops.integrations.protection.WorldGuardHook;
 import net.momirealms.customcrops.managers.CropManager;
 import net.momirealms.customcrops.utils.AdventureUtil;
 import org.bstats.bukkit.Metrics;
@@ -67,6 +68,9 @@ public final class CustomCrops extends JavaPlugin {
         plugin = this;
         LibraryLoader.load("dev.dejvokep","boosted-yaml","1.3","https://repo.maven.apache.org/maven2/");
         LibraryLoader.load("commons-io","commons-io","2.11.0","https://repo.maven.apache.org/maven2/");
+        if (Bukkit.getPluginManager().getPlugin("WorldGuard") != null) {
+            WorldGuardHook.initialize();
+        }
     }
 
     @Override

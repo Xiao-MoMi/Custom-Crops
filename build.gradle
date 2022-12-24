@@ -4,7 +4,7 @@ plugins {
 }
 
 group = 'net.momirealms'
-version = '2.1.0-r3'
+version = '2.1.2'
 
 repositories {
     mavenCentral()
@@ -73,7 +73,7 @@ dependencies {
     implementation('net.kyori:adventure-api:4.12.0')
     implementation('net.kyori:adventure-platform-bukkit:4.1.2')
     implementation('net.kyori:adventure-text-minimessage:4.12.0')
-    implementation("de.tr7zw:item-nbt-api:2.10.0")
+    implementation("de.tr7zw:item-nbt-api:2.11.1")
     implementation("org.bstats:bstats-bukkit:3.0.0")
 }
 

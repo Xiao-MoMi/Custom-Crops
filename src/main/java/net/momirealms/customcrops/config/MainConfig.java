@@ -124,6 +124,8 @@ public class MainConfig {
     public static HashMap<Material, String> vanilla2Crops;
     public static boolean enableEvents;
     public static int saveInterval;
+    public static boolean dryMakesCropDead;
+    public static double dryDeadChance;
 
     public static void load() {
         ConfigUtil.update("config.yml");
@@ -165,6 +167,9 @@ public class MainConfig {
         timeToDry = config.getInt("mechanics.auto-grow.pot-dry-time", 200);
         dryGrowChance = config.getDouble("mechanics.dry-pot-grow-chance", 0.5);
         dropLootsInAllWorlds = config.getBoolean("mechanics.drop-loots-in-all-worlds", false);
+
+        dryMakesCropDead = config.getBoolean("mechanics.dry-pot-makes-crop-dead.enable", false);
+        dryDeadChance = config.getDouble("mechanics.dry-pot-makes-crop-dead.chance", 0.6);
 
         waterBucketToSprinkler = config.getInt("mechanics.fill.water-bucket-to-sprinkler", 3);
         waterToWaterCan = config.getInt("mechanics.fill.waterblock-to-watering-can", 1);

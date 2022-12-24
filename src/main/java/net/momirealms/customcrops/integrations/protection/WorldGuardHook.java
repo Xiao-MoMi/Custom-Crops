@@ -24,7 +24,8 @@ import com.sk89q.worldguard.LocalPlayer;
 import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.internal.platform.WorldGuardPlatform;
-import com.sk89q.worldguard.protection.flags.Flags;
+import com.sk89q.worldguard.protection.flags.StateFlag;
+import com.sk89q.worldguard.protection.flags.registry.FlagRegistry;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
 import com.sk89q.worldguard.protection.regions.RegionQuery;
@@ -34,6 +35,21 @@ import org.bukkit.entity.Player;
 
 public class WorldGuardHook implements AntiGrief {
 
+    public static StateFlag HARVEST_FLAG;
+    public static StateFlag PLACE_FLAG;
+
+    public static void initialize() {
+        FlagRegistry registry = WorldGuard.getInstance().getFlagRegistry();
+        if (HARVEST_FLAG == null) {
+            HARVEST_FLAG = new StateFlag("customcrops-harvest", false);
+            registry.register(HARVEST_FLAG);
+        }
+        if (PLACE_FLAG == null) {
+            PLACE_FLAG = new StateFlag("customcrops-place", false);
+            registry.register(PLACE_FLAG);
+        }
+    }
+
     @Override
     public boolean canPlace(Location location, Player player) {
         LocalPlayer localPlayer = WorldGuardPlugin.inst().wrapPlayer(player);
@@ -41,7 +57,7 @@ public class WorldGuardHook implements AntiGrief {
         WorldGuardPlatform platform = WorldGuard.getInstance().getPlatform();
         if (hasRegion(world, BukkitAdapter.asBlockVector(location))){
             RegionQuery query = platform.getRegionContainer().createQuery();
-            return query.testBuild(BukkitAdapter.adapt(location), localPlayer, Flags.BUILD);
+            return query.testBuild(BukkitAdapter.adapt(location), localPlayer, PLACE_FLAG);
         }
         else return true;
     }
@@ -53,7 +69,7 @@ public class WorldGuardHook implements AntiGrief {
         WorldGuardPlatform platform = WorldGuard.getInstance().getPlatform();
         if (hasRegion(world, BukkitAdapter.asBlockVector(location))){
             RegionQuery query = platform.getRegionContainer().createQuery();
-            return query.testBuild(BukkitAdapter.adapt(location), localPlayer, Flags.BLOCK_BREAK);
+            return query.testBuild(BukkitAdapter.adapt(location), localPlayer, HARVEST_FLAG);
         }
         else return true;
     }

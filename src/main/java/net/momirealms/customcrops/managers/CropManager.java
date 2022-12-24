@@ -485,6 +485,13 @@ public class CropManager extends Function {
         if (potID == null) return true;
 
         boolean certainGrow = potID.equals(BasicItemConfig.wetPot);
+        if (MainConfig.dryMakesCropDead && !certainGrow && Math.random() < MainConfig.dryDeadChance) {
+            Bukkit.getScheduler().runTask(CustomCrops.plugin, () -> {
+                customInterface.removeBlock(location);
+                customInterface.placeWire(location, BasicItemConfig.deadCrop);
+            });
+            return true;
+        }
 
         String temp = CropConfig.namespace + growingCrop.getType() + "_stage_";
 
@@ -543,6 +550,10 @@ public class CropManager extends Function {
         if (potID == null) return true;
 
         boolean certainGrow = potID.equals(BasicItemConfig.wetPot);
+        if (MainConfig.dryMakesCropDead && !certainGrow && Math.random() < MainConfig.dryDeadChance) {
+            itemFrame.setItem(customInterface.getItemStack(BasicItemConfig.deadCrop), false);
+            return true;
+        }
 
         String temp = CropConfig.namespace + growingCrop.getType() + "_stage_";
         if (fertilizer instanceof SpeedGrow speedGrow && Math.random() < speedGrow.getChance() && current_stage+2 <= crop.getMax_stage()) {

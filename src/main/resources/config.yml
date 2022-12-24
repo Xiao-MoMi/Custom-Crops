@@ -1,6 +1,6 @@
 # Don't change
 # 请不要修改
-config-version: '18'
+config-version: '19'
 
 # lang: english / spanish / chinese
 lang: english
@@ -96,6 +96,11 @@ mechanics:
   # 建议设置高于0的数值，这样每个农作物都能得到生长，最后从数据中移除
   # 长远来看，这样不会造成数据堆积，对服务器性能友好
   dry-pot-grow-chance: 0.5
+  # Should the crop go to dead stage if the pot is dry
+  # 农作物是否会在干燥的种植盆上枯萎
+  dry-pot-makes-crop-dead:
+    enable: false
+    chance: 0.6
   # Can player harvest crops with right click?
   # if set "false" crops can't be harvested repeatedly
   # 玩家是否能右键收获农作物，禁用此项则重复收获机制也无法使用
