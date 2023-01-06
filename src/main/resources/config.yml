@@ -1,7 +1,7 @@
 # Don't change
 # 请不要修改
-config-version: '19'
-
+config-version: '20'
+metrics: true
 # lang: english / spanish / chinese
 lang: english
 
@@ -142,7 +142,7 @@ mechanics:
       world: world
 
     auto-season-change:
-      # If enabled, setseason command would only work for only one day
+      # If enabled, season would be automatically calculated according to game time when reloading
       # 自动切换季节，如果启用则setseason指令仅对当天有效
       enable: true
       # duration of each season

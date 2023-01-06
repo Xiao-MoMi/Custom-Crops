@@ -19,6 +19,8 @@ package net.momirealms.customcrops;
 
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
+import de.tr7zw.changeme.nbtapi.utils.MinecraftVersion;
+import de.tr7zw.changeme.nbtapi.utils.VersionChecker;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.momirealms.customcrops.commands.PluginCommand;
 import net.momirealms.customcrops.config.ConfigUtil;
@@ -31,6 +33,7 @@ import net.momirealms.customcrops.utils.AdventureUtil;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.kingdoms.main.ConfigManager;
 
 import java.util.Objects;
 
@@ -38,6 +41,7 @@ public final class CustomCrops extends JavaPlugin {
 
     public static BukkitAudiences adventure;
     public static CustomCrops plugin;
+    public static String version;
     public static ProtocolManager protocolManager;
 
     private PlaceholderManager placeholderManager;
@@ -78,7 +82,14 @@ public final class CustomCrops extends JavaPlugin {
 
         adventure = BukkitAudiences.create(plugin);
         protocolManager = ProtocolLibrary.getProtocolManager();
+        version = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
         AdventureUtil.consoleMessage("[CustomCrops] Running on <white>" + Bukkit.getVersion());
+
+        MinecraftVersion.disableBStats();
+        MinecraftVersion.disablePackageWarning();
+        MinecraftVersion.disableUpdateCheck();
+        MinecraftVersion.getVersion();
+        VersionChecker.hideOk = true;
 
         if (Bukkit.getPluginManager().getPlugin("ItemsAdder") != null) {
             MainConfig.customPlugin = "itemsadder";
@@ -107,7 +118,10 @@ public final class CustomCrops extends JavaPlugin {
         }
 
         AdventureUtil.consoleMessage("[CustomCrops] Plugin Enabled!");
-        new Metrics(this, 16593);
+
+        if (MainConfig.metrics) {
+            new Metrics(this, 16593);
+        }
     }
 
     @Override

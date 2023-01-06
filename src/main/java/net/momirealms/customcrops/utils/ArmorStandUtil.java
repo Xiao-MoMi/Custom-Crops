@@ -21,7 +21,9 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.Pair;
+import com.comphenix.protocol.wrappers.WrappedDataValue;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
+import com.google.common.collect.Lists;
 import net.momirealms.customcrops.CustomCrops;
 import net.momirealms.customcrops.config.BasicItemConfig;
 import net.momirealms.customcrops.config.MainConfig;
@@ -33,10 +35,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 
 public class ArmorStandUtil {
 
@@ -52,20 +51,12 @@ public class ArmorStandUtil {
 
     public void playWaterAnimation(Player player, Location location) {
         int id = new Random().nextInt(1000000000);
-        try {
-            CustomCrops.protocolManager.sendServerPacket(player, getSpawnPacket(id, location));
-            CustomCrops.protocolManager.sendServerPacket(player, getMetaPacket(id));
-            CustomCrops.protocolManager.sendServerPacket(player, getEquipPacket(id, cropManager.getCustomInterface().getItemStack(BasicItemConfig.waterEffect)));
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        }
+        CustomCrops.protocolManager.sendServerPacket(player, getSpawnPacket(id, location));
+        CustomCrops.protocolManager.sendServerPacket(player, getMetaPacket(id));
+        CustomCrops.protocolManager.sendServerPacket(player, getEquipPacket(id, cropManager.getCustomInterface().getItemStack(BasicItemConfig.waterEffect)));
 
         Bukkit.getScheduler().runTaskLaterAsynchronously(CustomCrops.plugin, () -> {
-            try {
-                CustomCrops.protocolManager.sendServerPacket(player, getDestroyPacket(id));
-            } catch (InvocationTargetException e) {
-                e.printStackTrace();
-            }
+            CustomCrops.protocolManager.sendServerPacket(player, getDestroyPacket(id));
         }, MainConfig.timeToWork/2);
     }
 
@@ -99,7 +90,17 @@ public class ArmorStandUtil {
     public PacketContainer getMetaPacket(int id) {
         PacketContainer metaPacket = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
         metaPacket.getIntegers().write(0, id);
-        metaPacket.getWatchableCollectionModifier().write(0, createDataWatcher().getWatchableObjects());
+        if (CustomCrops.version.equals("v1_19_R2")) {
+            WrappedDataWatcher wrappedDataWatcher = createDataWatcher();
+            List<WrappedDataValue> wrappedDataValueList = Lists.newArrayList();
+            wrappedDataWatcher.getWatchableObjects().stream().filter(Objects::nonNull).forEach(entry -> {
+                final WrappedDataWatcher.WrappedDataWatcherObject dataWatcherObject = entry.getWatcherObject();
+                wrappedDataValueList.add(new WrappedDataValue(dataWatcherObject.getIndex(), dataWatcherObject.getSerializer(), entry.getRawValue()));
+            });
+            metaPacket.getDataValueCollectionModifier().write(0, wrappedDataValueList);
+        } else {
+            metaPacket.getWatchableCollectionModifier().write(0, createDataWatcher().getWatchableObjects());
+        }
         return metaPacket;
     }
 

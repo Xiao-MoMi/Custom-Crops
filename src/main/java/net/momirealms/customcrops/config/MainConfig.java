@@ -126,12 +126,14 @@ public class MainConfig {
     public static int saveInterval;
     public static boolean dryMakesCropDead;
     public static double dryDeadChance;
+    public static boolean metrics;
 
     public static void load() {
         ConfigUtil.update("config.yml");
         YamlConfiguration config = ConfigUtil.getConfig("config.yml");
 
         lang = config.getString("lang","english");
+        metrics = config.getBoolean("metrics", true);
 
         whiteOrBlack = config.getString("worlds.mode","whitelist").equals("whitelist");
         worldNameList = config.getStringList("worlds.list");

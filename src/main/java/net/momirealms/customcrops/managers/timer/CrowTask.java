@@ -50,53 +50,28 @@ public class CrowTask extends BukkitRunnable {
         Location relative = crop.clone().subtract(from);
         this.vectorDown = new Vector(relative.getX() / 100, -0.1, relative.getZ() / 100);
         this.vectorUp = new Vector(relative.getX() / 100, 0.1, relative.getZ() / 100);
-        try {
-            CustomCrops.protocolManager.sendServerPacket(player, armorStandUtil.getSpawnPacket(entityID, from));
-            CustomCrops.protocolManager.sendServerPacket(player, armorStandUtil.getMetaPacket(entityID));
-            CustomCrops.protocolManager.sendServerPacket(player, armorStandUtil.getEquipPacket(entityID, armorStandUtil.getCropManager().getCustomInterface().getItemStack(BasicItemConfig.crowFly)));
-        }
-        catch (InvocationTargetException ignore) {
-        }
+        CustomCrops.protocolManager.sendServerPacket(player, armorStandUtil.getSpawnPacket(entityID, from));
+        CustomCrops.protocolManager.sendServerPacket(player, armorStandUtil.getMetaPacket(entityID));
+        CustomCrops.protocolManager.sendServerPacket(player, armorStandUtil.getEquipPacket(entityID, armorStandUtil.getCropManager().getCustomInterface().getItemStack(BasicItemConfig.crowFly)));
     }
 
     @Override
     public void run() {
         timer++;
         if (timer < 100) {
-            try {
-                CustomCrops.protocolManager.sendServerPacket(player, armorStandUtil.getTeleportPacket(entityID, from.add(vectorDown), yaw));
-            }
-            catch (InvocationTargetException e) {
-                //release
-            }
+            CustomCrops.protocolManager.sendServerPacket(player, armorStandUtil.getTeleportPacket(entityID, from.add(vectorDown), yaw));
         }
         else if (timer == 100){
-            try {
-                CustomCrops.protocolManager.sendServerPacket(player, armorStandUtil.getEquipPacket(entityID, armorStandUtil.getCropManager().getCustomInterface().getItemStack(BasicItemConfig.crowLand)));
-            }
-            catch (InvocationTargetException ignore) {
-            }
+            CustomCrops.protocolManager.sendServerPacket(player, armorStandUtil.getEquipPacket(entityID, armorStandUtil.getCropManager().getCustomInterface().getItemStack(BasicItemConfig.crowLand)));
         }
         else if (timer == 150) {
-            try {
-                CustomCrops.protocolManager.sendServerPacket(player, armorStandUtil.getEquipPacket(entityID, armorStandUtil.getCropManager().getCustomInterface().getItemStack(BasicItemConfig.crowFly)));
-            }
-            catch (InvocationTargetException ignore) {
-            }
+            CustomCrops.protocolManager.sendServerPacket(player, armorStandUtil.getEquipPacket(entityID, armorStandUtil.getCropManager().getCustomInterface().getItemStack(BasicItemConfig.crowFly)));
         }
         else if (timer > 150) {
-            try {
-                CustomCrops.protocolManager.sendServerPacket(player, armorStandUtil.getTeleportPacket(entityID, from.add(vectorUp), yaw));
-            }
-            catch (InvocationTargetException ignore) {
-            }
+            CustomCrops.protocolManager.sendServerPacket(player, armorStandUtil.getTeleportPacket(entityID, from.add(vectorUp), yaw));
         }
         if (timer > 300) {
-            try {
-                CustomCrops.protocolManager.sendServerPacket(player, armorStandUtil.getDestroyPacket(entityID));
-            }
-            catch (InvocationTargetException ignore) {
-            }
+            CustomCrops.protocolManager.sendServerPacket(player, armorStandUtil.getDestroyPacket(entityID));
             cancel();
         }
     }
