@@ -17,6 +17,7 @@
 
 package net.momirealms.customcrops.integrations.customplugin;
 
+import com.willfp.eco.core.items.Items;
 import de.tr7zw.changeme.nbtapi.NBTCompound;
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -314,7 +315,6 @@ public abstract class HandlerP extends Function {
             if (player.getGameMode() != GameMode.CREATIVE) item.setAmount(item.getAmount() - 1);
             customWorld.addSprinklerCache(sprinklerLoc, sprinkler);
             customInterface.placeFurniture(sprinklerLoc, config.getThreeD());
-
             return true;
         }
         return false;
@@ -637,6 +637,20 @@ public abstract class HandlerP extends Function {
         }
         customWorld.addCropCache(seedLoc, cropName, 1);
         return true;
+    }
+
+    protected boolean useBucket(Location potLoc, Player player, ItemStack itemInHand) {
+        if (itemInHand.getType() == Material.WATER_BUCKET) {
+            WaterPotEvent waterPotEvent = new WaterPotEvent(player, potLoc, itemInHand, 0);
+            Bukkit.getPluginManager().callEvent(waterPotEvent);
+            if (waterPotEvent.isCancelled()) {
+                return false;
+            }
+            itemInHand.setType(Material.BUCKET);
+            waterPot(1,1, potLoc, 0);
+            return true;
+        }
+        return false;
     }
 
     protected boolean isInCoolDown(Player player, int delay) {

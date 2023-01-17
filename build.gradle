@@ -4,7 +4,7 @@ plugins {
 }
 
 group = 'net.momirealms'
-version = '2.2.0'
+version = '2.2.1'
 
 repositories {
     mavenCentral()
@@ -58,7 +58,7 @@ dependencies {
     compileOnly 'dev.dejvokep:boosted-yaml:1.3'
     compileOnly 'com.github.Archy-X:AureliumSkills:Beta1.3.6'
     compileOnly 'commons-io:commons-io:2.11.0'
-    compileOnly 'com.github.angeschossen:LandsAPI:6.5.1'
+    compileOnly 'com.github.angeschossen:LandsAPI:6.26.18'
     compileOnly 'com.github.TechFortress:GriefPrevention:16.18'
     compileOnly 'io.papermc.paper:paper-api:1.17.1-R0.1-SNAPSHOT'
     compileOnly 'me.clip:placeholderapi:2.11.2'

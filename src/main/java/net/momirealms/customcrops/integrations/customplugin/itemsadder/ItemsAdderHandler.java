@@ -125,8 +125,12 @@ public abstract class ItemsAdderHandler extends HandlerP {
     public boolean tryMisc(Player player, ItemStack itemInHand, Location potLoc) {
         if (!AntiGrief.testPlace(player, potLoc)) return true;
         if (itemInHand == null || itemInHand.getType() == Material.AIR) return true;
-        CustomStack customStack = CustomStack.byItemStack(itemInHand);
 
+        if (useBucket(potLoc, player, itemInHand)) {
+            return true;
+        }
+
+        CustomStack customStack = CustomStack.byItemStack(itemInHand);
         if (customStack == null) return false;
         String itemID = customStack.getNamespacedID();
 
@@ -153,17 +157,17 @@ public abstract class ItemsAdderHandler extends HandlerP {
         int water = nbtItem.getInteger("WaterAmount");
         if (water > 0) {
 
-            WaterPotEvent waterPotEvent = new WaterPotEvent(player, potLoc, nbtItem, --water);
+            WaterPotEvent waterPotEvent = new WaterPotEvent(player, potLoc, itemStack, --water);
             Bukkit.getPluginManager().callEvent(waterPotEvent);
             if (waterPotEvent.isCancelled()) {
                 return true;
             }
-
+            nbtItem = new NBTItem(waterPotEvent.getItemStack());
             NBTCompound nbtCompound = nbtItem.getCompound("itemsadder");
-            if (nbtCompound.hasKey("custom_durability")){
+            if (nbtCompound.hasTag("custom_durability")){
                 int dur = nbtCompound.getInteger("custom_durability");
                 int max_dur = nbtCompound.getInteger("max_custom_durability");
-                if (dur > 0){
+                if (dur > 0) {
                     nbtCompound.setInteger("custom_durability", dur - 1);
                     nbtCompound.setDouble("fake_durability", (int) itemStack.getType().getMaxDurability() * (double) (dur/max_dur));
                     nbtItem.setInteger("Damage", (int) (itemStack.getType().getMaxDurability() * (1 - (double) dur/max_dur)));

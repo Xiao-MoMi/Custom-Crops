@@ -64,7 +64,6 @@ public class CustomWorld {
     private int timer;
 
     public CustomWorld(World world, CropManager cropManager) {
-
         this.world = world;
         this.fertilizerCache = new ConcurrentHashMap<>(2048);
         this.sprinklerCache = new ConcurrentHashMap<>(512);
@@ -370,10 +369,14 @@ public class CustomWorld {
         }
         else if (!compensation) {
             route(sprinklerTime);
-            potDryJudge(sprinklerTime + randomGenerator.nextInt(dryTime));
+
             for (Map.Entry<SimpleLocation, GrowingCrop> entry : cropData.entrySet()) {
                 growSingleWire(entry.getKey(), entry.getValue(), sprinklerTime + dryTime + randomGenerator.nextInt(cropTime));
             }
+
+            Bukkit.getScheduler().runTaskLaterAsynchronously(CustomCrops.plugin, () -> {
+                potDryJudge(dryTime);
+            }, sprinklerTime);
         }
         else {
             int delay = (int) (24000 - world.getTime());
@@ -405,10 +408,14 @@ public class CustomWorld {
         }
         else if (!compensation) {
             route(sprinklerTime);
-            potDryJudge(sprinklerTime + randomGenerator.nextInt(dryTime));
+
             for (Map.Entry<SimpleLocation, GrowingCrop> entry : cropData.entrySet()) {
                 growSingleFrame(entry.getKey(), entry.getValue(), sprinklerTime + dryTime + randomGenerator.nextInt(cropTime));
             }
+
+            Bukkit.getScheduler().runTaskLaterAsynchronously(CustomCrops.plugin, () -> {
+                potDryJudge(dryTime);
+            }, sprinklerTime);
         }
         else {
             int delay = (int) (24000 - world.getTime());
@@ -438,13 +445,18 @@ public class CustomWorld {
 
 
     private void route(int sprinklerTime) {
-
+        //先将湿润的种植盆放入等待判断的种植盆列表中
         tempWatered = new HashSet<>(watered);
+        //清空湿润的
         watered.clear();
+        //玩家浇水
         watered.addAll(playerWatered);
+        //清除昨日玩家浇水
         playerWatered.clear();
+        //清除玩家昨日种植
         plantedToday.clear();;
 
+        //洒水器工作会把种植盆放入watered中
         Random randomGenerator = new Random();
         for (Map.Entry<SimpleLocation, Sprinkler> sprinklerEntry : sprinklerCache.entrySet()) {
             bukkitScheduler.runTaskLaterAsynchronously(CustomCrops.plugin, () -> sprinklerWork(sprinklerEntry.getKey(), sprinklerEntry.getValue()), randomGenerator.nextInt(sprinklerTime));
@@ -489,25 +501,25 @@ public class CustomWorld {
         }
     }
 
-    private void potDryJudge(int time) {
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                tempWatered.removeAll(watered);
-                for (SimpleLocation simpleLocation : tempWatered) {
+    private void potDryJudge(int dry_time) {
+        //将待干的种植盆中今日被浇水的种植盆移除
+        //剩余的种植盆即为需要变干的
+        tempWatered.removeAll(watered);
+        for (SimpleLocation simpleLocation : tempWatered) {
+            new BukkitRunnable() {
+                @Override
+                public void run() {
                     Location potLoc = MiscUtils.getLocation(simpleLocation);
                     if (potLoc == null) return;
-                    if (!isPotWet(potLoc)) {
-                        cropManager.makePotDry(potLoc);
-                        continue;
-                    }
                     Fertilizer fertilizer = getFertilizerCache(potLoc);
                     if (!(fertilizer instanceof RetainingSoil retainingSoil && Math.random() < retainingSoil.getChance())) {
                         cropManager.makePotDry(potLoc);
                     }
                 }
-            }
-        }.runTaskLaterAsynchronously(CustomCrops.plugin, time);
+            }.runTaskLaterAsynchronously(CustomCrops.plugin, new Random().nextInt(dry_time));
+        }
+        //用完就抛弃
+        tempWatered.clear();
     }
 
     /**

@@ -88,6 +88,11 @@ public abstract class OraxenHandler extends HandlerP {
     public boolean tryMisc(Player player, ItemStack itemInHand, Location potLoc) {
         if (!AntiGrief.testPlace(player, potLoc)) return true;
         if (itemInHand == null || itemInHand.getType() == Material.AIR) return true;
+
+        if (useBucket(potLoc, player, itemInHand)) {
+            return true;
+        }
+
         String id = OraxenItems.getIdByItem(itemInHand);
         if (id == null) return false;
 
@@ -100,6 +105,7 @@ public abstract class OraxenHandler extends HandlerP {
         if (useWateringCan(potLoc, id, player, itemInHand)) {
             return true;
         }
+
         return false;
         //for future misc
     }
@@ -146,12 +152,13 @@ public abstract class OraxenHandler extends HandlerP {
         int water = nbtItem.getInteger("WaterAmount");
         if (water > 0) {
 
-            WaterPotEvent waterPotEvent = new WaterPotEvent(player, potLoc, nbtItem, --water);
+            WaterPotEvent waterPotEvent = new WaterPotEvent(player, potLoc, can, --water);
             Bukkit.getPluginManager().callEvent(waterPotEvent);
             if (waterPotEvent.isCancelled()) {
                 return true;
             }
 
+            nbtItem = new NBTItem(waterPotEvent.getItemStack());
             nbtItem.setInteger("WaterAmount", waterPotEvent.getCurrentWater());
 
             if (SoundConfig.waterPot.isEnable()) {
