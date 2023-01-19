@@ -361,6 +361,13 @@ public class MainConfig {
                 hookMessage("BentoBox");
             }
         }
+        if (config.getBoolean("integration.IridiumSkyblock",false)){
+            if (Bukkit.getPluginManager().getPlugin("IridiumSkyblock") == null) Log.warn("Failed to initialize IridiumSkyblock!");
+            else {
+                antiGriefs.add(new IridiumSkyblockHook());
+                hookMessage("IridiumSkyblock");
+            }
+        }
 
         if (config.getBoolean("integration.AureliumSkills")) {
             if (Bukkit.getPluginManager().getPlugin("AureliumSkills") == null) Log.warn("Failed to initialize AureliumSkills!");

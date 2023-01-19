@@ -24,6 +24,7 @@ softdepend:
   - CrashClaim
   - RealisticSeasons
   - Jobs
+  - IridiumSkyblock
 commands:
   customcrops:
     usage: /customcrops <args>

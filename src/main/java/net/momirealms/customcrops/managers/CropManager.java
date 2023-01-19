@@ -287,6 +287,13 @@ public class CropManager extends Function {
         });
     }
 
+    public void dry(Location potLoc) {
+        Bukkit.getScheduler().runTask(CustomCrops.plugin, () -> {
+            customInterface.removeBlock(potLoc);
+            customInterface.placeNoteBlock(potLoc, BasicItemConfig.dryPot);
+        });
+    }
+
     public void makePotWet(Location potLoc) {
         String potID = customInterface.getBlockID(potLoc);
         if (potID == null) return;
@@ -485,6 +492,13 @@ public class CropManager extends Function {
         if (potID == null) return true;
 
         boolean certainGrow = potID.equals(BasicItemConfig.wetPot);
+        if (certainGrow && !hasWater(potLoc)) {
+            if (!(fertilizer instanceof RetainingSoil retainingSoil && Math.random() < retainingSoil.getChance())) {
+                dry(potLoc);
+                certainGrow = false;
+            }
+        }
+
         if (MainConfig.dryMakesCropDead && !certainGrow && Math.random() < MainConfig.dryDeadChance) {
             Bukkit.getScheduler().runTask(CustomCrops.plugin, () -> {
                 customInterface.removeBlock(location);
@@ -504,6 +518,13 @@ public class CropManager extends Function {
             growingCrop.setStage(current_stage+1);
         }
         return false;
+    }
+
+    private boolean hasWater(Location potLoc) {
+        World world = potLoc.getWorld();
+        CustomWorld customWorld = customWorlds.get(world);
+        if (customWorld == null) return false;
+        return customWorld.isPotWet(potLoc);
     }
 
     public boolean itemFrameGrowJudge(Location location, GrowingCrop growingCrop) {
@@ -550,6 +571,13 @@ public class CropManager extends Function {
         if (potID == null) return true;
 
         boolean certainGrow = potID.equals(BasicItemConfig.wetPot);
+        if (certainGrow && !hasWater(potLoc)) {
+            if (!(fertilizer instanceof RetainingSoil retainingSoil && Math.random() < retainingSoil.getChance())) {
+                dry(potLoc);
+                certainGrow = false;
+            }
+        }
+
         if (MainConfig.dryMakesCropDead && !certainGrow && Math.random() < MainConfig.dryDeadChance) {
             itemFrame.setItem(customInterface.getItemStack(BasicItemConfig.deadCrop), false);
             return true;

@@ -598,6 +598,7 @@ public class CustomWorld {
         watered.remove(MiscUtils.getSimpleLocation(potLoc));
     }
     public void setPlayerWatered(Location potLoc) {
+        setPotWet(potLoc);
         playerWatered.add(MiscUtils.getSimpleLocation(potLoc));
     }
 
