@@ -17,14 +17,17 @@
 
 package net.momirealms.customcrops.objects.requirements.papi;
 
+import me.clip.placeholderapi.PlaceholderAPI;
+import org.bukkit.entity.Player;
+
 import java.util.HashMap;
 import java.util.Objects;
 
 public record PapiNotEquals(String papi, String requirement) implements PapiRequirement{
 
     @Override
-    public boolean isMet(HashMap<String, String> papiMap) {
+    public boolean isMet(HashMap<String, String> papiMap, Player player) {
         String value = papiMap.get(papi);
-        return !Objects.equals(value, requirement);
+        return !Objects.equals(value, PlaceholderAPI.setPlaceholders(player, requirement));
     }
 }

@@ -17,8 +17,10 @@
 
 package net.momirealms.customcrops.objects.requirements.papi;
 
+import org.bukkit.entity.Player;
+
 import java.util.HashMap;
 
 public interface PapiRequirement {
-    boolean isMet(HashMap<String, String> papiMap);
+    boolean isMet(HashMap<String, String> papiMap, Player player);
 }

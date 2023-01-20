@@ -62,10 +62,10 @@ public class CustomPapi implements RequirementInterface {
                     switch (type){
                         case "==" -> papiRequirement = new PapiEquals(papi, value);
                         case "!=" -> papiRequirement = new PapiNotEquals(papi, value);
-                        case ">=" -> papiRequirement = new PapiNoLess(papi, Double.parseDouble(value));
-                        case "<=" -> papiRequirement = new PapiNoLarger(papi, Double.parseDouble(value));
-                        case "<" -> papiRequirement = new PapiSmaller(papi, Double.parseDouble(value));
-                        case ">" -> papiRequirement = new PapiGreater(papi, Double.parseDouble(value));
+                        case ">=" -> papiRequirement = new PapiNoLess(papi, value);
+                        case "<=" -> papiRequirement = new PapiNoLarger(papi, value);
+                        case "<" -> papiRequirement = new PapiSmaller(papi, value);
+                        case ">" -> papiRequirement = new PapiGreater(papi, value);
                     }
                 }
             }
@@ -74,7 +74,7 @@ public class CustomPapi implements RequirementInterface {
 
     @Override
     public boolean isConditionMet(PlantingCondition plantingCondition) {
-        if (!papiRequirement.isMet(plantingCondition.getPapiMap())) {
+        if (!papiRequirement.isMet(plantingCondition.getPapiMap(), plantingCondition.getPlayer())) {
             if (msg != null) AdventureUtil.playerMessage(plantingCondition.getPlayer(), msg);
             return false;
         }
@@ -112,10 +112,10 @@ public class CustomPapi implements RequirementInterface {
                     switch (type){
                         case "==" -> papiRequirements.add(new PapiEquals(papi, value));
                         case "!=" -> papiRequirements.add(new PapiNotEquals(papi, value));
-                        case ">=" -> papiRequirements.add(new PapiNoLess(papi, Double.parseDouble(value)));
-                        case "<=" -> papiRequirements.add(new PapiNoLarger(papi, Double.parseDouble(value)));
-                        case "<" -> papiRequirements.add(new PapiSmaller(papi, Double.parseDouble(value)));
-                        case ">" -> papiRequirements.add(new PapiGreater(papi, Double.parseDouble(value)));
+                        case ">=" -> papiRequirements.add(new PapiNoLess(papi, value));
+                        case "<=" -> papiRequirements.add(new PapiNoLarger(papi, value));
+                        case "<" -> papiRequirements.add(new PapiSmaller(papi, value));
+                        case ">" -> papiRequirements.add(new PapiGreater(papi, value));
                     }
                 }
             }
