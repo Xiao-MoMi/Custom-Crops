@@ -28,8 +28,8 @@ public class RequirementWeather extends Requirement implements RequirementInterf
     }
 
     @Override
-    public boolean isConditionMet(PlantingCondition plantingCondition) {
-        World world = plantingCondition.getLocation().getWorld();
+    public boolean isConditionMet(PlayerCondition playerCondition) {
+        World world = playerCondition.getLocation().getWorld();
         String weather;
         if (world.isThundering()) weather = "thunder";
         else if (world.isClearWeather()) weather = "clear";
@@ -37,7 +37,7 @@ public class RequirementWeather extends Requirement implements RequirementInterf
         if (mode) {
             for (String value : values) {
                 if (!value.equalsIgnoreCase(weather)) {
-                    notMetMessage(plantingCondition.getPlayer());
+                    notMetMessage(playerCondition.getPlayer());
                     return false;
                 }
             }
@@ -49,7 +49,7 @@ public class RequirementWeather extends Requirement implements RequirementInterf
                     return true;
                 }
             }
-            notMetMessage(plantingCondition.getPlayer());
+            notMetMessage(playerCondition.getPlayer());
             return false;
         }
     }

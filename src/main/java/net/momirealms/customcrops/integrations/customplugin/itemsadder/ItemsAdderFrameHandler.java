@@ -28,7 +28,7 @@ import net.momirealms.customcrops.config.BasicItemConfig;
 import net.momirealms.customcrops.config.MainConfig;
 import net.momirealms.customcrops.config.SoundConfig;
 import net.momirealms.customcrops.config.SprinklerConfig;
-import net.momirealms.customcrops.integrations.AntiGrief;
+import net.momirealms.customcrops.integrations.CCAntiGrief;
 import net.momirealms.customcrops.managers.CropManager;
 import net.momirealms.customcrops.objects.Sprinkler;
 import net.momirealms.customcrops.utils.AdventureUtil;
@@ -44,6 +44,7 @@ import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 public class ItemsAdderFrameHandler extends ItemsAdderHandler {
@@ -55,40 +56,47 @@ public class ItemsAdderFrameHandler extends ItemsAdderHandler {
     public void onInteractFurniture(FurnitureInteractEvent event) {
         if (event.isCancelled()) return;
 
-        final String namespacedID = event.getNamespacedID();
-        if (namespacedID == null) return;
+        final String entityNamespacedID = event.getNamespacedID();
+        if (entityNamespacedID == null) return;
 
         final Player player = event.getPlayer();
         final Entity entity = event.getBukkitEntity();
-        final Location location = entity.getLocation();;
+        final Location entityLocation = entity.getLocation();;
 
-        if (!canProceedAction(player, location)) return;
-
-        Sprinkler sprinkler = SprinklerConfig.SPRINKLERS_3D.get(namespacedID);
+        Sprinkler sprinkler = SprinklerConfig.SPRINKLERS_3D.get(entityNamespacedID);
         if (sprinkler != null) {
-            if (!AntiGrief.testPlace(player, entity.getLocation())) return;
+            if (!CCAntiGrief.testPlace(player, entity.getLocation())) return;
             super.onInteractSprinkler(entity.getLocation(), player, player.getInventory().getItemInMainHand(), sprinkler);
             return;
         }
 
-        if (!namespacedID.contains("_stage_")) return;
-        if (!namespacedID.equals(BasicItemConfig.deadCrop)) {
+        if (!entityNamespacedID.contains("_stage_")) return;
+        if (!entityNamespacedID.equals(BasicItemConfig.deadCrop)) {
             ItemStack itemInHand = player.getInventory().getItemInMainHand();
-            if (isRipe(namespacedID)) {
+            if (isRipe(entityNamespacedID)) {
                 if (MainConfig.canRightClickHarvest && !(MainConfig.emptyHand && itemInHand.getType() != Material.AIR)) {
-                    if (!AntiGrief.testBreak(player, entity.getLocation())) return;
-                    if (!canProceedAction(player, entity.getLocation())) return;
+                    if (!CCAntiGrief.testBreak(player, entity.getLocation())) return;
+                    Crop crop = customInterface.getCropFromID(entityNamespacedID);
+                    if (crop == null) return;
+                    if (!checkHarvestRequirements(player, entityLocation, crop)) {
+                        event.setCancelled(true);
+                        return;
+                    }
                     customInterface.removeFurniture(entity);
                     if (entity.isValid()) entity.remove();
-                    this.onInteractRipeCrop(location, namespacedID, player);
+                    super.onInteractRipeCrop(entityLocation, crop, player);
+                    if (crop.getReturnStage() != null) {
+                        CustomFurniture customFurniture = CustomFurniture.spawn(crop.getReturnStage(), entityLocation.getBlock());
+                        if (crop.canRotate() && customFurniture instanceof ItemFrame itemFrame) itemFrame.setRotation(FurnitureUtil.getRandomRotation());
+                    }
                     return;
                 }
             }
             else if (MainConfig.enableBoneMeal && itemInHand.getType() == Material.BONE_MEAL) {
-                if (!AntiGrief.testPlace(player, location)) return;
+                if (!CCAntiGrief.testPlace(player, entityLocation)) return;
                 if (player.getGameMode() != GameMode.CREATIVE) itemInHand.setAmount(itemInHand.getAmount() - 1);
                 if (Math.random() < MainConfig.boneMealChance) {
-                    entity.getWorld().spawnParticle(MainConfig.boneMealSuccess, location.clone().add(0,0.5, 0),3,0.2,0.2,0.2);
+                    entity.getWorld().spawnParticle(MainConfig.boneMealSuccess, entityLocation.clone().add(0,0.5, 0),3,0.2,0.2,0.2);
                     if (SoundConfig.boneMeal.isEnable()) {
                         AdventureUtil.playerSound(
                                 player,
@@ -98,48 +106,54 @@ public class ItemsAdderFrameHandler extends ItemsAdderHandler {
                         );
                     }
                     customInterface.removeFurniture(entity);
-                    customInterface.placeFurniture(location, customInterface.getNextStage(namespacedID));
+                    customInterface.placeFurniture(entityLocation, customInterface.getNextStage(entityNamespacedID));
                 }
                 return;
             }
         }
-        super.tryMisc(player, player.getInventory().getItemInMainHand(), MiscUtils.getItemFrameBlockLocation(location.clone().subtract(0,1,0)));
+        super.tryMisc(player, player.getInventory().getItemInMainHand(), MiscUtils.getItemFrameBlockLocation(entityLocation.clone().subtract(0,1,0)));
     }
 
     public void onBreakFurniture(FurnitureBreakEvent event) {
         if (event.isCancelled()) return;
 
-        final String namespacedId = event.getNamespacedID();
-        if (namespacedId == null) return;
+        final String entityNamespacedId = event.getNamespacedID();
+        if (entityNamespacedId == null) return;
 
-        final Location location = event.getBukkitEntity().getLocation();
+        final Location entityLocation = event.getBukkitEntity().getLocation();
         final Player player = event.getPlayer();
 
-        Sprinkler sprinkler = SprinklerConfig.SPRINKLERS_3D.get(namespacedId);
+        Sprinkler sprinkler = SprinklerConfig.SPRINKLERS_3D.get(entityNamespacedId);
         if (sprinkler != null) {
-            super.onBreakSprinkler(location);
+            super.onBreakSprinkler(entityLocation);
             return;
         }
 
-        if (MainConfig.enableCrow && namespacedId.equals(BasicItemConfig.scarecrow)) {
-            super.removeScarecrow(event.getBukkitEntity().getLocation());
+        if (MainConfig.enableCrow && entityNamespacedId.equals(BasicItemConfig.scarecrow)) {
+            super.removeScarecrowCache(event.getBukkitEntity().getLocation());
             return;
         }
 
-        if (namespacedId.contains("_stage_")) {
-            if (namespacedId.equals(BasicItemConfig.deadCrop)) return;
-            if (!isRipe(namespacedId)) super.onBreakUnripeCrop(location);
-            else super.onBreakRipeCrop(location, namespacedId, player, false);
+        if (entityNamespacedId.contains("_stage_") && !entityNamespacedId.equals(BasicItemConfig.deadCrop)) {
+            if (!isRipe(entityNamespacedId)) {
+                super.onBreakUnripeCrop(entityLocation);
+            } else {
+                Crop crop = customInterface.getCropFromID(entityNamespacedId);
+                if (crop == null) return;
+                if (!checkHarvestRequirements(player, entityLocation, crop)) {
+                    event.setCancelled(true);
+                    return;
+                }
+                super.onBreakRipeCrop(entityLocation, crop, player, false);
+            }
         }
     }
 
     @Override
     public void onPlayerInteract(PlayerInteractEvent event) {
-
         final Player player = event.getPlayer();
-
+        if (event.getHand() != EquipmentSlot.HAND) return;
         super.onPlayerInteract(event);
-
         if (event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
         Block block = event.getClickedBlock();
         if (block == null) return;
@@ -150,7 +164,6 @@ public class ItemsAdderFrameHandler extends ItemsAdderHandler {
 
         if (!blockID.equals(BasicItemConfig.wetPot) && !blockID.equals(BasicItemConfig.dryPot)) return;
         Location seedLoc = block.getLocation().clone().add(0,1,0);
-        if (!canProceedAction(player, seedLoc)) return;
 
         ItemStack itemInHand = event.getItem();
         Location potLoc = block.getLocation();
@@ -180,33 +193,41 @@ public class ItemsAdderFrameHandler extends ItemsAdderHandler {
         final Player player = event.getPlayer();
         final Location location = event.getBlock().getLocation();
 
-        if (!AntiGrief.testBreak(player, location)) return;
-        if (!canProceedAction(player, location)) return;
+        if (!CCAntiGrief.testBreak(player, location)) return;
 
         if (namespacedId.equals(BasicItemConfig.dryPot) || namespacedId.equals(BasicItemConfig.wetPot)) {
-            super.onBreakPot(location);
-            ItemFrame itemFrame = FurnitureUtil.getItemFrame(customInterface.getFrameCropLocation(location.clone().add(0,1,0)));
-            if (itemFrame == null) return;
-            CustomFurniture customFurniture = CustomFurniture.byAlreadySpawned(itemFrame);
-            if (customFurniture == null) return;
-            String seedID = customFurniture.getNamespacedID();
-            if (seedID.contains("_stage_")) {
-                CustomFurniture.remove(itemFrame, false);
-                if (itemFrame.isValid()) itemFrame.remove();
-                if (seedID.equals(BasicItemConfig.deadCrop)) return;
-                if (!isRipe(seedID)) super.onBreakUnripeCrop(location.clone().add(0,1,0));
-                else super.onBreakRipeCrop(location.clone().add(0,1,0), seedID, player, true);
+            label_out: {
+                Location seedLoc = location.clone().add(0,1,0);
+                ItemFrame itemFrame = FurnitureUtil.getItemFrame(customInterface.getFrameCropLocation(seedLoc));
+                if (itemFrame == null) break label_out;
+                CustomFurniture customFurniture = CustomFurniture.byAlreadySpawned(itemFrame);
+                if (customFurniture == null) break label_out;
+                String seedID = customFurniture.getNamespacedID();
+                if (seedID.contains("_stage_")) {
+                    if (seedID.equals(BasicItemConfig.deadCrop)) {
+                        CustomFurniture.remove(itemFrame, false);
+                        if (itemFrame.isValid()) itemFrame.remove();
+                        break label_out;
+                    }
+                    if (!isRipe(seedID)) {
+                        CustomFurniture.remove(itemFrame, false);
+                        if (itemFrame.isValid()) itemFrame.remove();
+                        super.onBreakUnripeCrop(location.clone().add(0,1,0));
+                    }
+                    else {
+                        Crop crop = customInterface.getCropFromID(seedID);
+                        if (crop == null) break label_out;
+                        if (!checkHarvestRequirements(player, seedLoc, crop)) {
+                            event.setCancelled(true);
+                            return;
+                        }
+                        CustomFurniture.remove(itemFrame, false);
+                        if (itemFrame.isValid()) itemFrame.remove();
+                        super.onBreakRipeCrop(seedLoc, crop, player, true);
+                    }
+                }
             }
-        }
-    }
-
-    private void onInteractRipeCrop(Location location, String id, Player player) {
-        Crop crop = customInterface.getCropFromID(id);
-        if (crop == null) return;
-        if (super.onInteractRipeCrop(location, crop, player)) return;
-        if (crop.getReturnStage() != null) {
-            CustomFurniture customFurniture = CustomFurniture.spawn(crop.getReturnStage(), location.getBlock());
-            if (crop.canRotate() && customFurniture instanceof ItemFrame itemFrame) itemFrame.setRotation(FurnitureUtil.getRandomRotation());
+            super.onBreakPot(location);
         }
     }
 }

@@ -484,7 +484,7 @@ public class CustomWorld {
                 @Override
                 public void run() {
                     for (Player player : sprinklerLoc.getNearbyPlayers(48)) {
-                        cropManager.getArmorStandUtil().playWaterAnimation(player, sprinklerLoc.clone().add(0.5, 0.3, 0.5));
+                        cropManager.getArmorStandUtil().playWaterAnimation(player, sprinklerLoc.clone().add(0.5, MainConfig.animationYOffset, 0.5));
                     }
                 }
             }.runTask(CustomCrops.plugin);

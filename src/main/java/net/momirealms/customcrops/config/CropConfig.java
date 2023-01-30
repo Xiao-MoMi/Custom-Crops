@@ -155,49 +155,50 @@ public class CropConfig {
                     case "return" -> {
                         crop.setReturnStage(config.getString(key + ".return"));
                     }
-                    case "requirements" -> {
+                    case "requirements", "plant-requirements", "harvest-requirements" -> {
                         List<RequirementInterface> requirementList = new ArrayList<>();
-                        for (String requirement : Objects.requireNonNull(config.getConfigurationSection(key + ".requirements")).getKeys(false)) {
-                            String type = config.getString(key + ".requirements." + requirement + ".type");
+                        for (String requirement : Objects.requireNonNull(config.getConfigurationSection(key + "." + option)).getKeys(false)) {
+                            String type = config.getString(key + "." + option + "." + requirement + ".type");
                             if (type == null) continue;
                             switch (type) {
                                 case "time" -> requirementList.add(new RequirementTime(
-                                        config.getStringList(key + ".requirements." + requirement + ".value").toArray(new String[0]),
-                                        Objects.equals(config.getString(key + ".requirements." + requirement + ".mode"), "&&"),
-                                        config.getString(key + ".requirements." + requirement + ".message")
+                                        config.getStringList(key + "." + option + "." + requirement + ".value").toArray(new String[0]),
+                                        Objects.equals(config.getString(key + "." + option + "." + requirement + ".mode"), "&&"),
+                                        config.getString(key + "." + option + "." + requirement + ".message")
                                 ));
                                 case "weather" -> requirementList.add(new RequirementWeather(
-                                        config.getStringList(key + ".requirements." + requirement + ".value").toArray(new String[0]),
-                                        Objects.equals(config.getString(key + ".requirements." + requirement + ".mode"), "&&"),
-                                        config.getString(key + ".requirements." + requirement + ".message")
+                                        config.getStringList(key + "." + option + "." + requirement + ".value").toArray(new String[0]),
+                                        Objects.equals(config.getString(key + "." + option + "." + requirement + ".mode"), "&&"),
+                                        config.getString(key + "." + option + "." + requirement + ".message")
                                 ));
                                 case "yPos" -> requirementList.add(new RequirementYPos(
-                                        config.getStringList(key + ".requirements." + requirement + ".value").toArray(new String[0]),
-                                        Objects.equals(config.getString(key + ".requirements." + requirement + ".mode"), "&&"),
-                                        config.getString(key + ".requirements." + requirement + ".message")
+                                        config.getStringList(key + "." + option + "." + requirement + ".value").toArray(new String[0]),
+                                        Objects.equals(config.getString(key + "." + option + "." + requirement + ".mode"), "&&"),
+                                        config.getString(key + "." + option + "." + requirement + ".message")
                                 ));
                                 case "biome" -> requirementList.add(new RequirementBiome(
-                                        config.getStringList(key + ".requirements." + requirement + ".value").toArray(new String[0]),
-                                        Objects.equals(config.getString(key + ".requirements." + requirement + ".mode"), "&&"),
-                                        config.getString(key + ".requirements." + requirement + ".message")
+                                        config.getStringList(key + "." + option + "." + requirement + ".value").toArray(new String[0]),
+                                        Objects.equals(config.getString(key + "." + option + "." + requirement + ".mode"), "&&"),
+                                        config.getString(key + "." + option + "." + requirement + ".message")
                                 ));
                                 case "world" -> requirementList.add(new RequirementWorld(
-                                        config.getStringList(key + ".requirements." + requirement + ".value").toArray(new String[0]),
-                                        Objects.equals(config.getString(key + ".requirements." + requirement + ".mode"), "&&"),
-                                        config.getString(key + ".requirements." + requirement + ".message")
+                                        config.getStringList(key + "." + option + "." + requirement + ".value").toArray(new String[0]),
+                                        Objects.equals(config.getString(key + "." + option + "." + requirement + ".mode"), "&&"),
+                                        config.getString(key + "." + option + "." + requirement + ".message")
                                 ));
                                 case "permission" -> requirementList.add(new RequirementPermission(
-                                        config.getStringList(key + ".requirements." + requirement + ".value").toArray(new String[0]),
-                                        Objects.equals(config.getString(key + ".requirements." + requirement + ".mode"), "&&"),
-                                        config.getString(key + ".requirements." + requirement + ".message")
+                                        config.getStringList(key + "." + option + "." + requirement + ".value").toArray(new String[0]),
+                                        Objects.equals(config.getString(key + "." + option + "." + requirement + ".mode"), "&&"),
+                                        config.getString(key + "." + option + "." + requirement + ".message")
                                 ));
                                 case "papi-condition" -> requirementList.add(new CustomPapi(
-                                        Objects.requireNonNull(config.getConfigurationSection(key + ".requirements." + requirement + ".value")).getValues(false),
-                                        config.getString(key + ".requirements." + requirement + ".message")
+                                        Objects.requireNonNull(config.getConfigurationSection(key + "." + option + "." + requirement + ".value")).getValues(false),
+                                        config.getString(key + "." + option + "." + requirement + ".message")
                                 ));
                             }
                         }
-                        crop.setRequirements(requirementList.toArray(new RequirementInterface[0]));
+                        if (option.equals("harvest-requirements")) crop.setHarvestRequirements(requirementList.toArray(new RequirementInterface[0]));
+                        else crop.setPlantRequirements(requirementList.toArray(new RequirementInterface[0]));
                     }
                 }
             }

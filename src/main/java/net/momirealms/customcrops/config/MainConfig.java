@@ -18,7 +18,7 @@
 package net.momirealms.customcrops.config;
 
 import net.momirealms.customcrops.helper.Log;
-import net.momirealms.customcrops.integrations.AntiGrief;
+import net.momirealms.customcrops.integrations.CCAntiGrief;
 import net.momirealms.customcrops.integrations.SkillXP;
 import net.momirealms.customcrops.integrations.protection.*;
 import net.momirealms.customcrops.integrations.skill.*;
@@ -48,7 +48,8 @@ public class MainConfig {
     public static boolean OraxenHook;
     public static boolean realisticSeasonHook;
     public static boolean cropMode;
-    public static List<AntiGrief> antiGriefs;
+    public static List<CCAntiGrief> internalAntiGriefs = new ArrayList<>();
+    public static List<CCAntiGrief> externalAntiGriefs = new ArrayList<>();
     public static SkillXP skillXP;
     public static double dryGrowChance;
     public static boolean limitation;
@@ -89,6 +90,7 @@ public class MainConfig {
     public static String fertilizerInfo;
     public static boolean enableParticles;
     public static boolean enableAnimations;
+    public static double animationYOffset;
     public static boolean autoGrow;
     public static boolean enableCompensation;
     public static boolean syncSeason;
@@ -122,7 +124,6 @@ public class MainConfig {
     public static boolean enableSkillBonus;
     public static double bonusPerLevel;
     public static HashMap<Material, String> vanilla2Crops;
-    public static boolean enableEvents;
     public static int saveInterval;
     public static boolean dryMakesCropDead;
     public static double dryDeadChance;
@@ -191,7 +192,8 @@ public class MainConfig {
         autoBackUp = config.getBoolean("optimization.auto-back-up", true);
 
         enableParticles = !config.getBoolean("optimization.disable-water-particles", false);
-        enableAnimations = !config.getBoolean("optimization.disable-sprinkler-animation", false);
+        enableAnimations = config.getBoolean("mechanics.sprinkler-animation.enable", true);
+        animationYOffset = config.getDouble("mechanics.sprinkler-animation.y-offset", 1);
 
         enableSeasonBroadcast = config.getBoolean("season-broadcast.enable", true);
         springMsg = config.getStringList("season-broadcast.spring").toArray(new String[0]);
@@ -216,7 +218,6 @@ public class MainConfig {
 
         skyLightLevel = config.getInt("mechanics.dead-if-no-sky-light.level", 10);
         needSkyLight = config.getBoolean("mechanics.dead-if-no-sky-light.enable", true);
-        enableEvents = config.getBoolean("other-settings.enable-additional-events", false);
 
         String[] split = StringUtils.split(config.getString("mechanics.default-quality-ratio", "17/2/1"), "/");
         double[] weight = new double[3];
@@ -290,81 +291,81 @@ public class MainConfig {
 
         saveInterval = config.getInt("other-settings.data-save-interval", 3);
 
-        antiGriefs = new ArrayList<>();
+        internalAntiGriefs.clear();
         if (config.getBoolean("integration.Residence",false)){
             if (Bukkit.getPluginManager().getPlugin("Residence") == null) Log.warn("Failed to initialize Residence!");
             else {
-                antiGriefs.add(new ResidenceHook());
+                internalAntiGriefs.add(new ResidenceHook());
                 hookMessage("Residence");
             }
         }
         if (config.getBoolean("integration.Kingdoms",false)){
             if (Bukkit.getPluginManager().getPlugin("Kingdoms") == null) Log.warn("Failed to initialize Kingdoms!");
             else {
-                antiGriefs.add(new KingdomsXHook());
+                internalAntiGriefs.add(new KingdomsXHook());
                 hookMessage("Kingdoms");
             }
         }
         if (config.getBoolean("integration.WorldGuard",false)){
             if (Bukkit.getPluginManager().getPlugin("WorldGuard") == null) Log.warn("Failed to initialize WorldGuard!");
             else {
-                antiGriefs.add(new WorldGuardHook());
+                internalAntiGriefs.add(new WorldGuardHook());
                 hookMessage("WorldGuard");
             }
         }
         if (config.getBoolean("integration.GriefDefender",false)){
             if(Bukkit.getPluginManager().getPlugin("GriefDefender") == null) Log.warn("Failed to initialize GriefDefender!");
             else {
-                antiGriefs.add(new GriefDefenderHook());
+                internalAntiGriefs.add(new GriefDefenderHook());
                 hookMessage("GriefDefender");
             }
         }
         if (config.getBoolean("integration.PlotSquared",false)){
             if(Bukkit.getPluginManager().getPlugin("PlotSquared") == null) Log.warn("Failed to initialize PlotSquared!");
             else {
-                antiGriefs.add(new PlotSquaredHook());
+                internalAntiGriefs.add(new PlotSquaredHook());
                 hookMessage("PlotSquared");
             }
         }
         if (config.getBoolean("integration.Towny",false)){
             if (Bukkit.getPluginManager().getPlugin("Towny") == null) Log.warn("Failed to initialize Towny!");
             else {
-                antiGriefs.add(new TownyHook());
+                internalAntiGriefs.add(new TownyHook());
                 hookMessage("Towny");
             }
         }
         if (config.getBoolean("integration.Lands",false)){
             if (Bukkit.getPluginManager().getPlugin("Lands") == null) Log.warn("Failed to initialize Lands!");
             else {
-                antiGriefs.add(new LandsHook());
+                internalAntiGriefs.add(new LandsHook());
                 hookMessage("Lands");
             }
         }
         if (config.getBoolean("integration.GriefPrevention",false)){
             if (Bukkit.getPluginManager().getPlugin("GriefPrevention") == null) Log.warn("Failed to initialize GriefPrevention!");
             else {
-                antiGriefs.add(new GriefPreventionHook());
+                internalAntiGriefs.add(new GriefPreventionHook());
                 hookMessage("GriefPrevention");
             }
         }
         if (config.getBoolean("integration.CrashClaim",false)){
             if (Bukkit.getPluginManager().getPlugin("CrashClaim") == null) Log.warn("Failed to initialize CrashClaim!");
             else {
-                antiGriefs.add(new CrashClaimHook());
+                internalAntiGriefs.add(new CrashClaimHook());
                 hookMessage("CrashClaim");
             }
         }
         if (config.getBoolean("integration.BentoBox",false)){
             if (Bukkit.getPluginManager().getPlugin("BentoBox") == null) Log.warn("Failed to initialize BentoBox!");
             else {
-                antiGriefs.add(new BentoBoxHook());
+                internalAntiGriefs.add(new BentoBoxHook());
                 hookMessage("BentoBox");
             }
         }
         if (config.getBoolean("integration.IridiumSkyblock",false)){
             if (Bukkit.getPluginManager().getPlugin("IridiumSkyblock") == null) Log.warn("Failed to initialize IridiumSkyblock!");
             else {
-                antiGriefs.add(new IridiumSkyblockHook());
+                internalAntiGriefs.add(new IridiumSkyblockHook());
                 hookMessage("IridiumSkyblock");
             }
         }
@@ -434,5 +435,14 @@ public class MainConfig {
 
     private static void hookMessage(String plugin){
         AdventureUtil.consoleMessage("[CustomCrops] <white>" + plugin + " Hooked!");
+    }
+
+    public static void registerAntiGrief(CCAntiGrief ccAntiGrief) {
+        externalAntiGriefs.add(ccAntiGrief);
+        hookMessage(ccAntiGrief.getName());
+    }
+
+    public static void unregisterAntiGrief(CCAntiGrief ccAntiGrief) {
+        externalAntiGriefs.remove(ccAntiGrief);
     }
 }

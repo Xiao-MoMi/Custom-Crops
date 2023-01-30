@@ -61,7 +61,7 @@ public class InternalSeason extends Function implements SeasonInterface {
     public boolean isWrongSeason(World world, @Nullable CCSeason[] seasonList) {
         if (seasonList == null) return false;
         for (CCSeason season : seasonList) {
-            if (season == seasonHashMap.get(world)) {
+            if (season == getSeason(world)) {
                 return false;
             }
         }

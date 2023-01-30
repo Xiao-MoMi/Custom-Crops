@@ -17,11 +17,16 @@
 
 package net.momirealms.customcrops.integrations.protection;
 
-import net.momirealms.customcrops.integrations.AntiGrief;
+import net.momirealms.customcrops.integrations.CCAntiGrief;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-public class GriefDefenderHook implements AntiGrief {
+public class GriefDefenderHook implements CCAntiGrief {
+
+    @Override
+    public String getName() {
+        return "GriefDefender";
+    }
 
     @Override
     public boolean canBreak(Location location, Player player) {

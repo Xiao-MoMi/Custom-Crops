@@ -18,5 +18,5 @@
 package net.momirealms.customcrops.objects.requirements;
 
 public interface RequirementInterface {
-    boolean isConditionMet(PlantingCondition plantingCondition);
+    boolean isConditionMet(PlayerCondition playerCondition);
 }

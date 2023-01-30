@@ -25,13 +25,13 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 
-public class PlantingCondition {
+public class PlayerCondition {
 
     private final Location location;
     private final Player player;
     private HashMap<String, String> papiMap;
 
-    public PlantingCondition(Location location, Player player) {
+    public PlayerCondition(Location location, Player player) {
         this.location = location;
         this.player = player;
         if (CustomCrops.plugin.hasPapi()){

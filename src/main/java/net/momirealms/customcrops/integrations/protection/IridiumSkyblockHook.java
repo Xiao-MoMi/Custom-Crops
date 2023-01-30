@@ -21,13 +21,18 @@ import com.iridium.iridiumskyblock.PermissionType;
 import com.iridium.iridiumskyblock.api.IridiumSkyblockAPI;
 import com.iridium.iridiumskyblock.database.Island;
 import com.iridium.iridiumskyblock.database.User;
-import net.momirealms.customcrops.integrations.AntiGrief;
+import net.momirealms.customcrops.integrations.CCAntiGrief;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import java.util.Optional;
 
-public class IridiumSkyblockHook implements AntiGrief {
+public class IridiumSkyblockHook implements CCAntiGrief {
+
+    @Override
+    public String getName() {
+        return "IridiumSkyblock";
+    }
 
     private final IridiumSkyblockAPI api;
 

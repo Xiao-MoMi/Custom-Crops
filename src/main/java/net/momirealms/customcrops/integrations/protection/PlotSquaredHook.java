@@ -18,10 +18,15 @@
 package net.momirealms.customcrops.integrations.protection;
 
 import com.plotsquared.core.location.Location;
-import net.momirealms.customcrops.integrations.AntiGrief;
+import net.momirealms.customcrops.integrations.CCAntiGrief;
 import org.bukkit.entity.Player;
 
-public class PlotSquaredHook implements AntiGrief {
+public class PlotSquaredHook implements CCAntiGrief {
+
+    @Override
+    public String getName() {
+        return "PlotSquared";
+    }
 
     @Override
     public boolean canBreak(org.bukkit.Location location, Player player) {

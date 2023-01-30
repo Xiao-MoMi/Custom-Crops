@@ -21,7 +21,9 @@ import net.momirealms.customcrops.config.MainConfig;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-public interface AntiGrief {
+public interface CCAntiGrief {
+
+    String getName();
 
     boolean canBreak(Location location, Player player);
 
@@ -29,8 +31,13 @@ public interface AntiGrief {
 
     static boolean testBreak(Player player, Location location) {
         if (player.isOp()) return true;
-        for (AntiGrief antiGrief : MainConfig.antiGriefs) {
-            if(!antiGrief.canBreak(location, player)) {
+        for (CCAntiGrief CCAntiGrief : MainConfig.internalAntiGriefs) {
+            if(!CCAntiGrief.canBreak(location, player)) {
+                return false;
+            }
+        }
+        for (CCAntiGrief CCAntiGrief : MainConfig.externalAntiGriefs) {
+            if(!CCAntiGrief.canBreak(location, player)) {
                 return false;
             }
         }
@@ -39,8 +46,13 @@ public interface AntiGrief {
 
     static boolean testPlace(Player player, Location location) {
         if (player.isOp()) return true;
-        for (AntiGrief antiGrief : MainConfig.antiGriefs) {
-            if(!antiGrief.canPlace(location, player)) {
+        for (CCAntiGrief CCAntiGrief : MainConfig.internalAntiGriefs) {
+            if(!CCAntiGrief.canPlace(location, player)) {
+                return false;
+            }
+        }
+        for (CCAntiGrief CCAntiGrief : MainConfig.externalAntiGriefs) {
+            if(!CCAntiGrief.canPlace(location, player)) {
                 return false;
             }
         }

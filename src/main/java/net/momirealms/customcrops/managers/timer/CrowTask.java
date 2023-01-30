@@ -25,7 +25,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Random;
 
 public class CrowTask extends BukkitRunnable {

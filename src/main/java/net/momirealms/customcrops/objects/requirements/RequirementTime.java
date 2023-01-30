@@ -28,13 +28,13 @@ public class RequirementTime extends Requirement implements RequirementInterface
     }
 
     @Override
-    public boolean isConditionMet(PlantingCondition plantingCondition) {
-        long time = plantingCondition.getLocation().getWorld().getTime();
+    public boolean isConditionMet(PlayerCondition playerCondition) {
+        long time = playerCondition.getLocation().getWorld().getTime();
         if (mode) {
             for (String value : values) {
                 String[] timeMinMax = StringUtils.split(value, "~");
                 if (!(time > Long.parseLong(timeMinMax[0]) && time < Long.parseLong(timeMinMax[1]))) {
-                    notMetMessage(plantingCondition.getPlayer());
+                    notMetMessage(playerCondition.getPlayer());
                     return false;
                 }
             }
@@ -47,7 +47,7 @@ public class RequirementTime extends Requirement implements RequirementInterface
                     return true;
                 }
             }
-            notMetMessage(plantingCondition.getPlayer());
+            notMetMessage(playerCondition.getPlayer());
             return false;
         }
     }

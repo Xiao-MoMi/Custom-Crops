@@ -28,7 +28,9 @@ public interface Crop {
 
     CCSeason[] getSeasons();
 
-    RequirementInterface[] getRequirements();
+    RequirementInterface[] getPlantRequirements();
+
+    RequirementInterface[] getHarvestRequirements();
 
     String getReturnStage();
 

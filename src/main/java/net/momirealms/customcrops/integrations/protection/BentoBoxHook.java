@@ -17,7 +17,7 @@
 
 package net.momirealms.customcrops.integrations.protection;
 
-import net.momirealms.customcrops.integrations.AntiGrief;
+import net.momirealms.customcrops.integrations.CCAntiGrief;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import world.bentobox.bentobox.BentoBox;
@@ -27,7 +27,12 @@ import world.bentobox.bentobox.lists.Flags;
 
 import java.util.Optional;
 
-public class BentoBoxHook implements AntiGrief {
+public class BentoBoxHook implements CCAntiGrief {
+
+    @Override
+    public String getName() {
+        return "BentoBox";
+    }
 
     @Override
     public boolean canBreak(Location location, Player player) {

@@ -17,14 +17,19 @@
 
 package net.momirealms.customcrops.integrations.protection;
 
-import net.momirealms.customcrops.integrations.AntiGrief;
+import net.momirealms.customcrops.integrations.CCAntiGrief;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.kingdoms.constants.group.Kingdom;
 import org.kingdoms.constants.land.Land;
 import org.kingdoms.constants.player.KingdomPlayer;
 
-public class KingdomsXHook implements AntiGrief {
+public class KingdomsXHook implements CCAntiGrief {
+
+    @Override
+    public String getName() {
+        return "KingdomsX";
+    }
 
     @Override
     public boolean canBreak(Location location, Player player) {

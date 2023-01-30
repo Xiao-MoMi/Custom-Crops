@@ -19,11 +19,16 @@ package net.momirealms.customcrops.integrations.protection;
 
 import com.palmergames.bukkit.towny.object.TownyPermission;
 import com.palmergames.bukkit.towny.utils.PlayerCacheUtil;
-import net.momirealms.customcrops.integrations.AntiGrief;
+import net.momirealms.customcrops.integrations.CCAntiGrief;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-public class TownyHook implements AntiGrief {
+public class TownyHook implements CCAntiGrief {
+
+    @Override
+    public String getName() {
+        return "Towny";
+    }
 
     @Override
     public boolean canBreak(Location location, Player player) {

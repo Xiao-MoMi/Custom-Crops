@@ -27,12 +27,12 @@ public class RequirementWorld extends Requirement implements RequirementInterfac
     }
 
     @Override
-    public boolean isConditionMet(PlantingCondition plantingCondition) {
-        String worldName = plantingCondition.getLocation().getWorld().getName();
+    public boolean isConditionMet(PlayerCondition playerCondition) {
+        String worldName = playerCondition.getLocation().getWorld().getName();
         if (mode) {
             for (String value : values) {
                 if (!value.equals(worldName)) {
-                    notMetMessage(plantingCondition.getPlayer());
+                    notMetMessage(playerCondition.getPlayer());
                     return false;
                 }
             }
@@ -44,7 +44,7 @@ public class RequirementWorld extends Requirement implements RequirementInterfac
                     return true;
                 }
             }
-            notMetMessage(plantingCondition.getPlayer());
+            notMetMessage(playerCondition.getPlayer());
             return false;
         }
     }

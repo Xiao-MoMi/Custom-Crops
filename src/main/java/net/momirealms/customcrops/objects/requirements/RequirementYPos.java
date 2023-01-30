@@ -28,13 +28,13 @@ public class RequirementYPos extends Requirement implements RequirementInterface
     }
 
     @Override
-    public boolean isConditionMet(PlantingCondition plantingCondition) {
-        int y = plantingCondition.getLocation().getBlockY();
+    public boolean isConditionMet(PlayerCondition playerCondition) {
+        int y = playerCondition.getLocation().getBlockY();
         if (mode) {
             for (String value : values) {
                 String[] yMinMax = StringUtils.split(value, "~");
                 if (!(y > Long.parseLong(yMinMax[0]) && y < Long.parseLong(yMinMax[1]))) {
-                    notMetMessage(plantingCondition.getPlayer());
+                    notMetMessage(playerCondition.getPlayer());
                     return false;
                 }
             }
@@ -47,7 +47,7 @@ public class RequirementYPos extends Requirement implements RequirementInterface
                     return true;
                 }
             }
-            notMetMessage(plantingCondition.getPlayer());
+            notMetMessage(playerCondition.getPlayer());
             return false;
         }
     }

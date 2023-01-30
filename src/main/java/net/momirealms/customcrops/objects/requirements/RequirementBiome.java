@@ -24,12 +24,12 @@ public class RequirementBiome extends Requirement implements RequirementInterfac
     }
 
     @Override
-    public boolean isConditionMet(PlantingCondition plantingCondition) {
-        String currentBiome = plantingCondition.getLocation().getBlock().getBiome().getKey().toString();
+    public boolean isConditionMet(PlayerCondition playerCondition) {
+        String currentBiome = playerCondition.getLocation().getBlock().getBiome().getKey().toString();
         if (mode) {
             for (String value : values) {
                 if (!(currentBiome.equalsIgnoreCase(value))) {
-                    notMetMessage(plantingCondition.getPlayer());
+                    notMetMessage(playerCondition.getPlayer());
                     return false;
                 }
             }
@@ -41,7 +41,7 @@ public class RequirementBiome extends Requirement implements RequirementInterfac
                     return true;
                 }
             }
-            notMetMessage(plantingCondition.getPlayer());
+            notMetMessage(playerCondition.getPlayer());
             return false;
         }
     }

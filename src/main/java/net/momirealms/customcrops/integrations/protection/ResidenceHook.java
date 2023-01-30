@@ -20,11 +20,16 @@ package net.momirealms.customcrops.integrations.protection;
 import com.bekvon.bukkit.residence.containers.Flags;
 import com.bekvon.bukkit.residence.protection.ClaimedResidence;
 import com.bekvon.bukkit.residence.protection.ResidencePermissions;
-import net.momirealms.customcrops.integrations.AntiGrief;
+import net.momirealms.customcrops.integrations.CCAntiGrief;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-public class ResidenceHook implements AntiGrief {
+public class ResidenceHook implements CCAntiGrief {
+
+    @Override
+    public String getName() {
+        return "Residence";
+    }
 
     @Override
     public boolean canBreak(Location location, Player player) {

@@ -68,7 +68,7 @@ public class HologramUtil {
         wrappedDataWatcher.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(15, serializer2), mask2);
         metaPacket.getModifier().write(0,id);
 
-        if (CustomCrops.version.equals("v1_19_R2")) {
+        if (CustomCrops.plugin.getVersionHelper().isVersionNewerThan1_19_R2()) {
             List<WrappedDataValue> wrappedDataValueList = Lists.newArrayList();
             wrappedDataWatcher.getWatchableObjects().stream().filter(Objects::nonNull).forEach(entry -> {
                 final WrappedDataWatcher.WrappedDataWatcherObject dataWatcherObject = entry.getWatcherObject();

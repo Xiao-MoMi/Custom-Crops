@@ -25,7 +25,8 @@ import net.momirealms.customcrops.objects.requirements.RequirementInterface;
 public class CCCrop implements Crop {
 
     private CCSeason[] seasons;
-    private RequirementInterface[] requirementInterfaces;
+    private RequirementInterface[] plantRequirements;
+    private RequirementInterface[] harvestRequirements;
     private String returnStage;
     private QualityLoot qualityLoot;
     private GiganticCrop giganticCrop;
@@ -56,8 +57,8 @@ public class CCCrop implements Crop {
         return seasons;
     }
 
-    public RequirementInterface[] getRequirements() {
-        return requirementInterfaces;
+    public RequirementInterface[] getPlantRequirements() {
+        return plantRequirements;
     }
 
     public String getReturnStage() {
@@ -80,8 +81,8 @@ public class CCCrop implements Crop {
         this.seasons = seasons;
     }
 
-    public void setRequirements(RequirementInterface[] requirementInterfaces) {
-        this.requirementInterfaces = requirementInterfaces;
+    public void setPlantRequirements(RequirementInterface[] requirementInterfaces) {
+        this.plantRequirements = requirementInterfaces;
     }
 
     public void setReturnStage(String returnStage) {
@@ -110,5 +111,13 @@ public class CCCrop implements Crop {
 
     public int getMax_stage() {
         return max_stage;
+    }
+
+    public RequirementInterface[] getHarvestRequirements() {
+        return harvestRequirements;
+    }
+
+    public void setHarvestRequirements(RequirementInterface[] harvestRequirements) {
+        this.harvestRequirements = harvestRequirements;
     }
 }

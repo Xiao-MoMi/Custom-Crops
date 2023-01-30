@@ -29,7 +29,7 @@ public class BackUpCommand extends AbstractSubCommand {
         String worldName = args.get(0);
         World world = Bukkit.getWorld(worldName);
         if (world == null) {
-            AdventureUtil.sendMessage(sender, MessageConfig.prefix + MessageConfig.worldNotExists);
+            AdventureUtil.sendMessage(sender, MessageConfig.prefix + MessageConfig.worldNotExists.replace("{world}", worldName));
             return true;
         }
         CustomWorld customWorld = CustomCrops.plugin.getCropManager().getCustomWorld(world);

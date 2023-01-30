@@ -19,11 +19,16 @@ package net.momirealms.customcrops.integrations.protection;
 
 import net.crashcraft.crashclaim.api.CrashClaimAPI;
 import net.crashcraft.crashclaim.permissions.PermissionRoute;
-import net.momirealms.customcrops.integrations.AntiGrief;
+import net.momirealms.customcrops.integrations.CCAntiGrief;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-public class CrashClaimHook implements AntiGrief {
+public class CrashClaimHook implements CCAntiGrief {
+
+    @Override
+    public String getName() {
+        return "CrashClaim";
+    }
 
     @Override
     public boolean canBreak(Location location, Player player) {

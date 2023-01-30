@@ -29,7 +29,7 @@ import net.momirealms.customcrops.config.BasicItemConfig;
 import net.momirealms.customcrops.config.MainConfig;
 import net.momirealms.customcrops.config.SoundConfig;
 import net.momirealms.customcrops.config.SprinklerConfig;
-import net.momirealms.customcrops.integrations.AntiGrief;
+import net.momirealms.customcrops.integrations.CCAntiGrief;
 import net.momirealms.customcrops.managers.CropManager;
 import net.momirealms.customcrops.objects.Sprinkler;
 import net.momirealms.customcrops.utils.AdventureUtil;
@@ -61,12 +61,10 @@ public class OraxenWireHandler extends OraxenHandler{
         final Block block = event.getBlock();
         Location location = block.getLocation();
 
-        if (!AntiGrief.testBreak(player, location)) {
+        if (!CCAntiGrief.testBreak(player, location)) {
             event.setCancelled(true);
             return;
         }
-
-        if (!canProceedAction(player, location)) return;
 
         if (player.getInventory().getItemInMainHand().containsEnchantment(Enchantment.SILK_TOUCH) || player.getInventory().getItemInMainHand().getType() == Material.SHEARS){
             event.setCancelled(true);
@@ -78,7 +76,15 @@ public class OraxenWireHandler extends OraxenHandler{
 
         if (id.equals(BasicItemConfig.deadCrop)) return;
         if (!isRipe(id)) super.onBreakUnripeCrop(location);
-        else super.onBreakRipeCrop(location, id, player, true);
+        else {
+            Crop crop = customInterface.getCropFromID(id);
+            if (crop == null) return;
+            if (!checkHarvestRequirements(player, location, crop)) {
+                event.setCancelled(true);
+                return;
+            }
+            super.onBreakRipeCrop(location, crop, player, true);
+        }
     }
 
     @Override
@@ -94,7 +100,7 @@ public class OraxenWireHandler extends OraxenHandler{
             return;
         }
         if (MainConfig.enableCrow && id.equals(BasicItemConfig.scarecrow)) {
-            super.removeScarecrow(event.getBlock().getLocation());
+            super.removeScarecrowCache(event.getBlock().getLocation());
         }
     }
 
@@ -105,8 +111,7 @@ public class OraxenWireHandler extends OraxenHandler{
         final Player player = event.getPlayer();
         final Location blockLoc = event.getItemFrame().getLocation();
 
-        if (!AntiGrief.testPlace(player, blockLoc)) return;
-        if (!canProceedAction(player, blockLoc)) return;
+        if (!CCAntiGrief.testPlace(player, blockLoc)) return;
 
         FurnitureMechanic mechanic = event.getMechanic();
         if (mechanic == null) return;
@@ -125,8 +130,6 @@ public class OraxenWireHandler extends OraxenHandler{
         final Location potLoc = event.getBlock().getLocation();
         final Player player = event.getPlayer();
 
-        if (isInCoolDown(player, 50)) return;
-        if (!canProceedAction(player, potLoc)) return;
         if (super.tryMisc(event.getPlayer(), itemInHand, potLoc)) return;
         if (event.getBlockFace() != BlockFace.UP) return;
 
@@ -151,29 +154,32 @@ public class OraxenWireHandler extends OraxenHandler{
         if (event.isCancelled()) return;
 
         final Player player = event.getPlayer();
-
-        if (isInCoolDown(player, 50)) return;
-
         final Block block = event.getBlock();
         final String id = event.getMechanic().getItemID();
 
         if (!id.contains("_stage_")) return;
 
         Location seedLoc = block.getLocation();
-        if (!canProceedAction(player, seedLoc)) return;
         ItemStack itemInHand = event.getItemInHand();
         if (!id.equals(BasicItemConfig.deadCrop)) {
             if (isRipe(id)) {
                 if (MainConfig.canRightClickHarvest && !(MainConfig.emptyHand && itemInHand != null && itemInHand.getType() != Material.AIR)) {
-                    if (!AntiGrief.testBreak(player, seedLoc)) return;
+                    if (!CCAntiGrief.testBreak(player, seedLoc)) return;
+                    Crop crop = customInterface.getCropFromID(id);
+                    if (crop == null) return;
+                    if (!checkHarvestRequirements(player, seedLoc, crop)) {
+                        event.setCancelled(true);
+                        return;
+                    }
                     block.setType(Material.AIR);
-                    this.onInteractRipeCrop(seedLoc, id, player);
+                    super.onInteractRipeCrop(seedLoc, crop, player);
+                    if (crop.getReturnStage() != null) StringBlockMechanicFactory.setBlockModel(seedLoc.getBlock(), crop.getReturnStage());
                     return;
                 }
             }
             //has next stage
             else if (MainConfig.enableBoneMeal && itemInHand != null && itemInHand.getType() == Material.BONE_MEAL) {
-                if (!AntiGrief.testPlace(player, seedLoc)) return;
+                if (!CCAntiGrief.testPlace(player, seedLoc)) return;
                 if (player.getGameMode() != GameMode.CREATIVE) itemInHand.setAmount(itemInHand.getAmount() - 1);
                 if (Math.random() < MainConfig.boneMealChance) {
                     seedLoc.getWorld().spawnParticle(MainConfig.boneMealSuccess, seedLoc.clone().add(0.5,0.5, 0.5),3,0.2,0.2,0.2);
@@ -202,39 +208,39 @@ public class OraxenWireHandler extends OraxenHandler{
         final Location location = event.getBlock().getLocation();
 
         if (!id.equals(BasicItemConfig.dryPot) && !id.equals(BasicItemConfig.wetPot)) return;
-        if (!canProceedAction(player, location)) return;
+        if (!CCAntiGrief.testBreak(player, location)) return;
 
-        if (!AntiGrief.testBreak(player, location)) {
-            event.setCancelled(true);
-            return;
-        }
-
-        super.onBreakPot(location);
-        Location seedLocation = location.clone().add(0,1,0);
-        String blockID = customInterface.getBlockID(seedLocation);
-        if (blockID == null) return;
-        if (blockID.contains("_stage_")) {
-            customInterface.removeBlock(seedLocation);
-            if (blockID.equals(BasicItemConfig.deadCrop)) return;
-            if (!isRipe(blockID)) {
-                StringBlockMechanic mechanic = (StringBlockMechanic) FurnitureFactory.instance.getMechanic(blockID);
-                if (mechanic == null) return;
-                Drop drop = mechanic.getDrop();
-                if (drop != null && player.getGameMode() != GameMode.CREATIVE) {
-                    drop.spawns(seedLocation, new ItemStack(Material.AIR));
+        label_out: {
+            Location seedLocation = location.clone().add(0,1,0);
+            String blockID = customInterface.getBlockID(seedLocation);
+            if (blockID == null) break label_out;
+            if (blockID.contains("_stage_")) {
+                if (blockID.equals(BasicItemConfig.deadCrop)) {
+                    customInterface.removeBlock(seedLocation);
+                    break label_out;
                 }
-                super.onBreakUnripeCrop(seedLocation);
-            }
-            else {
-                super.onBreakRipeCrop(seedLocation, blockID, player, false);
+                if (!isRipe(blockID)) {
+                    StringBlockMechanic mechanic = (StringBlockMechanic) FurnitureFactory.instance.getMechanic(blockID);
+                    if (mechanic == null) break label_out;
+                    Drop drop = mechanic.getDrop();
+                    if (drop != null && player.getGameMode() != GameMode.CREATIVE) {
+                        drop.spawns(seedLocation, new ItemStack(Material.AIR));
+                    }
+                    customInterface.removeBlock(seedLocation);
+                    super.onBreakUnripeCrop(seedLocation);
+                }
+                else {
+                    Crop crop = customInterface.getCropFromID(id);
+                    if (crop == null) break label_out;
+                    if (!checkHarvestRequirements(player, seedLocation, crop)) {
+                        event.setCancelled(true);
+                        return;
+                    }
+                    customInterface.removeBlock(seedLocation);
+                    super.onBreakRipeCrop(seedLocation, crop, player, false);
+                }
             }
         }
-    }
-
-    private void onInteractRipeCrop(Location location, String id, Player player) {
-        Crop crop = customInterface.getCropFromID(id);
-        if (crop == null) return;
-        if (super.onInteractRipeCrop(location, crop, player)) return;
-        if (crop.getReturnStage() != null) StringBlockMechanicFactory.setBlockModel(location.getBlock(), crop.getReturnStage());
+        super.onBreakPot(location);
     }
 }

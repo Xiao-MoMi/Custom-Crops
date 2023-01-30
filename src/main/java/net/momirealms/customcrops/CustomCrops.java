@@ -26,6 +26,7 @@ import net.momirealms.customcrops.commands.PluginCommand;
 import net.momirealms.customcrops.config.ConfigUtil;
 import net.momirealms.customcrops.config.MainConfig;
 import net.momirealms.customcrops.helper.LibraryLoader;
+import net.momirealms.customcrops.helper.VersionHelper;
 import net.momirealms.customcrops.integrations.papi.PlaceholderManager;
 import net.momirealms.customcrops.integrations.protection.WorldGuardHook;
 import net.momirealms.customcrops.managers.CropManager;
@@ -33,7 +34,6 @@ import net.momirealms.customcrops.utils.AdventureUtil;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.kingdoms.main.ConfigManager;
 
 import java.util.Objects;
 
@@ -41,11 +41,11 @@ public final class CustomCrops extends JavaPlugin {
 
     public static BukkitAudiences adventure;
     public static CustomCrops plugin;
-    public static String version;
     public static ProtocolManager protocolManager;
 
     private PlaceholderManager placeholderManager;
     private CropManager cropManager;
+    private VersionHelper versionHelper;
 
 //                              _ooOoo_
 //                             o8888888o
@@ -79,10 +79,8 @@ public final class CustomCrops extends JavaPlugin {
 
     @Override
     public void onEnable() {
-
         adventure = BukkitAudiences.create(plugin);
         protocolManager = ProtocolLibrary.getProtocolManager();
-        version = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
         AdventureUtil.consoleMessage("[CustomCrops] Running on <white>" + Bukkit.getVersion());
 
         MinecraftVersion.disableBStats();
@@ -112,6 +110,7 @@ public final class CustomCrops extends JavaPlugin {
         Objects.requireNonNull(Bukkit.getPluginCommand("customcrops")).setTabCompleter(pluginCommand);
 
         this.cropManager = new CropManager();
+        this.versionHelper = new VersionHelper();
 
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
             this.placeholderManager = new PlaceholderManager();
@@ -147,5 +146,9 @@ public final class CustomCrops extends JavaPlugin {
 
     public CropManager getCropManager() {
         return cropManager;
+    }
+
+    public VersionHelper getVersionHelper() {
+        return versionHelper;
     }
 }

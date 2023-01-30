@@ -52,7 +52,7 @@ public class SetSeasonCommand extends AbstractSubCommand {
         else {
             World world = Bukkit.getWorld(args.get(0));
             if (world == null) {
-                AdventureUtil.sendMessage(sender, MessageConfig.prefix + MessageConfig.worldNotExists);
+                AdventureUtil.sendMessage(sender, MessageConfig.prefix + MessageConfig.worldNotExists.replace("{world}", args.get(0)));
                 return true;
             }
             CCSeason ccSeason;

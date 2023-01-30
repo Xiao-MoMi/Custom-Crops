@@ -24,11 +24,11 @@ public class RequirementPermission extends Requirement implements RequirementInt
     }
 
     @Override
-    public boolean isConditionMet(PlantingCondition plantingCondition) {
+    public boolean isConditionMet(PlayerCondition playerCondition) {
         if (mode) {
             for (String value : values) {
-                if (!(plantingCondition.getPlayer().hasPermission(value))) {
-                    notMetMessage(plantingCondition.getPlayer());
+                if (!(playerCondition.getPlayer().hasPermission(value))) {
+                    notMetMessage(playerCondition.getPlayer());
                     return false;
                 }
             }
@@ -36,11 +36,11 @@ public class RequirementPermission extends Requirement implements RequirementInt
         }
         else {
             for (String value : values) {
-                if (plantingCondition.getPlayer().hasPermission(value)) {
+                if (playerCondition.getPlayer().hasPermission(value)) {
                     return true;
                 }
             }
-            notMetMessage(plantingCondition.getPlayer());
+            notMetMessage(playerCondition.getPlayer());
             return false;
         }
     }

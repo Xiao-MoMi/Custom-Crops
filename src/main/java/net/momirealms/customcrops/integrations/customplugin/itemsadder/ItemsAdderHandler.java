@@ -31,7 +31,7 @@ import net.momirealms.customcrops.config.BasicItemConfig;
 import net.momirealms.customcrops.config.MainConfig;
 import net.momirealms.customcrops.config.SoundConfig;
 import net.momirealms.customcrops.config.WaterCanConfig;
-import net.momirealms.customcrops.integrations.AntiGrief;
+import net.momirealms.customcrops.integrations.CCAntiGrief;
 import net.momirealms.customcrops.integrations.customplugin.HandlerP;
 import net.momirealms.customcrops.integrations.customplugin.itemsadder.listeners.ItemsAdderBlockListener;
 import net.momirealms.customcrops.integrations.customplugin.itemsadder.listeners.ItemsAdderFurnitureListener;
@@ -114,8 +114,7 @@ public abstract class ItemsAdderHandler extends HandlerP {
             if (block == null) return;
 
             Location location = block.getLocation();
-            if (!AntiGrief.testPlace(player, location)) return;
-            if (!canProceedAction(player, location)) return;
+            if (!CCAntiGrief.testPlace(player, location)) return;
             if (event.getBlockFace() == BlockFace.UP) {
                 placeSprinkler(namespacedID, event.getClickedBlock().getLocation(), player, item);
             }
@@ -123,7 +122,7 @@ public abstract class ItemsAdderHandler extends HandlerP {
     }
 
     public boolean tryMisc(Player player, ItemStack itemInHand, Location potLoc) {
-        if (!AntiGrief.testPlace(player, potLoc)) return true;
+        if (!CCAntiGrief.testPlace(player, potLoc)) return true;
         if (itemInHand == null || itemInHand.getType() == Material.AIR) return true;
 
         if (useBucket(potLoc, player, itemInHand)) {

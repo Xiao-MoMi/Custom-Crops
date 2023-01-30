@@ -1,6 +1,6 @@
 # Don't change
 # 请不要修改
-config-version: '21'
+config-version: '22'
 metrics: true
 # lang: english / spanish / chinese
 lang: english
@@ -58,9 +58,6 @@ optimization:
   # Disable the water particles when using watering-cans
   # 关闭水粒子效果
   disable-water-particles: false
-  # Disable the animation when sprinkler works
-  # 关闭洒水器动画
-  disable-sprinkler-animation: false
   # Auto back up the data when a world is unloaded
   # 自动备份
   auto-back-up: true
@@ -118,6 +115,11 @@ mechanics:
   # Should crops drop loot only in whitelist worlds or in all the worlds
   # 农作物是否只在白名单世界掉落农产品
   drop-loots-in-all-worlds: false
+
+  # Water splash animation when sprinkler works
+  sprinkler-animation:
+    enable: true
+    y-offset: 0.4
 
   fill:
     watering-can-to-sprinkler: 1
@@ -262,8 +264,6 @@ hologram:
     empty: '뀁뀄'
     right: '뀁뀅</font>'
 
-
-
 actionbar:
   # Should actionbar be sent when using watering-can
   enable: true
@@ -323,7 +323,3 @@ other-settings:
   # 3 days = 1 hour
   # Save the cache to file
   data-save-interval: 3
-  # PreAction events.
-  # It's useful if your anti grief plugin is not supported
-  # You can listen to PreActionEvent and cancel all the CustomCrops related events
-  enable-additional-events: false

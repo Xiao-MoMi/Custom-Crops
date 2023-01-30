@@ -34,7 +34,6 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 public class ArmorStandUtil {
@@ -90,7 +89,7 @@ public class ArmorStandUtil {
     public PacketContainer getMetaPacket(int id) {
         PacketContainer metaPacket = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
         metaPacket.getIntegers().write(0, id);
-        if (CustomCrops.version.equals("v1_19_R2")) {
+        if (CustomCrops.plugin.getVersionHelper().isVersionNewerThan1_19_R2()) {
             WrappedDataWatcher wrappedDataWatcher = createDataWatcher();
             List<WrappedDataValue> wrappedDataValueList = Lists.newArrayList();
             wrappedDataWatcher.getWatchableObjects().stream().filter(Objects::nonNull).forEach(entry -> {

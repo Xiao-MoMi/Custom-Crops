@@ -17,7 +17,6 @@
 
 package net.momirealms.customcrops.integrations.customplugin;
 
-import com.willfp.eco.core.items.Items;
 import de.tr7zw.changeme.nbtapi.NBTCompound;
 import de.tr7zw.changeme.nbtapi.NBTItem;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -35,13 +34,12 @@ import net.momirealms.customcrops.objects.Function;
 import net.momirealms.customcrops.objects.Sprinkler;
 import net.momirealms.customcrops.objects.WaterCan;
 import net.momirealms.customcrops.objects.fertilizer.Fertilizer;
-import net.momirealms.customcrops.objects.requirements.PlantingCondition;
+import net.momirealms.customcrops.objects.requirements.PlayerCondition;
 import net.momirealms.customcrops.objects.requirements.RequirementInterface;
 import net.momirealms.customcrops.utils.AdventureUtil;
 import net.momirealms.customcrops.utils.FurnitureUtil;
 import net.momirealms.customcrops.utils.HologramUtil;
 import net.momirealms.customcrops.utils.LimitationUtil;
-import org.apache.commons.lang.StringUtils;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.ItemFrame;
@@ -228,29 +226,20 @@ public abstract class HandlerP extends Function {
         return true;
     }
 
-    private void removeCropCache(Location location) {
+    public void onBreakUnripeCrop(Location location) {
         CustomWorld customWorld = cropManager.getCustomWorld(location.getWorld());
         if (customWorld == null) return;
         customWorld.removeCropCache(location);
     }
 
-    public void onBreakUnripeCrop(Location location) {
-        removeCropCache(location);
-    }
-
-    public void onBreakRipeCrop(Location location, String id, Player player, boolean instant) {
-        removeCropCache(location);
-        String[] ns = StringUtils.split(id, ":");
-        String cropNameWithoutNS = ns[ns.length-1];
-        String cropName = cropNameWithoutNS.substring(0, cropNameWithoutNS.indexOf("_stage_"));
-
-        Crop crop = CropConfig.CROPS.get(cropName);
-        if (crop == null) return;
-
+    public void onBreakRipeCrop(Location location, Crop crop, Player player, boolean instant) {
+        if (isInCoolDown(player, 50)) return;
         CustomWorld customWorld = cropManager.getCustomWorld(location.getWorld());
         if (customWorld != null) {
+            customWorld.removeCropCache(location);
             Fertilizer fertilizer = customWorld.getFertilizerCache(location.clone().subtract(0,1,0));
             if (instant) {
+                //To prevent some unhooked region plugin duplication
                 Bukkit.getScheduler().runTaskLater(CustomCrops.plugin, ()-> {
                     if (location.getBlock().getType() != Material.AIR) return;
                     cropManager.proceedHarvest(crop, player, location, fertilizer, false);
@@ -273,7 +262,7 @@ public abstract class HandlerP extends Function {
         }
     }
 
-    public void removeScarecrow(Location location) {
+    public void removeScarecrowCache(Location location) {
         CustomWorld customWorld = cropManager.getCustomWorld(location.getWorld());
         if (customWorld == null) return;
         customWorld.removeScarecrowCache(location);
@@ -534,35 +523,19 @@ public abstract class HandlerP extends Function {
         }
     }
 
-    protected boolean canProceedAction(Player player, Location location) {
-        if (MainConfig.enableEvents) return true;
-        PreActionEvent preActionEvent = new PreActionEvent(player, location);
-        Bukkit.getPluginManager().callEvent(preActionEvent);
-        return !preActionEvent.isCancelled();
-    }
-
-    protected boolean onInteractRipeCrop(Location location, Crop crop, Player player) {
+    protected void onInteractRipeCrop(Location location, Crop crop, Player player) {
         CustomWorld customWorld = cropManager.getCustomWorld(location.getWorld());
         if (customWorld != null) {
             Fertilizer fertilizer = customWorld.getFertilizerCache(location.clone().subtract(0,1,0));
             cropManager.proceedHarvest(crop, player, location, fertilizer, true);
-
             String returnStage = crop.getReturnStage();
-            if (returnStage == null) {
-                customWorld.removeCropCache(location);
-                return true;
-            }
-            else {
-                customWorld.addCropCache(location, crop.getKey(), Integer.parseInt(returnStage.substring(returnStage.indexOf("_stage_") + 7)));
-                return false;
-            }
+            if (returnStage == null) customWorld.removeCropCache(location);
+            else customWorld.addCropCache(location, crop.getKey(), Integer.parseInt(returnStage.substring(returnStage.indexOf("_stage_") + 7)));
         }
         else if (MainConfig.dropLootsInAllWorlds) {
             cropManager.proceedHarvest(crop, player, location, null, true);
         }
-        return true;
     }
-
 
     public boolean plantSeed(Location seedLoc, String cropName, @Nullable Player player, @Nullable ItemStack itemInHand) {
         Crop crop = CropConfig.CROPS.get(cropName);
@@ -574,10 +547,10 @@ public abstract class HandlerP extends Function {
         if (FurnitureUtil.hasFurniture(customInterface.getFrameCropLocation(seedLoc)) || seedLoc.getBlock().getType() != Material.AIR) return false;
 
         if (player != null) {
-            PlantingCondition plantingCondition = new PlantingCondition(seedLoc, player);
-            if (crop.getRequirements() != null) {
-                for (RequirementInterface requirement : crop.getRequirements()) {
-                    if (!requirement.isConditionMet(plantingCondition)) {
+            PlayerCondition playerCondition = new PlayerCondition(seedLoc, player);
+            if (crop.getPlantRequirements() != null) {
+                for (RequirementInterface requirement : crop.getPlantRequirements()) {
+                    if (!requirement.isConditionMet(playerCondition)) {
                         return false;
                     }
                 }
@@ -665,5 +638,17 @@ public abstract class HandlerP extends Function {
         if (crop == null) return false;
         int stage = Integer.parseInt(id.substring(id.indexOf("_stage_") + 7));
         return stage == crop.getMax_stage();
+    }
+
+    protected boolean checkHarvestRequirements(Player player, Location location, Crop crop) {
+        PlayerCondition playerCondition = new PlayerCondition(location, player);
+        if (crop.getHarvestRequirements() != null) {
+            for (RequirementInterface requirement : crop.getHarvestRequirements()) {
+                if (!requirement.isConditionMet(playerCondition)) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 }

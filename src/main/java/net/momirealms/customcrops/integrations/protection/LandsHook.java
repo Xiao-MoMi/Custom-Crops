@@ -18,19 +18,19 @@
 package net.momirealms.customcrops.integrations.protection;
 
 import me.angeschossen.lands.api.LandsIntegration;
-import me.angeschossen.lands.api.flags.Flags;
-import me.angeschossen.lands.api.flags.enums.FlagTarget;
-import me.angeschossen.lands.api.flags.enums.RoleFlagCategory;
 import me.angeschossen.lands.api.flags.types.RoleFlag;
-import me.angeschossen.lands.api.land.Area;
 import me.angeschossen.lands.api.land.LandWorld;
 import net.momirealms.customcrops.CustomCrops;
-import net.momirealms.customcrops.integrations.AntiGrief;
+import net.momirealms.customcrops.integrations.CCAntiGrief;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
-public class LandsHook implements AntiGrief {
+public class LandsHook implements CCAntiGrief {
+
+    @Override
+    public String getName() {
+        return "Lands";
+    }
 
     private final LandsIntegration api;
 

@@ -45,7 +45,7 @@ tomato:
   season:
     - Spring
 
-  requirements:
+  plant-requirements:
     condition_1:
       # Condition System:
       type: permission
@@ -55,6 +55,14 @@ tomato:
         - crops.plant.tomato
       # The message to be shown when player doesn't fit the requirement
       message: 'You don''t have permission to plant this seed!'
+  harvest-requirements:
+    condition_1:
+      type: permission
+      mode: '&&'
+      value:
+        - crops.harvest.tomato
+      message: 'You don''t have permission to harvest tomato!'
+
 
 grape:
   max-stage: 6
