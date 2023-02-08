@@ -17,6 +17,9 @@
 
 package net.momirealms.customcrops.integrations.customplugin.oraxen;
 
+import dev.lone.itemsadder.api.CustomBlock;
+import dev.lone.itemsadder.api.CustomStack;
+import io.th0rgal.oraxen.api.OraxenBlocks;
 import io.th0rgal.oraxen.api.OraxenItems;
 import io.th0rgal.oraxen.api.events.OraxenFurnitureBreakEvent;
 import io.th0rgal.oraxen.api.events.OraxenFurnitureInteractEvent;
@@ -24,6 +27,7 @@ import io.th0rgal.oraxen.api.events.OraxenNoteBlockBreakEvent;
 import io.th0rgal.oraxen.api.events.OraxenNoteBlockInteractEvent;
 import io.th0rgal.oraxen.mechanics.provided.gameplay.furniture.FurnitureFactory;
 import io.th0rgal.oraxen.mechanics.provided.gameplay.furniture.FurnitureMechanic;
+import io.th0rgal.oraxen.mechanics.provided.gameplay.noteblock.NoteBlockMechanic;
 import io.th0rgal.oraxen.utils.drops.Drop;
 import net.momirealms.customcrops.api.crop.Crop;
 import net.momirealms.customcrops.config.BasicItemConfig;
@@ -43,6 +47,9 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 
@@ -136,32 +143,64 @@ public class OraxenFrameHandler extends OraxenHandler {
         }
     }
 
+//    @Override
+//    public void onInteractNoteBlock(OraxenNoteBlockInteractEvent event) {
+//        final Player player = event.getPlayer();
+//        final ItemStack itemInHand = event.getItemInHand();
+//        final Block block = event.getBlock();
+//
+//        String blockID = event.getMechanic().getItemID();
+//        if (!blockID.equals(BasicItemConfig.dryPot) && !blockID.equals(BasicItemConfig.wetPot)) return;
+//
+//        Location potLoc = block.getLocation();
+//        Location seedLoc = potLoc.clone().add(0,1,0);
+//
+//        if (super.tryMisc(player, itemInHand, potLoc)) return;
+//        if (event.getBlockFace() != BlockFace.UP) return;
+//
+//        String id = OraxenItems.getIdByItem(itemInHand);
+//        if (id != null) {
+//            if (id.endsWith("_seeds")) {
+//                String cropName = id.substring(0, id.length() - 6);
+//                plantSeed(seedLoc, cropName, player, itemInHand);
+//            }
+//        }
+//        else if (MainConfig.enableConvert) {
+//            String cropName = MainConfig.vanilla2Crops.get(itemInHand.getType());
+//            if (cropName == null) return;
+//            plantSeed(seedLoc, cropName, player, itemInHand);
+//        }
+//    }
+
     @Override
-    public void onInteractNoteBlock(OraxenNoteBlockInteractEvent event) {
+    public void onPlayerInteract(PlayerInteractEvent event) {
         final Player player = event.getPlayer();
-        final ItemStack itemInHand = event.getItemInHand();
-        final Block block = event.getBlock();
-
-        String blockID = event.getMechanic().getItemID();
-        if (!blockID.equals(BasicItemConfig.dryPot) && !blockID.equals(BasicItemConfig.wetPot)) return;
-
-        Location potLoc = block.getLocation();
-        Location seedLoc = potLoc.clone().add(0,1,0);
-
-        if (super.tryMisc(player, itemInHand, potLoc)) return;
+        if (event.getHand() != EquipmentSlot.HAND) return;
+        super.onPlayerInteract(event);
+        if (event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
         if (event.getBlockFace() != BlockFace.UP) return;
-
-        String id = OraxenItems.getIdByItem(itemInHand);
-        if (id != null) {
-            if (id.endsWith("_seeds")) {
-                String cropName = id.substring(0, id.length() - 6);
+        Block block = event.getClickedBlock();
+        if (block == null) return;
+        NoteBlockMechanic noteBlockMechanic = OraxenBlocks.getNoteBlockMechanic(block);
+        if (noteBlockMechanic != null) {
+            final String blockID = noteBlockMechanic.getItemID();
+            if (!blockID.equals(BasicItemConfig.wetPot) && !blockID.equals(BasicItemConfig.dryPot)) return;
+            Location seedLoc = block.getLocation().clone().add(0,1,0);
+            ItemStack itemInHand = event.getItem();
+            Location potLoc = block.getLocation();
+            if (super.tryMisc(player, itemInHand, potLoc)) return;
+            String id = OraxenItems.getIdByItem(itemInHand);
+            if (id != null) {
+                if (id.endsWith("_seeds")) {
+                    String cropName = id.substring(0, id.length() - 6);
+                    plantSeed(seedLoc, cropName, player, itemInHand);
+                }
+            }
+            else if (MainConfig.enableConvert) {
+                String cropName = MainConfig.vanilla2Crops.get(itemInHand.getType());
+                if (cropName == null) return;
                 plantSeed(seedLoc, cropName, player, itemInHand);
             }
-        }
-        else if (MainConfig.enableConvert) {
-            String cropName = MainConfig.vanilla2Crops.get(itemInHand.getType());
-            if (cropName == null) return;
-            plantSeed(seedLoc, cropName, player, itemInHand);
         }
     }
 

@@ -17,6 +17,8 @@
 
 package net.momirealms.customcrops.objects.requirements;
 
+import net.momirealms.biomeapi.BiomeAPI;
+
 public class RequirementBiome extends Requirement implements RequirementInterface {
 
     public RequirementBiome(String[] values, boolean mode, String msg) {
@@ -25,7 +27,7 @@ public class RequirementBiome extends Requirement implements RequirementInterfac
 
     @Override
     public boolean isConditionMet(PlayerCondition playerCondition) {
-        String currentBiome = playerCondition.getLocation().getBlock().getBiome().getKey().toString();
+        String currentBiome = BiomeAPI.getBiome(playerCondition.getLocation());
         if (mode) {
             for (String value : values) {
                 if (!(currentBiome.equalsIgnoreCase(value))) {

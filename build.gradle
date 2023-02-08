@@ -4,7 +4,7 @@ plugins {
 }
 
 group = 'net.momirealms'
-version = '2.2.3'
+version = '2.2.4'
 
 repositories {
     mavenCentral()
@@ -74,6 +74,7 @@ dependencies {
     implementation('net.kyori:adventure-text-minimessage:4.12.0')
     implementation("de.tr7zw:item-nbt-api:2.11.1")
     implementation("org.bstats:bstats-bukkit:3.0.0")
+    implementation fileTree(dir:'libs',includes:['BiomeAPI.jar'])
 }
 
 def targetJavaVersion = 17
@@ -109,6 +110,7 @@ shadowJar {
     relocate ('de.tr7zw', 'net.momirealms.customcrops.libs.de.tr7zw')
     relocate ('net.kyori', 'net.momirealms.customcrops.libs.net.kyori')
     relocate ('org.bstats', 'net.momirealms.customcrops.libs.org.bstats')
+    relocate 'net.momirealms.biomeapi', 'net.momirealms.customcrops.libs.net.momirealms.biomeapi'
 }
 
 tasks.register("delete", Delete).get().delete("build/libs/"+project.name+"-"+project.version+".jar")

@@ -641,6 +641,7 @@ public abstract class HandlerP extends Function {
     }
 
     protected boolean checkHarvestRequirements(Player player, Location location, Crop crop) {
+        if (player.getGameMode() == GameMode.CREATIVE) return true;
         PlayerCondition playerCondition = new PlayerCondition(location, player);
         if (crop.getHarvestRequirements() != null) {
             for (RequirementInterface requirement : crop.getHarvestRequirements()) {
