@@ -1,6 +1,6 @@
 # Don't change
 # 请不要修改
-config-version: '22'
+config-version: '23'
 metrics: true
 # lang: english / spanish / chinese
 lang: english
@@ -19,6 +19,7 @@ integration:
   CrashClaim: false
   BentoBox: false
   IridiumSkyblock: false
+  SuperiorSkyBlock: false
   # Skill Xp
   # 技能经验
   AureliumSkills: false

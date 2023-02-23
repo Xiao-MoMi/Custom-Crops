@@ -143,4 +143,12 @@ public class ItemsAdderHook implements CustomInterface {
             placeWire(seedLoc, stage);
         });
     }
+
+    @Override
+    @Nullable
+    public String getEntityID(Entity entity) {
+        CustomFurniture customFurniture = CustomFurniture.byAlreadySpawned(entity);
+        if (customFurniture == null) return null;
+        return customFurniture.getNamespacedID();
+    }
 }

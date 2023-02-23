@@ -51,12 +51,18 @@ public class SeasonUtils {
         CustomCrops.plugin.getCropManager().getSeasonAPI().unloadWorld(world);
     }
 
+    /**
+     * Get a season's localization
+     * @param season season
+     * @return localization
+     */
     public static String getSeasonText(CCSeason season) {
         return switch (season) {
             case SPRING -> MessageConfig.spring;
             case SUMMER -> MessageConfig.summer;
             case AUTUMN -> MessageConfig.autumn;
             case WINTER -> MessageConfig.winter;
+            case UNKNOWN -> "Error";
             default -> throw new IllegalStateException("Unexpected value: " + season);
         };
     }

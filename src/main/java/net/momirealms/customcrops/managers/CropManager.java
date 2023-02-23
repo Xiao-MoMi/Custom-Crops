@@ -31,6 +31,8 @@ import net.momirealms.customcrops.integrations.customplugin.itemsadder.ItemsAdde
 import net.momirealms.customcrops.integrations.customplugin.oraxen.OraxenFrameHandler;
 import net.momirealms.customcrops.integrations.customplugin.oraxen.OraxenHook;
 import net.momirealms.customcrops.integrations.customplugin.oraxen.OraxenWireHandler;
+import net.momirealms.customcrops.integrations.item.MMOItemsHook;
+import net.momirealms.customcrops.integrations.item.MythicMobsHook;
 import net.momirealms.customcrops.integrations.season.InternalSeason;
 import net.momirealms.customcrops.integrations.season.RealisticSeasonsHook;
 import net.momirealms.customcrops.integrations.season.SeasonInterface;
@@ -400,6 +402,8 @@ public class CropManager extends Function {
     private ItemStack getLoot(String id) {
         if (id == null) return null;
         if (MiscUtils.isVanillaItem(id)) return new ItemStack(Material.valueOf(id));
+        else if (id.startsWith("MMOItems:")) return MMOItemsHook.get(id);
+        else if (id.startsWith("MythicMobs:")) return MythicMobsHook.get(id);
         else return customInterface.getItemStack(id);
     }
 

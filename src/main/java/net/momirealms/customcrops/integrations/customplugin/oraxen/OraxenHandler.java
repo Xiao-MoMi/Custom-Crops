@@ -136,6 +136,8 @@ public abstract class OraxenHandler extends HandlerP {
 
                 if (block == null) return;
 
+                if (!CCAntiGrief.testPlace(player, block.getLocation())) return;
+
                 if (event.getBlockFace() == BlockFace.UP && placeSprinkler(id, block.getLocation(), player, item)) {
                     return;
                 }

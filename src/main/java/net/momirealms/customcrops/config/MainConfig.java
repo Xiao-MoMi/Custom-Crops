@@ -369,6 +369,13 @@ public class MainConfig {
                 hookMessage("IridiumSkyblock");
             }
         }
+        if (config.getBoolean("integration.SuperiorSkyBlock",false)){
+            if (Bukkit.getPluginManager().getPlugin("SuperiorSkyBlock2") == null) Log.warn("Failed to initialize SuperiorSkyBlock!");
+            else {
+                internalAntiGriefs.add(new SuperiorSkyBlockHook());
+                hookMessage("SuperiorSkyBlock");
+            }
+        }
 
         if (config.getBoolean("integration.AureliumSkills")) {
             if (Bukkit.getPluginManager().getPlugin("AureliumSkills") == null) Log.warn("Failed to initialize AureliumSkills!");

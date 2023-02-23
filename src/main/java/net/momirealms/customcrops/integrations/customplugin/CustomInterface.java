@@ -60,4 +60,7 @@ public interface CustomInterface {
     void addFrameStage(ItemFrame itemFrame, String stage, boolean rotate);
 
     void addWireStage(Location seedLoc, String stage);
+
+    @Nullable
+    String getEntityID(Entity entity);
 }

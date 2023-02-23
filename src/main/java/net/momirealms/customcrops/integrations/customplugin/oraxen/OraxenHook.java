@@ -37,6 +37,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.Nullable;
 
@@ -138,5 +139,12 @@ public class OraxenHook implements CustomInterface {
     @Override
     public void addWireStage(Location seedLoc, String stage) {
         Bukkit.getScheduler().runTask(CustomCrops.plugin, () -> placeWire(seedLoc, stage));
+    }
+
+    @Override
+    @Nullable
+    public String getEntityID(Entity entity) {
+        PersistentDataContainer pdc = entity.getPersistentDataContainer();
+        return pdc.get(FURNITURE, PersistentDataType.STRING);
     }
 }

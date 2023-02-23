@@ -9,6 +9,8 @@ tomato:
   quality-loots:
     amount: 1~4
     quality:
+      # MMOItems:TYPE:ID
+      # MythicMobs:id
       1: customcrops:tomato
       2: customcrops:tomato_silver_star
       3: customcrops:tomato_golden_star

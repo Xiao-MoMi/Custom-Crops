@@ -25,6 +25,7 @@ softdepend:
   - RealisticSeasons
   - Jobs
   - IridiumSkyblock
+  - SuperiorSkyBlock2
 commands:
   customcrops:
     usage: /customcrops <args>

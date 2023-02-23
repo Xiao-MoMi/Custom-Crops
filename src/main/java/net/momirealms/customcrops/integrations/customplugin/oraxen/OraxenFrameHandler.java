@@ -17,14 +17,11 @@
 
 package net.momirealms.customcrops.integrations.customplugin.oraxen;
 
-import dev.lone.itemsadder.api.CustomBlock;
-import dev.lone.itemsadder.api.CustomStack;
 import io.th0rgal.oraxen.api.OraxenBlocks;
 import io.th0rgal.oraxen.api.OraxenItems;
 import io.th0rgal.oraxen.api.events.OraxenFurnitureBreakEvent;
 import io.th0rgal.oraxen.api.events.OraxenFurnitureInteractEvent;
 import io.th0rgal.oraxen.api.events.OraxenNoteBlockBreakEvent;
-import io.th0rgal.oraxen.api.events.OraxenNoteBlockInteractEvent;
 import io.th0rgal.oraxen.mechanics.provided.gameplay.furniture.FurnitureFactory;
 import io.th0rgal.oraxen.mechanics.provided.gameplay.furniture.FurnitureMechanic;
 import io.th0rgal.oraxen.mechanics.provided.gameplay.noteblock.NoteBlockMechanic;
@@ -40,6 +37,7 @@ import net.momirealms.customcrops.objects.Sprinkler;
 import net.momirealms.customcrops.utils.AdventureUtil;
 import net.momirealms.customcrops.utils.FurnitureUtil;
 import net.momirealms.customcrops.utils.MiscUtils;
+import org.bukkit.BanList;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
