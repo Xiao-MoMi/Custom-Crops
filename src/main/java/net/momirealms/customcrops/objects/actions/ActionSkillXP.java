@@ -23,9 +23,11 @@ import org.bukkit.entity.Player;
 public class ActionSkillXP implements ActionInterface {
 
     private final double xp;
+    private final double chance;
 
-    public ActionSkillXP(double xp) {
+    public ActionSkillXP(double xp, double chance) {
         this.xp = xp;
+        this.chance = chance;
     }
 
     @Override
@@ -33,5 +35,10 @@ public class ActionSkillXP implements ActionInterface {
         if (MainConfig.skillXP != null) {
             MainConfig.skillXP.addXp(player, xp);
         }
+    }
+
+    @Override
+    public double getChance() {
+        return chance;
     }
 }

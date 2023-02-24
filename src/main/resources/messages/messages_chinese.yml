@@ -1,5 +1,5 @@
-#MiniMessage Format
-#https://docs.adventure.kyori.net/minimessage/format.html
+# Text Format
+# https://docs.adventure.kyori.net/minimessage/format.html
 messages:
   prefix: '<gradient:#ff206c:#fdee55>[CustomCrops] </gradient>'
   reload: '<white>重载成功! 耗时 <green>{time}ms'
@@ -19,7 +19,6 @@ messages:
   set-season: '<white>成功切换世界 {world} 的季节为 {season}!'
   before-plant: '<white>这种肥料必须在种植前使用!'
   wrong-season: '<white>当前季节不适合这个农作物生长. 当前季节{season}'
-
   no-season: '此世界没有季节'
   season-disabled: '季节系统已被禁用'
   auto-season-disabled: '自动季节切换已被禁用，无法计算此变量'

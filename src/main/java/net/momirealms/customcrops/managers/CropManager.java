@@ -355,7 +355,9 @@ public class CropManager extends Function {
 
     public void performActions(ActionInterface[] actions, Player player) {
         for (ActionInterface action : actions) {
-            action.performOn(player);
+            if (Math.random() <= action.getChance()) {
+                action.performOn(player);
+            }
         }
     }
 

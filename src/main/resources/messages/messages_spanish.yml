@@ -1,5 +1,5 @@
-#MiniMessage Format
-#https://docs.adventure.kyori.net/minimessage/format.html
+# Text Format
+# https://docs.adventure.kyori.net/minimessage/format.html
 messages:
   prefix: '<gradient:#ff206c:#fdee55>[CustomCrops] </gradient>'
   reload: '<white>¡Recargado! Tomó <green>{time}ms'
@@ -18,7 +18,6 @@ messages:
   set-season: '<white>Fijado con éxito {world}''s temporada a {season}!'
   before-plant: '<white>Este abono debe utilizarse antes de la siembra'
   wrong-season: '<white>La temporada actual no es adecuada para plantar esta semilla'
-
   no-season: 'Sin temporada'
   season-disabled: 'La temporada está desactivada'
   auto-season-disabled: 'No se ha podido contar'

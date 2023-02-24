@@ -23,9 +23,11 @@ import org.bukkit.entity.Player;
 public class ActionCommand implements ActionInterface {
 
     private final String[] commands;
+    private final double chance;
 
-    public ActionCommand(String[] commands) {
+    public ActionCommand(String[] commands, double chance) {
         this.commands = commands;
+        this.chance = chance;
     }
 
     @Override
@@ -33,5 +35,10 @@ public class ActionCommand implements ActionInterface {
         for (String command : commands) {
             Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), command.replace("{player}", player.getName()));
         }
+    }
+
+    @Override
+    public double getChance() {
+        return chance;
     }
 }

@@ -9,6 +9,14 @@ softdepend:
   - ItemsAdder
   - Oraxen
   - PlaceholderAPI
+  - mcMMO
+  - AureliumSkills
+  - MMOCore
+  - EcoSkills
+  - RealisticSeasons
+  - Jobs
+  - IridiumSkyblock
+  - SuperiorSkyBlock2
   - Residence
   - Kingdoms
   - WorldGuard
@@ -17,15 +25,7 @@ softdepend:
   - Towny
   - Lands
   - GriefPrevention
-  - mcMMO
-  - AureliumSkills
-  - MMOCore
-  - EcoSkills
   - CrashClaim
-  - RealisticSeasons
-  - Jobs
-  - IridiumSkyblock
-  - SuperiorSkyBlock2
 commands:
   customcrops:
     usage: /customcrops <args>

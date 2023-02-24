@@ -23,9 +23,11 @@ import org.bukkit.entity.Player;
 public class ActionMessage implements ActionInterface{
 
     private final String[] messages;
+    private final double chance;
 
-    public ActionMessage(String[] messages) {
+    public ActionMessage(String[] messages, double chance) {
         this.messages = messages;
+        this.chance = chance;
     }
 
     @Override
@@ -33,5 +35,10 @@ public class ActionMessage implements ActionInterface{
         for (String message : messages) {
             AdventureUtil.playerMessage(player, message.replace("{player}", player.getName()));
         }
+    }
+
+    @Override
+    public double getChance() {
+        return chance;
     }
 }

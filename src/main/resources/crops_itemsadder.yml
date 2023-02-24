@@ -1,14 +1,15 @@
+# Crop's namespace in ItemsAdder
 namespace: customcrops
 
-# Crop Name
-# Your seeds should end with "_seeds" and stage model should end with "_stage_x"
+# Crop's key name
 tomato:
-
+  # Crop's max stage
   max-stage: 4
 
   quality-loots:
     amount: 1~4
     quality:
+      # Other plugin item compatibility(Can also be used in other-loots)
       # MMOItems:TYPE:ID
       # MythicMobs:id
       1: customcrops:tomato
@@ -33,29 +34,33 @@ tomato:
     chance: 0.01
 
   harvest-actions:
-    # https://docs.adventure.kyori.net/minimessage/format.html
+    # Text format: https://docs.adventure.kyori.net/minimessage/format.html
     messages:
       - 'Hello, {player}! <u><click:open_url:https://www.yuque.com/docs/share/3e23f953-ccf0-4de5-bfe6-23868380c599>Click here to read the CustomCrops wiki'
+    # The chance of triggering this type of action, if not set, the action would be definitely triggered (commands-chance, xp-chance...)
+    messages-chance: 0.5
+
     commands:
       - 'say {player} harvested a tomato! lol'
     xp: 10
-    #skill-xp: 100
+    # skill-xp: 100 (You need to enable any skill plugin compatibility in config.yml)
 
-  # When you harvest with a single right click, the crop would return to a certain stage
+  # When you harvest with a single right click, the crop would return to a certain stage. If not set, crops would be removed when harvesting
   return: customcrops:tomato_stage_1
 
+  # Suitable seasons for growing
   season:
     - Spring
 
   plant-requirements:
     condition_1:
-      # Condition System:
+      # Read the wiki for more condition types
       type: permission
       # Mode: && / ||
       mode: '&&'
       value:
         - crops.plant.tomato
-      # The message to be shown when player doesn't fit the requirement
+      # The message to be shown when not meeting the requirements
       message: 'You don''t have permission to plant this seed!'
   harvest-requirements:
     condition_1:

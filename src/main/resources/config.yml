@@ -7,7 +7,6 @@ lang: english
 
 integration:
   # AntiGrief
-  # 防熊
   Residence: false
   WorldGuard: false
   Kingdoms: false
@@ -21,23 +20,23 @@ integration:
   IridiumSkyblock: false
   SuperiorSkyBlock: false
   # Skill Xp
-  # 技能经验
+  # Don't forget to config skill-xp for each crop if you enabled skill xp integration
   AureliumSkills: false
   mcMMO: false
   MMOCore: false
   EcoSkills: false
   JobsReborn: false
   # Season
-  # 季节
+  # Synchronize season with other plugins
   RealisticSeasons: false
 
 worlds:
   # This is designed for servers that using a separate folder for worlds
+  # The default folder is your server's root folder
   # 如果你的服务器使用独立文件夹存储世界，请在此填入根目录下的文件地址
   worlds-folder: ''
   # Mode: whitelist/blacklist
-  # Requires a restart when changing mode or world list
-  # Because reloading world data might cause unexpected problems and lag
+  # Requires a restart when changing mode or editing world list for the safety of data
   # 模式：白名单/黑名单
   # 为了避免重载时候造成服务器卡顿，修改本栏需要重启服务器
   mode: whitelist
@@ -45,7 +44,7 @@ worlds:
     - world
 
 optimization:
-  # Recommend enabling this to prevent large quantities of crops/itemframes lagging the server
+  # Recommend enabling this to prevent large quantities of crops/item frames from lagging the server
   # When you are using both item_frame mode and ItemsAdder, you should set "max-furniture-vehicles-per-chunk" in ItemsAdder's config.yml to a higher value
   # 推荐启用区块限制来防止玩家种植大量农作物
   # 如果你使用ItemsAdder的展示框模式，你需要在ItemsAdder的配置文件中设置"max-furniture-vehicles-per-chunk"到较高值，否则农作物种植后会消失
@@ -69,13 +68,13 @@ mechanics:
   crops-mode: tripwire
 
   # If enabled, crops would start growing at about 7am(at most 5 seconds inaccuracy) and finish growing in the rest of the day
-  # Note: All the crops can only start growing when a world's time is about 7am, so when a world is loaded and its time is 8am,
-  #       crops would not grow in this day. You can enable time compensation make the crops grow when starting the server.
+  # Note: All the crops can only start growing when a world's time is around 7am, so when a world is loaded and its time is 8am,
+  #       crops would not grow in this day. You can enable time compensation to make the crops grow when starting the server.
   # 如果启用自动生长，农作物将在上午7点左右完成当日生长任务安排并且在接下来的时间里完成生长
   # 请注意：农作物只有在生长点前种植才能在当日生长，否则需要等待下一个生长点，你可以开启下方的生长补偿功能
   auto-grow:
     enable: true
-    # For example, the time to start growing is 1000ticks(7am),
+    # For example, the time to start growing is at 1000ticks(7am),
     # sprinklers would finish their work in a random time between 1000~1300ticks,
     # Pot would start drying in a random time between 1300~1500ticks
     # and crops would grow in a random time between 1500~21500ticks
@@ -89,8 +88,8 @@ mechanics:
   # If the pot is wet, crop would 100% grow a stage per day
   # Otherwise they would have a lower chance to grow.
   # Recommend setting it to a value higher than 0 to make sure every crop can be ripe even if
-  # players don't take care of them, this is good for server performance because crop data would
-  # be removed from data file when the crop is ripe to avoid affecting server performance in the long term
+  # players don't take care of them, this is good for server's performance because crop data would
+  # be removed from data file as soon as the crop is ripe to avoid affecting server performance in the long term
   # 如果种植盆是干燥的，每天生长一个阶段的概率是多少
   # 建议设置高于0的数值，这样每个农作物都能得到生长，最后从数据中移除
   # 长远来看，这样不会造成数据堆积，对服务器性能友好
@@ -149,14 +148,14 @@ mechanics:
       # If enabled, season would be automatically calculated according to game time when reloading
       # 自动切换季节，如果启用则setseason指令仅对当天有效
       enable: true
-      # duration of each season
+      # duration of each season (Minecraft days)
       # 每个季节的时长
       duration: 28
     greenhouse:
       enable: true
-      # effective range
+      # effective range (Y axis)
       range: 5
-  # During the crop grow progress, crops have little chance to be eaten by a crow
+  # During the crop growing progress, crops have a little chance to be eaten by a crow
   # Place a scarecrow would protect the crops in this chunk
   # 在生长过程中，农作物有小概率被乌鸦袭击，在当前区块放置稻草人可以驱赶乌鸦
   crow:
@@ -167,7 +166,7 @@ mechanics:
   # 2/2/1 means 40%/40%/20%
   default-quality-ratio: 17/2/1
 
-  # A crop would go to dead stage if the sky-light level is lower than a value.
+  # A crop would go to dead stage if the sky-light level is lower than a certain value.
   # 在自然光照不足时，农作物是否会死亡
   dead-if-no-sky-light:
     enable: true
@@ -177,7 +176,7 @@ mechanics:
     # Can vanilla crops be harvested with right clicks
     # 是否可以右键重复收获原版农作物
     right-click-harvest: false
-    # Totally prevent player from planting these vanilla crops in farmland
+    # Prevent player from planting these vanilla crops in farmland
     # 阻止玩家种植原版农作物
     prevent-plant:
       enable: false
@@ -187,7 +186,7 @@ mechanics:
         - POTATOES
         - BEETROOTS
     # Convert vanilla items into CustomCrops crops
-    # You need to make extra CustomCrops/IA/Oraxen configs/models for these crops
+    # You need to make extra CustomCrops/IA/Oraxen configs & models for these crops
     # This makes it possible to make vanilla crops have a better mechanic
     # 将原版物品转换为customcrops插件农作物
     # 你需要为此制作额外的模型和配置
@@ -275,7 +274,6 @@ actionbar:
   right: '뀁뀅</font>'
 
 
-
 season-broadcast:
   enable: true
   spring:
@@ -304,7 +302,7 @@ watering-can-lore:
     # Wouldn't work in creative mode for safety
     # 是否启用发包模式
     # 安全起见，创造模式下这不会生效
-    enable: true
+    enable: false
     # true: top / false: bottom
     # 发包描述位于描述的顶部还是底部
     top-or-bottom: true
@@ -319,6 +317,7 @@ watering-can-lore:
     full: '뀁뀃'
     empty: '뀁뀄'
     right: '뀁뀅</font>'
+
 
 other-settings:
   # 3 days = 1 hour

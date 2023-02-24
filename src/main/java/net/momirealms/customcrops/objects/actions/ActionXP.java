@@ -22,13 +22,20 @@ import org.bukkit.entity.Player;
 public class ActionXP implements ActionInterface {
 
     private final int amount;
+    private final double chance;
 
-    public ActionXP(int amount) {
+    public ActionXP(int amount, double chance) {
         this.amount = amount;
+        this.chance = chance;
     }
 
     @Override
     public void performOn(Player player) {
         player.giveExp(amount);
+    }
+
+    @Override
+    public double getChance() {
+        return chance;
     }
 }

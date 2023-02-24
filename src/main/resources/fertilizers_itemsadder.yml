@@ -1,18 +1,18 @@
-#Crops have a small chance to grow two stages at a time
+#C rops have a small chance to grow two stages at a time
 speed:
   speed_1:
-    #Fertilizer Hologram display name
+    # Fertilizer Hologram display name
     name: '뀌'
-    #The chance of this fertilizer taking effect
+    # The chance of this fertilizer taking effect
     chance: 0.1
-    #How many days can this fertilizer stay in pot
+    # How many days can this fertilizer stay in pot
     times: 14
-    #ItemsAdder item namespacedID
+    # ItemsAdder item namespacedID
     item: customcrops:speed_1
-    #Should this fertilizer be used before planting
+    # Should this fertilizer be used before planting
     before-plant: true
-    #The particle to be displayed when using fertilizer
-    #https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Particle.html
+    # The particle to be displayed when using fertilizer
+    # https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Particle.html
     particle: SPELL_WITCH
   speed_2:
     name: '뀍'
@@ -30,7 +30,7 @@ speed:
     particle: SPELL_WITCH
 
 
-#Pot have a small chance to retain its water after crops grow
+# Pot have a small chance to retain its water after crops grow
 retaining:
   retaining_1:
     name: '뀉'
@@ -55,7 +55,7 @@ retaining:
     particle: SPELL
 
 
-#When haveresting, players have a higher chance to get high quality crops.
+# When haveresting, players have a higher chance to get high quality crops.
 quality:
   quality_1:
     name: '뀆'
@@ -83,7 +83,7 @@ quality:
     particle: SCRAPE
 
 
-#When haveresting, players have a higher chance to get more crops.
+# When haveresting, players have a higher chance to get more crops.
 quantity:
   quantity_1:
     name: '뀏'
@@ -111,7 +111,7 @@ quantity:
     particle: TOTEM
 
 
-#Crops have a higher chance to be gigantic
+# Crops have a higher chance to be gigantic
 gigantic:
   gigantic_1:
     name: '뀒'

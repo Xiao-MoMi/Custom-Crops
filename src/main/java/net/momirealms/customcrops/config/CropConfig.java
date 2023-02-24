@@ -109,10 +109,10 @@ public class CropConfig {
                         List<ActionInterface> actions = new ArrayList<>();
                         for (String action : Objects.requireNonNull(config.getConfigurationSection(key + ".harvest-actions")).getKeys(false)) {
                             switch (action) {
-                                case "xp" -> actions.add(new ActionXP(config.getInt(key + ".harvest-actions." + action)));
-                                case "skill-xp" -> actions.add(new ActionSkillXP(config.getDouble(key + ".harvest-actions." + action)));
-                                case "commands" -> actions.add(new ActionCommand(config.getStringList(key + ".harvest-actions." + action).toArray(new String[0])));
-                                case "messages" -> actions.add(new ActionMessage(config.getStringList(key + ".harvest-actions." + action).toArray(new String[0])));
+                                case "xp" -> actions.add(new ActionXP(config.getInt(key + ".harvest-actions." + action), config.getDouble(key + ".harvest-actions." + action + "-chance", 1)));
+                                case "skill-xp" -> actions.add(new ActionSkillXP(config.getDouble(key + ".harvest-actions." + action), config.getDouble(key + ".harvest-actions." + action + "-chance", 1)));
+                                case "commands" -> actions.add(new ActionCommand(config.getStringList(key + ".harvest-actions." + action).toArray(new String[0]), config.getDouble(key + ".harvest-actions." + action + "-chance", 1)));
+                                case "messages" -> actions.add(new ActionMessage(config.getStringList(key + ".harvest-actions." + action).toArray(new String[0]), config.getDouble(key + ".harvest-actions." + action + "-chance", 1)));
                             }
                         }
                         crop.setActions(actions.toArray(new ActionInterface[0]));
