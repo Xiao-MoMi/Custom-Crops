@@ -197,7 +197,6 @@ public class ItemsAdderWireHandler extends ItemsAdderHandler {
                         break label_out;
                     }
                     if (!isRipe(seedID)) {
-                        if (player.getGameMode() == GameMode.CREATIVE) break label_out;
                         CustomBlock.remove(seedLocation);
                         customBlock.getLoot().forEach(loot -> location.getWorld().dropItemNaturally(seedLocation.getBlock().getLocation(), loot));
                     }
