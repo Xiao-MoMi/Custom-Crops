@@ -23,6 +23,7 @@ import net.momirealms.customcrops.api.event.CropHarvestEvent;
 import net.momirealms.customcrops.api.event.CrowAttackEvent;
 import net.momirealms.customcrops.api.utils.CCSeason;
 import net.momirealms.customcrops.config.*;
+import net.momirealms.customcrops.helper.Log;
 import net.momirealms.customcrops.integrations.customplugin.CustomInterface;
 import net.momirealms.customcrops.integrations.customplugin.HandlerP;
 import net.momirealms.customcrops.integrations.customplugin.itemsadder.ItemsAdderFrameHandler;
@@ -47,6 +48,7 @@ import net.momirealms.customcrops.utils.ArmorStandUtil;
 import net.momirealms.customcrops.utils.FurnitureUtil;
 import net.momirealms.customcrops.utils.MiscUtils;
 import org.bukkit.*;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
@@ -54,6 +56,7 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -492,13 +495,15 @@ public class CropManager extends Function {
             return true;
         }
 
-        if (MainConfig.enableCrow && crowJudge(location)) return true;
+        if (MainConfig.enableCrow && crowJudge(location)) {
+            return true;
+        }
 
         String potID = customInterface.getBlockID(potLoc);
         if (potID == null) return true;
 
         boolean certainGrow = potID.equals(BasicItemConfig.wetPot);
-        if (certainGrow && !hasWater(potLoc)) {
+        if (certainGrow && !hasWater(potLoc.getBlock())) {
             if (!(fertilizer instanceof RetainingSoil retainingSoil && Math.random() < retainingSoil.getChance())) {
                 dry(potLoc);
                 certainGrow = false;
@@ -526,11 +531,10 @@ public class CropManager extends Function {
         return false;
     }
 
-    private boolean hasWater(Location potLoc) {
-        World world = potLoc.getWorld();
-        CustomWorld customWorld = customWorlds.get(world);
-        if (customWorld == null) return false;
-        return customWorld.isPotWet(potLoc);
+    private boolean hasWater(Block block) {
+        return Optional.ofNullable(customWorlds.get(block.getWorld()))
+                .map(customWorld -> customWorld.isPotWet(block.getLocation()))
+                .orElse(false);
     }
 
     public boolean itemFrameGrowJudge(Location location, GrowingCrop growingCrop) {
@@ -577,7 +581,7 @@ public class CropManager extends Function {
         if (potID == null) return true;
 
         boolean certainGrow = potID.equals(BasicItemConfig.wetPot);
-        if (certainGrow && !hasWater(potLoc)) {
+        if (certainGrow && !hasWater(potLoc.getBlock())) {
             if (!(fertilizer instanceof RetainingSoil retainingSoil && Math.random() < retainingSoil.getChance())) {
                 dry(potLoc);
                 certainGrow = false;

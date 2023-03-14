@@ -42,34 +42,4 @@ public class WorldUtils {
     public static void unloadCropWorld(World world, boolean sync) {
         CustomCrops.plugin.getCropManager().onWorldUnload(world, sync);
     }
-
-    /**
-     * Add a world to the world list
-     * @param world world
-     */
-    public static void addWorldToWorldList(World world) {
-        MainConfig.worldList.add(world);
-        MainConfig.worlds = MainConfig.worldList.toArray(new World[0]);
-    }
-
-    /**
-     * Remove a world from world list
-     * @param world world
-     * @return success or not
-     */
-    public static boolean removeWorldFromWorldList(World world) {
-        boolean success = MainConfig.worldList.remove(world);
-        if (success) {
-            MainConfig.worlds = MainConfig.worldList.toArray(new World[0]);
-        }
-        return success;
-    }
-
-    /**
-     * get the world list
-     * @return world list
-     */
-    public static List<World> getWorldList() {
-        return MainConfig.worldList;
-    }
 }

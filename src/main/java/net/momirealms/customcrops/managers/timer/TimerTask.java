@@ -19,6 +19,7 @@ package net.momirealms.customcrops.managers.timer;
 
 import net.momirealms.customcrops.config.MainConfig;
 import net.momirealms.customcrops.managers.CropManager;
+import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -33,13 +34,16 @@ public class TimerTask extends BukkitRunnable {
     @Override
     public void run() {
         if (!MainConfig.autoGrow) return;
-        for (World world : MainConfig.getWorldsList()) {
-            long time = world.getTime();
-            if (time > 900 && time < 1001) {
-                cropManager.grow(world, MainConfig.timeToGrow, MainConfig.timeToWork, MainConfig.timeToDry, false, false);
-            }
-            if (time > 0 && time < 101) {
-                cropManager.saveData(world);
+        for (String worldName : MainConfig.getWorldNameList()) {
+            World world = Bukkit.getWorld(worldName);
+            if (world != null) {
+                long time = world.getTime();
+                if (time > 900 && time < 1001) {
+                    cropManager.grow(world, MainConfig.timeToGrow, MainConfig.timeToWork, MainConfig.timeToDry, false, false);
+                }
+                if (time > 0 && time < 101) {
+                    cropManager.saveData(world);
+                }
             }
         }
     }

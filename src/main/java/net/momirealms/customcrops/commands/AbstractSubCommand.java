@@ -87,11 +87,11 @@ public abstract class AbstractSubCommand implements SubCommand {
     }
 
     public List<String> getWorlds(List<String> args) {
-        List<World> worlds = MainConfig.getWorldsList();
+        List<String> worlds = MainConfig.getWorldNameList();
         List<String> worldNames = new ArrayList<>();
-        for (World world : worlds) {
-            if (world.getName().startsWith(args.get(0))) {
-                worldNames.add(world.getName());
+        for (String world : worlds) {
+            if (world.startsWith(args.get(0))) {
+                worldNames.add(world);
             }
         }
         return worldNames;

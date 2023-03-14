@@ -38,9 +38,6 @@ import java.util.List;
 
 public class MainConfig {
 
-    public static World[] worlds;
-    public static String[] worldNames;
-    public static List<World> worldList;
     public static List<String> worldNameList;
     public static boolean whiteOrBlack;
     public static boolean dropLootsInAllWorlds;
@@ -138,21 +135,7 @@ public class MainConfig {
 
         whiteOrBlack = config.getString("worlds.mode","whitelist").equals("whitelist");
         worldNameList = config.getStringList("worlds.list");
-        worlds = new World[worldNameList.size()];
-        for (int i = 0; i < worldNameList.size(); i++) {
-            if (Bukkit.getWorld(worldNameList.get(i)) != null) {
-                worlds[i] = Bukkit.getWorld(worldNameList.get(i));
-            }
-        }
 
-        worldList = new ArrayList<>();
-        for (World world : worlds) {
-            if (world == null) continue;
-            worldList.add(world);
-        }
-
-        worlds = worldList.toArray(new World[0]);
-        worldNames = worldNameList.toArray(new String[0]);
         worldFolder = StringUtils.replace(config.getString("worlds.worlds-folder",""), "\\", File.separator);
 
         cropMode = config.getString("mechanics.crops-mode", "tripwire").equals("tripwire");
@@ -401,28 +384,6 @@ public class MainConfig {
         if (config.getBoolean("integration.RealisticSeasons")) {
             if (Bukkit.getPluginManager().getPlugin("RealisticSeasons") == null) Log.warn("Failed to initialize RealisticSeasons!");
             else realisticSeasonHook = true;
-        }
-    }
-
-    public static World[] getWorldsArray() {
-        if (MainConfig.whiteOrBlack) {
-            return worlds;
-        }
-        else {
-            List<World> worldList = new ArrayList<>(Bukkit.getWorlds());
-            worldList.removeAll(MainConfig.worldList);
-            return worldList.toArray(new World[0]);
-        }
-    }
-
-    public static List<World> getWorldsList() {
-        if (MainConfig.whiteOrBlack) {
-            return worldList;
-        }
-        else {
-            List<World> worldList = new ArrayList<>(Bukkit.getWorlds());
-            worldList.removeAll(MainConfig.worldList);
-            return worldList;
         }
     }
 

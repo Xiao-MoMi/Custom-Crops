@@ -63,7 +63,6 @@ public class SeasonUtils {
             case AUTUMN -> MessageConfig.autumn;
             case WINTER -> MessageConfig.winter;
             case UNKNOWN -> "Error";
-            default -> throw new IllegalStateException("Unexpected value: " + season);
         };
     }
 }

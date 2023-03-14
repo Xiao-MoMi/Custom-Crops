@@ -56,38 +56,38 @@ public class SeasonPapi extends PlaceholderExpansion {
         if (!SeasonConfig.enable) return MessageConfig.seasonDisabled;
         switch (params) {
             case "current" -> {
-                if (!MainConfig.getWorldsList().contains(player.getWorld())) return MessageConfig.noSeason;
+                if (!MainConfig.getWorldNameList().contains(player.getWorld().getName())) return MessageConfig.noSeason;
                 return getSeasonText(player.getWorld());
             }
             case "days_left" -> {
                 if (!SeasonConfig.auto) return MessageConfig.autoSeasonDisabled;
-                if (!MainConfig.getWorldsList().contains(player.getWorld())) return MessageConfig.noSeason;
+                if (!MainConfig.getWorldNameList().contains(player.getWorld().getName())) return MessageConfig.noSeason;
                 return String.valueOf(SeasonConfig.duration - ((int) ((player.getWorld().getFullTime() / 24000L) % (SeasonConfig.duration * 4)) % SeasonConfig.duration));
             }
             case "days_gone" -> {
                 if (!SeasonConfig.auto) return MessageConfig.autoSeasonDisabled;
-                if (!MainConfig.getWorldsList().contains(player.getWorld())) return MessageConfig.noSeason;
+                if (!MainConfig.getWorldNameList().contains(player.getWorld().getName())) return MessageConfig.noSeason;
                 return String.valueOf((int) ((player.getWorld().getFullTime() / 24000L) % (SeasonConfig.duration * 4)) % SeasonConfig.duration + 1);
             }
             default -> {
                 if (params.startsWith("current_")) {
                     World world = Bukkit.getWorld(params.substring(8));
                     if (world == null) return MessageConfig.noSeason;
-                    if (!MainConfig.getWorldsList().contains(world)) return MessageConfig.noSeason;
+                    if (!MainConfig.getWorldNameList().contains(world.getName())) return MessageConfig.noSeason;
                     return getSeasonText(world);
                 }
                 if (params.startsWith("days_left_")) {
                     if (!SeasonConfig.auto) return MessageConfig.autoSeasonDisabled;
                     World world = Bukkit.getWorld(params.substring(10));
                     if (world == null) return MessageConfig.noSeason;
-                    if (!MainConfig.getWorldsList().contains(world)) return MessageConfig.noSeason;
+                    if (!MainConfig.getWorldNameList().contains(world.getName())) return MessageConfig.noSeason;
                     return String.valueOf(SeasonConfig.duration - ((int) ((world.getFullTime() / 24000L) % (SeasonConfig.duration * 4)) % SeasonConfig.duration));
                 }
                 if (params.startsWith("days_gone_")) {
                     if (!SeasonConfig.auto) return MessageConfig.autoSeasonDisabled;
                     World world = Bukkit.getWorld(params.substring(10));
                     if (world == null) return MessageConfig.noSeason;
-                    if (!MainConfig.getWorldsList().contains(world)) return MessageConfig.noSeason;
+                    if (!MainConfig.getWorldNameList().contains(world.getName())) return MessageConfig.noSeason;
                     return String.valueOf((int) ((world.getFullTime() / 24000L) % (SeasonConfig.duration * 4)) % SeasonConfig.duration + 1);
                 }
             }

@@ -26,6 +26,7 @@ softdepend:
   - Lands
   - GriefPrevention
   - CrashClaim
+  - BentoBox
 commands:
   customcrops:
     usage: /customcrops <args>

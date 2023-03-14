@@ -81,14 +81,9 @@ public final class CustomCrops extends JavaPlugin {
     public void onEnable() {
         adventure = BukkitAudiences.create(plugin);
         protocolManager = ProtocolLibrary.getProtocolManager();
+        this.versionHelper = new VersionHelper(this);
         AdventureUtil.consoleMessage("[CustomCrops] Running on <white>" + Bukkit.getVersion());
-
-        MinecraftVersion.disableBStats();
-        MinecraftVersion.disablePackageWarning();
-        MinecraftVersion.disableUpdateCheck();
-        MinecraftVersion.getVersion();
         VersionChecker.hideOk = true;
-
         if (Bukkit.getPluginManager().getPlugin("ItemsAdder") != null) {
             MainConfig.customPlugin = "itemsadder";
             AdventureUtil.consoleMessage("[CustomCrops] Custom Item Plugin Platform: <#BA55D3><u>ItemsAdder");
@@ -110,7 +105,6 @@ public final class CustomCrops extends JavaPlugin {
         Objects.requireNonNull(Bukkit.getPluginCommand("customcrops")).setTabCompleter(pluginCommand);
 
         this.cropManager = new CropManager();
-        this.versionHelper = new VersionHelper();
 
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
             this.placeholderManager = new PlaceholderManager();

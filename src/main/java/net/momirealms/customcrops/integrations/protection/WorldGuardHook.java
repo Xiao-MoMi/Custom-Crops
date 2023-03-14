@@ -58,31 +58,16 @@ public class WorldGuardHook implements CCAntiGrief {
     @Override
     public boolean canPlace(Location location, Player player) {
         LocalPlayer localPlayer = WorldGuardPlugin.inst().wrapPlayer(player);
-        World world = BukkitAdapter.adapt(location.getWorld());
         WorldGuardPlatform platform = WorldGuard.getInstance().getPlatform();
-        if (hasRegion(world, BukkitAdapter.asBlockVector(location))){
-            RegionQuery query = platform.getRegionContainer().createQuery();
-            return query.testBuild(BukkitAdapter.adapt(location), localPlayer, PLACE_FLAG);
-        }
-        else return true;
+        RegionQuery query = platform.getRegionContainer().createQuery();
+        return query.testBuild(BukkitAdapter.adapt(location), localPlayer, PLACE_FLAG);
     }
 
     @Override
     public boolean canBreak(Location location, Player player) {
         LocalPlayer localPlayer = WorldGuardPlugin.inst().wrapPlayer(player);
-        World world = BukkitAdapter.adapt(location.getWorld());
         WorldGuardPlatform platform = WorldGuard.getInstance().getPlatform();
-        if (hasRegion(world, BukkitAdapter.asBlockVector(location))){
-            RegionQuery query = platform.getRegionContainer().createQuery();
-            return query.testBuild(BukkitAdapter.adapt(location), localPlayer, HARVEST_FLAG);
-        }
-        else return true;
-    }
-
-    private boolean hasRegion(World world, BlockVector3 vector){
-        RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
-        RegionManager regionManager = container.get(world);
-        if (regionManager == null) return true;
-        return regionManager.getApplicableRegions(vector).size() > 0;
+        RegionQuery query = platform.getRegionContainer().createQuery();
+        return query.testBuild(BukkitAdapter.adapt(location), localPlayer, HARVEST_FLAG);
     }
 }

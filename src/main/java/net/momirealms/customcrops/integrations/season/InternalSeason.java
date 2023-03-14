@@ -158,9 +158,12 @@ public class InternalSeason extends Function implements SeasonInterface {
             @Override
             public void run() {
                 if (!SeasonConfig.auto) return;
-                for (World world : MainConfig.getWorldsArray()) {
-                    if (world.getTime() < 100) {
-                        setSeason(countSeason(world), world);
+                for (String world_name : MainConfig.getWorldNameList()) {
+                    World world = Bukkit.getWorld(world_name);
+                    if (world != null) {
+                        if (world.getTime() < 100) {
+                            setSeason(countSeason(world), world);
+                        }
                     }
                 }
             }
