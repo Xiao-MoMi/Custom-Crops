@@ -111,6 +111,7 @@ public class CropConfig {
                             switch (action) {
                                 case "xp" -> actions.add(new ActionXP(config.getInt(key + ".harvest-actions." + action), config.getDouble(key + ".harvest-actions." + action + "-chance", 1)));
                                 case "skill-xp" -> actions.add(new ActionSkillXP(config.getDouble(key + ".harvest-actions." + action), config.getDouble(key + ".harvest-actions." + action + "-chance", 1)));
+                                case "job-xp" -> actions.add(new ActionJobXP(config.getDouble(key + ".harvest-actions." + action), config.getDouble(key + ".harvest-actions." + action + "-chance", 1)));
                                 case "commands" -> actions.add(new ActionCommand(config.getStringList(key + ".harvest-actions." + action).toArray(new String[0]), config.getDouble(key + ".harvest-actions." + action + "-chance", 1)));
                                 case "messages" -> actions.add(new ActionMessage(config.getStringList(key + ".harvest-actions." + action).toArray(new String[0]), config.getDouble(key + ".harvest-actions." + action + "-chance", 1)));
                             }

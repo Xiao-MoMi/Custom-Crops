@@ -20,10 +20,10 @@ package net.momirealms.customcrops.integrations.skill;
 import net.Indyuce.mmocore.MMOCore;
 import net.Indyuce.mmocore.experience.EXPSource;
 import net.Indyuce.mmocore.experience.Profession;
-import net.momirealms.customcrops.integrations.SkillXP;
+import net.momirealms.customcrops.integrations.SkillInterface;
 import org.bukkit.entity.Player;
 
-public class MMOCoreHook implements SkillXP {
+public class MMOCoreHook implements SkillInterface {
     @Override
     public void addXp(Player player, double amount) {
         Profession profession = MMOCore.plugin.professionManager.get("farming");

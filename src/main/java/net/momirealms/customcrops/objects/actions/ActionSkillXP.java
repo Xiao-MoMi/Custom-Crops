@@ -32,8 +32,8 @@ public class ActionSkillXP implements ActionInterface {
 
     @Override
     public void performOn(Player player) {
-        if (MainConfig.skillXP != null) {
-            MainConfig.skillXP.addXp(player, xp);
+        if (MainConfig.skillInterface != null) {
+            MainConfig.skillInterface.addXp(player, xp);
         }
     }
 

@@ -15,18 +15,19 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.momirealms.customcrops.integrations.skill;
+package net.momirealms.customcrops.integrations.job;
 
 import com.gamingmesh.jobs.Jobs;
 import com.gamingmesh.jobs.container.Job;
 import com.gamingmesh.jobs.container.JobProgression;
 import com.gamingmesh.jobs.container.JobsPlayer;
-import net.momirealms.customcrops.integrations.SkillXP;
+import net.momirealms.customcrops.integrations.JobInterface;
+import net.momirealms.customcrops.integrations.SkillInterface;
 import org.bukkit.entity.Player;
 
 import java.util.List;
 
-public class JobsRebornHook implements SkillXP {
+public class JobsRebornHook implements JobInterface {
 
     @Override
     public void addXp(Player player, double amount) {

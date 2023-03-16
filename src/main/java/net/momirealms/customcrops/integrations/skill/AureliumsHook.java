@@ -20,10 +20,10 @@ package net.momirealms.customcrops.integrations.skill;
 import com.archyx.aureliumskills.api.AureliumAPI;
 import com.archyx.aureliumskills.leveler.Leveler;
 import com.archyx.aureliumskills.skills.Skill;
-import net.momirealms.customcrops.integrations.SkillXP;
+import net.momirealms.customcrops.integrations.SkillInterface;
 import org.bukkit.entity.Player;
 
-public class AureliumsHook implements SkillXP {
+public class AureliumsHook implements SkillInterface {
 
     private static final Leveler leveler = AureliumAPI.getPlugin().getLeveler();
     private static final Skill skill = AureliumAPI.getPlugin().getSkillRegistry().getSkill("farming");

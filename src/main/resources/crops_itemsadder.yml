@@ -44,6 +44,7 @@ tomato:
       - 'say {player} harvested a tomato! lol'
     xp: 10
     # skill-xp: 100 (You need to enable any skill plugin compatibility in config.yml)
+    # job-xp: 10 (You need to enable any job plugin compatibility in config.yml)
 
   # When you harvest with a single right click, the crop would return to a certain stage. If not set, crops would be removed when harvesting
   return: customcrops:tomato_stage_1

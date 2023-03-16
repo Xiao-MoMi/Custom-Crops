@@ -19,7 +19,7 @@ package net.momirealms.customcrops.integrations;
 
 import org.bukkit.entity.Player;
 
-public interface SkillXP {
+public interface SkillInterface {
 
     void addXp(Player player, double amount);
 

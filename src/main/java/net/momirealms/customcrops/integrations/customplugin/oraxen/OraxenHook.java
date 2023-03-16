@@ -47,7 +47,7 @@ public class OraxenHook implements CustomInterface {
 
     @Override
     public void removeBlock(Location location) {
-        location.getBlock().setType(Material.AIR);
+        OraxenBlocks.remove(location, null);
     }
 
     @Override

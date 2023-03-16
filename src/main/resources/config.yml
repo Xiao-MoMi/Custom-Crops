@@ -1,6 +1,6 @@
 # Don't change
 # 请不要修改
-config-version: '23'
+config-version: '24'
 metrics: true
 # lang: english / spanish / chinese
 lang: english
@@ -25,7 +25,10 @@ integration:
   mcMMO: false
   MMOCore: false
   EcoSkills: false
+  # Job xp
+  # Don't forget to config job-xp for each crop if you enabled job xp integration
   JobsReborn: false
+  EcoJobs: false
   # Season
   # Synchronize season with other plugins
   RealisticSeasons: false

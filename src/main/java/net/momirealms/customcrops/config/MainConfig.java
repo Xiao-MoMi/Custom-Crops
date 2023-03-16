@@ -19,7 +19,10 @@ package net.momirealms.customcrops.config;
 
 import net.momirealms.customcrops.helper.Log;
 import net.momirealms.customcrops.integrations.CCAntiGrief;
-import net.momirealms.customcrops.integrations.SkillXP;
+import net.momirealms.customcrops.integrations.JobInterface;
+import net.momirealms.customcrops.integrations.SkillInterface;
+import net.momirealms.customcrops.integrations.job.EcoJobsHook;
+import net.momirealms.customcrops.integrations.job.JobsRebornHook;
 import net.momirealms.customcrops.integrations.protection.*;
 import net.momirealms.customcrops.integrations.skill.*;
 import net.momirealms.customcrops.objects.QualityRatio;
@@ -47,7 +50,8 @@ public class MainConfig {
     public static boolean cropMode;
     public static List<CCAntiGrief> internalAntiGriefs = new ArrayList<>();
     public static List<CCAntiGrief> externalAntiGriefs = new ArrayList<>();
-    public static SkillXP skillXP;
+    public static SkillInterface skillInterface;
+    public static JobInterface jobInterface;
     public static double dryGrowChance;
     public static boolean limitation;
     public static int wireAmount;
@@ -362,24 +366,28 @@ public class MainConfig {
 
         if (config.getBoolean("integration.AureliumSkills")) {
             if (Bukkit.getPluginManager().getPlugin("AureliumSkills") == null) Log.warn("Failed to initialize AureliumSkills!");
-            else skillXP = new AureliumsHook();
+            else skillInterface = new AureliumsHook();
         }
         if (config.getBoolean("integration.mcMMO")) {
             if (Bukkit.getPluginManager().getPlugin("mcMMO") == null) Log.warn("Failed to initialize mcMMO!");
-            else skillXP = new mcMMOHook();
+            else skillInterface = new mcMMOHook();
         }
         if (config.getBoolean("integration.MMOCore")) {
             if (Bukkit.getPluginManager().getPlugin("MMOCore") == null) Log.warn("Failed to initialize MMOCore!");
-            else skillXP = new MMOCoreHook();
+            else skillInterface = new MMOCoreHook();
         }
         if (config.getBoolean("integration.EcoSkills")) {
             if (Bukkit.getPluginManager().getPlugin("EcoSkills") == null) Log.warn("Failed to initialize EcoSkills!");
-            else skillXP = new EcoSkillsHook();
+            else skillInterface = new EcoSkillsHook();
         }
         if (config.getBoolean("integration.JobsReborn")) {
             if (Bukkit.getPluginManager().getPlugin("Jobs") == null) Log.warn("Failed to initialize JobsReborn!");
-            else skillXP = new JobsRebornHook();
+            else jobInterface = new JobsRebornHook();
+        } else if (config.getBoolean("integration.EcoJobs")) {
+            if (Bukkit.getPluginManager().getPlugin("EcoJobs") == null) Log.warn("Failed to initialize EcoJobs!");
+            else jobInterface = new EcoJobsHook();
         }
+
         realisticSeasonHook = false;
         if (config.getBoolean("integration.RealisticSeasons")) {
             if (Bukkit.getPluginManager().getPlugin("RealisticSeasons") == null) Log.warn("Failed to initialize RealisticSeasons!");

@@ -15,22 +15,29 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.momirealms.customcrops.integrations.skill;
+package net.momirealms.customcrops.integrations.job;
 
-import com.gmail.nossr50.api.ExperienceAPI;
-import com.gmail.nossr50.datatypes.skills.PrimarySkillType;
-import net.momirealms.customcrops.integrations.SkillInterface;
+import com.willfp.ecojobs.api.EcoJobsAPI;
+import com.willfp.ecojobs.jobs.Job;
+import com.willfp.ecojobs.jobs.Jobs;
+import net.momirealms.customcrops.integrations.JobInterface;
 import org.bukkit.entity.Player;
 
-public class mcMMOHook implements SkillInterface {
+public class EcoJobsHook implements JobInterface {
 
     @Override
     public void addXp(Player player, double amount) {
-        ExperienceAPI.addRawXP(player, "Herbalism", (float) amount, "UNKNOWN");
+        Job job = EcoJobsAPI.getInstance().getActiveJob(player);
+        if (job == null) return;
+        if (job.getId().equals("farmer")) {
+            EcoJobsAPI.getInstance().giveJobExperience(player, job, amount);
+        }
     }
 
     @Override
     public int getLevel(Player player) {
-        return ExperienceAPI.getLevel(player, PrimarySkillType.HERBALISM);
+        Job job = Jobs.getByID("farmer");
+        if (job == null) return 0;
+        return EcoJobsAPI.getInstance().getJobLevel(player, job);
     }
 }

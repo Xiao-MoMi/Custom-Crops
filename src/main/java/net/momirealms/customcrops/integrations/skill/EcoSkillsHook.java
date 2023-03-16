@@ -19,10 +19,10 @@ package net.momirealms.customcrops.integrations.skill;
 
 import com.willfp.ecoskills.api.EcoSkillsAPI;
 import com.willfp.ecoskills.skills.Skills;
-import net.momirealms.customcrops.integrations.SkillXP;
+import net.momirealms.customcrops.integrations.SkillInterface;
 import org.bukkit.entity.Player;
 
-public class EcoSkillsHook implements SkillXP {
+public class EcoSkillsHook implements SkillInterface {
 
     @Override
     public void addXp(Player player, double amount) {

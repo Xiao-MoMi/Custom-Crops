@@ -23,7 +23,6 @@ import net.momirealms.customcrops.api.event.CropHarvestEvent;
 import net.momirealms.customcrops.api.event.CrowAttackEvent;
 import net.momirealms.customcrops.api.utils.CCSeason;
 import net.momirealms.customcrops.config.*;
-import net.momirealms.customcrops.helper.Log;
 import net.momirealms.customcrops.integrations.customplugin.CustomInterface;
 import net.momirealms.customcrops.integrations.customplugin.HandlerP;
 import net.momirealms.customcrops.integrations.customplugin.itemsadder.ItemsAdderFrameHandler;
@@ -346,8 +345,8 @@ public class CropManager extends Function {
                     qualityRatio = qualityCrop.getQualityRatio();
                 }
             }
-            if (MainConfig.enableSkillBonus && MainConfig.skillXP != null) {
-                double bonus_chance = MainConfig.skillXP.getLevel(player) * MainConfig.bonusPerLevel;
+            if (MainConfig.enableSkillBonus && MainConfig.skillInterface != null) {
+                double bonus_chance = MainConfig.skillInterface.getLevel(player) * MainConfig.bonusPerLevel;
                 amount *= (bonus_chance + 1);
             }
             dropQualityLoots(qualityLoot, amount, location.getBlock().getLocation(), qualityRatio);
@@ -368,8 +367,8 @@ public class CropManager extends Function {
         for (OtherLoot otherLoot : otherLoots) {
             if (Math.random() < otherLoot.getChance()) {
                 int random = ThreadLocalRandom.current().nextInt(otherLoot.getMin(), otherLoot.getMax() + 1);
-                if (MainConfig.enableSkillBonus && MainConfig.skillXP != null) {
-                    double bonus_chance = MainConfig.skillXP.getLevel(player) * MainConfig.bonusPerLevel;
+                if (MainConfig.enableSkillBonus && MainConfig.skillInterface != null) {
+                    double bonus_chance = MainConfig.skillInterface.getLevel(player) * MainConfig.bonusPerLevel;
                     random *= (bonus_chance + 1);
                 }
                 ItemStack drop = getLoot(otherLoot.getItemID());

@@ -27,6 +27,7 @@ softdepend:
   - GriefPrevention
   - CrashClaim
   - BentoBox
+  - EcoJobs
 commands:
   customcrops:
     usage: /customcrops <args>
