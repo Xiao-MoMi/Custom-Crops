@@ -15,28 +15,25 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+package net.momirealms.customcrops.integrations.quest;
 
-package net.momirealms.customcrops.api.utils;
-
+import com.electro2560.dev.cluescrolls.api.*;
 import net.momirealms.customcrops.CustomCrops;
-import org.bukkit.World;
+import net.momirealms.customcrops.api.event.CropHarvestEvent;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 
-public class WorldUtils {
+public class ClueScrollCCQuest implements Listener {
 
-    /**
-     * load a world's crop data
-     * @param world world
-     */
-    public static void loadCropWorld(World world) {
-        CustomCrops.plugin.getCropManager().onWorldLoad(world);
+    private final CustomClue commonClue;
+
+    public ClueScrollCCQuest() {
+        commonClue = ClueScrollsAPI.getInstance().registerCustomClue(CustomCrops.plugin, "harvest", new ClueConfigData("crop_id", DataType.STRING));
     }
 
-    /**
-     * unload a world's crop data
-     * @param world world
-     * @param sync whether unload is sync or async
-     */
-    public static void unloadCropWorld(World world, boolean sync) {
-        CustomCrops.plugin.getCropManager().onWorldUnload(world, sync);
+    @EventHandler
+    public void onHarvest(CropHarvestEvent event) {
+        if (event.isCancelled()) return;
+        commonClue.handle(event.getPlayer(), 1, new ClueDataPair("crop_id", event.getCrop().getKey()));
     }
 }

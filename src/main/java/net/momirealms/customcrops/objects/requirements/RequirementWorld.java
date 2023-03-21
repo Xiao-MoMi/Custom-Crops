@@ -29,23 +29,12 @@ public class RequirementWorld extends Requirement implements RequirementInterfac
     @Override
     public boolean isConditionMet(PlayerCondition playerCondition) {
         String worldName = playerCondition.getLocation().getWorld().getName();
-        if (mode) {
-            for (String value : values) {
-                if (!value.equals(worldName)) {
-                    notMetMessage(playerCondition.getPlayer());
-                    return false;
-                }
+        for (String value : values) {
+            if (value.equals(worldName)) {
+                return true;
             }
-            return true;
         }
-        else {
-            for (String value : values) {
-                if (value.equals(worldName)) {
-                    return true;
-                }
-            }
-            notMetMessage(playerCondition.getPlayer());
-            return false;
-        }
+        notMetMessage(playerCondition.getPlayer());
+        return false;
     }
 }

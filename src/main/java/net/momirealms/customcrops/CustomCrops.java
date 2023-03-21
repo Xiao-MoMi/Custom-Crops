@@ -19,7 +19,6 @@ package net.momirealms.customcrops;
 
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
-import de.tr7zw.changeme.nbtapi.utils.MinecraftVersion;
 import de.tr7zw.changeme.nbtapi.utils.VersionChecker;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.momirealms.customcrops.commands.PluginCommand;
@@ -30,9 +29,14 @@ import net.momirealms.customcrops.helper.VersionHelper;
 import net.momirealms.customcrops.integrations.papi.PlaceholderManager;
 import net.momirealms.customcrops.integrations.protection.WorldGuardHook;
 import net.momirealms.customcrops.managers.CropManager;
+import net.momirealms.customcrops.integrations.quest.BattlePassCCQuest;
+import net.momirealms.customcrops.integrations.quest.ClueScrollCCQuest;
+import net.momirealms.customcrops.integrations.quest.NewBetonQuestCCQuest;
+import net.momirealms.customcrops.integrations.quest.OldBetonQuestCCQuest;
 import net.momirealms.customcrops.utils.AdventureUtil;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Objects;
@@ -99,6 +103,7 @@ public final class CustomCrops extends JavaPlugin {
         }
 
         ConfigUtil.reloadConfigs();
+        this.registerQuests();
 
         PluginCommand pluginCommand = new PluginCommand();
         Objects.requireNonNull(Bukkit.getPluginCommand("customcrops")).setExecutor(pluginCommand);
@@ -144,5 +149,20 @@ public final class CustomCrops extends JavaPlugin {
 
     public VersionHelper getVersionHelper() {
         return versionHelper;
+    }
+
+    private void registerQuests() {
+        PluginManager pluginManager = Bukkit.getPluginManager();
+        if (pluginManager.isPluginEnabled("ClueScrolls")) {
+            ClueScrollCCQuest quest = new ClueScrollCCQuest();
+            Bukkit.getPluginManager().registerEvents(quest, plugin);
+        }
+        if (pluginManager.isPluginEnabled("BetonQuest")) {
+            if (Bukkit.getPluginManager().getPlugin("BetonQuest").getDescription().getVersion().startsWith("2")) NewBetonQuestCCQuest.register();
+            else OldBetonQuestCCQuest.register();
+        }
+        if (pluginManager.isPluginEnabled("BattlePass")) {
+            BattlePassCCQuest.register();
+        }
     }
 }

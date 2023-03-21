@@ -22,7 +22,6 @@ import com.gamingmesh.jobs.container.Job;
 import com.gamingmesh.jobs.container.JobProgression;
 import com.gamingmesh.jobs.container.JobsPlayer;
 import net.momirealms.customcrops.integrations.JobInterface;
-import net.momirealms.customcrops.integrations.SkillInterface;
 import org.bukkit.entity.Player;
 
 import java.util.List;

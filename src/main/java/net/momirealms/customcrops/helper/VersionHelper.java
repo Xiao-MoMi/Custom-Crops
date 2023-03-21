@@ -3,7 +3,6 @@ package net.momirealms.customcrops.helper;
 import de.tr7zw.changeme.nbtapi.utils.MinecraftVersion;
 import de.tr7zw.changeme.nbtapi.utils.VersionChecker;
 import net.momirealms.customcrops.CustomCrops;
-import org.bukkit.Bukkit;
 
 import java.lang.reflect.Field;
 

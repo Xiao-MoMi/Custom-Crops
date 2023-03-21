@@ -28,6 +28,9 @@ softdepend:
   - CrashClaim
   - BentoBox
   - EcoJobs
+  - BattlePass
+  - BetonQuest
+  - ClueScrolls
 commands:
   customcrops:
     usage: /customcrops <args>
