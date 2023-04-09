@@ -95,7 +95,7 @@ public class OraxenHook implements CustomInterface {
     @Nullable
     public ItemFrame placeFurniture(Location location, String id) {
         FurnitureMechanic mechanic = (FurnitureMechanic) FurnitureFactory.getInstance().getMechanic(id);
-        return mechanic.place(Rotation.NONE, 0, BlockFace.UP, location);
+        return (ItemFrame) mechanic.place(location, 0, Rotation.NONE, BlockFace.UP);
     }
 
     @Override

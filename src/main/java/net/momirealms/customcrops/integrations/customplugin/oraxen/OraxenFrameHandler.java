@@ -42,6 +42,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
@@ -209,7 +210,8 @@ public class OraxenFrameHandler extends OraxenHandler {
         if (id == null) return;
 
         final Player player = event.getPlayer();
-        final ItemFrame itemFrame = event.getItemFrame();
+        final Entity entity = event.getBaseEntity();
+        if (!(entity instanceof ItemFrame itemFrame)) return;
         final Location location = itemFrame.getLocation();
 
         Sprinkler sprinkler = SprinklerConfig.SPRINKLERS_3D.get(id);

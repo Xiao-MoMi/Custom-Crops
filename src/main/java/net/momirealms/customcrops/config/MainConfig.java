@@ -369,26 +369,44 @@ public class MainConfig {
 
         if (config.getBoolean("integration.AureliumSkills")) {
             if (Bukkit.getPluginManager().getPlugin("AureliumSkills") == null) Log.warn("Failed to initialize AureliumSkills!");
-            else skillInterface = new AureliumsHook();
+            else {
+                skillInterface = new AureliumsHook();
+                hookMessage("AureliumSkills");
+            }
         }
         if (config.getBoolean("integration.mcMMO")) {
             if (Bukkit.getPluginManager().getPlugin("mcMMO") == null) Log.warn("Failed to initialize mcMMO!");
-            else skillInterface = new mcMMOHook();
+            else {
+                skillInterface = new mcMMOHook();
+                hookMessage("mcMMO");
+            }
         }
         if (config.getBoolean("integration.MMOCore")) {
             if (Bukkit.getPluginManager().getPlugin("MMOCore") == null) Log.warn("Failed to initialize MMOCore!");
-            else skillInterface = new MMOCoreHook();
+            else {
+                skillInterface = new MMOCoreHook();
+                hookMessage("MMOCore");
+            }
         }
         if (config.getBoolean("integration.EcoSkills")) {
             if (Bukkit.getPluginManager().getPlugin("EcoSkills") == null) Log.warn("Failed to initialize EcoSkills!");
-            else skillInterface = new EcoSkillsHook();
+            else {
+                skillInterface = new EcoSkillsHook();
+                hookMessage("EcoSkills");
+            }
         }
         if (config.getBoolean("integration.JobsReborn")) {
             if (Bukkit.getPluginManager().getPlugin("Jobs") == null) Log.warn("Failed to initialize JobsReborn!");
-            else jobInterface = new JobsRebornHook();
+            else {
+                jobInterface = new JobsRebornHook();
+                hookMessage("JobsReborn");
+            }
         } else if (config.getBoolean("integration.EcoJobs")) {
             if (Bukkit.getPluginManager().getPlugin("EcoJobs") == null) Log.warn("Failed to initialize EcoJobs!");
-            else jobInterface = new EcoJobsHook();
+            else {
+                jobInterface = new EcoJobsHook();
+                hookMessage("EcoJobs");
+            }
         }
 
         realisticSeasonHook = false;

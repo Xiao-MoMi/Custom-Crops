@@ -40,6 +40,7 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Objects;
+import java.util.TimeZone;
 
 public final class CustomCrops extends JavaPlugin {
 
@@ -74,8 +75,10 @@ public final class CustomCrops extends JavaPlugin {
     @Override
     public void onLoad(){
         plugin = this;
-        LibraryLoader.load("dev.dejvokep","boosted-yaml","1.3","https://repo.maven.apache.org/maven2/");
-        LibraryLoader.load("commons-io","commons-io","2.11.0","https://repo.maven.apache.org/maven2/");
+        TimeZone timeZone = TimeZone.getDefault();
+        String libRepo = timeZone.getID().startsWith("Asia") ? "https://maven.aliyun.com/repository/public/" : "https://repo.maven.apache.org/maven2/";
+        LibraryLoader.load("dev.dejvokep","boosted-yaml","1.3",libRepo);
+        LibraryLoader.load("commons-io","commons-io","2.11.0",libRepo);
         if (Bukkit.getPluginManager().getPlugin("WorldGuard") != null) {
             WorldGuardHook.initialize();
         }

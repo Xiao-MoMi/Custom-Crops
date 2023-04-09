@@ -114,7 +114,7 @@ public class OraxenWireHandler extends OraxenHandler{
         if (event.isCancelled()) return;
 
         final Player player = event.getPlayer();
-        final Location blockLoc = event.getItemFrame().getLocation();
+        final Location blockLoc = event.getBaseEntity().getLocation();
 
         if (!CCAntiGrief.testPlace(player, blockLoc)) return;
 

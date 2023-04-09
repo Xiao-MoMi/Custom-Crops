@@ -79,7 +79,7 @@ public abstract class OraxenHandler extends HandlerP {
         FurnitureMechanic mechanic = event.getMechanic();
         String id = mechanic.getItemID();
         if (!id.equals(BasicItemConfig.scarecrow)) return;
-        Location location = event.getItemFrame().getLocation();
+        Location location = event.getBaseEntity().getLocation();
         CustomWorld customWorld = cropManager.getCustomWorld(location.getWorld());
         if (customWorld == null) return;
         customWorld.addScarecrowCache(location);

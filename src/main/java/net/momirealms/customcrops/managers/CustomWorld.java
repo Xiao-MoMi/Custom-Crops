@@ -47,6 +47,7 @@ import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class CustomWorld {
 
@@ -361,7 +362,7 @@ public class CustomWorld {
 
     public void growWire(int cropTime, int sprinklerTime, int dryTime, boolean compensation, boolean force) {
         if (cropData == null) return;
-        Random randomGenerator = new Random();
+        Random randomGenerator = ThreadLocalRandom.current();
         if (force) {
             for (SimpleLocation location : cropData.keySet()) {
                 growSingleWire(location, randomGenerator.nextInt(cropTime));
@@ -402,7 +403,7 @@ public class CustomWorld {
 
     public void growFrame(int cropTime, int sprinklerTime, int dryTime, boolean compensation, boolean force) {
         if (cropData == null) return;
-        Random randomGenerator = new Random();
+        Random randomGenerator = ThreadLocalRandom.current();
         if (force) {
             for (SimpleLocation location : cropData.keySet()) {
                 growSingleFrame(location, randomGenerator.nextInt(cropTime));
@@ -456,7 +457,7 @@ public class CustomWorld {
         plantedToday.clear();;
 
         //洒水器工作会把种植盆放入watered中
-        Random randomGenerator = new Random();
+        Random randomGenerator = ThreadLocalRandom.current();
         for (Map.Entry<SimpleLocation, Sprinkler> sprinklerEntry : sprinklerCache.entrySet()) {
             bukkitScheduler.runTaskLaterAsynchronously(CustomCrops.plugin, () -> sprinklerWork(sprinklerEntry.getKey(), sprinklerEntry.getValue()), randomGenerator.nextInt(sprinklerTime));
         }
@@ -515,7 +516,7 @@ public class CustomWorld {
                         cropManager.makePotDry(potLoc);
                     }
                 }
-            }.runTaskLaterAsynchronously(CustomCrops.plugin, new Random().nextInt(dry_time));
+            }.runTaskLaterAsynchronously(CustomCrops.plugin, ThreadLocalRandom.current().nextInt(dry_time));
         }
         //用完就抛弃
         tempWatered.clear();
@@ -555,8 +556,8 @@ public class CustomWorld {
             double chance = (double) (24000 - world.getTime()) / 24000;
             plantedToday.add(simpleLocation);
             if (Math.random() > chance) return;
-            if (MainConfig.cropMode) growSingleWire(simpleLocation, new Random().nextInt(delay));
-            else growSingleFrame(simpleLocation, new Random().nextInt(delay));
+            if (MainConfig.cropMode) growSingleWire(simpleLocation, ThreadLocalRandom.current().nextInt(delay));
+            else growSingleFrame(simpleLocation, ThreadLocalRandom.current().nextInt(delay));
         }
     }
     @Nullable
