@@ -1,0 +1,109 @@
+package net.momirealms.customcrops.api.object.crop;
+
+import net.momirealms.customcrops.api.object.BoneMeal;
+import net.momirealms.customcrops.api.object.ItemMode;
+import net.momirealms.customcrops.api.object.action.Action;
+import net.momirealms.customcrops.api.object.condition.Condition;
+import net.momirealms.customcrops.api.object.condition.DeathCondition;
+import net.momirealms.customcrops.api.object.requirement.Requirement;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.HashMap;
+
+public class CropConfig {
+
+    private String key;
+    private final ItemMode itemMode;
+    private final String[] bottom_blocks;
+    private final int max_points;
+    private final HashMap<Integer, StageConfig> stageMap;
+    private final Requirement[] plantRequirements;
+    private final Requirement[] breakRequirements;
+    private final DeathCondition[] deathConditions;
+    private final Condition[] growConditions;
+    private final BoneMeal[] boneMeals;
+    private final Action[] plantActions;
+
+    public CropConfig(String key,
+                      ItemMode itemMode,
+                      int max_points,
+                      String[] bottom_blocks,
+                      Requirement[] plantRequirements,
+                      Requirement[] breakRequirements,
+                      DeathCondition[] deathConditions,
+                      Condition[] growConditions,
+                      HashMap<Integer, StageConfig> stageMap,
+                      BoneMeal[] boneMeals,
+                      Action[] plantActions
+    ) {
+        this.key = key;
+        this.itemMode = itemMode;
+        this.deathConditions = deathConditions;
+        this.plantRequirements = plantRequirements;
+        this.breakRequirements = breakRequirements;
+        this.max_points = max_points;
+        this.bottom_blocks = bottom_blocks;
+        this.stageMap = stageMap;
+        this.growConditions = growConditions;
+        this.boneMeals = boneMeals;
+        this.plantActions = plantActions;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    @NotNull
+    public ItemMode getCropMode() {
+        return itemMode;
+    }
+
+    public int getMaxPoints() {
+        return max_points;
+    }
+
+    @Nullable
+    public StageConfig getStageConfig(int stage) {
+        return stageMap.get(stage);
+    }
+
+    @NotNull
+    public String[] getBottom_blocks() {
+        return bottom_blocks;
+    }
+
+    public int getMax_points() {
+        return max_points;
+    }
+
+    @Nullable
+    public Requirement[] getPlantRequirements() {
+        return plantRequirements;
+    }
+
+    @Nullable
+    public Requirement[] getBreakRequirements() {
+        return breakRequirements;
+    }
+
+    @Nullable
+    public DeathCondition[] getDeathConditions() {
+        return deathConditions;
+    }
+
+    @Nullable
+    public Condition[] getGrowConditions() {
+        return growConditions;
+    }
+
+    @Nullable
+    public BoneMeal[] getBoneMeals() {
+        return boneMeals;
+    }
+
+    @Nullable
+    public Action[] getPlantActions() {
+        return plantActions;
+    }
+}

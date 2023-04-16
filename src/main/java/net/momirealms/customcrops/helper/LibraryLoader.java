@@ -28,7 +28,7 @@ package net.momirealms.customcrops.helper;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
 import net.momirealms.customcrops.CustomCrops;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.io.InputStream;
@@ -37,6 +37,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.util.Objects;
+import java.util.StringJoiner;
 
 /**
  * Resolves {@link MavenLibrary} annotations for a class, and loads the dependency
@@ -45,7 +46,7 @@ import java.util.Objects;
 public final class LibraryLoader {
 
     @SuppressWarnings("Guava")
-    private static final Supplier<URLClassLoaderAccess> URL_INJECTOR = Suppliers.memoize(() -> URLClassLoaderAccess.create((URLClassLoader) CustomCrops.plugin.getClass().getClassLoader()));
+    private static final Supplier<URLClassLoaderAccess> URL_INJECTOR = Suppliers.memoize(() -> URLClassLoaderAccess.create((URLClassLoader) CustomCrops.getInstance().getClass().getClassLoader()));
 
     /**
      * Resolves all {@link MavenLibrary} annotations on the given object.
@@ -63,10 +64,6 @@ public final class LibraryLoader {
      */
     public static void loadAll(Class<?> clazz) {
         MavenLibrary[] libs = clazz.getDeclaredAnnotationsByType(MavenLibrary.class);
-        if (libs == null) {
-            return;
-        }
-
         for (MavenLibrary lib : libs) {
             load(lib.groupId(), lib.artifactId(), lib.version(), lib.repo().url());
         }
@@ -78,7 +75,7 @@ public final class LibraryLoader {
 
     public static void load(Dependency d) {
         //Log.info(String.format("Loading dependency %s:%s:%s from %s", d.getGroupId(), d.getArtifactId(), d.getVersion(), d.getRepoUrl()));
-        String name = d.getArtifactId() + "-" + d.getVersion();
+        String name = d.artifactId() + "-" + d.version();
 
         File saveLocation = new File(getLibFolder(d), name + ".jar");
         if (!saveLocation.exists()) {
@@ -109,90 +106,68 @@ public final class LibraryLoader {
     }
 
     private static File getLibFolder(Dependency dependency) {
-        File pluginDataFolder = CustomCrops.plugin.getDataFolder();
+        File pluginDataFolder = CustomCrops.getInstance().getDataFolder();
         File serverDir = pluginDataFolder.getParentFile().getParentFile();
 
         File helperDir = new File(serverDir, "libraries");
-        String[] split = StringUtils.split(dependency.getGroupId(), ".");
+        String[] split = StringUtils.split(dependency.groupId(), ".");
         File jarDir;
-        if (split.length > 1){
-            jarDir = new File(helperDir, split[0] + File.separator + split[1] + File.separator + dependency.artifactId + File.separator + dependency.version );
-        }else {
-            jarDir = new File(helperDir, dependency.getGroupId() + File.separator + dependency.artifactId + File.separator + dependency.version );
+        StringJoiner stringJoiner = new StringJoiner(File.separator);
+        for (String str : split) {
+            stringJoiner.add(str);
         }
+        jarDir = new File(helperDir, stringJoiner + File.separator + dependency.artifactId + File.separator + dependency.version);
         jarDir.mkdirs();
         return jarDir;
     }
 
-    public static final class Dependency {
-        private final String groupId;
-        private final String artifactId;
-        private final String version;
-        private final String repoUrl;
-
-        public Dependency(String groupId, String artifactId, String version, String repoUrl) {
-            this.groupId = Objects.requireNonNull(groupId, "groupId");
-            this.artifactId = Objects.requireNonNull(artifactId, "artifactId");
-            this.version = Objects.requireNonNull(version, "version");
-            this.repoUrl = Objects.requireNonNull(repoUrl, "repoUrl");
-        }
-
-        public String getGroupId() {
-            return this.groupId;
-        }
-
-        public String getArtifactId() {
-            return this.artifactId;
-        }
-
-        public String getVersion() {
-            return this.version;
-        }
-
-        public String getRepoUrl() {
-            return this.repoUrl;
-        }
-
-        public URL getUrl() throws MalformedURLException {
-            String repo = this.repoUrl;
-            if (!repo.endsWith("/")) {
-                repo += "/";
+    public record Dependency(String groupId, String artifactId, String version, String repoUrl) {
+            public Dependency(String groupId, String artifactId, String version, String repoUrl) {
+                this.groupId = Objects.requireNonNull(groupId, "groupId");
+                this.artifactId = Objects.requireNonNull(artifactId, "artifactId");
+                this.version = Objects.requireNonNull(version, "version");
+                this.repoUrl = Objects.requireNonNull(repoUrl, "repoUrl");
             }
-            repo += "%s/%s/%s/%s-%s.jar";
 
-            String url = String.format(repo, this.groupId.replace(".", "/"), this.artifactId, this.version, this.artifactId, this.version);
-            return new URL(url);
-        }
+            public URL getUrl() throws MalformedURLException {
+                String repo = this.repoUrl;
+                if (!repo.endsWith("/")) {
+                    repo += "/";
+                }
+                repo += "%s/%s/%s/%s-%s.jar";
 
-        @Override
-        public boolean equals(Object o) {
-            if (o == this) return true;
-            if (!(o instanceof Dependency)) return false;
-            final Dependency other = (Dependency) o;
-            return this.getGroupId().equals(other.getGroupId()) &&
-                    this.getArtifactId().equals(other.getArtifactId()) &&
-                    this.getVersion().equals(other.getVersion()) &&
-                    this.getRepoUrl().equals(other.getRepoUrl());
-        }
+                String url = String.format(repo, this.groupId.replace(".", "/"), this.artifactId, this.version, this.artifactId, this.version);
+                return new URL(url);
+            }
 
-        @Override
-        public int hashCode() {
-            final int PRIME = 59;
-            int result = 1;
-            result = result * PRIME + this.getGroupId().hashCode();
-            result = result * PRIME + this.getArtifactId().hashCode();
-            result = result * PRIME + this.getVersion().hashCode();
-            result = result * PRIME + this.getRepoUrl().hashCode();
-            return result;
-        }
+            @Override
+            public boolean equals(Object o) {
+                if (o == this) return true;
+                if (!(o instanceof final Dependency other)) return false;
+                return this.groupId().equals(other.groupId()) &&
+                        this.artifactId().equals(other.artifactId()) &&
+                        this.version().equals(other.version()) &&
+                        this.repoUrl().equals(other.repoUrl());
+            }
 
-        @Override
-        public String toString() {
-            return "LibraryLoader.Dependency(" +
-                    "groupId=" + this.getGroupId() + ", " +
-                    "artifactId=" + this.getArtifactId() + ", " +
-                    "version=" + this.getVersion() + ", " +
-                    "repoUrl=" + this.getRepoUrl() + ")";
+            @Override
+            public int hashCode() {
+                final int PRIME = 59;
+                int result = 1;
+                result = result * PRIME + this.groupId().hashCode();
+                result = result * PRIME + this.artifactId().hashCode();
+                result = result * PRIME + this.version().hashCode();
+                result = result * PRIME + this.repoUrl().hashCode();
+                return result;
+            }
+
+            @Override
+            public String toString() {
+                return "LibraryLoader.Dependency(" +
+                        "groupId=" + this.groupId() + ", " +
+                        "artifactId=" + this.artifactId() + ", " +
+                        "version=" + this.version() + ", " +
+                        "repoUrl=" + this.repoUrl() + ")";
+            }
         }
-    }
 }

@@ -37,27 +37,26 @@ import java.util.logging.Level;
 public final class Log {
 
     public static void info(@NotNull String s) {
-        CustomCrops.plugin.getLogger().info(s);
+        CustomCrops.getInstance().getLogger().info(s);
     }
 
     public static void warn(@NotNull String s) {
-        CustomCrops.plugin.getLogger().warning(s);
+        CustomCrops.getInstance().getLogger().warning(s);
     }
 
     public static void severe(@NotNull String s) {
-        CustomCrops.plugin.getLogger().severe(s);
+        CustomCrops.getInstance().getLogger().severe(s);
     }
 
     public static void warn(@NotNull String s, Throwable t) {
-        CustomCrops.plugin.getLogger().log(Level.WARNING, s, t);
+        CustomCrops.getInstance().getLogger().log(Level.WARNING, s, t);
     }
 
     public static void severe(@NotNull String s, Throwable t) {
-        CustomCrops.plugin.getLogger().log(Level.SEVERE, s, t);
+        CustomCrops.getInstance().getLogger().log(Level.SEVERE, s, t);
     }
 
     private Log() {
         throw new UnsupportedOperationException("This class cannot be instantiated");
     }
-
 }

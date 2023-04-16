@@ -1,0 +1,146 @@
+watering_can_1:
+  item: customcrops:watering_can_1
+  capacity: 3
+  # Effective Range
+  effective-range:
+    width: 1
+    length: 1
+  particle: WATER_SPLASH
+  sound: minecraft:block.water.ambient
+  fill-method:
+    method_1:
+      target: WATER
+      type: block
+      amount: 1
+      particle: WATER_SPLASH
+      sound: minecraft:item.bucket.fill
+  pot-whitelist:
+    - default
+  # allows you to add water to sprinkler by clicking with a watering can
+  sprinkler-whitelist:
+    - sprinkler_1
+    - sprinkler_2
+    - sprinkler_3
+  dynamic-lore:
+    # Should watering-can has dynamic lore according to the water amount
+    # 水壶是否有根据水量变化的动态lore
+    enable: true
+    # Available variables:
+    # {water_bar} water bar image
+    # {current} current water
+    # {storage} max storage
+    lore:
+      - '<italic:false><white>{water_bar}'
+      - '<italic:false><gray>Right click water to add water to the can.'
+  actionbar:
+    # Should actionbar be sent when using watering-can
+    enable: true
+    # Available variables {current} {storage} {water_bar}
+    content: '{water_bar}'
+  water-bar:
+    left: '<font:customcrops:default>뀂'
+    full: '뀁뀃'
+    empty: '뀁뀄'
+    right: '뀁뀅</font>'
+
+watering_can_2:
+  item: customcrops:watering_can_2
+  capacity: 4
+  effective-range:
+    width: 1
+    length: 2
+  particle: WATER_SPLASH
+  sound: minecraft:block.water.ambient
+  fill-method:
+    method_1:
+      target: WATER
+      type: block
+      amount: 1
+      particle: WATER_SPLASH
+  pot-whitelist:
+    - default
+  sprinkler-whitelist:
+    - sprinkler_1
+    - sprinkler_2
+    - sprinkler_3
+  dynamic-lore:
+    enable: true
+    lore:
+      - '<italic:false><white>{water_bar}'
+      - '<italic:false><gray>Right click water to add water to the can.'
+  actionbar:
+    enable: true
+    content: '{water_bar}'
+  water-bar:
+    left: '<font:customcrops:default>뀂'
+    full: '뀁뀃'
+    empty: '뀁뀄'
+    right: '뀁뀅</font>'
+
+watering_can_3:
+  item: customcrops:watering_can_3
+  capacity: 5
+  effective-range:
+    width: 1
+    length: 3
+  particle: WATER_SPLASH
+  sound: minecraft:block.water.ambient
+  fill-method:
+    method_1:
+      target: WATER
+      type: block
+      amount: 1
+      particle: WATER_SPLASH
+  pot-whitelist:
+    - default
+  sprinkler-whitelist:
+    - sprinkler_1
+    - sprinkler_2
+    - sprinkler_3
+  dynamic-lore:
+    enable: true
+    lore:
+      - '<italic:false><white>{water_bar}'
+      - '<italic:false><gray>Right click water to add water to the can.'
+  actionbar:
+    enable: true
+    content: '{water_bar}'
+  water-bar:
+    left: '<font:customcrops:default>뀂'
+    full: '뀁뀃'
+    empty: '뀁뀄'
+    right: '뀁뀅</font>'
+
+watering_can_4:
+  item: customcrops:watering_can_4
+  capacity: 3
+  effective-range:
+    width: 3
+    length: 3
+  particle: WATER_SPLASH
+  sound: minecraft:block.water.ambient
+  fill-method:
+    method_1:
+      target: WATER
+      type: block
+      amount: 1
+      particle: WATER_SPLASH
+  pot-whitelist:
+    - default
+  sprinkler-whitelist:
+    - sprinkler_1
+    - sprinkler_2
+    - sprinkler_3
+  dynamic-lore:
+    enable: true
+    lore:
+      - '<italic:false><white>{water_bar}'
+      - '<italic:false><gray>Right click water to add water to the can.'
+  actionbar:
+    enable: true
+    content: '{water_bar}'
+  water-bar:
+    left: '<font:customcrops:default>뀂'
+    full: '뀁뀃'
+    empty: '뀁뀄'
+    right: '뀁뀅</font>'

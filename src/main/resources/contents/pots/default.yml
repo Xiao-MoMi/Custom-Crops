@@ -1,0 +1,48 @@
+default:
+  max-water-storage: 10
+  base:
+    # basic models
+    dry: customcrops:dry_pot
+    wet: customcrops:wet_pot
+  # If you want fertilized pots to have different looks
+  # Don't forget to set more bottom-block types in crop's config
+  fertilized-pots:
+    enable: false
+    quality:
+      dry: customcrops:dry_pot
+      wet: customcrops:wet_pot
+    yield-increase:
+      dry: customcrops:dry_pot
+      wet: customcrops:wet_pot
+    variation:
+      dry: customcrops:dry_pot
+      wet: customcrops:wet_pot
+    soil-retain:
+      dry: customcrops:dry_pot
+      wet: customcrops:wet_pot
+    speed-grow:
+      dry: customcrops:dry_pot
+      wet: customcrops:wet_pot
+  fill-method:
+    method_1:
+      item: WATER_BUCKET
+      return: BUCKET
+      amount: 3
+      particle: WATER_SPLASH
+      sound: minecraft:block.water.ambient
+    method_2:
+      item: WATER
+      return: GLASS_BOTTLE
+      amount: 1
+      particle: WATER_SPLASH
+      sound: minecraft:block.water.ambient
+    method_3:
+      item: SNOWBALL
+      amount: 1
+      particle: WATER_SPLASH
+      sound: minecraft:block.water.ambient
+    method_4:
+      item: customcrops:magic_water
+      amount: 10
+      particle: WATER_SPLASH
+      sound: minecraft:block.water.ambient

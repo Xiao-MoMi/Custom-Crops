@@ -1,0 +1,182 @@
+package net.momirealms.customcrops.api.object.crop;
+
+import net.momirealms.customcrops.CustomCrops;
+import net.momirealms.customcrops.api.object.Function;
+import net.momirealms.customcrops.api.object.ItemMode;
+import net.momirealms.customcrops.api.object.condition.Condition;
+import net.momirealms.customcrops.api.object.condition.DeathCondition;
+import net.momirealms.customcrops.api.object.requirement.Requirement;
+import net.momirealms.customcrops.api.util.AdventureUtils;
+import net.momirealms.customcrops.api.util.ConfigUtils;
+import org.bukkit.Bukkit;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Item;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.HandlerList;
+import org.bukkit.event.Listener;
+import org.bukkit.event.entity.ItemSpawnEvent;
+import org.jetbrains.annotations.Nullable;
+
+import java.io.File;
+import java.util.HashMap;
+import java.util.HashSet;
+
+public class CropManager extends Function implements Listener {
+
+    private final CustomCrops plugin;
+    private final HashMap<String, String> stageToCrop;
+    private final HashMap<String, CropConfig> seedToCropConfig;
+    private final HashMap<String, CropConfig> cropConfigMap;
+    private final HashMap<String, StageConfig> stageConfigMap;
+    private final HashSet<String> deadCrops;
+
+    public CropManager(CustomCrops plugin) {
+        this.plugin = plugin;
+        this.stageToCrop = new HashMap<>();
+        this.cropConfigMap = new HashMap<>();
+        this.stageConfigMap = new HashMap<>();
+        this.seedToCropConfig = new HashMap<>();
+        this.deadCrops = new HashSet<>();
+    }
+
+    @Override
+    public void load() {
+        this.loadConfig();
+        Bukkit.getPluginManager().registerEvents(this, plugin);
+    }
+
+    @Override
+    public void unload() {
+        this.stageToCrop.clear();
+        this.cropConfigMap.clear();
+        this.stageConfigMap.clear();
+        this.deadCrops.clear();
+        this.seedToCropConfig.clear();
+        HandlerList.unregisterAll(this);
+    }
+
+    private void loadConfig() {
+        File crop_folder = new File(plugin.getDataFolder(), "contents" + File.separator + "crops");
+        if (!crop_folder.exists()) {
+            if (!crop_folder.mkdirs()) return;
+            plugin.saveResource("contents" + File.separator + "crops" + File.separator + "tomato.yml", false);
+        }
+        File[] files = crop_folder.listFiles();
+        if (files == null) return;
+        for (File file : files) {
+            YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
+            for (String key : config.getKeys(false)) {
+                ConfigurationSection cropSec = config.getConfigurationSection(key);
+                if (cropSec == null) continue;
+                ItemMode itemMode = ItemMode.valueOf(cropSec.getString("crop-mode", "TripWire").toUpperCase());
+                String[] bottomBlocks = cropSec.getStringList("pot-whitelist").toArray(new String[0]);
+                if (bottomBlocks.length == 0) {
+                    AdventureUtils.consoleMessage("<red>[CustomCrops] pot-whitelist is not set for crop: " + key);
+                    continue;
+                }
+
+                String seed = cropSec.getString("seed");
+                Requirement[] breakReq = ConfigUtils.getRequirementsWithMsg(cropSec.getConfigurationSection("requirements.break"));
+                Requirement[] plantReq = ConfigUtils.getRequirementsWithMsg(cropSec.getConfigurationSection("requirements.plant"));
+
+                int max = cropSec.getInt("max-points", 0);
+                ConfigurationSection pointSec = cropSec.getConfigurationSection("points");
+                if (pointSec == null || max == 0) {
+                    AdventureUtils.consoleMessage("<red>[CustomCrops] Points are not set for crop: " + key);
+                    continue;
+                }
+                HashMap<Integer, StageConfig> stageMap = new HashMap<>();
+                for (String point : pointSec.getKeys(false)) {
+                    try {
+                        int parsed = Integer.parseInt(point);
+                        String stageModel = pointSec.getString(point + ".model");
+                        StageConfig stageConfig = new StageConfig(
+                                stageModel,
+                                ConfigUtils.getActions(pointSec.getConfigurationSection(point + ".events.break"), stageModel),
+                                ConfigUtils.getActions(pointSec.getConfigurationSection(point + ".events.grow"), stageModel),
+                                ConfigUtils.getInteractActions(pointSec.getConfigurationSection(point + ".events.interact-with-item"), stageModel),
+                                ConfigUtils.getActions(pointSec.getConfigurationSection(point + ".events.interact-by-hand"), stageModel)
+                        );
+                        stageMap.put(parsed, stageConfig);
+                        if (stageModel != null) {
+                            stageToCrop.put(stageModel, key);
+                            stageConfigMap.put(stageModel, stageConfig);
+                        }
+                    }
+                    catch (NumberFormatException e) {
+                        AdventureUtils.consoleMessage("<red>[CustomCrops] Unexpected point value: " + point);
+                    }
+                }
+                DeathCondition[] deathConditions = ConfigUtils.getDeathConditions(cropSec.getConfigurationSection("death-conditions"));
+                Condition[] growConditions = ConfigUtils.getConditions(cropSec.getConfigurationSection("grow-conditions"));
+                CropConfig cropConfig = new CropConfig(
+                        key,
+                        itemMode,
+                        max,
+                        bottomBlocks,
+                        plantReq,
+                        breakReq,
+                        deathConditions,
+                        growConditions,
+                        stageMap,
+                        ConfigUtils.getBoneMeals(cropSec.getConfigurationSection("custom-bone-meal")),
+                        ConfigUtils.getActions(cropSec.getConfigurationSection("plant-actions"), null)
+                );
+                cropConfigMap.put(key, cropConfig);
+                if (seed != null) seedToCropConfig.put(seed, cropConfig);
+            }
+        }
+        AdventureUtils.consoleMessage("[CustomCrops] Loaded <green>" + cropConfigMap.size() + " <gray>crop(s)");
+    }
+
+    @Nullable
+    public StageConfig getStageConfig(String stage_id) {
+        return stageConfigMap.get(stage_id);
+    }
+
+    @Nullable
+    public CropConfig getCropConfigByID(String id) {
+        return this.cropConfigMap.get(id);
+    }
+
+    @Nullable
+    public CropConfig getCropConfigByStage(String stage_id) {
+        String key = getCropConfigID(stage_id);
+        if (key == null) return null;
+        return this.cropConfigMap.get(key);
+    }
+
+    @Nullable
+    public String getCropConfigID(String stage_id) {
+        return this.stageToCrop.get(stage_id);
+    }
+
+    public boolean isDeadCrop(String id) {
+        return deadCrops.contains(id);
+    }
+
+    public boolean containsStage(String stage_id) {
+        return stageToCrop.containsKey(stage_id);
+    }
+
+    // Prevent players from getting stage model
+    @EventHandler
+    public void onItemSpawn(ItemSpawnEvent event) {
+        if (event.isCancelled()) return;
+        Item item = event.getEntity();
+        String id = plugin.getPlatformInterface().getItemID(item.getItemStack());
+        if (containsStage(id)) {
+            event.setCancelled(true);
+        }
+    }
+
+    public void registerDeadCrops(String id) {
+        this.deadCrops.add(id);
+    }
+
+    @Nullable
+    public CropConfig getCropConfigBySeed(String seed) {
+        return seedToCropConfig.get(seed);
+    }
+}

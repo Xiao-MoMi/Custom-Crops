@@ -1,0 +1,280 @@
+tomato:
+  # TripWire / Item_Frame / Item_Display
+  crop-mode: TripWire
+
+  # The crop can only be planted on certain pots
+  pot-whitelist:
+    - default
+
+  # Seed
+  seed: customcrops:tomato_seeds
+
+  # break/plant requirements
+  requirements:
+    break:
+      requirement_1:
+        type: permission
+        value: tomato.break
+        message: "You don't have permission to harvest the tomato"
+    plant:
+      requirement_1:
+        type: permission
+        value: tomato.plant
+        message: "You don't have permission to plant the tomato"
+      requirement_2:
+        type: season
+        value:
+          - Spring
+          - Autumn
+        message: "It's not a good season to plant tomato"
+
+  # plant actions
+  plant-actions:
+    action_1:
+      type: sound
+      value:
+        source: player
+        key: minecraft:item.hoe.till
+        volume: 1
+        pitch: 1
+
+  # This decides when the crop data would be removed from cache
+  max-points: 6
+  points:
+    0:
+      model: customcrops:tomato_stage_1
+      events:
+        break:
+          action_1:
+            type: drop-items
+            value:
+              other-items:
+                loot_1:
+                  item: customcrops:tomato_seeds
+                  min: 1
+                  max: 1
+                  chance: 0.3
+          action_2:
+            type: sound
+            value:
+              source: player
+              key: minecraft:block.crop.break
+              volume: 1
+              pitch: 1
+    1:
+      model: customcrops:tomato_stage_2
+      events:
+        break:
+          action_1:
+            type: drop-items
+            value:
+              other-items:
+                loot_1:
+                  item: customcrops:tomato_seeds
+                  min: 1
+                  max: 1
+                  chance: 0.5
+          action_2:
+            type: sound
+            value:
+              source: player
+              key: minecraft:block.crop.break
+              volume: 1
+              pitch: 1
+    3:
+      model: customcrops:tomato_stage_3
+      events:
+        break:
+          action_1:
+            type: drop-items
+            value:
+              other-items:
+                loot_1:
+                  item: customcrops:tomato_seeds
+                  min: 1
+                  max: 1
+                  chance: 0.8
+          action_2:
+            type: sound
+            value:
+              source: player
+              key: minecraft:block.crop.break
+              volume: 1
+              pitch: 1
+    5:
+      model: customcrops:tomato_stage_4
+      events:
+        break:
+          action_1:
+            type: command
+            value:
+              - 'say Hello, {player}!'
+            chance: 0.5
+          action_2:
+            type: sound
+            value:
+              source: player
+              key: minecraft:block.crop.break
+              volume: 1
+              pitch: 1
+          action_3:
+            type: drop-items
+            value:
+              quality-crops:
+                min: 1
+                max: 4
+                items:
+                  # Other plugin item compatibility(Can also be used in other-items)
+                  # MMOItems:TYPE:ID
+                  # MythicMobs:id
+                  1: customcrops:tomato
+                  2: customcrops:tomato_silver_star
+                  3: customcrops:tomato_golden_star
+              other-items:
+                loot_1:
+                  item: customcrops:tomato_seeds
+                  min: 1
+                  max: 1
+                  chance: 1
+        grow:
+          action_1:
+            type: variation
+            value:
+              golden:
+                model: tomato_stage_golden
+                type: TripWire
+                chance: 0.01
+        interact-by-hand:
+          action_1:
+            type: break
+          action_2:
+            type: replant
+            value:
+              point: 0
+              crop: tomato  # Replant the crop
+              model: customcrops:tomato_stage_1
+        interact-with-item:
+          interact_1:
+            item: customcrops:hoe
+            reduce-amount: false
+            actions:
+              action_1:
+                type: break
+              action_2:
+                type: replant
+                value:
+                  point: 0
+                  crop: tomato  # Replant the crop
+                  model: customcrops:tomato_stage_1  
+          interact_2:
+            item: customcrops:i_want_overgrown_tomato_right_now
+            reduce-amount: true
+            return: customcrops:returned_item
+            actions:
+              action_1:
+                type: variation
+                value:
+                  gigantic:
+                    item: customcrops:gigantic_tomato
+                    type: CHORUS
+                    chance: 1
+    6:
+      events:
+        grow:
+          action_1:
+            type: variation
+            value:
+              gigantic:
+                item: customcrops:gigantic_tomato
+                type: CHORUS
+                chance: 0.02
+
+    # The crop would actually not gain so many points
+    999:
+      model: customcrops:tomato_stage_golden
+      events:
+        break:
+          action_1:
+            type: drop-items
+            value:
+              other-items:
+                loot_1:
+                  item: customcrops:golden_tomato
+                  min: 1
+                  max: 1
+                  chance: 1
+                loot_2:
+                  item: customcrops:golden_tomato
+                  min: 1
+                  max: 2
+                  chance: 0.5
+                loot_3:
+                  item: customcrops:golden_tomato
+                  min: 1
+                  max: 2
+                  chance: 0.3
+        interact-by-hand:
+          action_1:
+            type: break
+          action_2:
+            type: replant
+            value:
+              point: 0
+              crop: tomato  # Replant the crop
+              model: customcrops:tomato_stage_1
+
+  # grow conditions
+  grow-conditions:
+    condition_1:
+      type: suitable_season
+      value:
+        - Spring
+        - Autumn
+    condition_2:
+      type: water_more_than
+      value: 3
+
+  # death conditions
+  death-conditions:
+    no_water:
+      model: customcrops:crop_stage_death
+      conditions:
+        '&&':
+          condition_1:
+            type: water_less_than
+            value: 1
+          condition_2:
+            type: random
+            value: 0.7 # 70% chance to die if the pot is not wet
+    unsuitable_season:
+      model: customcrops:crop_stage_death
+      conditions:
+        condition_1:
+          type: unsuitable_season
+          value:
+            - Winter
+    crow_attack:
+      # crop would be removed if dead-model is not set
+      conditions:
+        condition_1:
+          type: crow_attack
+          value:
+            chance: 0.001
+            fly-model: customcrops:crow_fly
+            stand-model: customcrops:crow_stand
+
+  # custom bone meal
+  custom-bone-meal:
+    bone_meal_1:
+      item: BONE_MEAL
+      particle: VILLAGER_HAPPY
+      sound: minecraft:item.bone_meal.use
+      chance:
+        2: 0.2
+        1: 0.6
+    bone_meal_2:
+      item: customcrops:custom_bone_meal
+      return: customcrops:custom_bone_meal_used
+      chance:
+        2: 0.4
+        1: 1

@@ -1,0 +1,116 @@
+sprinkler_1:
+  # This decides the work range
+  # (1+1x2)²=9
+  range: 1
+  storage: 5
+  3D-item: customcrops:sprinkler_1
+  2D-item: customcrops:sprinkler_1_item
+  # Item_Frame / Item_Display / Tripwire
+  type: Item_Frame
+  place-sound: minecraft:block.bone_block.place
+  hologram:
+    enable: true
+    y-offset: 0.8
+    duration: 1
+    # Available variables:
+    # {current} current water
+    # {storage} max storage
+    left: '<font:customcrops:default>뀂'
+    full: '뀁뀃'
+    empty: '뀁뀄'
+    right: '뀁뀅</font>'
+  # Water splash animation when sprinkler works
+  sprinkler-animation:
+    enable: true
+    y-offset: 0.4
+    item: customcrops:water_animation
+    # ARMOR_STAND / ITEM_DISPLAY
+    type: ARMOR_STAND
+  pot-whitelist:
+    - default
+  fill-method:
+    method_1:
+      item: WATER_BUCKET
+      return: BUCKET
+      amount: 3
+      particle: WATER_SPLASH
+      sound: minecraft:block.water.ambient
+    method_2:
+      item: WATER
+      return: GLASS_BOTTLE
+      amount: 1
+      particle: WATER_SPLASH
+      sound: minecraft:block.water.ambient
+
+sprinkler_2:
+  # (1+2x2)²=25
+  range: 2
+  storage: 5
+  3D-item: customcrops:sprinkler_2
+  2D-item: customcrops:sprinkler_2_item
+  type: Item_Frame
+  place-sound: minecraft:block.bone_block.place
+  hologram:
+    enable: true
+    y-offset: 0.8
+    duration: 1
+    left: '<font:customcrops:default>뀂'
+    full: '뀁뀃'
+    empty: '뀁뀄'
+    right: '뀁뀅</font>'
+  sprinkler-animation:
+    enable: true
+    y-offset: 0.4
+    item: customcrops:water_animation
+    type: ARMOR_STAND
+  pot-whitelist:
+    - default
+  fill-method:
+    method_1:
+      item: WATER_BUCKET
+      return: BUCKET
+      amount: 3
+      particle: WATER_SPLASH
+      sound: minecraft:block.water.ambient
+    method_2:
+      item: WATER
+      return: GLASS_BOTTLE
+      amount: 1
+      particle: WATER_SPLASH
+      sound: minecraft:block.water.ambient
+
+sprinkler_3:
+  range: 2
+  storage: 7
+  3D-item: customcrops:sprinkler_3
+  2D-item: customcrops:sprinkler_3_item
+  type: Item_Frame
+  place-sound: minecraft:block.bone_block.place
+  hologram:
+    enable: true
+    y-offset: 0.8
+    duration: 1
+    left: '<font:customcrops:default>뀂'
+    full: '뀁뀃'
+    empty: '뀁뀄'
+    right: '뀁뀅</font>'
+  sprinkler-animation:
+    enable: true
+    y-offset: 0.4
+    item: customcrops:water_animation
+    type: ARMOR_STAND
+  pot-whitelist:
+    - default
+  fill-method:
+    method_1:
+      item: WATER_BUCKET
+      return: BUCKET
+      amount: 3
+      particle: WATER_SPLASH
+      sound: minecraft:block.water.ambient
+    method_2:
+      item: WATER
+      return: GLASS_BOTTLE
+      amount: 1
+      particle: WATER_SPLASH
+      sound: minecraft:block.water.ambient

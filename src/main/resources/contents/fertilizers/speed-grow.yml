@@ -1,0 +1,45 @@
+speed_grow_1:
+  type: SPEED_GROW
+  # Fertilizer Hologram display name
+  name: '뀌'
+  # How many days can this fertilizer stay in pot
+  times: 14
+  # ItemsAdder item namespacedID
+  item: customcrops:speed_grow_1
+  # Should this fertilizer be used before planting
+  before-plant: true
+  # The particle to be displayed when using fertilizer
+  # https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Particle.html
+  particle: SPELL_WITCH
+  sound: minecraft:item.hoe.till
+  pot-whitelist:
+    - default
+  chance:
+    1: 0.5
+speed_grow_2:
+  type: SPEED_GROW
+  name: '뀍'
+  times: 14
+  item: customcrops:speed_grow_2
+  before-plant: true
+  particle: SPELL_WITCH
+  sound: minecraft:item.hoe.till
+  pot-whitelist:
+    - default
+  chance:
+    1: 0.9
+speed_grow_3:
+  type: SPEED_GROW
+  name: '뀎'
+  times: 14
+  item: customcrops:speed_grow_3
+  before-plant: true
+  particle: SPELL_WITCH
+  sound: minecraft:item.hoe.till
+  pot-whitelist:
+    - default
+  # 40% chance to gain another 2 points
+  # 100% chance to gain another 1 point
+  chance:
+    2: 0.4
+    1: 1

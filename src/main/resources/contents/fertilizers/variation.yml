@@ -1,0 +1,34 @@
+variation_1:
+  type: VARIATION
+  name: '뀒'
+  times: 14
+  # If a crop's default variation chance is 0.01, now it's 0.03
+  chance: 0.02
+  item: customcrops:variation_1
+  before-plant: true
+  particle: SOUL
+  sound: minecraft:item.hoe.till
+  pot-whitelist:
+    - default
+variation_2:
+  type: VARIATION
+  name: '뀓'
+  times: 14
+  chance: 0.04
+  item: customcrops:variation_2
+  before-plant: true
+  particle: SOUL
+  sound: minecraft:item.hoe.till
+  pot-whitelist:
+    - default
+variation_3:
+  type: VARIATION
+  name: '뀔'
+  times: 14
+  chance: 0.08
+  item: customcrops:variation_3
+  before-plant: true
+  particle: SOUL
+  sound: minecraft:item.hoe.till
+  pot-whitelist:
+    - default

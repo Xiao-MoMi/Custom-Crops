@@ -19,131 +19,185 @@ package net.momirealms.customcrops;
 
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
-import de.tr7zw.changeme.nbtapi.utils.VersionChecker;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
-import net.momirealms.customcrops.commands.PluginCommand;
-import net.momirealms.customcrops.config.ConfigUtil;
-import net.momirealms.customcrops.config.MainConfig;
+import net.momirealms.customcrops.api.CustomCropsAPI;
+import net.momirealms.customcrops.api.customplugin.Platform;
+import net.momirealms.customcrops.api.customplugin.PlatformInterface;
+import net.momirealms.customcrops.api.customplugin.PlatformManager;
+import net.momirealms.customcrops.api.customplugin.itemsadder.ItemsAdderPluginImpl;
+import net.momirealms.customcrops.api.customplugin.oraxen.OraxenPluginImpl;
+import net.momirealms.customcrops.api.object.basic.ConfigManager;
+import net.momirealms.customcrops.api.object.basic.MessageManager;
+import net.momirealms.customcrops.api.object.crop.CropManager;
+import net.momirealms.customcrops.api.object.pot.PotManager;
+import net.momirealms.customcrops.api.object.fertilizer.FertilizerManager;
+import net.momirealms.customcrops.api.object.season.SeasonManager;
+import net.momirealms.customcrops.api.object.sprinkler.SprinklerManager;
+import net.momirealms.customcrops.api.object.wateringcan.WateringCanManager;
+import net.momirealms.customcrops.api.object.world.CCWorld;
+import net.momirealms.customcrops.api.object.world.WorldDataManager;
+import net.momirealms.customcrops.api.util.AdventureUtils;
+import net.momirealms.customcrops.command.CustomCropsCommand;
 import net.momirealms.customcrops.helper.LibraryLoader;
 import net.momirealms.customcrops.helper.VersionHelper;
-import net.momirealms.customcrops.integrations.papi.PlaceholderManager;
-import net.momirealms.customcrops.integrations.protection.WorldGuardHook;
-import net.momirealms.customcrops.managers.CropManager;
-import net.momirealms.customcrops.integrations.quest.BattlePassCCQuest;
-import net.momirealms.customcrops.integrations.quest.ClueScrollCCQuest;
-import net.momirealms.customcrops.integrations.quest.NewBetonQuestCCQuest;
-import net.momirealms.customcrops.integrations.quest.OldBetonQuestCCQuest;
-import net.momirealms.customcrops.utils.AdventureUtil;
+import net.momirealms.customcrops.integration.IntegrationManager;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
+import org.bukkit.World;
+import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.Objects;
 import java.util.TimeZone;
 
 public final class CustomCrops extends JavaPlugin {
 
-    public static BukkitAudiences adventure;
-    public static CustomCrops plugin;
-    public static ProtocolManager protocolManager;
-
-    private PlaceholderManager placeholderManager;
+    private static BukkitAudiences adventure;
+    private static CustomCrops plugin;
+    private static ProtocolManager protocolManager;
+    private Platform platform;
+    private PlatformInterface platformInterface;
     private CropManager cropManager;
+    private IntegrationManager integrationManager;
+    private WorldDataManager worldDataManager;
+    private SprinklerManager sprinklerManager;
+    private WateringCanManager wateringCanManager;
+    private FertilizerManager fertilizerManager;
+    private SeasonManager seasonManager;
+    private PotManager potManager;
+    private ConfigManager configManager;
+    private MessageManager messageManager;
+    private PlatformManager platformManager;
     private VersionHelper versionHelper;
-
-//                              _ooOoo_
-//                             o8888888o
-//                             88" . "88
-//                             (| -_- |)
-//                             O\  =  /O
-//                          ____/`---'\____
-//                        .'  \\|     |//  `.
-//                       /  \\|||  :  |||//  \
-//                      /  _||||| -:- |||||_  \
-//                      |   | \\\  -  /'| |   |
-//                      | \_|  `\`---'//  |_/ |
-//                      \  .-\__ `-. -'__/-.  /
-//                    ___`. .'  /--.--\  `. .'___
-//                 ."" '<  `.___\_<|>_/___.' _> \"".
-//                | | :  `- \`. ;`. _/; .'/ /  .' ; |
-//                \  \ `-.   \_\_`. _.'_/_/  -' _.' /
-//  ================-.`___`-.__\ \___  /__.-'_.'_.-'================
-//                              `=--=-'
-//                    佛祖保佑    永无BUG    永不卡服
+    private CustomCropsAPI customCropsAPI;
 
     @Override
     public void onLoad(){
         plugin = this;
-        TimeZone timeZone = TimeZone.getDefault();
-        String libRepo = timeZone.getID().startsWith("Asia") ? "https://maven.aliyun.com/repository/public/" : "https://repo.maven.apache.org/maven2/";
-        LibraryLoader.load("dev.dejvokep","boosted-yaml","1.3",libRepo);
-        LibraryLoader.load("commons-io","commons-io","2.11.0",libRepo);
-        if (Bukkit.getPluginManager().getPlugin("WorldGuard") != null) {
-            WorldGuardHook.initialize();
-        }
+        this.loadLibs();
     }
 
     @Override
     public void onEnable() {
-        adventure = BukkitAudiences.create(plugin);
+        adventure = BukkitAudiences.create(this);
         protocolManager = ProtocolLibrary.getProtocolManager();
+        AdventureUtils.consoleMessage("[CustomCrops] Running on <white>" + Bukkit.getVersion());
+        this.registerCommands();
+        this.loadPlatform();
+
+        this.configManager = new ConfigManager(this);
+        this.messageManager = new MessageManager(this);
         this.versionHelper = new VersionHelper(this);
-        AdventureUtil.consoleMessage("[CustomCrops] Running on <white>" + Bukkit.getVersion());
-        VersionChecker.hideOk = true;
-        if (Bukkit.getPluginManager().getPlugin("ItemsAdder") != null) {
-            MainConfig.customPlugin = "itemsadder";
-            AdventureUtil.consoleMessage("[CustomCrops] Custom Item Plugin Platform: <#BA55D3><u>ItemsAdder");
-        }
-        else if (Bukkit.getPluginManager().getPlugin("Oraxen") != null) {
-            MainConfig.customPlugin = "oraxen";
-            AdventureUtil.consoleMessage("[CustomCrops] Custom Item Plugin Platform: <#6495ED><u>Oraxen");
-        }
-        else {
-            AdventureUtil.consoleMessage("<red>[CustomCrops] You need either ItemsAdder or Oraxen as CustomCrops' dependency");
-            Bukkit.getPluginManager().disablePlugin(CustomCrops.plugin);
-            return;
-        }
+        this.cropManager = new CropManager(this);
+        this.integrationManager = new IntegrationManager(this);
+        this.seasonManager = new SeasonManager(this);
+        this.worldDataManager = new WorldDataManager(this);
+        this.sprinklerManager = new SprinklerManager(this);
+        this.wateringCanManager = new WateringCanManager(this);
+        this.fertilizerManager = new FertilizerManager(this);
+        this.potManager = new PotManager(this);
+        this.platformManager = new PlatformManager(this);
+        this.customCropsAPI = new CustomCropsAPI(this);
 
-        ConfigUtil.reloadConfigs();
-        this.registerQuests();
+        this.reload();
 
-        PluginCommand pluginCommand = new PluginCommand();
-        Objects.requireNonNull(Bukkit.getPluginCommand("customcrops")).setExecutor(pluginCommand);
-        Objects.requireNonNull(Bukkit.getPluginCommand("customcrops")).setTabCompleter(pluginCommand);
-
-        this.cropManager = new CropManager();
-
-        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
-            this.placeholderManager = new PlaceholderManager();
+        for (World world : Bukkit.getWorlds()) {
+            this.worldDataManager.loadWorld(world);
         }
 
-        AdventureUtil.consoleMessage("[CustomCrops] Plugin Enabled!");
+        AdventureUtils.consoleMessage("[CustomCrops] Plugin Enabled!");
+        if (ConfigManager.enableBStats) new Metrics(this, 16593);
+        if (ConfigManager.checkUpdate) this.versionHelper.checkUpdate();
+    }
 
-        if (MainConfig.metrics) {
-            new Metrics(this, 16593);
-        }
+    public void reload() {
+        this.configManager.unload();
+        this.messageManager.unload();
+        this.cropManager.unload();
+        this.integrationManager.unload();
+        this.worldDataManager.unload();
+        this.sprinklerManager.unload();
+        this.wateringCanManager.unload();
+        this.fertilizerManager.unload();
+        this.potManager.unload();
+        this.seasonManager.unload();
+        this.platformManager.unload();
+
+        this.configManager.load();
+        this.messageManager.load();
+        this.integrationManager.load();
+        this.cropManager.load();
+        this.worldDataManager.load();
+        this.sprinklerManager.load();
+        this.wateringCanManager.load();
+        this.fertilizerManager.load();
+        this.potManager.load();
+        this.seasonManager.load();
+        this.platformManager.load();
     }
 
     @Override
     public void onDisable() {
-        if (adventure != null) {
-            adventure.close();
-        }
-        if (this.placeholderManager != null) {
-            this.placeholderManager.unload();
-        }
-        if (this.cropManager != null) {
-            this.cropManager.unload();
+        if (adventure != null) adventure.close();
+        if (this.cropManager != null) this.cropManager.unload();
+        if (this.worldDataManager != null) this.worldDataManager.disable();
+        if (this.seasonManager != null) this.seasonManager.unload();
+        if (this.sprinklerManager != null) this.sprinklerManager.unload();
+        if (this.wateringCanManager != null) this.wateringCanManager.unload();
+        if (this.fertilizerManager != null) this.fertilizerManager.unload();
+        if (this.platformManager != null) this.platformManager.unload();
+        if (this.potManager != null) this.potManager.unload();
+        if (this.messageManager != null) this.messageManager.unload();
+        if (this.configManager != null) this.configManager.unload();
+        if (this.integrationManager != null) this.integrationManager.unload();
+    }
+
+    private void loadLibs() {
+        TimeZone timeZone = TimeZone.getDefault();
+        String libRepo = timeZone.getID().startsWith("Asia") ? "https://maven.aliyun.com/repository/public/" : "https://repo.maven.apache.org/maven2/";
+        LibraryLoader.load("dev.dejvokep","boosted-yaml","1.3", libRepo);
+        LibraryLoader.load("commons-io","commons-io","2.11.0", libRepo);
+        LibraryLoader.load("net.objecthunter","exp4j","0.4.8", libRepo);
+    }
+
+    private void registerCommands() {
+        CustomCropsCommand customCropsCommand = new CustomCropsCommand();
+        PluginCommand pluginCommand = Bukkit.getPluginCommand("customcrops");
+        if (pluginCommand != null) {
+            pluginCommand.setExecutor(customCropsCommand);
+            pluginCommand.setTabCompleter(customCropsCommand);
         }
     }
 
-    public PlaceholderManager getPlaceholderManager() {
-        return placeholderManager;
+    private void loadPlatform() {
+        PluginManager pluginManager = Bukkit.getPluginManager();
+        if (pluginManager.isPluginEnabled("ItemsAdder")) {
+            this.platform = Platform.ItemsAdder;
+            this.platformInterface = new ItemsAdderPluginImpl();
+        }
+        else if (pluginManager.isPluginEnabled("Oraxen")) {
+            this.platform = Platform.Oraxen;
+            this.platformInterface = new OraxenPluginImpl();
+        }
+        if (this.platform == null) {
+            Bukkit.getPluginManager().disablePlugin(this);
+            AdventureUtils.consoleMessage("<red>[CustomCrops] Please install ItemsAdder/Oraxen");
+        }
+        else {
+            AdventureUtils.consoleMessage("[CustomCrops] Platform: " + platform.name());
+        }
     }
 
-    public boolean hasPapi() {
-        return placeholderManager != null;
+    public static BukkitAudiences getAdventure() {
+        return adventure;
+    }
+
+    public static CustomCrops getInstance() {
+        return plugin;
+    }
+
+    public static ProtocolManager getProtocolManager() {
+        return protocolManager;
     }
 
     public CropManager getCropManager() {
@@ -154,18 +208,55 @@ public final class CustomCrops extends JavaPlugin {
         return versionHelper;
     }
 
-    private void registerQuests() {
-        PluginManager pluginManager = Bukkit.getPluginManager();
-        if (pluginManager.isPluginEnabled("ClueScrolls")) {
-            ClueScrollCCQuest quest = new ClueScrollCCQuest();
-            Bukkit.getPluginManager().registerEvents(quest, plugin);
-        }
-        if (pluginManager.isPluginEnabled("BetonQuest")) {
-            if (Bukkit.getPluginManager().getPlugin("BetonQuest").getDescription().getVersion().startsWith("2")) NewBetonQuestCCQuest.register();
-            else OldBetonQuestCCQuest.register();
-        }
-        if (pluginManager.isPluginEnabled("BattlePass")) {
-            BattlePassCCQuest.register();
-        }
+    public Platform getPlatform() {
+        return platform;
+    }
+
+    public IntegrationManager getIntegrationManager() {
+        return integrationManager;
+    }
+
+    public PlatformInterface getPlatformInterface() {
+        return platformInterface;
+    }
+
+    public WorldDataManager getWorldDataManager() {
+        return worldDataManager;
+    }
+
+    public SprinklerManager getSprinklerManager() {
+        return sprinklerManager;
+    }
+
+    public PotManager getPotManager() {
+        return potManager;
+    }
+
+    public WateringCanManager getWateringCanManager() {
+        return wateringCanManager;
+    }
+
+    public FertilizerManager getFertilizerManager() {
+        return fertilizerManager;
+    }
+
+    public SeasonManager getSeasonManager() {
+        return seasonManager;
+    }
+
+    public ConfigManager getConfigManager() {
+        return configManager;
+    }
+
+    public MessageManager getMessageManager() {
+        return messageManager;
+    }
+
+    public PlatformManager getPlatformManager() {
+        return platformManager;
+    }
+
+    public CustomCropsAPI getAPI() {
+        return customCropsAPI;
     }
 }

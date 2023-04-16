@@ -1,12 +1,13 @@
 # Don't change
-# 请不要修改
-config-version: '24'
+config-version: '25'
+# BStats
 metrics: true
-# lang: english / spanish / chinese
+# Language: english / spanish / chinese / turkish
 lang: english
-
-integration:
-  # AntiGrief
+# Set up mode
+set-up-mode: true
+# AntiGrief
+integrations:
   Residence: false
   WorldGuard: false
   Kingdoms: false
@@ -17,27 +18,14 @@ integration:
   GriefPrevention: false
   CrashClaim: false
   BentoBox: false
-  IridiumSkyblock: false
+  IridiumSkyBlock: false
   SuperiorSkyBlock: false
-  # Skill Xp
-  # Don't forget to config skill-xp for each crop if you enabled skill xp integration
-  AureliumSkills: false
-  mcMMO: false
-  MMOCore: false
-  EcoSkills: false
-  # Job xp
-  # Don't forget to config job-xp for each crop if you enabled job xp integration
-  JobsReborn: false
-  EcoJobs: false
-  # Season
-  # Synchronize season with other plugins
-  RealisticSeasons: false
 
 worlds:
   # This is designed for servers that using a separate folder for worlds
   # The default folder is your server's root folder
   # 如果你的服务器使用独立文件夹存储世界，请在此填入根目录下的文件地址
-  worlds-folder: ''
+  folder: ''
   # Mode: whitelist/blacklist
   # Requires a restart when changing mode or editing world list for the safety of data
   # 模式：白名单/黑名单
@@ -45,6 +33,21 @@ worlds:
   mode: whitelist
   list:
     - world
+
+schedule-system:
+  enable: true
+  # The average interval for a crop to gain one point (measured in seconds)
+  # 平均每个农作物获得一生长点的时间间隔（秒）
+  point-gain-interval: 10
+  # Thread pool settings
+  # 线程池设置
+  thread-pool-settings:
+    # 核心线程池大小
+    corePoolSize: 2
+    # 最大线程池大小
+    maximumPoolSize: 4
+    # seconds (秒)
+    keepAliveTime: 10
 
 optimization:
   # Recommend enabling this to prevent large quantities of crops/item frames from lagging the server
@@ -55,274 +58,42 @@ optimization:
     enable: true
     # max amount per chunk
     # 每个区块的限制数量
-    tripwire-amount: 64
-    itemframe-amount: 64
-
-  # Disable the water particles when using watering-cans
-  # 关闭水粒子效果
-  disable-water-particles: false
-  # Auto back up the data when a world is unloaded
-  # 自动备份
-  auto-back-up: true
+    valid-crop-amount: 64
 
 mechanics:
-  # Mode: tripwire/item_frame
-  # 模式：拌线/展示框
-  crops-mode: tripwire
+  # 17/2/1 = 85%/10%/5%
+  # 2/2/1 = 40%/40%/20%
+  default-quality-ratio: 17/2/1
 
-  # If enabled, crops would start growing at about 7am(at most 5 seconds inaccuracy) and finish growing in the rest of the day
-  # Note: All the crops can only start growing when a world's time is around 7am, so when a world is loaded and its time is 8am,
-  #       crops would not grow in this day. You can enable time compensation to make the crops grow when starting the server.
-  # 如果启用自动生长，农作物将在上午7点左右完成当日生长任务安排并且在接下来的时间里完成生长
-  # 请注意：农作物只有在生长点前种植才能在当日生长，否则需要等待下一个生长点，你可以开启下方的生长补偿功能
-  auto-grow:
-    enable: true
-    # For example, the time to start growing is at 1000ticks(7am),
-    # sprinklers would finish their work in a random time between 1000~1300ticks,
-    # Pot would start drying in a random time between 1300~1500ticks
-    # and crops would grow in a random time between 1500~21500ticks
-    # 洒水器工作时间/种植盆干湿判断时间/农作物生长时间  不建议修改
-    sprinkler-work-time: 300
-    pot-dry-time: 200
-    crops-grow-time: 20000
-    # Crops would start growing instantly when the world is loaded instead of waiting for the second day's 7am
-    # 生长补偿：当你种下农作物或刚加载世界且恰好错过生长点时候，进行补偿计算分配生长任务
-    time-compensation: true
-  # If the pot is wet, crop would 100% grow a stage per day
-  # Otherwise they would have a lower chance to grow.
-  # Recommend setting it to a value higher than 0 to make sure every crop can be ripe even if
-  # players don't take care of them, this is good for server's performance because crop data would
-  # be removed from data file as soon as the crop is ripe to avoid affecting server performance in the long term
-  # 如果种植盆是干燥的，每天生长一个阶段的概率是多少
-  # 建议设置高于0的数值，这样每个农作物都能得到生长，最后从数据中移除
-  # 长远来看，这样不会造成数据堆积，对服务器性能友好
-  dry-pot-grow-chance: 0.5
-  # Should the crop go to dead stage if the pot is dry
-  # 农作物是否会在干燥的种植盆上枯萎
-  dry-pot-makes-crop-dead:
-    enable: false
-    chance: 0.6
-  # Can player harvest crops with right click?
-  # if set "false" crops can't be harvested repeatedly
-  # 玩家是否能右键收获农作物，禁用此项则重复收获机制也无法使用
-  right-click-harvest:
-    enable: true
-    # 是否需要空手
-    require-empty-hand: true
-  # Should player be prevented from planting if wrong season
-  # 是否阻止玩家在错误季节种植
-  prevent-plant-if-wrong-season: true
-  # Should player be notified of the wrong season?
-  # 是否提示玩家错误的季节
-  should-notify-if-wrong-season: true
-  # Should crops drop loot only in whitelist worlds or in all the worlds
-  # 农作物是否只在白名单世界掉落农产品
-  drop-loots-in-all-worlds: false
-
-  # Water splash animation when sprinkler works
-  sprinkler-animation:
-    enable: true
-    y-offset: 0.4
-
-  fill:
-    watering-can-to-sprinkler: 1
-    water-bucket-to-sprinkler: 3
-    waterblock-to-watering-can: 1
-
-  # Will bone meal accelerate the growth of crop
-  # 骨粉是否能加快农作物生长
-  bone-meal:
-    enable: true
-    chance: 0.5
-    success-particle: VILLAGER_HAPPY
   # Season mechanic
-  # Crops would go to death stage if growing in wrong seasons
-  # Season would not affect ripe crops(for better performance and friendly player's experience)
-  # 生长中的农作物会在错误的季节死去，但是不会影响已成熟的农作物
+  # 季节机制
   season:
     enable: true
     # If you want all the worlds to share the same season
     # 是否全世界同步季节
-    sync-seasons:
+    sync-season:
       enable: false
-      world: world
-
+      reference: world
+    # 自动季节交替
     auto-season-change:
-      # If enabled, season would be automatically calculated according to game time when reloading
-      # 自动切换季节，如果启用则setseason指令仅对当天有效
       enable: true
       # duration of each season (Minecraft days)
       # 每个季节的时长
       duration: 28
     greenhouse:
       enable: true
+      block: customcrops:greenhouse_glass
       # effective range (Y axis)
+      # Y轴有效范围
       range: 5
-  # During the crop growing progress, crops have a little chance to be eaten by a crow
-  # Place a scarecrow would protect the crops in this chunk
-  # 在生长过程中，农作物有小概率被乌鸦袭击，在当前区块放置稻草人可以驱赶乌鸦
-  crow:
-    enable: true
-    chance: 0.005
 
-  # 17/2/1 means 85%/10%/5%
-  # 2/2/1 means 40%/40%/20%
-  default-quality-ratio: 17/2/1
-
-  # A crop would go to dead stage if the sky-light level is lower than a certain value.
-  # 在自然光照不足时，农作物是否会死亡
-  dead-if-no-sky-light:
-    enable: true
-    level: 10
-
-  vanilla-crops:
-    # Can vanilla crops be harvested with right clicks
-    # 是否可以右键重复收获原版农作物
-    right-click-harvest: false
-    # Prevent player from planting these vanilla crops in farmland
-    # 阻止玩家种植原版农作物
-    prevent-plant:
-      enable: false
-      list:
-        - WHEAT
-        - CARROTS
-        - POTATOES
-        - BEETROOTS
-    # Convert vanilla items into CustomCrops crops
-    # You need to make extra CustomCrops/IA/Oraxen configs & models for these crops
-    # This makes it possible to make vanilla crops have a better mechanic
-    # 将原版物品转换为customcrops插件农作物
-    # 你需要为此制作额外的模型和配置
-    convert-to-customcrops:
-      enable: true
-      list:
-        APPLE: apple
-        #WHEAT_SEEDS: wheat
-        #CARROT: carrot
-        #POTATO: potato
-        #BEETROOT_SEEDS: beetroot
-
+other-settings:
   # This option requires a skill-plugin hook
   # Which would increase the amount of crops player get
   # 这需要一个技能插件才能生效，可以根据玩家种植技能等级提供增益
   skill-bonus:
     enable: false
-    bonus-per-level: 0.001
-
-sounds:
-  water-pot:
-    enable: true
-    sound: minecraft:block.water.ambient
-    type: player
-  add-water-to-can:
-    enable: true
-    sound: minecraft:item.bucket.fill
-    type: player
-  add-water-to-sprinkler:
-    enable: true
-    sound: minecraft:item.bucket.fill
-    type: player
-  place-sprinkler:
-    enable: true
-    sound: minecraft:block.bone_block.place
-    type: player
-  plant-seed:
-    enable: true
-    sound: minecraft:item.hoe.till
-    type: player
-  use-fertilizer:
-    enable: true
-    sound: minecraft:item.hoe.till
-    type: player
-  harvest-crops:
-    enable: true
-    sound: minecraft:block.crop.break
-    type: player
-  bonemeal:
-    enable: true
-    sound: minecraft:item.hoe.till
-    type: player
-  surveyor:
-    enable: true
-    sound: minecraft:block.note_block.pling
-    type: player
-
-
-# Hologram information
-hologram:
-  # Fertilizer infomation
-  fertilizer-info:
-    enable: true
-    y-offset: 0.8
-    duration: 1
-    text: '<font:customcrops:default>{fertilizer} </font><white>{times}<gray>/<white>{max_times}'
-  # Sprinkler infomation
-  sprinkler-info:
-    enable: true
-    y-offset: 0.8
-    duration: 1
-    # available variables {water} {max_water}
-    left: '<font:customcrops:default>뀂'
-    full: '뀁뀃'
-    empty: '뀁뀄'
-    right: '뀁뀅</font>'
-
-actionbar:
-  # Should actionbar be sent when using watering-can
-  enable: true
-  # Available variables  {water} {max_water}
-  left: '<font:customcrops:default>뀂'
-  full: '뀁뀃'
-  empty: '뀁뀄'
-  right: '뀁뀅</font>'
-
-
-season-broadcast:
-  enable: true
-  spring:
-    - '<#3CB371>Spring is coming!'
-  summer:
-    - '<#FFFFE0>Summer is coming!'
-  autumn:
-    - '<#FF8C00>Autumn is coming!'
-  winter:
-    - '<#87CEFA>Winter is coming!'
-
-season-change-command:
-  enable: false
-  spring:
-    - 'say spring is coming!'
-
-
-watering-can-lore:
-  # Should watering-can has dynamic lore according to the water amount
-  # 水壶是否有根据水量变化的动态lore
-  enable: true
-  # Only packets can remain the former lore, otherwise the lore would be replaced
-  # 只有发包描述才能保持原有的物品描述，否则会被强制替换
-  packets:
-    # Should watering-can's lore be sent by packets
-    # Wouldn't work in creative mode for safety
-    # 是否启用发包模式
-    # 安全起见，创造模式下这不会生效
-    enable: false
-    # true: top / false: bottom
-    # 发包描述位于描述的顶部还是底部
-    top-or-bottom: true
-  # Lore format
-  # Available variables: {water_bar}
-  # {water}current water {max_water}max storage
-  lore:
-    - '<italic:false><white>{water_bar}'
-    - '<italic:false><gray>Right click water to add water to the can.'
-  water-bar:
-    left: '<font:customcrops:default>뀂'
-    full: '뀁뀃'
-    empty: '뀁뀄'
-    right: '뀁뀅</font>'
-
-
-other-settings:
-  # 3 days = 1 hour
-  # Save the cache to file
-  data-save-interval: 3
+    formula: '{base} + {level} * 0.01'
+  # MMOCore profession name
+  # MMOCore职业名
+  MMOCore-profession-name: 'farmer'
