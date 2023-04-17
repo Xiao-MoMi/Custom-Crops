@@ -70,7 +70,8 @@ public class Pot implements Serializable {
      */
     public boolean reduceWater() {
         water--;
-        return water <= 0;
+        water = Math.max(0, water);
+        return water == 0;
     }
 
     /*

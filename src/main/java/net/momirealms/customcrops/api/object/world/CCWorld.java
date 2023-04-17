@@ -19,6 +19,7 @@ package net.momirealms.customcrops.api.object.world;
 
 import net.momirealms.customcrops.CustomCrops;
 import net.momirealms.customcrops.api.CustomCropsAPI;
+import net.momirealms.customcrops.api.object.CrowTask;
 import net.momirealms.customcrops.api.object.Function;
 import net.momirealms.customcrops.api.object.ItemMode;
 import net.momirealms.customcrops.api.object.action.Action;
@@ -34,21 +35,27 @@ import net.momirealms.customcrops.api.object.fertilizer.FertilizerConfig;
 import net.momirealms.customcrops.api.object.fertilizer.SoilRetain;
 import net.momirealms.customcrops.api.object.fertilizer.SpeedGrow;
 import net.momirealms.customcrops.api.object.pot.Pot;
+import net.momirealms.customcrops.api.object.pot.PotConfig;
 import net.momirealms.customcrops.api.object.season.CCSeason;
 import net.momirealms.customcrops.api.object.season.SeasonData;
 import net.momirealms.customcrops.api.object.sprinkler.Sprinkler;
+import net.momirealms.customcrops.api.object.sprinkler.SprinklerAnimation;
+import net.momirealms.customcrops.api.object.sprinkler.SprinklerConfig;
 import net.momirealms.customcrops.api.util.AdventureUtils;
 import net.momirealms.customcrops.api.util.ConfigUtils;
+import net.momirealms.customcrops.api.util.FakeEntityUtils;
 import net.momirealms.customcrops.helper.Log;
 import org.apache.commons.pool2.BasePooledObjectFactory;
 import org.apache.commons.pool2.PooledObject;
 import org.apache.commons.pool2.impl.DefaultPooledObject;
 import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
+import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -320,8 +327,12 @@ public class CCWorld extends Function {
                     pot.setWater(pot.getWater() + 1);
                 }
                 if (pot.reduceWater() | pot.reduceFertilizer()) {
+                    SimpleLocation temp = simpleLocation.copy();
+                    PotConfig potConfig = pot.getConfig();
+                    Fertilizer fertilizer = pot.getFertilizer();
+                    boolean wet = pot.isWet();
                     CustomCrops.getInstance().getScheduler().callSyncMethod(() -> {
-                        CustomCropsAPI.getInstance().changePotModel(simpleLocation, pot);
+                        CustomCropsAPI.getInstance().changePotModel(temp, potConfig, fertilizer, wet);
                         return null;
                     });
                 }
@@ -345,21 +356,37 @@ public class CCWorld extends Function {
         }
 
         public void execute() {
+            SprinklerConfig sprinklerConfig = sprinkler.getConfig();
+            if (sprinklerConfig == null) {
+                removeSprinklerData(simpleLocation);
+                return;
+            }
             int water = sprinkler.getWater();
-            if (water > 0) {
-                sprinkler.setWater(--water);
-                if (water == 0) {
-                    removeSprinklerData(simpleLocation);
-                }
-                int range = sprinkler.getRange();
-                for (int i = -range; i <= range; i++) {
-                    for (int j = -range; j <= range; j++) {
-                        addWaterToPot(simpleLocation.add(i, -1, j), 1, null);
+            if (water < 1) {
+                removeSprinklerData(simpleLocation);
+                return;
+            }
+            if (sprinklerConfig.hasAnimation()) {
+                SprinklerAnimation sprinklerAnimation = sprinklerConfig.getSprinklerAnimation();
+                Location location = simpleLocation.getBukkitLocation();
+                if (location != null && sprinklerAnimation != null) {
+                    for (Player player : Bukkit.getOnlinePlayers()) {
+                        SimpleLocation playerLoc = SimpleLocation.getByBukkitLocation(player.getLocation());
+                        if (playerLoc.isNear(simpleLocation, 48)) {
+                            FakeEntityUtils.playWaterAnimation(player, location.clone().add(0.5, sprinklerAnimation.offset(), 0.5), sprinklerAnimation.id(), sprinklerAnimation.duration(), sprinklerAnimation.itemMode());
+                        }
                     }
                 }
             }
-            else {
+            sprinkler.setWater(--water);
+            if (water == 0) {
                 removeSprinklerData(simpleLocation);
+            }
+            int range = sprinklerConfig.getRange();
+            for (int i = -range; i <= range; i++) {
+                for (int j = -range; j <= range; j++) {
+                    addWaterToPot(simpleLocation.add(i, -1, j), 1, null);
+                }
             }
         }
 

@@ -61,25 +61,25 @@ public class MessageManager extends Function {
 
     private void loadMessage() {
         YamlConfiguration config = ConfigUtils.getConfig("messages" + File.separator + "messages_" + ConfigManager.lang + ".yml");
-        prefix = config.getString("prefix","<gradient:#ff206c:#fdee55>[CustomCrops] </gradient>");
-        reload = config.getString("reload", "<white>Reloaded! Took <green>{time}ms.");
-        unavailableArgs = config.getString("invalid-args", "<white>Invalid arguments.");
-        noConsole = config.getString("no-console", "This command can only be executed by a player.");
-        notOnline = config.getString("not-online", "<white>Player {player} is not online.");
-        lackArgs = config.getString("lack-args", "<white>Arguments are insufficient.");
-        nonArgs = config.getString("not-none-args", "<white>Not a none argument command.");
-        beforePlant = config.getString("before-plant", "<white>This fertilizer can only be used before planting.");
-        unsuitablePot = config.getString("unsuitable-pot", "<white>You can't plant the seed in this pot.");
-        reachChunkLimit = config.getString("reach-crop-limit", "<white>The number of crops has reached the limitation.");
-        noPerm = config.getString("no-perm", "<red>You don't have permission to do that.");
-        spring = config.getString("spring", "Spring");
-        summer = config.getString("summer", "Summer");
-        autumn = config.getString("autumn", "Autumn");
-        winter = config.getString("winter", "Winter");
-        noSeason = config.getString("no-season", "SEASON DISABLED IN THIS WORLD");
-        setSeason = config.getString("set-season", "<white>Successfully set {world}'s season to {season}.");
-        setDate = config.getString("set-date", "<white>Successfully set {world}'s date to {date}.");
-        worldNotExist = config.getString("world-not-exist", "<white>World {world} does not exist.");
-        seasonNotExist = config.getString("season-not-exist", "<white>Season {season} does not exist.");
+        prefix = config.getString("messages.prefix","<gradient:#ff206c:#fdee55>[CustomCrops] </gradient>");
+        reload = config.getString("messages.reload", "<white>Reloaded! Took <green>{time}ms.");
+        unavailableArgs = config.getString("messages.invalid-args", "<white>Invalid arguments.");
+        noConsole = config.getString("messages.no-console", "This command can only be executed by a player.");
+        notOnline = config.getString("messages.not-online", "<white>Player {player} is not online.");
+        lackArgs = config.getString("messages.lack-args", "<white>Arguments are insufficient.");
+        nonArgs = config.getString("messages.not-none-args", "<white>Not a none argument command.");
+        beforePlant = config.getString("messages.before-plant", "<white>This fertilizer can only be used before planting.");
+        unsuitablePot = config.getString("messages.unsuitable-pot", "<white>You can't plant the seed in this pot.");
+        reachChunkLimit = config.getString("messages.reach-crop-limit", "<white>The number of crops has reached the limitation.");
+        noPerm = config.getString("messages.no-perm", "<red>You don't have permission to do that.");
+        spring = config.getString("messages.spring", "Spring");
+        summer = config.getString("messages.summer", "Summer");
+        autumn = config.getString("messages.autumn", "Autumn");
+        winter = config.getString("messages.winter", "Winter");
+        noSeason = config.getString("messages.no-season", "SEASON DISABLED IN THIS WORLD");
+        setSeason = config.getString("messages.set-season", "<white>Successfully set {world}'s season to {season}.");
+        setDate = config.getString("messages.set-date", "<white>Successfully set {world}'s date to {date}.");
+        worldNotExist = config.getString("messages.world-not-exist", "<white>World {world} does not exist.");
+        seasonNotExist = config.getString("messages.season-not-exist", "<white>Season {season} does not exist.");
     }
 }

@@ -1,3 +1,4 @@
+# https://docs.advntr.dev/minimessage/format.html
 messages:
   prefix: '<gradient:#ff206c:#fdee55>[CustomCrops] </gradient>'
   reload: '<white>Reloaded! Took <green>{time}ms.'
@@ -6,7 +7,7 @@ messages:
   not-online: '<white>Player {player} is not online.'
   lack-args: '<white>Arguments are insufficient.'
   not-none-args: '<white>Not a none argument command.'
-  before-plant: '<white>This fertilizer must be used before planting!'
+  before-plant: '<white>This fertilizer should be used before planting.'
   unsuitable-pot: "<white>You can't plant the seed in this pot."
   reach-crop-limit: '<white>The number of crops has reached the limitation.'
   no-perm: "<red>You don't have permission to do that."

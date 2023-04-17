@@ -12,7 +12,7 @@ sprinkler_1:
     enable: true
     # ARMOR_STAND / TEXT_DISPLAY (1.19.4+)
     type: ARMOR_STAND
-    y-offset: 0.8
+    vertical-offset: -0.3
     duration: 1
     # Available variables:
     # {water_bar} water bar image
@@ -25,10 +25,11 @@ sprinkler_1:
       empty: '뀁뀄'
       right: '뀁뀅'
   # Water splash animation when sprinkler works
-  sprinkler-animation:
+  animation:
     enable: true
-    y-offset: 0.4
-    item: customcrops:water_animation
+    duration: 10
+    vertical-offset: 0.4
+    item: customcrops:water_effect
     # ARMOR_STAND / ITEM_DISPLAY (1.19.4+)
     type: ARMOR_STAND
   pot-whitelist:
@@ -58,7 +59,7 @@ sprinkler_2:
   hologram:
     enable: true
     type: ARMOR_STAND
-    y-offset: 0.8
+    vertical-offset: -0.3
     duration: 1
     content: '<font:customcrops:default>{water_bar}</font>'
     water-bar:
@@ -66,10 +67,10 @@ sprinkler_2:
       full: '뀁뀃'
       empty: '뀁뀄'
       right: '뀁뀅'
-  sprinkler-animation:
+  animation:
     enable: true
-    y-offset: 0.4
-    item: customcrops:water_animation
+    vertical-offset: 0.4
+    item: customcrops:water_effect
     type: ARMOR_STAND
   pot-whitelist:
     - default
@@ -97,7 +98,7 @@ sprinkler_3:
   hologram:
     enable: true
     type: ARMOR_STAND
-    y-offset: 0.8
+    vertical-offset: -0.3
     duration: 1
     content: '<font:customcrops:default>{water_bar}</font>'
     water-bar:
@@ -105,10 +106,10 @@ sprinkler_3:
       full: '뀁뀃'
       empty: '뀁뀄'
       right: '뀁뀅'
-  sprinkler-animation:
+  animation:
     enable: true
-    y-offset: 0.4
-    item: customcrops:water_animation
+    vertical-offset: 0.4
+    item: customcrops:water_effect
     type: ARMOR_STAND
   pot-whitelist:
     - default

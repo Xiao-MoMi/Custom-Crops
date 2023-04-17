@@ -32,7 +32,7 @@ import net.momirealms.customcrops.api.object.basic.MessageManager;
 import net.momirealms.customcrops.api.object.crop.CropManager;
 import net.momirealms.customcrops.api.object.fertilizer.FertilizerManager;
 import net.momirealms.customcrops.api.object.pot.PotManager;
-import net.momirealms.customcrops.api.object.schedule.Scheduler;
+import net.momirealms.customcrops.api.object.scheduler.Scheduler;
 import net.momirealms.customcrops.api.object.season.SeasonManager;
 import net.momirealms.customcrops.api.object.sprinkler.SprinklerManager;
 import net.momirealms.customcrops.api.object.wateringcan.WateringCanManager;

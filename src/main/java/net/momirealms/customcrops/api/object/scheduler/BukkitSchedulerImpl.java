@@ -15,16 +15,30 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.momirealms.customcrops.api.object.schedule;
+package net.momirealms.customcrops.api.object.scheduler;
 
+import net.momirealms.customcrops.CustomCrops;
+import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 
-public interface SchedulerPlatform {
+public class BukkitSchedulerImpl implements SchedulerPlatform {
 
-    <T> Future<T> callSyncMethod(@NotNull Callable<T> task);
+    private final CustomCrops plugin;
 
-    void runTask(Runnable runnable);
+    public BukkitSchedulerImpl(CustomCrops plugin) {
+        this.plugin = plugin;
+    }
+
+    @Override
+    public <T> Future<T> callSyncMethod(@NotNull Callable<T> task) {
+        return Bukkit.getScheduler().callSyncMethod(plugin, task);
+    }
+
+    @Override
+    public void runTask(Runnable runnable) {
+        Bukkit.getScheduler().runTask(plugin, runnable);
+    }
 }

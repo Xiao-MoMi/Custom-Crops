@@ -17,16 +17,19 @@
 
 package net.momirealms.customcrops.api.object.sprinkler;
 
+import net.momirealms.customcrops.CustomCrops;
+import org.jetbrains.annotations.Nullable;
+
 import java.io.Serializable;
 
 public class Sprinkler implements Serializable {
 
     private int water;
-    private int range;
+    private final String key;
 
-    public Sprinkler(int water, int range) {
+    public Sprinkler(String key, int water) {
         this.water = water;
-        this.range = range;
+        this.key = key;
     }
 
     public int getWater() {
@@ -37,11 +40,12 @@ public class Sprinkler implements Serializable {
         this.water = water;
     }
 
-    public void setRange(int range) {
-        this.range = range;
+    public String getKey() {
+        return key;
     }
 
-    public int getRange() {
-        return range;
+    @Nullable
+    public SprinklerConfig getConfig() {
+        return CustomCrops.getInstance().getSprinklerManager().getConfigByKey(key);
     }
 }

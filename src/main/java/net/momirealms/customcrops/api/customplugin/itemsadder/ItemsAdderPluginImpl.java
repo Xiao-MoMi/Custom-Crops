@@ -23,6 +23,7 @@ import dev.lone.itemsadder.api.CustomBlock;
 import dev.lone.itemsadder.api.CustomFurniture;
 import dev.lone.itemsadder.api.CustomStack;
 import net.momirealms.customcrops.api.customplugin.PlatformInterface;
+import net.momirealms.customcrops.api.util.AdventureUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -58,6 +59,10 @@ public class ItemsAdderPluginImpl implements PlatformInterface {
     @Override
     public ItemFrame placeItemFrame(Location location, String id) {
         CustomFurniture customFurniture = CustomFurniture.spawn(id, location.getBlock());
+        if (customFurniture == null) {
+            AdventureUtils.consoleMessage("<red>[CustomCrops] Furniture not exists: " + id);
+            return null;
+        }
         Entity entity = customFurniture.getArmorstand();
         if (entity instanceof ItemFrame itemFrame)
             return itemFrame;

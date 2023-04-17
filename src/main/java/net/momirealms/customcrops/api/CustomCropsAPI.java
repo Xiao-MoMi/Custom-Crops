@@ -21,10 +21,15 @@ import net.momirealms.customcrops.CustomCrops;
 import net.momirealms.customcrops.api.customplugin.PlatformInterface;
 import net.momirealms.customcrops.api.object.ItemMode;
 import net.momirealms.customcrops.api.object.crop.CropConfig;
+import net.momirealms.customcrops.api.object.fertilizer.Fertilizer;
 import net.momirealms.customcrops.api.object.pot.Pot;
+import net.momirealms.customcrops.api.object.pot.PotConfig;
 import net.momirealms.customcrops.api.object.season.CCSeason;
 import net.momirealms.customcrops.api.object.world.SimpleLocation;
+import net.momirealms.customcrops.api.util.ConfigUtils;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.inventory.ItemStack;
 
 public class CustomCropsAPI {
@@ -78,8 +83,29 @@ public class CustomCropsAPI {
         Location location = simpleLocation.getBukkitLocation();
         if (location == null) return;
         PlatformInterface platform = plugin.getPlatformInterface();
-        if (platform.removeCustomBlock(location)) {
-            platform.placeNoteBlock(location, pot.isWet() ? pot.getConfig().getWetPot(pot.getFertilizer()) : pot.getConfig().getDryPot(pot.getFertilizer()));
+        if (platform.removeAnyBlock(location)) {
+            String replacer = pot.isWet() ? pot.getConfig().getWetPot(pot.getFertilizer()) : pot.getConfig().getDryPot(pot.getFertilizer());
+            if (ConfigUtils.isVanillaItem(replacer)) {
+                location.getBlock().setType(Material.valueOf(replacer));
+            } else {
+                platform.placeNoteBlock(location, replacer);
+            }
+        } else {
+            CustomCrops.getInstance().getWorldDataManager().removePotData(simpleLocation);
+        }
+    }
+
+    public void changePotModel(SimpleLocation simpleLocation, PotConfig potConfig, Fertilizer fertilizer, boolean wet) {
+        Location location = simpleLocation.getBukkitLocation();
+        if (location == null) return;
+        PlatformInterface platform = plugin.getPlatformInterface();
+        if (platform.removeAnyBlock(location)) {
+            String replacer = wet ? potConfig.getWetPot(fertilizer) : potConfig.getDryPot(fertilizer);
+            if (ConfigUtils.isVanillaItem(replacer)) {
+                location.getBlock().setType(Material.valueOf(replacer));
+            } else {
+                platform.placeNoteBlock(location, replacer);
+            }
         } else {
             CustomCrops.getInstance().getWorldDataManager().removePotData(simpleLocation);
         }

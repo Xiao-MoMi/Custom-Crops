@@ -34,6 +34,20 @@ public interface PlatformInterface {
 
     boolean removeCustomBlock(Location location);
 
+    default boolean removeAnyBlock(Location location) {
+        String id = getCustomBlockID(location);
+        if (id != null) {
+            return removeCustomBlock(location);
+        }
+        Block block = location.getBlock();
+        if (block.getType() == Material.AIR) {
+            return false;
+        } else {
+            block.setType(Material.AIR);
+            return true;
+        }
+    }
+
     @Nullable
     String getCustomBlockID(Location location);
 

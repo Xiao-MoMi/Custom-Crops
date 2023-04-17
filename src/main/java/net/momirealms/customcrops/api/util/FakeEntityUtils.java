@@ -24,6 +24,7 @@ import com.google.common.collect.Lists;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.momirealms.customcrops.CustomCrops;
+import net.momirealms.customcrops.api.object.ItemMode;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -33,14 +34,19 @@ import java.util.*;
 
 public class FakeEntityUtils {
 
-    public static void playWaterAnimation(Player player, Location location, String animation_id) {
+    public static void playWaterAnimation(Player player, Location location, String animation_id, int duration, ItemMode itemMode) {
         int id = new Random().nextInt(Integer.MAX_VALUE);
-        CustomCrops.getProtocolManager().sendServerPacket(player,   getSpawnPacket(id, location, EntityType.ARMOR_STAND));
-        CustomCrops.getProtocolManager().sendServerPacket(player, getMetaPacket(id));
-        CustomCrops.getProtocolManager().sendServerPacket(player, getEquipPacket(id, CustomCrops.getInstance().getIntegrationManager().build(animation_id)));
+        if (itemMode == ItemMode.ARMOR_STAND) {
+            CustomCrops.getProtocolManager().sendServerPacket(player, getSpawnPacket(id, location, EntityType.ARMOR_STAND));
+            CustomCrops.getProtocolManager().sendServerPacket(player, getVanishArmorStandMetaPacket(id));
+            CustomCrops.getProtocolManager().sendServerPacket(player, getEquipPacket(id, CustomCrops.getInstance().getIntegrationManager().build(animation_id)));
+        } else if (itemMode == ItemMode.ITEM_DISPLAY) {
+            CustomCrops.getProtocolManager().sendServerPacket(player, getSpawnPacket(id, location, EntityType.ITEM_DISPLAY));
+            CustomCrops.getProtocolManager().sendServerPacket(player, getItemDisplayMetaPacket(id, CustomCrops.getInstance().getIntegrationManager().build(animation_id)));
+        }
         CustomCrops.getInstance().getScheduler().runTaskAsyncLater(() -> {
             CustomCrops.getProtocolManager().sendServerPacket(player, getDestroyPacket(id));
-        }, 10000);
+        }, 1000L * duration);
     }
 
     public static WrappedDataWatcher createInvisibleDataWatcher() {
@@ -70,7 +76,7 @@ public class FakeEntityUtils {
         return entityPacket;
     }
 
-    public static PacketContainer getMetaPacket(int id) {
+    public static PacketContainer getVanishArmorStandMetaPacket(int id) {
         PacketContainer metaPacket = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
         metaPacket.getIntegers().write(0, id);
         if (CustomCrops.getInstance().getVersionHelper().isVersionNewerThan1_19_R2()) {
@@ -101,7 +107,7 @@ public class FakeEntityUtils {
         return packet;
     }
 
-    public static PacketContainer getMetaPacket(int id, Component component) {
+    public static PacketContainer getVanishArmorStandMetaPacket(int id, Component component) {
         PacketContainer metaPacket = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
         WrappedDataWatcher wrappedDataWatcher = new WrappedDataWatcher();
         WrappedDataWatcher.Serializer serializer1 = WrappedDataWatcher.Registry.get(Boolean.class);
@@ -119,6 +125,24 @@ public class FakeEntityUtils {
         } else {
             metaPacket.getWatchableCollectionModifier().write(0, wrappedDataWatcher.getWatchableObjects());
         }
+        return metaPacket;
+    }
+
+    public static PacketContainer getItemDisplayMetaPacket(int id, ItemStack itemStack) {
+        PacketContainer metaPacket = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
+        metaPacket.getModifier().write(0, id);
+        WrappedDataWatcher wrappedDataWatcher = new WrappedDataWatcher();
+        wrappedDataWatcher.setObject(22, itemStack);
+        setWrappedDataValue(metaPacket, wrappedDataWatcher);
+        return metaPacket;
+    }
+
+    public static PacketContainer getTextDisplayMetaPacket(int id, Component component) {
+        PacketContainer metaPacket = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
+        metaPacket.getModifier().write(0, id);
+        WrappedDataWatcher wrappedDataWatcher = new WrappedDataWatcher();
+        wrappedDataWatcher.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(22, WrappedDataWatcher.Registry.getChatComponentSerializer(true)), Optional.of(WrappedChatComponent.fromJson(GsonComponentSerializer.gson().serialize(component)).getHandle()));
+        setWrappedDataValue(metaPacket, wrappedDataWatcher);
         return metaPacket;
     }
 

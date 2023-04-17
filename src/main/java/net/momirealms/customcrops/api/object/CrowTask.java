@@ -53,7 +53,7 @@ public class CrowTask implements Runnable {
         this.vectorDown = new Vector(relative.getX() / 100, -0.1, relative.getZ() / 100);
         this.vectorUp = new Vector(relative.getX() / 100, 0.1, relative.getZ() / 100);
         CustomCrops.getProtocolManager().sendServerPacket(player, FakeEntityUtils.getSpawnPacket(entityID, from, EntityType.ARMOR_STAND));
-        CustomCrops.getProtocolManager().sendServerPacket(player, FakeEntityUtils.getMetaPacket(entityID));
+        CustomCrops.getProtocolManager().sendServerPacket(player, FakeEntityUtils.getVanishArmorStandMetaPacket(entityID));
         CustomCrops.getProtocolManager().sendServerPacket(player, FakeEntityUtils.getEquipPacket(entityID, fly));
     }
 

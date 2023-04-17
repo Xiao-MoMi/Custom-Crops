@@ -23,6 +23,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockFromToEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 public abstract class Handler extends Function implements Listener {
@@ -46,5 +49,15 @@ public abstract class Handler extends Function implements Listener {
     @EventHandler
     public void onInteract(PlayerInteractEvent event) {
         platformManager.onInteractBlock(event);
+    }
+
+    @EventHandler
+    public void onBreak(BlockBreakEvent event) {
+        platformManager.onBreakVanilla(event);
+    }
+
+    @EventHandler
+    public void onPlace(BlockPlaceEvent event) {
+        platformManager.onPlaceVanilla(event);
     }
 }

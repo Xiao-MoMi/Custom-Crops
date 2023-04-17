@@ -33,8 +33,13 @@ public class SprinklerConfig {
     private final String threeD;
     private final String twoD;
     private final PassiveFillMethod[] passiveFillMethods;
+    private final boolean hasAnimation;
+    private final boolean hasHologram;
+    private final SprinklerHologram sprinklerHologram;
+    private final SprinklerAnimation sprinklerAnimation;
 
-    public SprinklerConfig(String key, int storage, int range, @Nullable Sound sound, @NotNull ItemMode itemMode, @NotNull String threeD, @NotNull String twoD, @NotNull PassiveFillMethod[] passiveFillMethods) {
+    public SprinklerConfig(String key, int storage, int range, @Nullable Sound sound, @NotNull ItemMode itemMode, @NotNull String threeD, @NotNull String twoD,
+                           @NotNull PassiveFillMethod[] passiveFillMethods, boolean hasHologram, boolean hasAnimation, @Nullable SprinklerHologram sprinklerHologram, SprinklerAnimation sprinklerAnimation) {
         this.key = key;
         this.storage = storage;
         this.range = range;
@@ -43,6 +48,10 @@ public class SprinklerConfig {
         this.threeD = threeD;
         this.twoD = twoD;
         this.passiveFillMethods = passiveFillMethods;
+        this.hasAnimation = hasAnimation;
+        this.hasHologram = hasHologram;
+        this.sprinklerAnimation = sprinklerAnimation;
+        this.sprinklerHologram = sprinklerHologram;
     }
 
     public String getKey() {
@@ -80,5 +89,23 @@ public class SprinklerConfig {
     @NotNull
     public PassiveFillMethod[] getPassiveFillMethods() {
         return passiveFillMethods;
+    }
+
+    public boolean hasAnimation() {
+        return hasAnimation;
+    }
+
+    public boolean hasHologram() {
+        return hasHologram;
+    }
+
+    @Nullable
+    public SprinklerHologram getSprinklerHologram() {
+        return sprinklerHologram;
+    }
+
+    @Nullable
+    public SprinklerAnimation getSprinklerAnimation() {
+        return sprinklerAnimation;
     }
 }

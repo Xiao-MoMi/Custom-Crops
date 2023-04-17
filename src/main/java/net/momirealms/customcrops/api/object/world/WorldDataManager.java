@@ -24,6 +24,7 @@ import net.momirealms.customcrops.api.object.crop.GrowingCrop;
 import net.momirealms.customcrops.api.object.fertilizer.Fertilizer;
 import net.momirealms.customcrops.api.object.pot.Pot;
 import net.momirealms.customcrops.api.object.sprinkler.Sprinkler;
+import net.momirealms.customcrops.api.object.sprinkler.SprinklerConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.event.HandlerList;
@@ -206,14 +207,13 @@ public class WorldDataManager extends Function {
         }
     }
 
-    public void addWaterToSprinkler(SimpleLocation simpleLocation, int add, int range, int max) {
+    public void addWaterToSprinkler(SimpleLocation simpleLocation, int add, SprinklerConfig sprinklerConfig) {
         Sprinkler sprinkler = getSprinklerData(simpleLocation);
         if (sprinkler != null) {
-            sprinkler.setWater(Math.min(add + sprinkler.getWater(), max));
-            sprinkler.setRange(range);
+            sprinkler.setWater(Math.min(add + sprinkler.getWater(), sprinklerConfig.getStorage()));
         }
         else {
-            Sprinkler newSprinkler = new Sprinkler(Math.min(add, max), range);
+            Sprinkler newSprinkler = new Sprinkler(sprinklerConfig.getKey(), Math.min(add, sprinklerConfig.getStorage()));
             addSprinklerData(simpleLocation, newSprinkler);
         }
     }

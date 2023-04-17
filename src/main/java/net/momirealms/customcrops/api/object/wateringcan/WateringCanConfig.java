@@ -83,7 +83,7 @@ public class WateringCanConfig {
     public String getWaterBar(int current) {
         return bar_left +
                 String.valueOf(bar_full).repeat(current) +
-                String.valueOf(bar_empty).repeat(storage - current) +
+                String.valueOf(bar_empty).repeat(Math.max(storage - current, 0)) +
                 bar_right;
     }
 

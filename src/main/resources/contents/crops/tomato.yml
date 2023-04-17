@@ -145,7 +145,7 @@ tomato:
             type: variation
             value:
               golden:
-                model: tomato_stage_golden
+                item: customcrops:tomato_stage_golden
                 type: TripWire
                 chance: 0.01
         interact-by-hand:

@@ -139,10 +139,19 @@ public class HologramManager extends Function implements Listener {
                 int random = ThreadLocalRandom.current().nextInt(Integer.MAX_VALUE);
                 tupleList.add(Tuple.of(location, random, System.currentTimeMillis() + millis));
                 this.tuples = tupleList.toArray(new Tuple[0]);
-                CustomCrops.getProtocolManager().sendServerPacket(player, FakeEntityUtils.getSpawnPacket(random, location, EntityType.ARMOR_STAND));
-                CustomCrops.getProtocolManager().sendServerPacket(player, FakeEntityUtils.getMetaPacket(random, component));
+                if (mode == Mode.ARMOR_STAND) {
+                    CustomCrops.getProtocolManager().sendServerPacket(player, FakeEntityUtils.getSpawnPacket(random, location, EntityType.ARMOR_STAND));
+                    CustomCrops.getProtocolManager().sendServerPacket(player, FakeEntityUtils.getVanishArmorStandMetaPacket(random, component));
+                } else if (mode == Mode.TEXT_DISPLAY) {
+                    CustomCrops.getProtocolManager().sendServerPacket(player, FakeEntityUtils.getSpawnPacket(random, location, EntityType.TEXT_DISPLAY));
+                    CustomCrops.getProtocolManager().sendServerPacket(player, FakeEntityUtils.getTextDisplayMetaPacket(random, component));
+                }
             } else {
-                CustomCrops.getProtocolManager().sendServerPacket(player, FakeEntityUtils.getMetaPacket(entity_id, component));
+                if (mode == Mode.ARMOR_STAND) {
+                    CustomCrops.getProtocolManager().sendServerPacket(player, FakeEntityUtils.getVanishArmorStandMetaPacket(entity_id, component));
+                } else if (mode == Mode.TEXT_DISPLAY) {
+                    CustomCrops.getProtocolManager().sendServerPacket(player, FakeEntityUtils.getTextDisplayMetaPacket(entity_id, component));
+                }
             }
         }
 

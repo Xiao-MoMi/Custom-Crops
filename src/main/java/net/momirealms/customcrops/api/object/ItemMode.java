@@ -19,6 +19,7 @@ package net.momirealms.customcrops.api.object;
 
 public enum ItemMode {
 
+    ARMOR_STAND,
     TRIPWIRE,
     ITEM_FRAME,
     ITEM_DISPLAY,

@@ -4,8 +4,6 @@ config-version: '25'
 metrics: true
 # Language: english / spanish / chinese / turkish
 lang: english
-# Set up mode
-set-up-mode: true
 # AntiGrief
 integrations:
   Residence: false
@@ -38,7 +36,7 @@ schedule-system:
   enable: true
   # The average interval for a crop to gain one point (measured in seconds)
   # 平均每个农作物获得一生长点的时间间隔（秒）
-  point-gain-interval: 10
+  point-gain-interval: 1200
   # Thread pool settings
   # 线程池设置
   thread-pool-settings:
