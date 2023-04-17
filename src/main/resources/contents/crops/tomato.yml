@@ -1,6 +1,6 @@
 tomato:
-  # TripWire / Item_Frame / Item_Display
-  crop-mode: TripWire
+  # TripWire / Item_Frame / Item_Display (1.19.4+)
+  crop-mode: Item_Frame
 
   # The crop can only be planted on certain pots
   pot-whitelist:
@@ -43,6 +43,7 @@ tomato:
   points:
     0:
       model: customcrops:tomato_stage_1
+      hologram-offset-correction: 0.2
       events:
         break:
           action_1:
@@ -63,6 +64,7 @@ tomato:
               pitch: 1
     1:
       model: customcrops:tomato_stage_2
+      hologram-offset-correction: 0.2
       events:
         break:
           action_1:
@@ -83,6 +85,7 @@ tomato:
               pitch: 1
     3:
       model: customcrops:tomato_stage_3
+      hologram-offset-correction: 0.2
       events:
         break:
           action_1:
@@ -103,6 +106,7 @@ tomato:
               pitch: 1
     5:
       model: customcrops:tomato_stage_4
+      hologram-offset-correction: 0.2
       events:
         break:
           action_1:
@@ -155,18 +159,6 @@ tomato:
               model: customcrops:tomato_stage_1
         interact-with-item:
           interact_1:
-            item: customcrops:hoe
-            reduce-amount: false
-            actions:
-              action_1:
-                type: break
-              action_2:
-                type: replant
-                value:
-                  point: 0
-                  crop: tomato  # Replant the crop
-                  model: customcrops:tomato_stage_1  
-          interact_2:
             item: customcrops:i_want_overgrown_tomato_right_now
             reduce-amount: true
             return: customcrops:returned_item
@@ -222,6 +214,19 @@ tomato:
               point: 0
               crop: tomato  # Replant the crop
               model: customcrops:tomato_stage_1
+        interact-with-item:
+          interact_1:
+            item: GOLDEN_HOE
+            reduce-amount: false
+            actions:
+              action_1:
+                type: break
+              action_2:
+                type: replant
+                value:
+                  point: 0
+                  crop: tomato
+                  model: customcrops:tomato_stage_1
 
   # grow conditions
   grow-conditions:

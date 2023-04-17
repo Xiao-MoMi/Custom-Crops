@@ -1,3 +1,20 @@
+/*
+ *  Copyright (C) <2022> <XiaoMoMi>
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package net.momirealms.customcrops.api.object.crop;
 
 import net.momirealms.customcrops.CustomCrops;
@@ -96,7 +113,8 @@ public class CropManager extends Function implements Listener {
                                 ConfigUtils.getActions(pointSec.getConfigurationSection(point + ".events.break"), stageModel),
                                 ConfigUtils.getActions(pointSec.getConfigurationSection(point + ".events.grow"), stageModel),
                                 ConfigUtils.getInteractActions(pointSec.getConfigurationSection(point + ".events.interact-with-item"), stageModel),
-                                ConfigUtils.getActions(pointSec.getConfigurationSection(point + ".events.interact-by-hand"), stageModel)
+                                ConfigUtils.getActions(pointSec.getConfigurationSection(point + ".events.interact-by-hand"), stageModel),
+                                pointSec.getDouble(point + ".hologram-offset-correction", 0d)
                         );
                         stageMap.put(parsed, stageConfig);
                         if (stageModel != null) {
@@ -165,7 +183,7 @@ public class CropManager extends Function implements Listener {
     public void onItemSpawn(ItemSpawnEvent event) {
         if (event.isCancelled()) return;
         Item item = event.getEntity();
-        String id = plugin.getPlatformInterface().getItemID(item.getItemStack());
+        String id = plugin.getPlatformInterface().getItemStackID(item.getItemStack());
         if (containsStage(id)) {
             event.setCancelled(true);
         }

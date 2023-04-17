@@ -1,6 +1,6 @@
 variation_1:
   type: VARIATION
-  name: '뀒'
+  icon: '뀒'
   times: 14
   # If a crop's default variation chance is 0.01, now it's 0.03
   chance: 0.02
@@ -12,7 +12,7 @@ variation_1:
     - default
 variation_2:
   type: VARIATION
-  name: '뀓'
+  icon: '뀓'
   times: 14
   chance: 0.04
   item: customcrops:variation_2
@@ -23,7 +23,7 @@ variation_2:
     - default
 variation_3:
   type: VARIATION
-  name: '뀔'
+  icon: '뀔'
   times: 14
   chance: 0.08
   item: customcrops:variation_3

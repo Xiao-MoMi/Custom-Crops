@@ -43,7 +43,7 @@ schedule-system:
   # 线程池设置
   thread-pool-settings:
     # 核心线程池大小
-    corePoolSize: 2
+    corePoolSize: 1
     # 最大线程池大小
     maximumPoolSize: 4
     # seconds (秒)

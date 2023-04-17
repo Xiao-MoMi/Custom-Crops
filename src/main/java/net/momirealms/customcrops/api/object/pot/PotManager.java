@@ -1,7 +1,25 @@
+/*
+ *  Copyright (C) <2022> <XiaoMoMi>
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package net.momirealms.customcrops.api.object.pot;
 
 import net.momirealms.customcrops.CustomCrops;
 import net.momirealms.customcrops.api.object.Function;
+import net.momirealms.customcrops.api.object.HologramManager;
 import net.momirealms.customcrops.api.object.fertilizer.FertilizerType;
 import net.momirealms.customcrops.api.object.fill.PassiveFillMethod;
 import net.momirealms.customcrops.api.util.AdventureUtils;
@@ -63,12 +81,26 @@ public class PotManager extends Function {
                 }
                 blockToPotKey.put(base_wet, key);
                 blockToPotKey.put(base_dry, key);
+                boolean enableHolo = section.getBoolean("hologram.enable", false);
                 PotConfig potConfig = new PotConfig(
                         section.getInt("max-water-storage"),
                         base_dry,
                         base_wet,
                         enableFertilized,
-                        methods
+                        methods,
+                        enableHolo,
+                        enableHolo ? new PotHologram(
+                                section.getString("hologram.fertilizer.text"),
+                                section.getDouble("hologram.fertilizer.vertical-offset"),
+                                section.getString("hologram.water.text"),
+                                section.getDouble("hologram.water.vertical-offset"),
+                                HologramManager.Mode.valueOf(section.getString("hologram.type", "ARMOR_STAND").toUpperCase()),
+                                section.getInt("hologram.duration"),
+                                section.getString("hologram.water.water-bar.left"),
+                                section.getString("hologram.water.water-bar.full"),
+                                section.getString("hologram.water.water-bar.empty"),
+                                section.getString("hologram.water.water-bar.right")
+                        ) : null
                 );
                 if (enableFertilized) {
                     ConfigurationSection fertilizedSec = section.getConfigurationSection("fertilized-pots");

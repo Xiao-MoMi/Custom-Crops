@@ -123,4 +123,21 @@ public class SimpleLocation implements Serializable {
     public String toString() {
         return "[" + worldName + "," + x + "," + y + "," + z + "]";
     }
+
+    public boolean isNear(SimpleLocation simpleLocation, int distance) {
+        if (Math.abs(simpleLocation.x - this.x) > distance) {
+            return false;
+        }
+        if (Math.abs(simpleLocation.z - this.z) > distance) {
+            return false;
+        }
+        if (Math.abs(simpleLocation.y - this.y) > distance) {
+            return false;
+        }
+        return true;
+    }
+
+    public SimpleLocation copy() {
+        return new SimpleLocation(worldName, x, y, z);
+    }
 }

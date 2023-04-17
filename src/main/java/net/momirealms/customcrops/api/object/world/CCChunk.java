@@ -1,19 +1,37 @@
+/*
+ *  Copyright (C) <2022> <XiaoMoMi>
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package net.momirealms.customcrops.api.object.world;
 
 import net.momirealms.customcrops.CustomCrops;
 import net.momirealms.customcrops.api.CustomCropsAPI;
 import net.momirealms.customcrops.api.object.basic.ConfigManager;
 import net.momirealms.customcrops.api.object.crop.GrowingCrop;
-import net.momirealms.customcrops.api.object.pot.Pot;
 import net.momirealms.customcrops.api.object.fertilizer.Fertilizer;
+import net.momirealms.customcrops.api.object.pot.Pot;
 import net.momirealms.customcrops.api.object.sprinkler.Sprinkler;
-import org.bukkit.Bukkit;
-import org.bukkit.Sound;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Random;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -108,7 +126,7 @@ public class CCChunk implements Serializable {
         Pot pot = potMap.get(simpleLocation);
         if (pot != null) {
             if (pot.addWater(amount)) {
-                Bukkit.getScheduler().callSyncMethod(CustomCrops.getInstance(), () -> {
+                CustomCrops.getInstance().getScheduler().callSyncMethod(() -> {
                     CustomCropsAPI.getInstance().changePotModel(simpleLocation, pot);
                     return null;
                 });
@@ -117,7 +135,7 @@ public class CCChunk implements Serializable {
         else if (pot_id != null) {
             Pot newPot = new Pot(pot_id, null, amount);
             potMap.put(simpleLocation, newPot);
-            Bukkit.getScheduler().callSyncMethod(CustomCrops.getInstance(), () -> {
+            CustomCrops.getInstance().getScheduler().callSyncMethod(() -> {
                 CustomCropsAPI.getInstance().changePotModel(simpleLocation, newPot);
                 return null;
             });
@@ -128,7 +146,7 @@ public class CCChunk implements Serializable {
         Pot pot = potMap.get(simpleLocation);
         if (pot != null) {
             pot.setFertilizer(fertilizer);
-            Bukkit.getScheduler().callSyncMethod(CustomCrops.getInstance(), () -> {
+            CustomCrops.getInstance().getScheduler().callSyncMethod(() -> {
                 CustomCropsAPI.getInstance().changePotModel(simpleLocation, pot);
                 return null;
             });
@@ -136,7 +154,7 @@ public class CCChunk implements Serializable {
         else {
             Pot newPot = new Pot(pot_id, fertilizer, 0);
             potMap.put(simpleLocation, newPot);
-            Bukkit.getScheduler().callSyncMethod(CustomCrops.getInstance(), () -> {
+            CustomCrops.getInstance().getScheduler().callSyncMethod(() -> {
                 CustomCropsAPI.getInstance().changePotModel(simpleLocation, newPot);
                 return null;
             });

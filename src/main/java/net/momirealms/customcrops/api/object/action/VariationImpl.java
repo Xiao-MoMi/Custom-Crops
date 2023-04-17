@@ -1,3 +1,20 @@
+/*
+ *  Copyright (C) <2022> <XiaoMoMi>
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package net.momirealms.customcrops.api.object.action;
 
 import net.momirealms.customcrops.CustomCrops;
@@ -7,7 +24,6 @@ import net.momirealms.customcrops.api.object.crop.VariationCrop;
 import net.momirealms.customcrops.api.object.fertilizer.Variation;
 import net.momirealms.customcrops.api.object.pot.Pot;
 import net.momirealms.customcrops.api.object.world.SimpleLocation;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -48,7 +64,7 @@ public record VariationImpl(VariationCrop[] variationCrops) implements Action {
     }
 
     private void doVariation(@NotNull SimpleLocation crop_loc, ItemMode itemMode, VariationCrop variationCrop) {
-        Bukkit.getScheduler().callSyncMethod(CustomCrops.getInstance(), () -> {
+        CustomCrops.getInstance().getScheduler().callSyncMethod(() -> {
             Location location = crop_loc.getBukkitLocation();
             if (CustomCropsAPI.getInstance().removeCustomItem(location, itemMode)) {
                 CustomCropsAPI.getInstance().placeCustomItem(location, variationCrop.getId(), variationCrop.getCropMode());

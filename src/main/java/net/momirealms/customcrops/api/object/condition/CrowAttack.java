@@ -1,3 +1,20 @@
+/*
+ *  Copyright (C) <2022> <XiaoMoMi>
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package net.momirealms.customcrops.api.object.condition;
 
 import net.momirealms.customcrops.CustomCrops;
@@ -6,6 +23,8 @@ import net.momirealms.customcrops.api.object.world.SimpleLocation;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+
+import java.util.concurrent.ScheduledFuture;
 
 public class CrowAttack implements Condition {
 
@@ -24,12 +43,19 @@ public class CrowAttack implements Condition {
         if (Math.random() > chance) return false;
         Location location = simpleLocation.getBukkitLocation();
         if (location == null) return false;
-        Bukkit.getScheduler().runTask(CustomCrops.getInstance(), () -> {
-            for (Player player : location.getNearbyPlayers(48)) {
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            SimpleLocation playerLoc = SimpleLocation.getByBukkitLocation(player.getLocation());
+            if (playerLoc.isNear(simpleLocation, 48)) {
                 CrowTask crowTask = new CrowTask(player, location.clone().add(0.4,0,0.4), fly_model, stand_model);
-                crowTask.runTaskTimerAsynchronously(CustomCrops.getInstance(), 1, 1);
+                ScheduledFuture<?> scheduledFuture = CustomCrops.getInstance().getScheduler().runTaskTimerAsync(crowTask, 50, 50);
+                crowTask.setScheduledFuture(scheduledFuture);
             }
-        });
+        }
         return true;
+    }
+
+    @Override
+    public int getDelay() {
+        return 7000;
     }
 }

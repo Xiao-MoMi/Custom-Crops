@@ -1,6 +1,6 @@
 quality_1:
   type: QUALITY
-  name: '뀆'
+  icon: '뀆'
   chance: 1
   times: 28
   ratio: 7/2/1
@@ -12,7 +12,7 @@ quality_1:
     - default
 quality_2:
   type: QUALITY
-  name: '뀇'
+  icon: '뀇'
   chance: 1
   times: 28
   ratio: 11/6/3
@@ -24,7 +24,7 @@ quality_2:
     - default
 quality_3:
   type: QUALITY
-  name: '뀈'
+  icon: '뀈'
   chance: 1
   times: 28
   ratio: 2/2/1

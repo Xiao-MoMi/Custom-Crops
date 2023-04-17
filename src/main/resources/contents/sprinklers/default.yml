@@ -5,26 +5,31 @@ sprinkler_1:
   storage: 5
   3D-item: customcrops:sprinkler_1
   2D-item: customcrops:sprinkler_1_item
-  # Item_Frame / Item_Display / Tripwire
+  # Item_Frame / Tripwire / Item_Display (1.19.4+)
   type: Item_Frame
   place-sound: minecraft:block.bone_block.place
   hologram:
     enable: true
+    # ARMOR_STAND / TEXT_DISPLAY (1.19.4+)
+    type: ARMOR_STAND
     y-offset: 0.8
     duration: 1
     # Available variables:
+    # {water_bar} water bar image
     # {current} current water
     # {storage} max storage
-    left: '<font:customcrops:default>뀂'
-    full: '뀁뀃'
-    empty: '뀁뀄'
-    right: '뀁뀅</font>'
+    content: '<font:customcrops:default>{water_bar}</font>'
+    water-bar:
+      left: '뀂'
+      full: '뀁뀃'
+      empty: '뀁뀄'
+      right: '뀁뀅'
   # Water splash animation when sprinkler works
   sprinkler-animation:
     enable: true
     y-offset: 0.4
     item: customcrops:water_animation
-    # ARMOR_STAND / ITEM_DISPLAY
+    # ARMOR_STAND / ITEM_DISPLAY (1.19.4+)
     type: ARMOR_STAND
   pot-whitelist:
     - default
@@ -52,12 +57,15 @@ sprinkler_2:
   place-sound: minecraft:block.bone_block.place
   hologram:
     enable: true
+    type: ARMOR_STAND
     y-offset: 0.8
     duration: 1
-    left: '<font:customcrops:default>뀂'
-    full: '뀁뀃'
-    empty: '뀁뀄'
-    right: '뀁뀅</font>'
+    content: '<font:customcrops:default>{water_bar}</font>'
+    water-bar:
+      left: '뀂'
+      full: '뀁뀃'
+      empty: '뀁뀄'
+      right: '뀁뀅'
   sprinkler-animation:
     enable: true
     y-offset: 0.4
@@ -88,12 +96,15 @@ sprinkler_3:
   place-sound: minecraft:block.bone_block.place
   hologram:
     enable: true
+    type: ARMOR_STAND
     y-offset: 0.8
     duration: 1
-    left: '<font:customcrops:default>뀂'
-    full: '뀁뀃'
-    empty: '뀁뀄'
-    right: '뀁뀅</font>'
+    content: '<font:customcrops:default>{water_bar}</font>'
+    water-bar:
+      left: '뀂'
+      full: '뀁뀃'
+      empty: '뀁뀄'
+      right: '뀁뀅'
   sprinkler-animation:
     enable: true
     y-offset: 0.4

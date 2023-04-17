@@ -1,5 +1,5 @@
 default:
-  max-water-storage: 10
+  max-water-storage: 4
   base:
     # basic models
     dry: customcrops:dry_pot
@@ -46,3 +46,20 @@ default:
       amount: 10
       particle: WATER_SPLASH
       sound: minecraft:block.water.ambient
+  hologram:
+    enable: true
+    # ARMOR_STAND / TEXT_DISPLAY (1.19.4+)
+    type: ARMOR_STAND
+    duration: 2
+    fertilizer:
+      vertical-offset: 0.8
+      text: '<font:customcrops:default>{icon}</font> {left_times}/{max_times}'
+    water:
+      vertical-offset: 1.05
+      text: '<font:customcrops:default>{water_bar}</font>'
+      #text: '{current}/{storage}'
+      water-bar:
+        left: '뀂'
+        full: '뀁뀃'
+        empty: '뀁뀄'
+        right: '뀁뀅'

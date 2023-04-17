@@ -1,10 +1,27 @@
+/*
+ *  Copyright (C) <2022> <XiaoMoMi>
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package net.momirealms.customcrops.api.object.pot;
 
 import net.momirealms.customcrops.api.object.Pair;
-import net.momirealms.customcrops.api.object.fill.PassiveFillMethod;
 import net.momirealms.customcrops.api.object.fertilizer.Fertilizer;
 import net.momirealms.customcrops.api.object.fertilizer.FertilizerConfig;
 import net.momirealms.customcrops.api.object.fertilizer.FertilizerType;
+import net.momirealms.customcrops.api.object.fill.PassiveFillMethod;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -17,13 +34,18 @@ public class PotConfig {
     private final Pair<String, String> pot;
     private final boolean enableFertilized;
     private final PassiveFillMethod[] passiveFillMethods;
+    private final boolean enableHologram;
+    private final PotHologram potHologram;
 
-    public PotConfig(int max_storage, String dry_pot, String wet_pot, boolean enableFertilized, @NotNull PassiveFillMethod[] passiveFillMethods) {
+    public PotConfig(int max_storage, String dry_pot, String wet_pot, boolean enableFertilized,
+                     @NotNull PassiveFillMethod[] passiveFillMethods, boolean enableHologram, @Nullable PotHologram potHologram) {
         this.max_storage = max_storage;
         this.pot = Pair.of(dry_pot, wet_pot);
         this.enableFertilized = enableFertilized;
         this.fertilizerConvertMap = new HashMap<>();
         this.passiveFillMethods = passiveFillMethods;
+        this.enableHologram = enableHologram;
+        this.potHologram = potHologram;
     }
 
     public void registerFertilizedPot(FertilizerType fertilizerType, String dry_pot, String wet_pot) {
@@ -50,12 +72,20 @@ public class PotConfig {
         else return pair.left();
     }
 
-    public int getMax_storage() {
+    public int getMaxStorage() {
         return max_storage;
     }
 
     @NotNull
     public PassiveFillMethod[] getPassiveFillMethods() {
         return passiveFillMethods;
+    }
+
+    public boolean isHologramEnabled() {
+        return enableHologram;
+    }
+
+    public PotHologram getPotHologram() {
+        return potHologram;
     }
 }

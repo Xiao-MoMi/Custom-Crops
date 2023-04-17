@@ -26,15 +26,16 @@ import net.momirealms.customcrops.api.customplugin.PlatformInterface;
 import net.momirealms.customcrops.api.customplugin.PlatformManager;
 import net.momirealms.customcrops.api.customplugin.itemsadder.ItemsAdderPluginImpl;
 import net.momirealms.customcrops.api.customplugin.oraxen.OraxenPluginImpl;
+import net.momirealms.customcrops.api.object.HologramManager;
 import net.momirealms.customcrops.api.object.basic.ConfigManager;
 import net.momirealms.customcrops.api.object.basic.MessageManager;
 import net.momirealms.customcrops.api.object.crop.CropManager;
-import net.momirealms.customcrops.api.object.pot.PotManager;
 import net.momirealms.customcrops.api.object.fertilizer.FertilizerManager;
+import net.momirealms.customcrops.api.object.pot.PotManager;
+import net.momirealms.customcrops.api.object.schedule.Scheduler;
 import net.momirealms.customcrops.api.object.season.SeasonManager;
 import net.momirealms.customcrops.api.object.sprinkler.SprinklerManager;
 import net.momirealms.customcrops.api.object.wateringcan.WateringCanManager;
-import net.momirealms.customcrops.api.object.world.CCWorld;
 import net.momirealms.customcrops.api.object.world.WorldDataManager;
 import net.momirealms.customcrops.api.util.AdventureUtils;
 import net.momirealms.customcrops.command.CustomCropsCommand;
@@ -68,8 +69,10 @@ public final class CustomCrops extends JavaPlugin {
     private ConfigManager configManager;
     private MessageManager messageManager;
     private PlatformManager platformManager;
+    private HologramManager hologramManager;
     private VersionHelper versionHelper;
     private CustomCropsAPI customCropsAPI;
+    private Scheduler scheduler;
 
     @Override
     public void onLoad(){
@@ -85,6 +88,7 @@ public final class CustomCrops extends JavaPlugin {
         this.registerCommands();
         this.loadPlatform();
 
+        this.scheduler = new Scheduler(this);
         this.configManager = new ConfigManager(this);
         this.messageManager = new MessageManager(this);
         this.versionHelper = new VersionHelper(this);
@@ -96,6 +100,7 @@ public final class CustomCrops extends JavaPlugin {
         this.wateringCanManager = new WateringCanManager(this);
         this.fertilizerManager = new FertilizerManager(this);
         this.potManager = new PotManager(this);
+        this.hologramManager = new HologramManager(this);
         this.platformManager = new PlatformManager(this);
         this.customCropsAPI = new CustomCropsAPI(this);
 
@@ -122,6 +127,7 @@ public final class CustomCrops extends JavaPlugin {
         this.potManager.unload();
         this.seasonManager.unload();
         this.platformManager.unload();
+        this.hologramManager.unload();
 
         this.configManager.load();
         this.messageManager.load();
@@ -134,6 +140,7 @@ public final class CustomCrops extends JavaPlugin {
         this.potManager.load();
         this.seasonManager.load();
         this.platformManager.load();
+        this.hologramManager.load();
     }
 
     @Override
@@ -150,6 +157,8 @@ public final class CustomCrops extends JavaPlugin {
         if (this.messageManager != null) this.messageManager.unload();
         if (this.configManager != null) this.configManager.unload();
         if (this.integrationManager != null) this.integrationManager.unload();
+        if (this.hologramManager != null) this.hologramManager.unload();
+        if (this.scheduler != null) this.scheduler.disable();
     }
 
     private void loadLibs() {
@@ -256,7 +265,15 @@ public final class CustomCrops extends JavaPlugin {
         return platformManager;
     }
 
+    public HologramManager getHologramManager() {
+        return hologramManager;
+    }
+
     public CustomCropsAPI getAPI() {
         return customCropsAPI;
+    }
+
+    public Scheduler getScheduler() {
+        return scheduler;
     }
 }

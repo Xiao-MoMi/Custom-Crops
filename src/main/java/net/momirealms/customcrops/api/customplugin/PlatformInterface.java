@@ -1,3 +1,20 @@
+/*
+ *  Copyright (C) <2022> <XiaoMoMi>
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package net.momirealms.customcrops.api.customplugin;
 
 import net.momirealms.customcrops.CustomCrops;
@@ -40,14 +57,28 @@ public interface PlatformInterface {
 
     void dropBlockLoot(Block block);
 
-    boolean removeItemDisplay(Location location);
-
     void placeChorus(Location location, String id);
 
     Location getItemFrameLocation(Location location);
 
-    @Nullable
-    String getCustomItemAt(Location location);
+    @NotNull
+    default String getAnyItemIDAt(Location location) {
+        String block = getBlockID(location.getBlock());
+        if (!block.equals("AIR")) return block;
+
+        String item_frame_id = getItemFrameIDAt(location);
+        if (item_frame_id != null) {
+            return item_frame_id;
+        }
+
+        if (CustomCrops.getInstance().getVersionHelper().isVersionNewerThan1_19_R3()) {
+            String item_display_id = getItemDisplayIDAt(location);
+            if (item_display_id != null) {
+                return item_display_id;
+            }
+        }
+        return "AIR";
+    }
 
     default void removeCustomItemAt(Location location) {
         removeCustomBlock(location);
@@ -55,16 +86,35 @@ public interface PlatformInterface {
     }
 
     @NotNull
-    String getItemID(@NotNull ItemStack itemStack);
+    String getItemStackID(@NotNull ItemStack itemStack);
+
+    @Nullable
+    default String getItemDisplayIDAt(Location location) {
+        ItemDisplay itemDisplay = getItemDisplayAt(location);
+        if (itemDisplay == null) return null;
+        return getItemDisplayID(itemDisplay);
+    }
+
+    @Nullable
+    default String getItemFrameIDAt(Location location) {
+        ItemFrame itemFrame = getItemFrameAt(location);
+        if (itemFrame == null) return null;
+        return getItemFrameID(itemFrame);
+    }
+
+    @Nullable
+    String getItemDisplayID(ItemDisplay itemDisplay);
+
+    @Nullable
+    String getItemFrameID(ItemFrame itemFrame);
 
     @Nullable
     default ItemFrame getItemFrameAt(Location location) {
-        Collection<ItemFrame> itemFrames = getItemFrameLocation(location).getNearbyEntitiesByType(ItemFrame.class, 0, 0, 0);
+        Collection<ItemFrame> itemFrames = getItemFrameLocation(location).getNearbyEntitiesByType(ItemFrame.class, 0.5, 0.5, 0.5);
         int i = itemFrames.size();
         int j = 1;
         for (ItemFrame itemFrame : itemFrames) {
             if (j != i) {
-                // To prevent item frames stack in one block
                 itemFrame.remove();
                 j++;
             }
@@ -73,10 +123,34 @@ public interface PlatformInterface {
         return null;
     }
 
+    @Nullable
+    default ItemDisplay getItemDisplayAt(Location location) {
+        Collection<ItemDisplay> itemDisplays = getItemFrameLocation(location).getNearbyEntitiesByType(ItemDisplay.class, 0.5, 0.5, 0.5);
+        int i = itemDisplays.size();
+        int j = 1;
+        for (ItemDisplay itemDisplay : itemDisplays) {
+            if (j != i) {
+                itemDisplay.remove();
+                j++;
+            }
+            else return itemDisplay;
+        }
+        return null;
+    }
+
     default boolean removeItemFrame(Location location) {
         ItemFrame itemFrame = getItemFrameAt(location);
         if (itemFrame != null) {
             itemFrame.remove();
+            return true;
+        }
+        return false;
+    }
+
+    default boolean removeItemDisplay(Location location) {
+        ItemDisplay itemDisplay = getItemDisplayAt(location);
+        if (itemDisplay != null) {
+            itemDisplay.remove();
             return true;
         }
         return false;

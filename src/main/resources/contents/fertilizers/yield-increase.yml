@@ -1,6 +1,6 @@
 yield_increase_1:
   type: YIELD_INCREASE
-  name: '뀏'
+  icon: '뀏'
   times: 14
   item: customcrops:yield_increase_1
   before-plant: true
@@ -14,7 +14,7 @@ yield_increase_1:
     1: 0.8
 yield_increase_2:
   type: YIELD_INCREASE
-  name: '뀐'
+  icon: '뀐'
   times: 14
   item: customcrops:yield_increase_2
   before-plant: true
@@ -28,7 +28,7 @@ yield_increase_2:
     1: 1
 yield_increase_3:
   type: YIELD_INCREASE
-  name: '뀑'
+  icon: '뀑'
   times: 14
   item: customcrops:yield_increase_3
   before-plant: true

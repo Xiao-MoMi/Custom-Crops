@@ -1,3 +1,20 @@
+/*
+ *  Copyright (C) <2022> <XiaoMoMi>
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package net.momirealms.customcrops.api.object.fertilizer;
 
 import net.kyori.adventure.key.Key;
@@ -55,7 +72,7 @@ public class FertilizerManager extends Function {
     public FertilizerConfig getConfigByItemID(String id) {
         String key = itemToKey.get(id);
         if (key == null) return null;
-        return fertilizerConfigMap.get(id);
+        return getConfigByKey(key);
     }
 
     private void loadConfig() {
@@ -83,16 +100,20 @@ public class FertilizerManager extends Function {
                 Particle particle = fertilizerSec.contains("particle") ? Particle.valueOf(fertilizerSec.getString("particle")) : null;
                 @Subst("namespace:key") String soundKey = fertilizerSec.getString("sound", "minecraft:item.hoe.till");
                 Sound sound = fertilizerSec.contains("sound") ? Sound.sound(Key.key(soundKey), Sound.Source.PLAYER, 1, 1) : null;
+                String icon = fertilizerSec.getString("icon");
                 switch (fertilizerType) {
-                    case SPEED_GROW -> fertilizerConfig = new SpeedGrow(key, fertilizerType, times, getChancePair(fertilizerSec), pot_whitelist, beforePlant, particle, sound);
-                    case YIELD_INCREASE -> fertilizerConfig = new YieldIncrease(key, fertilizerType, times, fertilizerSec.getDouble("chance"), getChancePair(fertilizerSec), pot_whitelist, beforePlant, particle, sound);
-                    case VARIATION -> fertilizerConfig = new Variation(key, fertilizerType, times, fertilizerSec.getDouble("chance"), pot_whitelist, beforePlant, particle, sound);
-                    case QUALITY -> fertilizerConfig = new Quality(key, fertilizerType, times, fertilizerSec.getDouble("chance"), ConfigUtils.getQualityRatio(fertilizerSec.getString("ratio", "2/2/1")), pot_whitelist, beforePlant, particle, sound);
-                    case SOIL_RETAIN -> fertilizerConfig = new SoilRetain(key, fertilizerType, times, fertilizerSec.getDouble("chance"), pot_whitelist, beforePlant, particle, sound);
+                    case SPEED_GROW -> fertilizerConfig = new SpeedGrow(key, fertilizerType, times, getChancePair(fertilizerSec), pot_whitelist, beforePlant, particle, sound, icon);
+                    case YIELD_INCREASE -> fertilizerConfig = new YieldIncrease(key, fertilizerType, times, fertilizerSec.getDouble("chance"), getChancePair(fertilizerSec), pot_whitelist, beforePlant, particle, sound, icon);
+                    case VARIATION -> fertilizerConfig = new Variation(key, fertilizerType, times, fertilizerSec.getDouble("chance"), pot_whitelist, beforePlant, particle, sound, icon);
+                    case QUALITY -> fertilizerConfig = new Quality(key, fertilizerType, times, fertilizerSec.getDouble("chance"), ConfigUtils.getQualityRatio(fertilizerSec.getString("ratio", "2/2/1")), pot_whitelist, beforePlant, particle, sound, icon);
+                    case SOIL_RETAIN -> fertilizerConfig = new SoilRetain(key, fertilizerType, times, fertilizerSec.getDouble("chance"), pot_whitelist, beforePlant, particle, sound, icon);
                     default -> fertilizerConfig = null;
                 }
-                if (fertilizerConfig != null)
+                String item = fertilizerSec.getString("item");
+                if (fertilizerConfig != null && item != null) {
                     fertilizerConfigMap.put(key, fertilizerConfig);
+                    itemToKey.put(item, key);
+                }
                 else
                     AdventureUtils.consoleMessage("<red>[CustomCrops] Invalid fertilizer: " + key);
             }

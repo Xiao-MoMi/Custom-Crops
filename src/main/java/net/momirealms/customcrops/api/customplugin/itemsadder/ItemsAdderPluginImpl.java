@@ -1,3 +1,20 @@
+/*
+ *  Copyright (C) <2022> <XiaoMoMi>
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package net.momirealms.customcrops.api.customplugin.itemsadder;
 
 import de.tr7zw.changeme.nbtapi.NBTCompound;
@@ -90,12 +107,6 @@ public class ItemsAdderPluginImpl implements PlatformInterface {
     }
 
     @Override
-    public boolean removeItemDisplay(Location location) {
-        //TODO Not implemented
-        return false;
-    }
-
-    @Override
     public void placeChorus(Location location, String id) {
         CustomBlock.place(id, location);
     }
@@ -105,30 +116,29 @@ public class ItemsAdderPluginImpl implements PlatformInterface {
         return location.clone().add(0.5, 0.5, 0.5);
     }
 
-    @Nullable
-    @Override
-    public String getCustomItemAt(Location location) {
-        String block = getBlockID(location.getBlock());
-        if (!block.equals("AIR")) return block;
-
-        ItemFrame itemFrame = getItemFrameAt(location);
-        if (itemFrame != null) {
-            CustomFurniture customFurniture = CustomFurniture.byAlreadySpawned(itemFrame);
-            if (customFurniture != null) {
-                return customFurniture.getNamespacedID();
-            }
-        }
-        return null;
-    }
-
     @NotNull
     @Override
-    public String getItemID(@NotNull ItemStack itemStack) {
+    public String getItemStackID(@NotNull ItemStack itemStack) {
         if (itemStack.getType() != Material.AIR) {
             NBTItem nbtItem = new NBTItem(itemStack);
             NBTCompound nbtCompound = nbtItem.getCompound("itemsadder");
             if (nbtCompound != null) return nbtCompound.getString("namespace") + ":" + nbtCompound.getString("id");
         }
         return itemStack.getType().name();
+    }
+
+    @Nullable
+    @Override
+    public String getItemDisplayID(ItemDisplay itemDisplay) {
+        //TODO Not implemented
+        return null;
+    }
+
+    @Nullable
+    @Override
+    public String getItemFrameID(ItemFrame itemFrame) {
+        CustomFurniture customFurniture = CustomFurniture.byAlreadySpawned(itemFrame);
+        if (customFurniture == null) return null;
+        return customFurniture.getNamespacedID();
     }
 }

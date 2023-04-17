@@ -17,18 +17,18 @@
 
 package net.momirealms.customcrops.api.object;
 
-import com.willfp.eco.core.items.Items;
 import net.momirealms.customcrops.CustomCrops;
-import net.momirealms.customcrops.api.util.ArmorStandUtils;
+import net.momirealms.customcrops.api.util.FakeEntityUtils;
 import org.bukkit.Location;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-import java.util.Random;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.ThreadLocalRandom;
 
-public class CrowTask extends BukkitRunnable {
+public class CrowTask implements Runnable {
 
     private int timer;
     private final int entityID;
@@ -39,38 +39,43 @@ public class CrowTask extends BukkitRunnable {
     private final float yaw;
     private final ItemStack fly;
     private final ItemStack stand;
+    private ScheduledFuture<?> scheduledFuture;
 
     public CrowTask(Player player, Location crop, String fly_model, String stand_model) {
         this.timer = 0;
         this.fly = CustomCrops.getInstance().getIntegrationManager().build(fly_model);
         this.stand = CustomCrops.getInstance().getIntegrationManager().build(stand_model);
         this.player = player;
-        this.entityID = new Random().nextInt(10000000);
-        this.yaw = new Random().nextInt(361) - 180;
+        this.entityID = ThreadLocalRandom.current().nextInt(Integer.MAX_VALUE);
+        this.yaw = ThreadLocalRandom.current().nextInt(361) - 180;
         this.from = crop.clone().add(10 * Math.sin((Math.PI * yaw)/180), 10, - 10 * Math.cos((Math.PI * yaw)/180));
         Location relative = crop.clone().subtract(from);
         this.vectorDown = new Vector(relative.getX() / 100, -0.1, relative.getZ() / 100);
         this.vectorUp = new Vector(relative.getX() / 100, 0.1, relative.getZ() / 100);
-        CustomCrops.getProtocolManager().sendServerPacket(player, ArmorStandUtils.getSpawnPacket(entityID, from));
-        CustomCrops.getProtocolManager().sendServerPacket(player, ArmorStandUtils.getMetaPacket(entityID));
-        CustomCrops.getProtocolManager().sendServerPacket(player, ArmorStandUtils.getEquipPacket(entityID, fly));
+        CustomCrops.getProtocolManager().sendServerPacket(player, FakeEntityUtils.getSpawnPacket(entityID, from, EntityType.ARMOR_STAND));
+        CustomCrops.getProtocolManager().sendServerPacket(player, FakeEntityUtils.getMetaPacket(entityID));
+        CustomCrops.getProtocolManager().sendServerPacket(player, FakeEntityUtils.getEquipPacket(entityID, fly));
     }
 
     @Override
     public void run() {
         timer++;
         if (timer < 100) {
-            CustomCrops.getProtocolManager().sendServerPacket(player, ArmorStandUtils.getTeleportPacket(entityID, from.add(vectorDown), yaw));
+            CustomCrops.getProtocolManager().sendServerPacket(player, FakeEntityUtils.getTeleportPacket(entityID, from.add(vectorDown), yaw));
         } else if (timer == 100){
-            CustomCrops.getProtocolManager().sendServerPacket(player, ArmorStandUtils.getEquipPacket(entityID, stand));
+            CustomCrops.getProtocolManager().sendServerPacket(player, FakeEntityUtils.getEquipPacket(entityID, stand));
         } else if (timer == 150) {
-            CustomCrops.getProtocolManager().sendServerPacket(player, ArmorStandUtils.getEquipPacket(entityID, fly));
+            CustomCrops.getProtocolManager().sendServerPacket(player, FakeEntityUtils.getEquipPacket(entityID, fly));
         } else if (timer > 150) {
-            CustomCrops.getProtocolManager().sendServerPacket(player, ArmorStandUtils.getTeleportPacket(entityID, from.add(vectorUp), yaw));
+            CustomCrops.getProtocolManager().sendServerPacket(player, FakeEntityUtils.getTeleportPacket(entityID, from.add(vectorUp), yaw));
         }
         if (timer > 300) {
-            CustomCrops.getProtocolManager().sendServerPacket(player, ArmorStandUtils.getDestroyPacket(entityID));
-            cancel();
+            CustomCrops.getProtocolManager().sendServerPacket(player, FakeEntityUtils.getDestroyPacket(entityID));
+            if (scheduledFuture != null) scheduledFuture.cancel(false);
         }
+    }
+
+    public void setScheduledFuture(ScheduledFuture<?> scheduledFuture) {
+        this.scheduledFuture = scheduledFuture;
     }
 }

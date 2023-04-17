@@ -1,6 +1,6 @@
 soil_retain_1:
   type: SOIL_RETAIN
-  name: '뀉'
+  icon: '뀉'
   chance: 0.1
   times: 28
   item: customcrops:soil_retain_1
@@ -11,7 +11,7 @@ soil_retain_1:
     - default
 soil_retain_2:
   type: SOIL_RETAIN
-  name: '뀊'
+  icon: '뀊'
   chance: 0.2
   times: 28
   item: customcrops:soil_retain_2
@@ -22,7 +22,7 @@ soil_retain_2:
     - default
 soil_retain_3:
   type: SOIL_RETAIN
-  name: '뀋'
+  icon: '뀋'
   chance: 0.3
   times: 28
   item: customcrops:soil_retain_3

@@ -1,3 +1,20 @@
+/*
+ *  Copyright (C) <2022> <XiaoMoMi>
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package net.momirealms.customcrops.api.object.action;
 
 import net.momirealms.customcrops.CustomCrops;
@@ -5,7 +22,6 @@ import net.momirealms.customcrops.api.CustomCropsAPI;
 import net.momirealms.customcrops.api.object.ItemMode;
 import net.momirealms.customcrops.api.object.crop.StageConfig;
 import net.momirealms.customcrops.api.object.world.SimpleLocation;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
@@ -22,7 +38,7 @@ public class BreakImpl implements Action {
     @Override
     public void doOn(@Nullable Player player, @Nullable SimpleLocation crop_loc, ItemMode itemMode) {
         if (crop_loc == null) return;
-        Bukkit.getScheduler().callSyncMethod(CustomCrops.getInstance(), () -> {
+        CustomCrops.getInstance().getScheduler().callSyncMethod(() -> {
             CustomCropsAPI.getInstance().removeCustomItem(crop_loc.getBukkitLocation(), itemMode);
             CustomCrops.getInstance().getWorldDataManager().removeCropData(crop_loc);
             return null;

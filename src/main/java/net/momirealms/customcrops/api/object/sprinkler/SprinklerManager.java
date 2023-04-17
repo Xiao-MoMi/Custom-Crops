@@ -1,3 +1,20 @@
+/*
+ *  Copyright (C) <2022> <XiaoMoMi>
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package net.momirealms.customcrops.api.object.sprinkler;
 
 import net.kyori.adventure.key.Key;
@@ -113,7 +130,7 @@ public class SprinklerManager extends Function implements Listener {
     public void onItemSpawn(ItemSpawnEvent event) {
         if (event.isCancelled()) return;
         Item item = event.getEntity();
-        String id = plugin.getPlatformInterface().getItemID(item.getItemStack());
+        String id = plugin.getPlatformInterface().getItemStackID(item.getItemStack());
         String key = itemToKey.get(id);
         if (key == null) return;
         String twoD = sprinklerConfigMap.get(key).getTwoD();

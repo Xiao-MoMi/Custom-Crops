@@ -1,10 +1,26 @@
+/*
+ *  Copyright (C) <2022> <XiaoMoMi>
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package net.momirealms.customcrops.api.object.condition;
 
 import net.momirealms.customcrops.CustomCrops;
 import net.momirealms.customcrops.api.CustomCropsAPI;
 import net.momirealms.customcrops.api.object.ItemMode;
 import net.momirealms.customcrops.api.object.world.SimpleLocation;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -19,19 +35,19 @@ public class DeathCondition {
         this.conditions = conditions;
     }
 
-    public boolean checkIfDead(SimpleLocation simpleLocation) {
+    public int checkIfDead(SimpleLocation simpleLocation) {
         for (Condition condition : conditions) {
             if (condition.isMet(simpleLocation)) {
-                return true;
+                return condition.getDelay();
             }
         }
-        return false;
+        return -1;
     }
 
     public void applyDeadModel(SimpleLocation simpleLocation, ItemMode itemMode) {
         Location location = simpleLocation.getBukkitLocation();
         if (location == null) return;
-        Bukkit.getScheduler().callSyncMethod(CustomCrops.getInstance(), () -> {
+        CustomCrops.getInstance().getScheduler().callSyncMethod(() -> {
             CustomCropsAPI.getInstance().removeCustomItem(location, itemMode);
             if (dead_model != null) {
                 CustomCropsAPI.getInstance().placeCustomItem(location, dead_model, itemMode);

@@ -23,16 +23,17 @@ import org.jetbrains.annotations.Nullable;
 
 public abstract class FertilizerConfig {
 
-    protected int times;
-    protected double chance;
-    protected String key;
-    protected FertilizerType fertilizerType;
-    protected String[] pot_whitelist;
-    protected boolean beforePlant;
-    protected Particle particle;
-    protected Sound sound;
+    private final int times;
+    private final double chance;
+    private final String key;
+    private final FertilizerType fertilizerType;
+    private final String[] pot_whitelist;
+    private final boolean beforePlant;
+    private final Particle particle;
+    private final Sound sound;
+    private final String icon;
 
-    public FertilizerConfig(String key, FertilizerType fertilizerType, int times, double chance, @Nullable String[] pot_whitelist, boolean beforePlant, @Nullable Particle particle, @Nullable Sound sound) {
+    public FertilizerConfig(String key, FertilizerType fertilizerType, int times, double chance, @Nullable String[] pot_whitelist, boolean beforePlant, @Nullable Particle particle, @Nullable Sound sound, @Nullable String icon) {
         this.times = times;
         this.chance = chance;
         this.key = key;
@@ -41,6 +42,7 @@ public abstract class FertilizerConfig {
         this.beforePlant = beforePlant;
         this.particle = particle;
         this.sound = sound;
+        this.icon = icon;
     }
 
     public int getTimes() {
@@ -80,5 +82,9 @@ public abstract class FertilizerConfig {
     @Nullable
     public Sound getSound() {
         return sound;
+    }
+
+    public String getIcon() {
+        return icon;
     }
 }

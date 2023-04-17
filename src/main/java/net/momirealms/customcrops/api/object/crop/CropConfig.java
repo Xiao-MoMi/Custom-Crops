@@ -1,3 +1,20 @@
+/*
+ *  Copyright (C) <2022> <XiaoMoMi>
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package net.momirealms.customcrops.api.object.crop;
 
 import net.momirealms.customcrops.api.object.BoneMeal;
@@ -13,7 +30,7 @@ import java.util.HashMap;
 
 public class CropConfig {
 
-    private String key;
+    private final String key;
     private final ItemMode itemMode;
     private final String[] bottom_blocks;
     private final int max_points;
@@ -59,21 +76,17 @@ public class CropConfig {
         return itemMode;
     }
 
-    public int getMaxPoints() {
-        return max_points;
-    }
-
     @Nullable
     public StageConfig getStageConfig(int stage) {
         return stageMap.get(stage);
     }
 
     @NotNull
-    public String[] getBottom_blocks() {
+    public String[] getPotWhitelist() {
         return bottom_blocks;
     }
 
-    public int getMax_points() {
+    public int getMaxPoints() {
         return max_points;
     }
 

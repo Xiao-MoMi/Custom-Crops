@@ -1,19 +1,38 @@
+/*
+ *  Copyright (C) <2022> <XiaoMoMi>
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package net.momirealms.customcrops.api.object.world;
 
 import net.momirealms.customcrops.CustomCrops;
 import net.momirealms.customcrops.api.CustomCropsAPI;
 import net.momirealms.customcrops.api.object.Function;
+import net.momirealms.customcrops.api.object.ItemMode;
 import net.momirealms.customcrops.api.object.action.Action;
 import net.momirealms.customcrops.api.object.action.VariationImpl;
 import net.momirealms.customcrops.api.object.basic.ConfigManager;
 import net.momirealms.customcrops.api.object.condition.Condition;
 import net.momirealms.customcrops.api.object.condition.DeathCondition;
 import net.momirealms.customcrops.api.object.crop.CropConfig;
-import net.momirealms.customcrops.api.object.ItemMode;
 import net.momirealms.customcrops.api.object.crop.GrowingCrop;
 import net.momirealms.customcrops.api.object.crop.StageConfig;
-import net.momirealms.customcrops.api.object.crop.VariationCrop;
-import net.momirealms.customcrops.api.object.fertilizer.*;
+import net.momirealms.customcrops.api.object.fertilizer.Fertilizer;
+import net.momirealms.customcrops.api.object.fertilizer.FertilizerConfig;
+import net.momirealms.customcrops.api.object.fertilizer.SoilRetain;
+import net.momirealms.customcrops.api.object.fertilizer.SpeedGrow;
 import net.momirealms.customcrops.api.object.pot.Pot;
 import net.momirealms.customcrops.api.object.season.CCSeason;
 import net.momirealms.customcrops.api.object.season.SeasonData;
@@ -26,7 +45,6 @@ import org.apache.commons.pool2.PooledObject;
 import org.apache.commons.pool2.impl.DefaultPooledObject;
 import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
-import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -194,6 +212,9 @@ public class CCWorld extends Function {
 
     private void closePool() {
         this.schedule.shutdown();
+        //this.cropTaskPool.close();
+        //this.sprinklerTaskPool.close();
+        //this.consumeTaskPool.close();
     }
 
     public void pushCropTask(SimpleLocation simpleLocation, int delay) {
@@ -299,7 +320,7 @@ public class CCWorld extends Function {
                     pot.setWater(pot.getWater() + 1);
                 }
                 if (pot.reduceWater() | pot.reduceFertilizer()) {
-                    Bukkit.getScheduler().callSyncMethod(CustomCrops.getInstance(), () -> {
+                    CustomCrops.getInstance().getScheduler().callSyncMethod(() -> {
                         CustomCropsAPI.getInstance().changePotModel(simpleLocation, pot);
                         return null;
                     });
@@ -370,9 +391,18 @@ public class CCWorld extends Function {
             DeathCondition[] deathConditions = cropConfig.getDeathConditions();
             if (deathConditions != null) {
                 for (DeathCondition deathCondition : deathConditions) {
-                    if (deathCondition.checkIfDead(simpleLocation)) {
-                        removeCropData(simpleLocation);
-                        deathCondition.applyDeadModel(simpleLocation, itemMode);
+                    int delay = deathCondition.checkIfDead(simpleLocation);
+                    if (delay != -1) {
+                        if (delay == 0) {
+                            removeCropData(simpleLocation);
+                            deathCondition.applyDeadModel(simpleLocation, itemMode);
+                        } else {
+                            SimpleLocation copied = simpleLocation.copy();
+                            schedule.schedule(() -> {
+                                removeCropData(copied);
+                                deathCondition.applyDeadModel(copied, itemMode);
+                            }, delay, TimeUnit.MILLISECONDS);
+                        }
                         return;
                     }
                 }
@@ -440,7 +470,7 @@ public class CCWorld extends Function {
 
         growingCrop.setPoints(current + points);
         if (ConfigManager.debug) Log.info(simpleLocation.toString() + ":" + growingCrop.getPoints());
-        if (growingCrop.getPoints() >= cropConfig.getMax_points()) {
+        if (growingCrop.getPoints() >= cropConfig.getMaxPoints()) {
             removeCropData(simpleLocation);
         }
 
@@ -454,7 +484,7 @@ public class CCWorld extends Function {
                 return chunk.isEntitiesLoaded();
             });
             loadEntities.whenComplete((result, throwable) ->
-                    Bukkit.getScheduler().callSyncMethod(CustomCrops.getInstance(), () -> {
+                    CustomCrops.getInstance().getScheduler().callSyncMethod(() -> {
                         if (CustomCropsAPI.getInstance().removeCustomItem(location, itemMode)) {
                             CustomCropsAPI.getInstance().placeCustomItem(location, finalNextModel, itemMode);
                         } else {
@@ -465,7 +495,7 @@ public class CCWorld extends Function {
         }
         else {
             asyncGetChunk.whenComplete((result, throwable) ->
-                    Bukkit.getScheduler().callSyncMethod(CustomCrops.getInstance(), () -> {
+                    CustomCrops.getInstance().getScheduler().callSyncMethod(() -> {
                         if (CustomCropsAPI.getInstance().removeCustomItem(location, itemMode)) {
                             CustomCropsAPI.getInstance().placeCustomItem(location, finalNextModel, itemMode);
                         } else {
