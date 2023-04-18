@@ -18,14 +18,12 @@
 package net.momirealms.customcrops.api.customplugin;
 
 import net.momirealms.customcrops.CustomCrops;
-import net.momirealms.customcrops.api.CustomCropsAPI;
 import net.momirealms.customcrops.api.customplugin.itemsadder.ItemsAdderHandler;
 import net.momirealms.customcrops.api.customplugin.oraxen.OraxenHandler;
 import net.momirealms.customcrops.api.event.*;
 import net.momirealms.customcrops.api.object.BoneMeal;
 import net.momirealms.customcrops.api.object.Function;
 import net.momirealms.customcrops.api.object.InteractWithItem;
-import net.momirealms.customcrops.api.object.ItemType;
 import net.momirealms.customcrops.api.object.action.Action;
 import net.momirealms.customcrops.api.object.basic.ConfigManager;
 import net.momirealms.customcrops.api.object.basic.MessageManager;
@@ -36,13 +34,14 @@ import net.momirealms.customcrops.api.object.fertilizer.Fertilizer;
 import net.momirealms.customcrops.api.object.fertilizer.FertilizerConfig;
 import net.momirealms.customcrops.api.object.fill.PassiveFillMethod;
 import net.momirealms.customcrops.api.object.fill.PositiveFillMethod;
+import net.momirealms.customcrops.api.object.hologram.FertilizerHologram;
+import net.momirealms.customcrops.api.object.hologram.WaterAmountHologram;
 import net.momirealms.customcrops.api.object.pot.Pot;
 import net.momirealms.customcrops.api.object.pot.PotConfig;
 import net.momirealms.customcrops.api.object.requirement.CurrentState;
 import net.momirealms.customcrops.api.object.requirement.Requirement;
 import net.momirealms.customcrops.api.object.sprinkler.Sprinkler;
 import net.momirealms.customcrops.api.object.sprinkler.SprinklerConfig;
-import net.momirealms.customcrops.api.object.sprinkler.SprinklerHologram;
 import net.momirealms.customcrops.api.object.wateringcan.WateringCanConfig;
 import net.momirealms.customcrops.api.object.world.SimpleLocation;
 import net.momirealms.customcrops.api.util.AdventureUtils;
@@ -59,7 +58,6 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -146,88 +144,78 @@ public class PlatformManager extends Function {
         onInteractSomething(player, entity.getLocation().getBlock().getLocation(), id, event);
     }
 
-    @NotNull
-    public ItemType onInteractAir(Player player) {
+    public void onInteractAir(Player player) {
         ItemStack item_in_hand = player.getInventory().getItemInMainHand();
         String id = plugin.getPlatformInterface().getItemStackID(item_in_hand);
 
-        if (onInteractWithWateringCan(player, id, item_in_hand)) {
-            return ItemType.WATERING_CAN;
+        if (onInteractWithWateringCan(player, id, item_in_hand, null, null)) {
+            return;
         }
-
-        return ItemType.UNKNOWN;
     }
 
-    @NotNull
-    public ItemType onBreakSomething(Player player, Location location, String id, Cancellable event) {
+    public void onBreakSomething(Player player, Location location, String id, Cancellable event) {
 
         if (onBreakGlass(id, location)) {
-            return ItemType.GLASS;
+            return;
         }
 
         if (onBreakPot(player, id, location, event)) {
-            return ItemType.POT;
+            return;
         }
 
         if (onBreakCrop(player, id, location, event)) {
-            return ItemType.CROP;
+            return;
         }
 
         if (onBreakSprinkler(id, location)) {
-            return ItemType.SPRINKLER;
+            return;
         }
 
         if (onBreakScarecrow(id, location)) {
-            return ItemType.SCARECROW;
+            return;
         }
-
-        return ItemType.UNKNOWN;
     }
 
-    @NotNull
-    public ItemType onPlaceSomething(Location location, String id) {
+    public void onPlaceSomething(Location location, String id) {
 
         if (onPlaceGlass(id, location)) {
-            return ItemType.GLASS;
+            return;
         }
 
         if (onPlacePot(id, location)) {
-            return ItemType.POT;
+            return;
         }
 
         if (onPlaceScarecrow(id, location)) {
-            return ItemType.SCARECROW;
+            return;
         }
-
-        return ItemType.UNKNOWN;
     }
 
-    @NotNull ItemType onInteractSomething(Player player, Location location, String id, Cancellable event) {
+    void onInteractSomething(Player player, Location location, String id, Cancellable event) {
 
         ItemStack item_in_hand = player.getInventory().getItemInMainHand();
         String item_in_hand_id = plugin.getPlatformInterface().getItemStackID(item_in_hand);
 
         if (onInteractWithSprinkler(player, location, item_in_hand, item_in_hand_id)) {
-            return ItemType.SPRINKLER;
+            return;
         }
 
-        if (onInteractSprinkler(player, id, location, item_in_hand, item_in_hand_id)) {
-            return ItemType.SPRINKLER;
+        if (onInteractSprinkler(player, id, location, item_in_hand, item_in_hand_id, event)) {
+            return;
         }
 
         if (onInteractPot(player, id, location, item_in_hand, item_in_hand_id, event)) {
-            return ItemType.POT;
+            return;
         }
 
         if (onInteractCrop(player, id, location, item_in_hand, item_in_hand_id, event)) {
-            return ItemType.CROP;
+            return;
         }
 
-        if (onInteractWithWateringCan(player, item_in_hand_id, item_in_hand)) {
-            return ItemType.WATERING_CAN;
+        if (onInteractWithWateringCan(player, item_in_hand_id, item_in_hand, id, location)) {
+            return;
         }
 
-        return ItemType.UNKNOWN;
     }
 
     public boolean onBreakGlass(String id, Location location) {
@@ -274,7 +262,7 @@ public class PlatformManager extends Function {
         return true;
     }
 
-    public boolean onInteractSprinkler(Player player, String id, Location location, ItemStack item_in_hand, String item_in_hand_id) {
+    public boolean onInteractSprinkler(Player player, String id, Location location, ItemStack item_in_hand, String item_in_hand_id, Cancellable event) {
         SprinklerConfig sprinklerConfig = plugin.getSprinklerManager().getConfigByItemID(id);
         if (sprinklerConfig == null) {
             return false;
@@ -292,6 +280,7 @@ public class PlatformManager extends Function {
                         return true;
                     }
 
+                    event.setCancelled(true);
                     doPassiveFillAction(player, item_in_hand, passiveFillMethod, location.clone().add(0,0.2,0));
                     plugin.getWorldDataManager().addWaterToSprinkler(SimpleLocation.getByBukkitLocation(location), sprinklerFillEvent.getWater(), sprinklerConfig);
                     break outer;
@@ -338,12 +327,17 @@ public class PlatformManager extends Function {
         }
 
         Sprinkler sprinkler = plugin.getWorldDataManager().getSprinklerData(SimpleLocation.getByBukkitLocation(location));
-        if (sprinkler != null && sprinklerConfig.hasHologram()) {
-            SprinklerHologram sprinklerHologram = sprinklerConfig.getSprinklerHologram();
-            if (sprinklerHologram != null) {
-                String content = sprinklerHologram.getContent(sprinkler.getWater(), sprinklerConfig.getStorage());
-                plugin.getHologramManager().showHologram(player, location.clone().add(0.5,sprinklerHologram.getOffset(),0.5), AdventureUtils.getComponentFromMiniMessage(content),
-                        sprinklerHologram.getDuration() * 1000, sprinklerHologram.getMode());
+        if (sprinkler != null) {
+            WaterAmountHologram waterAmountHologram = sprinklerConfig.getSprinklerHologram();
+            if (waterAmountHologram != null) {
+                String content = waterAmountHologram.getContent(sprinkler.getWater(), sprinklerConfig.getStorage());
+                plugin.getHologramManager().showHologram(player,
+                        location.clone().add(0.5, waterAmountHologram.getOffset(),0.5),
+                        AdventureUtils.getComponentFromMiniMessage(content),
+                        waterAmountHologram.getDuration() * 1000,
+                        waterAmountHologram.getMode(),
+                        waterAmountHologram.getTextDisplayMeta()
+                );
             }
         }
         return true;
@@ -381,7 +375,7 @@ public class PlatformManager extends Function {
         }
 
         if (player.getGameMode() != GameMode.CREATIVE) item_in_hand.setAmount(item_in_hand.getAmount() - 1);
-        CustomCropsAPI.getInstance().placeCustomItem(sprinkler_loc, sprinklerConfig.getThreeD(), sprinklerConfig.getItemMode());
+        CustomCrops.getInstance().getPlatformInterface().placeCustomItem(sprinkler_loc, sprinklerConfig.getThreeD(), sprinklerConfig.getItemMode());
         if (sprinklerConfig.getSound() != null) {
             AdventureUtils.playerSound(player, sprinklerConfig.getSound());
         }
@@ -409,20 +403,21 @@ public class PlatformManager extends Function {
             return true;
         }
 
-        Pot potData = plugin.getWorldDataManager().getPotData(SimpleLocation.getByBukkitLocation(location).add(0,-1,0));
+        Location pot_loc = location.clone().subtract(0, 1, 0);
+        Pot potData = plugin.getWorldDataManager().getPotData(SimpleLocation.getByBukkitLocation(pot_loc));
         if (potData != null) {
             PassiveFillMethod[] passiveFillMethods = potData.getConfig().getPassiveFillMethods();
             for (PassiveFillMethod passiveFillMethod : passiveFillMethods) {
                 if (passiveFillMethod.isRightItem(item_in_hand_id)) {
 
-                    PotWaterEvent potWaterEvent = new PotWaterEvent(player, item_in_hand, passiveFillMethod.getAmount(), location);
+                    PotWaterEvent potWaterEvent = new PotWaterEvent(player, item_in_hand, passiveFillMethod.getAmount(), pot_loc);
                     Bukkit.getPluginManager().callEvent(potWaterEvent);
                     if (potWaterEvent.isCancelled()) {
                         return true;
                     }
 
                     event.setCancelled(true);
-                    doPassiveFillAction(player, item_in_hand, passiveFillMethod, location);
+                    doPassiveFillAction(player, item_in_hand, passiveFillMethod, pot_loc);
                     potData.addWater(potWaterEvent.getWater());
                     return true;
                 }
@@ -444,7 +439,6 @@ public class PlatformManager extends Function {
                 int current_water = plugin.getWateringCanManager().getCurrentWater(item_in_hand);
                 if (current_water <= 0) return true;
 
-                Location pot_loc = location.clone().subtract(0,1,0);
                 PotWaterEvent potWaterEvent = new PotWaterEvent(player, item_in_hand, 1, pot_loc);
                 Bukkit.getPluginManager().callEvent(potWaterEvent);
                 if (potWaterEvent.isCancelled()) {
@@ -571,7 +565,7 @@ public class PlatformManager extends Function {
 
                 if (player.getGameMode() != GameMode.CREATIVE) item_in_hand.setAmount(item_in_hand.getAmount() - 1);
                 player.swingMainHand();
-                CustomCropsAPI.getInstance().placeCustomItem(crop_loc, cropPlantEvent.getCropModel(), cropConfig.getCropMode());
+                CustomCrops.getInstance().getPlatformInterface().placeCustomItem(crop_loc, cropPlantEvent.getCropModel(), cropConfig.getCropMode());
                 plugin.getWorldDataManager().addCropData(SimpleLocation.getByBukkitLocation(crop_loc), new GrowingCrop(cropConfig.getKey(), cropPlantEvent.getPoint()));
                 return true;
             }
@@ -658,13 +652,35 @@ public class PlatformManager extends Function {
         PotInfoEvent potInfoEvent = new PotInfoEvent(player, location, item_in_hand, potConfig, potData == null ? null : potData.getFertilizer(), potData == null ? 0 : potData.getWater(), growingCrop);
         Bukkit.getPluginManager().callEvent(potInfoEvent);
 
-        if (potConfig.isHologramEnabled() && potData != null) {
+        if (potConfig.getRequiredItem() != null && !item_in_hand_id.equals(potConfig.getRequiredItem())) {
+            return true;
+        }
+
+        WaterAmountHologram waterAmountHologram = potConfig.getWaterAmountHologram();
+        if (waterAmountHologram != null && potData != null) {
+            plugin.getHologramManager().showHologram(player,
+                    location.clone().add(0.5,waterAmountHologram.getOffset(),0.5),
+                    AdventureUtils.getComponentFromMiniMessage(waterAmountHologram.getContent(potData.getWater(), potConfig.getMaxStorage())),
+                    waterAmountHologram.getDuration() * 1000,
+                    waterAmountHologram.getMode(),
+                    waterAmountHologram.getTextDisplayMeta()
+            );
+        }
+
+        FertilizerHologram fertilizerHologram = potConfig.getFertilizerHologram();
+        if (fertilizerHologram != null && potData != null && potData.getFertilizer() != null) {
             double offset = 0;
             StageConfig stageConfig = plugin.getCropManager().getStageConfig(plugin.getPlatformInterface().getAnyItemIDAt(location.clone().add(0,1,0)));
             if (stageConfig != null) {
                 offset = stageConfig.getOffsetCorrection();
             }
-            potConfig.getPotHologram().show(player, potData, location.clone().add(0.5,0,0.5), offset);
+            plugin.getHologramManager().showHologram(player,
+                    location.clone().add(0.5,fertilizerHologram.getOffset() + offset,0.5),
+                    AdventureUtils.getComponentFromMiniMessage(fertilizerHologram.getContent(potData.getFertilizer())),
+                    fertilizerHologram.getDuration() * 1000,
+                    fertilizerHologram.getMode(),
+                    fertilizerHologram.getTextDisplayMeta()
+            );
         }
         return true;
     }
@@ -701,7 +717,7 @@ public class PlatformManager extends Function {
     }
 
     private boolean onBreakSprinkler(String id, Location location) {
-        if (!plugin.getSprinklerManager().containsSprinkler(id)) {
+        if (plugin.getSprinklerManager().getConfigKeyByItemID(id) == null) {
             return false;
         }
 
@@ -804,7 +820,7 @@ public class PlatformManager extends Function {
         }
     }
 
-    public boolean onInteractWithWateringCan(Player player, String item_in_hand_id, ItemStack item_in_hand) {
+    public boolean onInteractWithWateringCan(Player player, String item_in_hand_id, ItemStack item_in_hand, @Nullable String id, @Nullable Location location) {
         WateringCanConfig wateringCanConfig = plugin.getWateringCanManager().getConfigByItemID(item_in_hand_id);
         if (wateringCanConfig == null) {
             return false;
@@ -812,12 +828,27 @@ public class PlatformManager extends Function {
 
         int current = plugin.getWateringCanManager().getCurrentWater(item_in_hand);
         if (current >= wateringCanConfig.getStorage()) return true;
-        List<Block> lineOfSight = player.getLineOfSight(null, 5);
-        List<String> blockIds = lineOfSight.stream().map(block -> plugin.getPlatformInterface().getBlockID(block)).toList();
 
         int add = 0;
-        for (PositiveFillMethod positiveFillMethod : wateringCanConfig.getPositiveFillMethods()) {
-            if (positiveFillMethod.getType() == PositiveFillMethod.InteractType.BLOCK) {
+
+        if (id != null && location != null) {
+            for (PositiveFillMethod positiveFillMethod : wateringCanConfig.getPositiveFillMethods()) {
+                if (positiveFillMethod.getId().equals(id)) {
+                    add = positiveFillMethod.getAmount();
+                    if (positiveFillMethod.getSound() != null) {
+                        AdventureUtils.playerSound(player, positiveFillMethod.getSound());
+                    }
+                    if (positiveFillMethod.getParticle() != null) {
+                        location.getWorld().spawnParticle(positiveFillMethod.getParticle(), location.clone().add(0.5,1.1, 0.5),5,0.1,0.1,0.1);
+                    }
+                    break;
+                }
+            }
+        } else {
+            List<Block> lineOfSight = player.getLineOfSight(null, 5);
+            List<String> blockIds = lineOfSight.stream().map(block -> plugin.getPlatformInterface().getBlockID(block)).toList();
+
+            for (PositiveFillMethod positiveFillMethod : wateringCanConfig.getPositiveFillMethods()) {
                 int index = 0;
                 for (String blockId : blockIds) {
                     if (positiveFillMethod.getId().equals(blockId)) {
@@ -827,7 +858,7 @@ public class PlatformManager extends Function {
                         }
                         if (positiveFillMethod.getParticle() != null) {
                             Block block = lineOfSight.get(index);
-                            block.getWorld().spawnParticle(positiveFillMethod.getParticle(), block.getLocation().add(0.5,1, 0.5),5,0.1,0.1,0.1);
+                            block.getWorld().spawnParticle(positiveFillMethod.getParticle(), block.getLocation().add(0.5,1.1, 0.5),5,0.1,0.1,0.1);
                         }
                         break;
                     }
@@ -844,5 +875,4 @@ public class PlatformManager extends Function {
         }
         return true;
     }
-
 }

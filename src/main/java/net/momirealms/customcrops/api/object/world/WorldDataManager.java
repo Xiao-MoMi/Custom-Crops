@@ -47,18 +47,24 @@ public class WorldDataManager extends Function {
     @Override
     public void load() {
         Bukkit.getPluginManager().registerEvents(worldListener, plugin);
+        for (CCWorld ccWorld : worldMap.values()) {
+            ccWorld.load();
+        }
     }
 
     @Override
     public void unload() {
         HandlerList.unregisterAll(worldListener);
+        for (CCWorld ccWorld : worldMap.values()) {
+            ccWorld.unload();
+        }
     }
 
     @Override
     public void disable() {
         this.unload();
         for (CCWorld ccWorld : worldMap.values()) {
-            ccWorld.unload();
+            ccWorld.disable();
         }
         this.worldMap.clear();
     }
@@ -66,6 +72,7 @@ public class WorldDataManager extends Function {
     public void loadWorld(World world) {
         if (!isWorldAllowed(world)) return;
         CCWorld ccWorld = new CCWorld(world);
+        ccWorld.init();
         ccWorld.load();
         worldMap.put(world.getName(), ccWorld);
     }
@@ -73,7 +80,7 @@ public class WorldDataManager extends Function {
     public void unloadWorld(World world) {
         CCWorld ccWorld = worldMap.remove(world.getName());
         if (ccWorld != null) {
-            ccWorld.unload();
+            ccWorld.disable();
         }
     }
 
@@ -233,5 +240,10 @@ public class WorldDataManager extends Function {
             return ccWorld.getCropData(simpleLocation);
         }
         return null;
+    }
+
+    @Nullable
+    public CCWorld getWorld(String world) {
+        return worldMap.get(world);
     }
 }

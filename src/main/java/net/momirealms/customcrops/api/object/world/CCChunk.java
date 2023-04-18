@@ -18,12 +18,14 @@
 package net.momirealms.customcrops.api.object.world;
 
 import net.momirealms.customcrops.CustomCrops;
-import net.momirealms.customcrops.api.CustomCropsAPI;
 import net.momirealms.customcrops.api.object.basic.ConfigManager;
 import net.momirealms.customcrops.api.object.crop.GrowingCrop;
 import net.momirealms.customcrops.api.object.fertilizer.Fertilizer;
 import net.momirealms.customcrops.api.object.pot.Pot;
 import net.momirealms.customcrops.api.object.sprinkler.Sprinkler;
+import net.momirealms.customcrops.api.util.ConfigUtils;
+import org.bukkit.Location;
+import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -127,7 +129,7 @@ public class CCChunk implements Serializable {
         if (pot != null) {
             if (pot.addWater(amount)) {
                 CustomCrops.getInstance().getScheduler().callSyncMethod(() -> {
-                    CustomCropsAPI.getInstance().changePotModel(simpleLocation, pot);
+                    changePotModel(simpleLocation, pot);
                     return null;
                 });
             }
@@ -136,7 +138,7 @@ public class CCChunk implements Serializable {
             Pot newPot = new Pot(pot_id, null, amount);
             potMap.put(simpleLocation, newPot);
             CustomCrops.getInstance().getScheduler().callSyncMethod(() -> {
-                CustomCropsAPI.getInstance().changePotModel(simpleLocation, newPot);
+                changePotModel(simpleLocation, newPot);
                 return null;
             });
         }
@@ -147,7 +149,7 @@ public class CCChunk implements Serializable {
         if (pot != null) {
             pot.setFertilizer(fertilizer);
             CustomCrops.getInstance().getScheduler().callSyncMethod(() -> {
-                CustomCropsAPI.getInstance().changePotModel(simpleLocation, pot);
+                changePotModel(simpleLocation, pot);
                 return null;
             });
         }
@@ -155,7 +157,7 @@ public class CCChunk implements Serializable {
             Pot newPot = new Pot(pot_id, fertilizer, 0);
             potMap.put(simpleLocation, newPot);
             CustomCrops.getInstance().getScheduler().callSyncMethod(() -> {
-                CustomCropsAPI.getInstance().changePotModel(simpleLocation, newPot);
+                changePotModel(simpleLocation, newPot);
                 return null;
             });
         }
@@ -179,6 +181,18 @@ public class CCChunk implements Serializable {
         Random randomGenerator = ThreadLocalRandom.current();
         for (SimpleLocation simpleLocation : potMap.keySet()) {
             ccWorld.pushConsumeTask(simpleLocation, randomGenerator.nextInt(60));
+        }
+    }
+
+    public void changePotModel(SimpleLocation simpleLocation, Pot pot) {
+        Location location = simpleLocation.getBukkitLocation();
+        if (location == null) return;
+        if (CustomCrops.getInstance().getPlatformInterface().removeAnyBlock(location)) {
+            String replacer = pot.isWet() ? pot.getConfig().getWetPot(pot.getFertilizer()) : pot.getConfig().getDryPot(pot.getFertilizer());
+            if (ConfigUtils.isVanillaItem(replacer)) location.getBlock().setType(Material.valueOf(replacer));
+            else CustomCrops.getInstance().getPlatformInterface().placeNoteBlock(location, replacer);
+        } else {
+            CustomCrops.getInstance().getWorldDataManager().removePotData(simpleLocation);
         }
     }
 }

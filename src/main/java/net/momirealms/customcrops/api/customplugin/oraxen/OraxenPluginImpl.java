@@ -71,7 +71,7 @@ public class OraxenPluginImpl implements PlatformInterface {
     public ItemFrame placeItemFrame(Location location, String id) {
         FurnitureMechanic mechanic = (FurnitureMechanic) FurnitureFactory.getInstance().getMechanic(id);
         if (mechanic == null) {
-            AdventureUtils.consoleMessage("<red>[CustomCrops] Item Frame not exists: " + id);
+            AdventureUtils.consoleMessage("<red>[CustomCrops] Furniture not exists: " + id);
             return null;
         }
         Entity entity = mechanic.place(location, 0, Rotation.NONE, BlockFace.UP);
@@ -89,7 +89,7 @@ public class OraxenPluginImpl implements PlatformInterface {
     public ItemDisplay placeItemDisplay(Location location, String id) {
         FurnitureMechanic mechanic = (FurnitureMechanic) FurnitureFactory.getInstance().getMechanic(id);
         if (mechanic == null) {
-            AdventureUtils.consoleMessage("<red>[CustomCrops] Item Display not exists: " + id);
+            AdventureUtils.consoleMessage("<red>[CustomCrops] Furniture not exists: " + id);
             return null;
         }
         Entity entity = mechanic.place(location);
@@ -135,13 +135,7 @@ public class OraxenPluginImpl implements PlatformInterface {
 
     @Override
     public void placeChorus(Location location, String id) {
-        //TODO Not implemented, so use tripwire instead
         StringBlockMechanicFactory.setBlockModel(location.getBlock(), id);
-    }
-
-    @Override
-    public Location getItemFrameLocation(Location location) {
-        return location.clone().add(0.5,0.5,0.5);
     }
 
     @Nullable

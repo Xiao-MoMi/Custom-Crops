@@ -15,10 +15,12 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.momirealms.customcrops.api.object;
+package net.momirealms.customcrops.api.object.hologram;
 
 import net.kyori.adventure.text.Component;
 import net.momirealms.customcrops.CustomCrops;
+import net.momirealms.customcrops.api.object.Function;
+import net.momirealms.customcrops.api.object.Tuple;
 import net.momirealms.customcrops.api.util.FakeEntityUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -86,13 +88,13 @@ public class HologramManager extends Function implements Listener {
         this.hologramMap.remove(event.getPlayer().getUniqueId());
     }
 
-    public void showHologram(Player player, Location location, Component component, int millis, Mode mode) {
+    public void showHologram(Player player, Location location, Component component, int millis, Mode mode, TextDisplayMeta textDisplayMeta) {
         HologramCache hologramCache = hologramMap.get(player.getUniqueId());
         if (hologramCache != null) {
-            hologramCache.showHologram(player, location, component, millis, mode);
+            hologramCache.showHologram(player, location, component, millis, mode, textDisplayMeta);
         } else {
             hologramCache = new HologramCache();
-            hologramCache.showHologram(player, location, component, millis, mode);
+            hologramCache.showHologram(player, location, component, millis, mode, textDisplayMeta);
             hologramMap.put(player.getUniqueId(), hologramCache);
         }
     }
@@ -133,7 +135,7 @@ public class HologramManager extends Function implements Listener {
             }
         }
 
-        public void showHologram(Player player, Location location, Component component, int millis, Mode mode) {
+        public void showHologram(Player player, Location location, Component component, int millis, Mode mode, TextDisplayMeta textDisplayMeta) {
             int entity_id = push(location, millis);
             if (entity_id == 0) {
                 int random = ThreadLocalRandom.current().nextInt(Integer.MAX_VALUE);
@@ -143,14 +145,14 @@ public class HologramManager extends Function implements Listener {
                     CustomCrops.getProtocolManager().sendServerPacket(player, FakeEntityUtils.getSpawnPacket(random, location, EntityType.ARMOR_STAND));
                     CustomCrops.getProtocolManager().sendServerPacket(player, FakeEntityUtils.getVanishArmorStandMetaPacket(random, component));
                 } else if (mode == Mode.TEXT_DISPLAY) {
-                    CustomCrops.getProtocolManager().sendServerPacket(player, FakeEntityUtils.getSpawnPacket(random, location, EntityType.TEXT_DISPLAY));
-                    CustomCrops.getProtocolManager().sendServerPacket(player, FakeEntityUtils.getTextDisplayMetaPacket(random, component));
+                    CustomCrops.getProtocolManager().sendServerPacket(player, FakeEntityUtils.getSpawnPacket(random, location.clone().add(0,1,0), EntityType.TEXT_DISPLAY));
+                    CustomCrops.getProtocolManager().sendServerPacket(player, FakeEntityUtils.getTextDisplayMetaPacket(random, component, textDisplayMeta));
                 }
             } else {
                 if (mode == Mode.ARMOR_STAND) {
                     CustomCrops.getProtocolManager().sendServerPacket(player, FakeEntityUtils.getVanishArmorStandMetaPacket(entity_id, component));
                 } else if (mode == Mode.TEXT_DISPLAY) {
-                    CustomCrops.getProtocolManager().sendServerPacket(player, FakeEntityUtils.getTextDisplayMetaPacket(entity_id, component));
+                    CustomCrops.getProtocolManager().sendServerPacket(player, FakeEntityUtils.getTextDisplayMetaPacket(entity_id, component, textDisplayMeta));
                 }
             }
         }

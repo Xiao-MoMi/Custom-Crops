@@ -18,7 +18,6 @@
 package net.momirealms.customcrops.api.object.action;
 
 import net.momirealms.customcrops.CustomCrops;
-import net.momirealms.customcrops.api.CustomCropsAPI;
 import net.momirealms.customcrops.api.object.ItemMode;
 import net.momirealms.customcrops.api.object.crop.VariationCrop;
 import net.momirealms.customcrops.api.object.fertilizer.Variation;
@@ -66,8 +65,8 @@ public record VariationImpl(VariationCrop[] variationCrops) implements Action {
     private void doVariation(@NotNull SimpleLocation crop_loc, ItemMode itemMode, VariationCrop variationCrop) {
         CustomCrops.getInstance().getScheduler().callSyncMethod(() -> {
             Location location = crop_loc.getBukkitLocation();
-            if (CustomCropsAPI.getInstance().removeCustomItem(location, itemMode)) {
-                CustomCropsAPI.getInstance().placeCustomItem(location, variationCrop.getId(), variationCrop.getCropMode());
+            if (CustomCrops.getInstance().getPlatformInterface().removeCustomItem(location, itemMode)) {
+                CustomCrops.getInstance().getPlatformInterface().placeCustomItem(location, variationCrop.getId(), variationCrop.getCropMode());
             }
             CustomCrops.getInstance().getWorldDataManager().removeCropData(crop_loc);
             return null;

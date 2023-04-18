@@ -2,6 +2,7 @@ name: CustomCrops
 version: '${version}'
 main: net.momirealms.customcrops.CustomCrops
 api-version: 1.17
+load: POSTWORLD
 authors: [ XiaoMoMi ]
 depend:
   - ProtocolLib
@@ -31,9 +32,30 @@ softdepend:
   - BattlePass
   - BetonQuest
   - ClueScrolls
+  - HuskTowns
 commands:
   customcrops:
     usage: /customcrops <args>
     permission: customcrops.admin
     aliases:
       - ccrops
+permissions :
+  customcrops.*:
+    default: op
+    children:
+      customcrops.admin: true
+      customcrops.reload: true
+      customcrops.help: true
+      customcrops.about: true
+      customcrops.setdate: true
+      customcrops.setseason: true
+  customcrops.reload:
+    default: op
+  customcrops.help:
+    default: op
+  customcrops.about:
+    default: op
+  customcrops.setdate:
+    default: op
+  customcrops.setseason:
+    default: op

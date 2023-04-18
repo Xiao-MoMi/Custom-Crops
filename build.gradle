@@ -42,7 +42,7 @@ dependencies {
     implementation ("de.tr7zw:item-nbt-api:2.11.2")
     implementation ('org.bstats:bstats-bukkit:3.0.1')
     implementation ('org.apache.commons:commons-pool2:2.11.1')
-    implementation fileTree(dir:'libs',includes:['BiomeAPI.jar'])
+    implementation fileTree(dir:'libs',includes:['BiomeAPI.jar','ProtectionLib.jar'])
 }
 
 def targetJavaVersion = 17
@@ -55,23 +55,18 @@ java {
     }
 }
 
-tasks.withType(JavaCompile).configureEach {
-    if (targetJavaVersion >= 10 || JavaVersion.current().isJava10Compatible()) {
-        options.release = targetJavaVersion
-    }
-}
-
 processResources {
     def props = [version: version]
     inputs.properties props
     filteringCharset 'UTF-8'
-    filesMatching('plugin.yml') {
+    filesMatching(['paper-plugin.yml', 'plugin.yml']) {
         expand props
     }
 }
 
-tasks.withType(JavaCompile) {
+tasks.withType(JavaCompile).configureEach {
     options.encoding = "UTF-8"
+    options.release = targetJavaVersion
 }
 
 shadowJar {
@@ -80,6 +75,7 @@ shadowJar {
     relocate ('org.bstats', 'net.momirealms.customcrops.libs.org.bstats')
     relocate ('org.apache.commons.pool2', 'net.momirealms.customcrops.libs.org.apache.commons.pool2')
     relocate ('net.momirealms.biomeapi', 'net.momirealms.customcrops.libs.net.momirealms.biomeapi')
+    relocate ('net.momirealms.protectionlib', 'net.momirealms.customcrops.libs.net.momirealms.protectionlib')
 }
 
 tasks.register("delete", Delete).get().delete("build/libs/"+project.name+"-"+project.version+".jar")

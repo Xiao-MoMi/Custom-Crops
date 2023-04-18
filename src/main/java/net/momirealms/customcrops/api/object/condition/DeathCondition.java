@@ -18,7 +18,6 @@
 package net.momirealms.customcrops.api.object.condition;
 
 import net.momirealms.customcrops.CustomCrops;
-import net.momirealms.customcrops.api.CustomCropsAPI;
 import net.momirealms.customcrops.api.object.ItemMode;
 import net.momirealms.customcrops.api.object.world.SimpleLocation;
 import org.bukkit.Location;
@@ -48,9 +47,9 @@ public class DeathCondition {
         Location location = simpleLocation.getBukkitLocation();
         if (location == null) return;
         CustomCrops.getInstance().getScheduler().callSyncMethod(() -> {
-            CustomCropsAPI.getInstance().removeCustomItem(location, itemMode);
+            CustomCrops.getInstance().getPlatformInterface().removeCustomItem(location, itemMode);
             if (dead_model != null) {
-                CustomCropsAPI.getInstance().placeCustomItem(location, dead_model, itemMode);
+                CustomCrops.getInstance().getPlatformInterface().placeCustomItem(location, dead_model, itemMode);
             }
             return null;
         });

@@ -22,6 +22,8 @@ import net.momirealms.customcrops.api.object.fertilizer.Fertilizer;
 import net.momirealms.customcrops.api.object.fertilizer.FertilizerConfig;
 import net.momirealms.customcrops.api.object.fertilizer.FertilizerType;
 import net.momirealms.customcrops.api.object.fill.PassiveFillMethod;
+import net.momirealms.customcrops.api.object.hologram.FertilizerHologram;
+import net.momirealms.customcrops.api.object.hologram.WaterAmountHologram;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -34,18 +36,23 @@ public class PotConfig {
     private final Pair<String, String> pot;
     private final boolean enableFertilized;
     private final PassiveFillMethod[] passiveFillMethods;
-    private final boolean enableHologram;
-    private final PotHologram potHologram;
+    private final FertilizerHologram fertilizerHologram;
+    private final WaterAmountHologram waterAmountHologram;
+    private final String requiredItem;
 
     public PotConfig(int max_storage, String dry_pot, String wet_pot, boolean enableFertilized,
-                     @NotNull PassiveFillMethod[] passiveFillMethods, boolean enableHologram, @Nullable PotHologram potHologram) {
+                     @NotNull PassiveFillMethod[] passiveFillMethods,
+                     @Nullable FertilizerHologram fertilizerHologram,
+                     @Nullable WaterAmountHologram waterAmountHologram,
+                     String requiredItem) {
         this.max_storage = max_storage;
         this.pot = Pair.of(dry_pot, wet_pot);
         this.enableFertilized = enableFertilized;
         this.fertilizerConvertMap = new HashMap<>();
         this.passiveFillMethods = passiveFillMethods;
-        this.enableHologram = enableHologram;
-        this.potHologram = potHologram;
+        this.fertilizerHologram = fertilizerHologram;
+        this.waterAmountHologram = waterAmountHologram;
+        this.requiredItem = requiredItem;
     }
 
     public void registerFertilizedPot(FertilizerType fertilizerType, String dry_pot, String wet_pot) {
@@ -81,11 +88,18 @@ public class PotConfig {
         return passiveFillMethods;
     }
 
-    public boolean isHologramEnabled() {
-        return enableHologram;
+    @Nullable
+    public FertilizerHologram getFertilizerHologram() {
+        return fertilizerHologram;
     }
 
-    public PotHologram getPotHologram() {
-        return potHologram;
+    @Nullable
+    public WaterAmountHologram getWaterAmountHologram() {
+        return waterAmountHologram;
+    }
+
+    @Nullable
+    public String getRequiredItem() {
+        return requiredItem;
     }
 }

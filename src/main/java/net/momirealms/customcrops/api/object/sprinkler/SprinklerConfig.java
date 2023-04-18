@@ -20,6 +20,7 @@ package net.momirealms.customcrops.api.object.sprinkler;
 import net.kyori.adventure.sound.Sound;
 import net.momirealms.customcrops.api.object.ItemMode;
 import net.momirealms.customcrops.api.object.fill.PassiveFillMethod;
+import net.momirealms.customcrops.api.object.hologram.WaterAmountHologram;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -33,13 +34,11 @@ public class SprinklerConfig {
     private final String threeD;
     private final String twoD;
     private final PassiveFillMethod[] passiveFillMethods;
-    private final boolean hasAnimation;
-    private final boolean hasHologram;
-    private final SprinklerHologram sprinklerHologram;
+    private final WaterAmountHologram waterAmountHologram;
     private final SprinklerAnimation sprinklerAnimation;
 
     public SprinklerConfig(String key, int storage, int range, @Nullable Sound sound, @NotNull ItemMode itemMode, @NotNull String threeD, @NotNull String twoD,
-                           @NotNull PassiveFillMethod[] passiveFillMethods, boolean hasHologram, boolean hasAnimation, @Nullable SprinklerHologram sprinklerHologram, SprinklerAnimation sprinklerAnimation) {
+                           @NotNull PassiveFillMethod[] passiveFillMethods, @Nullable WaterAmountHologram waterAmountHologram, SprinklerAnimation sprinklerAnimation) {
         this.key = key;
         this.storage = storage;
         this.range = range;
@@ -48,10 +47,8 @@ public class SprinklerConfig {
         this.threeD = threeD;
         this.twoD = twoD;
         this.passiveFillMethods = passiveFillMethods;
-        this.hasAnimation = hasAnimation;
-        this.hasHologram = hasHologram;
         this.sprinklerAnimation = sprinklerAnimation;
-        this.sprinklerHologram = sprinklerHologram;
+        this.waterAmountHologram = waterAmountHologram;
     }
 
     public String getKey() {
@@ -91,17 +88,9 @@ public class SprinklerConfig {
         return passiveFillMethods;
     }
 
-    public boolean hasAnimation() {
-        return hasAnimation;
-    }
-
-    public boolean hasHologram() {
-        return hasHologram;
-    }
-
     @Nullable
-    public SprinklerHologram getSprinklerHologram() {
-        return sprinklerHologram;
+    public WaterAmountHologram getSprinklerHologram() {
+        return waterAmountHologram;
     }
 
     @Nullable

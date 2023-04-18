@@ -1,20 +1,51 @@
+# Sprinkler key name
 sprinkler_1:
   # This decides the work range
   # (1+1x2)²=9
+  # 洒水器工作范围 3x3
   range: 1
-  storage: 5
+  # max water storage
+  # 最大储水量
+  storage: 4
+  # 2/3D物品
   3D-item: customcrops:sprinkler_1
   2D-item: customcrops:sprinkler_1_item
-  # Item_Frame / Tripwire / Item_Display (1.19.4+)
-  type: Item_Frame
+  # ITEM_FRAME / TRIPWIRE / ITEM_DISPLAY (1.19.4+)
+  # Sprinkler item type
+  type: ITEM_FRAME
+  # The sprinkler can only add water to certain pots
+  # 洒水器只能对指定种植盆浇水
+  pot-whitelist:
+    - default
+  # see how fill-method works in /CustomCrops/contents/pots/default.yml
+  # 请在CustomCrops/contents/pots/default.yml查看"fill-method"如何使用
+  fill-method:
+    method_1:
+      item: WATER_BUCKET
+      return: BUCKET
+      amount: 3
+      particle: WATER_SPLASH
+      sound: minecraft:block.water.ambient
+    method_2:
+      item: WATER
+      return: GLASS_BOTTLE
+      amount: 1
+      particle: WATER_SPLASH
+      sound: minecraft:block.water.ambient
+  # The sound to play when placing
+  # 放置时候的声音
   place-sound: minecraft:block.bone_block.place
+  # The hologram to show when interacting
+  # 交互时候产生的悬浮信息
   hologram:
     enable: true
     # ARMOR_STAND / TEXT_DISPLAY (1.19.4+)
     type: ARMOR_STAND
-    vertical-offset: -0.3
+    # vertical offset(change this according to your model size)
+    # 竖直方向的偏移
+    vertical-offset: -0.1
     duration: 1
-    # Available variables:
+    # Available placeholders:
     # {water_bar} water bar image
     # {current} current water
     # {storage} max storage
@@ -24,29 +55,23 @@ sprinkler_1:
       full: '뀁뀃'
       empty: '뀁뀄'
       right: '뀁뀅'
+    text-display-options:
+      background-color: 0,0,0,0
+      has-shadow: false
+      is-see-through: false
+      use-default-background-color: false
+      text-opacity: -1
   # Water splash animation when sprinkler works
+  # 洒水器在工作时候的洒水效果
   animation:
     enable: true
+    # in seconds
+    # 持续时间
     duration: 10
     vertical-offset: 0.4
     item: customcrops:water_effect
     # ARMOR_STAND / ITEM_DISPLAY (1.19.4+)
     type: ARMOR_STAND
-  pot-whitelist:
-    - default
-  fill-method:
-    method_1:
-      item: WATER_BUCKET
-      return: BUCKET
-      amount: 3
-      particle: WATER_SPLASH
-      sound: minecraft:block.water.ambient
-    method_2:
-      item: WATER
-      return: GLASS_BOTTLE
-      amount: 1
-      particle: WATER_SPLASH
-      sound: minecraft:block.water.ambient
 
 sprinkler_2:
   # (1+2x2)²=25
@@ -54,24 +79,7 @@ sprinkler_2:
   storage: 5
   3D-item: customcrops:sprinkler_2
   2D-item: customcrops:sprinkler_2_item
-  type: Item_Frame
-  place-sound: minecraft:block.bone_block.place
-  hologram:
-    enable: true
-    type: ARMOR_STAND
-    vertical-offset: -0.3
-    duration: 1
-    content: '<font:customcrops:default>{water_bar}</font>'
-    water-bar:
-      left: '뀂'
-      full: '뀁뀃'
-      empty: '뀁뀄'
-      right: '뀁뀅'
-  animation:
-    enable: true
-    vertical-offset: 0.4
-    item: customcrops:water_effect
-    type: ARMOR_STAND
+  type: ITEM_FRAME
   pot-whitelist:
     - default
   fill-method:
@@ -87,30 +95,37 @@ sprinkler_2:
       amount: 1
       particle: WATER_SPLASH
       sound: minecraft:block.water.ambient
+  place-sound: minecraft:block.bone_block.place
+  hologram:
+    enable: true
+    type: ARMOR_STAND
+    vertical-offset: -0.1
+    duration: 1
+    content: '<font:customcrops:default>{water_bar}</font>'
+    water-bar:
+      left: '뀂'
+      full: '뀁뀃'
+      empty: '뀁뀄'
+      right: '뀁뀅'
+    text-display-options:
+      background-color: 0,0,0,0
+      has-shadow: false
+      is-see-through: false
+      use-default-background-color: false
+      text-opacity: -1
+  animation:
+    enable: true
+    duration: 10
+    vertical-offset: 0.4
+    item: customcrops:water_effect
+    type: ARMOR_STAND
 
 sprinkler_3:
   range: 2
   storage: 7
   3D-item: customcrops:sprinkler_3
   2D-item: customcrops:sprinkler_3_item
-  type: Item_Frame
-  place-sound: minecraft:block.bone_block.place
-  hologram:
-    enable: true
-    type: ARMOR_STAND
-    vertical-offset: -0.3
-    duration: 1
-    content: '<font:customcrops:default>{water_bar}</font>'
-    water-bar:
-      left: '뀂'
-      full: '뀁뀃'
-      empty: '뀁뀄'
-      right: '뀁뀅'
-  animation:
-    enable: true
-    vertical-offset: 0.4
-    item: customcrops:water_effect
-    type: ARMOR_STAND
+  type: ITEM_FRAME
   pot-whitelist:
     - default
   fill-method:
@@ -126,3 +141,27 @@ sprinkler_3:
       amount: 1
       particle: WATER_SPLASH
       sound: minecraft:block.water.ambient
+  place-sound: minecraft:block.bone_block.place
+  hologram:
+    enable: true
+    type: ARMOR_STAND
+    vertical-offset: -0.1
+    duration: 1
+    content: '<font:customcrops:default>{water_bar}</font>'
+    water-bar:
+      left: '뀂'
+      full: '뀁뀃'
+      empty: '뀁뀄'
+      right: '뀁뀅'
+    text-display-options:
+      background-color: 0,0,0,0
+      has-shadow: false
+      is-see-through: false
+      use-default-background-color: false
+      text-opacity: -1
+  animation:
+    enable: true
+    duration: 10
+    vertical-offset: 0.4
+    item: customcrops:water_effect
+    type: ARMOR_STAND

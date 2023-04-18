@@ -389,11 +389,9 @@ public class ConfigUtils {
             ConfigurationSection methodSec = section.getConfigurationSection(key);
             if (methodSec == null) continue;
             String id = methodSec.getString("target", "WATER");
-            PositiveFillMethod.InteractType type = PositiveFillMethod.InteractType.valueOf(methodSec.getString("type", "block").toUpperCase());
             @Subst("namespace:key") String soundKey = methodSec.getString("sound", "minecraft:item.bucket.fill");
             Sound sound = Sound.sound(Key.key(soundKey), Sound.Source.PLAYER, 1, 1);
             PositiveFillMethod method = new PositiveFillMethod(
-                    type,
                     id,
                     methodSec.getInt("amount"),
                     methodSec.contains("particle") ? Particle.valueOf(methodSec.getString("particle", "WATER_SPLASH").toUpperCase()) : null,
@@ -419,5 +417,14 @@ public class ConfigUtils {
             interactWithItems.add(interactWithItem);
         }
         return interactWithItems.toArray(new InteractWithItem[0]);
+    }
+
+    public static int rgbToDecimal(String rgba) {
+        String[] split = rgba.split(",");
+        int r = Integer.parseInt(split[0]);
+        int g = Integer.parseInt(split[1]);
+        int b = Integer.parseInt(split[2]);
+        int a = Integer.parseInt(split[3]);
+        return (a << 24) | (r << 16) | (g << 8) | b;
     }
 }

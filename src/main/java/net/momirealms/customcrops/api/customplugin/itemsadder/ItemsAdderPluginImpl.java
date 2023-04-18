@@ -67,6 +67,7 @@ public class ItemsAdderPluginImpl implements PlatformInterface {
         if (entity instanceof ItemFrame itemFrame)
             return itemFrame;
         else {
+            AdventureUtils.consoleMessage("<red>[CustomCrops] Item Frame not exists: " + id);
             customFurniture.remove(false);
         }
         return null;
@@ -75,7 +76,18 @@ public class ItemsAdderPluginImpl implements PlatformInterface {
     @Nullable
     @Override
     public ItemDisplay placeItemDisplay(Location location, String id) {
-        //TODO Not implemented
+        CustomFurniture customFurniture = CustomFurniture.spawn(id, location.getBlock());
+        if (customFurniture == null) {
+            AdventureUtils.consoleMessage("<red>[CustomCrops] Furniture not exists: " + id);
+            return null;
+        }
+        Entity entity = customFurniture.getArmorstand();
+        if (entity instanceof ItemDisplay itemDisplay)
+            return itemDisplay;
+        else {
+            AdventureUtils.consoleMessage("<red>[CustomCrops] Item Display not exists: " + id);
+            customFurniture.remove(false);
+        }
         return null;
     }
 
@@ -116,11 +128,6 @@ public class ItemsAdderPluginImpl implements PlatformInterface {
         CustomBlock.place(id, location);
     }
 
-    @Override
-    public Location getItemFrameLocation(Location location) {
-        return location.clone().add(0.5, 0.5, 0.5);
-    }
-
     @NotNull
     @Override
     public String getItemStackID(@NotNull ItemStack itemStack) {
@@ -135,8 +142,9 @@ public class ItemsAdderPluginImpl implements PlatformInterface {
     @Nullable
     @Override
     public String getItemDisplayID(ItemDisplay itemDisplay) {
-        //TODO Not implemented
-        return null;
+        CustomFurniture customFurniture = CustomFurniture.byAlreadySpawned(itemDisplay);
+        if (customFurniture == null) return null;
+        return customFurniture.getNamespacedID();
     }
 
     @Nullable

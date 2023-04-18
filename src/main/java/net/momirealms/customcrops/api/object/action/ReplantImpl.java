@@ -18,7 +18,6 @@
 package net.momirealms.customcrops.api.object.action;
 
 import net.momirealms.customcrops.CustomCrops;
-import net.momirealms.customcrops.api.CustomCropsAPI;
 import net.momirealms.customcrops.api.object.ItemMode;
 import net.momirealms.customcrops.api.object.basic.ConfigManager;
 import net.momirealms.customcrops.api.object.basic.MessageManager;
@@ -55,7 +54,7 @@ public class ReplantImpl implements Action {
                     return null;
                 }
                 if (!CustomCrops.getInstance().getPlatformInterface().detectAnyThing(location)) {
-                    CustomCropsAPI.getInstance().placeCustomItem(location, model, newCMode);
+                    CustomCrops.getInstance().getPlatformInterface().placeCustomItem(location, model, newCMode);
                     CustomCrops.getInstance().getWorldDataManager().addCropData(crop_loc, new GrowingCrop(crop, point));
                 }
                 return null;

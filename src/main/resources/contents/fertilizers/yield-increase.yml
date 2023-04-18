@@ -8,6 +8,9 @@ yield_increase_1:
   sound: minecraft:item.hoe.till
   pot-whitelist:
     - default
+  # 10% chance to gain another 3 crops
+  # (100% - 10%) * 40% = 36% chance to gain another 2 crops
+  # (100% - (10% + 36%)) * 80% = 43.2% chance to gain another 1 crop
   chance:
     3: 0.1
     2: 0.4
@@ -22,6 +25,9 @@ yield_increase_2:
   sound: minecraft:item.hoe.till
   pot-whitelist:
     - default
+  # 20% chance to gain another 3 crops
+  # (100% - 20%) * 60% = 48% chance to gain another 2 crops
+  # (100% - (20% + 48%)) * 80% = 25.6% chance to gain another 1 crop
   chance:
     3: 0.2
     2: 0.6
@@ -36,6 +42,8 @@ yield_increase_3:
   sound: minecraft:item.hoe.till
   pot-whitelist:
     - default
+  # 40% chance to gain another 3 crops
+  # (100% - 40%) * 100% = 60% chance to gain another 2 crops
   chance:
     3: 0.4
     2: 1

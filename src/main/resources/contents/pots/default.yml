@@ -1,11 +1,16 @@
+# Pot key name
 default:
-  max-water-storage: 4
+  # The max water storage
+  # 最大储水量
+  max-water-storage: 5
   base:
-    # basic models
+    # basic models, use capital letters if you want to use vanilla blocks
+    # Example: FARMLAND
+    # 基础模型，如果你想要使用原版方块请使用大写字母，例如FARMLAND（耕地）
     dry: customcrops:dry_pot
     wet: customcrops:wet_pot
   # If you want fertilized pots to have different looks
-  # Don't forget to set more bottom-block types in crop's config
+  # 如果你想让施肥的种植盆有不同的外观
   fertilized-pots:
     enable: false
     quality:
@@ -23,12 +28,22 @@ default:
     speed-grow:
       dry: customcrops:dry_pot
       wet: customcrops:wet_pot
+  # Methods to fill the pot
+  # 浇水的方法
   fill-method:
     method_1:
+      # The item to use
+      # 使用的物品
       item: WATER_BUCKET
+      # The item returned
+      # 返还的物品
       return: BUCKET
+      # water amount to add
+      # 增加的水量
       amount: 3
+      # 粒子效果
       particle: WATER_SPLASH
+      # 声音
       sound: minecraft:block.water.ambient
     method_2:
       item: WATER
@@ -42,24 +57,49 @@ default:
       particle: WATER_SPLASH
       sound: minecraft:block.water.ambient
     method_4:
+      # This is just an example
+      # "customcrops:magic_water" actually not exists
+      # 这只是个示例， "customcrops:magic_water"事实上不存在
       item: customcrops:magic_water
-      amount: 10
+      amount: 5
       particle: WATER_SPLASH
       sound: minecraft:block.water.ambient
+  # Pot info hologram
+  # 种植盆悬浮信息
   hologram:
-    enable: true
     # ARMOR_STAND / TEXT_DISPLAY (1.19.4+)
+    # 显示载体
     type: ARMOR_STAND
+    # in seconds
+    # 持续时间
     duration: 2
+    # remove this if you want players can see the pot info even with empty hands
+    # 如果你想要空手也能查看种植盆信息，那么移除这个项目
+    require-item: customcrops:soil_surveyor
+    # Fertilizer info
+    # 肥料信息
     fertilizer:
+      enable: true
       vertical-offset: 0.8
-      text: '<font:customcrops:default>{icon}</font> {left_times}/{max_times}'
+      content: '<font:customcrops:default>{icon}</font> {left_times}/{max_times}'
+    # Water info
+    # 水分信息
     water:
+      enable: true
       vertical-offset: 1.05
-      text: '<font:customcrops:default>{water_bar}</font>'
-      #text: '{current}/{storage}'
+      # Available placeholders
+      # {current} current water 当前水量
+      # {storage} max water 最大储水量
+      # {water_bar} water bar image 水条
+      content: '<font:customcrops:default>{water_bar}</font>'
       water-bar:
         left: '뀂'
         full: '뀁뀃'
         empty: '뀁뀄'
         right: '뀁뀅'
+    text-display-options:
+      background-color: 0,0,0,0
+      has-shadow: false
+      is-see-through: false
+      use-default-background-color: false
+      text-opacity: -1

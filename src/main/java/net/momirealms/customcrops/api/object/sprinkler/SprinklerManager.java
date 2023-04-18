@@ -21,9 +21,11 @@ import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
 import net.momirealms.customcrops.CustomCrops;
 import net.momirealms.customcrops.api.object.Function;
-import net.momirealms.customcrops.api.object.HologramManager;
 import net.momirealms.customcrops.api.object.ItemMode;
 import net.momirealms.customcrops.api.object.fill.PassiveFillMethod;
+import net.momirealms.customcrops.api.object.hologram.HologramManager;
+import net.momirealms.customcrops.api.object.hologram.TextDisplayMeta;
+import net.momirealms.customcrops.api.object.hologram.WaterAmountHologram;
 import net.momirealms.customcrops.api.util.AdventureUtils;
 import net.momirealms.customcrops.api.util.ConfigUtils;
 import org.bukkit.Bukkit;
@@ -93,8 +95,6 @@ public class SprinklerManager extends Function implements Listener {
                 @Subst("namespace:key") String soundKey = sprinklerSec.getString("place-sound", "minecraft:block.bone_block.place");
                 Sound sound = sprinklerSec.contains("place-sound") ? Sound.sound(Key.key(soundKey), Sound.Source.PLAYER, 1, 1) : null;
                 ItemMode itemMode = ItemMode.valueOf(sprinklerSec.getString("type","ITEM_FRAME").toUpperCase());
-                boolean hasAnimation = sprinklerSec.getBoolean("animation.enable");
-                boolean hasHologram = sprinklerSec.getBoolean("hologram.enable");
                 SprinklerConfig sprinklerConfig = new SprinklerConfig(
                         key,
                         sprinklerSec.getInt("storage", 3),
@@ -104,9 +104,7 @@ public class SprinklerManager extends Function implements Listener {
                         threeD,
                         twoD,
                         methods,
-                        hasHologram,
-                        hasAnimation,
-                        hasHologram ? new SprinklerHologram(
+                        sprinklerSec.getBoolean("hologram.enable") ? new WaterAmountHologram(
                                 sprinklerSec.getString("hologram.content",""),
                                 sprinklerSec.getDouble("hologram.vertical-offset"),
                                 HologramManager.Mode.valueOf(sprinklerSec.getString("hologram.type", "ARMOR_STAND").toUpperCase()),
@@ -114,9 +112,16 @@ public class SprinklerManager extends Function implements Listener {
                                 sprinklerSec.getString("hologram.water-bar.left"),
                                 sprinklerSec.getString("hologram.water-bar.full"),
                                 sprinklerSec.getString("hologram.water-bar.empty"),
-                                sprinklerSec.getString("hologram.water-bar.right")
+                                sprinklerSec.getString("hologram.water-bar.right"),
+                                new TextDisplayMeta(
+                                        sprinklerSec.getBoolean("hologram.text-display-options.has-shadow", false),
+                                        sprinklerSec.getBoolean("hologram.text-display-options.is-see-through", false),
+                                        sprinklerSec.getBoolean("hologram.text-display-options.use-default-background-color", false),
+                                        ConfigUtils.rgbToDecimal(sprinklerSec.getString("hologram.text-display-options.background-color", "0,0,0,128")),
+                                        (byte) sprinklerSec.getInt("hologram.text-display-options.text-opacity")
+                                )
                         ) : null,
-                        hasAnimation ? new SprinklerAnimation(
+                        sprinklerSec.getBoolean("animation.enable") ? new SprinklerAnimation(
                                 sprinklerSec.getInt("animation.duration"),
                                 sprinklerSec.getString("animation.item"),
                                 sprinklerSec.getDouble("animation.vertical-offset"),
@@ -146,10 +151,6 @@ public class SprinklerManager extends Function implements Listener {
     @Nullable
     public SprinklerConfig getConfigByKey(String key) {
         return sprinklerConfigMap.get(key);
-    }
-
-    public boolean containsSprinkler(String key) {
-        return sprinklerConfigMap.containsKey(key);
     }
 
     @EventHandler

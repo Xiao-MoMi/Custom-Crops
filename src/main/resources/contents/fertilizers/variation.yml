@@ -3,6 +3,7 @@ variation_1:
   icon: '뀒'
   times: 14
   # If a crop's default variation chance is 0.01, now it's 0.03
+  # 如果农作物的变异概率是0.01，那么使用肥料后变成了0.03
   chance: 0.02
   item: customcrops:variation_1
   before-plant: true

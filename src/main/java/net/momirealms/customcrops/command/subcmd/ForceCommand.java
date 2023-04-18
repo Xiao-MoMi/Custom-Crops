@@ -15,23 +15,19 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.momirealms.customcrops.api.object;
+package net.momirealms.customcrops.command.subcmd;
 
-public class Function {
+import net.momirealms.customcrops.command.AbstractSubCommand;
+import net.momirealms.customcrops.command.subcmd.force.ConsumeTaskCommand;
+import net.momirealms.customcrops.command.subcmd.force.SprinklerWorkCommand;
 
-    public void init() {
+public class ForceCommand extends AbstractSubCommand {
 
-    }
+    public static final ForceCommand INSTANCE = new ForceCommand();
 
-    public void load() {
-
-    }
-
-    public void unload() {
-
-    }
-
-    public void disable() {
-
+    public ForceCommand() {
+        super("force");
+        regSubCommand(SprinklerWorkCommand.INSTANCE);
+        regSubCommand(ConsumeTaskCommand.INSTANCE);
     }
 }

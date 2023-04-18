@@ -25,6 +25,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.momirealms.customcrops.CustomCrops;
 import net.momirealms.customcrops.api.object.ItemMode;
+import net.momirealms.customcrops.api.object.hologram.TextDisplayMeta;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -44,9 +45,7 @@ public class FakeEntityUtils {
             CustomCrops.getProtocolManager().sendServerPacket(player, getSpawnPacket(id, location, EntityType.ITEM_DISPLAY));
             CustomCrops.getProtocolManager().sendServerPacket(player, getItemDisplayMetaPacket(id, CustomCrops.getInstance().getIntegrationManager().build(animation_id)));
         }
-        CustomCrops.getInstance().getScheduler().runTaskAsyncLater(() -> {
-            CustomCrops.getProtocolManager().sendServerPacket(player, getDestroyPacket(id));
-        }, 1000L * duration);
+        CustomCrops.getInstance().getScheduler().runTaskAsyncLater(() -> CustomCrops.getProtocolManager().sendServerPacket(player, getDestroyPacket(id)), 1000L * duration);
     }
 
     public static WrappedDataWatcher createInvisibleDataWatcher() {
@@ -110,15 +109,13 @@ public class FakeEntityUtils {
     public static PacketContainer getVanishArmorStandMetaPacket(int id, Component component) {
         PacketContainer metaPacket = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
         WrappedDataWatcher wrappedDataWatcher = new WrappedDataWatcher();
-        WrappedDataWatcher.Serializer serializer1 = WrappedDataWatcher.Registry.get(Boolean.class);
-        WrappedDataWatcher.Serializer serializer2 = WrappedDataWatcher.Registry.get(Byte.class);
         wrappedDataWatcher.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(2, WrappedDataWatcher.Registry.getChatComponentSerializer(true)), Optional.of(WrappedChatComponent.fromJson(GsonComponentSerializer.gson().serialize(component)).getHandle()));
-        wrappedDataWatcher.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(3, serializer1), true);
-        wrappedDataWatcher.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(5, serializer1), true);
+        wrappedDataWatcher.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(3, WrappedDataWatcher.Registry.get(Boolean.class)), true);
+        wrappedDataWatcher.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(5, WrappedDataWatcher.Registry.get(Boolean.class)), true);
         byte mask1 = 0x20;
         byte mask2 = 0x01;
-        wrappedDataWatcher.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(0, serializer2), mask1);
-        wrappedDataWatcher.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(15, serializer2), mask2);
+        wrappedDataWatcher.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(0, WrappedDataWatcher.Registry.get(Byte.class)), mask1);
+        wrappedDataWatcher.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(15, WrappedDataWatcher.Registry.get(Byte.class)), mask2);
         metaPacket.getModifier().write(0, id);
         if (CustomCrops.getInstance().getVersionHelper().isVersionNewerThan1_19_R2()) {
             setWrappedDataValue(metaPacket, wrappedDataWatcher);
@@ -132,16 +129,24 @@ public class FakeEntityUtils {
         PacketContainer metaPacket = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
         metaPacket.getModifier().write(0, id);
         WrappedDataWatcher wrappedDataWatcher = new WrappedDataWatcher();
-        wrappedDataWatcher.setObject(22, itemStack);
+        wrappedDataWatcher.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(22, WrappedDataWatcher.Registry.getItemStackSerializer(false)), itemStack);
         setWrappedDataValue(metaPacket, wrappedDataWatcher);
         return metaPacket;
     }
 
-    public static PacketContainer getTextDisplayMetaPacket(int id, Component component) {
+    public static PacketContainer getTextDisplayMetaPacket(int id, Component component, TextDisplayMeta textDisplayMeta) {
         PacketContainer metaPacket = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
         metaPacket.getModifier().write(0, id);
         WrappedDataWatcher wrappedDataWatcher = new WrappedDataWatcher();
-        wrappedDataWatcher.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(22, WrappedDataWatcher.Registry.getChatComponentSerializer(true)), Optional.of(WrappedChatComponent.fromJson(GsonComponentSerializer.gson().serialize(component)).getHandle()));
+        wrappedDataWatcher.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(22, WrappedDataWatcher.Registry.getChatComponentSerializer(false)), WrappedChatComponent.fromJson(GsonComponentSerializer.gson().serialize(component)));
+        wrappedDataWatcher.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(24, WrappedDataWatcher.Registry.get(Integer.class)), textDisplayMeta.getBackgroundColor());
+        wrappedDataWatcher.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(14, WrappedDataWatcher.Registry.get(Byte.class)), (byte) 3);
+        wrappedDataWatcher.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(25, WrappedDataWatcher.Registry.get(Byte.class)), textDisplayMeta.getOpacity());
+        int mask = 0;
+        if (textDisplayMeta.isHasShadow()) mask += 1;
+        if (textDisplayMeta.isSeeThrough()) mask += 2;
+        if (textDisplayMeta.isUseDefaultBackground()) mask += 4;
+        wrappedDataWatcher.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(26, WrappedDataWatcher.Registry.get(Byte.class)), (byte) mask);
         setWrappedDataValue(metaPacket, wrappedDataWatcher);
         return metaPacket;
     }

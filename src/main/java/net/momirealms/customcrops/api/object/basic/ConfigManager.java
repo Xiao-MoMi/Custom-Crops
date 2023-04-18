@@ -76,9 +76,15 @@ public class ConfigManager extends Function {
         debug = config.getBoolean("debug");
         setUpMode = config.getBoolean("set-up-mode", true);
         loadWorlds(Objects.requireNonNull(config.getConfigurationSection("worlds")));
+        loadOptimization(Objects.requireNonNull(config.getConfigurationSection("optimization")));
         loadScheduleSystem(Objects.requireNonNull(config.getConfigurationSection("schedule-system")));
         loadMechanic(Objects.requireNonNull(config.getConfigurationSection("mechanics")));
         loadOtherSetting(Objects.requireNonNull(config.getConfigurationSection("other-settings")));
+    }
+
+    private void loadOptimization(ConfigurationSection section) {
+        enableLimitation = section.getBoolean("limitation.enable");
+        maxCropPerChunk = section.getInt("limitation.valid-crop-amount");
     }
 
     private void loadWorlds(ConfigurationSection section) {
@@ -105,6 +111,7 @@ public class ConfigManager extends Function {
         enableGreenhouse = section.getBoolean("season.greenhouse.enable", true);
         greenhouseRange = section.getInt("season.greenhouse.range", 5);
         greenhouseBlock = section.getString("season.greenhouse.block");
+        scarecrow = section.getString("scarecrow");
     }
 
     private void loadOtherSetting(ConfigurationSection section) {

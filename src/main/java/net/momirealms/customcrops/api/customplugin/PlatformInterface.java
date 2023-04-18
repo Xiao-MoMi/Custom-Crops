@@ -18,6 +18,7 @@
 package net.momirealms.customcrops.api.customplugin;
 
 import net.momirealms.customcrops.CustomCrops;
+import net.momirealms.customcrops.api.object.ItemMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -73,8 +74,6 @@ public interface PlatformInterface {
 
     void placeChorus(Location location, String id);
 
-    Location getItemFrameLocation(Location location);
-
     @NotNull
     default String getAnyItemIDAt(Location location) {
         String block = getBlockID(location.getBlock());
@@ -124,7 +123,7 @@ public interface PlatformInterface {
 
     @Nullable
     default ItemFrame getItemFrameAt(Location location) {
-        Collection<ItemFrame> itemFrames = getItemFrameLocation(location).getNearbyEntitiesByType(ItemFrame.class, 0.5, 0.5, 0.5);
+        Collection<ItemFrame> itemFrames = location.clone().add(0.5,0.5,0.5).getNearbyEntitiesByType(ItemFrame.class, 0.5, 0.5, 0.5);
         int i = itemFrames.size();
         int j = 1;
         for (ItemFrame itemFrame : itemFrames) {
@@ -139,7 +138,7 @@ public interface PlatformInterface {
 
     @Nullable
     default ItemDisplay getItemDisplayAt(Location location) {
-        Collection<ItemDisplay> itemDisplays = getItemFrameLocation(location).getNearbyEntitiesByType(ItemDisplay.class, 0.5, 0.5, 0.5);
+        Collection<ItemDisplay> itemDisplays = location.clone().add(0.5,0.5,0.5).getNearbyEntitiesByType(ItemDisplay.class, 0.5, 0.5, 0.5);
         int i = itemDisplays.size();
         int j = 1;
         for (ItemDisplay itemDisplay : itemDisplays) {
@@ -180,5 +179,26 @@ public interface PlatformInterface {
     default boolean detectItemDisplay(Location location) {
         Collection<Entity> entities = location.clone().add(0.5,0.5,0.5).getNearbyEntitiesByType(ItemDisplay.class, 0.5, 0.5, 0.5);
         return entities.size() != 0;
+    }
+
+    default boolean removeCustomItem(Location location, ItemMode itemMode) {
+        if (itemMode == ItemMode.TRIPWIRE || itemMode == ItemMode.CHORUS)
+            return removeCustomBlock(location);
+        else if (itemMode == ItemMode.ITEM_FRAME)
+            return removeItemFrame(location);
+        else if (itemMode == ItemMode.ITEM_DISPLAY)
+            return removeItemDisplay(location);
+        return false;
+    }
+
+    default void placeCustomItem(Location location, String id, ItemMode itemMode) {
+        if (itemMode == ItemMode.TRIPWIRE)
+            placeTripWire(location, id);
+        else if (itemMode == ItemMode.ITEM_FRAME)
+            placeItemFrame(location, id);
+        else if (itemMode == ItemMode.ITEM_DISPLAY)
+            placeItemDisplay(location, id);
+        else if (itemMode == ItemMode.CHORUS)
+            placeChorus(location, id);
     }
 }

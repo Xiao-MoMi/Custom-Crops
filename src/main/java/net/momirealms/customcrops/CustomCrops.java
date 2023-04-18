@@ -26,11 +26,11 @@ import net.momirealms.customcrops.api.customplugin.PlatformInterface;
 import net.momirealms.customcrops.api.customplugin.PlatformManager;
 import net.momirealms.customcrops.api.customplugin.itemsadder.ItemsAdderPluginImpl;
 import net.momirealms.customcrops.api.customplugin.oraxen.OraxenPluginImpl;
-import net.momirealms.customcrops.api.object.HologramManager;
 import net.momirealms.customcrops.api.object.basic.ConfigManager;
 import net.momirealms.customcrops.api.object.basic.MessageManager;
 import net.momirealms.customcrops.api.object.crop.CropManager;
 import net.momirealms.customcrops.api.object.fertilizer.FertilizerManager;
+import net.momirealms.customcrops.api.object.hologram.HologramManager;
 import net.momirealms.customcrops.api.object.pot.PotManager;
 import net.momirealms.customcrops.api.object.scheduler.Scheduler;
 import net.momirealms.customcrops.api.object.season.SeasonManager;
@@ -42,6 +42,7 @@ import net.momirealms.customcrops.command.CustomCropsCommand;
 import net.momirealms.customcrops.helper.LibraryLoader;
 import net.momirealms.customcrops.helper.VersionHelper;
 import net.momirealms.customcrops.integration.IntegrationManager;
+import net.momirealms.protectionlib.ProtectionLib;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -78,11 +79,23 @@ public final class CustomCrops extends JavaPlugin {
     public void onLoad(){
         plugin = this;
         this.loadLibs();
+        ProtectionLib.initialize(this);
     }
 
     @Override
     public void onEnable() {
         adventure = BukkitAudiences.create(this);
+        this.versionHelper = new VersionHelper(this);
+        if (versionHelper.isSpigot()) {
+            AdventureUtils.consoleMessage("<red>========================[CustomCrops]=========================");
+            AdventureUtils.consoleMessage("<red>       Spigot is not officially supported by CustomCrops");
+            AdventureUtils.consoleMessage("<red>             Please use Paper or its forks");
+            AdventureUtils.consoleMessage("<red>       Paper download link: https://papermc.io/downloads");
+            AdventureUtils.consoleMessage("<red>==============================================================");
+            Bukkit.getPluginManager().disablePlugin(this);
+            return;
+        }
+
         protocolManager = ProtocolLibrary.getProtocolManager();
         AdventureUtils.consoleMessage("[CustomCrops] Running on <white>" + Bukkit.getVersion());
         this.registerCommands();
@@ -91,7 +104,6 @@ public final class CustomCrops extends JavaPlugin {
         this.scheduler = new Scheduler(this);
         this.configManager = new ConfigManager(this);
         this.messageManager = new MessageManager(this);
-        this.versionHelper = new VersionHelper(this);
         this.cropManager = new CropManager(this);
         this.integrationManager = new IntegrationManager(this);
         this.seasonManager = new SeasonManager(this);

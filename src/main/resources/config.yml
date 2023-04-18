@@ -4,20 +4,6 @@ config-version: '25'
 metrics: true
 # Language: english / spanish / chinese / turkish
 lang: english
-# AntiGrief
-integrations:
-  Residence: false
-  WorldGuard: false
-  Kingdoms: false
-  GriefDefender: false
-  PlotSquared: false
-  Towny: false
-  Lands: false
-  GriefPrevention: false
-  CrashClaim: false
-  BentoBox: false
-  IridiumSkyBlock: false
-  SuperiorSkyBlock: false
 
 worlds:
   # This is designed for servers that using a separate folder for worlds
@@ -84,6 +70,9 @@ mechanics:
       # effective range (Y axis)
       # Y轴有效范围
       range: 5
+  # scarecrow item id
+  # 稻草人物品id
+  scarecrow: customcrops:scarecrow
 
 other-settings:
   # This option requires a skill-plugin hook

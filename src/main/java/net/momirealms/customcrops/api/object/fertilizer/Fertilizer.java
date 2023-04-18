@@ -55,4 +55,8 @@ public class Fertilizer implements Serializable {
     public int getLeftTimes() {
         return times;
     }
+
+    public void setTimes(int times) {
+        this.times = times;
+    }
 }

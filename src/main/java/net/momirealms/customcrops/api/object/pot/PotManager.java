@@ -19,9 +19,12 @@ package net.momirealms.customcrops.api.object.pot;
 
 import net.momirealms.customcrops.CustomCrops;
 import net.momirealms.customcrops.api.object.Function;
-import net.momirealms.customcrops.api.object.HologramManager;
 import net.momirealms.customcrops.api.object.fertilizer.FertilizerType;
 import net.momirealms.customcrops.api.object.fill.PassiveFillMethod;
+import net.momirealms.customcrops.api.object.hologram.FertilizerHologram;
+import net.momirealms.customcrops.api.object.hologram.HologramManager;
+import net.momirealms.customcrops.api.object.hologram.TextDisplayMeta;
+import net.momirealms.customcrops.api.object.hologram.WaterAmountHologram;
 import net.momirealms.customcrops.api.util.AdventureUtils;
 import net.momirealms.customcrops.api.util.ConfigUtils;
 import org.bukkit.configuration.ConfigurationSection;
@@ -81,26 +84,43 @@ public class PotManager extends Function {
                 }
                 blockToPotKey.put(base_wet, key);
                 blockToPotKey.put(base_dry, key);
-                boolean enableHolo = section.getBoolean("hologram.enable", false);
                 PotConfig potConfig = new PotConfig(
                         section.getInt("max-water-storage"),
                         base_dry,
                         base_wet,
                         enableFertilized,
                         methods,
-                        enableHolo,
-                        enableHolo ? new PotHologram(
-                                section.getString("hologram.fertilizer.text"),
+                        section.getBoolean("hologram.fertilizer.enable", false) ? new FertilizerHologram(
+                                section.getString("hologram.fertilizer.content", ""),
                                 section.getDouble("hologram.fertilizer.vertical-offset"),
-                                section.getString("hologram.water.text"),
+                                HologramManager.Mode.valueOf(section.getString("hologram.type", "ARMOR_STAND").toUpperCase()),
+                                section.getInt("hologram.duration"),
+                                new TextDisplayMeta(
+                                        section.getBoolean("hologram.text-display-options.has-shadow", false),
+                                        section.getBoolean("hologram.text-display-options.is-see-through", false),
+                                        section.getBoolean("hologram.text-display-options.use-default-background-color", false),
+                                        ConfigUtils.rgbToDecimal(section.getString("hologram.text-display-options.background-color", "0,0,0,128")),
+                                        (byte) section.getInt("hologram.text-display-options.text-opacity")
+                                )
+                        ) : null,
+                        section.getBoolean("hologram.water.enable", false) ? new WaterAmountHologram(
+                                section.getString("hologram.water.content", ""),
                                 section.getDouble("hologram.water.vertical-offset"),
                                 HologramManager.Mode.valueOf(section.getString("hologram.type", "ARMOR_STAND").toUpperCase()),
                                 section.getInt("hologram.duration"),
                                 section.getString("hologram.water.water-bar.left"),
                                 section.getString("hologram.water.water-bar.full"),
                                 section.getString("hologram.water.water-bar.empty"),
-                                section.getString("hologram.water.water-bar.right")
-                        ) : null
+                                section.getString("hologram.water.water-bar.right"),
+                                new TextDisplayMeta(
+                                        section.getBoolean("hologram.text-display-options.has-shadow", false),
+                                        section.getBoolean("hologram.text-display-options.is-see-through", false),
+                                        section.getBoolean("hologram.text-display-options.use-default-background-color", false),
+                                        ConfigUtils.rgbToDecimal(section.getString("hologram.text-display-options.background-color", "0,0,0,128")),
+                                        (byte) section.getInt("hologram.text-display-options.text-opacity")
+                                )
+                        ) : null,
+                        section.getString("hologram.require-item")
                 );
                 if (enableFertilized) {
                     ConfigurationSection fertilizedSec = section.getConfigurationSection("fertilized-pots");

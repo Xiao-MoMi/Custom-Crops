@@ -86,7 +86,7 @@ public class CropManager extends Function implements Listener {
             for (String key : config.getKeys(false)) {
                 ConfigurationSection cropSec = config.getConfigurationSection(key);
                 if (cropSec == null) continue;
-                ItemMode itemMode = ItemMode.valueOf(cropSec.getString("crop-mode", "TripWire").toUpperCase());
+                ItemMode itemMode = ItemMode.valueOf(cropSec.getString("type", "TripWire").toUpperCase());
                 String[] bottomBlocks = cropSec.getStringList("pot-whitelist").toArray(new String[0]);
                 if (bottomBlocks.length == 0) {
                     AdventureUtils.consoleMessage("<red>[CustomCrops] pot-whitelist is not set for crop: " + key);

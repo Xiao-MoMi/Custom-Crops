@@ -27,6 +27,10 @@ import net.momirealms.customcrops.integration.item.MMOItemsItemImpl;
 import net.momirealms.customcrops.integration.job.EcoJobsImpl;
 import net.momirealms.customcrops.integration.job.JobsRebornImpl;
 import net.momirealms.customcrops.integration.papi.PlaceholderManager;
+import net.momirealms.customcrops.integration.quest.BattlePassCCQuest;
+import net.momirealms.customcrops.integration.quest.BetonQuestCCQuest;
+import net.momirealms.customcrops.integration.quest.ClueScrollCCQuest;
+import net.momirealms.customcrops.integration.quest.LegacyBetonQuestCCQuest;
 import net.momirealms.customcrops.integration.season.CustomCropsSeasonImpl;
 import net.momirealms.customcrops.integration.season.RealisticSeasonsImpl;
 import net.momirealms.customcrops.integration.skill.AureliumsImpl;
@@ -56,6 +60,7 @@ public class IntegrationManager extends Function {
         this.plugin = plugin;
         this.pluginManager = Bukkit.getPluginManager();
         this.placeholderManager = new PlaceholderManager(plugin);
+        this.registerQuests();
     }
 
     @Override
@@ -139,6 +144,21 @@ public class IntegrationManager extends Function {
             }
         }
         return new ItemStack(Material.AIR);
+    }
+
+    private void registerQuests() {
+        PluginManager pluginManager = Bukkit.getPluginManager();
+        if (pluginManager.isPluginEnabled("ClueScrolls")) {
+            ClueScrollCCQuest quest = new ClueScrollCCQuest(plugin);
+            Bukkit.getPluginManager().registerEvents(quest, plugin);
+        }
+        if (pluginManager.isPluginEnabled("BetonQuest")) {
+            if (Bukkit.getPluginManager().getPlugin("BetonQuest").getDescription().getVersion().startsWith("2")) BetonQuestCCQuest.register();
+            else LegacyBetonQuestCCQuest.register();
+        }
+        if (pluginManager.isPluginEnabled("BattlePass")) {
+            BattlePassCCQuest.register();
+        }
     }
 
     @Nullable
