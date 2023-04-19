@@ -34,7 +34,7 @@ public class Scheduler extends Function {
         this.schedule = new ScheduledThreadPoolExecutor(1);
         this.schedule.setMaximumPoolSize(2);
         this.schedule.setKeepAliveTime(ConfigManager.keepAliveTime, TimeUnit.SECONDS);
-        this.schedule.setRejectedExecutionHandler(new ThreadPoolExecutor.DiscardPolicy());
+        this.schedule.setRejectedExecutionHandler(new ThreadPoolExecutor.AbortPolicy());
     }
 
     @Override

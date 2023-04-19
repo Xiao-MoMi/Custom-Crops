@@ -61,7 +61,7 @@ public class PotManager extends Function {
         File pot_folder = new File(plugin.getDataFolder(), "contents" + File.separator + "pots");
         if (!pot_folder.exists()) {
             if (!pot_folder.mkdirs()) return;
-            plugin.saveResource("contents" + File.separator + "pots" + File.separator + "default.yml", false);
+            ConfigUtils.getConfig("contents" + File.separator + "pots" + File.separator + "default.yml");
         }
         File[] files = pot_folder.listFiles();
         if (files == null) return;

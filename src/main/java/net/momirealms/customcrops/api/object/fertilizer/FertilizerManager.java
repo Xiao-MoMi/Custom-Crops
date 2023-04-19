@@ -79,11 +79,11 @@ public class FertilizerManager extends Function {
         File can_folder = new File(plugin.getDataFolder(), "contents" + File.separator + "fertilizers");
         if (!can_folder.exists()) {
             if (!can_folder.mkdirs()) return;
-            plugin.saveResource("contents" + File.separator + "fertilizers" + File.separator + "speed-grow.yml", false);
-            plugin.saveResource("contents" + File.separator + "fertilizers" + File.separator + "quality.yml", false);
-            plugin.saveResource("contents" + File.separator + "fertilizers" + File.separator + "soil-retain.yml", false);
-            plugin.saveResource("contents" + File.separator + "fertilizers" + File.separator + "yield-increase.yml", false);
-            plugin.saveResource("contents" + File.separator + "fertilizers" + File.separator + "variation.yml", false);
+            ConfigUtils.getConfig("contents" + File.separator + "fertilizers" + File.separator + "speed-grow.yml");
+            ConfigUtils.getConfig("contents" + File.separator + "fertilizers" + File.separator + "quality.yml");
+            ConfigUtils.getConfig("contents" + File.separator + "fertilizers" + File.separator + "soil-retain.yml");
+            ConfigUtils.getConfig("contents" + File.separator + "fertilizers" + File.separator + "yield-increase.yml");
+            ConfigUtils.getConfig("contents" + File.separator + "fertilizers" + File.separator + "variation.yml");
         }
         File[] files = can_folder.listFiles();
         if (files == null) return;

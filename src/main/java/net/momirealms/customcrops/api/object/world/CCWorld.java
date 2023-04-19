@@ -18,6 +18,7 @@
 package net.momirealms.customcrops.api.object.world;
 
 import net.momirealms.customcrops.CustomCrops;
+import net.momirealms.customcrops.api.object.CrowTask;
 import net.momirealms.customcrops.api.object.Function;
 import net.momirealms.customcrops.api.object.ItemMode;
 import net.momirealms.customcrops.api.object.action.Action;
@@ -71,7 +72,8 @@ public class CCWorld extends Function {
     private final GenericObjectPool<ConsumeCheckTask> consumeTaskPool;
     private long lastWorkDay;
     private long lastConsumeDay;
-    private ScheduledFuture<?> scheduledTimerTask;
+    private ScheduledFuture<?> timerTask;
+    private int timer;
 
     public CCWorld(World world) {
         this.world = new WeakReference<>(world);
@@ -90,6 +92,7 @@ public class CCWorld extends Function {
         this.consumeTaskPool = new GenericObjectPool<>(new ConsumeTaskFactory(), new GenericObjectPoolConfig<>());
         this.consumeTaskPool.setMaxTotal(10);
         this.consumeTaskPool.setMinIdle(1);
+        this.timer = 10;
     }
 
     @Override
@@ -124,7 +127,6 @@ public class CCWorld extends Function {
         }
         this.lastConsumeDay = dataFile.getLong("last-consume-day", 0);
         this.lastWorkDay = dataFile.getLong("last-work-day", 0);
-        this.arrangeTask();
     }
 
     @Override
@@ -169,60 +171,55 @@ public class CCWorld extends Function {
     }
 
     public void load() {
-        if (this.scheduledTimerTask == null) {
-            this.scheduledTimerTask = this.schedule.scheduleAtFixedRate(() -> {
-                for (CCChunk chunk : chunkMap.values()) {
-                    chunk.scheduleGrowTask(this);
+        timer = ConfigManager.pointGainInterval;
+        if (this.timerTask == null) {
+            this.timerTask = CustomCrops.getInstance().getScheduler().runTaskTimerAsync(() -> {
+                if (ConfigManager.debug) Log.info("Task queue size: " + schedule.getQueue().size());
+                World current = world.get();
+                if (current != null) {
+                    long fullTime = current.getFullTime();
+                    long day = fullTime / 24000;
+                    long time = current.getTime();
+                    if (time < 60 && day != lastConsumeDay) {
+                        lastConsumeDay = day;
+                        if (ConfigManager.enableSeason && !ConfigManager.rsHook && ConfigManager.autoSeasonChange) {
+                            CustomCrops.getInstance().getSeasonManager().addDate(worldName);
+                        }
+                        if (ConfigManager.enableScheduleSystem) {
+                            scheduleConsumeTask();
+                        }
+                    }
+                    else if (time > 1970 && time < 2030 && lastWorkDay != day) {
+                        lastWorkDay = day;
+                        if (ConfigManager.enableScheduleSystem) {
+                            scheduleSprinklerWork();
+                        }
+                    }
+                    timer--;
+                    if (timer <= 0) {
+                        if (ConfigManager.debug) Log.info("== Grow point ==");
+                        timer = ConfigManager.pointGainInterval;
+                        for (CCChunk chunk : chunkMap.values()) {
+                            chunk.scheduleGrowTask(this);
+                        }
+                    }
                 }
-            }, ThreadLocalRandom.current().nextInt(20), ConfigManager.pointGainInterval, TimeUnit.SECONDS);
+                else {
+                    this.schedule.shutdown();
+                }
+            }, 1000, 1000L);
         }
     }
 
     public void unload() {
-        if (this.scheduledTimerTask != null) {
-            this.scheduledTimerTask.cancel(false);
-            this.scheduledTimerTask = null;
+        if (this.timerTask != null) {
+            this.timerTask.cancel(false);
+            this.timerTask = null;
         }
-    }
-
-    /**
-     * Some season plugin would change the length of a day
-     * So a flag is needed to ensure that all the function would only work once
-     */
-    private void arrangeTask() {
-        this.schedule.scheduleAtFixedRate(() -> {
-            World current = world.get();
-            if (current != null) {
-                long fullTime = current.getFullTime();
-                long day = fullTime / 24000;
-                long time = current.getTime();
-                if (time < 100 && day != lastConsumeDay) {
-                    lastConsumeDay = day;
-                    if (ConfigManager.enableSeason && !ConfigManager.rsHook && ConfigManager.autoSeasonChange) {
-                        CustomCrops.getInstance().getSeasonManager().addDate(worldName);
-                    }
-                    if (ConfigManager.enableScheduleSystem) {
-                        scheduleConsumeTask();
-                    }
-                }
-                else if (time > 1950 && time < 2050 && lastWorkDay != day) {
-                    lastWorkDay = day;
-                    if (ConfigManager.enableScheduleSystem) {
-                        scheduleSprinklerWork();
-                    }
-                }
-            }
-            else {
-                this.schedule.shutdown();
-            }
-        }, 2, 2, TimeUnit.SECONDS);
     }
 
     private void closePool() {
         this.schedule.shutdown();
-        //this.cropTaskPool.close();
-        //this.sprinklerTaskPool.close();
-        //this.consumeTaskPool.close();
     }
 
     public void pushCropTask(SimpleLocation simpleLocation, int delay) {
@@ -426,18 +423,9 @@ public class CCWorld extends Function {
             DeathCondition[] deathConditions = cropConfig.getDeathConditions();
             if (deathConditions != null) {
                 for (DeathCondition deathCondition : deathConditions) {
-                    int delay = deathCondition.checkIfDead(simpleLocation);
-                    if (delay != -1) {
-                        if (delay == 0) {
-                            removeCropData(simpleLocation);
-                            deathCondition.applyDeadModel(simpleLocation, itemMode);
-                        } else {
-                            SimpleLocation copied = simpleLocation.copy();
-                            schedule.schedule(() -> {
-                                removeCropData(copied);
-                                deathCondition.applyDeadModel(copied, itemMode);
-                            }, delay, TimeUnit.MILLISECONDS);
-                        }
+                    if (deathCondition.checkIfDead(simpleLocation)) {
+                        removeCropData(simpleLocation);
+                        deathCondition.applyDeadModel(simpleLocation, itemMode);
                         return;
                     }
                 }
@@ -504,7 +492,6 @@ public class CCWorld extends Function {
         }
 
         growingCrop.setPoints(current + points);
-        if (ConfigManager.debug) Log.info(simpleLocation.toString() + ":" + growingCrop.getPoints());
         if (growingCrop.getPoints() >= cropConfig.getMaxPoints()) {
             removeCropData(simpleLocation);
         }
@@ -518,23 +505,32 @@ public class CCWorld extends Function {
                 chunk.getEntities();
                 return chunk.isEntitiesLoaded();
             });
-            loadEntities.whenComplete((result, throwable) ->
-                    CustomCrops.getInstance().getScheduler().callSyncMethod(() -> {
+            loadEntities.whenComplete((result, throwable) -> {
+                CustomCrops.getInstance().getScheduler().callSyncMethod(() -> {
+                    try {
                         if (CustomCrops.getInstance().getPlatformInterface().removeCustomItem(location, itemMode)) {
                             CustomCrops.getInstance().getPlatformInterface().placeCustomItem(location, finalNextModel, itemMode);
                         } else {
                             removeCropData(simpleLocation);
                         }
-                        return null;
-                    }));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    return null;
+                });
+            });
         }
         else {
             asyncGetChunk.whenComplete((result, throwable) ->
                     CustomCrops.getInstance().getScheduler().callSyncMethod(() -> {
-                        if (CustomCrops.getInstance().getPlatformInterface().removeCustomItem(location, itemMode)) {
-                            CustomCrops.getInstance().getPlatformInterface().placeCustomItem(location, finalNextModel, itemMode);
-                        } else {
-                            removeCropData(simpleLocation);
+                        try {
+                            if (CustomCrops.getInstance().getPlatformInterface().removeCustomItem(location, itemMode)) {
+                                CustomCrops.getInstance().getPlatformInterface().placeCustomItem(location, finalNextModel, itemMode);
+                            } else {
+                                removeCropData(simpleLocation);
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
                         return null;
                     }));

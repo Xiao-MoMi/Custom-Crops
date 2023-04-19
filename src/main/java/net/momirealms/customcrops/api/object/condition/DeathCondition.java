@@ -34,13 +34,13 @@ public class DeathCondition {
         this.conditions = conditions;
     }
 
-    public int checkIfDead(SimpleLocation simpleLocation) {
+    public boolean checkIfDead(SimpleLocation simpleLocation) {
         for (Condition condition : conditions) {
             if (condition.isMet(simpleLocation)) {
-                return condition.getDelay();
+                return true;
             }
         }
-        return -1;
+        return false;
     }
 
     public void applyDeadModel(SimpleLocation simpleLocation, ItemMode itemMode) {

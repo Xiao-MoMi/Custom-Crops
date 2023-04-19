@@ -50,11 +50,9 @@ public class FakeEntityUtils {
 
     public static WrappedDataWatcher createInvisibleDataWatcher() {
         WrappedDataWatcher wrappedDataWatcher = new WrappedDataWatcher();
-        WrappedDataWatcher.Serializer serializer1 = WrappedDataWatcher.Registry.get(Boolean.class);
-        WrappedDataWatcher.Serializer serializer2 = WrappedDataWatcher.Registry.get(Byte.class);
-        wrappedDataWatcher.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(3, serializer1), false);
+        //wrappedDataWatcher.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(3, WrappedDataWatcher.Registry.get(Boolean.class)), false);
         byte flag = 0x20;
-        wrappedDataWatcher.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(0, serializer2), flag);
+        wrappedDataWatcher.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(0, WrappedDataWatcher.Registry.get(Byte.class)), flag);
         return wrappedDataWatcher;
     }
 

@@ -85,6 +85,7 @@ public final class CustomCrops extends JavaPlugin {
     @Override
     public void onEnable() {
         adventure = BukkitAudiences.create(this);
+        protocolManager = ProtocolLibrary.getProtocolManager();
         this.versionHelper = new VersionHelper(this);
         if (versionHelper.isSpigot()) {
             AdventureUtils.consoleMessage("<red>========================[CustomCrops]=========================");
@@ -96,10 +97,9 @@ public final class CustomCrops extends JavaPlugin {
             return;
         }
 
-        protocolManager = ProtocolLibrary.getProtocolManager();
-        AdventureUtils.consoleMessage("[CustomCrops] Running on <white>" + Bukkit.getVersion());
+        if (!this.loadPlatform()) return;
         this.registerCommands();
-        this.loadPlatform();
+        AdventureUtils.consoleMessage("[CustomCrops] Running on <white>" + Bukkit.getVersion());
         ProtectionLib.hook();
 
         this.scheduler = new Scheduler(this);
@@ -191,7 +191,7 @@ public final class CustomCrops extends JavaPlugin {
         }
     }
 
-    private void loadPlatform() {
+    private boolean loadPlatform() {
         PluginManager pluginManager = Bukkit.getPluginManager();
         if (pluginManager.isPluginEnabled("ItemsAdder")) {
             this.platform = Platform.ItemsAdder;
@@ -202,11 +202,17 @@ public final class CustomCrops extends JavaPlugin {
             this.platformInterface = new OraxenPluginImpl();
         }
         if (this.platform == null) {
+            AdventureUtils.consoleMessage("<red>========================[CustomCrops]=========================");
+            AdventureUtils.consoleMessage("<red>   Please install ItemsAdder or Oraxen as dependency.");
+            AdventureUtils.consoleMessage("<red>  ItemsAdder Link: https://www.spigotmc.org/resources/73355/");
+            AdventureUtils.consoleMessage("<red>   Oraxen link: https://www.spigotmc.org/resources/72448/");
+            AdventureUtils.consoleMessage("<red>==============================================================");
             Bukkit.getPluginManager().disablePlugin(this);
-            AdventureUtils.consoleMessage("<red>[CustomCrops] Please install ItemsAdder/Oraxen");
+            return false;
         }
         else {
-            AdventureUtils.consoleMessage("[CustomCrops] Platform: " + platform.name());
+            AdventureUtils.consoleMessage("[CustomCrops] Platform: <green>" + platform.name());
+            return true;
         }
     }
 

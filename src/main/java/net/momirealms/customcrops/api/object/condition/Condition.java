@@ -22,8 +22,4 @@ import net.momirealms.customcrops.api.object.world.SimpleLocation;
 public interface Condition {
 
     boolean isMet(SimpleLocation simpleLocation);
-
-    default int getDelay() {
-        return 0;
-    }
 }

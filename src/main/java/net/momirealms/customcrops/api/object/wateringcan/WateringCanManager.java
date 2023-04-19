@@ -67,7 +67,7 @@ public class WateringCanManager extends Function {
         File can_folder = new File(plugin.getDataFolder(), "contents" + File.separator + "watering-cans");
         if (!can_folder.exists()) {
             if (!can_folder.mkdirs()) return;
-            plugin.saveResource("contents" + File.separator + "watering-cans" + File.separator + "default.yml", false);
+            ConfigUtils.getConfig("contents" + File.separator + "watering-cans" + File.separator + "default.yml");
         }
         File[] files = can_folder.listFiles();
         if (files == null) return;

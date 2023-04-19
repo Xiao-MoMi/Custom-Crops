@@ -26,6 +26,7 @@ import dev.dejvokep.boostedyaml.settings.updater.UpdaterSettings;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
 import net.momirealms.customcrops.CustomCrops;
+import net.momirealms.customcrops.api.customplugin.Platform;
 import net.momirealms.customcrops.api.object.BoneMeal;
 import net.momirealms.customcrops.api.object.InteractWithItem;
 import net.momirealms.customcrops.api.object.ItemMode;
@@ -52,8 +53,8 @@ import org.intellij.lang.annotations.Subst;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -61,13 +62,39 @@ public class ConfigUtils {
 
     /**
      * Get a config by name
-     * @param configName config's name
+     * @param config_path config's path
      * @return yaml
      */
-    public static YamlConfiguration getConfig(String configName) {
-        File file = new File(CustomCrops.getInstance().getDataFolder(), configName);
-        if (!file.exists()) CustomCrops.getInstance().saveResource(configName, false);
+    public static YamlConfiguration getConfig(String config_path) {
+        File file = new File(CustomCrops.getInstance().getDataFolder(), config_path);
+        if (!file.exists()) {
+            CustomCrops.getInstance().saveResource(config_path, false);
+            if (CustomCrops.getInstance().getPlatform() == Platform.Oraxen) {
+                File generated = new File(CustomCrops.getInstance().getDataFolder(), config_path);
+                if (generated.exists() && generated.getName().endsWith(".yml")) {
+                    removeNamespace(generated);
+                }
+            }
+        }
         return YamlConfiguration.loadConfiguration(file);
+    }
+
+    public static void removeNamespace(File file) {
+        String line;
+        StringBuilder sb = new StringBuilder();
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8))) {
+            while ((line = reader.readLine()) != null) {
+                sb.append(line).append(System.lineSeparator());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try (BufferedWriter writer = new BufferedWriter(
+                new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8))) {
+            writer.write(sb.toString().replace(" customcrops:", " ").replace("CHORUS", "TRIPWIRE").replace("<font:customcrops:default>", "<font:minecraft:customcrops>"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**

@@ -18,6 +18,7 @@
 package net.momirealms.customcrops.api.object.crop;
 
 import net.momirealms.customcrops.CustomCrops;
+import net.momirealms.customcrops.api.customplugin.Platform;
 import net.momirealms.customcrops.api.object.Function;
 import net.momirealms.customcrops.api.object.ItemMode;
 import net.momirealms.customcrops.api.object.condition.Condition;
@@ -27,12 +28,14 @@ import net.momirealms.customcrops.api.util.AdventureUtils;
 import net.momirealms.customcrops.api.util.ConfigUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Item;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.ItemSpawnEvent;
+import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
@@ -47,6 +50,7 @@ public class CropManager extends Function implements Listener {
     private final HashMap<String, CropConfig> cropConfigMap;
     private final HashMap<String, StageConfig> stageConfigMap;
     private final HashSet<String> deadCrops;
+    private boolean hasCheckedTripwire;
 
     public CropManager(CustomCrops plugin) {
         this.plugin = plugin;
@@ -77,7 +81,7 @@ public class CropManager extends Function implements Listener {
         File crop_folder = new File(plugin.getDataFolder(), "contents" + File.separator + "crops");
         if (!crop_folder.exists()) {
             if (!crop_folder.mkdirs()) return;
-            plugin.saveResource("contents" + File.separator + "crops" + File.separator + "tomato.yml", false);
+            ConfigUtils.getConfig("contents" + File.separator + "crops" + File.separator + "tomato.yml");
         }
         File[] files = crop_folder.listFiles();
         if (files == null) return;
@@ -87,6 +91,9 @@ public class CropManager extends Function implements Listener {
                 ConfigurationSection cropSec = config.getConfigurationSection(key);
                 if (cropSec == null) continue;
                 ItemMode itemMode = ItemMode.valueOf(cropSec.getString("type", "TripWire").toUpperCase());
+                if (itemMode == ItemMode.TRIPWIRE && !hasCheckedTripwire) {
+                    checkTripwire();
+                }
                 String[] bottomBlocks = cropSec.getStringList("pot-whitelist").toArray(new String[0]);
                 if (bottomBlocks.length == 0) {
                     AdventureUtils.consoleMessage("<red>[CustomCrops] pot-whitelist is not set for crop: " + key);
@@ -185,7 +192,7 @@ public class CropManager extends Function implements Listener {
         if (event.isCancelled()) return;
         Item item = event.getEntity();
         String id = plugin.getPlatformInterface().getItemStackID(item.getItemStack());
-        if (containsStage(id)) {
+        if (containsStage(id) || isDeadCrop(id)) {
             event.setCancelled(true);
         }
     }
@@ -197,5 +204,39 @@ public class CropManager extends Function implements Listener {
     @Nullable
     public CropConfig getCropConfigBySeed(String seed) {
         return seedToCropConfig.get(seed);
+    }
+
+    private void checkTripwire() {
+        hasCheckedTripwire = true;
+        if (plugin.getPlatform() == Platform.ItemsAdder) {
+            Plugin iaP = Bukkit.getPluginManager().getPlugin("ItemsAdder");
+            if (iaP != null) {
+                FileConfiguration config = iaP.getConfig();
+                boolean disabled = config.getBoolean("blocks.disable-REAL_WIRE");
+                if (disabled) {
+                    AdventureUtils.consoleMessage("<red>========================[CustomCrops]=========================");
+                    AdventureUtils.consoleMessage("<red>   Detected that one of your crops is using TRIPWIRE type");
+                    AdventureUtils.consoleMessage("<red>  If you want to use tripwire for custom crops, please set");
+                    AdventureUtils.consoleMessage("<red>\"blocks.disable-REAL_WIRE: false\" in /ItemsAdder/config.yml");
+                    AdventureUtils.consoleMessage("<red>       Change this setting requires a server restart");
+                    AdventureUtils.consoleMessage("<red>  If you have problems with which one to use, read the wiki.");
+                    AdventureUtils.consoleMessage("<red>==============================================================");
+                }
+            }
+        } else if (plugin.getPlatform() == Platform.Oraxen) {
+            Plugin oxP = Bukkit.getPluginManager().getPlugin("Oraxen");
+            if (oxP != null) {
+                YamlConfiguration config = YamlConfiguration.loadConfiguration(new File(oxP.getDataFolder(), "mechanics.yml"));
+                boolean disabled = !config.getBoolean("stringblock.enabled");
+                if (disabled) {
+                    AdventureUtils.consoleMessage("<red>========================[CustomCrops]=========================");
+                    AdventureUtils.consoleMessage("<red>   Detected that one of your crops is using TRIPWIRE type");
+                    AdventureUtils.consoleMessage("<red>  If you want to use tripwire for custom crops, please set");
+                    AdventureUtils.consoleMessage("<red>  \"stringblock.enabled: true\" in /Oraxen/mechanics.yml");
+                    AdventureUtils.consoleMessage("<red>  If you have problems with which one to use, read the wiki.");
+                    AdventureUtils.consoleMessage("<red>==============================================================");
+                }
+            }
+        }
     }
 }

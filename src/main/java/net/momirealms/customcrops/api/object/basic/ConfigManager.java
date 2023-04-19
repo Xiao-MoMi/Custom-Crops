@@ -23,6 +23,7 @@ import net.momirealms.customcrops.api.util.ConfigUtils;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
+import java.io.File;
 import java.util.HashSet;
 import java.util.Objects;
 
@@ -69,7 +70,7 @@ public class ConfigManager extends Function {
     }
 
     private void loadConfig() {
-        ConfigUtils.update("config.yml");
+        if (new File(plugin.getDataFolder(), "config.yml").exists()) ConfigUtils.update("config.yml");
         YamlConfiguration config = ConfigUtils.getConfig("config.yml");
         enableBStats = config.getBoolean("metrics");
         lang = config.getString("lang");

@@ -4,6 +4,8 @@ config-version: '25'
 metrics: true
 # Language: english / spanish / chinese / turkish
 lang: english
+# debug
+debug: false
 
 worlds:
   # This is designed for servers that using a separate folder for worlds

@@ -5,7 +5,7 @@ tomato:
   # Otherwise some unexpected problems would occur
   # TRIPWIRE / ITEM_FRAME / ITEM_DISPLAY (1.19.4+)
   # 农作物模式，请确保和你的资源包配置等一致，否则会出现bug
-  type: ITEM_FRAME
+  type: TRIPWIRE
 
   # The crop can only be planted on certain pots
   # Pot are stored in /CustomCrops/contents/pots

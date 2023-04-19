@@ -24,8 +24,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-import java.util.concurrent.ScheduledFuture;
-
 public class CrowAttack implements Condition {
 
     private final double chance;
@@ -42,20 +40,16 @@ public class CrowAttack implements Condition {
     public boolean isMet(SimpleLocation simpleLocation) {
         if (Math.random() > chance) return false;
         Location location = simpleLocation.getBukkitLocation();
-        if (location == null || CustomCrops.getInstance().getWorldDataManager().hasScarecrow(simpleLocation)) return false;
+        if (location == null || CustomCrops.getInstance().getWorldDataManager().hasScarecrow(simpleLocation)) return true;
         for (Player player : Bukkit.getOnlinePlayers()) {
             SimpleLocation playerLoc = SimpleLocation.getByBukkitLocation(player.getLocation());
             if (playerLoc.isNear(simpleLocation, 48)) {
-                CrowTask crowTask = new CrowTask(player, location.clone().add(0.4,0,0.4), fly_model, stand_model);
-                ScheduledFuture<?> scheduledFuture = CustomCrops.getInstance().getScheduler().runTaskTimerAsync(crowTask, 50, 50);
-                crowTask.setScheduledFuture(scheduledFuture);
+                CustomCrops.getInstance().getScheduler().callSyncMethod(() -> {
+                    new CrowTask(player, location, fly_model, stand_model).runTaskTimerAsynchronously(CustomCrops.getInstance(), 1, 1);
+                    return null;
+                });
             }
         }
         return true;
-    }
-
-    @Override
-    public int getDelay() {
-        return 7000;
     }
 }

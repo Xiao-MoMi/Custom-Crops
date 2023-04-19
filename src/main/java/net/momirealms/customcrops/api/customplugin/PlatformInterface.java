@@ -17,12 +17,15 @@
 
 package net.momirealms.customcrops.api.customplugin;
 
+import io.th0rgal.oraxen.api.OraxenFurniture;
+import io.th0rgal.oraxen.mechanics.provided.gameplay.furniture.FurnitureMechanic;
 import net.momirealms.customcrops.CustomCrops;
 import net.momirealms.customcrops.api.object.ItemMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Interaction;
 import org.bukkit.entity.ItemDisplay;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.inventory.ItemStack;
@@ -138,7 +141,7 @@ public interface PlatformInterface {
 
     @Nullable
     default ItemDisplay getItemDisplayAt(Location location) {
-        Collection<ItemDisplay> itemDisplays = location.clone().add(0.5,0.5,0.5).getNearbyEntitiesByType(ItemDisplay.class, 0.5, 0.5, 0.5);
+        Collection<ItemDisplay> itemDisplays = location.clone().add(0.5,0,0.5).getNearbyEntitiesByType(ItemDisplay.class, 0.5, 0.5, 0.5);
         int i = itemDisplays.size();
         int j = 1;
         for (ItemDisplay itemDisplay : itemDisplays) {
@@ -155,15 +158,21 @@ public interface PlatformInterface {
         ItemFrame itemFrame = getItemFrameAt(location);
         if (itemFrame != null) {
             itemFrame.remove();
+            if (CustomCrops.getInstance().getVersionHelper().isVersionNewerThan1_19_R3()) removeInteractions(location);
             return true;
         }
         return false;
+    }
+
+    default void removeInteractions(Location location) {
+        location.clone().add(0.5,0.5,0.5).getNearbyEntitiesByType(Interaction.class, 0.5, 0.5, 0.5).forEach(Entity::remove);
     }
 
     default boolean removeItemDisplay(Location location) {
         ItemDisplay itemDisplay = getItemDisplayAt(location);
         if (itemDisplay != null) {
             itemDisplay.remove();
+            removeInteractions(location);
             return true;
         }
         return false;
@@ -177,7 +186,7 @@ public interface PlatformInterface {
     }
 
     default boolean detectItemDisplay(Location location) {
-        Collection<Entity> entities = location.clone().add(0.5,0.5,0.5).getNearbyEntitiesByType(ItemDisplay.class, 0.5, 0.5, 0.5);
+        Collection<Entity> entities = location.clone().add(0.5,0,0.5).getNearbyEntitiesByType(ItemDisplay.class, 0.5, 0.5, 0.5);
         return entities.size() != 0;
     }
 

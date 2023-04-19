@@ -72,7 +72,7 @@ public class SprinklerManager extends Function implements Listener {
         File sprinkler_folder = new File(plugin.getDataFolder(), "contents" + File.separator + "sprinklers");
         if (!sprinkler_folder.exists()) {
             if (!sprinkler_folder.mkdirs()) return;
-            plugin.saveResource("contents" + File.separator + "sprinklers" + File.separator + "default.yml", false);
+            ConfigUtils.getConfig("contents" + File.separator + "sprinklers" + File.separator + "default.yml");
         }
         File[] files = sprinkler_folder.listFiles();
         if (files == null) return;

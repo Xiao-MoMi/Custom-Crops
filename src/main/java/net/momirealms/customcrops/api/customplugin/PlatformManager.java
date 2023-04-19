@@ -48,6 +48,7 @@ import net.momirealms.customcrops.api.util.AdventureUtils;
 import net.momirealms.protectionlib.ProtectionLib;
 import org.bukkit.*;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
@@ -58,6 +59,8 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 
@@ -65,6 +68,7 @@ public class PlatformManager extends Function {
 
     private final CustomCrops plugin;
     private final Handler handler;
+    private static final HashSet<Material> REPLACEABLE = new HashSet<>(Arrays.asList(Material.SNOW, Material.VINE, Material.GRASS, Material.TALL_GRASS, Material.SEAGRASS, Material.FERN, Material.LARGE_FERN, Material.AIR));
 
     public PlatformManager(CustomCrops plugin) {
         this.plugin = plugin;
@@ -134,13 +138,13 @@ public class PlatformManager extends Function {
             Block block = event.getClickedBlock();
             String id = plugin.getPlatformInterface().getBlockID(block);
             assert block != null;
-            onInteractSomething(event.getPlayer(), block.getLocation(), id, event);
+            onInteractSomething(event.getPlayer(), block.getLocation(), id, event.getBlockFace(), event);
         }
     }
 
     public void onInteractFurniture(Player player, Entity entity, String id, Cancellable event) {
         if (event.isCancelled()) return;
-        onInteractSomething(player, entity.getLocation().getBlock().getLocation(), id, event);
+        onInteractSomething(player, entity.getLocation().getBlock().getLocation(), id, null, event);
     }
 
     public void onInteractAir(Player player) {
@@ -190,7 +194,7 @@ public class PlatformManager extends Function {
         }
     }
 
-    void onInteractSomething(Player player, Location location, String id, Cancellable event) {
+    void onInteractSomething(Player player, Location location, String id, @Nullable BlockFace blockFace, Cancellable event) {
 
         ItemStack item_in_hand = player.getInventory().getItemInMainHand();
         String item_in_hand_id = plugin.getPlatformInterface().getItemStackID(item_in_hand);
@@ -202,7 +206,7 @@ public class PlatformManager extends Function {
         }
 
         if (ProtectionLib.canPlace(player, location)) {
-            if (onInteractWithSprinkler(player, location, item_in_hand, item_in_hand_id)) {
+            if (onInteractWithSprinkler(player, location, item_in_hand, item_in_hand_id, blockFace)) {
                 return;
             }
 
@@ -402,14 +406,13 @@ public class PlatformManager extends Function {
         }
     }
 
-    public boolean onInteractWithSprinkler(Player player, Location location, ItemStack item_in_hand, String item_in_hand_id) {
+    public boolean onInteractWithSprinkler(Player player, Location location, ItemStack item_in_hand, String item_in_hand_id, @Nullable BlockFace blockFace) {
         SprinklerConfig sprinklerConfig = plugin.getSprinklerManager().getConfigByItemID(item_in_hand_id);
         if (sprinklerConfig == null) {
             return false;
         }
 
-        // Prevent player from placing sprinkler on furniture
-        if (location.getBlock().getType() == Material.AIR) {
+        if (blockFace != BlockFace.UP || REPLACEABLE.contains(location.getBlock().getType())) {
             return true;
         }
 
@@ -902,20 +905,22 @@ public class PlatformManager extends Function {
 
         int add = 0;
 
-        if (id != null && location != null) {
-            for (PositiveFillMethod positiveFillMethod : wateringCanConfig.getPositiveFillMethods()) {
-                if (positiveFillMethod.getId().equals(id)) {
-                    add = positiveFillMethod.getAmount();
-                    if (positiveFillMethod.getSound() != null) {
-                        AdventureUtils.playerSound(player, positiveFillMethod.getSound());
+        outer: {
+            if (id != null && location != null) {
+                for (PositiveFillMethod positiveFillMethod : wateringCanConfig.getPositiveFillMethods()) {
+                    if (positiveFillMethod.getId().equals(id)) {
+                        add = positiveFillMethod.getAmount();
+                        if (positiveFillMethod.getSound() != null) {
+                            AdventureUtils.playerSound(player, positiveFillMethod.getSound());
+                        }
+                        if (positiveFillMethod.getParticle() != null) {
+                            location.getWorld().spawnParticle(positiveFillMethod.getParticle(), location.clone().add(0.5,1.1, 0.5),5,0.1,0.1,0.1);
+                        }
+                        break outer;
                     }
-                    if (positiveFillMethod.getParticle() != null) {
-                        location.getWorld().spawnParticle(positiveFillMethod.getParticle(), location.clone().add(0.5,1.1, 0.5),5,0.1,0.1,0.1);
-                    }
-                    break;
                 }
             }
-        } else {
+
             List<Block> lineOfSight = player.getLineOfSight(null, 5);
             List<String> blockIds = lineOfSight.stream().map(block -> plugin.getPlatformInterface().getBlockID(block)).toList();
 

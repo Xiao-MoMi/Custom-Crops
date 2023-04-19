@@ -37,10 +37,9 @@ public class BreakImpl implements Action {
     @Override
     public void doOn(@Nullable Player player, @Nullable SimpleLocation crop_loc, ItemMode itemMode) {
         if (crop_loc == null) return;
-        CustomCrops.getInstance().getScheduler().callSyncMethod(() -> {
+        CustomCrops.getInstance().getScheduler().runTask(() -> {
             CustomCrops.getInstance().getPlatformInterface().removeCustomItem(crop_loc.getBukkitLocation(), itemMode);
             CustomCrops.getInstance().getWorldDataManager().removeCropData(crop_loc);
-            return null;
         });
         if (triggerAction && stage_id != null) {
             StageConfig stageConfig = CustomCrops.getInstance().getCropManager().getStageConfig(stage_id);

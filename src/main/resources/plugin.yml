@@ -49,6 +49,8 @@ permissions :
       customcrops.about: true
       customcrops.setdate: true
       customcrops.setseason: true
+      customcrops.force: true
+      customcrops.migrate: true
   customcrops.reload:
     default: op
   customcrops.help:
@@ -58,4 +60,8 @@ permissions :
   customcrops.setdate:
     default: op
   customcrops.setseason:
+    default: op
+  customcrops.force:
+    default: op
+  customcrops.migrate:
     default: op
