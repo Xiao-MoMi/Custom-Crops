@@ -50,12 +50,12 @@ public class ItemsAdderHandler extends Handler {
 
     @EventHandler
     public void onPlaceFurniture(FurniturePlaceSuccessEvent event) {
-        platformManager.onPlaceFurniture(event.getBukkitEntity().getLocation().getBlock().getLocation(), event.getNamespacedID());
+        platformManager.onPlaceFurniture(event.getPlayer(), event.getBukkitEntity().getLocation().getBlock().getLocation(), event.getNamespacedID(), null);
     }
 
     @EventHandler
     public void onPlaceCustomBlock(CustomBlockPlaceEvent event) {
-        platformManager.onPlaceBlock(event.getBlock().getLocation(), event.getNamespacedID(), event);
+        platformManager.onPlaceBlock(event.getPlayer(), event.getBlock().getLocation(), event.getNamespacedID(), event);
     }
 
     @EventHandler

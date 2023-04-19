@@ -100,6 +100,7 @@ public final class CustomCrops extends JavaPlugin {
         AdventureUtils.consoleMessage("[CustomCrops] Running on <white>" + Bukkit.getVersion());
         this.registerCommands();
         this.loadPlatform();
+        ProtectionLib.hook();
 
         this.scheduler = new Scheduler(this);
         this.configManager = new ConfigManager(this);

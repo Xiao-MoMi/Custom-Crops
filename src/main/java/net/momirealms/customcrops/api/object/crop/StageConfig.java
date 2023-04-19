@@ -23,6 +23,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class StageConfig {
 
+    private final int point;
     private final String model;
     private final Action[] breakActions;
     private final InteractWithItem[] interactActions;
@@ -30,7 +31,8 @@ public class StageConfig {
     private final Action[] interactByHandActions;
     private final double offsetCorrection;
 
-    public StageConfig(@Nullable String model, @Nullable Action[] breakActions, @Nullable Action[] growActions, @Nullable InteractWithItem[] interactActions, @Nullable Action[] interactByHandActions, double offsetCorrection) {
+    public StageConfig(int point, @Nullable String model, @Nullable Action[] breakActions, @Nullable Action[] growActions, @Nullable InteractWithItem[] interactActions, @Nullable Action[] interactByHandActions, double offsetCorrection) {
+        this.point = point;
         this.breakActions = breakActions;
         this.interactActions = interactActions;
         this.growActions = growActions;
@@ -66,5 +68,9 @@ public class StageConfig {
 
     public double getOffsetCorrection() {
         return offsetCorrection;
+    }
+
+    public int getPoint() {
+        return point;
     }
 }

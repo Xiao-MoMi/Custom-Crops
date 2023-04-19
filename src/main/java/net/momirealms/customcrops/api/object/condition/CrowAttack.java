@@ -42,7 +42,7 @@ public class CrowAttack implements Condition {
     public boolean isMet(SimpleLocation simpleLocation) {
         if (Math.random() > chance) return false;
         Location location = simpleLocation.getBukkitLocation();
-        if (location == null) return false;
+        if (location == null || CustomCrops.getInstance().getWorldDataManager().hasScarecrow(simpleLocation)) return false;
         for (Player player : Bukkit.getOnlinePlayers()) {
             SimpleLocation playerLoc = SimpleLocation.getByBukkitLocation(player.getLocation());
             if (playerLoc.isNear(simpleLocation, 48)) {

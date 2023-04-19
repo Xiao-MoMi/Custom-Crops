@@ -109,6 +109,7 @@ public class CropManager extends Function implements Listener {
                         int parsed = Integer.parseInt(point);
                         String stageModel = pointSec.getString(point + ".model");
                         StageConfig stageConfig = new StageConfig(
+                                parsed,
                                 stageModel,
                                 ConfigUtils.getActions(pointSec.getConfigurationSection(point + ".events.break"), stageModel),
                                 ConfigUtils.getActions(pointSec.getConfigurationSection(point + ".events.grow"), stageModel),

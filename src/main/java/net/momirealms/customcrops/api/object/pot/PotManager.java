@@ -85,6 +85,7 @@ public class PotManager extends Function {
                 blockToPotKey.put(base_wet, key);
                 blockToPotKey.put(base_dry, key);
                 PotConfig potConfig = new PotConfig(
+                        key,
                         section.getInt("max-water-storage"),
                         base_dry,
                         base_wet,

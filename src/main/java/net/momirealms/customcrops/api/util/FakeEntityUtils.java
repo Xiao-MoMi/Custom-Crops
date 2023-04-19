@@ -139,13 +139,13 @@ public class FakeEntityUtils {
         metaPacket.getModifier().write(0, id);
         WrappedDataWatcher wrappedDataWatcher = new WrappedDataWatcher();
         wrappedDataWatcher.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(22, WrappedDataWatcher.Registry.getChatComponentSerializer(false)), WrappedChatComponent.fromJson(GsonComponentSerializer.gson().serialize(component)));
-        wrappedDataWatcher.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(24, WrappedDataWatcher.Registry.get(Integer.class)), textDisplayMeta.getBackgroundColor());
+        wrappedDataWatcher.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(24, WrappedDataWatcher.Registry.get(Integer.class)), textDisplayMeta.backgroundColor());
         wrappedDataWatcher.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(14, WrappedDataWatcher.Registry.get(Byte.class)), (byte) 3);
-        wrappedDataWatcher.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(25, WrappedDataWatcher.Registry.get(Byte.class)), textDisplayMeta.getOpacity());
+        wrappedDataWatcher.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(25, WrappedDataWatcher.Registry.get(Byte.class)), textDisplayMeta.opacity());
         int mask = 0;
-        if (textDisplayMeta.isHasShadow()) mask += 1;
+        if (textDisplayMeta.hasShadow()) mask += 1;
         if (textDisplayMeta.isSeeThrough()) mask += 2;
-        if (textDisplayMeta.isUseDefaultBackground()) mask += 4;
+        if (textDisplayMeta.useDefaultBackground()) mask += 4;
         wrappedDataWatcher.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(26, WrappedDataWatcher.Registry.get(Byte.class)), (byte) mask);
         setWrappedDataValue(metaPacket, wrappedDataWatcher);
         return metaPacket;

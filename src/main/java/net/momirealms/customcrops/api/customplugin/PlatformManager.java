@@ -45,10 +45,8 @@ import net.momirealms.customcrops.api.object.sprinkler.SprinklerConfig;
 import net.momirealms.customcrops.api.object.wateringcan.WateringCanConfig;
 import net.momirealms.customcrops.api.object.world.SimpleLocation;
 import net.momirealms.customcrops.api.util.AdventureUtils;
-import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Particle;
+import net.momirealms.protectionlib.ProtectionLib;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -95,7 +93,7 @@ public class PlatformManager extends Function {
     public void onPlaceVanilla(BlockPlaceEvent event) {
         if (event.isCancelled()) return;
         Block block = event.getBlock();
-        onPlaceSomething(block.getLocation(), block.getType().name());
+        onPlaceSomething(event.getPlayer(), block.getLocation(), block.getType().name(), event);
     }
 
     public void onBreakTripWire(Player player, Block block, String id, Cancellable event) {
@@ -118,13 +116,14 @@ public class PlatformManager extends Function {
         onBreakSomething(player, entity.getLocation().getBlock().getLocation(), id, event);
     }
 
-    public void onPlaceFurniture(Location location, String id) {
-        onPlaceSomething(location, id);
+    public void onPlaceFurniture(Player player, Location location, String id, Cancellable event) {
+        if (event != null && event.isCancelled()) return;
+        onPlaceSomething(player, location, id, event);
     }
 
-    public void onPlaceBlock(Location location, String id, Cancellable event) {
+    public void onPlaceBlock(Player player, Location location, String id, Cancellable event) {
         if (event.isCancelled()) return;
-        onPlaceSomething(location, id);
+        onPlaceSomething(player, location, id, event);
     }
 
     public void onInteractBlock(PlayerInteractEvent event) {
@@ -155,7 +154,7 @@ public class PlatformManager extends Function {
 
     public void onBreakSomething(Player player, Location location, String id, Cancellable event) {
 
-        if (onBreakGlass(id, location)) {
+        if (onBreakGlass(player, id, location, event)) {
             return;
         }
 
@@ -167,26 +166,26 @@ public class PlatformManager extends Function {
             return;
         }
 
-        if (onBreakSprinkler(id, location)) {
+        if (onBreakSprinkler(player, id, location, event)) {
             return;
         }
 
-        if (onBreakScarecrow(id, location)) {
+        if (onBreakScarecrow(player, id, location, event)) {
             return;
         }
     }
 
-    public void onPlaceSomething(Location location, String id) {
+    public void onPlaceSomething(Player player, Location location, String id, @Nullable Cancellable event) {
 
-        if (onPlaceGlass(id, location)) {
+        if (onPlaceGlass(player, id, location, event)) {
             return;
         }
 
-        if (onPlacePot(id, location)) {
+        if (onPlacePot(player, id, location, event)) {
             return;
         }
 
-        if (onPlaceScarecrow(id, location)) {
+        if (onPlaceScarecrow(player, id, location, event)) {
             return;
         }
     }
@@ -196,69 +195,106 @@ public class PlatformManager extends Function {
         ItemStack item_in_hand = player.getInventory().getItemInMainHand();
         String item_in_hand_id = plugin.getPlatformInterface().getItemStackID(item_in_hand);
 
-        if (onInteractWithSprinkler(player, location, item_in_hand, item_in_hand_id)) {
-            return;
+        if (ProtectionLib.canBreak(player, location)) {
+            if (onInteractCrop(player, id, location, item_in_hand, item_in_hand_id, event)) {
+                return;
+            }
         }
 
-        if (onInteractSprinkler(player, id, location, item_in_hand, item_in_hand_id, event)) {
-            return;
-        }
+        if (ProtectionLib.canPlace(player, location)) {
+            if (onInteractWithSprinkler(player, location, item_in_hand, item_in_hand_id)) {
+                return;
+            }
 
-        if (onInteractPot(player, id, location, item_in_hand, item_in_hand_id, event)) {
-            return;
-        }
+            if (onInteractSprinkler(player, id, location, item_in_hand, item_in_hand_id, event)) {
+                return;
+            }
 
-        if (onInteractCrop(player, id, location, item_in_hand, item_in_hand_id, event)) {
-            return;
-        }
+            if (onInteractPot(player, id, location, item_in_hand, item_in_hand_id, event)) {
+                return;
+            }
 
-        if (onInteractWithWateringCan(player, item_in_hand_id, item_in_hand, id, location)) {
-            return;
+            if (onInteractWithWateringCan(player, item_in_hand_id, item_in_hand, id, location)) {
+                return;
+            }
         }
-
     }
 
-    public boolean onBreakGlass(String id, Location location) {
+    public boolean onBreakGlass(Player player, String id, Location location, Cancellable event) {
         if (!id.equals(ConfigManager.greenhouseBlock)) {
             return false;
+        }
+
+        GreenhouseGlassBreakEvent greenhouseGlassBreakEvent = new GreenhouseGlassBreakEvent(player, location);
+        if (greenhouseGlassBreakEvent.isCancelled()) {
+            event.setCancelled(true);
+            return true;
         }
 
         plugin.getWorldDataManager().removeGreenhouse(SimpleLocation.getByBukkitLocation(location));
         return true;
     }
 
-    public boolean onPlaceGlass(String id, Location location) {
+    public boolean onPlaceGlass(Player player, String id, Location location, Cancellable event) {
         if (!id.equals(ConfigManager.greenhouseBlock)) {
             return false;
+        }
+
+        GreenhouseGlassPlaceEvent greenhouseGlassPlaceEvent = new GreenhouseGlassPlaceEvent(player, location);
+        Bukkit.getPluginManager().callEvent(greenhouseGlassPlaceEvent);
+        if (greenhouseGlassPlaceEvent.isCancelled()) {
+            if (event != null) event.setCancelled(true);
+            return true;
         }
 
         plugin.getWorldDataManager().addGreenhouse(SimpleLocation.getByBukkitLocation(location));
         return true;
     }
 
-    public boolean onBreakScarecrow(String id, Location location) {
+    public boolean onBreakScarecrow(Player player, String id, Location location, Cancellable event) {
         if (!id.equals(ConfigManager.scarecrow)) {
             return false;
+        }
+
+        ScarecrowBreakEvent scarecrowBreakEvent = new ScarecrowBreakEvent(player, location);
+        Bukkit.getPluginManager().callEvent(scarecrowBreakEvent);
+        if (scarecrowBreakEvent.isCancelled()) {
+            event.setCancelled(true);
+            return true;
         }
 
         plugin.getWorldDataManager().removeScarecrow(SimpleLocation.getByBukkitLocation(location));
         return true;
     }
 
-    public boolean onPlaceScarecrow(String id, Location location) {
+    public boolean onPlaceScarecrow(Player player, String id, Location location, Cancellable event) {
         if (!id.equals(ConfigManager.scarecrow)) {
             return false;
+        }
+
+        ScarecrowPlaceEvent scarecrowPlaceEvent = new ScarecrowPlaceEvent(player, location);
+        Bukkit.getPluginManager().callEvent(scarecrowPlaceEvent);
+        if (scarecrowPlaceEvent.isCancelled()) {
+            if (event != null) event.setCancelled(true);
+            return true;
         }
 
         plugin.getWorldDataManager().addScarecrow(SimpleLocation.getByBukkitLocation(location));
         return true;
     }
 
-    private boolean onPlacePot(String id, Location location) {
-        String pot_id = plugin.getPotManager().getPotKeyByBlockID(id);
-        if (pot_id == null) return false;
+    private boolean onPlacePot(Player player, String id, Location location, Cancellable event) {
+        PotConfig potConfig = plugin.getPotManager().getPotConfigByBlockID(id);
+        if (potConfig == null) return false;
 
-        plugin.getWorldDataManager().addPotData(SimpleLocation.getByBukkitLocation(location), new Pot(pot_id, null, 0));
+        PotPlaceEvent potPlaceEvent = new PotPlaceEvent(player, location, potConfig);
+        Bukkit.getPluginManager().callEvent(potPlaceEvent);
+        if (potPlaceEvent.isCancelled()) {
+            if (event != null) event.setCancelled(true);
+            return true;
+        }
+
+        plugin.getWorldDataManager().addPotData(SimpleLocation.getByBukkitLocation(location), new Pot(potConfig.getKey(), null, 0));
         return true;
     }
 
@@ -266,6 +302,13 @@ public class PlatformManager extends Function {
         SprinklerConfig sprinklerConfig = plugin.getSprinklerManager().getConfigByItemID(id);
         if (sprinklerConfig == null) {
             return false;
+        }
+
+        SprinklerInteractEvent sprinklerInteractEvent = new SprinklerInteractEvent(player, item_in_hand, location, sprinklerConfig);
+        Bukkit.getPluginManager().callEvent(sprinklerInteractEvent);
+        if (sprinklerInteractEvent.isCancelled()) {
+            event.setCancelled(true);
+            return true;
         }
 
         outer: {
@@ -365,6 +408,11 @@ public class PlatformManager extends Function {
             return false;
         }
 
+        // Prevent player from placing sprinkler on furniture
+        if (location.getBlock().getType() == Material.AIR) {
+            return true;
+        }
+
         Location sprinkler_loc = location.clone().add(0,1,0);
         if (plugin.getPlatformInterface().detectAnyThing(sprinkler_loc)) return true;
 
@@ -390,6 +438,13 @@ public class PlatformManager extends Function {
 
         StageConfig stageConfig = plugin.getCropManager().getStageConfig(id);
         if (stageConfig == null) {
+            return true;
+        }
+
+        CropInteractEvent cropInteractEvent = new CropInteractEvent(player, item_in_hand, location, cropConfig, stageConfig);
+        Bukkit.getPluginManager().callEvent(cropInteractEvent);
+        if (cropInteractEvent.isCancelled()) {
+            event.setCancelled(true);
             return true;
         }
 
@@ -696,8 +751,16 @@ public class PlatformManager extends Function {
     }
 
     public boolean onBreakPot(Player player, String id, Location location, Cancellable event) {
-        if (!plugin.getPotManager().containsPotBlock(id)) {
+        PotConfig potConfig = plugin.getPotManager().getPotConfigByBlockID(id);
+        if (potConfig == null) {
             return false;
+        }
+
+        PotBreakEvent potBreakEvent = new PotBreakEvent(player, location, potConfig);
+        Bukkit.getPluginManager().callEvent(potBreakEvent);
+        if (potBreakEvent.isCancelled()) {
+            event.setCancelled(true);
+            return true;
         }
 
         Location above_loc = location.clone().add(0,1,0);
@@ -716,9 +779,17 @@ public class PlatformManager extends Function {
         return true;
     }
 
-    private boolean onBreakSprinkler(String id, Location location) {
-        if (plugin.getSprinklerManager().getConfigKeyByItemID(id) == null) {
+    private boolean onBreakSprinkler(Player player, String id, Location location, Cancellable event) {
+        SprinklerConfig sprinklerConfig = plugin.getSprinklerManager().getConfigByItemID(id);
+        if (sprinklerConfig == null) {
             return false;
+        }
+
+        SprinklerBreakEvent sprinklerBreakEvent = new SprinklerBreakEvent(player, location, sprinklerConfig);
+        Bukkit.getPluginManager().callEvent(sprinklerBreakEvent);
+        if (sprinklerBreakEvent.isCancelled()) {
+            event.setCancelled(true);
+            return true;
         }
 
         plugin.getWorldDataManager().removeSprinklerData(SimpleLocation.getByBukkitLocation(location));

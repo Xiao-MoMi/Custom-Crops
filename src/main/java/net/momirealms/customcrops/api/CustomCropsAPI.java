@@ -18,6 +18,12 @@
 package net.momirealms.customcrops.api;
 
 import net.momirealms.customcrops.CustomCrops;
+import net.momirealms.customcrops.api.object.crop.GrowingCrop;
+import net.momirealms.customcrops.api.object.pot.Pot;
+import net.momirealms.customcrops.api.object.sprinkler.Sprinkler;
+import net.momirealms.customcrops.api.object.world.SimpleLocation;
+import org.bukkit.Location;
+import org.jetbrains.annotations.Nullable;
 
 public class CustomCropsAPI {
 
@@ -31,5 +37,27 @@ public class CustomCropsAPI {
 
     public static CustomCropsAPI getInstance() {
         return instance;
+    }
+
+    @Nullable
+    public Pot getPotAt(Location location) {
+        return plugin.getWorldDataManager().getPotData(SimpleLocation.getByBukkitLocation(location));
+    }
+
+    @Nullable
+    public GrowingCrop getCropAt(Location location) {
+        return plugin.getWorldDataManager().getCropData(SimpleLocation.getByBukkitLocation(location));
+    }
+
+    public boolean isGreenhouseGlass(Location location) {
+        return plugin.getWorldDataManager().isGreenhouse(SimpleLocation.getByBukkitLocation(location));
+    }
+
+    public boolean hasScarecrowInChunk(Location location) {
+        return plugin.getWorldDataManager().hasScarecrow(SimpleLocation.getByBukkitLocation(location));
+    }
+
+    public Sprinkler getSprinklerAt(Location location) {
+        return plugin.getWorldDataManager().getSprinklerData(SimpleLocation.getByBukkitLocation(location));
     }
 }

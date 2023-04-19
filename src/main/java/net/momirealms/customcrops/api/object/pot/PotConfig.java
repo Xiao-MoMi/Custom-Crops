@@ -31,6 +31,7 @@ import java.util.HashMap;
 
 public class PotConfig {
 
+    private final String key;
     private final HashMap<FertilizerType, Pair<String, String>> fertilizerConvertMap;
     private final int max_storage;
     private final Pair<String, String> pot;
@@ -40,11 +41,12 @@ public class PotConfig {
     private final WaterAmountHologram waterAmountHologram;
     private final String requiredItem;
 
-    public PotConfig(int max_storage, String dry_pot, String wet_pot, boolean enableFertilized,
+    public PotConfig(String key, int max_storage, String dry_pot, String wet_pot, boolean enableFertilized,
                      @NotNull PassiveFillMethod[] passiveFillMethods,
                      @Nullable FertilizerHologram fertilizerHologram,
                      @Nullable WaterAmountHologram waterAmountHologram,
                      String requiredItem) {
+        this.key = key;
         this.max_storage = max_storage;
         this.pot = Pair.of(dry_pot, wet_pot);
         this.enableFertilized = enableFertilized;
@@ -101,5 +103,10 @@ public class PotConfig {
     @Nullable
     public String getRequiredItem() {
         return requiredItem;
+    }
+
+    @NotNull
+    public String getKey() {
+        return key;
     }
 }

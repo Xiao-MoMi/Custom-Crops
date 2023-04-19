@@ -50,17 +50,17 @@ public class OraxenHandler extends Handler {
 
     @EventHandler
     public void onPlaceFurniture(OraxenFurniturePlaceEvent event) {
-        platformManager.onPlaceFurniture(event.getBaseEntity().getLocation().getBlock().getLocation(), event.getMechanic().getItemID());
+        platformManager.onPlaceFurniture(event.getPlayer(), event.getBaseEntity().getLocation().getBlock().getLocation(), event.getMechanic().getItemID(), event);
     }
 
     @EventHandler
     public void onPlaceStringBlock(OraxenStringBlockPlaceEvent event) {
-        platformManager.onPlaceBlock(event.getBlock().getLocation(), event.getMechanic().getItemID(), event);
+        platformManager.onPlaceBlock(event.getPlayer(), event.getBlock().getLocation(), event.getMechanic().getItemID(), event);
     }
 
     @EventHandler
     public void onPlaceNoteBlock(OraxenNoteBlockPlaceEvent event) {
-        platformManager.onPlaceBlock(event.getBlock().getLocation(), event.getMechanic().getItemID(), event);
+        platformManager.onPlaceBlock(event.getPlayer(), event.getBlock().getLocation(), event.getMechanic().getItemID(), event);
     }
 
     @EventHandler
