@@ -38,11 +38,12 @@ public class BreakImpl implements Action {
     @Override
     public void doOn(@Nullable Player player, @Nullable SimpleLocation crop_loc, ItemMode itemMode) {
         if (crop_loc == null) return;
-        CustomCrops.getInstance().getScheduler().runTask(() -> {
+        CustomCrops.getInstance().getScheduler().callSyncMethod(() -> {
             Location bLoc = crop_loc.getBukkitLocation();
-            if (bLoc == null) return;
+            if (bLoc == null) return null;
             CustomCrops.getInstance().getPlatformInterface().removeAnyThingAt(bLoc);
             CustomCrops.getInstance().getWorldDataManager().removeCropData(crop_loc);
+            return null;
         });
         if (triggerAction && stage_id != null) {
             StageConfig stageConfig = CustomCrops.getInstance().getCropManager().getStageConfig(stage_id);

@@ -141,7 +141,7 @@ public interface PlatformInterface {
 
     @Nullable
     default ItemDisplay getItemDisplayAt(Location location) {
-        Collection<ItemDisplay> itemDisplays = location.clone().add(0.5,0,0.5).getNearbyEntitiesByType(ItemDisplay.class, 0.5, 0.5, 0.5);
+        Collection<ItemDisplay> itemDisplays = location.clone().add(0.5,0.25,0.5).getNearbyEntitiesByType(ItemDisplay.class, 0.5, 0.5, 0.5);
         int i = itemDisplays.size();
         int j = 1;
         for (ItemDisplay itemDisplay : itemDisplays) {
