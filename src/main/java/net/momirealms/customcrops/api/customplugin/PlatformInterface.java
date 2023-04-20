@@ -200,6 +200,12 @@ public interface PlatformInterface {
         return false;
     }
 
+    default void removeAnyThingAt(Location location) {
+        removeAnyBlock(location);
+        removeItemFrame(location);
+        if (CustomCrops.getInstance().getVersionHelper().isVersionNewerThan1_19_R3()) removeItemDisplay(location);
+    }
+
     default void placeCustomItem(Location location, String id, ItemMode itemMode) {
         if (itemMode == ItemMode.TRIPWIRE)
             placeTripWire(location, id);

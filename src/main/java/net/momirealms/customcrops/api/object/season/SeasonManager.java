@@ -19,6 +19,7 @@ package net.momirealms.customcrops.api.object.season;
 
 import net.momirealms.customcrops.CustomCrops;
 import net.momirealms.customcrops.api.object.Function;
+import net.momirealms.customcrops.api.object.basic.ConfigManager;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.ConcurrentHashMap;
@@ -53,6 +54,7 @@ public class SeasonManager extends Function {
     }
 
     public CCSeason getSeason(String world) {
+        if (ConfigManager.syncSeason) world = ConfigManager.referenceWorld;
         SeasonData seasonData = seasonMap.get(world);
         if (seasonData == null) return CCSeason.UNKNOWN;
         return seasonData.getSeason();

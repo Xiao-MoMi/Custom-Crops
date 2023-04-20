@@ -21,6 +21,7 @@ import net.momirealms.customcrops.CustomCrops;
 import net.momirealms.customcrops.api.object.ItemMode;
 import net.momirealms.customcrops.api.object.crop.StageConfig;
 import net.momirealms.customcrops.api.object.world.SimpleLocation;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
@@ -38,7 +39,9 @@ public class BreakImpl implements Action {
     public void doOn(@Nullable Player player, @Nullable SimpleLocation crop_loc, ItemMode itemMode) {
         if (crop_loc == null) return;
         CustomCrops.getInstance().getScheduler().runTask(() -> {
-            CustomCrops.getInstance().getPlatformInterface().removeCustomItem(crop_loc.getBukkitLocation(), itemMode);
+            Location bLoc = crop_loc.getBukkitLocation();
+            if (bLoc == null) return;
+            CustomCrops.getInstance().getPlatformInterface().removeAnyThingAt(bLoc);
             CustomCrops.getInstance().getWorldDataManager().removeCropData(crop_loc);
         });
         if (triggerAction && stage_id != null) {
