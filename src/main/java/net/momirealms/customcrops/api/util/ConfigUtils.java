@@ -32,6 +32,7 @@ import net.momirealms.customcrops.api.object.InteractWithItem;
 import net.momirealms.customcrops.api.object.ItemMode;
 import net.momirealms.customcrops.api.object.Pair;
 import net.momirealms.customcrops.api.object.action.*;
+import net.momirealms.customcrops.api.object.basic.ConfigManager;
 import net.momirealms.customcrops.api.object.condition.Random;
 import net.momirealms.customcrops.api.object.condition.*;
 import net.momirealms.customcrops.api.object.crop.VariationCrop;
@@ -453,5 +454,15 @@ public class ConfigUtils {
         int b = Integer.parseInt(split[2]);
         int a = Integer.parseInt(split[3]);
         return (a << 24) | (r << 16) | (g << 8) | b;
+    }
+
+    public static File getChunkFolder(String world) {
+        File chunks_folder;
+        if (ConfigManager.worldFolderPath.equals("")) {
+            chunks_folder = new File(CustomCrops.getInstance().getDataFolder().getParentFile().getParentFile(), world + File.separator + "customcrops" + File.separator + "chunks");
+        } else {
+            chunks_folder = new File(ConfigManager.worldFolderPath, world + File.separator + "customcrops" + File.separator + "chunks");
+        }
+        return chunks_folder;
     }
 }

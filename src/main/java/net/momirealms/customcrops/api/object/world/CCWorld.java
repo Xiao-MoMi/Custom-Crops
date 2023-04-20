@@ -99,7 +99,7 @@ public class CCWorld extends Function {
     @Override
     @SuppressWarnings("ResultOfMethodCallIgnored")
     public void init() {
-        File chunks_folder = new File(CustomCrops.getInstance().getDataFolder().getParentFile().getParentFile(), ConfigManager.worldFolderPath + worldName + File.separator + "customcrops" + File.separator + "chunks");
+        File chunks_folder = ConfigUtils.getChunkFolder(worldName);
         if (!chunks_folder.exists()) chunks_folder.mkdirs();
         File[] data_files = chunks_folder.listFiles();
         if (data_files == null) return;
@@ -131,14 +131,14 @@ public class CCWorld extends Function {
     }
 
     @Override
-    @SuppressWarnings("ResultOfMethodCallIgnored")
     public void disable() {
         closePool();
         saveCache();
     }
 
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     public void saveCache() {
-        File chunks_folder = new File(CustomCrops.getInstance().getDataFolder().getParentFile().getParentFile(), ConfigManager.worldFolderPath + worldName + File.separator + "customcrops" + File.separator + "chunks");
+        File chunks_folder = ConfigUtils.getChunkFolder(worldName);
         if (!chunks_folder.exists()) chunks_folder.mkdirs();
         for (Map.Entry<ChunkCoordinate, CCChunk> entry : chunkMap.entrySet()) {
             ChunkCoordinate chunkCoordinate = entry.getKey();

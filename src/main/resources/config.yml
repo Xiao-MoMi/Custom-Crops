@@ -1,5 +1,5 @@
 # Don't change
-config-version: '25'
+config-version: '26'
 # BStats
 metrics: true
 # Language: english / spanish / chinese / turkish
@@ -9,9 +9,8 @@ debug: false
 
 worlds:
   # This is designed for servers that using a separate folder for worlds
-  # The default folder is your server's root folder
-  # 如果你的服务器使用独立文件夹存储世界，请在此填入根目录下的文件地址
-  folder: ''
+  # 如果你的服务器使用独立文件夹存储世界，请在此填入绝对地址
+  absolute-world-folder-path: ''
   # Mode: whitelist/blacklist
   # Requires a restart when changing mode or editing world list for the safety of data
   # 模式：白名单/黑名单
@@ -33,7 +32,7 @@ schedule-system:
   # Save cache to file interval (seconds)
   # set "-1" to disable
   # 保存缓存的时间间隔 (秒)
-  cache-save-interval: 7200
+  cache-save-interval: 7500
   # Thread pool settings
   # 线程池设置
   thread-pool-settings:

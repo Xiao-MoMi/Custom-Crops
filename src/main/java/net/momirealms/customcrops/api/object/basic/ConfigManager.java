@@ -90,7 +90,7 @@ public class ConfigManager extends Function {
     }
 
     private void loadWorlds(ConfigurationSection section) {
-        worldFolderPath = section.getString("folder", "");
+        worldFolderPath = section.getString("absolute-world-folder-path", "");
         whiteListWorlds = section.getString("mode", "whitelist").equalsIgnoreCase("whitelist");
         worldList = new HashSet<>(section.getStringList("list"));
     }

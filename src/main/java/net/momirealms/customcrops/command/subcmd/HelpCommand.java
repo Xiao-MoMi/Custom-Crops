@@ -40,7 +40,13 @@ public class HelpCommand extends AbstractSubCommand {
         AdventureUtils.sendMessage(sender, "  <gray>├─<white>help");
         AdventureUtils.sendMessage(sender, "  <gray>├─<white>about");
         AdventureUtils.sendMessage(sender, "  <gray>├─<white>reload <#87CEFA>Reload the plugin");
-        AdventureUtils.sendMessage(sender, "  <gray>└─<white>setseason <#FFFACD><world> <season> <#87CEFA>Set a world's season");
+        AdventureUtils.sendMessage(sender, "  <gray>├─<white>migrate <#87CEFA>Migrate data from 2.0->3.0");
+        AdventureUtils.sendMessage(sender, "  <gray>├─<white>convert <#87CEFA>Convert config from 2.0->3.0");
+        AdventureUtils.sendMessage(sender, "  <gray>├─<white>setseason <#FFFACD><world> <season> <#87CEFA>Set a world's season");
+        AdventureUtils.sendMessage(sender, "  <gray>├─<white>setdate <#FFFACD><world> <date> <#87CEFA>Set a world's date");
+        AdventureUtils.sendMessage(sender, "  <gray>└─<white>force");
+        AdventureUtils.sendMessage(sender, "  <gray>    ├─<white>sprinklerwork <#FFFACD><world> <#87CEFA>Forced sprinklers to work");
+        AdventureUtils.sendMessage(sender, "  <gray>    └─<white>consume <#FFFACD><world> <#87CEFA>Forced pots to reduce water amount and the remaining use of fertilizers");
         return true;
     }
 }

@@ -76,7 +76,13 @@ public class MigrateCommand extends AbstractSubCommand {
 
         @Override
         public void run() {
-            File outer_folder = new File(CustomCrops.getInstance().getDataFolder().getAbsoluteFile().getParentFile().getParentFile() + ConfigManager.worldFolderPath);
+
+            File outer_folder;
+            if (ConfigManager.worldFolderPath.equals("")) {
+                outer_folder = CustomCrops.getInstance().getDataFolder().getAbsoluteFile().getParentFile().getParentFile();
+            } else {
+                outer_folder = new File(ConfigManager.worldFolderPath);
+            }
             if (!outer_folder.isDirectory()) {
                 AdventureUtils.consoleMessage("<red>[CustomCrops] World folder is not detected");
                 return;
