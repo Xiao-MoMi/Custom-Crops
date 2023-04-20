@@ -29,6 +29,7 @@ public class CustomCropsCommand extends AbstractMainCommand {
         regSubCommand(SetDateCommand.INSTANCE);
         regSubCommand(ForceCommand.INSTANCE);
         regSubCommand(MigrateCommand.INSTANCE);
+        regSubCommand(ConvertCommand.INSTANCE);
 //        regSubCommand(PerformanceTest.INSTANCE);
     }
 }

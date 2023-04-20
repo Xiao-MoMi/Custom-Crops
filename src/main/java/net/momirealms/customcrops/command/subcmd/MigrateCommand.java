@@ -39,6 +39,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -46,12 +47,23 @@ public class MigrateCommand extends AbstractSubCommand {
 
     public static final MigrateCommand INSTANCE = new MigrateCommand();
 
+    private final HashSet<String> confirm;
+
     public MigrateCommand() {
         super("migrate");
+        confirm = new HashSet<>();
     }
 
     @Override
     public boolean onCommand(CommandSender sender, List<String> args) {
+
+        if (!confirm.contains(sender.getName())) {
+            confirm.add(sender.getName());
+            AdventureUtils.sendMessage(sender, "<red>[CustomCrops] Type the command again to confirm.");
+            return true;
+        }
+
+        confirm.remove(sender.getName());
         if (sender instanceof Player player) {
             AdventureUtils.playerMessage(player, "Migration started. See the console for more information.");
         }

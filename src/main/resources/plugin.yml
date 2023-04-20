@@ -51,6 +51,7 @@ permissions :
       customcrops.setseason: true
       customcrops.force: true
       customcrops.migrate: true
+      customcrops.convert: true
   customcrops.reload:
     default: op
   customcrops.help:
@@ -64,4 +65,6 @@ permissions :
   customcrops.force:
     default: op
   customcrops.migrate:
+    default: op
+  customcrops.convert:
     default: op

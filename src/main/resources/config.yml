@@ -21,10 +21,19 @@ worlds:
     - world
 
 schedule-system:
-  enable: true
+  # Water amount and fertilizer use would be reduced at 6am
+  # Sprinklers would work at 7am
+  # if disabled, you can do that manually with command /customcrops force [consume/sprinklerwork]
+  # 水分和肥料将在每天6点减少，洒水器将在7点工作
+  # 如果禁用，你可以使用指令/customcrops force [consume/sprinklerwork]手动操作
+  default-schedule: true
   # The average interval for a crop to gain one point (measured in seconds)
   # 平均每个农作物获得一生长点的时间间隔（秒）
   point-gain-interval: 1200
+  # Save cache to file interval (seconds)
+  # set "-1" to disable
+  # 保存缓存的时间间隔 (秒)
+  cache-save-interval: 7200
   # Thread pool settings
   # 线程池设置
   thread-pool-settings:

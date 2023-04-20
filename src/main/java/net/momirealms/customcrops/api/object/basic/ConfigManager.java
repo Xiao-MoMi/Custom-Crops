@@ -56,6 +56,7 @@ public class ConfigManager extends Function {
     public static String referenceWorld;
     public static boolean enableLimitation;
     public static int maxCropPerChunk;
+    public static int cacheSaveInterval;
     public static boolean setUpMode;
 
     private final CustomCrops plugin;
@@ -95,11 +96,12 @@ public class ConfigManager extends Function {
     }
 
     private void loadScheduleSystem(ConfigurationSection section) {
-        enableScheduleSystem = section.getBoolean("enable");
+        enableScheduleSystem = section.getBoolean("default-schedule");
         pointGainInterval = section.getInt("point-gain-interval", 1000);
         corePoolSize = section.getInt("thread-pool-settings.corePoolSize", 2);
         maxPoolSize = section.getInt("thread-pool-settings.maximumPoolSize", 4);
         keepAliveTime = section.getInt("thread-pool-settings.keepAliveTime", 10);
+        cacheSaveInterval = section.getInt("cache-save-interval", 7200);
     }
 
     private void loadMechanic(ConfigurationSection section) {

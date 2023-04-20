@@ -18,7 +18,6 @@
 package net.momirealms.customcrops.api.object.world;
 
 import net.momirealms.customcrops.CustomCrops;
-import net.momirealms.customcrops.api.object.CrowTask;
 import net.momirealms.customcrops.api.object.Function;
 import net.momirealms.customcrops.api.object.ItemMode;
 import net.momirealms.customcrops.api.object.action.Action;
@@ -74,6 +73,7 @@ public class CCWorld extends Function {
     private long lastConsumeDay;
     private ScheduledFuture<?> timerTask;
     private int timer;
+    private int cacheTimer;
 
     public CCWorld(World world) {
         this.world = new WeakReference<>(world);
@@ -93,6 +93,7 @@ public class CCWorld extends Function {
         this.consumeTaskPool.setMaxTotal(10);
         this.consumeTaskPool.setMinIdle(1);
         this.timer = 10;
+        this.cacheTimer = ConfigManager.cacheSaveInterval;
     }
 
     @Override
@@ -133,6 +134,10 @@ public class CCWorld extends Function {
     @SuppressWarnings("ResultOfMethodCallIgnored")
     public void disable() {
         closePool();
+        saveCache();
+    }
+
+    public void saveCache() {
         File chunks_folder = new File(CustomCrops.getInstance().getDataFolder().getParentFile().getParentFile(), ConfigManager.worldFolderPath + worldName + File.separator + "customcrops" + File.separator + "chunks");
         if (!chunks_folder.exists()) chunks_folder.mkdirs();
         for (Map.Entry<ChunkCoordinate, CCChunk> entry : chunkMap.entrySet()) {
@@ -203,8 +208,17 @@ public class CCWorld extends Function {
                             chunk.scheduleGrowTask(this);
                         }
                     }
+                    if (ConfigManager.cacheSaveInterval != -1) {
+                        cacheTimer--;
+                        if (cacheTimer <= 0) {
+                            if (ConfigManager.debug) Log.info("== Save cache ==");
+                            cacheTimer = ConfigManager.cacheSaveInterval;
+                            schedule.execute(this::saveCache);
+                        }
+                    }
                 }
                 else {
+                    AdventureUtils.consoleMessage("<red>[CustomCrops] Unexpected world: " + worldName + " unloaded. Shutdown the schedule.");
                     this.schedule.shutdown();
                 }
             }, 1000, 1000L);

@@ -716,8 +716,13 @@ public class PlatformManager extends Function {
 
         WaterAmountHologram waterAmountHologram = potConfig.getWaterAmountHologram();
         if (waterAmountHologram != null && potData != null) {
+            double offset = 0;
+            StageConfig stageConfig = plugin.getCropManager().getStageConfig(plugin.getPlatformInterface().getAnyItemIDAt(location.clone().add(0,1,0)));
+            if (stageConfig != null) {
+                offset = stageConfig.getOffsetCorrection();
+            }
             plugin.getHologramManager().showHologram(player,
-                    location.clone().add(0.5,waterAmountHologram.getOffset(),0.5),
+                    location.clone().add(0.5,waterAmountHologram.getOffset() + offset,0.5),
                     AdventureUtils.getComponentFromMiniMessage(waterAmountHologram.getContent(potData.getWater(), potConfig.getMaxStorage())),
                     waterAmountHologram.getDuration() * 1000,
                     waterAmountHologram.getMode(),
