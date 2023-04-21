@@ -36,8 +36,8 @@ public class AboutCommand extends AbstractSubCommand {
     public boolean onCommand(CommandSender sender, List<String> args) {
         AdventureUtils.sendMessage(sender, "<#FFA500>⛈ CustomCrops <gray>- <#F4A460>" + CustomCrops.getInstance().getVersionHelper().getPluginVersion());
         AdventureUtils.sendMessage(sender, "<#FFFFE0>Custom crop system based on thread pool");
-        AdventureUtils.sendMessage(sender, "<#DA70D6>\uD83E\uDDEA Author: <#FFC0CB>Iqtester");
-        AdventureUtils.sendMessage(sender, "<#FF7F50>\uD83D\uDD25 Contributors: <#FFA07A>Cha_Shao<white>, <#FFA07A>TopOrigin<white>, <#FFA07A>AmazingCat, <#FFA07A>Iqtester");
+        AdventureUtils.sendMessage(sender, "<#DA70D6>\uD83E\uDDEA Author: <#FFC0CB>XiaoMoMi");
+        AdventureUtils.sendMessage(sender, "<#FF7F50>\uD83D\uDD25 Contributors: <#FFA07A>Cha_Shao<white>, <#FFA07A>TopOrigin<white>, <#FFA07A>AmazingCat<white>, <#FFA07A>Iqtester");
         AdventureUtils.sendMessage(sender, "<#FFD700>⭐ <click:open_url:https://mo-mi.gitbook.io/xiaomomi-plugins/plugin-wiki/customcrops>Document</click> <#A9A9A9>| <#FAFAD2>⛏ <click:open_url:https://github.com/Xiao-MoMi/Custom-Crops>Github</click> <#A9A9A9>| <#48D1CC>\uD83D\uDD14 <click:open_url:https://polymart.org/resource/customcrops.2625>Polymart</click>");
         return true;
     }
