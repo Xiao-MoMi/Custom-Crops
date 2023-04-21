@@ -195,7 +195,7 @@ public class CCWorld extends Function {
                             scheduleConsumeTask();
                         }
                     }
-                    else if (time > 1970 && time < 2030 && lastWorkDay != day) {
+                    else if (time > 970 && time < 1030 && lastWorkDay != day) {
                         lastWorkDay = day;
                         if (ConfigManager.enableScheduleSystem) {
                             scheduleSprinklerWork();

@@ -46,6 +46,7 @@ public class SprinklerWorkCommand extends AbstractSubCommand {
             AdventureUtils.sendMessage(sender, MessageManager.prefix + MessageManager.worldNotExist.replace("{world}", args.get(0)));
             return true;
         }
+        AdventureUtils.sendMessage(sender, MessageManager.prefix + MessageManager.forceWork.replace("{world}", args.get(0)));
         CustomCrops.getInstance().getScheduler().runTaskAsync(() -> {
             CCWorld ccworld = CustomCrops.getInstance().getWorldDataManager().getWorld(args.get(0));
             if (ccworld != null) {

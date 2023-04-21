@@ -374,18 +374,22 @@ public class PlatformManager extends Function {
         }
 
         Sprinkler sprinkler = plugin.getWorldDataManager().getSprinklerData(SimpleLocation.getByBukkitLocation(location));
-        if (sprinkler != null) {
-            WaterAmountHologram waterAmountHologram = sprinklerConfig.getSprinklerHologram();
-            if (waterAmountHologram != null) {
-                String content = waterAmountHologram.getContent(sprinkler.getWater(), sprinklerConfig.getStorage());
-                plugin.getHologramManager().showHologram(player,
-                        location.clone().add(0.5, waterAmountHologram.getOffset(),0.5),
-                        AdventureUtils.getComponentFromMiniMessage(content),
-                        waterAmountHologram.getDuration() * 1000,
-                        waterAmountHologram.getMode(),
-                        waterAmountHologram.getTextDisplayMeta()
-                );
+
+        WaterAmountHologram waterAmountHologram = sprinklerConfig.getSprinklerHologram();
+        if (waterAmountHologram != null) {
+            String content;
+            if (sprinkler != null) {
+                content = waterAmountHologram.getContent(sprinkler.getWater(), sprinklerConfig.getStorage());
+            } else {
+                content = waterAmountHologram.getContent(0, sprinklerConfig.getStorage());
             }
+            plugin.getHologramManager().showHologram(player,
+                    location.clone().add(0.5, waterAmountHologram.getOffset(),0.5),
+                    AdventureUtils.getComponentFromMiniMessage(content),
+                    waterAmountHologram.getDuration() * 1000,
+                    waterAmountHologram.getMode(),
+                    waterAmountHologram.getTextDisplayMeta()
+            );
         }
         return true;
     }

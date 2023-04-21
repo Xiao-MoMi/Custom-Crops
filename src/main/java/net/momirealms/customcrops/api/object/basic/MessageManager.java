@@ -49,6 +49,8 @@ public class MessageManager extends Function {
     public static String setDate;
     public static String worldNotExist;
     public static String seasonNotExist;
+    public static String forceWork;
+    public static String forceConsume;
 
     public MessageManager(CustomCrops plugin) {
         this.plugin =plugin;
@@ -81,5 +83,7 @@ public class MessageManager extends Function {
         setDate = config.getString("messages.set-date", "<white>Successfully set {world}'s date to {date}.");
         worldNotExist = config.getString("messages.world-not-exist", "<white>World {world} does not exist.");
         seasonNotExist = config.getString("messages.season-not-exist", "<white>Season {season} does not exist.");
+        forceWork = config.getString("messages.force-sprinkler-work", "<white>Forced {world}'s sprinklers to work.");
+        forceConsume = config.getString("messages.force-consume", "<white>Forced {world}'s pots to reduce water amount and the remaining use of fertilizers.");
     }
 }
