@@ -18,7 +18,10 @@
 package net.momirealms.customcrops.api.object.requirement;
 
 import net.momirealms.customcrops.CustomCrops;
+import net.momirealms.customcrops.api.object.basic.ConfigManager;
 import net.momirealms.customcrops.api.object.season.CCSeason;
+import net.momirealms.customcrops.api.object.world.SimpleLocation;
+import net.momirealms.customcrops.api.object.world.WorldDataManager;
 import net.momirealms.customcrops.integration.SeasonInterface;
 import org.jetbrains.annotations.Nullable;
 
@@ -36,10 +39,19 @@ public class SeasonImpl extends AbstractRequirement implements Requirement {
     @Override
     public boolean isConditionMet(CurrentState currentState) {
         SeasonInterface seasonInterface = CustomCrops.getInstance().getIntegrationManager().getSeasonInterface();
-        if (seasonInterface == null) return true;
         CCSeason currentSeason = seasonInterface.getSeason(currentState.getLocation().getWorld().getName());
         if (seasons.contains(currentSeason)) {
             return true;
+        }
+
+        SimpleLocation simpleLocation = SimpleLocation.getByBukkitLocation(currentState.getLocation());
+        WorldDataManager worldDataManager = CustomCrops.getInstance().getWorldDataManager();
+        if (ConfigManager.enableGreenhouse) {
+            for (int i = 0; i < ConfigManager.greenhouseRange; i++) {
+                if (worldDataManager.isGreenhouse(simpleLocation.add(0, i, 0))) {
+                    return true;
+                }
+            }
         }
         notMetMessage(currentState.getPlayer());
         return false;

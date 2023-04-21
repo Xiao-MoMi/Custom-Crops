@@ -134,6 +134,7 @@ public class CCWorld extends Function {
     public void disable() {
         closePool();
         saveCache();
+        CustomCrops.getInstance().getSeasonManager().unloadSeasonData(worldName);
     }
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
@@ -157,7 +158,7 @@ public class CCWorld extends Function {
         }
         YamlConfiguration dataFile = new YamlConfiguration();
         if (ConfigManager.enableSeason && !ConfigManager.rsHook) {
-            SeasonData seasonData = CustomCrops.getInstance().getSeasonManager().unloadSeasonData(worldName);
+            SeasonData seasonData = CustomCrops.getInstance().getSeasonManager().getSeasonData(worldName);
             if (seasonData == null) {
                 dataFile.set("season", "SPRING");
                 dataFile.set("date", 1);
