@@ -54,9 +54,10 @@ public class SeasonManager extends Function {
     }
 
     public CCSeason getSeason(String world) {
-        if (ConfigManager.syncSeason) world = ConfigManager.referenceWorld;
-        SeasonData seasonData = seasonMap.get(world);
-        if (seasonData == null) return CCSeason.UNKNOWN;
+        SeasonData seasonData = seasonMap.get(ConfigManager.syncSeason ? ConfigManager.referenceWorld : world);
+        if (seasonData == null) {
+            return CCSeason.UNKNOWN;
+        }
         return seasonData.getSeason();
     }
 
@@ -66,7 +67,7 @@ public class SeasonManager extends Function {
     }
 
     public int getDate(String world) {
-        SeasonData seasonData = seasonMap.get(world);
+        SeasonData seasonData = seasonMap.get(ConfigManager.syncSeason ? ConfigManager.referenceWorld : world);
         if (seasonData == null) return -1;
         return seasonData.getDate();
     }

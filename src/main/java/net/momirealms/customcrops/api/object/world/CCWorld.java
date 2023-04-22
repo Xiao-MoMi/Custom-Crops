@@ -116,8 +116,13 @@ public class CCWorld extends Function {
                 e.printStackTrace();
             }
         }
-        YamlConfiguration dataFile = ConfigUtils.readData(new File(CustomCrops.getInstance().getDataFolder().getParentFile().getParentFile(), ConfigManager.worldFolderPath + worldName + File.separator + "customcrops" + File.separator + "data.yml"));
-        if (ConfigManager.enableSeason && !ConfigManager.rsHook) {
+        YamlConfiguration dataFile;
+        if (ConfigManager.worldFolderPath.equals("")) {
+            dataFile = ConfigUtils.readData(new File(CustomCrops.getInstance().getDataFolder().getParentFile().getParentFile(), worldName + File.separator + "customcrops" + File.separator + "data.yml"));
+        } else {
+            dataFile = ConfigUtils.readData(new File(ConfigManager.worldFolderPath + worldName + File.separator + "customcrops" + File.separator + "data.yml"));
+        }
+        if (ConfigManager.enableSeason) {
             SeasonData seasonData;
             if (dataFile.contains("season") && dataFile.contains("date")) {
                 seasonData = new SeasonData(worldName, CCSeason.valueOf(dataFile.getString("season")), dataFile.getInt("date"));

@@ -196,6 +196,10 @@ public class PlatformManager extends Function {
 
     void onInteractSomething(Player player, Location location, String id, @Nullable BlockFace blockFace, Cancellable event) {
 
+        if (!plugin.getWorldDataManager().isWorldAllowed(location.getWorld())) {
+            return;
+        }
+
         ItemStack item_in_hand = player.getInventory().getItemInMainHand();
         String item_in_hand_id = plugin.getPlatformInterface().getItemStackID(item_in_hand);
 

@@ -33,8 +33,7 @@ public enum CCSeason {
         this.display = display;
     }
 
-    @Override
-    public String toString() {
+    public String getDisplay() {
         return display;
     }
 }

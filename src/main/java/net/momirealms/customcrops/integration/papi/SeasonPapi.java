@@ -61,7 +61,7 @@ public class SeasonPapi extends PlaceholderExpansion {
                     case "season" -> {
                         Player online_player = player.getPlayer();
                         if (online_player == null) return null;
-                        return plugin.getIntegrationManager().getSeasonInterface().getSeason(player.getPlayer().getWorld().getName()).toString();
+                        return plugin.getIntegrationManager().getSeasonInterface().getSeason(player.getPlayer().getWorld().getName()).getDisplay();
                     }
                     case "date" -> {
                         Player online_player = player.getPlayer();
@@ -73,7 +73,7 @@ public class SeasonPapi extends PlaceholderExpansion {
             case 2 -> {
                 switch (split[0]) {
                     case "season" -> {
-                        return plugin.getIntegrationManager().getSeasonInterface().getSeason(split[1]).toString();
+                        return plugin.getIntegrationManager().getSeasonInterface().getSeason(split[1]).getDisplay();
                     }
                     case "date" -> {
                         return String.valueOf(plugin.getIntegrationManager().getSeasonInterface().getDate(split[1]));

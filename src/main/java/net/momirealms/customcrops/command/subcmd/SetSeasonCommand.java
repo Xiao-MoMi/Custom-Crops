@@ -56,7 +56,7 @@ public class SetSeasonCommand extends AbstractSubCommand {
             }
             seasonData.changeSeason(ccSeason);
             CustomCrops.getInstance().getSeasonManager().loadSeasonData(seasonData);
-            AdventureUtils.sendMessage(sender, MessageManager.prefix + MessageManager.setSeason.replace("{world}", args.get(0)).replace("{season}", ccSeason.toString()));
+            AdventureUtils.sendMessage(sender, MessageManager.prefix + MessageManager.setSeason.replace("{world}", args.get(0)).replace("{season}", ccSeason.getDisplay()));
             return true;
         } catch (IllegalArgumentException e) {
             AdventureUtils.sendMessage(sender, MessageManager.prefix + MessageManager.seasonNotExist.replace("{season}", args.get(1)));
