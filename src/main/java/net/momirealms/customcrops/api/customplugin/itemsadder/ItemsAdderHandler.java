@@ -36,6 +36,7 @@ public class ItemsAdderHandler extends Handler {
         switch (block.getType()) {
             case NOTE_BLOCK -> platformManager.onBreakNoteBlock(event.getPlayer(), event.getBlock(), event.getNamespacedID(), event);
             case TRIPWIRE -> platformManager.onBreakTripWire(event.getPlayer(), event.getBlock(), event.getNamespacedID(), event);
+            case CHORUS_PLANT -> platformManager.onBreakChorus(event.getPlayer(), event.getBlock(), event.getNamespacedID(), event);
         }
     }
 

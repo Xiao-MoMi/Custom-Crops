@@ -17,6 +17,7 @@
 
 package net.momirealms.customcrops.api.customplugin;
 
+import dev.lone.itemsadder.api.Events.CustomBlockBreakEvent;
 import net.momirealms.customcrops.CustomCrops;
 import net.momirealms.customcrops.api.customplugin.itemsadder.ItemsAdderHandler;
 import net.momirealms.customcrops.api.customplugin.oraxen.OraxenHandler;
@@ -52,6 +53,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
+import org.bukkit.event.Event;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -105,6 +107,11 @@ public class PlatformManager extends Function {
         onBreakSomething(player, block.getLocation(), id, event);
     }
 
+    public void onBreakChorus(Player player, Block block, String id, CustomBlockBreakEvent event) {
+        if (event.isCancelled()) return;
+        onBreakSomething(player, block.getLocation(), id, event);
+    }
+
     public void onBreakNoteBlock(Player player, Block block, String id, Cancellable event) {
         if (event.isCancelled()) return;
         onBreakSomething(player, block.getLocation(), id, event);
@@ -132,6 +139,7 @@ public class PlatformManager extends Function {
 
     public void onInteractBlock(PlayerInteractEvent event) {
         if (event.getHand() != EquipmentSlot.HAND) return;
+        if (event.useItemInHand() == Event.Result.DENY) return;
         if (event.getAction() == org.bukkit.event.block.Action.RIGHT_CLICK_AIR) {
             onInteractAir(event.getPlayer());
         } else if (event.getAction() == org.bukkit.event.block.Action.RIGHT_CLICK_BLOCK) {
@@ -410,7 +418,7 @@ public class PlatformManager extends Function {
             AdventureUtils.playerSound(player, passiveFillMethod.getSound());
         }
         if (passiveFillMethod.getParticle() != null) {
-            location.getWorld().spawnParticle(passiveFillMethod.getParticle(), location.clone().add(0.5,0.4, 0.5),5,0.3,0.1,0.3);
+            location.getWorld().spawnParticle(passiveFillMethod.getParticle(), location.clone().add(0.5,0.3, 0.5),5,0.3,0.1,0.3);
         }
     }
 
@@ -483,7 +491,7 @@ public class PlatformManager extends Function {
                     }
 
                     event.setCancelled(true);
-                    doPassiveFillAction(player, item_in_hand, passiveFillMethod, pot_loc);
+                    doPassiveFillAction(player, item_in_hand, passiveFillMethod, location);
                     potData.addWater(potWaterEvent.getWater());
                     return true;
                 }
@@ -648,7 +656,7 @@ public class PlatformManager extends Function {
                     }
 
                     event.setCancelled(true);
-                    doPassiveFillAction(player, item_in_hand, passiveFillMethod, location);
+                    doPassiveFillAction(player, item_in_hand, passiveFillMethod, location.clone().add(0,1,0));
                     plugin.getWorldDataManager().addWaterToPot(SimpleLocation.getByBukkitLocation(location), potWaterEvent.getWater(), pot_id);
                     break outer;
                 }
