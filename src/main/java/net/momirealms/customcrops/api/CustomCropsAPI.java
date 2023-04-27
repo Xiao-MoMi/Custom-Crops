@@ -20,6 +20,8 @@ package net.momirealms.customcrops.api;
 import net.momirealms.customcrops.CustomCrops;
 import net.momirealms.customcrops.api.object.crop.GrowingCrop;
 import net.momirealms.customcrops.api.object.pot.Pot;
+import net.momirealms.customcrops.api.object.season.CCSeason;
+import net.momirealms.customcrops.api.object.season.SeasonData;
 import net.momirealms.customcrops.api.object.sprinkler.Sprinkler;
 import net.momirealms.customcrops.api.object.world.SimpleLocation;
 import org.bukkit.Location;
@@ -59,5 +61,35 @@ public class CustomCropsAPI {
 
     public Sprinkler getSprinklerAt(Location location) {
         return plugin.getWorldDataManager().getSprinklerData(SimpleLocation.getByBukkitLocation(location));
+    }
+
+    public void setSeason(String world, CCSeason season) {
+        SeasonData seasonData = plugin.getSeasonManager().getSeasonData(world);
+        if (seasonData != null) {
+            seasonData.changeSeason(season);
+        }
+    }
+
+    public void setDate(String world, int date) {
+        SeasonData seasonData = plugin.getSeasonManager().getSeasonData(world);
+        if (seasonData != null) {
+            seasonData.setDate(date);
+        }
+    }
+
+    public void addDate(String world) {
+        SeasonData seasonData = plugin.getSeasonManager().getSeasonData(world);
+        if (seasonData != null) {
+            seasonData.addDate();
+        }
+    }
+
+    @Nullable
+    public CCSeason getSeason(String world) {
+        SeasonData seasonData = plugin.getSeasonManager().getSeasonData(world);
+        if (seasonData != null) {
+            return seasonData.getSeason();
+        }
+        return null;
     }
 }

@@ -1,5 +1,5 @@
 # Don't change
-config-version: '26'
+config-version: '27'
 # BStats
 metrics: true
 # Language: english / spanish / chinese / turkish
@@ -49,10 +49,15 @@ optimization:
   # 推荐启用区块限制来防止玩家种植大量农作物
   # 如果你使用ItemsAdder的展示框模式，你需要在ItemsAdder的配置文件中设置"max-furniture-vehicles-per-chunk"到较高值，否则农作物种植后会消失
   limitation:
-    enable: true
-    # max amount per chunk
+    # max crop amount per chunk
     # 每个区块的限制数量
-    valid-crop-amount: 64
+    growing-crop-amount:
+      enable: true
+      default: 48
+      # settings for a specified world
+      # 指定世界的设置
+      worlds:
+        - world:64
 
 mechanics:
   # 17/2/1 = 85%/10%/5%

@@ -19,12 +19,15 @@ package net.momirealms.customcrops.api.object.basic;
 
 import net.momirealms.customcrops.CustomCrops;
 import net.momirealms.customcrops.api.object.Function;
+import net.momirealms.customcrops.api.util.AdventureUtils;
 import net.momirealms.customcrops.api.util.ConfigUtils;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 
 public class ConfigManager extends Function {
@@ -59,15 +62,22 @@ public class ConfigManager extends Function {
     public static int cacheSaveInterval;
     public static boolean setUpMode;
 
+    private final HashMap<String, Integer> cropPerWorld;
     private final CustomCrops plugin;
 
     public ConfigManager(CustomCrops plugin) {
         this.plugin = plugin;
+        this.cropPerWorld = new HashMap<>();
     }
 
     @Override
     public void load() {
         this.loadConfig();
+    }
+
+    @Override
+    public void unload() {
+        this.cropPerWorld.clear();
     }
 
     private void loadConfig() {
@@ -85,8 +95,17 @@ public class ConfigManager extends Function {
     }
 
     private void loadOptimization(ConfigurationSection section) {
-        enableLimitation = section.getBoolean("limitation.enable");
-        maxCropPerChunk = section.getInt("limitation.valid-crop-amount");
+        enableLimitation = section.getBoolean("limitation.growing-crop-amount.enable", true);
+        maxCropPerChunk = section.getInt("limitation.growing-crop-amount.default", 64);
+        List<String> worldSettings = section.getStringList("limitation.growing-crop-amount.worlds");
+        for (String setting : worldSettings) {
+            String[] split = setting.split(":", 2);
+            try {
+                cropPerWorld.put(split[0], Integer.parseInt(split[1]));
+            } catch (NumberFormatException e) {
+                AdventureUtils.consoleMessage("<red>[CustomCrops] Wrong number format found at: optimization.limitation.growing-crop-amount.worlds in config.yml");
+            }
+        }
     }
 
     private void loadWorlds(ConfigurationSection section) {
@@ -120,5 +139,9 @@ public class ConfigManager extends Function {
     private void loadOtherSetting(ConfigurationSection section) {
         enableSkillBonus = section.getBoolean("skill-bonus.enable", false);
         bonusFormula =  section.getString("skill-bonus.formula");
+    }
+
+    public int getCropLimit(String world) {
+        return Objects.requireNonNullElse(cropPerWorld.get(world), maxCropPerChunk);
     }
 }

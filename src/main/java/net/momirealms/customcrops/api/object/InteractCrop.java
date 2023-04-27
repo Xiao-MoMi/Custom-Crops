@@ -19,22 +19,25 @@ package net.momirealms.customcrops.api.object;
 
 import net.momirealms.customcrops.CustomCrops;
 import net.momirealms.customcrops.api.object.action.Action;
+import net.momirealms.customcrops.api.object.requirement.Requirement;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class InteractWithItem  {
+public class InteractCrop {
 
     private final boolean consume;
     private final String id;
     private final String returned;
     private final Action[] actions;
+    private final Requirement[] requirements;
 
-    public InteractWithItem(@NotNull String id, boolean consume, @Nullable String returned, @Nullable Action[] actions) {
+    public InteractCrop(@NotNull String id, boolean consume, @Nullable String returned, @Nullable Action[] actions, @Nullable Requirement[] requirements) {
         this.consume = consume;
         this.id = id;
         this.returned = returned;
         this.actions = actions;
+        this.requirements = requirements;
     }
 
     public boolean isRightItem(String item) {
@@ -53,5 +56,10 @@ public class InteractWithItem  {
 
     public Action[] getActions() {
         return actions;
+    }
+
+    @Nullable
+    public Requirement[] getRequirements() {
+        return requirements;
     }
 }

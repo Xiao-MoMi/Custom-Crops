@@ -137,10 +137,12 @@ public class IntegrationManager extends Function {
 
     @NotNull
     public ItemStack build(String key) {
-        for (ItemInterface itemInterface : itemInterfaces) {
-            ItemStack itemStack = itemInterface.build(key);
-            if (itemStack != null) {
-                return itemStack;
+        if (key != null) {
+            for (ItemInterface itemInterface : itemInterfaces) {
+                ItemStack itemStack = itemInterface.build(key);
+                if (itemStack != null) {
+                    return itemStack;
+                }
             }
         }
         return new ItemStack(Material.AIR);

@@ -256,6 +256,11 @@ tomato:
           interact_1:
             item: GOLDEN_HOE
             reduce-amount: false
+            requirements:
+              requirement_1:
+                type: permission
+                value: golden_hoe.use
+                message: "You don't have permission to use golden hoe."
             actions:
               action_1:
                 type: break

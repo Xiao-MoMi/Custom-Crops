@@ -24,7 +24,7 @@ import net.momirealms.customcrops.api.customplugin.oraxen.OraxenHandler;
 import net.momirealms.customcrops.api.event.*;
 import net.momirealms.customcrops.api.object.BoneMeal;
 import net.momirealms.customcrops.api.object.Function;
-import net.momirealms.customcrops.api.object.InteractWithItem;
+import net.momirealms.customcrops.api.object.InteractCrop;
 import net.momirealms.customcrops.api.object.action.Action;
 import net.momirealms.customcrops.api.object.basic.ConfigManager;
 import net.momirealms.customcrops.api.object.basic.MessageManager;
@@ -468,9 +468,18 @@ public class PlatformManager extends Function {
         }
 
         if (item_in_hand_id.equals("AIR")) {
-            Action[] actions = stageConfig.getInteractByHandActions();
-            if (actions != null) {
-                for (Action action : actions) {
+            InteractCrop interactCrop = stageConfig.getInteractByHand();
+            if (interactCrop != null) {
+                Requirement[] requirements = interactCrop.getRequirements();
+                if (requirements != null) {
+                    CurrentState currentState = new CurrentState(location, player);
+                    for (Requirement requirement : requirements) {
+                        if (!requirement.isConditionMet(currentState)) {
+                            return true;
+                        }
+                    }
+                }
+                for (Action action : interactCrop.getActions()) {
                     action.doOn(player, SimpleLocation.getByBukkitLocation(location), cropConfig.getCropMode());
                 }
             }
@@ -549,19 +558,29 @@ public class PlatformManager extends Function {
             }
         }
 
-        InteractWithItem[] interactActions = stageConfig.getInteractActions();
+        InteractCrop[] interactActions = stageConfig.getInteractCropWithItem();
         if (interactActions != null) {
-            for (InteractWithItem interactWithItem : interactActions) {
-                if (interactWithItem.isRightItem(item_in_hand_id)) {
-                    if (player.getGameMode() != GameMode.CREATIVE) {
-                        if (interactWithItem.isConsumed()) {
-                            item_in_hand.setAmount(item_in_hand.getAmount() - 1);
-                        }
-                        if (interactWithItem.getReturned() != null) {
-                            player.getInventory().addItem(interactWithItem.getReturned());
+            outer:
+            for (InteractCrop interactCrop : interactActions) {
+                if (interactCrop.isRightItem(item_in_hand_id)) {
+                    Requirement[] requirements = interactCrop.getRequirements();
+                    if (requirements != null) {
+                        CurrentState currentState = new CurrentState(location, player);
+                        for (Requirement requirement : requirements) {
+                            if (!requirement.isConditionMet(currentState)) {
+                                continue outer;
+                            }
                         }
                     }
-                    Action[] inAc = interactWithItem.getActions();
+                    if (player.getGameMode() != GameMode.CREATIVE) {
+                        if (interactCrop.isConsumed()) {
+                            item_in_hand.setAmount(item_in_hand.getAmount() - 1);
+                        }
+                        if (interactCrop.getReturned() != null) {
+                            player.getInventory().addItem(interactCrop.getReturned());
+                        }
+                    }
+                    Action[] inAc = interactCrop.getActions();
                     if (inAc != null) {
                         for (Action action : inAc) {
                             action.doOn(player, SimpleLocation.getByBukkitLocation(location), cropConfig.getCropMode());
@@ -618,7 +637,7 @@ public class PlatformManager extends Function {
                 }
 
                 if (plugin.getPlatformInterface().detectAnyThing(crop_loc)) return true;
-                if (ConfigManager.enableLimitation && plugin.getWorldDataManager().getChunkCropAmount(SimpleLocation.getByBukkitLocation(crop_loc)) >= ConfigManager.maxCropPerChunk) {
+                if (ConfigManager.enableLimitation && plugin.getWorldDataManager().getChunkCropAmount(SimpleLocation.getByBukkitLocation(crop_loc)) >= plugin.getConfigManager().getCropLimit(location.getWorld().getName())) {
                     AdventureUtils.playerMessage(player, MessageManager.prefix + MessageManager.reachChunkLimit);
                     return true;
                 }

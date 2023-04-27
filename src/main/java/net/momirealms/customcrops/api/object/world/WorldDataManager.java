@@ -246,5 +246,4 @@ public class WorldDataManager extends Function {
     public CCWorld getWorld(String world) {
         return worldMap.get(world);
     }
-
 }

@@ -20,6 +20,7 @@ package net.momirealms.customcrops.api.object.crop;
 import net.momirealms.customcrops.CustomCrops;
 import net.momirealms.customcrops.api.customplugin.Platform;
 import net.momirealms.customcrops.api.object.Function;
+import net.momirealms.customcrops.api.object.InteractCrop;
 import net.momirealms.customcrops.api.object.ItemMode;
 import net.momirealms.customcrops.api.object.condition.Condition;
 import net.momirealms.customcrops.api.object.condition.DeathCondition;
@@ -121,7 +122,13 @@ public class CropManager extends Function implements Listener {
                                 ConfigUtils.getActions(pointSec.getConfigurationSection(point + ".events.break"), stageModel),
                                 ConfigUtils.getActions(pointSec.getConfigurationSection(point + ".events.grow"), stageModel),
                                 ConfigUtils.getInteractActions(pointSec.getConfigurationSection(point + ".events.interact-with-item"), stageModel),
-                                ConfigUtils.getActions(pointSec.getConfigurationSection(point + ".events.interact-by-hand"), stageModel),
+                                pointSec.contains(point + ".events.interact-by-hand") ? new InteractCrop(
+                                        "AIR",
+                                        false,
+                                        null,
+                                        ConfigUtils.getActions(pointSec.getConfigurationSection(point + ".events.interact-by-hand"), stageModel),
+                                        ConfigUtils.getRequirementsWithMsg(pointSec.getConfigurationSection(point + ".events.interact-by-hand.requirements"))
+                                ) : null,
                                 pointSec.getDouble(point + ".hologram-offset-correction", 0d)
                         );
                         stageMap.put(parsed, stageConfig);

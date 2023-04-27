@@ -93,12 +93,18 @@ public class ItemsAdderPluginImpl implements PlatformInterface {
 
     @Override
     public void placeNoteBlock(Location location, String id) {
-        CustomBlock.place(id, location);
+        CustomBlock customBlock = CustomBlock.place(id, location);
+        if (customBlock == null) {
+            AdventureUtils.consoleMessage("<red>[CustomCrops] NoteBlock not exists: " + id);
+        }
     }
 
     @Override
     public void placeTripWire(Location location, String id) {
-        CustomBlock.place(id, location);
+        CustomBlock customBlock = CustomBlock.place(id, location);
+        if (customBlock == null) {
+            AdventureUtils.consoleMessage("<red>[CustomCrops] Tripwire not exists: " + id);
+        }
     }
 
     @NotNull
@@ -125,7 +131,10 @@ public class ItemsAdderPluginImpl implements PlatformInterface {
 
     @Override
     public void placeChorus(Location location, String id) {
-        CustomBlock.place(id, location);
+        CustomBlock customBlock = CustomBlock.place(id, location);
+        if (customBlock == null) {
+            AdventureUtils.consoleMessage("<red>[CustomCrops] Chorus not exists: " + id);
+        }
     }
 
     @NotNull

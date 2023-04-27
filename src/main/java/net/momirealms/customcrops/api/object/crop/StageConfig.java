@@ -17,7 +17,7 @@
 
 package net.momirealms.customcrops.api.object.crop;
 
-import net.momirealms.customcrops.api.object.InteractWithItem;
+import net.momirealms.customcrops.api.object.InteractCrop;
 import net.momirealms.customcrops.api.object.action.Action;
 import org.jetbrains.annotations.Nullable;
 
@@ -26,17 +26,17 @@ public class StageConfig {
     private final int point;
     private final String model;
     private final Action[] breakActions;
-    private final InteractWithItem[] interactActions;
+    private final InteractCrop[] interactWithItem;
     private final Action[] growActions;
-    private final Action[] interactByHandActions;
+    private final InteractCrop interactByHand;
     private final double offsetCorrection;
 
-    public StageConfig(int point, @Nullable String model, @Nullable Action[] breakActions, @Nullable Action[] growActions, @Nullable InteractWithItem[] interactActions, @Nullable Action[] interactByHandActions, double offsetCorrection) {
+    public StageConfig(int point, @Nullable String model, @Nullable Action[] breakActions, @Nullable Action[] growActions, @Nullable InteractCrop[] interactWithItem, @Nullable InteractCrop interactByHand, double offsetCorrection) {
         this.point = point;
         this.breakActions = breakActions;
-        this.interactActions = interactActions;
+        this.interactWithItem = interactWithItem;
         this.growActions = growActions;
-        this.interactByHandActions = interactByHandActions;
+        this.interactByHand = interactByHand;
         this.model = model;
         this.offsetCorrection = offsetCorrection;
     }
@@ -47,8 +47,8 @@ public class StageConfig {
     }
 
     @Nullable
-    public InteractWithItem[] getInteractActions() {
-        return interactActions;
+    public InteractCrop[] getInteractCropWithItem() {
+        return interactWithItem;
     }
 
     @Nullable
@@ -57,8 +57,8 @@ public class StageConfig {
     }
 
     @Nullable
-    public Action[] getInteractByHandActions() {
-        return interactByHandActions;
+    public InteractCrop getInteractByHand() {
+        return interactByHand;
     }
 
     @Nullable

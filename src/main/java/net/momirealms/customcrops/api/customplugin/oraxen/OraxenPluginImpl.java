@@ -104,12 +104,20 @@ public class OraxenPluginImpl implements PlatformInterface {
 
     @Override
     public void placeNoteBlock(Location location, String id) {
-        NoteBlockMechanicFactory.setBlockModel(location.getBlock(), id);
+        try {
+            NoteBlockMechanicFactory.setBlockModel(location.getBlock(), id);
+        } catch (NullPointerException e) {
+            AdventureUtils.consoleMessage("<red>[CustomCrop] NoteBlock not exists: " + id);
+        }
     }
 
     @Override
     public void placeTripWire(Location location, String id) {
-        StringBlockMechanicFactory.setBlockModel(location.getBlock(), id);
+        try {
+            StringBlockMechanicFactory.setBlockModel(location.getBlock(), id);
+        } catch (NullPointerException e) {
+            AdventureUtils.consoleMessage("<red>[CustomCrop] Tripwire not exists: " + id);
+        }
     }
 
     @NotNull

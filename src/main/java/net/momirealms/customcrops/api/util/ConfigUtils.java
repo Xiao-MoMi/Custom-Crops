@@ -28,7 +28,7 @@ import net.kyori.adventure.sound.Sound;
 import net.momirealms.customcrops.CustomCrops;
 import net.momirealms.customcrops.api.customplugin.Platform;
 import net.momirealms.customcrops.api.object.BoneMeal;
-import net.momirealms.customcrops.api.object.InteractWithItem;
+import net.momirealms.customcrops.api.object.InteractCrop;
 import net.momirealms.customcrops.api.object.ItemMode;
 import net.momirealms.customcrops.api.object.Pair;
 import net.momirealms.customcrops.api.object.action.*;
@@ -221,6 +221,7 @@ public class ConfigUtils {
         if (section != null) {
             List<Action> actions = new ArrayList<>();
             for (String action_key : section.getKeys(false)) {
+                if (action_key.equals("requirements")) continue;
                 ConfigurationSection actionSec = section.getConfigurationSection(action_key);
                 if (actionSec == null) continue;
                 String type = actionSec.getString("type");
@@ -430,21 +431,22 @@ public class ConfigUtils {
         return methods.toArray(new PositiveFillMethod[0]);
     }
 
-    public static InteractWithItem[] getInteractActions(ConfigurationSection section, String stageModel) {
+    public static InteractCrop[] getInteractActions(ConfigurationSection section, String stageModel) {
         if (section == null) return null;
-        ArrayList<InteractWithItem> interactWithItems = new ArrayList<>();
+        ArrayList<InteractCrop> interactCrops = new ArrayList<>();
         for (String key : section.getKeys(false)) {
             ConfigurationSection innerSec = section.getConfigurationSection(key);
             if (innerSec == null) continue;
-            InteractWithItem interactWithItem = new InteractWithItem(
+            InteractCrop interactCrop = new InteractCrop(
                     innerSec.getString("item", "AIR"),
                     innerSec.getBoolean("reduce-amount", false),
                     innerSec.getString("return"),
-                    getActions(innerSec.getConfigurationSection("actions"), stageModel)
+                    getActions(innerSec.getConfigurationSection("actions"), stageModel),
+                    getRequirementsWithMsg(innerSec.getConfigurationSection("requirements"))
             );
-            interactWithItems.add(interactWithItem);
+            interactCrops.add(interactCrop);
         }
-        return interactWithItems.toArray(new InteractWithItem[0]);
+        return interactCrops.toArray(new InteractCrop[0]);
     }
 
     public static int rgbToDecimal(String rgba) {
