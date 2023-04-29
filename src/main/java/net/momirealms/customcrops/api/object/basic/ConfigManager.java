@@ -61,6 +61,8 @@ public class ConfigManager extends Function {
     public static int maxCropPerChunk;
     public static int cacheSaveInterval;
     public static boolean setUpMode;
+    public static int intervalConsume;
+    public static int intervalWork;
 
     private final HashMap<String, Integer> cropPerWorld;
     private final CustomCrops plugin;
@@ -115,12 +117,14 @@ public class ConfigManager extends Function {
     }
 
     private void loadScheduleSystem(ConfigurationSection section) {
-        enableScheduleSystem = section.getBoolean("default-schedule");
-        pointGainInterval = section.getInt("point-gain-interval", 1000);
+        enableScheduleSystem = section.getBoolean("others.enable", true);
+        pointGainInterval = section.getInt("point-gain-interval", 600);
         corePoolSize = section.getInt("thread-pool-settings.corePoolSize", 2);
         maxPoolSize = section.getInt("thread-pool-settings.maximumPoolSize", 4);
         keepAliveTime = section.getInt("thread-pool-settings.keepAliveTime", 10);
-        cacheSaveInterval = section.getInt("cache-save-interval", 7200);
+        cacheSaveInterval = section.getInt("cache-save-interval", 12000);
+        intervalConsume = section.getInt("others.consume-water-fertilizer-every-x-point", 2);
+        intervalWork = section.getInt("others.sprinkler-work-every-x-point", 2);
     }
 
     private void loadMechanic(ConfigurationSection section) {

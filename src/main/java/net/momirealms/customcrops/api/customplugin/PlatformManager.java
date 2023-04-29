@@ -61,10 +61,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class PlatformManager extends Function {
 
@@ -307,10 +304,8 @@ public class PlatformManager extends Function {
         Bukkit.getPluginManager().callEvent(potPlaceEvent);
         if (potPlaceEvent.isCancelled()) {
             if (event != null) event.setCancelled(true);
-            return true;
         }
 
-        plugin.getWorldDataManager().addPotData(SimpleLocation.getByBukkitLocation(location), new Pot(potConfig.getKey(), null, 0));
         return true;
     }
 
@@ -659,7 +654,7 @@ public class PlatformManager extends Function {
                 if (player.getGameMode() != GameMode.CREATIVE) item_in_hand.setAmount(item_in_hand.getAmount() - 1);
                 player.swingMainHand();
                 CustomCrops.getInstance().getPlatformInterface().placeCustomItem(crop_loc, cropPlantEvent.getCropModel(), cropConfig.getCropMode());
-                plugin.getWorldDataManager().addCropData(SimpleLocation.getByBukkitLocation(crop_loc), new GrowingCrop(cropConfig.getKey(), cropPlantEvent.getPoint()));
+                plugin.getWorldDataManager().addCropData(SimpleLocation.getByBukkitLocation(crop_loc), new GrowingCrop(cropConfig.getKey(), cropPlantEvent.getPoint()), true);
                 return true;
             }
 
@@ -740,9 +735,9 @@ public class PlatformManager extends Function {
             }
         }
 
-        Pot potData = plugin.getWorldDataManager().getPotData(SimpleLocation.getByBukkitLocation(location));
+        Pot potData = Optional.ofNullable(plugin.getWorldDataManager().getPotData(SimpleLocation.getByBukkitLocation(location))).orElse(new Pot(pot_id, null, 0));
         GrowingCrop growingCrop = plugin.getWorldDataManager().getCropData(SimpleLocation.getByBukkitLocation(location));
-        PotInfoEvent potInfoEvent = new PotInfoEvent(player, location, item_in_hand, potConfig, potData == null ? null : potData.getFertilizer(), potData == null ? 0 : potData.getWater(), growingCrop);
+        PotInfoEvent potInfoEvent = new PotInfoEvent(player, location, item_in_hand, potConfig, potData.getFertilizer(), potData.getWater(), growingCrop);
         Bukkit.getPluginManager().callEvent(potInfoEvent);
 
         if (potConfig.getRequiredItem() != null && !item_in_hand_id.equals(potConfig.getRequiredItem())) {
@@ -750,7 +745,7 @@ public class PlatformManager extends Function {
         }
 
         WaterAmountHologram waterAmountHologram = potConfig.getWaterAmountHologram();
-        if (waterAmountHologram != null && potData != null) {
+        if (waterAmountHologram != null) {
             double offset = 0;
             StageConfig stageConfig = plugin.getCropManager().getStageConfig(plugin.getPlatformInterface().getAnyItemIDAt(location.clone().add(0,1,0)));
             if (stageConfig != null) {
@@ -766,7 +761,7 @@ public class PlatformManager extends Function {
         }
 
         FertilizerHologram fertilizerHologram = potConfig.getFertilizerHologram();
-        if (fertilizerHologram != null && potData != null && potData.getFertilizer() != null) {
+        if (fertilizerHologram != null && potData.getFertilizer() != null) {
             double offset = 0;
             StageConfig stageConfig = plugin.getCropManager().getStageConfig(plugin.getPlatformInterface().getAnyItemIDAt(location.clone().add(0,1,0)));
             if (stageConfig != null) {

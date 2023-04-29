@@ -30,7 +30,7 @@
 //                   for (int j = 0; j < radius * 2; j++) {
 //                       for (int y = 0; y < 10; y++) {
 //                           SimpleLocation temp = simpleLocation1.add(i, y, j);
-//                           worldDataManager.addCropData(temp, new GrowingCrop("tomato", 0));
+//                           worldDataManager.addCropData(temp, new GrowingCrop("tomato", 0), false);
 //                       }
 //                   }
 //               }

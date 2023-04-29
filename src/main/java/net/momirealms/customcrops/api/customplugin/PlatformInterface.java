@@ -17,8 +17,6 @@
 
 package net.momirealms.customcrops.api.customplugin;
 
-import io.th0rgal.oraxen.api.OraxenFurniture;
-import io.th0rgal.oraxen.mechanics.provided.gameplay.furniture.FurnitureMechanic;
 import net.momirealms.customcrops.CustomCrops;
 import net.momirealms.customcrops.api.object.ItemMode;
 import org.bukkit.Location;

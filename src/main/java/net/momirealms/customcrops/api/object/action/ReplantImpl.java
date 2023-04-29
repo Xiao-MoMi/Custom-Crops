@@ -55,7 +55,7 @@ public class ReplantImpl implements Action {
                 }
                 if (!CustomCrops.getInstance().getPlatformInterface().detectAnyThing(location)) {
                     CustomCrops.getInstance().getPlatformInterface().placeCustomItem(location, model, newCMode);
-                    CustomCrops.getInstance().getWorldDataManager().addCropData(crop_loc, new GrowingCrop(crop, point));
+                    CustomCrops.getInstance().getWorldDataManager().addCropData(crop_loc, new GrowingCrop(crop, point), false);
                 }
                 return null;
             });

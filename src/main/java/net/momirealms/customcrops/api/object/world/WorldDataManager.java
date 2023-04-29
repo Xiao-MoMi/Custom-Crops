@@ -91,10 +91,10 @@ public class WorldDataManager extends Function {
         }
     }
 
-    public void addCropData(SimpleLocation simpleLocation, GrowingCrop growingCrop) {
+    public void addCropData(SimpleLocation simpleLocation, GrowingCrop growingCrop, boolean grow) {
         CCWorld ccWorld = worldMap.get(simpleLocation.getWorldName());
         if (ccWorld != null) {
-            ccWorld.addCropData(simpleLocation, growingCrop);
+            ccWorld.addCropData(simpleLocation, growingCrop, grow);
         }
     }
 

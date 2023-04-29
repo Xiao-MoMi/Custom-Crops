@@ -133,15 +133,25 @@ public class CCChunk implements Serializable {
                     return null;
                 });
             }
+            return;
         }
-        else if (pot_id != null) {
-            Pot newPot = new Pot(pot_id, null, amount);
-            potMap.put(simpleLocation, newPot);
-            CustomCrops.getInstance().getScheduler().callSyncMethod(() -> {
-                changePotModel(simpleLocation, newPot);
-                return null;
-            });
+        if (pot_id == null) {
+            Location bukkitLoc = simpleLocation.getBukkitLocation();
+            if (bukkitLoc == null) return;
+            String id = CustomCrops.getInstance().getPlatformInterface().getCustomBlockID(bukkitLoc);
+            if (id != null) {
+                pot_id = CustomCrops.getInstance().getPotManager().getPotKeyByBlockID(id);
+            } else {
+                return;
+            }
         }
+
+        Pot newPot = new Pot(pot_id, null, amount);
+        potMap.put(simpleLocation, newPot);
+        CustomCrops.getInstance().getScheduler().callSyncMethod(() -> {
+            changePotModel(simpleLocation, newPot);
+            return null;
+        });
     }
 
     public void addFertilizerToPot(SimpleLocation simpleLocation, Fertilizer fertilizer, @NotNull String pot_id) {
@@ -172,15 +182,17 @@ public class CCChunk implements Serializable {
 
     public void scheduleSprinklerTask(CCWorld ccWorld) {
         Random randomGenerator = ThreadLocalRandom.current();
+        int delay = Math.min(30, ConfigManager.pointGainInterval);
         for (SimpleLocation simpleLocation : sprinklerMap.keySet()) {
-            ccWorld.pushSprinklerTask(simpleLocation, randomGenerator.nextInt(30));
+            ccWorld.pushSprinklerTask(simpleLocation, randomGenerator.nextInt(delay));
         }
     }
 
     public void scheduleConsumeTask(CCWorld ccWorld) {
         Random randomGenerator = ThreadLocalRandom.current();
+        int delay = Math.min(30, ConfigManager.pointGainInterval);
         for (SimpleLocation simpleLocation : potMap.keySet()) {
-            ccWorld.pushConsumeTask(simpleLocation, randomGenerator.nextInt(60));
+            ccWorld.pushConsumeTask(simpleLocation, randomGenerator.nextInt(delay));
         }
     }
 

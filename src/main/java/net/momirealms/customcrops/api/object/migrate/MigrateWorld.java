@@ -17,9 +17,7 @@
 
 package net.momirealms.customcrops.api.object.migrate;
 
-import net.momirealms.customcrops.CustomCrops;
 import net.momirealms.customcrops.api.object.Function;
-import net.momirealms.customcrops.api.object.basic.ConfigManager;
 import net.momirealms.customcrops.api.object.crop.GrowingCrop;
 import net.momirealms.customcrops.api.object.fertilizer.Fertilizer;
 import net.momirealms.customcrops.api.object.pot.Pot;
