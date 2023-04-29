@@ -21,9 +21,13 @@ import net.momirealms.customcrops.CustomCrops;
 import net.momirealms.customcrops.api.object.fertilizer.Fertilizer;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 public class Pot implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = -6598493908660891824L;
 
     private Fertilizer fertilizer;
     private int water;

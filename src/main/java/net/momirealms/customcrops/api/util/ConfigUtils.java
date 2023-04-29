@@ -328,6 +328,7 @@ public class ConfigUtils {
                             getActions(actionSec.getConfigurationSection("value"), model_id),
                             actionSec.getDouble("chance")
                     ));
+                    case "swing-hand" -> actions.add(new SwingHandImpl());
                 }
             }
             return actions.toArray(new Action[0]);

@@ -20,9 +20,13 @@ package net.momirealms.customcrops.api.object.sprinkler;
 import net.momirealms.customcrops.CustomCrops;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 public class Sprinkler implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = -1994328062935821245L;
 
     private int water;
     private final String key;

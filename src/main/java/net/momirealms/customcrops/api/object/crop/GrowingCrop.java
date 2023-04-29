@@ -19,9 +19,13 @@ package net.momirealms.customcrops.api.object.crop;
 
 import net.momirealms.customcrops.CustomCrops;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 public class GrowingCrop implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 2828962866548871991L;
 
     private int points;
     private final String crop;

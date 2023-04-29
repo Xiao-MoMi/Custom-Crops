@@ -4,7 +4,7 @@ plugins {
 }
 
 group = 'net.momirealms'
-version = '3.0.6'
+version = '3.0.6-hotfix'
 
 repositories {
     mavenCentral()
@@ -41,7 +41,6 @@ dependencies {
     implementation ('net.kyori:adventure-text-minimessage:4.13.1')
     implementation ("de.tr7zw:item-nbt-api:2.11.2")
     implementation ('org.bstats:bstats-bukkit:3.0.1')
-    implementation ('org.apache.commons:commons-pool2:2.11.1')
     implementation fileTree(dir:'libs',includes:['BiomeAPI.jar','ProtectionLib.jar'])
 }
 

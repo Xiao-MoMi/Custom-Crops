@@ -43,11 +43,6 @@ import net.momirealms.customcrops.api.util.AdventureUtils;
 import net.momirealms.customcrops.api.util.ConfigUtils;
 import net.momirealms.customcrops.api.util.FakeEntityUtils;
 import net.momirealms.customcrops.helper.Log;
-import org.apache.commons.pool2.BasePooledObjectFactory;
-import org.apache.commons.pool2.PooledObject;
-import org.apache.commons.pool2.impl.DefaultPooledObject;
-import org.apache.commons.pool2.impl.GenericObjectPool;
-import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.bukkit.*;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -69,9 +64,6 @@ public class CCWorld extends Function {
     private final Reference<World> world;
     private final ConcurrentHashMap<ChunkCoordinate, CCChunk> chunkMap;
     private final ScheduledThreadPoolExecutor schedule;
-    private final GenericObjectPool<CropCheckTask> cropTaskPool;
-    private final GenericObjectPool<SprinklerCheckTask> sprinklerTaskPool;
-    private final GenericObjectPool<ConsumeCheckTask> consumeTaskPool;
     private long current_day;
     private ScheduledFuture<?> timerTask;
     private int pointTimer;
@@ -88,17 +80,7 @@ public class CCWorld extends Function {
         this.schedule.setMaximumPoolSize(ConfigManager.maxPoolSize);
         this.schedule.setKeepAliveTime(ConfigManager.keepAliveTime, TimeUnit.SECONDS);
         this.schedule.setRejectedExecutionHandler(new ThreadPoolExecutor.DiscardPolicy());
-        this.cropTaskPool = new GenericObjectPool<>(new CropTaskFactory(), new GenericObjectPoolConfig<>());
-        this.cropTaskPool.setMaxTotal(10);
-        this.cropTaskPool.setMinIdle(1);
-        this.sprinklerTaskPool = new GenericObjectPool<>(new SprinklerTaskFactory(), new GenericObjectPoolConfig<>());
-        this.sprinklerTaskPool.setMaxTotal(10);
-        this.sprinklerTaskPool.setMinIdle(1);
-        this.consumeTaskPool = new GenericObjectPool<>(new ConsumeTaskFactory(), new GenericObjectPoolConfig<>());
-        this.consumeTaskPool.setMaxTotal(10);
-        this.consumeTaskPool.setMinIdle(1);
         this.plantToday = new HashSet<>(128);
-        this.pointTimer = 10;
         this.cacheTimer = ConfigManager.cacheSaveInterval;
     }
 
@@ -122,6 +104,8 @@ public class CCWorld extends Function {
                 if (chunkCoordinate != null) chunkMap.put(chunkCoordinate, chunk);
             } catch (IOException | ClassNotFoundException e) {
                 e.printStackTrace();
+                Log.info("Error at " + file.getAbsolutePath());
+                outdated.add(file);
             }
         }
 
@@ -211,7 +195,9 @@ public class CCWorld extends Function {
                 World current = world.get();
                 if (current != null) {
 
-                    if (ConfigManager.debug) Log.info("Task queue size: " + schedule.getQueue().size());
+                    if (ConfigManager.debug) {
+                        Log.info("Queue size: " + schedule.getQueue().size() + " Completed: " + schedule.getCompletedTaskCount());
+                    }
 
                     long day = current.getFullTime() / 24000;
                     long time = current.getTime();
@@ -242,6 +228,7 @@ public class CCWorld extends Function {
                 if (ConfigManager.debug) Log.info("== Save cache ==");
                 cacheTimer = ConfigManager.cacheSaveInterval;
                 schedule.execute(this::saveDate);
+                schedule.execute(this::saveCrop);
             }
         }
     }
@@ -250,32 +237,34 @@ public class CCWorld extends Function {
         pointTimer--;
         if (pointTimer <= 0) {
             pointTimer = ConfigManager.pointGainInterval;
-            plantToday.clear();
+            onReachPoint();
+        }
+    }
 
-            if (ConfigManager.debug) Log.info("== Grow point ==");
+    public void onReachPoint() {
+        if (ConfigManager.debug) Log.info("== Grow point ==");
+        plantToday.clear();
+        int size = schedule.getQueue().size();
+        if (size != 0) {
+            schedule.getQueue().clear();
+            if (ConfigManager.debug) Log.info("== Clear queue ==");
+        }
 
-            int size = schedule.getQueue().size();
-            if (size != 0) {
-                schedule.getQueue().clear();
-                if (ConfigManager.debug) Log.info("== Clear queue ==");
+        for (CCChunk chunk : chunkMap.values()) {
+            chunk.scheduleGrowTask(this);
+        }
+        if (ConfigManager.enableScheduleSystem) {
+            workCounter--;
+            consumeCounter--;
+            if (consumeCounter <= 0) {
+                consumeCounter = ConfigManager.intervalConsume;
+                if (ConfigManager.debug) Log.info("== Consume time ==");
+                scheduleConsumeTask();
             }
-
-            for (CCChunk chunk : chunkMap.values()) {
-                chunk.scheduleGrowTask(this);
-            }
-            if (ConfigManager.enableScheduleSystem) {
-                workCounter--;
-                consumeCounter--;
-                if (consumeCounter <= 0) {
-                    consumeCounter = ConfigManager.intervalConsume;
-                    if (ConfigManager.debug) Log.info("== Consume time ==");
-                    scheduleConsumeTask();
-                }
-                if (workCounter <= 0) {
-                    workCounter = ConfigManager.intervalWork;
-                    if (ConfigManager.debug) Log.info("== Work time ==");
-                    scheduleSprinklerWork();
-                }
+            if (workCounter <= 0) {
+                workCounter = ConfigManager.intervalWork;
+                if (ConfigManager.debug) Log.info("== Work time ==");
+                scheduleSprinklerWork();
             }
         }
     }
@@ -292,153 +281,73 @@ public class CCWorld extends Function {
     }
 
     public void pushCropTask(SimpleLocation simpleLocation, int delay) {
-        schedule.schedule(new ScheduledCropTask(simpleLocation), delay, TimeUnit.SECONDS);
+        schedule.schedule(new CropCheckTask(simpleLocation), delay, TimeUnit.SECONDS);
     }
 
     public void pushSprinklerTask(SimpleLocation simpleLocation, int delay) {
-        schedule.schedule(new ScheduledSprinklerTask(simpleLocation), delay, TimeUnit.SECONDS);
+        schedule.schedule(new SprinklerCheckTask(simpleLocation), delay, TimeUnit.SECONDS);
     }
 
     public void pushConsumeTask(SimpleLocation simpleLocation, int delay) {
-        schedule.schedule(new ScheduledConsumeTask(simpleLocation), delay, TimeUnit.SECONDS);
+        schedule.schedule(new ConsumeCheckTask(simpleLocation), delay, TimeUnit.SECONDS);
     }
 
-    public abstract static class ScheduledTask implements Runnable {
+    public class ConsumeCheckTask implements Runnable {
 
-        SimpleLocation simpleLocation;
+        private final SimpleLocation simpleLocation;
 
-        public ScheduledTask(SimpleLocation simpleLocation) {
+        public ConsumeCheckTask(SimpleLocation simpleLocation) {
             this.simpleLocation = simpleLocation;
         }
-    }
 
-    public class ScheduledCropTask extends ScheduledTask {
-
-        public ScheduledCropTask(SimpleLocation simpleLocation) {
-            super(simpleLocation);
-        }
-
-        @Override
         public void run() {
-            try {
-                CropCheckTask cropCheckTask = cropTaskPool.borrowObject();
-                GrowingCrop growingCrop = getCropData(simpleLocation);
-                if (growingCrop == null) return;
-                cropCheckTask.setArgs(simpleLocation.copy(), growingCrop);
-                cropCheckTask.execute();
-                cropTaskPool.returnObject(cropCheckTask);
+            Pot pot = getPotData(simpleLocation);
+            if (pot == null) return;
+
+            if (pot.isWet() && CustomCrops.getInstance().getFertilizerManager().getConfigByFertilizer(pot.getFertilizer()) instanceof SoilRetain soilRetain && soilRetain.canTakeEffect()) {
+                pot.setWater(pot.getWater() + 1);
             }
-            catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
+            if (pot.reduceWater() | pot.reduceFertilizer()) {
 
-    public class ScheduledConsumeTask extends ScheduledTask {
+                PotConfig potConfig = pot.getConfig();
+                Fertilizer fertilizer = pot.getFertilizer();
+                boolean wet = pot.isWet();
 
-        public ScheduledConsumeTask(SimpleLocation simpleLocation) {
-            super(simpleLocation);
-        }
-
-        @Override
-        public void run() {
-            try {
-                ConsumeCheckTask consumeCheckTask = consumeTaskPool.borrowObject();
-                Pot pot = getPotData(simpleLocation);
-                if (pot == null) return;
-                consumeCheckTask.setArgs(simpleLocation, pot);
-                consumeCheckTask.execute();
-                consumeTaskPool.returnObject(consumeCheckTask);
-            }
-            catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    public class ScheduledSprinklerTask extends ScheduledTask {
-
-        public ScheduledSprinklerTask(SimpleLocation simpleLocation) {
-            super(simpleLocation);
-        }
-
-        @Override
-        public void run() {
-            try {
-                SprinklerCheckTask sprinklerCheckTask = sprinklerTaskPool.borrowObject();
-                Sprinkler sprinkler = getSprinklerData(simpleLocation);
-                if (sprinkler == null) return;
-                sprinklerCheckTask.setArgs(simpleLocation, sprinkler);
-                sprinklerCheckTask.execute();
-                sprinklerTaskPool.returnObject(sprinklerCheckTask);
-            }
-            catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    public class ConsumeCheckTask {
-
-        private SimpleLocation simpleLocation;
-        private Pot pot;
-
-        public void setArgs(SimpleLocation simpleLocation, Pot pot) {
-            this.simpleLocation = simpleLocation;
-            this.pot = pot;
-        }
-
-        public void execute() {
-            if (pot != null) {
-                if (pot.isWet() && CustomCrops.getInstance().getFertilizerManager().getConfigByFertilizer(pot.getFertilizer()) instanceof SoilRetain soilRetain && soilRetain.canTakeEffect()) {
-                    pot.setWater(pot.getWater() + 1);
+                if (!wet && fertilizer == null) {
+                    removePotData(simpleLocation);
                 }
-                if (pot.reduceWater() | pot.reduceFertilizer()) {
 
-                    PotConfig potConfig = pot.getConfig();
-                    Fertilizer fertilizer = pot.getFertilizer();
-                    boolean wet = pot.isWet();
-
-                    if (!wet && fertilizer == null) {
-                        removePotData(simpleLocation);
-                    }
-
-                    Location location = simpleLocation.getBukkitLocation();
-                    if (location == null) {
-                        return;
-                    }
-
-                    CustomCrops.getInstance().getScheduler().callSyncMethod(() -> {
-                        if (CustomCrops.getInstance().getPlatformInterface().removeAnyBlock(location)) {
-                            String replacer = wet ? potConfig.getWetPot(fertilizer) : potConfig.getDryPot(fertilizer);
-                            if (ConfigUtils.isVanillaItem(replacer)) location.getBlock().setType(Material.valueOf(replacer));
-                            else CustomCrops.getInstance().getPlatformInterface().placeNoteBlock(location, replacer);
-                        } else {
-                            CustomCrops.getInstance().getWorldDataManager().removePotData(SimpleLocation.getByBukkitLocation(location));
-                        }
-                        return null;
-                    });
+                Location location = simpleLocation.getBukkitLocation();
+                if (location == null) {
+                    return;
                 }
-            }
-        }
 
-        public void clear() {
-            this.simpleLocation = null;
-            this.pot = null;
+                CustomCrops.getInstance().getScheduler().callSyncMethod(() -> {
+                    if (CustomCrops.getInstance().getPlatformInterface().removeAnyBlock(location)) {
+                        String replacer = wet ? potConfig.getWetPot(fertilizer) : potConfig.getDryPot(fertilizer);
+                        if (ConfigUtils.isVanillaItem(replacer)) location.getBlock().setType(Material.valueOf(replacer));
+                        else CustomCrops.getInstance().getPlatformInterface().placeNoteBlock(location, replacer);
+                    } else {
+                        CustomCrops.getInstance().getWorldDataManager().removePotData(SimpleLocation.getByBukkitLocation(location));
+                    }
+                    return null;
+                });
+            }
         }
     }
 
-    public class SprinklerCheckTask {
+    public class SprinklerCheckTask implements Runnable {
 
-        private SimpleLocation simpleLocation;
-        private Sprinkler sprinkler;
+        private final SimpleLocation simpleLocation;
 
-        public void setArgs(SimpleLocation simpleLocation, Sprinkler sprinkler) {
+        public SprinklerCheckTask(SimpleLocation simpleLocation) {
             this.simpleLocation = simpleLocation;
-            this.sprinkler = sprinkler;
         }
 
-        public void execute() {
+        public void run() {
+            Sprinkler sprinkler = getSprinklerData(simpleLocation);
+            if (sprinkler == null) return;
+
             SprinklerConfig sprinklerConfig = sprinkler.getConfig();
             if (sprinklerConfig == null) {
                 removeSprinklerData(simpleLocation);
@@ -472,24 +381,20 @@ public class CCWorld extends Function {
                 }
             }
         }
-
-        public void clear() {
-            this.simpleLocation = null;
-            this.sprinkler = null;
-        }
     }
 
-    public class CropCheckTask {
+    public class CropCheckTask implements Runnable {
 
-        private SimpleLocation simpleLocation;
-        private GrowingCrop growingCrop;
+        private final SimpleLocation simpleLocation;
 
-        public void setArgs(SimpleLocation simpleLocation, GrowingCrop growingCrop) {
+        public CropCheckTask(SimpleLocation simpleLocation) {
             this.simpleLocation = simpleLocation;
-            this.growingCrop = growingCrop;
         }
 
-        public void execute() {
+        public void run() {
+            GrowingCrop growingCrop = getCropData(simpleLocation);
+            if (growingCrop == null) return;
+
             CropConfig cropConfig = growingCrop.getConfig();
             if (cropConfig == null) {
                 removeCropData(simpleLocation);
@@ -526,11 +431,6 @@ public class CCWorld extends Function {
                 }
             }
             addCropPoint(points, cropConfig, growingCrop, simpleLocation, itemMode);
-        }
-
-        public void clear() {
-            simpleLocation = null;
-            growingCrop = null;
         }
     }
 
@@ -584,14 +484,10 @@ public class CCWorld extends Function {
             });
             loadEntities.whenComplete((result, throwable) -> {
                 CustomCrops.getInstance().getScheduler().callSyncMethod(() -> {
-                    try {
-                        if (CustomCrops.getInstance().getPlatformInterface().removeCustomItem(location, itemMode)) {
-                            CustomCrops.getInstance().getPlatformInterface().placeCustomItem(location, finalNextModel, itemMode);
-                        } else {
-                            removeCropData(simpleLocation);
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                    if (CustomCrops.getInstance().getPlatformInterface().removeCustomItem(location, itemMode)) {
+                        CustomCrops.getInstance().getPlatformInterface().placeCustomItem(location, finalNextModel, itemMode);
+                    } else {
+                        removeCropData(simpleLocation);
                     }
                     return null;
                 });
@@ -600,71 +496,13 @@ public class CCWorld extends Function {
         else {
             asyncGetChunk.whenComplete((result, throwable) ->
                     CustomCrops.getInstance().getScheduler().callSyncMethod(() -> {
-                        try {
-                            if (CustomCrops.getInstance().getPlatformInterface().removeCustomItem(location, itemMode)) {
-                                CustomCrops.getInstance().getPlatformInterface().placeCustomItem(location, finalNextModel, itemMode);
-                            } else {
-                                removeCropData(simpleLocation);
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                        if (CustomCrops.getInstance().getPlatformInterface().removeCustomItem(location, itemMode)) {
+                            CustomCrops.getInstance().getPlatformInterface().placeCustomItem(location, finalNextModel, itemMode);
+                        } else {
+                            removeCropData(simpleLocation);
                         }
                         return null;
                     }));
-        }
-    }
-
-    private class CropTaskFactory extends BasePooledObjectFactory<CropCheckTask> {
-
-        @Override
-        public CropCheckTask create() {
-            return new CropCheckTask();
-        }
-
-        @Override
-        public PooledObject<CropCheckTask> wrap(CropCheckTask obj) {
-            return new DefaultPooledObject<>(obj);
-        }
-
-        @Override
-        public void passivateObject(PooledObject<CropCheckTask> obj) {
-            obj.getObject().clear();
-        }
-    }
-
-    private class SprinklerTaskFactory extends BasePooledObjectFactory<SprinklerCheckTask> {
-
-        @Override
-        public SprinklerCheckTask create() {
-            return new SprinklerCheckTask();
-        }
-
-        @Override
-        public PooledObject<SprinklerCheckTask> wrap(SprinklerCheckTask obj) {
-            return new DefaultPooledObject<>(obj);
-        }
-
-        @Override
-        public void passivateObject(PooledObject<SprinklerCheckTask> obj) {
-            obj.getObject().clear();
-        }
-    }
-
-    private class ConsumeTaskFactory extends BasePooledObjectFactory<ConsumeCheckTask> {
-
-        @Override
-        public ConsumeCheckTask create() {
-            return new ConsumeCheckTask();
-        }
-
-        @Override
-        public PooledObject<ConsumeCheckTask> wrap(ConsumeCheckTask obj) {
-            return new DefaultPooledObject<>(obj);
-        }
-
-        @Override
-        public void passivateObject(PooledObject<ConsumeCheckTask> obj) {
-            obj.getObject().clear();
         }
     }
 

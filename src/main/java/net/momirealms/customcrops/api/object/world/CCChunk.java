@@ -29,6 +29,7 @@ import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashSet;
@@ -38,6 +39,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class CCChunk implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 5300805317167684402L;
 
     private final ConcurrentHashMap<SimpleLocation, GrowingCrop> growingCropMap;
     private final ConcurrentHashMap<SimpleLocation, Pot> potMap;

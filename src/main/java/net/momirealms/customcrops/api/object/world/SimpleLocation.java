@@ -23,10 +23,14 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
 
 public class SimpleLocation implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = -1288860694388882412L;
 
     private final int x;
     private final int y;

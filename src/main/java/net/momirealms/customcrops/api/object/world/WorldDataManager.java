@@ -74,6 +74,7 @@ public class WorldDataManager extends Function {
         CCWorld ccWorld = new CCWorld(world);
         ccWorld.init();
         ccWorld.load();
+        ccWorld.onReachPoint();
         worldMap.put(world.getName(), ccWorld);
     }
 

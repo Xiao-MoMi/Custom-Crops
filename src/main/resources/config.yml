@@ -32,6 +32,7 @@ schedule-system:
     enable: true
     # Water amount and fertilizer would reduce every two points are gained
     # As the default point-gain-interval is 600s, so here it would be 1200s(20min = a minecraft day)
+    # 默认每两个生长点进行一次水分、肥料消耗/洒水器工作
     consume-water-fertilizer-every-x-point: 2
     # Sprinkler would work every two points are gained
     sprinkler-work-every-x-point: 2
