@@ -9,6 +9,7 @@ sprinkler_1:
   storage: 4
   # 2/3D物品
   3D-item: customcrops:sprinkler_1
+  # Optional, remove this section if you don't need 2d items
   2D-item: customcrops:sprinkler_1_item
   # ITEM_FRAME / TRIPWIRE / ITEM_DISPLAY (1.19.4+)
   # Sprinkler item type

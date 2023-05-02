@@ -83,8 +83,8 @@ public class SprinklerManager extends Function implements Listener {
                 if (sprinklerSec == null) continue;
                 String twoD = sprinklerSec.getString("2D-item");
                 String threeD = sprinklerSec.getString("3D-item");
-                if (twoD == null || threeD == null) {
-                    AdventureUtils.consoleMessage("<red>[CustomCrops] 2/3D-item is not set for sprinkler: " + key);
+                if (threeD == null) {
+                    AdventureUtils.consoleMessage("<red>[CustomCrops] 3D-item is not set for sprinkler: " + key);
                     continue;
                 }
                 PassiveFillMethod[] methods = ConfigUtils.getPassiveFillMethods(sprinklerSec.getConfigurationSection("fill-method"));
@@ -129,7 +129,7 @@ public class SprinklerManager extends Function implements Listener {
                         ) : null
                         );
                 this.itemToKey.put(threeD, key);
-                this.itemToKey.put(twoD, key);
+                if (twoD != null) this.itemToKey.put(twoD, key);
                 this.sprinklerConfigMap.put(key, sprinklerConfig);
             }
         }
@@ -161,6 +161,7 @@ public class SprinklerManager extends Function implements Listener {
         String key = itemToKey.get(id);
         if (key == null) return;
         String twoD = sprinklerConfigMap.get(key).getTwoD();
+        if (twoD == null) return;
         ItemStack itemStack = plugin.getPlatformInterface().getItemStack(twoD);
         if (itemStack == null) {
             AdventureUtils.consoleMessage("<red>[CustomCrops] 2D sprinkler " + twoD + " doesn't exist");

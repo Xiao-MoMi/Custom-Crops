@@ -37,7 +37,7 @@ public class SprinklerConfig {
     private final WaterAmountHologram waterAmountHologram;
     private final SprinklerAnimation sprinklerAnimation;
 
-    public SprinklerConfig(String key, int storage, int range, @Nullable Sound sound, @NotNull ItemMode itemMode, @NotNull String threeD, @NotNull String twoD,
+    public SprinklerConfig(String key, int storage, int range, @Nullable Sound sound, @NotNull ItemMode itemMode, @NotNull String threeD, @Nullable String twoD,
                            @NotNull PassiveFillMethod[] passiveFillMethods, @Nullable WaterAmountHologram waterAmountHologram, SprinklerAnimation sprinklerAnimation) {
         this.key = key;
         this.storage = storage;
@@ -78,7 +78,7 @@ public class SprinklerConfig {
         return threeD;
     }
 
-    @NotNull
+    @Nullable
     public String getTwoD() {
         return twoD;
     }
