@@ -4,7 +4,7 @@ plugins {
 }
 
 group = 'net.momirealms'
-version = '3.0.6-hotfix2'
+version = '3.0.7'
 
 repositories {
     mavenCentral()

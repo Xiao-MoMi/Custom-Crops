@@ -32,7 +32,7 @@ public class InteractCrop {
     private final Action[] actions;
     private final Requirement[] requirements;
 
-    public InteractCrop(@NotNull String id, boolean consume, @Nullable String returned, @Nullable Action[] actions, @Nullable Requirement[] requirements) {
+    public InteractCrop(@Nullable String id, boolean consume, @Nullable String returned, @Nullable Action[] actions, @Nullable Requirement[] requirements) {
         this.consume = consume;
         this.id = id;
         this.returned = returned;
@@ -41,6 +41,7 @@ public class InteractCrop {
     }
 
     public boolean isRightItem(String item) {
+        if (id == null || id.equals("*")) return true;
         return item.equals(id);
     }
 

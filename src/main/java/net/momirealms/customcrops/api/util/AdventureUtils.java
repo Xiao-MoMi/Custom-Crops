@@ -134,43 +134,65 @@ public class AdventureUtils {
         au.playSound(sound);
     }
 
-
-    /**
-     * Replace the legacy codes with MiniMessage Format
-     * @param str text
-     * @return MiniMessage format text
-     */
-    public static String replaceLegacy(String str) {
+    public static String replaceLegacy(String legacy) {
         StringBuilder stringBuilder = new StringBuilder();
-        char[] chars = str.replace("&","§").toCharArray();
+        char[] chars = legacy.toCharArray();
         for (int i = 0; i < chars.length; i++) {
-            if (chars[i] == '§') {
+            if (isColorCode(chars[i])) {
                 if (i + 1 < chars.length) {
                     switch (chars[i+1]) {
-                        case '0' -> {i++;stringBuilder.append("<black>");}
-                        case '1' -> {i++;stringBuilder.append("<dark_blue>");}
-                        case '2' -> {i++;stringBuilder.append("<dark_green>");}
-                        case '3' -> {i++;stringBuilder.append("<dark_aqua>");}
-                        case '4' -> {i++;stringBuilder.append("<dark_red>");}
-                        case '5' -> {i++;stringBuilder.append("<dark_purple>");}
-                        case '6' -> {i++;stringBuilder.append("<gold>");}
-                        case '7' -> {i++;stringBuilder.append("<gray>");}
-                        case '8' -> {i++;stringBuilder.append("<dark_gray>");}
-                        case '9' -> {i++;stringBuilder.append("<blue>");}
-                        case 'a' -> {i++;stringBuilder.append("<green>");}
-                        case 'b' -> {i++;stringBuilder.append("<aqua>");}
-                        case 'c' -> {i++;stringBuilder.append("<red>");}
-                        case 'd' -> {i++;stringBuilder.append("<light_purple>");}
-                        case 'e' -> {i++;stringBuilder.append("<yellow>");}
-                        case 'f' -> {i++;stringBuilder.append("<white>");}
-                        case 'r' -> {i++;stringBuilder.append("<reset><!italic>");}
-                        case 'l' -> {i++;stringBuilder.append("<bold>");}
-                        case 'm' -> {i++;stringBuilder.append("<strikethrough>");}
-                        case 'o' -> {i++;stringBuilder.append("<italic>");}
-                        case 'n' -> {i++;stringBuilder.append("<underlined>");}
-                        case 'k' -> {i++;stringBuilder.append("<obfuscated>");}
-                        case 'x' -> {stringBuilder.append("<#").append(chars[i+3]).append(chars[i+5]).append(chars[i+7]).append(chars[i+9]).append(chars[i+11]).append(chars[i+13]).append(">");i += 13;}
+                        case '0' -> stringBuilder.append("<black>");
+                        case '1' -> stringBuilder.append("<dark_blue>");
+                        case '2' -> stringBuilder.append("<dark_green>");
+                        case '3' -> stringBuilder.append("<dark_aqua>");
+                        case '4' -> stringBuilder.append("<dark_red>");
+                        case '5' -> stringBuilder.append("<dark_purple>");
+                        case '6' -> stringBuilder.append("<gold>");
+                        case '7' -> stringBuilder.append("<gray>");
+                        case '8' -> stringBuilder.append("<dark_gray>");
+                        case '9' -> stringBuilder.append("<blue>");
+                        case 'a' -> stringBuilder.append("<green>");
+                        case 'b' -> stringBuilder.append("<aqua>");
+                        case 'c' -> stringBuilder.append("<red>");
+                        case 'd' -> stringBuilder.append("<light_purple>");
+                        case 'e' -> stringBuilder.append("<yellow>");
+                        case 'f' -> stringBuilder.append("<white>");
+                        case 'r' -> stringBuilder.append("<reset><!italic>");
+                        case 'l' -> stringBuilder.append("<bold>");
+                        case 'm' -> stringBuilder.append("<strikethrough>");
+                        case 'o' -> stringBuilder.append("<italic>");
+                        case 'n' -> stringBuilder.append("<underlined>");
+                        case 'k' -> stringBuilder.append("<obfuscated>");
+                        case 'x' -> {
+                            if (i + 13 >= chars.length
+                                    || !isColorCode(chars[i+2])
+                                    || !isColorCode(chars[i+4])
+                                    || !isColorCode(chars[i+6])
+                                    || !isColorCode(chars[i+8])
+                                    || !isColorCode(chars[i+10])
+                                    || !isColorCode(chars[i+12])) {
+                                stringBuilder.append(chars[i]);
+                                continue;
+                            }
+                            stringBuilder
+                                    .append("<#")
+                                    .append(chars[i+3])
+                                    .append(chars[i+5])
+                                    .append(chars[i+7])
+                                    .append(chars[i+9])
+                                    .append(chars[i+11])
+                                    .append(chars[i+13])
+                                    .append(">");
+                            i += 13;
+                        }
+                        default -> {
+                            stringBuilder.append(chars[i]);
+                            continue;
+                        }
                     }
+                    i++;
+                } else {
+                    stringBuilder.append(chars[i]);
                 }
             }
             else {
@@ -178,5 +200,9 @@ public class AdventureUtils {
             }
         }
         return stringBuilder.toString();
+    }
+
+    private static boolean isColorCode(char c) {
+        return c == '§' || c == '&';
     }
 }

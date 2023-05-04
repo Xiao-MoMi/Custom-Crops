@@ -176,8 +176,14 @@ public class ConfigUtils {
                     switch (type) {
                         case "water_less_than" -> conditions.add(new WaterLessThan(map2.getInt("value")));
                         case "water_more_than" -> conditions.add(new WaterMoreThan(map2.getInt("value")));
-                        case "unsuitable_season" -> conditions.add(new WrongSeason(map2.getStringList("value").stream().map(s -> CCSeason.valueOf(s.toUpperCase())).toList().toArray(new CCSeason[0])));
-                        case "suitable_season" -> conditions.add(new RightSeason(map2.getStringList("value").stream().map(s -> CCSeason.valueOf(s.toUpperCase())).toList().toArray(new CCSeason[0])));
+                        case "unsuitable_season" -> {
+                            if (!ConfigManager.enableSeason) return;
+                            conditions.add(new WrongSeason(map2.getStringList("value").stream().map(s -> CCSeason.valueOf(s.toUpperCase())).toList().toArray(new CCSeason[0])));
+                        }
+                        case "suitable_season" -> {
+                            if (!ConfigManager.enableSeason) return;
+                            conditions.add(new RightSeason(map2.getStringList("value").stream().map(s -> CCSeason.valueOf(s.toUpperCase())).toList().toArray(new CCSeason[0])));
+                        }
                         case "crow_attack" -> conditions.add(new CrowAttack(map2.getDouble("value.chance"), map2.getString("value.fly-model"), map2.getString("value.stand-model")));
                         case "random" -> conditions.add(new Random(map2.getDouble("value")));
                     }
@@ -201,7 +207,10 @@ public class ConfigUtils {
                     case "biome" -> requirements.add(new BiomeImpl(msg, new HashSet<>(innerSec.getStringList("value"))));
                     case "weather" -> requirements.add(new WeatherImpl(msg, innerSec.getStringList("value")));
                     case "ypos" -> requirements.add(new YPosImpl(msg, innerSec.getStringList("value")));
-                    case "season" -> requirements.add(new SeasonImpl(msg, innerSec.getStringList("value").stream().map(str -> CCSeason.valueOf(str.toUpperCase())).collect(Collectors.toList())));
+                    case "season" -> {
+                        if (!ConfigManager.enableSeason) continue;
+                        requirements.add(new SeasonImpl(msg, innerSec.getStringList("value").stream().map(str -> CCSeason.valueOf(str.toUpperCase())).collect(Collectors.toList())));
+                    }
                     case "world" -> requirements.add(new WorldImpl(msg, innerSec.getStringList("value")));
                     case "permission" -> requirements.add(new PermissionImpl(msg, innerSec.getString("value")));
                     case "time" -> requirements.add(new TimeImpl(msg, innerSec.getStringList("value")));
@@ -439,7 +448,7 @@ public class ConfigUtils {
             ConfigurationSection innerSec = section.getConfigurationSection(key);
             if (innerSec == null) continue;
             InteractCrop interactCrop = new InteractCrop(
-                    innerSec.getString("item", "AIR"),
+                    innerSec.getString("item"),
                     innerSec.getBoolean("reduce-amount", false),
                     innerSec.getString("return"),
                     getActions(innerSec.getConfigurationSection("actions"), stageModel),
