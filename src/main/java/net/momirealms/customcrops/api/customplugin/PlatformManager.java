@@ -61,6 +61,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
+import javax.xml.transform.sax.SAXResult;
 import java.util.*;
 
 public class PlatformManager extends Function {
@@ -481,52 +482,59 @@ public class PlatformManager extends Function {
             return true;
         }
 
-        Location pot_loc = location.clone().subtract(0, 1, 0);
-        Pot potData = plugin.getWorldDataManager().getPotData(SimpleLocation.getByBukkitLocation(pot_loc));
-        if (potData != null) {
-            PassiveFillMethod[] passiveFillMethods = potData.getConfig().getPassiveFillMethods();
-            for (PassiveFillMethod passiveFillMethod : passiveFillMethods) {
-                if (passiveFillMethod.isRightItem(item_in_hand_id)) {
+        Location bottomLoc = location.clone().subtract(0, 1, 0);
+        String bottomBlockID = plugin.getPlatformInterface().getBlockID(bottomLoc.getBlock());
+        String pot_id = plugin.getPotManager().getPotKeyByBlockID(bottomBlockID);
+        if (pot_id != null) {
+            PotConfig potConfig = plugin.getPotManager().getPotConfig(pot_id);
+            if (potConfig != null) {
+                PassiveFillMethod[] passiveFillMethods = potConfig.getPassiveFillMethods();
+                if (passiveFillMethods != null) {
+                    for (PassiveFillMethod passiveFillMethod : passiveFillMethods) {
+                        if (passiveFillMethod.isRightItem(item_in_hand_id)) {
 
-                    PotWaterEvent potWaterEvent = new PotWaterEvent(player, item_in_hand, passiveFillMethod.getAmount(), pot_loc);
+                            PotWaterEvent potWaterEvent = new PotWaterEvent(player, item_in_hand, passiveFillMethod.getAmount(), bottomLoc);
+                            Bukkit.getPluginManager().callEvent(potWaterEvent);
+                            if (potWaterEvent.isCancelled()) {
+                                return true;
+                            }
+
+                            event.setCancelled(true);
+                            doPassiveFillAction(player, item_in_hand, passiveFillMethod, bottomLoc);
+                            plugin.getWorldDataManager().addWaterToPot(SimpleLocation.getByBukkitLocation(bottomLoc), potWaterEvent.getWater(), pot_id);
+                            return true;
+                        }
+                    }
+                }
+
+                WateringCanConfig wateringCanConfig = plugin.getWateringCanManager().getConfigByItemID(item_in_hand_id);
+                if (wateringCanConfig != null) {
+                    String[] pot_whitelist = wateringCanConfig.getPotWhitelist();
+                    if (pot_whitelist != null) {
+                        inner: {
+                            for (String pot : pot_whitelist) {
+                                if (pot.equals(pot_id)) {
+                                    break inner;
+                                }
+                            }
+                            return true;
+                        }
+                    }
+
+                    int current_water = plugin.getWateringCanManager().getCurrentWater(item_in_hand);
+                    if (current_water <= 0) return true;
+
+                    PotWaterEvent potWaterEvent = new PotWaterEvent(player, item_in_hand, 1, bottomLoc);
                     Bukkit.getPluginManager().callEvent(potWaterEvent);
                     if (potWaterEvent.isCancelled()) {
                         return true;
                     }
 
-                    event.setCancelled(true);
-                    doPassiveFillAction(player, item_in_hand, passiveFillMethod, location);
-                    potData.addWater(potWaterEvent.getWater());
+                    current_water--;
+                    this.waterPot(wateringCanConfig.getWidth(), wateringCanConfig.getLength(), bottomLoc, player.getLocation().getYaw(), pot_id, wateringCanConfig.getParticle(), potWaterEvent.getWater());
+                    this.doWateringCanActions(player, item_in_hand, wateringCanConfig, current_water);
                     return true;
                 }
-            }
-
-            WateringCanConfig wateringCanConfig = plugin.getWateringCanManager().getConfigByItemID(item_in_hand_id);
-            if (wateringCanConfig != null) {
-                String[] pot_whitelist = wateringCanConfig.getPotWhitelist();
-                if (pot_whitelist != null) {
-                    outer: {
-                        for (String pot : pot_whitelist) {
-                            if (pot.equals(potData.getPotKey())) {
-                                break outer;
-                            }
-                        }
-                        return true;
-                    }
-                }
-                int current_water = plugin.getWateringCanManager().getCurrentWater(item_in_hand);
-                if (current_water <= 0) return true;
-
-                PotWaterEvent potWaterEvent = new PotWaterEvent(player, item_in_hand, 1, pot_loc);
-                Bukkit.getPluginManager().callEvent(potWaterEvent);
-                if (potWaterEvent.isCancelled()) {
-                    return true;
-                }
-
-                current_water--;
-                this.waterPot(wateringCanConfig.getWidth(), wateringCanConfig.getLength(), pot_loc, player.getLocation().getYaw(), potData.getPotKey(), wateringCanConfig.getParticle(), potWaterEvent.getWater());
-                this.doWateringCanActions(player, item_in_hand, wateringCanConfig, current_water);
-                return true;
             }
         }
 
