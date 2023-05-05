@@ -27,12 +27,15 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.type.Farmland;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Cancellable;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.*;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+
+import java.util.List;
 
 public abstract class Handler extends Function implements Listener {
 
@@ -102,8 +105,18 @@ public abstract class Handler extends Function implements Listener {
     @EventHandler
     public void onPistonExtend(BlockPistonExtendEvent event) {
         if (!PotManager.enableVanillaBlock || event.isCancelled()) return;
+        handlePiston(event.getBlocks(), event);
+    }
+
+    @EventHandler
+    public void onPistonRetract(BlockPistonRetractEvent event) {
+        if (!PotManager.enableVanillaBlock || event.isCancelled()) return;
+        handlePiston(event.getBlocks(), event);
+    }
+
+    public void handlePiston(List<Block> blocks, Cancellable event) {
         PotManager potManager = CustomCrops.getInstance().getPotManager();
-        for (Block block : event.getBlocks()) {
+        for (Block block : blocks) {
             String id = block.getType().name();
             if (potManager.containsPotBlock(id)) {
                 platformManager.onBreakPot(null, id, block.getLocation(), event);
