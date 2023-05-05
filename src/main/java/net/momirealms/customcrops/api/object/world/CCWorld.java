@@ -44,8 +44,11 @@ import net.momirealms.customcrops.api.util.ConfigUtils;
 import net.momirealms.customcrops.api.util.FakeEntityUtils;
 import net.momirealms.customcrops.helper.Log;
 import org.bukkit.*;
+import org.bukkit.block.Block;
+import org.bukkit.block.data.type.Farmland;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.event.block.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -325,8 +328,16 @@ public class CCWorld extends Function {
                 CustomCrops.getInstance().getScheduler().callSyncMethod(() -> {
                     if (CustomCrops.getInstance().getPlatformInterface().removeAnyBlock(location)) {
                         String replacer = wet ? potConfig.getWetPot(fertilizer) : potConfig.getDryPot(fertilizer);
-                        if (ConfigUtils.isVanillaItem(replacer)) location.getBlock().setType(Material.valueOf(replacer));
-                        else CustomCrops.getInstance().getPlatformInterface().placeNoteBlock(location, replacer);
+                        if (ConfigUtils.isVanillaItem(replacer)) {
+                            Block block = location.getBlock();
+                            block.setType(Material.valueOf(replacer));
+                            if (block.getBlockData() instanceof Farmland farmland && ConfigManager.disableMoistureMechanic) {
+                                farmland.setMoisture(wet ? farmland.getMaximumMoisture() : 0);
+                                block.setBlockData(farmland);
+                            }
+                        } else {
+                            CustomCrops.getInstance().getPlatformInterface().placeNoteBlock(location, replacer);
+                        }
                     } else {
                         CustomCrops.getInstance().getWorldDataManager().removePotData(SimpleLocation.getByBukkitLocation(location));
                     }

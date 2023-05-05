@@ -19,6 +19,7 @@ package net.momirealms.customcrops.integration.quest;
 
 import com.electro2560.dev.cluescrolls.api.*;
 import net.momirealms.customcrops.api.event.CropBreakEvent;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
@@ -34,6 +35,8 @@ public class ClueScrollCCQuest implements Listener {
     @EventHandler
     public void onHarvest(CropBreakEvent event) {
         if (event.isCancelled()) return;
-        commonClue.handle(event.getPlayer(), 1, new ClueDataPair("crop_id", event.getCropItemID()));
+        if (event.getEntity() instanceof Player player) {
+            commonClue.handle(player, 1, new ClueDataPair("crop_id", event.getCropItemID()));
+        }
     }
 }

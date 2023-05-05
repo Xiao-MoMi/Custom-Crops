@@ -26,6 +26,8 @@ import net.momirealms.customcrops.api.object.sprinkler.Sprinkler;
 import net.momirealms.customcrops.api.util.ConfigUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.block.data.type.Farmland;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -166,8 +168,7 @@ public class CCChunk implements Serializable {
                 changePotModel(simpleLocation, pot);
                 return null;
             });
-        }
-        else {
+        } else {
             Pot newPot = new Pot(pot_id, fertilizer, 0);
             potMap.put(simpleLocation, newPot);
             CustomCrops.getInstance().getScheduler().callSyncMethod(() -> {
@@ -205,7 +206,14 @@ public class CCChunk implements Serializable {
         if (location == null) return;
         if (CustomCrops.getInstance().getPlatformInterface().removeAnyBlock(location)) {
             String replacer = pot.isWet() ? pot.getConfig().getWetPot(pot.getFertilizer()) : pot.getConfig().getDryPot(pot.getFertilizer());
-            if (ConfigUtils.isVanillaItem(replacer)) location.getBlock().setType(Material.valueOf(replacer));
+            if (ConfigUtils.isVanillaItem(replacer)) {
+                Block block = location.getBlock();
+                block.setType(Material.valueOf(replacer));
+                if (block.getBlockData() instanceof Farmland farmland && ConfigManager.disableMoistureMechanic) {
+                    farmland.setMoisture(pot.isWet() ? farmland.getMaximumMoisture() : 0);
+                    block.setBlockData(farmland);
+                }
+            }
             else CustomCrops.getInstance().getPlatformInterface().placeNoteBlock(location, replacer);
         } else {
             CustomCrops.getInstance().getWorldDataManager().removePotData(simpleLocation);

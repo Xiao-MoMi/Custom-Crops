@@ -39,7 +39,8 @@ public class BattlePassCCQuest extends ExternalQuestExecutor implements Listener
     @EventHandler
     public void onHarvest(CropBreakEvent event) {
         if (event.isCancelled()) return;
-        Player player = event.getPlayer();
-        this.execute("harvest", player, (var1x) -> var1x.root(event.getCropItemID()));
+        if (event.getEntity() instanceof Player player) {
+            this.execute("harvest", player, (var1x) -> var1x.root(event.getCropItemID()));
+        }
     }
 }

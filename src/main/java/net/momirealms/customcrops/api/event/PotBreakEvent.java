@@ -19,21 +19,26 @@ package net.momirealms.customcrops.api.event;
 
 import net.momirealms.customcrops.api.object.pot.PotConfig;
 import org.bukkit.Location;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
+import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+import org.bukkit.event.entity.EntityEvent;
 import org.bukkit.event.player.PlayerEvent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public class PotBreakEvent extends PlayerEvent implements Cancellable {
+public class PotBreakEvent extends Event implements Cancellable {
 
     private static final HandlerList handlers = new HandlerList();
     private boolean cancelled;
     private final Location location;
     private final PotConfig potConfig;
+    private final Entity entity;
 
-    public PotBreakEvent(@NotNull Player who, Location location, PotConfig potConfig) {
-        super(who);
+    public PotBreakEvent(@Nullable Entity entity, Location location, PotConfig potConfig) {
+        this.entity = entity;
         this.location = location;
         this.potConfig = potConfig;
     }
@@ -65,5 +70,10 @@ public class PotBreakEvent extends PlayerEvent implements Cancellable {
 
     public PotConfig getPotConfig() {
         return potConfig;
+    }
+
+    @Nullable
+    public Entity getEntity() {
+        return entity;
     }
 }

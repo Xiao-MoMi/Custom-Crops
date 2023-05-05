@@ -32,18 +32,7 @@ public record VanillaXPImpl(int amount, boolean mending, double chance) implemen
     @Override
     public void doOn(@Nullable Player player, @Nullable SimpleLocation crop_loc, ItemMode itemMode) {
         if (player == null || Math.random() > chance) return;
-        if (CustomCrops.getInstance().getVersionHelper().isSpigot()) {
-            if (mending) {
-                player.getLocation().getWorld().spawn(player.getLocation(), ExperienceOrb.class, e -> e.setExperience(amount));
-            }
-            else {
-                player.giveExp(amount);
-                AdventureUtils.playerSound(player, Sound.Source.PLAYER, Key.key("minecraft:entity.experience_orb.pickup"), 1, 1);
-            }
-        }
-        else {
-            player.giveExp(amount, mending);
-            AdventureUtils.playerSound(player, Sound.Source.PLAYER, Key.key("minecraft:entity.experience_orb.pickup"), 1, 1);
-        }
+        player.giveExp(amount, mending);
+        AdventureUtils.playerSound(player, Sound.Source.PLAYER, Key.key("minecraft:entity.experience_orb.pickup"), 1, 1);
     }
 }

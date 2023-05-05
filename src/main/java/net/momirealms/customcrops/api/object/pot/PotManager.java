@@ -19,6 +19,7 @@ package net.momirealms.customcrops.api.object.pot;
 
 import net.momirealms.customcrops.CustomCrops;
 import net.momirealms.customcrops.api.object.Function;
+import net.momirealms.customcrops.api.object.basic.ConfigManager;
 import net.momirealms.customcrops.api.object.fertilizer.FertilizerType;
 import net.momirealms.customcrops.api.object.fill.PassiveFillMethod;
 import net.momirealms.customcrops.api.object.hologram.FertilizerHologram;
@@ -39,6 +40,8 @@ public class PotManager extends Function {
     private final CustomCrops plugin;
     private final HashMap<String, PotConfig> potConfigMap;
     private final HashMap<String, String> blockToPotKey;
+    public static boolean enableFarmLand;
+    public static boolean enableVanillaBlock;
 
     public PotManager(CustomCrops plugin) {
         this.plugin = plugin;
@@ -55,6 +58,8 @@ public class PotManager extends Function {
     public void unload() {
         this.potConfigMap.clear();
         this.blockToPotKey.clear();
+        enableFarmLand = false;
+        enableVanillaBlock = false;
     }
 
     private void loadConfig() {
@@ -77,11 +82,9 @@ public class PotManager extends Function {
                     AdventureUtils.consoleMessage("<red>[CustomCrops] base.dry/base.wet is not correctly set for pot: " + key);
                     continue;
                 }
-                PassiveFillMethod[] methods = ConfigUtils.getPassiveFillMethods(section.getConfigurationSection("fill-method"));
-                if (methods == null) {
-                    AdventureUtils.consoleMessage("<red>[CustomCrops] fill method is not set for pot: " + key);
-                    continue;
-                }
+
+                if (ConfigUtils.isVanillaItem(base_wet) || ConfigUtils.isVanillaItem(base_dry)) enableVanillaBlock = true;
+
                 blockToPotKey.put(base_wet, key);
                 blockToPotKey.put(base_dry, key);
                 PotConfig potConfig = new PotConfig(
@@ -90,7 +93,7 @@ public class PotManager extends Function {
                         base_dry,
                         base_wet,
                         enableFertilized,
-                        methods,
+                        ConfigUtils.getPassiveFillMethods(section.getConfigurationSection("fill-method")),
                         section.getBoolean("hologram.fertilizer.enable", false) ? new FertilizerHologram(
                                 section.getString("hologram.fertilizer.content", ""),
                                 section.getDouble("hologram.fertilizer.vertical-offset"),
@@ -123,6 +126,7 @@ public class PotManager extends Function {
                         ) : null,
                         section.getString("hologram.require-item")
                 );
+
                 if (enableFertilized) {
                     ConfigurationSection fertilizedSec = section.getConfigurationSection("fertilized-pots");
                     if (fertilizedSec == null) continue;
@@ -141,6 +145,17 @@ public class PotManager extends Function {
                         }
                     }
                 }
+
+                if (base_dry.equals("FARMLAND") || base_wet.equals("FARMLAND")) {
+                    enableFarmLand = true;
+                    if (!ConfigManager.disableMoistureMechanic && (potConfig.getPassiveFillMethods() != null || potConfig.getWaterAmountHologram() != null)) {
+                        AdventureUtils.consoleMessage("<red>[CustomCrops] Since you are using vanilla farmland, vanilla moisture would");
+                        AdventureUtils.consoleMessage("<red>[CustomCrops] conflict with CustomCrops' water system. It's advised to disable");
+                        AdventureUtils.consoleMessage("<red>[CustomCrops] moisture mechanic in config.yml or delete fill-method and");
+                        AdventureUtils.consoleMessage("<red>[CustomCrops] disable the water info hologram in pot configuration.");
+                    }
+                }
+
                 potConfigMap.put(key, potConfig);
             }
         }

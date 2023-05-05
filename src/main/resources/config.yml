@@ -1,5 +1,5 @@
 # Don't change
-config-version: '28'
+config-version: '29'
 # BStats
 metrics: true
 # Language: english / spanish / chinese / turkish
@@ -96,6 +96,15 @@ mechanics:
   # scarecrow item id
   # 稻草人物品id
   scarecrow: customcrops:scarecrow
+  # Vanilla farmland settings
+  # 原版耕地设置
+  vanilla-farmland:
+    # disable vanilla farmland moisture mechanics
+    # 禁用原版耕地湿润机制
+    disable-moisture-mechanic: false
+    # prevent entities from trampling the farmland
+    # 防止玩家踩踏耕地
+    prevent-trampling: false
 
 other-settings:
   # This option requires a skill-plugin hook

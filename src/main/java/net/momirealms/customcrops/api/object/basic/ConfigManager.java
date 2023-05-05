@@ -63,6 +63,8 @@ public class ConfigManager extends Function {
     public static boolean setUpMode;
     public static int intervalConsume;
     public static int intervalWork;
+    public static boolean disableMoistureMechanic;
+    public static boolean preventTrampling;
 
     private final HashMap<String, Integer> cropPerWorld;
     private final CustomCrops plugin;
@@ -138,6 +140,8 @@ public class ConfigManager extends Function {
         greenhouseRange = section.getInt("season.greenhouse.range", 5);
         greenhouseBlock = section.getString("season.greenhouse.block");
         scarecrow = section.getString("scarecrow");
+        disableMoistureMechanic = section.getBoolean("vanilla-farmland.disable-moisture-mechanic", false);
+        preventTrampling = section.getBoolean("vanilla-farmland.prevent-trampling", false);
     }
 
     private void loadOtherSetting(ConfigurationSection section) {

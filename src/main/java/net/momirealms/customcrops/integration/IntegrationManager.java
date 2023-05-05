@@ -54,6 +54,7 @@ public class IntegrationManager extends Function {
     private ItemInterface[] itemInterfaces;
     private SeasonInterface seasonInterface;
     private final PluginManager pluginManager;
+    private VaultHook vaultHook;
     private final PlaceholderManager placeholderManager;
 
     public IntegrationManager(CustomCrops plugin) {
@@ -61,6 +62,12 @@ public class IntegrationManager extends Function {
         this.pluginManager = Bukkit.getPluginManager();
         this.placeholderManager = new PlaceholderManager(plugin);
         this.registerQuests();
+        if (Bukkit.getPluginManager().isPluginEnabled("Vault")) {
+            this.vaultHook = new VaultHook();
+            if (!vaultHook.initialize()) {
+                AdventureUtils.consoleMessage("<red>[CustomCrops] Failed to initialize Vault");
+            }
+        }
     }
 
     @Override
@@ -180,5 +187,10 @@ public class IntegrationManager extends Function {
 
     public PlaceholderManager getPlaceholderManager() {
         return placeholderManager;
+    }
+
+    @Nullable
+    public VaultHook getVault() {
+        return vaultHook;
     }
 }

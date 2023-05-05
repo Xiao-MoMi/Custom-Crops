@@ -338,6 +338,10 @@ public class ConfigUtils {
                             actionSec.getDouble("chance")
                     ));
                     case "swing-hand" -> actions.add(new SwingHandImpl());
+                    case "give-money" -> actions.add(new GiveMoneyImpl(
+                            actionSec.getDouble("value"),
+                            actionSec.getDouble("chance", 1)
+                    ));
                 }
             }
             return actions.toArray(new Action[0]);

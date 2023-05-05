@@ -39,13 +39,13 @@ public class PotConfig {
     private final PassiveFillMethod[] passiveFillMethods;
     private final FertilizerHologram fertilizerHologram;
     private final WaterAmountHologram waterAmountHologram;
-    private final String requiredItem;
+    private final String potInfoItem;
 
     public PotConfig(String key, int max_storage, String dry_pot, String wet_pot, boolean enableFertilized,
-                     @NotNull PassiveFillMethod[] passiveFillMethods,
+                     @Nullable PassiveFillMethod[] passiveFillMethods,
                      @Nullable FertilizerHologram fertilizerHologram,
                      @Nullable WaterAmountHologram waterAmountHologram,
-                     String requiredItem) {
+                     String potInfoItem) {
         this.key = key;
         this.max_storage = max_storage;
         this.pot = Pair.of(dry_pot, wet_pot);
@@ -54,7 +54,7 @@ public class PotConfig {
         this.passiveFillMethods = passiveFillMethods;
         this.fertilizerHologram = fertilizerHologram;
         this.waterAmountHologram = waterAmountHologram;
-        this.requiredItem = requiredItem;
+        this.potInfoItem = potInfoItem;
     }
 
     public void registerFertilizedPot(FertilizerType fertilizerType, String dry_pot, String wet_pot) {
@@ -85,7 +85,7 @@ public class PotConfig {
         return max_storage;
     }
 
-    @NotNull
+    @Nullable
     public PassiveFillMethod[] getPassiveFillMethods() {
         return passiveFillMethods;
     }
@@ -101,8 +101,8 @@ public class PotConfig {
     }
 
     @Nullable
-    public String getRequiredItem() {
-        return requiredItem;
+    public String getPotInfoItem() {
+        return potInfoItem;
     }
 
     @NotNull

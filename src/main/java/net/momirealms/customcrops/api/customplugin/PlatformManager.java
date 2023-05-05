@@ -660,19 +660,21 @@ public class PlatformManager extends Function {
 
             // water
             PassiveFillMethod[] passiveFillMethods = potConfig.getPassiveFillMethods();
-            for (PassiveFillMethod passiveFillMethod : passiveFillMethods) {
-                if (passiveFillMethod.isRightItem(item_in_hand_id)) {
+            if (passiveFillMethods != null) {
+                for (PassiveFillMethod passiveFillMethod : passiveFillMethods) {
+                    if (passiveFillMethod.isRightItem(item_in_hand_id)) {
 
-                    PotWaterEvent potWaterEvent = new PotWaterEvent(player, item_in_hand, passiveFillMethod.getAmount(), location);
-                    Bukkit.getPluginManager().callEvent(potWaterEvent);
-                    if (potWaterEvent.isCancelled()) {
-                        return true;
+                        PotWaterEvent potWaterEvent = new PotWaterEvent(player, item_in_hand, passiveFillMethod.getAmount(), location);
+                        Bukkit.getPluginManager().callEvent(potWaterEvent);
+                        if (potWaterEvent.isCancelled()) {
+                            return true;
+                        }
+
+                        event.setCancelled(true);
+                        doPassiveFillAction(player, item_in_hand, passiveFillMethod, location.clone().add(0,1,0));
+                        plugin.getWorldDataManager().addWaterToPot(SimpleLocation.getByBukkitLocation(location), potWaterEvent.getWater(), pot_id);
+                        break outer;
                     }
-
-                    event.setCancelled(true);
-                    doPassiveFillAction(player, item_in_hand, passiveFillMethod, location.clone().add(0,1,0));
-                    plugin.getWorldDataManager().addWaterToPot(SimpleLocation.getByBukkitLocation(location), potWaterEvent.getWater(), pot_id);
-                    break outer;
                 }
             }
 
@@ -740,7 +742,7 @@ public class PlatformManager extends Function {
         PotInfoEvent potInfoEvent = new PotInfoEvent(player, location, item_in_hand, potConfig, potData.getFertilizer(), potData.getWater(), growingCrop);
         Bukkit.getPluginManager().callEvent(potInfoEvent);
 
-        if (potConfig.getRequiredItem() != null && !item_in_hand_id.equals(potConfig.getRequiredItem())) {
+        if (potConfig.getPotInfoItem() != null && !item_in_hand_id.equals(potConfig.getPotInfoItem())) {
             return true;
         }
 
@@ -788,13 +790,13 @@ public class PlatformManager extends Function {
         plugin.getWateringCanManager().setWater(item_in_hand, current_water, wateringCanConfig);
     }
 
-    public boolean onBreakPot(Player player, String id, Location location, Cancellable event) {
+    public boolean onBreakPot(@Nullable Entity entity, String id, Location location, Cancellable event) {
         PotConfig potConfig = plugin.getPotManager().getPotConfigByBlockID(id);
         if (potConfig == null) {
             return false;
         }
 
-        PotBreakEvent potBreakEvent = new PotBreakEvent(player, location, potConfig);
+        PotBreakEvent potBreakEvent = new PotBreakEvent(entity, location, potConfig);
         Bukkit.getPluginManager().callEvent(potBreakEvent);
         if (potBreakEvent.isCancelled()) {
             event.setCancelled(true);
@@ -805,7 +807,7 @@ public class PlatformManager extends Function {
         String above_id = plugin.getPlatformInterface().getAnyItemIDAt(above_loc);
         // has item above
         // is a crop
-        if (onBreakCrop(player, above_id, above_loc, event)) {
+        if (onBreakCrop(entity, above_id, above_loc, event)) {
             // The event might be cancelled if the player doesn't meet the break requirements
             if (event.isCancelled()) {
                 return true;
@@ -834,7 +836,7 @@ public class PlatformManager extends Function {
         return true;
     }
 
-    private boolean onBreakCrop(Player player, String id, Location location, Cancellable event) {
+    private boolean onBreakCrop(@Nullable Entity entity, String id, Location location, Cancellable event) {
         if (plugin.getCropManager().isDeadCrop(id)) {
             return true;
         }
@@ -842,18 +844,44 @@ public class PlatformManager extends Function {
         CropConfig cropConfig = plugin.getCropManager().getCropConfigByStage(id);
         if (cropConfig == null) return false;
 
-        if (!canBreak(player, cropConfig, location)) {
-            event.setCancelled(true);
-            return true;
-        }
+        if (entity instanceof Player player) {
 
-        if (player.getGameMode() != GameMode.CREATIVE) {
+            if (!canBreak(player, cropConfig, location)) {
+                event.setCancelled(true);
+                return true;
+            }
+
+            CropBreakEvent cropBreakEvent = new CropBreakEvent(entity, cropConfig, id, location);
+            Bukkit.getPluginManager().callEvent(cropBreakEvent);
+            if (cropBreakEvent.isCancelled()) {
+                return true;
+            }
+
+            if (player.getGameMode() != GameMode.CREATIVE) {
+                StageConfig stageConfig = plugin.getCropManager().getStageConfig(id);
+                if (stageConfig != null) {
+                    Action[] breakActions = stageConfig.getBreakActions();
+                    if (breakActions != null) {
+                        for (Action action : breakActions) {
+                            action.doOn(player, SimpleLocation.getByBukkitLocation(location), cropConfig.getCropMode());
+                        }
+                    }
+                }
+            }
+        } else {
+
+            CropBreakEvent cropBreakEvent = new CropBreakEvent(entity, cropConfig, id, location);
+            Bukkit.getPluginManager().callEvent(cropBreakEvent);
+            if (cropBreakEvent.isCancelled()) {
+                return true;
+            }
+
             StageConfig stageConfig = plugin.getCropManager().getStageConfig(id);
             if (stageConfig != null) {
                 Action[] breakActions = stageConfig.getBreakActions();
                 if (breakActions != null) {
                     for (Action action : breakActions) {
-                        action.doOn(player, SimpleLocation.getByBukkitLocation(location), cropConfig.getCropMode());
+                        action.doOn(null, SimpleLocation.getByBukkitLocation(location), cropConfig.getCropMode());
                     }
                 }
             }

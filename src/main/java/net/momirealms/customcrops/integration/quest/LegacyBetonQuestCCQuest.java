@@ -94,11 +94,12 @@ public class LegacyBetonQuestCCQuest extends Objective implements Listener {
 
     @EventHandler
     public void onHarvest(CropBreakEvent event) {
-        String playerID = PlayerConverter.getID(event.getPlayer());
+        if (!(event.getEntity() instanceof Player player)) return;
+        String playerID = PlayerConverter.getID(player);
         if (this.containsPlayer(playerID)) {
             if (this.crop_ids.contains(event.getCropItemID())) {
                 if (this.checkConditions(playerID)) {
-                    if (!isValidPlayer(event.getPlayer())) {
+                    if (!isValidPlayer(player)) {
                         return;
                     }
                     CropData cropData = (CropData) this.dataMap.get(playerID);

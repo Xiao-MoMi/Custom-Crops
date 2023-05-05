@@ -30,6 +30,7 @@ import org.betonquest.betonquest.utils.PlayerConverter;
 import org.betonquest.betonquest.utils.location.CompoundLocation;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
@@ -71,7 +72,8 @@ public class BetonQuestCCQuest extends CountingObjective implements Listener {
 
     @EventHandler
     public void onHarvest(CropBreakEvent event) {
-        OnlineProfile onlineProfile = PlayerConverter.getID(event.getPlayer());
+        if (!(event.getEntity() instanceof Player player)) return;
+        OnlineProfile onlineProfile = PlayerConverter.getID(player);
         if (!containsPlayer(onlineProfile)) {
             return;
         }
@@ -97,7 +99,7 @@ public class BetonQuestCCQuest extends CountingObjective implements Listener {
             return true;
         }
         final int range = rangeVar.getInt(profile);
-        final Location playerLoc = event.getPlayer().getLocation();
+        final Location playerLoc = event.getEntity().getLocation();
         return !playerLoc.getWorld().equals(targetLocation.getWorld()) || targetLocation.distanceSquared(playerLoc) > range * range;
     }
 

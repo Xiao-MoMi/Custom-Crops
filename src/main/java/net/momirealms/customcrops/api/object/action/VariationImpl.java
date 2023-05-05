@@ -23,10 +23,13 @@ import net.momirealms.customcrops.api.object.crop.VariationCrop;
 import net.momirealms.customcrops.api.object.fertilizer.Variation;
 import net.momirealms.customcrops.api.object.pot.Pot;
 import net.momirealms.customcrops.api.object.world.SimpleLocation;
+import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.concurrent.CompletableFuture;
 
 public record VariationImpl(VariationCrop[] variationCrops) implements Action {
 
@@ -63,13 +66,30 @@ public record VariationImpl(VariationCrop[] variationCrops) implements Action {
     }
 
     private void doVariation(@NotNull SimpleLocation crop_loc, ItemMode itemMode, VariationCrop variationCrop) {
-        CustomCrops.getInstance().getScheduler().callSyncMethod(() -> {
-            Location location = crop_loc.getBukkitLocation();
-            if (CustomCrops.getInstance().getPlatformInterface().removeCustomItem(location, itemMode)) {
-                CustomCrops.getInstance().getPlatformInterface().placeCustomItem(location, variationCrop.getId(), variationCrop.getCropMode());
-            }
-            CustomCrops.getInstance().getWorldDataManager().removeCropData(crop_loc);
-            return null;
-        });
+        Location location = crop_loc.getBukkitLocation();
+        if (location == null) return;
+        CompletableFuture<Chunk> asyncGetChunk = location.getWorld().getChunkAtAsync(location.getBlockX() >> 4, location.getBlockZ() >> 4);
+        if (itemMode == ItemMode.ITEM_FRAME || itemMode == ItemMode.ITEM_DISPLAY) {
+            CompletableFuture<Boolean> loadEntities = asyncGetChunk.thenApply((chunk) -> {
+                chunk.getEntities();
+                return chunk.isEntitiesLoaded();
+            });
+            loadEntities.whenComplete((result, throwable) ->
+                    CustomCrops.getInstance().getScheduler().callSyncMethod(() -> {
+                        if (CustomCrops.getInstance().getPlatformInterface().removeCustomItem(location, itemMode)) {
+                            CustomCrops.getInstance().getPlatformInterface().placeCustomItem(location, variationCrop.getId(), variationCrop.getCropMode());
+                        }
+                        return null;
+                    }));
+        }
+        else {
+            asyncGetChunk.whenComplete((result, throwable) ->
+                    CustomCrops.getInstance().getScheduler().callSyncMethod(() -> {
+                        if (CustomCrops.getInstance().getPlatformInterface().removeCustomItem(location, itemMode)) {
+                            CustomCrops.getInstance().getPlatformInterface().placeCustomItem(location, variationCrop.getId(), variationCrop.getCropMode());
+                        }
+                        return null;
+                    }));
+        }
     }
 }

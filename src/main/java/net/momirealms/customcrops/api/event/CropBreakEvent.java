@@ -19,24 +19,27 @@ package net.momirealms.customcrops.api.event;
 
 import net.momirealms.customcrops.api.object.crop.CropConfig;
 import org.bukkit.Location;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.Entity;
 import org.bukkit.event.Cancellable;
+import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
-import org.bukkit.event.player.PlayerEvent;
+import org.bukkit.event.entity.EntityEvent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public class CropBreakEvent extends PlayerEvent implements Cancellable {
+public class CropBreakEvent extends Event implements Cancellable {
 
     private static final HandlerList handlers = new HandlerList();
     private boolean cancelled;
     private final CropConfig cropConfig;
-    private final String crop_id;
+    private final String cropItemID;
     private final Location location;
+    private final Entity entity;
 
-    public CropBreakEvent(@NotNull Player who, CropConfig cropConfig, String crop_id, Location location) {
-        super(who);
+    public CropBreakEvent(@Nullable Entity entity, CropConfig cropConfig, String cropItemID, Location location) {
+        this.entity = entity;
         this.cropConfig = cropConfig;
-        this.crop_id = crop_id;
+        this.cropItemID = cropItemID;
         this.location = location;
     }
 
@@ -70,10 +73,15 @@ public class CropBreakEvent extends PlayerEvent implements Cancellable {
      * @return item id
      */
     public String getCropItemID() {
-        return crop_id;
+        return cropItemID;
     }
 
     public Location getLocation() {
         return location;
+    }
+
+    @Nullable
+    public Entity getEntity() {
+        return entity;
     }
 }
