@@ -50,7 +50,7 @@ public class ConsumeTaskCommand extends AbstractSubCommand {
         CustomCrops.getInstance().getScheduler().runTaskAsync(() -> {
             CCWorld ccworld = CustomCrops.getInstance().getWorldDataManager().getWorld(args.get(0));
             if (ccworld != null) {
-                ccworld.scheduleConsumeTask();
+                ccworld.scheduleConsumeTask(0);
             }
         });
         return true;

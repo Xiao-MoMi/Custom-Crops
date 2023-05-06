@@ -1,5 +1,5 @@
 # Don't change
-config-version: '29'
+config-version: '30'
 # BStats
 metrics: true
 # Language: english / spanish / chinese / turkish
@@ -68,6 +68,10 @@ optimization:
         - world:64
 
 mechanics:
+  # Does the system only work in loaded chunks (Requires you to stop the server before changing this setting)
+  # 插件是否只在加载中的区块工作 (需要关闭服务器再设置此项)
+  only-work-in-loaded-chunks: false
+
   # 17/2/1 = 85%/10%/5%
   # 2/2/1 = 40%/40%/20%
   default-quality-ratio: 17/2/1

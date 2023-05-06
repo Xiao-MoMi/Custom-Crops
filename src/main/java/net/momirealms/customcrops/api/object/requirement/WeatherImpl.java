@@ -24,9 +24,9 @@ import java.util.List;
 
 public class WeatherImpl extends AbstractRequirement implements Requirement {
 
-    private final List<String> weathers;
+    private final String[] weathers;
 
-    public WeatherImpl(@Nullable String[] msg, List<String> weathers) {
+    public WeatherImpl(@Nullable String[] msg, String[] weathers) {
         super(msg);
         this.weathers = weathers;
     }
@@ -39,7 +39,7 @@ public class WeatherImpl extends AbstractRequirement implements Requirement {
         else if (world.isClearWeather()) currentWeather = "clear";
         else currentWeather = "rain";
         for (String weather : weathers) {
-            if (weather.equalsIgnoreCase(currentWeather)) {
+            if (weather.equals(currentWeather)) {
                 return true;
             }
         }

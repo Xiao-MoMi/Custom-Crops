@@ -50,7 +50,7 @@ public class SprinklerWorkCommand extends AbstractSubCommand {
         CustomCrops.getInstance().getScheduler().runTaskAsync(() -> {
             CCWorld ccworld = CustomCrops.getInstance().getWorldDataManager().getWorld(args.get(0));
             if (ccworld != null) {
-                ccworld.scheduleSprinklerWork();
+                ccworld.scheduleSprinklerWork(0);
             }
         });
         return true;

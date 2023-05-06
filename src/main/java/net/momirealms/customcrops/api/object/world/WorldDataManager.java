@@ -26,6 +26,7 @@ import net.momirealms.customcrops.api.object.pot.Pot;
 import net.momirealms.customcrops.api.object.sprinkler.Sprinkler;
 import net.momirealms.customcrops.api.object.sprinkler.SprinklerConfig;
 import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.Nullable;
@@ -246,5 +247,19 @@ public class WorldDataManager extends Function {
     @Nullable
     public CCWorld getWorld(String world) {
         return worldMap.get(world);
+    }
+
+    public void loadChunk(Chunk chunk, World world) {
+        CCWorld ccWorld = worldMap.get(world.getName());
+        if (ccWorld != null) {
+            ccWorld.loadChunk(new ChunkCoordinate(chunk.getX(), chunk.getZ()));
+        }
+    }
+
+    public void unloadChunk(Chunk chunk, World world) {
+        CCWorld ccWorld = worldMap.get(world.getName());
+        if (ccWorld != null) {
+            ccWorld.unloadChunk(new ChunkCoordinate(chunk.getX(), chunk.getZ()));
+        }
     }
 }

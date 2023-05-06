@@ -48,7 +48,6 @@ import org.bukkit.block.Block;
 import org.bukkit.block.data.type.Farmland;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.event.block.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -74,6 +73,7 @@ public class CCWorld extends Function {
     private int workCounter;
     private int consumeCounter;
     private final HashSet<SimpleLocation> plantToday;
+    private File chunks_folder;
 
     public CCWorld(World world) {
         this.world = new WeakReference<>(world);
@@ -90,11 +90,25 @@ public class CCWorld extends Function {
     @Override
     @SuppressWarnings("ResultOfMethodCallIgnored")
     public void init() {
-        File chunks_folder = ConfigUtils.getChunkFolder(worldName);
+        loadDateData();
+        if (!ConfigManager.onlyInLoadedChunks) {
+            loadAllChunkData();
+        }
+    }
+
+    @Override
+    public void disable() {
+        closePool();
+        saveDateData();
+        saveAllChunkData();
+        CustomCrops.getInstance().getSeasonManager().unloadSeasonData(worldName);
+    }
+
+    public void loadAllChunkData() {
+        chunks_folder = ConfigUtils.getChunkFolder(worldName);
         if (!chunks_folder.exists()) chunks_folder.mkdirs();
         File[] data_files = chunks_folder.listFiles();
         if (data_files == null) return;
-
         List<File> outdated = new ArrayList<>();
         for (File file : data_files) {
             ChunkCoordinate chunkCoordinate = ChunkCoordinate.getByString(file.getName().substring(0, file.getName().length() - 7));
@@ -111,11 +125,12 @@ public class CCWorld extends Function {
                 outdated.add(file);
             }
         }
-
         for (File file : outdated) {
             file.delete();
         }
+    }
 
+    public void loadDateData() {
         YamlConfiguration dataFile;
         if (ConfigManager.worldFolderPath.equals("")) {
             dataFile = ConfigUtils.readData(new File(CustomCrops.getInstance().getDataFolder().getParentFile().getParentFile(), worldName + File.separator + "customcrops" + File.separator + "data.yml"));
@@ -134,18 +149,8 @@ public class CCWorld extends Function {
         this.current_day = dataFile.getLong("day", 0);
     }
 
-    @Override
-    public void disable() {
-        closePool();
-        saveCrop();
-        saveDate();
-        CustomCrops.getInstance().getSeasonManager().unloadSeasonData(worldName);
-    }
-
     @SuppressWarnings("ResultOfMethodCallIgnored")
-    public void saveCrop() {
-        File chunks_folder = ConfigUtils.getChunkFolder(worldName);
-        if (!chunks_folder.exists()) chunks_folder.mkdirs();
+    public void saveAllChunkData() {
         for (Map.Entry<ChunkCoordinate, CCChunk> entry : chunkMap.entrySet()) {
             ChunkCoordinate chunkCoordinate = entry.getKey();
             CCChunk chunk = entry.getValue();
@@ -163,7 +168,7 @@ public class CCWorld extends Function {
         }
     }
 
-    public void saveDate() {
+    public void saveDateData() {
         YamlConfiguration dataFile = new YamlConfiguration();
         if (ConfigManager.enableSeason && !ConfigManager.rsHook) {
             SeasonData seasonData = CustomCrops.getInstance().getSeasonManager().getSeasonData(worldName);
@@ -191,28 +196,29 @@ public class CCWorld extends Function {
         this.scheduleTask();
     }
 
+    public void unload() {
+        if (this.timerTask != null) {
+            this.timerTask.cancel(false);
+            this.timerTask = null;
+        }
+    }
+
     private void scheduleTask() {
         if (this.timerTask == null) {
             this.timerTask = CustomCrops.getInstance().getScheduler().runTaskTimerAsync(() -> {
-
                 World current = world.get();
                 if (current != null) {
-
                     if (ConfigManager.debug) {
                         Log.info("Queue size: " + schedule.getQueue().size() + " Completed: " + schedule.getCompletedTaskCount());
                     }
-
                     long day = current.getFullTime() / 24000;
                     long time = current.getTime();
-
                     this.tryDayCycleTask(time, day);
-                    this.tryScheduleGrow();
+                    this.timerTask();
                 }
                 else {
-
                     AdventureUtils.consoleMessage("<red>[CustomCrops] World: " + worldName + " unloaded unexpectedly. Shutdown the schedule.");
                     this.schedule.shutdown();
-
                 }
             }, 1000, 1000L);
         }
@@ -230,13 +236,13 @@ public class CCWorld extends Function {
             if (cacheTimer <= 0) {
                 if (ConfigManager.debug) Log.info("== Save cache ==");
                 cacheTimer = ConfigManager.cacheSaveInterval;
-                schedule.execute(this::saveDate);
-                schedule.execute(this::saveCrop);
+                schedule.execute(this::saveDateData);
+                schedule.execute(this::saveAllChunkData);
             }
         }
     }
 
-    private void tryScheduleGrow() {
+    private void timerTask() {
         pointTimer--;
         if (pointTimer <= 0) {
             pointTimer = ConfigManager.pointGainInterval;
@@ -252,7 +258,6 @@ public class CCWorld extends Function {
             schedule.getQueue().clear();
             if (ConfigManager.debug) Log.info("== Clear queue ==");
         }
-
         for (CCChunk chunk : chunkMap.values()) {
             chunk.scheduleGrowTask(this);
         }
@@ -262,20 +267,13 @@ public class CCWorld extends Function {
             if (consumeCounter <= 0) {
                 consumeCounter = ConfigManager.intervalConsume;
                 if (ConfigManager.debug) Log.info("== Consume time ==");
-                scheduleConsumeTask();
+                scheduleConsumeTask(0);
             }
             if (workCounter <= 0) {
                 workCounter = ConfigManager.intervalWork;
                 if (ConfigManager.debug) Log.info("== Work time ==");
-                scheduleSprinklerWork();
+                scheduleSprinklerWork(Math.min(30, ConfigManager.pointGainInterval));
             }
-        }
-    }
-
-    public void unload() {
-        if (this.timerTask != null) {
-            this.timerTask.cancel(false);
-            this.timerTask = null;
         }
     }
 
@@ -283,16 +281,56 @@ public class CCWorld extends Function {
         this.schedule.shutdown();
     }
 
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+    public void unloadChunk(ChunkCoordinate chunkCoordinate) {
+        CCChunk chunk = chunkMap.remove(chunkCoordinate);
+        if (chunk != null) {
+            File file = new File(chunks_folder, chunkCoordinate.getFileName() + ".ccdata");
+            if (chunk.isUseless() && file.exists()) {
+                file.delete();
+                return;
+            }
+            try (FileOutputStream fos = new FileOutputStream(file); ObjectOutputStream oos = new ObjectOutputStream(fos)) {
+                oos.writeObject(chunk);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+    public void loadChunk(ChunkCoordinate chunkCoordinate) {
+        File file = new File(chunks_folder, chunkCoordinate.getFileName() + ".ccdata");
+        if (file.exists()) {
+            boolean delete = false;
+            try (FileInputStream fis = new FileInputStream(file); ObjectInputStream ois = new ObjectInputStream(fis)) {
+                CCChunk chunk = (CCChunk) ois.readObject();
+                if (chunk.isUseless()) {
+                    delete = true;
+                } else {
+                    chunkMap.put(chunkCoordinate, chunk);
+                }
+            } catch (IOException | ClassNotFoundException e) {
+                e.printStackTrace();
+                Log.info("Error at " + file.getAbsolutePath());
+            } finally {
+                if (delete) {
+                    file.delete();
+                }
+            }
+        }
+    }
+
     public void pushCropTask(SimpleLocation simpleLocation, int delay) {
-        schedule.schedule(new CropCheckTask(simpleLocation), delay, TimeUnit.SECONDS);
+        schedule.schedule(new CropCheckTask(simpleLocation), delay, TimeUnit.MILLISECONDS);
     }
 
     public void pushSprinklerTask(SimpleLocation simpleLocation, int delay) {
-        schedule.schedule(new SprinklerCheckTask(simpleLocation), delay, TimeUnit.SECONDS);
+        schedule.schedule(new SprinklerCheckTask(simpleLocation), delay, TimeUnit.MILLISECONDS);
     }
 
     public void pushConsumeTask(SimpleLocation simpleLocation, int delay) {
-        schedule.schedule(new ConsumeCheckTask(simpleLocation), delay, TimeUnit.SECONDS);
+        schedule.schedule(new ConsumeCheckTask(simpleLocation), delay, TimeUnit.MILLISECONDS);
     }
 
     public class ConsumeCheckTask implements Runnable {
@@ -487,22 +525,22 @@ public class CCWorld extends Function {
         Location location = simpleLocation.getBukkitLocation();
         String finalNextModel = nextModel;
         if (finalNextModel == null || location == null) return;
+
         CompletableFuture<Chunk> asyncGetChunk = location.getWorld().getChunkAtAsync(location.getBlockX() >> 4, location.getBlockZ() >> 4);
         if (itemMode == ItemMode.ITEM_FRAME || itemMode == ItemMode.ITEM_DISPLAY) {
             CompletableFuture<Boolean> loadEntities = asyncGetChunk.thenApply((chunk) -> {
                 chunk.getEntities();
                 return chunk.isEntitiesLoaded();
             });
-            loadEntities.whenComplete((result, throwable) -> {
-                CustomCrops.getInstance().getScheduler().callSyncMethod(() -> {
-                    if (CustomCrops.getInstance().getPlatformInterface().removeCustomItem(location, itemMode)) {
-                        CustomCrops.getInstance().getPlatformInterface().placeCustomItem(location, finalNextModel, itemMode);
-                    } else {
-                        removeCropData(simpleLocation);
-                    }
-                    return null;
-                });
-            });
+            loadEntities.whenComplete((result, throwable) ->
+                    CustomCrops.getInstance().getScheduler().callSyncMethod(() -> {
+                        if (CustomCrops.getInstance().getPlatformInterface().removeCustomItem(location, itemMode)) {
+                            CustomCrops.getInstance().getPlatformInterface().placeCustomItem(location, finalNextModel, itemMode);
+                        } else {
+                            removeCropData(simpleLocation);
+                        }
+                        return null;
+            }));
         }
         else {
             asyncGetChunk.whenComplete((result, throwable) ->
@@ -515,10 +553,6 @@ public class CCWorld extends Function {
                         return null;
                     }));
         }
-    }
-
-    public String getWorldName() {
-        return worldName;
     }
 
     public World getWorld() {
@@ -553,7 +587,7 @@ public class CCWorld extends Function {
         if (plantToday.contains(simpleLocation)) {
             return;
         }
-        pushCropTask(simpleLocation, ThreadLocalRandom.current().nextInt(ConfigManager.pointGainInterval));
+        pushCropTask(simpleLocation, ThreadLocalRandom.current().nextInt(ConfigManager.pointGainInterval * 1000));
         plantToday.add(simpleLocation);
     }
 
@@ -680,19 +714,19 @@ public class CCWorld extends Function {
         return newChunk;
     }
 
-    public void scheduleSprinklerWork() {
+    public void scheduleSprinklerWork(int delay) {
         schedule.execute(() -> {
             for (CCChunk chunk : chunkMap.values()) {
-                chunk.scheduleSprinklerTask(this);
+                chunk.scheduleSprinklerTask(this, delay);
             }
         });
     }
 
-    public void scheduleConsumeTask() {
-        schedule.schedule(() -> {
+    public void scheduleConsumeTask(int delay) {
+        schedule.execute(() -> {
             for (CCChunk chunk : chunkMap.values()) {
-                chunk.scheduleConsumeTask(this);
+                chunk.scheduleConsumeTask(this, delay);
             }
-        }, 0, TimeUnit.SECONDS);
+        });
     }
 }

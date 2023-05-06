@@ -65,6 +65,7 @@ public class ConfigManager extends Function {
     public static int intervalWork;
     public static boolean disableMoistureMechanic;
     public static boolean preventTrampling;
+    public static boolean onlyInLoadedChunks;
 
     private final HashMap<String, Integer> cropPerWorld;
     private final CustomCrops plugin;
@@ -72,6 +73,8 @@ public class ConfigManager extends Function {
     public ConfigManager(CustomCrops plugin) {
         this.plugin = plugin;
         this.cropPerWorld = new HashMap<>();
+        YamlConfiguration config = ConfigUtils.getConfig("config.yml");
+        onlyInLoadedChunks = config.getBoolean("mechanics.only-work-in-loaded-chunks", false);
     }
 
     @Override

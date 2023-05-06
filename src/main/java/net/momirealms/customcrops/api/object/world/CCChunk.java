@@ -180,22 +180,23 @@ public class CCChunk implements Serializable {
 
     public void scheduleGrowTask(CCWorld ccWorld) {
         Random randomGenerator = ThreadLocalRandom.current();
+        int delay = ConfigManager.pointGainInterval * 1000;
         for (SimpleLocation simpleLocation : growingCropMap.keySet()) {
-            ccWorld.pushCropTask(simpleLocation, randomGenerator.nextInt(ConfigManager.pointGainInterval));
+            ccWorld.pushCropTask(simpleLocation, randomGenerator.nextInt(delay));
         }
     }
 
-    public void scheduleSprinklerTask(CCWorld ccWorld) {
+    public void scheduleSprinklerTask(CCWorld ccWorld, int startDelay) {
         Random randomGenerator = ThreadLocalRandom.current();
-        int delay = Math.min(30, ConfigManager.pointGainInterval);
+        int delay = (Math.min(30, ConfigManager.pointGainInterval) + startDelay) * 1000;
         for (SimpleLocation simpleLocation : sprinklerMap.keySet()) {
             ccWorld.pushSprinklerTask(simpleLocation, randomGenerator.nextInt(delay));
         }
     }
 
-    public void scheduleConsumeTask(CCWorld ccWorld) {
+    public void scheduleConsumeTask(CCWorld ccWorld, int startDelay) {
         Random randomGenerator = ThreadLocalRandom.current();
-        int delay = Math.min(30, ConfigManager.pointGainInterval);
+        int delay = (Math.min(30, ConfigManager.pointGainInterval) + startDelay) * 1000;
         for (SimpleLocation simpleLocation : potMap.keySet()) {
             ccWorld.pushConsumeTask(simpleLocation, randomGenerator.nextInt(delay));
         }

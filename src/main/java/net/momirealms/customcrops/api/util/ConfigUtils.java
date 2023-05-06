@@ -186,6 +186,7 @@ public class ConfigUtils {
                         }
                         case "crow_attack" -> conditions.add(new CrowAttack(map2.getDouble("value.chance"), map2.getString("value.fly-model"), map2.getString("value.stand-model")));
                         case "random" -> conditions.add(new Random(map2.getDouble("value")));
+                        case "weather" -> conditions.add(new Weather(map2.getStringList("value").toArray(new String[0])));
                     }
                 }
             }
@@ -205,7 +206,7 @@ public class ConfigUtils {
                 String[] msg = innerSec.getStringList("message").size() == 0 ? (innerSec.getString("message") == null ? null : new String[]{innerSec.getString("message")}) : innerSec.getStringList("message").toArray(new String[0]);
                 switch (type) {
                     case "biome" -> requirements.add(new BiomeImpl(msg, new HashSet<>(innerSec.getStringList("value"))));
-                    case "weather" -> requirements.add(new WeatherImpl(msg, innerSec.getStringList("value")));
+                    case "weather" -> requirements.add(new WeatherImpl(msg, innerSec.getStringList("value").toArray(new String[0])));
                     case "ypos" -> requirements.add(new YPosImpl(msg, innerSec.getStringList("value")));
                     case "season" -> {
                         if (!ConfigManager.enableSeason) continue;
