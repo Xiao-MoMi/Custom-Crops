@@ -157,16 +157,18 @@ public class SprinklerManager extends Function implements Listener {
     public void onItemSpawn(ItemSpawnEvent event) {
         if (event.isCancelled()) return;
         Item item = event.getEntity();
-        String id = plugin.getPlatformInterface().getItemStackID(item.getItemStack());
+        ItemStack origin = item.getItemStack();
+        String id = plugin.getPlatformInterface().getItemStackID(origin);
         String key = itemToKey.get(id);
         if (key == null) return;
         String twoD = sprinklerConfigMap.get(key).getTwoD();
-        if (twoD == null) return;
+        if (twoD == null || id.equals(twoD)) return;
         ItemStack itemStack = plugin.getPlatformInterface().getItemStack(twoD);
         if (itemStack == null) {
             AdventureUtils.consoleMessage("<red>[CustomCrops] 2D sprinkler " + twoD + " doesn't exist");
             return;
         }
+        itemStack.setAmount(origin.getAmount());
         item.setItemStack(itemStack);
     }
 }

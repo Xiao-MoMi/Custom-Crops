@@ -193,11 +193,11 @@ public final class CustomCrops extends JavaPlugin {
 
     private boolean loadPlatform() {
         PluginManager pluginManager = Bukkit.getPluginManager();
-        if (pluginManager.isPluginEnabled("ItemsAdder")) {
+        if (pluginManager.getPlugin("ItemsAdder") != null) {
             this.platform = Platform.ItemsAdder;
             this.platformInterface = new ItemsAdderPluginImpl();
         }
-        else if (pluginManager.isPluginEnabled("Oraxen")) {
+        else if (pluginManager.getPlugin("Oraxen") != null) {
             this.platform = Platform.Oraxen;
             this.platformInterface = new OraxenPluginImpl();
         }
