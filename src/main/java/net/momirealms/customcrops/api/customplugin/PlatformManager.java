@@ -61,7 +61,6 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
-import javax.xml.transform.sax.SAXResult;
 import java.util.*;
 
 public class PlatformManager extends Function {

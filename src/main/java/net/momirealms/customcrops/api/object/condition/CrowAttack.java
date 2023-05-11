@@ -45,10 +45,7 @@ public class CrowAttack implements Condition {
         for (Player player : Bukkit.getOnlinePlayers()) {
             SimpleLocation playerLoc = SimpleLocation.getByBukkitLocation(player.getLocation());
             if (playerLoc.isNear(simpleLocation, 48)) {
-                CustomCrops.getInstance().getScheduler().callSyncMethod(() -> {
-                    new CrowTask(player, location, fly_model, stand_model).runTaskTimerAsynchronously(CustomCrops.getInstance(), 1, 1);
-                    return null;
-                });
+                new CrowTask(player, location, fly_model, stand_model).runTaskTimerAsynchronously(CustomCrops.getInstance(), 1, 1);
             }
         }
         return true;

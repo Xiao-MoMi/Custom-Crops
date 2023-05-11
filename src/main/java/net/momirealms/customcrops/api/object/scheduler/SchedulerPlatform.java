@@ -17,6 +17,7 @@
 
 package net.momirealms.customcrops.api.object.scheduler;
 
+import org.bukkit.Location;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.Callable;
@@ -27,4 +28,6 @@ public interface SchedulerPlatform {
     <T> Future<T> callSyncMethod(@NotNull Callable<T> task);
 
     void runTask(Runnable runnable);
+
+    void runTask(Runnable runnable, Location location);
 }

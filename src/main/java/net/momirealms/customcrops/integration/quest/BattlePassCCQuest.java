@@ -21,6 +21,7 @@ import io.github.battlepass.BattlePlugin;
 import io.github.battlepass.quests.quests.external.executor.ExternalQuestExecutor;
 import io.github.battlepass.registry.quest.QuestRegistry;
 import net.momirealms.customcrops.api.event.CropBreakEvent;
+import net.momirealms.customcrops.api.event.CropPlantEvent;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -40,7 +41,16 @@ public class BattlePassCCQuest extends ExternalQuestExecutor implements Listener
     public void onHarvest(CropBreakEvent event) {
         if (event.isCancelled()) return;
         if (event.getEntity() instanceof Player player) {
-            this.execute("harvest", player, (var1x) -> var1x.root(event.getCropItemID()));
+            String id = event.getCropItemID();
+            String[] split = id.split(":");
+            this.execute("harvest", player, (result) -> result.root(split[split.length - 1]));
         }
+    }
+
+    @EventHandler
+    public void onPlant(CropPlantEvent event) {
+        if (event.isCancelled()) return;
+        String id = event.getCrop();
+        this.execute("plant", event.getPlayer(), (result) -> result.root(id));
     }
 }

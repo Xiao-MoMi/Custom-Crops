@@ -42,7 +42,6 @@ public class CrowTask extends BukkitRunnable {
         this.cropLoc = crop_location.clone();
         this.timer = 0;
         this.fly = CustomCrops.getInstance().getIntegrationManager().build(fly_model);
-        ItemStack stand = CustomCrops.getInstance().getIntegrationManager().build(stand_model);
         this.player = player;
         this.entityID = ThreadLocalRandom.current().nextInt(Integer.MAX_VALUE);
         this.yaw = ThreadLocalRandom.current().nextInt(361) - 180;
@@ -50,7 +49,7 @@ public class CrowTask extends BukkitRunnable {
         this.vectorUp = new Vector(relative.getX() / 75, 0.1, relative.getZ() / 75);
         CustomCrops.getProtocolManager().sendServerPacket(player, FakeEntityUtils.getSpawnPacket(entityID, crop_location, EntityType.ARMOR_STAND));
         CustomCrops.getProtocolManager().sendServerPacket(player, FakeEntityUtils.getVanishArmorStandMetaPacket(entityID));
-        CustomCrops.getProtocolManager().sendServerPacket(player, FakeEntityUtils.getEquipPacket(entityID, stand));
+        CustomCrops.getProtocolManager().sendServerPacket(player, FakeEntityUtils.getEquipPacket(entityID, CustomCrops.getInstance().getIntegrationManager().build(stand_model)));
     }
 
     @Override

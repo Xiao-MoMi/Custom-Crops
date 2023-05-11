@@ -124,7 +124,7 @@ public interface PlatformInterface {
 
     @Nullable
     default ItemFrame getItemFrameAt(Location location) {
-        Collection<ItemFrame> itemFrames = location.clone().add(0.5,0.5,0.5).getNearbyEntitiesByType(ItemFrame.class, 0.5, 0.5, 0.5);
+        Collection<ItemFrame> itemFrames = location.clone().add(0.5,0.5,0.5).getNearbyEntitiesByType(ItemFrame.class, 0.4, 0.5, 0.4);
         int i = itemFrames.size();
         int j = 1;
         for (ItemFrame itemFrame : itemFrames) {
@@ -139,7 +139,7 @@ public interface PlatformInterface {
 
     @Nullable
     default ItemDisplay getItemDisplayAt(Location location) {
-        Collection<ItemDisplay> itemDisplays = location.clone().add(0.5,0.25,0.5).getNearbyEntitiesByType(ItemDisplay.class, 0.5, 0.5, 0.5);
+        Collection<ItemDisplay> itemDisplays = location.clone().add(0.5,0.25,0.5).getNearbyEntitiesByType(ItemDisplay.class, 0.4, 0.5, 0.4);
         int i = itemDisplays.size();
         int j = 1;
         for (ItemDisplay itemDisplay : itemDisplays) {
@@ -163,7 +163,7 @@ public interface PlatformInterface {
     }
 
     default void removeInteractions(Location location) {
-        location.clone().add(0.5,0.5,0.5).getNearbyEntitiesByType(Interaction.class, 0.5, 0.5, 0.5).forEach(Entity::remove);
+        location.clone().add(0.5,0.5,0.5).getNearbyEntitiesByType(Interaction.class, 0.4, 0.5, 0.4).forEach(Entity::remove);
     }
 
     default boolean removeItemDisplay(Location location) {
@@ -179,12 +179,12 @@ public interface PlatformInterface {
     default boolean detectAnyThing(Location location) {
         Block block = location.getBlock();
         if (block.getType() != Material.AIR) return true;
-        Collection<Entity> entities = location.clone().add(0.5,0.5,0.5).getNearbyEntitiesByType(ItemFrame.class, 0.5, 0.5, 0.5);
+        Collection<Entity> entities = location.clone().add(0.5,0.5,0.5).getNearbyEntitiesByType(ItemFrame.class, 0.4, 0.5, 0.4);
         return entities.size() != 0 || (CustomCrops.getInstance().getVersionHelper().isVersionNewerThan1_19_R3() && detectItemDisplay(location));
     }
 
     default boolean detectItemDisplay(Location location) {
-        Collection<Entity> entities = location.clone().add(0.5,0,0.5).getNearbyEntitiesByType(ItemDisplay.class, 0.5, 0.5, 0.5);
+        Collection<Entity> entities = location.clone().add(0.5,0,0.5).getNearbyEntitiesByType(ItemDisplay.class, 0.4, 0.5, 0.4);
         return entities.size() != 0;
     }
 

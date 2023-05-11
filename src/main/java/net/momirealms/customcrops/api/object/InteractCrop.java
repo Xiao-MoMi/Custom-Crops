@@ -21,7 +21,6 @@ import net.momirealms.customcrops.CustomCrops;
 import net.momirealms.customcrops.api.object.action.Action;
 import net.momirealms.customcrops.api.object.requirement.Requirement;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class InteractCrop {

@@ -19,11 +19,9 @@ package net.momirealms.customcrops.api.object.action;
 
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
-import net.momirealms.customcrops.CustomCrops;
 import net.momirealms.customcrops.api.object.ItemMode;
 import net.momirealms.customcrops.api.object.world.SimpleLocation;
 import net.momirealms.customcrops.api.util.AdventureUtils;
-import org.bukkit.entity.ExperienceOrb;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 

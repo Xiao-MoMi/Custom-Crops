@@ -19,6 +19,7 @@ package net.momirealms.customcrops.api.object.scheduler;
 
 import net.momirealms.customcrops.CustomCrops;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.Callable;
@@ -40,5 +41,10 @@ public class BukkitSchedulerImpl implements SchedulerPlatform {
     @Override
     public void runTask(Runnable runnable) {
         Bukkit.getScheduler().runTask(plugin, runnable);
+    }
+
+    @Override
+    public void runTask(Runnable runnable, Location location) {
+        runTask(runnable);
     }
 }

@@ -18,6 +18,9 @@
 package net.momirealms.customcrops.api.customplugin.oraxen;
 
 import io.th0rgal.oraxen.api.events.*;
+import io.th0rgal.oraxen.mechanics.provided.gameplay.furniture.FurnitureMechanic;
+import io.th0rgal.oraxen.mechanics.provided.gameplay.noteblock.NoteBlockMechanic;
+import io.th0rgal.oraxen.mechanics.provided.gameplay.stringblock.StringBlockMechanic;
 import net.momirealms.customcrops.api.customplugin.Handler;
 import net.momirealms.customcrops.api.customplugin.PlatformManager;
 import org.bukkit.entity.Entity;
@@ -50,17 +53,23 @@ public class OraxenHandler extends Handler {
 
     @EventHandler
     public void onPlaceFurniture(OraxenFurniturePlaceEvent event) {
-        platformManager.onPlaceFurniture(event.getPlayer(), event.getBaseEntity().getLocation().getBlock().getLocation(), event.getMechanic().getItemID(), event);
+        FurnitureMechanic mechanic = event.getMechanic();
+        if (mechanic == null) return;
+        platformManager.onPlaceFurniture(event.getPlayer(), event.getBaseEntity().getLocation().getBlock().getLocation(), mechanic.getItemID(), event);
     }
 
     @EventHandler
     public void onPlaceStringBlock(OraxenStringBlockPlaceEvent event) {
-        platformManager.onPlaceBlock(event.getPlayer(), event.getBlock().getLocation(), event.getMechanic().getItemID(), event);
+        StringBlockMechanic mechanic = event.getMechanic();
+        if (mechanic == null) return;
+        platformManager.onPlaceBlock(event.getPlayer(), event.getBlock().getLocation(), mechanic.getItemID(), event);
     }
 
     @EventHandler
     public void onPlaceNoteBlock(OraxenNoteBlockPlaceEvent event) {
-        platformManager.onPlaceBlock(event.getPlayer(), event.getBlock().getLocation(), event.getMechanic().getItemID(), event);
+        NoteBlockMechanic mechanic = event.getMechanic();
+        if (mechanic == null) return;
+        platformManager.onPlaceBlock(event.getPlayer(), event.getBlock().getLocation(), mechanic.getItemID(), event);
     }
 
     @EventHandler

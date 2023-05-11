@@ -20,8 +20,6 @@ package net.momirealms.customcrops.api.object.requirement;
 import org.bukkit.World;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-
 public class WeatherImpl extends AbstractRequirement implements Requirement {
 
     private final String[] weathers;

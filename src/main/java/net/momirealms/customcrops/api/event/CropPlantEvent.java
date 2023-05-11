@@ -35,6 +35,9 @@ public class CropPlantEvent extends PlayerEvent implements Cancellable {
     private int point;
     private String crop_model;
 
+    /**
+     * This event might be called when player plants the crop with a seed or triggers the replant action
+     */
     public CropPlantEvent(@NotNull Player who, ItemStack hand, Location location, String crop, int point, String crop_model) {
         super(who);
         this.hand = hand;

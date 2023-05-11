@@ -23,7 +23,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
-import org.bukkit.event.entity.EntityEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -36,6 +35,9 @@ public class CropBreakEvent extends Event implements Cancellable {
     private final Location location;
     private final Entity entity;
 
+    /**
+     * This event might be called when entity breaks the crop or player triggers the break action
+     */
     public CropBreakEvent(@Nullable Entity entity, CropConfig cropConfig, String cropItemID, Location location) {
         this.entity = entity;
         this.cropConfig = cropConfig;
