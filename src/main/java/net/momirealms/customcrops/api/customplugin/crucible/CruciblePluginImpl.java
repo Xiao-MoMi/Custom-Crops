@@ -34,6 +34,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
+@Deprecated
 public class CruciblePluginImpl implements PlatformInterface {
 
     @Override
@@ -62,6 +63,7 @@ public class CruciblePluginImpl implements PlatformInterface {
 
     @Nullable
     @Override
+    @Deprecated
     public ItemFrame placeItemFrame(Location location, String id) {
         Optional<CrucibleItem> optionalCI = MythicCrucible.inst().getItemManager().getItem(id);
         if (optionalCI.isPresent()) {
@@ -75,6 +77,7 @@ public class CruciblePluginImpl implements PlatformInterface {
 
     @Nullable
     @Override
+    @Deprecated
     public ItemDisplay placeItemDisplay(Location location, String id) {
         //TODO Not implemented feature
         return null;
@@ -115,18 +118,15 @@ public class CruciblePluginImpl implements PlatformInterface {
     }
 
     @Override
+    @Deprecated
     public void dropBlockLoot(Block block) {
-        //TODO Not necessary
+        //TODO
     }
 
     @Override
+    @Deprecated
     public void placeChorus(Location location, String id) {
-        Optional<CrucibleItem> optionalCI = MythicCrucible.inst().getItemManager().getItem(id);
-        if (optionalCI.isPresent()) {
-            location.getBlock().setBlockData(optionalCI.get().getBlockData().getBlockData());
-        } else {
-            AdventureUtils.consoleMessage("<red>[CustomCrop] Chorus not exists: " + id);
-        }
+        //TODO
     }
 
     @NotNull
@@ -139,6 +139,7 @@ public class CruciblePluginImpl implements PlatformInterface {
 
     @Nullable
     @Override
+    @Deprecated
     public String getItemDisplayID(ItemDisplay itemDisplay) {
         return null;
     }

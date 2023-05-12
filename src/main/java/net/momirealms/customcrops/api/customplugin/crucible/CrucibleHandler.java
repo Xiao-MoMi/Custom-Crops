@@ -20,10 +20,11 @@ package net.momirealms.customcrops.api.customplugin.crucible;
 import net.momirealms.customcrops.api.customplugin.Handler;
 import net.momirealms.customcrops.api.customplugin.PlatformManager;
 
+@Deprecated
 public class CrucibleHandler extends Handler {
 
     public CrucibleHandler(PlatformManager platformManager) {
         super(platformManager);
-        //TODO NO API Events
+        //TODO NO API Events Available
     }
 }
