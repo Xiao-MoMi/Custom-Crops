@@ -78,7 +78,7 @@ public class OraxenPluginImpl implements PlatformInterface {
         if (entity instanceof ItemFrame itemFrame)
             return itemFrame;
         else {
-            AdventureUtils.consoleMessage("<red>[CustomCrops] Item Frame not exists: " + id);
+            AdventureUtils.consoleMessage("<red>[CustomCrops] ItemFrame not exists: " + id);
             entity.remove();
             return null;
         }
@@ -96,7 +96,7 @@ public class OraxenPluginImpl implements PlatformInterface {
         if (entity instanceof ItemDisplay itemDisplay)
             return itemDisplay;
         else {
-            AdventureUtils.consoleMessage("<red>[CustomCrops] Item Display not exists: " + id);
+            AdventureUtils.consoleMessage("<red>[CustomCrops] ItemDisplay not exists: " + id);
             entity.remove();
             return null;
         }

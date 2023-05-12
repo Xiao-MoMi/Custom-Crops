@@ -15,22 +15,15 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.momirealms.customcrops.command;
+package net.momirealms.customcrops.api.customplugin.crucible;
 
-import net.momirealms.customcrops.command.subcmd.*;
+import net.momirealms.customcrops.api.customplugin.Handler;
+import net.momirealms.customcrops.api.customplugin.PlatformManager;
 
-public class CustomCropsCommand extends AbstractMainCommand {
+public class CrucibleHandler extends Handler {
 
-    public CustomCropsCommand() {
-        regSubCommand(ReloadCommand.INSTANCE);
-        regSubCommand(SetSeasonCommand.INSTANCE);
-        regSubCommand(HelpCommand.INSTANCE);
-        regSubCommand(AboutCommand.INSTANCE);
-        regSubCommand(SetDateCommand.INSTANCE);
-        regSubCommand(ForceCommand.INSTANCE);
-        regSubCommand(MigrateCommand.INSTANCE);
-        regSubCommand(ConvertCommand.INSTANCE);
-//        regSubCommand(CorruptionTest.INSTANCE);
-//        regSubCommand(PerformanceTest.INSTANCE);
+    public CrucibleHandler(PlatformManager platformManager) {
+        super(platformManager);
+        //TODO NO API Events
     }
 }
