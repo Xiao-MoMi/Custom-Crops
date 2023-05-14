@@ -134,69 +134,53 @@ public class CCChunk implements Serializable {
         Pot pot = potMap.get(simpleLocation);
         if (pot != null) {
             if (pot.addWater(amount)) {
-                CustomCrops.getInstance().getScheduler().callSyncMethod(() -> {
-                    changePotModel(simpleLocation, pot);
-                    return null;
-                });
+                CustomCrops.getInstance().getScheduler().runTask(() -> changePotModel(simpleLocation, pot));
             }
             return;
         }
         if (pot_id == null) {
             Location bukkitLoc = simpleLocation.getBukkitLocation();
             if (bukkitLoc == null) return;
-            String id = CustomCrops.getInstance().getPlatformInterface().getCustomBlockID(bukkitLoc);
-            if (id != null) {
-                pot_id = CustomCrops.getInstance().getPotManager().getPotKeyByBlockID(id);
-            } else {
-                return;
-            }
+            String id = CustomCrops.getInstance().getPlatformInterface().getBlockID(bukkitLoc.getBlock());
+            pot_id = CustomCrops.getInstance().getPotManager().getPotKeyByBlockID(id);
+            if (pot_id == null) return;
         }
-
         Pot newPot = new Pot(pot_id, null, amount);
         potMap.put(simpleLocation, newPot);
-        CustomCrops.getInstance().getScheduler().callSyncMethod(() -> {
-            changePotModel(simpleLocation, newPot);
-            return null;
-        });
+        CustomCrops.getInstance().getScheduler().runTask(() -> changePotModel(simpleLocation, newPot));
     }
 
     public void addFertilizerToPot(SimpleLocation simpleLocation, Fertilizer fertilizer, @NotNull String pot_id) {
         Pot pot = potMap.get(simpleLocation);
         if (pot != null) {
             pot.setFertilizer(fertilizer);
-            CustomCrops.getInstance().getScheduler().callSyncMethod(() -> {
-                changePotModel(simpleLocation, pot);
-                return null;
-            });
+            CustomCrops.getInstance().getScheduler().runTask(() -> changePotModel(simpleLocation, pot));
         } else {
             Pot newPot = new Pot(pot_id, fertilizer, 0);
             potMap.put(simpleLocation, newPot);
-            CustomCrops.getInstance().getScheduler().callSyncMethod(() -> {
-                changePotModel(simpleLocation, newPot);
-                return null;
-            });
+            CustomCrops.getInstance().getScheduler().runTask(() -> changePotModel(simpleLocation, newPot));
         }
     }
 
-    public void scheduleGrowTask(CCWorld ccWorld) {
+    public void scheduleGrowTask(CCWorld ccWorld, int force) {
         Random randomGenerator = ThreadLocalRandom.current();
-        int delay = ConfigManager.pointGainInterval * 1000;
+        int delay = force == -1 ? ConfigManager.pointGainInterval * 1000 : force * 1000;
         for (SimpleLocation simpleLocation : growingCropMap.keySet()) {
             ccWorld.pushCropTask(simpleLocation, randomGenerator.nextInt(delay));
         }
     }
 
-    public void scheduleSprinklerTask(CCWorld ccWorld, int startDelay) {
+    public void scheduleSprinklerTask(CCWorld ccWorld, int force) {
         Random randomGenerator = ThreadLocalRandom.current();
-        int delay = (Math.min(30, ConfigManager.pointGainInterval) + startDelay) * 1000;
+        int delay = force == -1 ? ConfigManager.pointGainInterval * 1000 : force * 1000;
         for (SimpleLocation simpleLocation : sprinklerMap.keySet()) {
             ccWorld.pushSprinklerTask(simpleLocation, randomGenerator.nextInt(delay));
         }
     }
 
-    public void scheduleConsumeTask(CCWorld ccWorld, int startDelay) {
+    public void scheduleConsumeTask(CCWorld ccWorld, int force) {
         Random randomGenerator = ThreadLocalRandom.current();
-        int delay = (Math.min(30, ConfigManager.pointGainInterval) + startDelay) * 1000;
+        int delay = force == -1 ? ConfigManager.pointGainInterval * 1000 : force * 1000;
         for (SimpleLocation simpleLocation : potMap.keySet()) {
             ccWorld.pushConsumeTask(simpleLocation, randomGenerator.nextInt(delay));
         }

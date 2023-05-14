@@ -33,15 +33,19 @@ public class SprinklerConfig {
     private final ItemMode itemMode;
     private final String threeD;
     private final String twoD;
+    private final String[] potWhitelist;
     private final PassiveFillMethod[] passiveFillMethods;
     private final WaterAmountHologram waterAmountHologram;
     private final SprinklerAnimation sprinklerAnimation;
+    private final int water;
 
-    public SprinklerConfig(String key, int storage, int range, @Nullable Sound sound, @NotNull ItemMode itemMode, @NotNull String threeD, @Nullable String twoD,
+    public SprinklerConfig(String key, int storage, int range, int water, @Nullable String[] potWhitelist, @Nullable Sound sound, @NotNull ItemMode itemMode, @NotNull String threeD, @Nullable String twoD,
                            @NotNull PassiveFillMethod[] passiveFillMethods, @Nullable WaterAmountHologram waterAmountHologram, SprinklerAnimation sprinklerAnimation) {
         this.key = key;
         this.storage = storage;
         this.range = range;
+        this.water = water;
+        this.potWhitelist = potWhitelist;
         this.sound = sound;
         this.itemMode = itemMode;
         this.threeD = threeD;
@@ -96,5 +100,14 @@ public class SprinklerConfig {
     @Nullable
     public SprinklerAnimation getSprinklerAnimation() {
         return sprinklerAnimation;
+    }
+
+    @Nullable
+    public String[] getPotWhitelist() {
+        return potWhitelist;
+    }
+
+    public int getWaterFillAbility() {
+        return water;
     }
 }

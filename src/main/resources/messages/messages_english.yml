@@ -22,3 +22,4 @@ messages:
   season-not-exist: '<white>Season {season} does not exist.'
   force-sprinkler-work: "<white>Forced {world}'s sprinklers to start working."
   force-consume: "<white>Forced {world}'s pots to reduce water amount and the remaining use of fertilizers."
+  force-grow: "<white>Forced {world}'s crops to grow one point."

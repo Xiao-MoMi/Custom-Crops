@@ -23,8 +23,10 @@ import net.momirealms.customcrops.api.object.pot.Pot;
 import net.momirealms.customcrops.api.object.season.CCSeason;
 import net.momirealms.customcrops.api.object.season.SeasonData;
 import net.momirealms.customcrops.api.object.sprinkler.Sprinkler;
+import net.momirealms.customcrops.api.object.world.CCWorld;
 import net.momirealms.customcrops.api.object.world.SimpleLocation;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.jetbrains.annotations.Nullable;
 
 public class CustomCropsAPI {
@@ -91,5 +93,32 @@ public class CustomCropsAPI {
             return seasonData.getSeason();
         }
         return null;
+    }
+
+    public void grow(World world, int seconds) {
+        CustomCrops.getInstance().getScheduler().runTaskAsync(() -> {
+            CCWorld ccworld = CustomCrops.getInstance().getWorldDataManager().getWorld(world.getName());
+            if (ccworld != null) {
+                ccworld.scheduleConsumeTask(seconds);
+            }
+        });
+    }
+
+    public void sprinklerWork(World world, int seconds) {
+        CustomCrops.getInstance().getScheduler().runTaskAsync(() -> {
+            CCWorld ccworld = CustomCrops.getInstance().getWorldDataManager().getWorld(world.getName());
+            if (ccworld != null) {
+                ccworld.scheduleSprinklerWork(seconds);
+            }
+        });
+    }
+
+    public void consume(World world, int seconds) {
+        CustomCrops.getInstance().getScheduler().runTaskAsync(() -> {
+            CCWorld ccworld = CustomCrops.getInstance().getWorldDataManager().getWorld(world.getName());
+            if (ccworld != null) {
+                ccworld.scheduleConsumeTask(seconds);
+            }
+        });
     }
 }

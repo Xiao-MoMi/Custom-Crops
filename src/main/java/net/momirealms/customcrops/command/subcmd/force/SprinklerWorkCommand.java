@@ -40,17 +40,18 @@ public class SprinklerWorkCommand extends AbstractSubCommand {
 
     @Override
     public boolean onCommand(CommandSender sender, List<String> args) {
-        if (lackArgs(sender, 1, args.size())) return true;
+        if (lackArgs(sender, 2, args.size())) return true;
         World world = Bukkit.getWorld(args.get(0));
         if (world == null) {
             AdventureUtils.sendMessage(sender, MessageManager.prefix + MessageManager.worldNotExist.replace("{world}", args.get(0)));
             return true;
         }
+        int seconds = Integer.parseInt(args.get(1));
         AdventureUtils.sendMessage(sender, MessageManager.prefix + MessageManager.forceWork.replace("{world}", args.get(0)));
         CustomCrops.getInstance().getScheduler().runTaskAsync(() -> {
             CCWorld ccworld = CustomCrops.getInstance().getWorldDataManager().getWorld(args.get(0));
             if (ccworld != null) {
-                ccworld.scheduleSprinklerWork(0);
+                ccworld.scheduleSprinklerWork(seconds);
             }
         });
         return true;
@@ -60,6 +61,9 @@ public class SprinklerWorkCommand extends AbstractSubCommand {
     public List<String> onTabComplete(CommandSender sender, List<String> args) {
         if (args.size() == 1) {
             return super.filterStartingWith(Bukkit.getWorlds().stream().filter(world -> CustomCrops.getInstance().getWorldDataManager().isWorldAllowed(world)).map(WorldInfo::getName).collect(Collectors.toList()), args.get(0));
+        }
+        if (args.size() == 2) {
+            return List.of("<Seconds>");
         }
         return null;
     }

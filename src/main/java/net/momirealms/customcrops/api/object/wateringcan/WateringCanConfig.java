@@ -32,7 +32,7 @@ public class WateringCanConfig {
     private final int width;
     private final int length;
     private final int storage;
-    private final String[] pot_whitelist;
+    private final String[] potWhitelist;
     private final String[] sprinkler_whitelist;
     private final boolean hasDynamicLore;
     private final boolean hasActionBar;
@@ -49,7 +49,7 @@ public class WateringCanConfig {
     public WateringCanConfig(int width, int length, int storage,
                              boolean hasDynamicLore, boolean hasActionBar, @Nullable List<String> loreTemplate, @Nullable String actionBarMsg,
                              @Nullable String bar_left, @Nullable String bar_full, @Nullable String bar_empty, @Nullable String bar_right,
-                             String[] pot_whitelist, String[] sprinkler_whitelist, @Nullable Sound sound, @Nullable Particle particle, @NotNull PositiveFillMethod[] positiveFillMethods) {
+                             String[] potWhitelist, String[] sprinkler_whitelist, @Nullable Sound sound, @Nullable Particle particle, @NotNull PositiveFillMethod[] positiveFillMethods) {
         this.width = width;
         this.length = length;
         this.storage = storage;
@@ -61,7 +61,7 @@ public class WateringCanConfig {
         this.bar_full = bar_full;
         this.bar_empty = bar_empty;
         this.bar_right = bar_right;
-        this.pot_whitelist = pot_whitelist;
+        this.potWhitelist = potWhitelist;
         this.sprinkler_whitelist = sprinkler_whitelist;
         this.sound = sound;
         this.particle = particle;
@@ -114,7 +114,7 @@ public class WateringCanConfig {
     }
 
     public String[] getPotWhitelist() {
-        return pot_whitelist;
+        return potWhitelist;
     }
 
     public String[] getSprinklerWhitelist() {

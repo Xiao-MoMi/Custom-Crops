@@ -30,12 +30,12 @@ import org.bukkit.generator.WorldInfo;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class ConsumeTaskCommand extends AbstractSubCommand {
+public class CropGrowCommand extends AbstractSubCommand {
 
-    public static final ConsumeTaskCommand INSTANCE = new ConsumeTaskCommand();
+    public static final CropGrowCommand INSTANCE = new CropGrowCommand();
 
-    public ConsumeTaskCommand() {
-        super("consume");
+    public CropGrowCommand() {
+        super("cropgrow");
     }
 
     @Override
@@ -47,11 +47,11 @@ public class ConsumeTaskCommand extends AbstractSubCommand {
             return true;
         }
         int seconds = Integer.parseInt(args.get(1));
-        AdventureUtils.sendMessage(sender, MessageManager.prefix + MessageManager.forceConsume.replace("{world}", args.get(0)));
+        AdventureUtils.sendMessage(sender, MessageManager.prefix + MessageManager.forceGrow.replace("{world}", args.get(0)));
         CustomCrops.getInstance().getScheduler().runTaskAsync(() -> {
             CCWorld ccworld = CustomCrops.getInstance().getWorldDataManager().getWorld(args.get(0));
             if (ccworld != null) {
-                ccworld.scheduleConsumeTask(seconds);
+                ccworld.scheduleCropGrowTask(seconds);
             }
         });
         return true;

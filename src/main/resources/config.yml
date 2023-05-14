@@ -1,5 +1,5 @@
 # Don't change
-config-version: '30'
+config-version: '31'
 # BStats
 metrics: true
 # Language: english / spanish / chinese / turkish
@@ -20,23 +20,18 @@ worlds:
     - world
 
 schedule-system:
-
-  default-schedule: true
+  # if disabled, you can do that manually with command /customcrops force [consume/sprinklerwork/cropgrow] or API
+  # 如果禁用，你可以使用指令/customcrops force [consume/sprinklerwork/cropgrow]手动操作或使用API
+  enable: true
   # The average interval for a crop to gain one point (measured in seconds)
   # 平均每个农作物获得一生长点的时间间隔（秒）
   point-gain-interval: 600
-
-  others:
-    # if disabled, you can do that manually with command /customcrops force [consume/sprinklerwork]
-    # 如果禁用，你可以使用指令/customcrops force [consume/sprinklerwork]手动操作
-    enable: true
-    # Water amount and fertilizer would reduce every two points are gained
-    # As the default point-gain-interval is 600s, so here it would be 1200s(20min = a minecraft day)
-    # 默认每两个生长点进行一次水分、肥料消耗/洒水器工作
-    consume-water-fertilizer-every-x-point: 2
-    # Sprinkler would work every two points are gained
-    sprinkler-work-every-x-point: 2
-
+  # Water amount and fertilizer would reduce every two points are gained
+  # As the default point-gain-interval is 600s, so here it would be 1200s(20min = a minecraft day)
+  # 默认每两个生长点进行一次水分、肥料消耗/洒水器工作
+  consume-water-fertilizer-every-x-point: 2
+  # Sprinkler would work every two points are gained
+  sprinkler-work-every-x-point: 2
   # Save cache to file interval (seconds)
   # set "-1" to disable
   # 保存缓存的时间间隔 (秒)
@@ -71,11 +66,9 @@ mechanics:
   # Does the system only work in loaded chunks (Requires you to stop the server before changing this setting)
   # 插件是否只在加载中的区块工作 (需要关闭服务器再设置此项)
   only-work-in-loaded-chunks: false
-
   # 17/2/1 = 85%/10%/5%
   # 2/2/1 = 40%/40%/20%
   default-quality-ratio: 17/2/1
-
   # Season mechanic
   # 季节机制
   season:

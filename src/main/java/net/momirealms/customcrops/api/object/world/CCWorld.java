@@ -18,6 +18,7 @@
 package net.momirealms.customcrops.api.object.world;
 
 import net.momirealms.customcrops.CustomCrops;
+import net.momirealms.customcrops.api.customplugin.PlatformInterface;
 import net.momirealms.customcrops.api.object.Function;
 import net.momirealms.customcrops.api.object.ItemMode;
 import net.momirealms.customcrops.api.object.action.Action;
@@ -34,6 +35,7 @@ import net.momirealms.customcrops.api.object.fertilizer.SoilRetain;
 import net.momirealms.customcrops.api.object.fertilizer.SpeedGrow;
 import net.momirealms.customcrops.api.object.pot.Pot;
 import net.momirealms.customcrops.api.object.pot.PotConfig;
+import net.momirealms.customcrops.api.object.pot.PotManager;
 import net.momirealms.customcrops.api.object.season.CCSeason;
 import net.momirealms.customcrops.api.object.season.SeasonData;
 import net.momirealms.customcrops.api.object.sprinkler.Sprinkler;
@@ -88,7 +90,6 @@ public class CCWorld extends Function {
     }
 
     @Override
-    @SuppressWarnings("ResultOfMethodCallIgnored")
     public void init() {
         loadDateData();
         if (!ConfigManager.onlyInLoadedChunks) {
@@ -104,6 +105,7 @@ public class CCWorld extends Function {
         CustomCrops.getInstance().getSeasonManager().unloadSeasonData(worldName);
     }
 
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     public void loadAllChunkData() {
         chunks_folder = ConfigUtils.getChunkFolder(worldName);
         if (!chunks_folder.exists()) chunks_folder.mkdirs();
@@ -251,28 +253,28 @@ public class CCWorld extends Function {
     }
 
     public void onReachPoint() {
-        if (ConfigManager.debug) Log.info("== Grow point ==");
-        plantToday.clear();
-        int size = schedule.getQueue().size();
-        if (size != 0) {
-            schedule.getQueue().clear();
-            if (ConfigManager.debug) Log.info("== Clear queue ==");
-        }
-        for (CCChunk chunk : chunkMap.values()) {
-            chunk.scheduleGrowTask(this);
-        }
         if (ConfigManager.enableScheduleSystem) {
+            if (ConfigManager.debug) Log.info("== Grow point ==");
+            plantToday.clear();
+            int size = schedule.getQueue().size();
+            if (size != 0) {
+                schedule.getQueue().clear();
+                if (ConfigManager.debug) Log.info("== Clear queue ==");
+            }
+            for (CCChunk chunk : chunkMap.values()) {
+                chunk.scheduleGrowTask(this, -1);
+            }
             workCounter--;
             consumeCounter--;
             if (consumeCounter <= 0) {
                 consumeCounter = ConfigManager.intervalConsume;
                 if (ConfigManager.debug) Log.info("== Consume time ==");
-                scheduleConsumeTask(0);
+                scheduleConsumeTask(-1);
             }
             if (workCounter <= 0) {
                 workCounter = ConfigManager.intervalWork;
                 if (ConfigManager.debug) Log.info("== Work time ==");
-                scheduleSprinklerWork(Math.min(30, ConfigManager.pointGainInterval));
+                scheduleSprinklerWork(-1);
             }
         }
     }
@@ -349,21 +351,17 @@ public class CCWorld extends Function {
                 pot.setWater(pot.getWater() + 1);
             }
             if (pot.reduceWater() | pot.reduceFertilizer()) {
-
                 PotConfig potConfig = pot.getConfig();
                 Fertilizer fertilizer = pot.getFertilizer();
                 boolean wet = pot.isWet();
-
                 if (!wet && fertilizer == null) {
                     removePotData(simpleLocation);
                 }
-
                 Location location = simpleLocation.getBukkitLocation();
                 if (location == null) {
                     return;
                 }
-
-                CustomCrops.getInstance().getScheduler().callSyncMethod(() -> {
+                CustomCrops.getInstance().getScheduler().runTask(() -> {
                     if (CustomCrops.getInstance().getPlatformInterface().removeAnyBlock(location)) {
                         String replacer = wet ? potConfig.getWetPot(fertilizer) : potConfig.getDryPot(fertilizer);
                         if (ConfigUtils.isVanillaItem(replacer)) {
@@ -379,7 +377,6 @@ public class CCWorld extends Function {
                     } else {
                         CustomCrops.getInstance().getWorldDataManager().removePotData(SimpleLocation.getByBukkitLocation(location));
                     }
-                    return null;
                 });
             }
         }
@@ -423,10 +420,44 @@ public class CCWorld extends Function {
             if (water == 0) {
                 removeSprinklerData(simpleLocation);
             }
+
             int range = sprinklerConfig.getRange();
-            for (int i = -range; i <= range; i++) {
-                for (int j = -range; j <= range; j++) {
-                    addWaterToPot(simpleLocation.add(i, -1, j), 1, null);
+            PlatformInterface platformInterface = CustomCrops.getInstance().getPlatformInterface();
+            PotManager potManager = CustomCrops.getInstance().getPotManager();
+            String[] whiteList = sprinklerConfig.getPotWhitelist();
+            int amount = sprinklerConfig.getWaterFillAbility();
+            if (whiteList == null) {
+                for (int i = -range; i <= range; i++) {
+                    for (int j = -range; j <= range; j++) {
+                        SimpleLocation potLoc = simpleLocation.add(i, -1, j);
+                        Location bLoc = potLoc.getBukkitLocation();
+                        if (bLoc != null) {
+                            String blockID = platformInterface.getBlockID(potLoc.getBukkitLocation().getBlock());
+                            String current_id = potManager.getPotKeyByBlockID(blockID);
+                            if (current_id != null) {
+                                addWaterToPot(potLoc, amount, current_id);
+                            }
+                        }
+                    }
+                }
+            } else {
+                for (int i = -range; i <= range; i++) {
+                     outer:
+                     for (int j = -range; j <= range; j++) {
+                        SimpleLocation potLoc = simpleLocation.add(i, -1, j);
+                        Location bLoc = potLoc.getBukkitLocation();
+                        if (bLoc != null) {
+                            String blockID = platformInterface.getBlockID(bLoc.getBlock());
+                            String current_id = potManager.getPotKeyByBlockID(blockID);
+                            if (current_id == null) continue;
+                            for (String pot : whiteList) {
+                                if (pot.equals(current_id)) {
+                                    addWaterToPot(potLoc, amount, current_id);
+                                    continue outer;
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -533,24 +564,22 @@ public class CCWorld extends Function {
                 return chunk.isEntitiesLoaded();
             });
             loadEntities.whenComplete((result, throwable) ->
-                    CustomCrops.getInstance().getScheduler().callSyncMethod(() -> {
+                    CustomCrops.getInstance().getScheduler().runTask(() -> {
                         if (CustomCrops.getInstance().getPlatformInterface().removeCustomItem(location, itemMode)) {
                             CustomCrops.getInstance().getPlatformInterface().placeCustomItem(location, finalNextModel, itemMode);
                         } else {
                             removeCropData(simpleLocation);
                         }
-                        return null;
             }));
         }
         else {
             asyncGetChunk.whenComplete((result, throwable) ->
-                    CustomCrops.getInstance().getScheduler().callSyncMethod(() -> {
+                    CustomCrops.getInstance().getScheduler().runTask(() -> {
                         if (CustomCrops.getInstance().getPlatformInterface().removeCustomItem(location, itemMode)) {
                             CustomCrops.getInstance().getPlatformInterface().placeCustomItem(location, finalNextModel, itemMode);
                         } else {
                             removeCropData(simpleLocation);
                         }
-                        return null;
                     }));
         }
     }
@@ -672,7 +701,7 @@ public class CCWorld extends Function {
         return chunk.getSprinklerData(simpleLocation);
     }
 
-    public void addWaterToPot(SimpleLocation simpleLocation, int amount, @Nullable String pot_id) {
+    public void addWaterToPot(SimpleLocation simpleLocation, int amount, @NotNull String pot_id) {
         CCChunk chunk = chunkMap.get(simpleLocation.getChunkCoordinate());
         if (chunk != null) {
             chunk.addWaterToPot(simpleLocation, amount, pot_id);
@@ -714,18 +743,26 @@ public class CCWorld extends Function {
         return newChunk;
     }
 
-    public void scheduleSprinklerWork(int delay) {
+    public void scheduleSprinklerWork(int force) {
         schedule.execute(() -> {
             for (CCChunk chunk : chunkMap.values()) {
-                chunk.scheduleSprinklerTask(this, delay);
+                chunk.scheduleSprinklerTask(this, force);
             }
         });
     }
 
-    public void scheduleConsumeTask(int delay) {
+    public void scheduleConsumeTask(int force) {
         schedule.execute(() -> {
             for (CCChunk chunk : chunkMap.values()) {
-                chunk.scheduleConsumeTask(this, delay);
+                chunk.scheduleConsumeTask(this, force);
+            }
+        });
+    }
+
+    public void scheduleCropGrowTask(int force) {
+        schedule.execute(() -> {
+            for (CCChunk chunk : chunkMap.values()) {
+                chunk.scheduleGrowTask(this, force);
             }
         });
     }

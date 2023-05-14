@@ -19,6 +19,7 @@ package net.momirealms.customcrops.command.subcmd;
 
 import net.momirealms.customcrops.command.AbstractSubCommand;
 import net.momirealms.customcrops.command.subcmd.force.ConsumeTaskCommand;
+import net.momirealms.customcrops.command.subcmd.force.CropGrowCommand;
 import net.momirealms.customcrops.command.subcmd.force.SprinklerWorkCommand;
 
 public class ForceCommand extends AbstractSubCommand {
@@ -29,5 +30,6 @@ public class ForceCommand extends AbstractSubCommand {
         super("force");
         regSubCommand(SprinklerWorkCommand.INSTANCE);
         regSubCommand(ConsumeTaskCommand.INSTANCE);
+        regSubCommand(CropGrowCommand.INSTANCE);
     }
 }

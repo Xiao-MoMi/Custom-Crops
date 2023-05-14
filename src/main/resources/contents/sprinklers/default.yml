@@ -7,6 +7,9 @@ sprinkler_1:
   # max water storage
   # 最大储水量
   storage: 4
+  # The water amount add to the pot
+  # 单次洒水加到种植盆的水量
+  water: 1
   # 2/3D物品
   3D-item: customcrops:sprinkler_1
   # Optional, remove this section if you don't need 2d items
@@ -78,6 +81,7 @@ sprinkler_2:
   # (1+2x2)²=25
   range: 2
   storage: 5
+  water: 1
   3D-item: customcrops:sprinkler_2
   2D-item: customcrops:sprinkler_2_item
   type: ITEM_FRAME
@@ -123,7 +127,8 @@ sprinkler_2:
 
 sprinkler_3:
   range: 2
-  storage: 7
+  storage: 3
+  water: 2
   3D-item: customcrops:sprinkler_3
   2D-item: customcrops:sprinkler_3_item
   type: ITEM_FRAME

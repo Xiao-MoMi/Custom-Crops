@@ -22,3 +22,4 @@ messages:
   season-not-exist: '<white>{season} 不是一个有效的季节.'
   force-sprinkler-work: '<white>已强制世界 {world} 的洒水器进行工作.'
   force-consume: '<white>已强制世界 {world} 的肥料、水分消耗.'
+  force-grow: '<white>已强制世界 {world} 的农作物生长.'

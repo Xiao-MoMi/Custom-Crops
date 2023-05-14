@@ -22,3 +22,4 @@ messages:
   season-not-exist: '<white>{season} adında bir mevsim bulunamadı.'
   force-sprinkler-work: "<white>{world}'nin sulama sistemlerinin çalışmasını zorladı"
   force-consume: "<white>{world}'nin tenceresindeki su miktarını azaltmayı ve kalan gübre kullanımını zorladı"
+  force-grow: "<white>Forced {world}'s crops to grow one point."

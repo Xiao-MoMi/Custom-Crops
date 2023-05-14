@@ -60,7 +60,6 @@ public class ConfigManager extends Function {
     public static boolean enableLimitation;
     public static int maxCropPerChunk;
     public static int cacheSaveInterval;
-    public static boolean setUpMode;
     public static int intervalConsume;
     public static int intervalWork;
     public static boolean disableMoistureMechanic;
@@ -93,7 +92,6 @@ public class ConfigManager extends Function {
         enableBStats = config.getBoolean("metrics");
         lang = config.getString("lang");
         debug = config.getBoolean("debug");
-        setUpMode = config.getBoolean("set-up-mode", true);
         loadWorlds(Objects.requireNonNull(config.getConfigurationSection("worlds")));
         loadOptimization(Objects.requireNonNull(config.getConfigurationSection("optimization")));
         loadScheduleSystem(Objects.requireNonNull(config.getConfigurationSection("schedule-system")));
@@ -122,14 +120,14 @@ public class ConfigManager extends Function {
     }
 
     private void loadScheduleSystem(ConfigurationSection section) {
-        enableScheduleSystem = section.getBoolean("others.enable", true);
+        enableScheduleSystem = section.getBoolean("enable", true);
         pointGainInterval = section.getInt("point-gain-interval", 600);
         corePoolSize = section.getInt("thread-pool-settings.corePoolSize", 2);
         maxPoolSize = section.getInt("thread-pool-settings.maximumPoolSize", 4);
         keepAliveTime = section.getInt("thread-pool-settings.keepAliveTime", 10);
         cacheSaveInterval = section.getInt("cache-save-interval", 12000);
-        intervalConsume = section.getInt("others.consume-water-fertilizer-every-x-point", 2);
-        intervalWork = section.getInt("others.sprinkler-work-every-x-point", 2);
+        intervalConsume = section.getInt("consume-water-fertilizer-every-x-point", 2);
+        intervalWork = section.getInt("sprinkler-work-every-x-point", 2);
     }
 
     private void loadMechanic(ConfigurationSection section) {

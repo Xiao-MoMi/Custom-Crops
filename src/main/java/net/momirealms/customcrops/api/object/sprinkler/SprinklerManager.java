@@ -99,6 +99,8 @@ public class SprinklerManager extends Function implements Listener {
                         key,
                         sprinklerSec.getInt("storage", 3),
                         sprinklerSec.getInt("range", 1),
+                        sprinklerSec.getInt("water",1),
+                        sprinklerSec.contains("pot-whitelist") ? sprinklerSec.getStringList("pot-whitelist").toArray(new String[0]) : null,
                         sound,
                         itemMode,
                         threeD,
