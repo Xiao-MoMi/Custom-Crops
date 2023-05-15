@@ -25,11 +25,12 @@ schedule-system:
   enable: true
   # The average interval for a crop to gain one point (measured in seconds)
   # 平均每个农作物获得一生长点的时间间隔（秒）
-  point-gain-interval: 600
-  # Water amount and fertilizer would reduce every two points are gained
-  # As the default point-gain-interval is 600s, so here it would be 1200s(20min = a minecraft day)
-  # 默认每两个生长点进行一次水分、肥料消耗/洒水器工作
-  consume-water-fertilizer-every-x-point: 2
+  point-gain-interval: 300
+  # Water amount and fertilizer would reduce every 4 points are gained
+  # set it to -1 if you don't want CustomCrops to control consumption/sprinkler tasks
+  # 默认每四个生长点进行一次水分、肥料消耗/洒水器工作
+  # 设置为-1以禁用CustomCrops对水分、肥料消耗/洒水器任务的掌管
+  consume-water-fertilizer-every-x-point: 4
   # Sprinkler would work every two points are gained
   sprinkler-work-every-x-point: 2
   # Save cache to file interval (seconds)
@@ -65,7 +66,7 @@ optimization:
 mechanics:
   # Does the system only work in loaded chunks (Requires you to stop the server before changing this setting)
   # 插件是否只在加载中的区块工作 (需要关闭服务器再设置此项)
-  only-work-in-loaded-chunks: false
+  only-work-in-loaded-chunks: true
   # 17/2/1 = 85%/10%/5%
   # 2/2/1 = 40%/40%/20%
   default-quality-ratio: 17/2/1
@@ -113,3 +114,5 @@ other-settings:
   # MMOCore profession name
   # MMOCore职业名
   MMOCore-profession-name: 'farmer'
+  # Fixed corrupted pots when interacting
+  corrupt-fix-range: 4

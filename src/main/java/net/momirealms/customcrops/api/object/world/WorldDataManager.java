@@ -72,7 +72,7 @@ public class WorldDataManager extends Function {
 
     public void loadWorld(World world) {
         if (!isWorldAllowed(world)) return;
-        CCWorld ccWorld = new CCWorld(world);
+        CCWorld ccWorld = new CCWorld(world, plugin);
         ccWorld.init();
         ccWorld.load();
         ccWorld.onReachPoint();
@@ -260,6 +260,30 @@ public class WorldDataManager extends Function {
         CCWorld ccWorld = worldMap.get(world.getName());
         if (ccWorld != null) {
             ccWorld.unloadChunk(new ChunkCoordinate(chunk.getX(), chunk.getZ()));
+        }
+    }
+
+    @Nullable
+    public String getCorruptedPotOriginalKey(SimpleLocation simpleLocation) {
+        CCWorld ccWorld = worldMap.get(simpleLocation.getWorldName());
+        if (ccWorld != null) {
+            return ccWorld.getCorruptedPotOriginalKey(simpleLocation);
+        }
+        return null;
+    }
+
+    public String removeCorrupted(SimpleLocation simpleLocation) {
+        CCWorld ccWorld = worldMap.get(simpleLocation.getWorldName());
+        if (ccWorld != null) {
+            return ccWorld.removeCorrupted(simpleLocation);
+        }
+        return null;
+    }
+
+    public void fixCorruptedData(String world) {
+        CCWorld ccWorld = worldMap.get(world);
+        if (ccWorld != null) {
+            ccWorld.fixCorruptedData();
         }
     }
 }

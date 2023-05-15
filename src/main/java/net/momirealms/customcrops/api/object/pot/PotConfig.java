@@ -109,4 +109,8 @@ public class PotConfig {
     public String getKey() {
         return key;
     }
+
+    public boolean isEnableFertilized() {
+        return enableFertilized;
+    }
 }

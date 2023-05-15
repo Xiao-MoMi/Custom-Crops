@@ -28,7 +28,6 @@ package net.momirealms.customcrops.helper;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
 import net.momirealms.customcrops.CustomCrops;
-import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.io.InputStream;
@@ -110,7 +109,7 @@ public final class LibraryLoader {
         File serverDir = pluginDataFolder.getParentFile().getParentFile();
 
         File helperDir = new File(serverDir, "libraries");
-        String[] split = StringUtils.split(dependency.groupId(), ".");
+        String[] split = dependency.groupId().split("\\.");
         File jarDir;
         StringJoiner stringJoiner = new StringJoiner(File.separator);
         for (String str : split) {

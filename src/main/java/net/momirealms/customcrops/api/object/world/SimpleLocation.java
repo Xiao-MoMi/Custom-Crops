@@ -17,7 +17,6 @@
 
 package net.momirealms.customcrops.api.object.world;
 
-import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -115,7 +114,7 @@ public class SimpleLocation implements Serializable {
     }
 
     public static SimpleLocation getByString(String location, String world) {
-        String[] loc = StringUtils.split(location, ",");
+        String[] loc = location.split(",");
         return new SimpleLocation(world, Integer.parseInt(loc[0]), Integer.parseInt(loc[1]), Integer.parseInt(loc[2]));
     }
 

@@ -17,7 +17,6 @@
 
 package net.momirealms.customcrops.api.object.world;
 
-import net.momirealms.customcrops.api.object.basic.ConfigManager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.world.ChunkLoadEvent;
@@ -45,13 +44,12 @@ public class WorldListener implements Listener {
 
     @EventHandler
     public void onChunkLoad(ChunkLoadEvent event) {
-        if (!ConfigManager.onlyInLoadedChunks || event.isNewChunk()) return;
+        if (event.isNewChunk()) return;
         worldManager.loadChunk(event.getChunk(), event.getWorld());
     }
 
     @EventHandler
     public void onChunkUnload(ChunkUnloadEvent event) {
-        if (!ConfigManager.onlyInLoadedChunks) return;
         worldManager.unloadChunk(event.getChunk(), event.getWorld());
     }
 }

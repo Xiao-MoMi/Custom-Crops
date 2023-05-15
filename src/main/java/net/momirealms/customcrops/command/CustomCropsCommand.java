@@ -30,6 +30,7 @@ public class CustomCropsCommand extends AbstractMainCommand {
         regSubCommand(ForceCommand.INSTANCE);
         regSubCommand(MigrateCommand.INSTANCE);
         regSubCommand(ConvertCommand.INSTANCE);
+        regSubCommand(FixCommand.INSTANCE);
 //        regSubCommand(CorruptionTest.INSTANCE);
 //        regSubCommand(PerformanceTest.INSTANCE);
     }

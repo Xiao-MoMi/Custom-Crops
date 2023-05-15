@@ -90,6 +90,7 @@ public class PlatformManager extends Function {
     public void onBreakVanilla(BlockBreakEvent event) {
         if (event.isCancelled()) return;
         Block block = event.getBlock();
+        if (block.getType() == Material.NOTE_BLOCK) plugin.getWorldDataManager().removeCorrupted(SimpleLocation.getByBukkitLocation(block.getLocation()));
         onBreakSomething(event.getPlayer(), block.getLocation(), block.getType().name(), event);
     }
 
@@ -227,9 +228,80 @@ public class PlatformManager extends Function {
                 return;
             }
 
+            if (onInteractBrokenPot(id, location)) {
+                return;
+            }
+
             if (onInteractWithWateringCan(player, item_in_hand_id, item_in_hand, id, location)) {
                 return;
             }
+        }
+    }
+
+    private boolean onInteractBrokenPot(String id, Location location) {
+        if (!id.equals("NOTE_BLOCK")) {
+            return false;
+        }
+        SimpleLocation simpleLocation = SimpleLocation.getByBukkitLocation(location);
+        String replacer;
+        String potKey = plugin.getWorldDataManager().removeCorrupted(simpleLocation);
+        Pot pot = plugin.getWorldDataManager().getPotData(simpleLocation);
+        if (pot != null) {
+            replacer = pot.isWet() ? pot.getConfig().getWetPot(pot.getFertilizer()) : pot.getConfig().getDryPot(pot.getFertilizer());
+        } else {
+            if (potKey == null) {
+                return false;
+            }
+            PotConfig potConfig = plugin.getPotManager().getPotConfig(potKey);
+            if (potConfig == null) {
+                return true;
+            }
+            replacer = potConfig.getDryPot(null);
+        }
+        plugin.getPlatformInterface().placeNoteBlock(location, replacer);
+        furtherFix(location, 1);
+        return true;
+    }
+
+    public void furtherFix(Location location, int range) {
+        if (range >= ConfigManager.fixRange) return;
+        List<Location> locations = new ArrayList<>();
+        for (int i = -range; i <= range; i++) {
+            for (int j = -range; j <= range; j++) {
+                if (i == -range || i == range || j == range || j == -range) {
+                    locations.add(location.clone().add(i, 0, j));
+                }
+            }
+        }
+        int success = 0;
+        for (Location check : locations) {
+            SimpleLocation simpleLocation = SimpleLocation.getByBukkitLocation(check);
+            String id = plugin.getPlatformInterface().getBlockID(check.getBlock());
+            String potKey = plugin.getWorldDataManager().removeCorrupted(simpleLocation);
+            if (!id.equals("NOTE_BLOCK")) {
+                continue;
+            }
+
+            String replacer;
+            Pot pot = plugin.getWorldDataManager().getPotData(simpleLocation);
+            if (pot != null) {
+                replacer = pot.isWet() ? pot.getConfig().getWetPot(pot.getFertilizer()) : pot.getConfig().getDryPot(pot.getFertilizer());
+            } else {
+                if (potKey == null) {
+                    continue;
+                }
+                PotConfig potConfig = plugin.getPotManager().getPotConfig(potKey);
+                if (potConfig == null) {
+                    continue;
+                }
+                replacer = potConfig.getDryPot(null);
+            }
+            plugin.getPlatformInterface().placeNoteBlock(check, replacer);
+            success++;
+        }
+
+        if (success != 0) {
+            furtherFix(location, range + 1);
         }
     }
 
@@ -499,7 +571,7 @@ public class PlatformManager extends Function {
                             }
 
                             event.setCancelled(true);
-                            doPassiveFillAction(player, item_in_hand, passiveFillMethod, bottomLoc);
+                            doPassiveFillAction(player, item_in_hand, passiveFillMethod, location);
                             plugin.getWorldDataManager().addWaterToPot(SimpleLocation.getByBukkitLocation(bottomLoc), potWaterEvent.getWater(), pot_id);
                             return true;
                         }
@@ -921,8 +993,7 @@ public class PlatformManager extends Function {
                         tryToWaterPot(tempLoc, id, particle, water);
                     }
                 }
-            }
-            else {
+            } else {
                 for (int i = -extend; i <= extend; i++) {
                     Location tempLoc = location.clone().add(-1, 0, i);
                     for (int j = 0; j < length; j++){
@@ -931,8 +1002,7 @@ public class PlatformManager extends Function {
                     }
                 }
             }
-        }
-        else {
+        } else {
             if (yaw > 45 && yaw < 135) {
                 for (int i = -extend; i <= extend; i++) {
                     Location tempLoc = location.clone().add(1, 0, i);
@@ -941,8 +1011,7 @@ public class PlatformManager extends Function {
                         tryToWaterPot(tempLoc, id, particle, water);
                     }
                 }
-            }
-            else {
+            } else {
                 for (int i = -extend; i <= extend; i++) {
                     Location tempLoc = location.clone().add(i, 0, 1);
                     for (int j = 0; j < length; j++){

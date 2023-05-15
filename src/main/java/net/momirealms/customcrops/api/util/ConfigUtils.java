@@ -45,6 +45,7 @@ import net.momirealms.customcrops.api.object.requirement.*;
 import net.momirealms.customcrops.api.object.season.CCSeason;
 import net.momirealms.customcrops.helper.Log;
 import org.bukkit.Particle;
+import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.MemorySection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -473,13 +474,23 @@ public class ConfigUtils {
         return (a << 24) | (r << 16) | (g << 8) | b;
     }
 
-    public static File getChunkFolder(String world) {
-        File chunks_folder;
+    public static File getFile(String world, String fileName) {
+        File file;
         if (ConfigManager.worldFolderPath.equals("")) {
-            chunks_folder = new File(CustomCrops.getInstance().getDataFolder().getParentFile().getParentFile(), world + File.separator + "customcrops" + File.separator + "chunks");
+            file = new File(CustomCrops.getInstance().getDataFolder().getParentFile().getParentFile(), world + File.separator + "customcrops" + File.separator + fileName);
         } else {
-            chunks_folder = new File(ConfigManager.worldFolderPath, world + File.separator + "customcrops" + File.separator + "chunks");
+            file = new File(ConfigManager.worldFolderPath, world + File.separator + "customcrops" + File.separator + fileName);
         }
-        return chunks_folder;
+        return file;
+    }
+
+    public static File getFile(World world, String fileName) {
+        File file;
+        if (ConfigManager.worldFolderPath.equals("")) {
+            file = new File(world.getWorldFolder(), "customcrops" + File.separator + fileName);
+        } else {
+            file = new File(ConfigManager.worldFolderPath, world + File.separator + "customcrops" + File.separator + fileName);
+        }
+        return file;
     }
 }

@@ -130,24 +130,17 @@ public class CCChunk implements Serializable {
         sprinklerMap.put(simpleLocation, sprinkler);
     }
 
-    public void addWaterToPot(SimpleLocation simpleLocation, int amount, @Nullable String pot_id) {
+    public void addWaterToPot(SimpleLocation simpleLocation, int amount, @NotNull String pot_id) {
         Pot pot = potMap.get(simpleLocation);
         if (pot != null) {
             if (pot.addWater(amount)) {
-                CustomCrops.getInstance().getScheduler().runTask(() -> changePotModel(simpleLocation, pot));
+                changePotModel(simpleLocation, pot);
             }
             return;
         }
-        if (pot_id == null) {
-            Location bukkitLoc = simpleLocation.getBukkitLocation();
-            if (bukkitLoc == null) return;
-            String id = CustomCrops.getInstance().getPlatformInterface().getBlockID(bukkitLoc.getBlock());
-            pot_id = CustomCrops.getInstance().getPotManager().getPotKeyByBlockID(id);
-            if (pot_id == null) return;
-        }
         Pot newPot = new Pot(pot_id, null, amount);
         potMap.put(simpleLocation, newPot);
-        CustomCrops.getInstance().getScheduler().runTask(() -> changePotModel(simpleLocation, newPot));
+        changePotModel(simpleLocation, newPot);
     }
 
     public void addFertilizerToPot(SimpleLocation simpleLocation, Fertilizer fertilizer, @NotNull String pot_id) {
@@ -173,6 +166,7 @@ public class CCChunk implements Serializable {
     public void scheduleSprinklerTask(CCWorld ccWorld, int force) {
         Random randomGenerator = ThreadLocalRandom.current();
         int delay = force == -1 ? ConfigManager.pointGainInterval * 1000 : force * 1000;
+        delay = Math.max(delay - 10000, 10000);
         for (SimpleLocation simpleLocation : sprinklerMap.keySet()) {
             ccWorld.pushSprinklerTask(simpleLocation, randomGenerator.nextInt(delay));
         }
@@ -189,19 +183,20 @@ public class CCChunk implements Serializable {
     public void changePotModel(SimpleLocation simpleLocation, Pot pot) {
         Location location = simpleLocation.getBukkitLocation();
         if (location == null) return;
-        if (CustomCrops.getInstance().getPlatformInterface().removeAnyBlock(location)) {
-            String replacer = pot.isWet() ? pot.getConfig().getWetPot(pot.getFertilizer()) : pot.getConfig().getDryPot(pot.getFertilizer());
-            if (ConfigUtils.isVanillaItem(replacer)) {
-                Block block = location.getBlock();
-                block.setType(Material.valueOf(replacer));
-                if (block.getBlockData() instanceof Farmland farmland && ConfigManager.disableMoistureMechanic) {
-                    farmland.setMoisture(pot.isWet() ? farmland.getMaximumMoisture() : 0);
-                    block.setBlockData(farmland);
-                }
-            }
-            else CustomCrops.getInstance().getPlatformInterface().placeNoteBlock(location, replacer);
-        } else {
+        if (!CustomCrops.getInstance().getPlatformInterface().removeAnyBlock(location)) {
             CustomCrops.getInstance().getWorldDataManager().removePotData(simpleLocation);
+            return;
+        }
+        String replacer = pot.isWet() ? pot.getConfig().getWetPot(pot.getFertilizer()) : pot.getConfig().getDryPot(pot.getFertilizer());
+        if (ConfigUtils.isVanillaItem(replacer)) {
+            Block block = location.getBlock();
+            block.setType(Material.valueOf(replacer));
+            if (block.getBlockData() instanceof Farmland farmland && ConfigManager.disableMoistureMechanic) {
+                farmland.setMoisture(pot.isWet() ? farmland.getMaximumMoisture() : 0);
+                block.setBlockData(farmland);
+            }
+        } else {
+            CustomCrops.getInstance().getPlatformInterface().placeNoteBlock(location, replacer);
         }
     }
 }

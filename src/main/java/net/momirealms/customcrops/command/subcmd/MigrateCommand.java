@@ -29,7 +29,6 @@ import net.momirealms.customcrops.api.object.season.SeasonData;
 import net.momirealms.customcrops.api.object.world.SimpleLocation;
 import net.momirealms.customcrops.api.util.AdventureUtils;
 import net.momirealms.customcrops.command.AbstractSubCommand;
-import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -123,7 +122,7 @@ public class MigrateCommand extends AbstractSubCommand {
                             JsonArray jsonArray = jsonObject.getAsJsonArray("pot");
                             for (JsonElement jsonElement : jsonArray) {
                                 String loc = jsonElement.getAsString();
-                                String[] locs = StringUtils.split(loc, ",");
+                                String[] locs = loc.split(",");
                                 SimpleLocation simpleLocation = new SimpleLocation(worldName, Integer.parseInt(locs[0]), Integer.parseInt(locs[1]), Integer.parseInt(locs[2]));
                                 migrateWorld.addWaterToPot(simpleLocation, 1, "default");
                             }
@@ -136,7 +135,7 @@ public class MigrateCommand extends AbstractSubCommand {
 
                 YamlConfiguration data = YamlConfiguration.loadConfiguration(new File(ccDataFolder, "fertilizers.yml"));
                 for (String key : data.getKeys(false)) {
-                    String[] loc = StringUtils.split(key, ",");
+                    String[] loc = key.split(",");
                     SimpleLocation location = new SimpleLocation(worldName, Integer.parseInt(loc[0]), Integer.parseInt(loc[1]), Integer.parseInt(loc[2]));
                     String fertilizer = data.getString(key + ".type");
                     int times = data.getInt(key + ".times");
@@ -158,7 +157,7 @@ public class MigrateCommand extends AbstractSubCommand {
                             JsonArray jsonArray = en.getValue().getAsJsonArray();
                             int size = jsonArray.size();
                             for (int i = 0; i < size; i++) {
-                                String[] loc = StringUtils.split(jsonArray.get(i).getAsString(), ",");
+                                String[] loc = jsonArray.get(i).getAsString().split(",");
                                 migrateWorld.addScarecrow(new SimpleLocation(worldName, Integer.parseInt(loc[0]), Integer.parseInt(loc[1]), Integer.parseInt(loc[2])));
                             }
                         }
@@ -177,7 +176,7 @@ public class MigrateCommand extends AbstractSubCommand {
                         String stageStr = crop.substring(crop.indexOf("_stage_") + 7);
                         int stage = Integer.parseInt(stageStr);
                         growingCrop = new GrowingCrop(crop.substring(0, crop.indexOf("_stage_")), stage);
-                        String[] loc = StringUtils.split(entry.getKey(), ",");
+                        String[] loc = entry.getKey().split(",");
                         SimpleLocation simpleLocation = new SimpleLocation(worldName, Integer.parseInt(loc[0]), Integer.parseInt(loc[1]), Integer.parseInt(loc[2]));
                         migrateWorld.addCropData(simpleLocation, growingCrop);
                     }

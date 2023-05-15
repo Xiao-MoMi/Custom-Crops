@@ -19,6 +19,7 @@ package net.momirealms.customcrops.integration.papi;
 
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import net.momirealms.customcrops.CustomCrops;
+import net.momirealms.customcrops.api.object.basic.ConfigManager;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -26,7 +27,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class SeasonPapi extends PlaceholderExpansion {
 
-    private CustomCrops plugin;
+    private final CustomCrops plugin;
 
     public SeasonPapi(CustomCrops plugin) {
         this.plugin = plugin;
@@ -68,6 +69,11 @@ public class SeasonPapi extends PlaceholderExpansion {
                         if (online_player == null) return null;
                         return String.valueOf(plugin.getIntegrationManager().getSeasonInterface().getDate(player.getPlayer().getWorld().getName()));
                     }
+                    case "daysleft" -> {
+                        Player online_player = player.getPlayer();
+                        if (online_player == null) return null;
+                        return String.valueOf(1 + ConfigManager.seasonInterval - plugin.getIntegrationManager().getSeasonInterface().getDate(player.getPlayer().getWorld().getName()));
+                    }
                 }
             }
             case 2 -> {
@@ -77,6 +83,9 @@ public class SeasonPapi extends PlaceholderExpansion {
                     }
                     case "date" -> {
                         return String.valueOf(plugin.getIntegrationManager().getSeasonInterface().getDate(split[1]));
+                    }
+                    case "daysleft" -> {
+                        return String.valueOf(1 + ConfigManager.seasonInterval - plugin.getIntegrationManager().getSeasonInterface().getDate(split[1]));
                     }
                 }
             }

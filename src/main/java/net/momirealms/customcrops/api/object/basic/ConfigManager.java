@@ -62,6 +62,7 @@ public class ConfigManager extends Function {
     public static int cacheSaveInterval;
     public static int intervalConsume;
     public static int intervalWork;
+    public static int fixRange;
     public static boolean disableMoistureMechanic;
     public static boolean preventTrampling;
     public static boolean onlyInLoadedChunks;
@@ -148,6 +149,7 @@ public class ConfigManager extends Function {
     private void loadOtherSetting(ConfigurationSection section) {
         enableSkillBonus = section.getBoolean("skill-bonus.enable", false);
         bonusFormula =  section.getString("skill-bonus.formula");
+        fixRange =  section.getInt("corrupt-fix-range", 4);
     }
 
     public int getCropLimit(String world) {

@@ -46,7 +46,7 @@ public class MigrateWorld extends Function {
     @Override
     @SuppressWarnings("ResultOfMethodCallIgnored")
     public void init() {
-        File chunks_folder = ConfigUtils.getChunkFolder(worldName);
+        File chunks_folder = ConfigUtils.getFile(worldName, "chunks");
         if (!chunks_folder.exists()) chunks_folder.mkdirs();
         File[] data_files = chunks_folder.listFiles();
         if (data_files == null) return;
@@ -68,7 +68,7 @@ public class MigrateWorld extends Function {
     @Override
     @SuppressWarnings("ResultOfMethodCallIgnored")
     public void disable() {
-        File chunks_folder = ConfigUtils.getChunkFolder(worldName);
+        File chunks_folder = ConfigUtils.getFile(worldName, "chunks");
         if (!chunks_folder.exists()) chunks_folder.mkdirs();
         for (Map.Entry<ChunkCoordinate, CCChunk> entry : chunkMap.entrySet()) {
             ChunkCoordinate chunkCoordinate = entry.getKey();
@@ -194,7 +194,7 @@ public class MigrateWorld extends Function {
         return chunk.getSprinklerData(simpleLocation);
     }
 
-    public void addWaterToPot(SimpleLocation simpleLocation, int amount, @Nullable String pot_id) {
+    public void addWaterToPot(SimpleLocation simpleLocation, int amount, @NotNull String pot_id) {
         CCChunk chunk = chunkMap.get(simpleLocation.getChunkCoordinate());
         if (chunk != null) {
             chunk.addWaterToPot(simpleLocation, amount, pot_id);
