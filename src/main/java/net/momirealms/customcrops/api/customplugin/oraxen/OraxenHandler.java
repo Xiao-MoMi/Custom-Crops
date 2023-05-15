@@ -45,6 +45,7 @@ public class OraxenHandler extends Handler {
     @EventHandler
     public void onBreakFurniture(OraxenFurnitureBreakEvent event) {
         Entity entity = event.getBaseEntity();
+        if (entity == null) return;
         switch (entity.getType()) {
             case ITEM_FRAME -> platformManager.onBreakItemFrame(event.getPlayer(), entity, event.getMechanic().getItemID(), event);
             case ITEM_DISPLAY -> platformManager.onBreakItemDisplay(event.getPlayer(), entity, event.getMechanic().getItemID(), event);
