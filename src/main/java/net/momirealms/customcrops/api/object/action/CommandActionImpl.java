@@ -26,14 +26,14 @@ import org.jetbrains.annotations.Nullable;
 public record CommandActionImpl(String[] commands, double chance) implements Action {
 
     @Override
-    public void doOn(@Nullable Player player, @Nullable SimpleLocation crop_loc, ItemMode itemMode) {
+    public void doOn(@Nullable Player player, @Nullable SimpleLocation cropLoc, ItemMode itemMode) {
         if (player == null || Math.random() > chance) return;
         for (String command : commands) {
             Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(),
                     command.replace("{player}", player.getName())
-                            .replace("{x}", crop_loc == null ? "" : String.valueOf(crop_loc.getX()))
-                            .replace("{y}", crop_loc == null ? "" : String.valueOf(crop_loc.getY()))
-                            .replace("{z}", crop_loc == null ? "" : String.valueOf(crop_loc.getZ()))
+                            .replace("{x}", cropLoc == null ? "" : String.valueOf(cropLoc.getX()))
+                            .replace("{y}", cropLoc == null ? "" : String.valueOf(cropLoc.getY()))
+                            .replace("{z}", cropLoc == null ? "" : String.valueOf(cropLoc.getZ()))
                             .replace("{world}", player.getWorld().getName())
             );
         }

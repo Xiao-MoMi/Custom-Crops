@@ -24,6 +24,6 @@ import org.jetbrains.annotations.Nullable;
 
 public interface Action {
 
-    void doOn(@Nullable Player player, @Nullable SimpleLocation crop_loc, ItemMode itemMode);
+    void doOn(@Nullable Player player, @Nullable SimpleLocation cropLoc, ItemMode itemMode);
 
 }

@@ -37,9 +37,9 @@ public class ParticleImpl implements Action {
     }
 
     @Override
-    public void doOn(@Nullable Player player, @Nullable SimpleLocation crop_loc, ItemMode itemMode) {
-        if (crop_loc == null) return;
-        Location location = crop_loc.getBukkitLocation();
+    public void doOn(@Nullable Player player, @Nullable SimpleLocation cropLoc, ItemMode itemMode) {
+        if (cropLoc == null) return;
+        Location location = cropLoc.getBukkitLocation();
         if (location == null) return;
         location.getWorld().spawnParticle(particle, location.clone().add(0.5,0.5,0.5), amount, offset, offset, offset);
     }

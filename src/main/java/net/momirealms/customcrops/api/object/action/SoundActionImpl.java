@@ -28,7 +28,7 @@ import org.jetbrains.annotations.Nullable;
 public record SoundActionImpl(String source, String sound, float volume, float pitch) implements Action {
 
     @Override
-    public void doOn(@Nullable Player player, @Nullable SimpleLocation crop_loc, ItemMode itemMode) {
+    public void doOn(@Nullable Player player, @Nullable SimpleLocation cropLoc, ItemMode itemMode) {
         if (player == null) return;
         AdventureUtils.playerSound(player, Sound.Source.valueOf(source.toUpperCase()), Key.key(sound), volume, pitch);
     }

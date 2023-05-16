@@ -26,15 +26,15 @@ import org.jetbrains.annotations.Nullable;
 public record MessageActionImpl(String[] messages, double chance) implements Action {
 
     @Override
-    public void doOn(@Nullable Player player, @Nullable SimpleLocation crop_loc, ItemMode itemMode) {
+    public void doOn(@Nullable Player player, @Nullable SimpleLocation cropLoc, ItemMode itemMode) {
         if (player == null || Math.random() > chance) return;
         for (String message : messages) {
             AdventureUtils.playerMessage(player,
                     message.replace("{player}", player.getName())
                             .replace("{world}", player.getWorld().getName())
-                            .replace("{x}", crop_loc == null ? "" : String.valueOf(crop_loc.getX()))
-                            .replace("{y}", crop_loc == null ? "" : String.valueOf(crop_loc.getY()))
-                            .replace("{z}", crop_loc == null ? "" : String.valueOf(crop_loc.getZ()))
+                            .replace("{x}", cropLoc == null ? "" : String.valueOf(cropLoc.getX()))
+                            .replace("{y}", cropLoc == null ? "" : String.valueOf(cropLoc.getY()))
+                            .replace("{z}", cropLoc == null ? "" : String.valueOf(cropLoc.getZ()))
             );
         }
     }

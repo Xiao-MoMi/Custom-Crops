@@ -26,7 +26,7 @@ import org.jetbrains.annotations.Nullable;
 public record PotionEffectImpl(PotionEffect potionEffect, double chance) implements Action {
 
     @Override
-    public void doOn(@Nullable Player player, @Nullable SimpleLocation crop_loc, ItemMode itemMode) {
+    public void doOn(@Nullable Player player, @Nullable SimpleLocation cropLoc, ItemMode itemMode) {
         if (player == null || Math.random() > chance) return;
         player.addPotionEffect(potionEffect);
     }

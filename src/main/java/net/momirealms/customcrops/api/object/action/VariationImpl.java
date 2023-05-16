@@ -34,16 +34,16 @@ import java.util.concurrent.CompletableFuture;
 public record VariationImpl(VariationCrop[] variationCrops) implements Action {
 
     @Override
-    public void doOn(@Nullable Player player, @Nullable SimpleLocation crop_loc, ItemMode itemMode) {
-        if (crop_loc == null) return;
+    public void doOn(@Nullable Player player, @Nullable SimpleLocation cropLoc, ItemMode itemMode) {
+        if (cropLoc == null) return;
         double bonus = 0;
-        Pot pot = CustomCrops.getInstance().getWorldDataManager().getPotData(crop_loc.add(0,-1,0));
+        Pot pot = CustomCrops.getInstance().getWorldDataManager().getPotData(cropLoc.add(0,-1,0));
         if (pot != null && CustomCrops.getInstance().getFertilizerManager().getConfigByFertilizer(pot.getFertilizer()) instanceof Variation variation) {
             bonus = variation.getChance();
         }
         for (VariationCrop variationCrop : variationCrops) {
             if (Math.random() < variationCrop.getChance() + bonus) {
-                doVariation(crop_loc, itemMode, variationCrop);
+                doVariation(cropLoc, itemMode, variationCrop);
                 break;
             }
         }
@@ -81,8 +81,7 @@ public record VariationImpl(VariationCrop[] variationCrops) implements Action {
                         }
                         return null;
                     }));
-        }
-        else {
+        } else {
             asyncGetChunk.whenComplete((result, throwable) ->
                     CustomCrops.getInstance().getScheduler().callSyncMethod(() -> {
                         if (CustomCrops.getInstance().getPlatformInterface().removeCustomItem(location, itemMode)) {

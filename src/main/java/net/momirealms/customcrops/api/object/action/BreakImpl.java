@@ -24,9 +24,13 @@ import net.momirealms.customcrops.api.object.crop.CropConfig;
 import net.momirealms.customcrops.api.object.crop.StageConfig;
 import net.momirealms.customcrops.api.object.world.SimpleLocation;
 import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.concurrent.CompletableFuture;
 
 public class BreakImpl implements Action {
 
@@ -39,30 +43,57 @@ public class BreakImpl implements Action {
     }
 
     @Override
-    public void doOn(@Nullable Player player, @Nullable SimpleLocation crop_loc, ItemMode itemMode) {
-        if (crop_loc == null || stage_id == null || player == null) return;
+    public void doOn(@Nullable Player player, @Nullable SimpleLocation cropLoc, ItemMode itemMode) {
+        if (cropLoc == null || stage_id == null) return;
         CropConfig cropConfig = CustomCrops.getInstance().getCropManager().getCropConfigByStage(stage_id);
-        CustomCrops.getInstance().getScheduler().runTask(() -> {
-            Location bLoc = crop_loc.getBukkitLocation();
-            if (bLoc == null) return;
+        Location bLoc = cropLoc.getBukkitLocation();
+        if (bLoc == null) return;
+        if (player != null) {
             CropBreakEvent cropBreakEvent = new CropBreakEvent(player, cropConfig, stage_id, bLoc);
             Bukkit.getPluginManager().callEvent(cropBreakEvent);
             if (cropBreakEvent.isCancelled()) {
                 return;
             }
             CustomCrops.getInstance().getPlatformInterface().removeAnyThingAt(bLoc);
-            CustomCrops.getInstance().getWorldDataManager().removeCropData(crop_loc);
-            if (triggerAction) {
-                StageConfig stageConfig = CustomCrops.getInstance().getCropManager().getStageConfig(stage_id);
-                if (stageConfig != null) {
-                    Action[] actions = stageConfig.getBreakActions();
-                    if (actions != null) {
-                        for (Action action : actions) {
-                            action.doOn(player, crop_loc, itemMode);
-                        }
+            CustomCrops.getInstance().getWorldDataManager().removeCropData(cropLoc);
+            doTriggerActions(player, cropLoc, itemMode);
+        } else {
+            CompletableFuture<Chunk> asyncGetChunk = bLoc.getWorld().getChunkAtAsync(bLoc.getBlockX() >> 4, bLoc.getBlockZ() >> 4);
+            if (itemMode == ItemMode.ITEM_FRAME || itemMode == ItemMode.ITEM_DISPLAY) {
+                CompletableFuture<Boolean> loadEntities = asyncGetChunk.thenApply((chunk) -> {
+                    chunk.getEntities();
+                    return chunk.isEntitiesLoaded();
+                });
+                loadEntities.whenComplete((result, throwable) ->
+                        CustomCrops.getInstance().getScheduler().runTask(() -> {
+                            CustomCrops.getInstance().getWorldDataManager().removeCropData(cropLoc);
+                            if (CustomCrops.getInstance().getPlatformInterface().removeCustomItem(bLoc, itemMode)) {
+                                doTriggerActions(null, cropLoc, itemMode);
+                            }
+                        }));
+            } else {
+                asyncGetChunk.whenComplete((result, throwable) ->
+                        CustomCrops.getInstance().getScheduler().runTask(() -> {
+                            CustomCrops.getInstance().getWorldDataManager().removeCropData(cropLoc);
+                            if (CustomCrops.getInstance().getPlatformInterface().removeCustomItem(bLoc, itemMode)) {
+                                doTriggerActions(null, cropLoc, itemMode);
+                            }
+                        }));
+            }
+        }
+    }
+
+    private void doTriggerActions(@Nullable Player player, @NotNull SimpleLocation crop_loc, ItemMode itemMode) {
+        if (triggerAction) {
+            StageConfig stageConfig = CustomCrops.getInstance().getCropManager().getStageConfig(stage_id);
+            if (stageConfig != null) {
+                Action[] actions = stageConfig.getBreakActions();
+                if (actions != null) {
+                    for (Action action : actions) {
+                        action.doOn(player, crop_loc, itemMode);
                     }
                 }
             }
-        });
+        }
     }
 }

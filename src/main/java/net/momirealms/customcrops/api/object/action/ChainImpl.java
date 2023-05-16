@@ -33,10 +33,10 @@ public class ChainImpl implements Action {
     }
 
     @Override
-    public void doOn(@Nullable Player player, @Nullable SimpleLocation crop_loc, ItemMode itemMode) {
+    public void doOn(@Nullable Player player, @Nullable SimpleLocation cropLoc, ItemMode itemMode) {
         if (Math.random() < chance) {
             for (Action action : actions) {
-                action.doOn(player, crop_loc, itemMode);
+                action.doOn(player, cropLoc, itemMode);
             }
         }
     }

@@ -24,6 +24,7 @@ import net.objecthunter.exp4j.Expression;
 import net.objecthunter.exp4j.ExpressionBuilder;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -37,7 +38,7 @@ public abstract class Loot {
         this.max = max;
     }
 
-    public void drop(Player player, Location location) {
+    public void drop(@Nullable Player player, Location location) {
         //empty
     }
 
@@ -49,7 +50,7 @@ public abstract class Loot {
         return max;
     }
 
-    public int getAmount(Player player) {
+    public int getAmount(@Nullable Player player) {
         int random = ThreadLocalRandom.current().nextInt(getMin(), getMax() + 1);
         if (ConfigManager.enableSkillBonus && player != null) {
             SkillInterface skillInterface = CustomCrops.getInstance().getIntegrationManager().getSkillInterface();

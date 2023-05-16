@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
 public record GiveMoneyImpl(double money, double chance) implements Action {
 
     @Override
-    public void doOn(@Nullable Player player, @Nullable SimpleLocation crop_loc, ItemMode itemMode) {
+    public void doOn(@Nullable Player player, @Nullable SimpleLocation cropLoc, ItemMode itemMode) {
         if (player != null && Math.random() < chance) {
             VaultHook vaultHook = CustomCrops.getInstance().getIntegrationManager().getVault();
             if (vaultHook != null) {

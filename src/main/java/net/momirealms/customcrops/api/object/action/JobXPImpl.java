@@ -27,7 +27,7 @@ import org.jetbrains.annotations.Nullable;
 public record JobXPImpl(double amount, double chance) implements Action {
 
     @Override
-    public void doOn(@Nullable Player player, @Nullable SimpleLocation crop_loc, ItemMode itemMode) {
+    public void doOn(@Nullable Player player, @Nullable SimpleLocation cropLoc, ItemMode itemMode) {
         if (player == null || Math.random() > chance) return;
         JobInterface jobInterface = CustomCrops.getInstance().getIntegrationManager().getJobInterface();
         if (jobInterface == null) return;

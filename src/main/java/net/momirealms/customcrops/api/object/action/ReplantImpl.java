@@ -27,9 +27,12 @@ import net.momirealms.customcrops.api.object.crop.GrowingCrop;
 import net.momirealms.customcrops.api.object.world.SimpleLocation;
 import net.momirealms.customcrops.api.util.AdventureUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.concurrent.CompletableFuture;
 
 public class ReplantImpl implements Action {
 
@@ -44,30 +47,56 @@ public class ReplantImpl implements Action {
     }
 
     @Override
-    public void doOn(@Nullable Player player, @Nullable SimpleLocation crop_loc, ItemMode itemMode) {
-        if (player == null || crop_loc == null) return;
+    public void doOn(@Nullable Player player, @Nullable SimpleLocation cropLoc, ItemMode itemMode) {
+        if (cropLoc == null) return;
         CropConfig cropConfig = CustomCrops.getInstance().getCropManager().getCropConfigByID(crop);
         if (cropConfig != null) {
+            Location location = cropLoc.getBukkitLocation();
+            if (location == null) return;
             ItemMode newCMode = cropConfig.getCropMode();
-            CustomCrops.getInstance().getScheduler().runTask(() -> {
-                Location location = crop_loc.getBukkitLocation();
-                if (location == null) return;
-                if (ConfigManager.enableLimitation && CustomCrops.getInstance().getWorldDataManager().getChunkCropAmount(crop_loc) >= ConfigManager.maxCropPerChunk) {
-                    AdventureUtils.playerMessage(player, MessageManager.prefix + MessageManager.reachChunkLimit);
-                    return;
+            if (ConfigManager.enableLimitation && CustomCrops.getInstance().getWorldDataManager().getChunkCropAmount(cropLoc) >= ConfigManager.maxCropPerChunk) {
+                AdventureUtils.playerMessage(player, MessageManager.prefix + MessageManager.reachChunkLimit);
+                return;
+            }
+            if (player != null) {
+                // Though the task is executed on main thread
+                // But it still needs slight delay to prevent crop loots from doubled when clicking with both left and right click
+                // It's still unsure how it happens
+                CustomCrops.getInstance().getScheduler().runTask(() -> {
+                    CropPlantEvent cropPlantEvent = new CropPlantEvent(player, player.getInventory().getItemInMainHand(), location, crop, point, model);
+                    Bukkit.getPluginManager().callEvent(cropPlantEvent);
+                    if (cropPlantEvent.isCancelled()) {
+                        return;
+                    }
+                    if (!CustomCrops.getInstance().getPlatformInterface().detectAnyThing(location)) {
+                        CustomCrops.getInstance().getPlatformInterface().placeCustomItem(location, model, newCMode);
+                        CustomCrops.getInstance().getWorldDataManager().addCropData(cropLoc, new GrowingCrop(crop, point), true);
+                    }
+                });
+            } else {
+                CompletableFuture<Chunk> asyncGetChunk = location.getWorld().getChunkAtAsync(location.getBlockX() >> 4, location.getBlockZ() >> 4);
+                if (itemMode == ItemMode.ITEM_FRAME || itemMode == ItemMode.ITEM_DISPLAY) {
+                    CompletableFuture<Boolean> loadEntities = asyncGetChunk.thenApply((chunk) -> {
+                        chunk.getEntities();
+                        return chunk.isEntitiesLoaded();
+                    });
+                    loadEntities.whenComplete((result, throwable) ->
+                            CustomCrops.getInstance().getScheduler().runTask(() -> {
+                                if (!CustomCrops.getInstance().getPlatformInterface().detectAnyThing(location)) {
+                                    CustomCrops.getInstance().getPlatformInterface().placeCustomItem(location, model, newCMode);
+                                    CustomCrops.getInstance().getWorldDataManager().addCropData(cropLoc, new GrowingCrop(crop, point), true);
+                                }
+                            }));
+                } else {
+                    asyncGetChunk.whenComplete((result, throwable) ->
+                            CustomCrops.getInstance().getScheduler().runTask(() -> {
+                                if (!CustomCrops.getInstance().getPlatformInterface().detectAnyThing(location)) {
+                                    CustomCrops.getInstance().getPlatformInterface().placeCustomItem(location, model, newCMode);
+                                    CustomCrops.getInstance().getWorldDataManager().addCropData(cropLoc, new GrowingCrop(crop, point), true);
+                                }
+                            }));
                 }
-
-                CropPlantEvent cropPlantEvent = new CropPlantEvent(player, player.getInventory().getItemInMainHand(), location, crop, point, model);
-                Bukkit.getPluginManager().callEvent(cropPlantEvent);
-                if (cropPlantEvent.isCancelled()) {
-                    return;
-                }
-
-                if (!CustomCrops.getInstance().getPlatformInterface().detectAnyThing(location)) {
-                    CustomCrops.getInstance().getPlatformInterface().placeCustomItem(location, model, newCMode);
-                    CustomCrops.getInstance().getWorldDataManager().addCropData(crop_loc, new GrowingCrop(crop, point), true);
-                }
-            });
+            }
         }
     }
 }

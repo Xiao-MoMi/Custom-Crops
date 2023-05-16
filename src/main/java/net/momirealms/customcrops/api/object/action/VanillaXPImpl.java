@@ -28,7 +28,7 @@ import org.jetbrains.annotations.Nullable;
 public record VanillaXPImpl(int amount, boolean mending, double chance) implements Action {
 
     @Override
-    public void doOn(@Nullable Player player, @Nullable SimpleLocation crop_loc, ItemMode itemMode) {
+    public void doOn(@Nullable Player player, @Nullable SimpleLocation cropLoc, ItemMode itemMode) {
         if (player == null || Math.random() > chance) return;
         player.giveExp(amount, mending);
         AdventureUtils.playerSound(player, Sound.Source.PLAYER, Key.key("minecraft:entity.experience_orb.pickup"), 1, 1);

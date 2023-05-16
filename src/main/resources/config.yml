@@ -25,13 +25,13 @@ schedule-system:
   enable: true
   # The average interval for a crop to gain one point (measured in seconds)
   # 平均每个农作物获得一生长点的时间间隔（秒）
-  point-gain-interval: 300
-  # Water amount and fertilizer would reduce every 4 points are gained
+  point-gain-interval: 400
+  # Water amount and fertilizer would reduce every 3 points are gained
   # set it to -1 if you don't want CustomCrops to control consumption/sprinkler tasks
-  # 默认每四个生长点进行一次水分、肥料消耗/洒水器工作
+  # 默认每3个生长点进行一次水分、肥料消耗
   # 设置为-1以禁用CustomCrops对水分、肥料消耗/洒水器任务的掌管
-  consume-water-fertilizer-every-x-point: 4
-  # Sprinkler would work every two points are gained
+  consume-water-fertilizer-every-x-point: 3
+  # Sprinkler would work every 2 points are gained
   sprinkler-work-every-x-point: 2
   # Save cache to file interval (seconds)
   # set "-1" to disable
