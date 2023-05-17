@@ -233,7 +233,7 @@ public class CCWorld extends Function {
             this.timerTask = plugin.getScheduler().runTaskTimerAsync(() -> {
                 World current = world.get();
                 if (current != null) {
-                    if (ConfigManager.debug) {
+                    if (ConfigManager.debugScheduler) {
                         Log.info("Queue size: " + schedule.getQueue().size() + " Completed: " + schedule.getCompletedTaskCount());
                     }
                     long day = current.getFullTime() / 24000;
@@ -259,7 +259,7 @@ public class CCWorld extends Function {
         if (ConfigManager.cacheSaveInterval != -1) {
             cacheTimer--;
             if (cacheTimer <= 0) {
-                if (ConfigManager.debug) Log.info("== Save cache ==");
+                if (ConfigManager.debugScheduler) Log.info("== Save cache ==");
                 cacheTimer = ConfigManager.cacheSaveInterval;
                 schedule.execute(this::saveDateData);
                 schedule.execute(this::saveCorruptedPots);
@@ -278,12 +278,12 @@ public class CCWorld extends Function {
 
     public void onReachPoint() {
         if (ConfigManager.enableScheduleSystem) {
-            if (ConfigManager.debug) Log.info("== Grow point ==");
+            if (ConfigManager.debugScheduler) Log.info("== Grow point ==");
             plantInPoint.clear();
             int size = schedule.getQueue().size();
             if (size != 0) {
                 schedule.getQueue().clear();
-                if (ConfigManager.debug) Log.info("== Clear queue ==");
+                if (ConfigManager.debugScheduler) Log.info("== Clear queue ==");
             }
             for (CCChunk chunk : chunkMap.values()) {
                 chunk.scheduleGrowTask(this, -1);
@@ -296,12 +296,12 @@ public class CCWorld extends Function {
             }
             if (consumeCounter == 0) {
                 consumeCounter = ConfigManager.intervalConsume;
-                if (ConfigManager.debug) Log.info("== Consume time ==");
+                if (ConfigManager.debugScheduler) Log.info("== Consume time ==");
                 scheduleConsumeTask(-1);
             }
             if (workCounter == 0) {
                 workCounter = ConfigManager.intervalWork;
-                if (ConfigManager.debug) Log.info("== Work time ==");
+                if (ConfigManager.debugScheduler) Log.info("== Work time ==");
                 scheduleSprinklerWork(-1);
             }
         }
@@ -443,13 +443,26 @@ public class CCWorld extends Function {
                 CompletableFuture<Chunk> asyncGetChunk = location.getWorld().getChunkAtAsync(location.getBlockX() >> 4, location.getBlockZ() >> 4);
                 asyncGetChunk.whenComplete((result, throwable) ->
                     plugin.getScheduler().runTask(() -> {
-                        if (!plugin.getPlatformInterface().removeAnyBlock(location)) {
-                            plugin.getWorldDataManager().removePotData(simpleLocation);
+                        Block block = location.getBlock();
+                        if (block.getType() == Material.AIR) {
+                            removePotData(simpleLocation);
                             return;
                         }
                         String replacer = wet ? potConfig.getWetPot(fertilizer) : potConfig.getDryPot(fertilizer);
+                        String id = plugin.getPlatformInterface().getBlockID(block);
+                        if (ConfigManager.enableCorruptionFixer && id.equals("NOTE_BLOCK")) {
+                            plugin.getPlatformInterface().placeNoteBlock(location, replacer);
+                            return;
+                        }
+                        String potKey = plugin.getPotManager().getPotKeyByBlockID(id);
+                        if (potKey == null) {
+                            removePotData(simpleLocation);
+                            return;
+                        }
+                        if (potKey.equals(pot.getPotKey())) {
+                            return;
+                        }
                         if (ConfigUtils.isVanillaItem(replacer)) {
-                            Block block = location.getBlock();
                             block.setType(Material.valueOf(replacer));
                             if (block.getBlockData() instanceof Farmland farmland && ConfigManager.disableMoistureMechanic) {
                                 farmland.setMoisture(wet ? farmland.getMaximumMoisture() : 0);
@@ -546,15 +559,12 @@ public class CCWorld extends Function {
                         } else {
                             addWaterToPot(simpleLocation, amount, potKey);
                         }
-                    } else if (blockID.equals("NOTE_BLOCK")) {
+                    } else if (ConfigManager.enableCorruptionFixer && blockID.equals("NOTE_BLOCK")) {
                         // Only ItemsAdder can go to this step
                         Pot pot = getPotData(simpleLocation);
                         if (pot != null) {
-                            // mark it as glitched
+                            // mark it as corrupted
                             potKey = pot.getPotKey();
-                            corruptedPot.put(simpleLocation, potKey);
-                            if (ConfigManager.debug) AdventureUtils.consoleMessage("[CustomCrops] Trying to fix corrupted pot found at: " + simpleLocation);
-
                             if (whitelist == null) {
                                 pot.addWater(amount);
                             } else {
@@ -565,21 +575,12 @@ public class CCWorld extends Function {
                                     }
                                 }
                             }
-
+                            corruptedPot.put(simpleLocation, potKey);
+                            if (ConfigManager.debugCorruption) AdventureUtils.consoleMessage("[CustomCrops] Trying to fix corrupted pot found at: " + simpleLocation);
                             // only custom blocks would corrupt
-                            String replacer = pot.getConfig().getWetPot(pot.getFertilizer());
+                            // so it's not necessary to check if the pot is a vanilla block
+                            String replacer = pot.isWet() ? pot.getConfig().getWetPot(pot.getFertilizer()) : pot.getConfig().getDryPot(pot.getFertilizer());
                             plugin.getPlatformInterface().placeNoteBlock(location, replacer);
-                        } else {
-                            potKey = corruptedPot.get(simpleLocation);
-                            if (potKey != null) {
-                                PotConfig potConfig = plugin.getPotManager().getPotConfig(potKey);
-                                if (potConfig != null) {
-                                    String replacer = potConfig.getDryPot(null);
-                                    plugin.getPlatformInterface().placeNoteBlock(location, replacer);
-                                } else {
-                                    corruptedPot.remove(simpleLocation);
-                                }
-                            }
                         }
                     }
                 }
@@ -627,7 +628,7 @@ public class CCWorld extends Function {
             }
 
             int points = 1;
-            Pot pot = plugin.getWorldDataManager().getPotData(simpleLocation.add(0,-1,0));
+            Pot pot = getPotData(simpleLocation.add(0,-1,0));
             if (pot != null) {
                 FertilizerConfig fertilizerConfig = plugin.getFertilizerManager().getConfigByFertilizer(pot.getFertilizer());
                 if (fertilizerConfig instanceof SpeedGrow speedGrow) {

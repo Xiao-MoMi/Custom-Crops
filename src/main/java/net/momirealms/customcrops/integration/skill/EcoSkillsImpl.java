@@ -24,19 +24,13 @@ import org.bukkit.entity.Player;
 
 public class EcoSkillsImpl implements SkillInterface {
 
-    public EcoSkillsAPI ecoSkillsAPI;
-
-    public EcoSkillsImpl() {
-        ecoSkillsAPI = EcoSkillsAPI.getInstance();
-    }
-
     @Override
     public void addXp(Player player, double amount) {
-        ecoSkillsAPI.giveSkillExperience(player, Skills.FARMING, amount);
+        EcoSkillsAPI.giveSkillXP(player, Skills.INSTANCE.getByID("farming"), amount);
     }
 
     @Override
     public int getLevel(Player player) {
-        return ecoSkillsAPI.getSkillLevel(player, Skills.FISHING);
+        return EcoSkillsAPI.getSkillLevel(player, Skills.INSTANCE.getByID("farming"));
     }
 }

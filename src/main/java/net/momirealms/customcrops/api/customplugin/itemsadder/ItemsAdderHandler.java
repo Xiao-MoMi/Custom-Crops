@@ -20,8 +20,6 @@ package net.momirealms.customcrops.api.customplugin.itemsadder;
 import dev.lone.itemsadder.api.Events.*;
 import net.momirealms.customcrops.api.customplugin.Handler;
 import net.momirealms.customcrops.api.customplugin.PlatformManager;
-import org.bukkit.block.Block;
-import org.bukkit.entity.Entity;
 import org.bukkit.event.EventHandler;
 
 public class ItemsAdderHandler extends Handler {
@@ -32,21 +30,12 @@ public class ItemsAdderHandler extends Handler {
 
     @EventHandler
     public void onBreakCustomBlock(CustomBlockBreakEvent event) {
-        Block block = event.getBlock();
-        switch (block.getType()) {
-            case NOTE_BLOCK -> platformManager.onBreakNoteBlock(event.getPlayer(), event.getBlock(), event.getNamespacedID(), event);
-            case TRIPWIRE -> platformManager.onBreakTripWire(event.getPlayer(), event.getBlock(), event.getNamespacedID(), event);
-            case CHORUS_PLANT -> platformManager.onBreakChorus(event.getPlayer(), event.getBlock(), event.getNamespacedID(), event);
-        }
+        platformManager.onBreakCustomBlock(event.getPlayer(), event.getBlock().getLocation(), event.getNamespacedID(), event);
     }
 
     @EventHandler
     public void onBreakFurniture(FurnitureBreakEvent event) {
-        Entity entity = event.getBukkitEntity();
-        switch (entity.getType()) {
-            case ITEM_FRAME -> platformManager.onBreakItemFrame(event.getPlayer(), entity, event.getNamespacedID(), event);
-            case ITEM_DISPLAY -> platformManager.onBreakItemDisplay(event.getPlayer(), entity, event.getNamespacedID(), event);
-        }
+        platformManager.onBreakFurniture(event.getPlayer(), event.getBukkitEntity(), event.getNamespacedID(), event);
     }
 
     @EventHandler
@@ -56,7 +45,7 @@ public class ItemsAdderHandler extends Handler {
 
     @EventHandler
     public void onPlaceCustomBlock(CustomBlockPlaceEvent event) {
-        platformManager.onPlaceBlock(event.getPlayer(), event.getBlock().getLocation(), event.getNamespacedID(), event);
+        platformManager.onPlaceCustomBlock(event.getPlayer(), event.getBlock().getLocation(), event.getNamespacedID(), event);
     }
 
     @EventHandler

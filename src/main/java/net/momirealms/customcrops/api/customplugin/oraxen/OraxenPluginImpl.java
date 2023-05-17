@@ -79,6 +79,7 @@ public class OraxenPluginImpl implements PlatformInterface {
             return itemFrame;
         else {
             AdventureUtils.consoleMessage("<red>[CustomCrops] ItemFrame not exists: " + id);
+            // use oraxen method to remove sub entities
             OraxenFurniture.remove(entity, null);
             return null;
         }
@@ -97,6 +98,7 @@ public class OraxenPluginImpl implements PlatformInterface {
             return itemDisplay;
         else {
             AdventureUtils.consoleMessage("<red>[CustomCrops] ItemDisplay not exists: " + id);
+            // use oraxen method to remove sub entities
             OraxenFurniture.remove(entity, null);
             return null;
         }

@@ -4,7 +4,7 @@ plugins {
 }
 
 group = 'net.momirealms'
-version = '3.2.1'
+version = '3.2.2'
 
 repositories {
     mavenCentral()
@@ -30,9 +30,9 @@ dependencies {
     compileOnly ('me.clip:placeholderapi:2.11.3')
     compileOnly ('com.github.LoneDev6:api-itemsadder:3.4.1-r4')
     compileOnly ('io.lumine:Mythic-Dist:5.0.3-SNAPSHOT')
-    compileOnly ('com.willfp:EcoSkills:2.2.6')
-    compileOnly ('com.willfp:eco:6.53.1')
-    compileOnly ('com.willfp:EcoJobs:3.2.5')
+    //compileOnly ('com.willfp:EcoSkills:3.0.0-b2')
+    compileOnly ('com.willfp:eco:6.60.0')
+    compileOnly ('com.willfp:EcoJobs:3.13.0')
     compileOnly ('net.objecthunter:exp4j:0.4.8')
     compileOnly ('io.lumine:Mythic-Dist:5.2.1')
     compileOnly fileTree (dir:'libs',includes:['*.jar'])

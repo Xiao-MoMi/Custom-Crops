@@ -34,22 +34,20 @@ public class OraxenHandler extends Handler {
 
     @EventHandler
     public void onBreakNoteBlock(OraxenNoteBlockBreakEvent event) {
-        platformManager.onBreakNoteBlock(event.getPlayer(), event.getBlock(), event.getMechanic().getItemID(), event);
+        platformManager.onBreakCustomBlock(event.getPlayer(), event.getBlock().getLocation(), event.getMechanic().getItemID(), event);
     }
 
     @EventHandler
     public void onBreakStringBlock(OraxenStringBlockBreakEvent event) {
-        platformManager.onBreakTripWire(event.getPlayer(), event.getBlock(), event.getMechanic().getItemID(), event);
+        platformManager.onBreakCustomBlock(event.getPlayer(), event.getBlock().getLocation(), event.getMechanic().getItemID(), event);
     }
 
     @EventHandler
     public void onBreakFurniture(OraxenFurnitureBreakEvent event) {
         Entity entity = event.getBaseEntity();
+        // TODO Why entity would sometimes be null
         if (entity == null) return;
-        switch (entity.getType()) {
-            case ITEM_FRAME -> platformManager.onBreakItemFrame(event.getPlayer(), entity, event.getMechanic().getItemID(), event);
-            case ITEM_DISPLAY -> platformManager.onBreakItemDisplay(event.getPlayer(), entity, event.getMechanic().getItemID(), event);
-        }
+        platformManager.onBreakFurniture(event.getPlayer(), entity, event.getMechanic().getItemID(), event);
     }
 
     @EventHandler
@@ -63,14 +61,15 @@ public class OraxenHandler extends Handler {
     public void onPlaceStringBlock(OraxenStringBlockPlaceEvent event) {
         StringBlockMechanic mechanic = event.getMechanic();
         if (mechanic == null) return;
-        platformManager.onPlaceBlock(event.getPlayer(), event.getBlock().getLocation(), mechanic.getItemID(), event);
+        platformManager.onPlaceCustomBlock(event.getPlayer(), event.getBlock().getLocation(), mechanic.getItemID(), event);
     }
 
     @EventHandler
     public void onPlaceNoteBlock(OraxenNoteBlockPlaceEvent event) {
         NoteBlockMechanic mechanic = event.getMechanic();
+        // TODO Why mechanic would sometimes be null
         if (mechanic == null) return;
-        platformManager.onPlaceBlock(event.getPlayer(), event.getBlock().getLocation(), mechanic.getItemID(), event);
+        platformManager.onPlaceCustomBlock(event.getPlayer(), event.getBlock().getLocation(), mechanic.getItemID(), event);
     }
 
     @EventHandler

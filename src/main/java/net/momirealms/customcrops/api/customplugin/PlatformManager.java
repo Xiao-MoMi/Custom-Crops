@@ -17,7 +17,6 @@
 
 package net.momirealms.customcrops.api.customplugin;
 
-import dev.lone.itemsadder.api.Events.CustomBlockBreakEvent;
 import net.momirealms.customcrops.CustomCrops;
 import net.momirealms.customcrops.api.customplugin.itemsadder.ItemsAdderHandler;
 import net.momirealms.customcrops.api.customplugin.oraxen.OraxenHandler;
@@ -87,52 +86,41 @@ public class PlatformManager extends Function {
         this.handler.unload();
     }
 
-    public void onBreakVanilla(BlockBreakEvent event) {
+    public void onPlaceVanillaBlock(BlockPlaceEvent event) {
         if (event.isCancelled()) return;
         Block block = event.getBlock();
-        if (block.getType() == Material.NOTE_BLOCK) plugin.getWorldDataManager().removeCorrupted(SimpleLocation.getByBukkitLocation(block.getLocation()));
-        onBreakSomething(event.getPlayer(), block.getLocation(), block.getType().name(), event);
+        onPlaceVanilla(event.getPlayer(), block.getLocation(), block.getType().name(), event);
     }
 
-    public void onPlaceVanilla(BlockPlaceEvent event) {
+    public void onBreakVanillaBlock(BlockBreakEvent event) {
         if (event.isCancelled()) return;
         Block block = event.getBlock();
-        onPlaceSomething(event.getPlayer(), block.getLocation(), block.getType().name(), event);
-    }
-
-    public void onBreakTripWire(Player player, Block block, String id, Cancellable event) {
-        if (event.isCancelled()) return;
-        onBreakSomething(player, block.getLocation(), id, event);
-    }
-
-    public void onBreakChorus(Player player, Block block, String id, CustomBlockBreakEvent event) {
-        if (event.isCancelled()) return;
-        onBreakSomething(player, block.getLocation(), id, event);
-    }
-
-    public void onBreakNoteBlock(Player player, Block block, String id, Cancellable event) {
-        if (event.isCancelled()) return;
-        onBreakSomething(player, block.getLocation(), id, event);
-    }
-
-    public void onBreakItemDisplay(Player player, Entity entity, String id, Cancellable event) {
-        if (event.isCancelled()) return;
-        onBreakSomething(player, entity.getLocation().getBlock().getLocation(), id, event);
-    }
-
-    public void onBreakItemFrame(Player player, Entity entity, String id, Cancellable event) {
-        if (event.isCancelled()) return;
-        onBreakSomething(player, entity.getLocation().getBlock().getLocation(), id, event);
+        if (block.getType() == Material.NOTE_BLOCK) {
+            SimpleLocation potLoc = SimpleLocation.getByBukkitLocation(block.getLocation());
+            plugin.getWorldDataManager().removeCorrupted(potLoc);
+            plugin.getWorldDataManager().removePotData(potLoc);
+        }
+        onBreakVanilla(event.getPlayer(), block.getLocation(), block.getType().name(), event);
     }
 
     public void onPlaceFurniture(Player player, Location location, String id, Cancellable event) {
         if (event != null && event.isCancelled()) return;
-        onPlaceSomething(player, location, id, event);
+        onPlaceCustom(player, location, id, event);
     }
 
-    public void onPlaceBlock(Player player, Location location, String id, Cancellable event) {
+    public void onBreakFurniture(Player player, Entity entity, String id, Cancellable event) {
         if (event.isCancelled()) return;
-        onPlaceSomething(player, location, id, event);
+        onBreakCustom(player, entity.getLocation().getBlock().getLocation(), id, event);
+    }
+
+    public void onPlaceCustomBlock(Player player, Location location, String id, Cancellable event) {
+        if (event.isCancelled()) return;
+        onPlaceCustom(player, location, id, event);
+    }
+
+    public void onBreakCustomBlock(Player player, Location location, String id, Cancellable event) {
+        if (event.isCancelled()) return;
+        onBreakCustom(player, location, id, event);
     }
 
     public void onInteractBlock(PlayerInteractEvent event) {
@@ -144,6 +132,9 @@ public class PlatformManager extends Function {
             Block block = event.getClickedBlock();
             String id = plugin.getPlatformInterface().getBlockID(block);
             assert block != null;
+            if (ConfigManager.enableCorruptionFixer && onInteractBrokenPot(id, block.getLocation())) {
+                return;
+            }
             onInteractSomething(event.getPlayer(), block.getLocation(), id, event.getBlockFace(), event);
         }
     }
@@ -156,13 +147,10 @@ public class PlatformManager extends Function {
     public void onInteractAir(Player player) {
         ItemStack item_in_hand = player.getInventory().getItemInMainHand();
         String id = plugin.getPlatformInterface().getItemStackID(item_in_hand);
-
-        if (onInteractWithWateringCan(player, id, item_in_hand, null, null)) {
-            return;
-        }
+        onInteractWithWateringCan(player, id, item_in_hand, null, null);
     }
 
-    public void onBreakSomething(Player player, Location location, String id, Cancellable event) {
+    public void onBreakCustom(Player player, Location location, String id, Cancellable event) {
 
         if (onBreakGlass(player, id, location, event)) {
             return;
@@ -185,7 +173,18 @@ public class PlatformManager extends Function {
         }
     }
 
-    public void onPlaceSomething(Player player, Location location, String id, @Nullable Cancellable event) {
+    public void onBreakVanilla(Player player, Location location, String id, Cancellable event) {
+
+        if (onBreakGlass(player, id, location, event)) {
+            return;
+        }
+
+        if (onBreakPot(player, id, location, event)) {
+            return;
+        }
+    }
+
+    public void onPlaceCustom(Player player, Location location, String id, @Nullable Cancellable event) {
 
         if (onPlaceGlass(player, id, location, event)) {
             return;
@@ -196,6 +195,17 @@ public class PlatformManager extends Function {
         }
 
         if (onPlaceScarecrow(player, id, location, event)) {
+            return;
+        }
+    }
+
+    public void onPlaceVanilla(Player player, Location location, String id, @Nullable Cancellable event) {
+
+        if (onPlaceGlass(player, id, location, event)) {
+            return;
+        }
+
+        if (onPlacePot(player, id, location, event)) {
             return;
         }
     }
@@ -228,16 +238,15 @@ public class PlatformManager extends Function {
                 return;
             }
 
-            if (onInteractBrokenPot(id, location)) {
-                return;
-            }
-
             if (onInteractWithWateringCan(player, item_in_hand_id, item_in_hand, id, location)) {
                 return;
             }
         }
     }
 
+    /**
+     * Fix a pot if CustomCrops detected the location seems to be corrupted
+     */
     private boolean onInteractBrokenPot(String id, Location location) {
         if (!id.equals("NOTE_BLOCK")) {
             return false;
@@ -263,6 +272,10 @@ public class PlatformManager extends Function {
         return true;
     }
 
+    /**
+     * Fix the pots according to the range
+     * The scope of detection is to some extent determined by the scope of corruption
+     */
     public void furtherFix(Location location, int range) {
         if (range >= ConfigManager.fixRange) return;
         List<Location> locations = new ArrayList<>();
@@ -453,7 +466,6 @@ public class PlatformManager extends Function {
         }
 
         Sprinkler sprinkler = plugin.getWorldDataManager().getSprinklerData(SimpleLocation.getByBukkitLocation(location));
-
         WaterAmountHologram waterAmountHologram = sprinklerConfig.getSprinklerHologram();
         if (waterAmountHologram != null) {
             String content;
@@ -923,19 +935,18 @@ public class PlatformManager extends Function {
         CropConfig cropConfig = plugin.getCropManager().getCropConfigByStage(id);
         if (cropConfig == null) return false;
 
+        // The entity might be other creatures when the pot is FARMLAND
+        // because of vanilla farmland mechanics
         if (entity instanceof Player player) {
-
             if (!canBreak(player, cropConfig, location)) {
                 event.setCancelled(true);
                 return true;
             }
-
             CropBreakEvent cropBreakEvent = new CropBreakEvent(entity, cropConfig, id, location);
             Bukkit.getPluginManager().callEvent(cropBreakEvent);
             if (cropBreakEvent.isCancelled()) {
                 return true;
             }
-
             if (player.getGameMode() != GameMode.CREATIVE) {
                 StageConfig stageConfig = plugin.getCropManager().getStageConfig(id);
                 if (stageConfig != null) {
@@ -948,13 +959,11 @@ public class PlatformManager extends Function {
                 }
             }
         } else {
-
             CropBreakEvent cropBreakEvent = new CropBreakEvent(entity, cropConfig, id, location);
             Bukkit.getPluginManager().callEvent(cropBreakEvent);
             if (cropBreakEvent.isCancelled()) {
                 return true;
             }
-
             StageConfig stageConfig = plugin.getCropManager().getStageConfig(id);
             if (stageConfig != null) {
                 Action[] breakActions = stageConfig.getBreakActions();
@@ -965,7 +974,6 @@ public class PlatformManager extends Function {
                 }
             }
         }
-
         plugin.getWorldDataManager().removeCropData(SimpleLocation.getByBukkitLocation(location));
         return true;
     }

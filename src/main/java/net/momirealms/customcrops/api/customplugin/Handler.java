@@ -59,12 +59,12 @@ public abstract class Handler extends Function implements Listener {
 
     @EventHandler
     public void onBreak(BlockBreakEvent event) {
-        platformManager.onBreakVanilla(event);
+        platformManager.onBreakVanillaBlock(event);
     }
 
     @EventHandler
     public void onPlace(BlockPlaceEvent event) {
-        platformManager.onPlaceVanilla(event);
+        platformManager.onPlaceVanillaBlock(event);
     }
 
     @EventHandler

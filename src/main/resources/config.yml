@@ -1,11 +1,13 @@
 # Don't change
-config-version: '31'
+config-version: '32'
 # BStats
 metrics: true
 # Language: english / spanish / chinese / turkish
 lang: english
 # debug
-debug: false
+debug:
+  log-scheduler: false
+  log-corruption-fixer: false
 
 worlds:
   # This is designed for servers that using a separate folder for worlds
@@ -114,5 +116,7 @@ other-settings:
   # MMOCore profession name
   # MMOCore职业名
   MMOCore-profession-name: 'farmer'
+  # Enable corruption fixer
+  enable-corruption-fixer: true
   # Fixed corrupted pots when interacting
   corrupt-fix-range: 4

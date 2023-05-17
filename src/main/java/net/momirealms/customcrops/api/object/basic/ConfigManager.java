@@ -41,7 +41,8 @@ public class ConfigManager extends Function {
     public static boolean whiteListWorlds;
     public static HashSet<String> worldList;
     public static String worldFolderPath;
-    public static boolean debug;
+    public static boolean debugScheduler;
+    public static boolean debugCorruption;
     public static String greenhouseBlock;
     public static String scarecrow;
     public static boolean enableGreenhouse;
@@ -66,6 +67,7 @@ public class ConfigManager extends Function {
     public static boolean disableMoistureMechanic;
     public static boolean preventTrampling;
     public static boolean onlyInLoadedChunks;
+    public static boolean enableCorruptionFixer;
 
     private final HashMap<String, Integer> cropPerWorld;
     private final CustomCrops plugin;
@@ -92,7 +94,8 @@ public class ConfigManager extends Function {
         YamlConfiguration config = ConfigUtils.getConfig("config.yml");
         enableBStats = config.getBoolean("metrics");
         lang = config.getString("lang");
-        debug = config.getBoolean("debug");
+        debugScheduler = config.getBoolean("debug.log-scheduler", false);
+        debugCorruption = config.getBoolean("debug.log-corruption-fixer", false);
         loadWorlds(Objects.requireNonNull(config.getConfigurationSection("worlds")));
         loadOptimization(Objects.requireNonNull(config.getConfigurationSection("optimization")));
         loadScheduleSystem(Objects.requireNonNull(config.getConfigurationSection("schedule-system")));
@@ -149,6 +152,7 @@ public class ConfigManager extends Function {
     private void loadOtherSetting(ConfigurationSection section) {
         enableSkillBonus = section.getBoolean("skill-bonus.enable", false);
         bonusFormula =  section.getString("skill-bonus.formula");
+        enableCorruptionFixer =  section.getBoolean("enable-corruption-fixer", true);
         fixRange =  section.getInt("corrupt-fix-range", 4);
     }
 
