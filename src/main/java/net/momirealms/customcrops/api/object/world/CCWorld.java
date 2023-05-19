@@ -81,11 +81,11 @@ public class CCWorld extends Function {
 
     public CCWorld(World world, CustomCrops plugin) {
         this.plugin = plugin;
+        this.worldName = world.getName();
         this.chunksFolder = ConfigUtils.getFile(world, "chunks");
         this.dateFile = ConfigUtils.getFile(world, "data.yml");
         this.corruptedFile = ConfigUtils.getFile(world, "corrupted.yml");
         this.world = new WeakReference<>(world);
-        this.worldName = world.getName();
         this.chunkMap = new ConcurrentHashMap<>(64);
         this.schedule = new ScheduledThreadPoolExecutor(ConfigManager.corePoolSize);
         this.schedule.setMaximumPoolSize(ConfigManager.maxPoolSize);
@@ -100,6 +100,7 @@ public class CCWorld extends Function {
     public void init() {
         loadDateData();
         loadCorruptedPots();
+        if (!chunksFolder.exists()) chunksFolder.mkdirs();
         if (!ConfigManager.onlyInLoadedChunks) {
             loadAllChunkData();
         }
@@ -151,7 +152,6 @@ public class CCWorld extends Function {
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
     public void loadAllChunkData() {
-        if (!chunksFolder.exists()) chunksFolder.mkdirs();
         File[] data_files = chunksFolder.listFiles();
         if (data_files == null) return;
         List<File> outdated = new ArrayList<>();
@@ -177,6 +177,7 @@ public class CCWorld extends Function {
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
     public void saveAllChunkData() {
+        if (!chunksFolder.exists()) chunksFolder.mkdirs();
         for (Map.Entry<ChunkCoordinate, CCChunk> entry : chunkMap.entrySet()) {
             ChunkCoordinate chunkCoordinate = entry.getKey();
             CCChunk chunk = entry.getValue();

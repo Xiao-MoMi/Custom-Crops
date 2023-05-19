@@ -4,7 +4,7 @@ config-version: '32'
 metrics: true
 # Language: english / spanish / chinese / turkish
 lang: english
-# debug
+# Debug
 debug:
   log-scheduler: false
   log-corruption-fixer: false
@@ -16,7 +16,7 @@ worlds:
   # Mode: whitelist/blacklist
   # Requires a restart when changing mode or editing world list for the safety of data
   # 模式：白名单/黑名单
-  # 为了避免重载时候造成服务器卡顿，修改本栏需要重启服务器
+  # 修改本栏需要重启服务器
   mode: whitelist
   list:
     - world
@@ -55,7 +55,9 @@ optimization:
   # 推荐启用区块限制来防止玩家种植大量农作物
   # 如果你使用ItemsAdder的展示框模式，你需要在ItemsAdder的配置文件中设置"max-furniture-vehicles-per-chunk"到较高值，否则农作物种植后会消失
   limitation:
-    # max crop amount per chunk
+    # Maximum amount of growing crops per chunk
+    # Note: This only limits **growing** crops
+    # If a crop is ripe, it would not be counted
     # 每个区块的限制数量
     growing-crop-amount:
       enable: true

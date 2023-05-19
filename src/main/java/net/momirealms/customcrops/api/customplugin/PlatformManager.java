@@ -95,11 +95,6 @@ public class PlatformManager extends Function {
     public void onBreakVanillaBlock(BlockBreakEvent event) {
         if (event.isCancelled()) return;
         Block block = event.getBlock();
-        if (block.getType() == Material.NOTE_BLOCK) {
-            SimpleLocation potLoc = SimpleLocation.getByBukkitLocation(block.getLocation());
-            plugin.getWorldDataManager().removeCorrupted(potLoc);
-            plugin.getWorldDataManager().removePotData(potLoc);
-        }
         onBreakVanilla(event.getPlayer(), block.getLocation(), block.getType().name(), event);
     }
 
@@ -181,6 +176,12 @@ public class PlatformManager extends Function {
 
         if (onBreakPot(player, id, location, event)) {
             return;
+        }
+
+        if (id.equals("NOTE_BLOCK")) {
+            SimpleLocation potLoc = SimpleLocation.getByBukkitLocation(location);
+            plugin.getWorldDataManager().removeCorrupted(potLoc);
+            plugin.getWorldDataManager().removePotData(potLoc);
         }
     }
 
