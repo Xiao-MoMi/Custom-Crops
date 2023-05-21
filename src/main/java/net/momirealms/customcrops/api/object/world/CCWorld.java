@@ -460,7 +460,7 @@ public class CCWorld extends Function {
                             removePotData(simpleLocation);
                             return;
                         }
-                        if (potKey.equals(pot.getPotKey())) {
+                        if (!potKey.equals(pot.getPotKey())) {
                             return;
                         }
                         if (ConfigUtils.isVanillaItem(replacer)) {
