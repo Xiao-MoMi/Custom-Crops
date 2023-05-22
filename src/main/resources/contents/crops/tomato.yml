@@ -142,18 +142,13 @@ tomato:
       events:
         break:
           action_1:
-            type: command
-            value:
-              - 'say Hello, {player}!'
-            chance: 0.5
-          action_2:
             type: sound
             value:
               source: player
               key: minecraft:block.crop.break
               volume: 1
               pitch: 1
-          action_3:
+          action_2:
             type: drop-items
             value:
               quality-crops:

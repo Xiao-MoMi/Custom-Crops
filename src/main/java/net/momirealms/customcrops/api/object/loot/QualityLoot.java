@@ -45,7 +45,7 @@ public class QualityLoot extends Loot {
     @Override
     public void drop(Player player, Location location) {
         SimpleLocation simpleLocation = SimpleLocation.getByBukkitLocation(location);
-        Pot pot = CustomCrops.getInstance().getWorldDataManager().getPotData(simpleLocation);
+        Pot pot = CustomCrops.getInstance().getWorldDataManager().getPotData(simpleLocation.add(0,-1,0));
         int amount = getAmount(player);
         double[] qualityRatio = ConfigManager.defaultRatio;
         if (pot != null) {
