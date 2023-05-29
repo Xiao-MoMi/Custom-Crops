@@ -24,6 +24,7 @@ import net.momirealms.customcrops.api.util.AdventureUtils;
 import net.momirealms.customcrops.api.util.ConfigUtils;
 import net.momirealms.customcrops.integration.item.DefaultImpl;
 import net.momirealms.customcrops.integration.item.MMOItemsItemImpl;
+import net.momirealms.customcrops.integration.item.MythicMobsItemImpl;
 import net.momirealms.customcrops.integration.job.EcoJobsImpl;
 import net.momirealms.customcrops.integration.job.JobsRebornImpl;
 import net.momirealms.customcrops.integration.papi.PlaceholderManager;
@@ -93,7 +94,7 @@ public class IntegrationManager extends Function {
     private void hookItems() {
         ArrayList<ItemInterface> itemInterfaceList = new ArrayList<>();
         if (pluginManager.isPluginEnabled("MythicMobs")) {
-            itemInterfaceList.add(new MMOItemsItemImpl());
+            itemInterfaceList.add(new MythicMobsItemImpl());
             hookMessage("MythicMobs");
         }
         if (pluginManager.isPluginEnabled("MMOItems")) {

@@ -1,11 +1,12 @@
 # Don't change
-config-version: '32'
+config-version: '33'
 # BStats
 metrics: true
 # Language: english / spanish / chinese / turkish
 lang: english
 # Debug
 debug:
+  log-world-state: false
   log-scheduler: false
   log-corruption-fixer: false
 

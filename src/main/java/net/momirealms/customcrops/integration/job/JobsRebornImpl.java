@@ -25,17 +25,19 @@ import net.momirealms.customcrops.integration.JobInterface;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
 public class JobsRebornImpl implements JobInterface, Listener {
 
     @Override
-    public void addXp(Player player, double amount) {
+    public void addXp(Player player, double amount, String jobName) {
+        if (jobName == null) jobName = "Farmer";
         JobsPlayer jobsPlayer = Jobs.getPlayerManager().getJobsPlayer(player);
         if (jobsPlayer != null) {
             List<JobProgression> jobs = jobsPlayer.getJobProgression();
-            Job job = Jobs.getJob("Farmer");
+            Job job = Jobs.getJob(jobName);
             for (JobProgression progression : jobs) {
                 if (progression.getJob().equals(job)) {
                     progression.addExperience(amount);
@@ -46,11 +48,12 @@ public class JobsRebornImpl implements JobInterface, Listener {
     }
 
     @Override
-    public int getLevel(Player player) {
+    public int getLevel(Player player, @Nullable String jobName) {
+        if (jobName == null) jobName = "Farmer";
         JobsPlayer jobsPlayer = Jobs.getPlayerManager().getJobsPlayer(player);
         if (jobsPlayer != null) {
             List<JobProgression> jobs = jobsPlayer.getJobProgression();
-            Job job = Jobs.getJob("Farmer");
+            Job job = Jobs.getJob(jobName);
             for (JobProgression progression : jobs) {
                 if (progression.getJob().equals(job)) {
                     return progression.getLevel();

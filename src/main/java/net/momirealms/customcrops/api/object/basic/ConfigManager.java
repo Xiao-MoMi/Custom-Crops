@@ -68,6 +68,7 @@ public class ConfigManager extends Function {
     public static boolean preventTrampling;
     public static boolean onlyInLoadedChunks;
     public static boolean enableCorruptionFixer;
+    public static boolean debugWorld;
 
     private final HashMap<String, Integer> cropPerWorld;
     private final CustomCrops plugin;
@@ -96,6 +97,7 @@ public class ConfigManager extends Function {
         lang = config.getString("lang");
         debugScheduler = config.getBoolean("debug.log-scheduler", false);
         debugCorruption = config.getBoolean("debug.log-corruption-fixer", false);
+        debugWorld = config.getBoolean("debug.log-world-state", false);
         loadWorlds(Objects.requireNonNull(config.getConfigurationSection("worlds")));
         loadOptimization(Objects.requireNonNull(config.getConfigurationSection("optimization")));
         loadScheduleSystem(Objects.requireNonNull(config.getConfigurationSection("schedule-system")));

@@ -21,13 +21,15 @@ import com.willfp.ecojobs.api.EcoJobsAPI;
 import com.willfp.ecojobs.jobs.Job;
 import net.momirealms.customcrops.integration.JobInterface;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 
 public class EcoJobsImpl implements JobInterface {
 
     @Override
-    public void addXp(Player player, double amount) {
+    public void addXp(Player player, double amount, @Nullable String jobName) {
+        if (jobName == null) jobName = "farmer";
         for (Job job : EcoJobsAPI.getActiveJobs(player)) {
-            if (job.getId().equals("farmer")) {
+            if (job.getId().equals(jobName)) {
                 EcoJobsAPI.giveJobExperience(player, job, amount);
                 break;
             }
@@ -35,7 +37,7 @@ public class EcoJobsImpl implements JobInterface {
     }
 
     @Override
-    public int getLevel(Player player) {
+    public int getLevel(Player player, @Nullable String jobName) {
 //        Job job = Jobs.getByID("farmer");
 //        if (job == null) return 0;
 //        return EcoJobsAPI.getJobLevel(player, job);

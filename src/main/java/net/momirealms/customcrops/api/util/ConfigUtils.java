@@ -217,7 +217,7 @@ public class ConfigUtils {
                     case "permission" -> requirements.add(new PermissionImpl(msg, innerSec.getString("value")));
                     case "time" -> requirements.add(new TimeImpl(msg, innerSec.getStringList("value")));
                     case "skill-level" -> requirements.add(new SkillLevelImpl(msg, innerSec.getInt("value")));
-                    case "job-level" -> requirements.add(new JobLevelImpl(msg, innerSec.getInt("value")));
+                    case "job-level" -> requirements.add(new JobLevelImpl(msg, innerSec.getInt("value.level"), innerSec.getString("value.job")));
                     case "date" -> requirements.add(new DateImpl(msg, new HashSet<>(innerSec.getStringList("value"))));
                     case "papi-condition" -> requirements.add(new CustomPapi(msg, Objects.requireNonNull(innerSec.getConfigurationSection("value")).getValues(false)));
                 }
@@ -261,8 +261,9 @@ public class ConfigUtils {
                             actionSec.getDouble("chance", 1))
                     );
                     case "job-xp" -> actions.add(new JobXPImpl(
-                            actionSec.getDouble("value"),
-                            actionSec.getDouble("chance", 1))
+                            actionSec.getDouble("value.xp"),
+                            actionSec.getDouble("chance", 1),
+                            actionSec.getString("value.job"))
                     );
                     case "sound" -> actions.add(new SoundActionImpl(
                             actionSec.getString("value.source"),

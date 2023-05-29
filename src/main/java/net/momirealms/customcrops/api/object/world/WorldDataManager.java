@@ -25,6 +25,7 @@ import net.momirealms.customcrops.api.object.fertilizer.Fertilizer;
 import net.momirealms.customcrops.api.object.pot.Pot;
 import net.momirealms.customcrops.api.object.sprinkler.Sprinkler;
 import net.momirealms.customcrops.api.object.sprinkler.SprinklerConfig;
+import net.momirealms.customcrops.api.util.AdventureUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.World;
@@ -38,16 +39,23 @@ public class WorldDataManager extends Function {
     private final ConcurrentHashMap<String, CCWorld> worldMap;
     private final CustomCrops plugin;
     private final WorldListener worldListener;
+    private SlimeWorldListener slimeWorldListener;
 
     public WorldDataManager(CustomCrops plugin) {
         this.plugin = plugin;
         this.worldMap = new ConcurrentHashMap<>();
         this.worldListener = new WorldListener(this);
+        try {
+            Class.forName("com.infernalsuite.aswm.api.world.SlimeWorld");
+            this.slimeWorldListener = new SlimeWorldListener(this);
+        } catch (ClassNotFoundException ignored) {
+        }
     }
 
     @Override
     public void load() {
         Bukkit.getPluginManager().registerEvents(worldListener, plugin);
+        if (slimeWorldListener != null) Bukkit.getPluginManager().registerEvents(slimeWorldListener, plugin);
         for (CCWorld ccWorld : worldMap.values()) {
             ccWorld.load();
         }
@@ -56,6 +64,7 @@ public class WorldDataManager extends Function {
     @Override
     public void unload() {
         HandlerList.unregisterAll(worldListener);
+        if (slimeWorldListener != null) HandlerList.unregisterAll(slimeWorldListener);
         for (CCWorld ccWorld : worldMap.values()) {
             ccWorld.unload();
         }
@@ -71,18 +80,21 @@ public class WorldDataManager extends Function {
     }
 
     public void loadWorld(World world) {
+        if (ConfigManager.debugWorld) AdventureUtils.consoleMessage("World " + world.getName() + " is trying to load");
         if (!isWorldAllowed(world)) return;
         CCWorld ccWorld = new CCWorld(world, plugin);
         ccWorld.init();
         ccWorld.load();
         ccWorld.onReachPoint();
         worldMap.put(world.getName(), ccWorld);
+        if (ConfigManager.debugWorld) AdventureUtils.consoleMessage("World " + world.getName() + " is loaded");
     }
 
     public void unloadWorld(World world) {
         CCWorld ccWorld = worldMap.remove(world.getName());
         if (ccWorld != null) {
             ccWorld.disable();
+            if (ConfigManager.debugWorld) AdventureUtils.consoleMessage("World " + world.getName() + " is unloaded");
         }
     }
 

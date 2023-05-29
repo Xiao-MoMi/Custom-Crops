@@ -24,17 +24,19 @@ import org.jetbrains.annotations.Nullable;
 public class JobLevelImpl extends AbstractRequirement implements Requirement {
 
     private final int level;
+    private final String jobName;
 
-    public JobLevelImpl(@Nullable String[] msg, int level) {
+    public JobLevelImpl(@Nullable String[] msg, int level, String jobName) {
         super(msg);
         this.level = level;
+        this.jobName = jobName;
     }
 
     @Override
     public boolean isConditionMet(CurrentState currentState) {
         JobInterface jobInterface = CustomCrops.getInstance().getIntegrationManager().getJobInterface();
         if (jobInterface == null || currentState.getPlayer() == null) return true;
-        if (jobInterface.getLevel(currentState.getPlayer()) >= level) {
+        if (jobInterface.getLevel(currentState.getPlayer(), jobName) >= level) {
             return true;
         }
         notMetMessage(currentState.getPlayer());

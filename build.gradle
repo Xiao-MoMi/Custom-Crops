@@ -4,7 +4,7 @@ plugins {
 }
 
 group = 'net.momirealms'
-version = '3.2.2-hotfix3'
+version = '3.2.3.1'
 
 repositories {
     mavenCentral()
@@ -19,6 +19,8 @@ repositories {
     maven {name = "jitpack repo"; url = "https://jitpack.io"}
     maven {name = 'glaremasters repo'; url = 'https://repo.glaremasters.me/repository/towny/'}
     maven {name = 'bg-software repo'; url = 'https://repo.bg-software.com/repository/api/'}
+    maven {name = 'aswm repo'; url = 'https://repo.infernalsuite.com/repository/maven-snapshots/' }
+    maven {name = 'aswm repo'; url = 'https://repo.rapture.pw/repository/maven-releases/' }
 }
 
 dependencies {
@@ -30,11 +32,12 @@ dependencies {
     compileOnly ('me.clip:placeholderapi:2.11.3')
     compileOnly ('com.github.LoneDev6:api-itemsadder:3.4.1-r4')
     compileOnly ('io.lumine:Mythic-Dist:5.0.3-SNAPSHOT')
-    //compileOnly ('com.willfp:EcoSkills:3.0.0-b2')
+    //compileOnly ('com.willfp:EcoSkills:3.0.0-b2') No read access
     compileOnly ('com.willfp:eco:6.60.0')
     compileOnly ('com.willfp:EcoJobs:3.13.0')
     compileOnly ('net.objecthunter:exp4j:0.4.8')
     compileOnly ('io.lumine:Mythic-Dist:5.2.1')
+    compileOnly ('com.infernalsuite.aswm:api:1.19.4-R0.1-SNAPSHOT')
     compileOnly fileTree (dir:'libs',includes:['*.jar'])
     implementation ('net.kyori:adventure-api:4.13.1')
     implementation ('net.kyori:adventure-platform-bukkit:4.3.0')

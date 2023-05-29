@@ -18,8 +18,9 @@
 package net.momirealms.customcrops.integration;
 
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 
 public interface JobInterface {
-    void addXp(Player player, double amount);
-    int getLevel(Player player);
+    void addXp(Player player, double amount, @Nullable String job);
+    int getLevel(Player player, @Nullable String job);
 }

@@ -123,7 +123,7 @@ public class FertilizerManager extends Function {
 
     public ArrayList<Pair<Double, Integer>> getChancePair(ConfigurationSection fertilizerSec) {
         ArrayList<Pair<Double, Integer>> pairs = new ArrayList<>();
-        ConfigurationSection effectSec = fertilizerSec.getConfigurationSection("effects");
+        ConfigurationSection effectSec = fertilizerSec.getConfigurationSection("chance");
         if (effectSec == null) return new ArrayList<>();
         for (String point : effectSec.getKeys(false)) {
             Pair<Double, Integer> pair = new Pair<>(effectSec.getDouble(point), Integer.parseInt(point));
