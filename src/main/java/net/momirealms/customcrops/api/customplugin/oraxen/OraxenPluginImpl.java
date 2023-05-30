@@ -74,7 +74,7 @@ public class OraxenPluginImpl implements PlatformInterface {
             AdventureUtils.consoleMessage("<red>[CustomCrops] Furniture not exists: " + id);
             return null;
         }
-        Entity entity = mechanic.place(location, 0, Rotation.NONE, BlockFace.UP);
+        Entity entity = mechanic.place(location, 0, BlockFace.UP);
         if (entity instanceof ItemFrame itemFrame)
             return itemFrame;
         else {
