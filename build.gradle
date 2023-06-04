@@ -4,7 +4,7 @@ plugins {
 }
 
 group = 'net.momirealms'
-version = '3.2.3.2'
+version = '3.2.3.3'
 
 repositories {
     mavenCentral()
@@ -25,7 +25,6 @@ repositories {
 
 dependencies {
     compileOnly ('dev.dejvokep:boosted-yaml:1.3')
-    compileOnly ('com.github.Archy-X:AureliumSkills:Beta1.3.18')
     compileOnly ('commons-io:commons-io:2.11.0')
     compileOnly ('dev.folia:folia-api:1.19.4-R0.1-SNAPSHOT')
     compileOnly ('io.papermc.paper:paper-api:1.19.4-R0.1-SNAPSHOT')
@@ -47,16 +46,6 @@ dependencies {
     implementation fileTree (dir:'libs',includes:['BiomeAPI.jar','ProtectionLib.jar'])
 }
 
-def targetJavaVersion = 17
-java {
-    def javaVersion = JavaVersion.toVersion(targetJavaVersion)
-    sourceCompatibility = javaVersion
-    targetCompatibility = javaVersion
-    if (JavaVersion.current() < javaVersion) {
-        toolchain.languageVersion = JavaLanguageVersion.of(targetJavaVersion)
-    }
-}
-
 processResources {
     def props = [version: version]
     inputs.properties props
@@ -68,7 +57,6 @@ processResources {
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = "UTF-8"
-    options.release = targetJavaVersion
 }
 
 shadowJar {

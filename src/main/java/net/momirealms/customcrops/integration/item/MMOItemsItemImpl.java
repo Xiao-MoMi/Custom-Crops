@@ -24,6 +24,8 @@ import net.momirealms.customcrops.integration.ItemInterface;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Locale;
+
 public class MMOItemsItemImpl implements ItemInterface {
 
     @Nullable
@@ -32,7 +34,7 @@ public class MMOItemsItemImpl implements ItemInterface {
         if (!material.startsWith("MMOItems:")) return null;
         material = material.substring(9);
         String[] split = material.split(":", 2);
-        MMOItem mmoItem = MMOItems.plugin.getMMOItem(Type.get(split[0]), split[1].toUpperCase());
+        MMOItem mmoItem = MMOItems.plugin.getMMOItem(Type.get(split[0]), split[1].toUpperCase(Locale.ENGLISH));
         return mmoItem == null ? null : mmoItem.newBuilder().build();
     }
 }

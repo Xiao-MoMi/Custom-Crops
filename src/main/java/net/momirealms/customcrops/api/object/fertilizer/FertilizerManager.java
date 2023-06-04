@@ -33,6 +33,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Locale;
 
 public class FertilizerManager extends Function {
 
@@ -93,7 +94,7 @@ public class FertilizerManager extends Function {
                 ConfigurationSection fertilizerSec = config.getConfigurationSection(key);
                 if (fertilizerSec == null) continue;
                 FertilizerConfig fertilizerConfig;
-                FertilizerType fertilizerType = FertilizerType.valueOf(fertilizerSec.getString("type", "SPEED_GROW").toUpperCase());
+                FertilizerType fertilizerType = FertilizerType.valueOf(fertilizerSec.getString("type", "SPEED_GROW").toUpperCase(Locale.ENGLISH));
                 String[] pot_whitelist = fertilizerSec.contains("pot-whitelist") ? fertilizerSec.getStringList("pot-whitelist").toArray(new String[0]) : null;
                 boolean beforePlant = fertilizerSec.getBoolean("before-plant", false);
                 int times = fertilizerSec.getInt("times", 14);

@@ -59,20 +59,15 @@ public class ReplantImpl implements Action {
                 return;
             }
             if (player != null) {
-                // Though the task is executed on main thread
-                // But it still needs slight delay to prevent crop loots from doubled when clicking with both left and right click
-                // It's still unsure how it happens
-                CustomCrops.getInstance().getScheduler().runTask(() -> {
-                    CropPlantEvent cropPlantEvent = new CropPlantEvent(player, player.getInventory().getItemInMainHand(), location, crop, point, model);
-                    Bukkit.getPluginManager().callEvent(cropPlantEvent);
-                    if (cropPlantEvent.isCancelled()) {
-                        return;
-                    }
-                    if (!CustomCrops.getInstance().getPlatformInterface().detectAnyThing(location)) {
-                        CustomCrops.getInstance().getPlatformInterface().placeCustomItem(location, model, newCMode);
-                        CustomCrops.getInstance().getWorldDataManager().addCropData(cropLoc, new GrowingCrop(crop, point), true);
-                    }
-                });
+                CropPlantEvent cropPlantEvent = new CropPlantEvent(player, player.getInventory().getItemInMainHand(), location, crop, point, model);
+                Bukkit.getPluginManager().callEvent(cropPlantEvent);
+                if (cropPlantEvent.isCancelled()) {
+                    return;
+                }
+                if (!CustomCrops.getInstance().getPlatformInterface().detectAnyThing(location)) {
+                    CustomCrops.getInstance().getPlatformInterface().placeCustomItem(location, model, newCMode);
+                    CustomCrops.getInstance().getWorldDataManager().addCropData(cropLoc, new GrowingCrop(crop, point), true);
+                }
             } else {
                 CompletableFuture<Chunk> asyncGetChunk = location.getWorld().getChunkAtAsync(location.getBlockX() >> 4, location.getBlockZ() >> 4);
                 if (itemMode == ItemMode.ITEM_FRAME || itemMode == ItemMode.ITEM_DISPLAY) {

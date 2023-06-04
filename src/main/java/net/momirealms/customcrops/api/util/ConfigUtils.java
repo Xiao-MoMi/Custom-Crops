@@ -179,11 +179,11 @@ public class ConfigUtils {
                         case "water_more_than" -> conditions.add(new WaterMoreThan(map2.getInt("value")));
                         case "unsuitable_season" -> {
                             if (!ConfigManager.enableSeason) return;
-                            conditions.add(new WrongSeason(map2.getStringList("value").stream().map(s -> CCSeason.valueOf(s.toUpperCase())).toList().toArray(new CCSeason[0])));
+                            conditions.add(new WrongSeason(map2.getStringList("value").stream().map(s -> CCSeason.valueOf(s.toUpperCase(Locale.ENGLISH))).toList().toArray(new CCSeason[0])));
                         }
                         case "suitable_season" -> {
                             if (!ConfigManager.enableSeason) return;
-                            conditions.add(new RightSeason(map2.getStringList("value").stream().map(s -> CCSeason.valueOf(s.toUpperCase())).toList().toArray(new CCSeason[0])));
+                            conditions.add(new RightSeason(map2.getStringList("value").stream().map(s -> CCSeason.valueOf(s.toUpperCase(Locale.ENGLISH))).toList().toArray(new CCSeason[0])));
                         }
                         case "crow_attack" -> conditions.add(new CrowAttack(map2.getDouble("value.chance"), map2.getString("value.fly-model"), map2.getString("value.stand-model")));
                         case "random" -> conditions.add(new Random(map2.getDouble("value")));
@@ -211,7 +211,7 @@ public class ConfigUtils {
                     case "ypos" -> requirements.add(new YPosImpl(msg, innerSec.getStringList("value")));
                     case "season" -> {
                         if (!ConfigManager.enableSeason) continue;
-                        requirements.add(new SeasonImpl(msg, innerSec.getStringList("value").stream().map(str -> CCSeason.valueOf(str.toUpperCase())).collect(Collectors.toList())));
+                        requirements.add(new SeasonImpl(msg, innerSec.getStringList("value").stream().map(str -> CCSeason.valueOf(str.toUpperCase(Locale.ENGLISH))).collect(Collectors.toList())));
                     }
                     case "world" -> requirements.add(new WorldImpl(msg, innerSec.getStringList("value")));
                     case "permission" -> requirements.add(new PermissionImpl(msg, innerSec.getString("value")));
@@ -272,12 +272,12 @@ public class ConfigUtils {
                             (float) actionSec.getDouble("value.pitch"))
                     );
                     case "particle" -> actions.add(new ParticleImpl(
-                            Particle.valueOf(actionSec.getString("value.particle", "FLAME").toUpperCase()),
+                            Particle.valueOf(actionSec.getString("value.particle", "FLAME").toUpperCase(Locale.ENGLISH)),
                             actionSec.getInt("value.amount"),
                             actionSec.getDouble("value.offset"))
                     );
                     case "potion-effect" -> {
-                        PotionEffectType potionEffectType = PotionEffectType.getByName(actionSec.getString("value.type", "BLINDNESS").toUpperCase());
+                        PotionEffectType potionEffectType = PotionEffectType.getByName(actionSec.getString("value.type", "BLINDNESS").toUpperCase(Locale.ENGLISH));
                         PotionEffect potionEffect = new PotionEffect(
                                 potionEffectType == null ? PotionEffectType.LUCK : potionEffectType,
                                 actionSec.getInt("value.duration"),
@@ -329,7 +329,7 @@ public class ConfigUtils {
                         for (String inner_key : variationSec.getKeys(false)) {
                             VariationCrop variationCrop = new VariationCrop(
                                     variationSec.getString(inner_key + ".item"),
-                                    ItemMode.valueOf(variationSec.getString(inner_key + ".type", "TripWire").toUpperCase()),
+                                    ItemMode.valueOf(variationSec.getString(inner_key + ".type", "TripWire").toUpperCase(Locale.ENGLISH)),
                                     variationSec.getDouble(inner_key + ".chance")
                             );
                             variationCrops.add(variationCrop);
@@ -365,7 +365,7 @@ public class ConfigUtils {
                     methodSec.getString("item"),
                     methodSec.getString("return"),
                     methodSec.getInt("amount", 1),
-                    methodSec.contains("particle") ? Particle.valueOf(methodSec.getString("particle", "WATER_SPLASH").toUpperCase()) : null,
+                    methodSec.contains("particle") ? Particle.valueOf(methodSec.getString("particle", "WATER_SPLASH").toUpperCase(Locale.ENGLISH)) : null,
                     sound
             );
             passiveFillMethods.add(passiveFillMethod);
@@ -420,7 +420,7 @@ public class ConfigUtils {
                     boneMealSec.getString("return"),
                     pairs,
                     sound,
-                    boneMealSec.contains("particle") ? Particle.valueOf(boneMealSec.getString("particle", "WATER_SPLASH").toUpperCase()) : null
+                    boneMealSec.contains("particle") ? Particle.valueOf(boneMealSec.getString("particle", "WATER_SPLASH").toUpperCase(Locale.ENGLISH)) : null
             );
             boneMeals.add(boneMeal);
         }
@@ -440,7 +440,7 @@ public class ConfigUtils {
             PositiveFillMethod method = new PositiveFillMethod(
                     id,
                     methodSec.getInt("amount"),
-                    methodSec.contains("particle") ? Particle.valueOf(methodSec.getString("particle", "WATER_SPLASH").toUpperCase()) : null,
+                    methodSec.contains("particle") ? Particle.valueOf(methodSec.getString("particle", "WATER_SPLASH").toUpperCase(Locale.ENGLISH)) : null,
                     sound
             );
             methods.add(method);

@@ -25,11 +25,13 @@ import net.momirealms.customcrops.api.util.AdventureUtils;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Locale;
+
 public record SoundActionImpl(String source, String sound, float volume, float pitch) implements Action {
 
     @Override
     public void doOn(@Nullable Player player, @Nullable SimpleLocation cropLoc, ItemMode itemMode) {
         if (player == null) return;
-        AdventureUtils.playerSound(player, Sound.Source.valueOf(source.toUpperCase()), Key.key(sound), volume, pitch);
+        AdventureUtils.playerSound(player, Sound.Source.valueOf(source.toUpperCase(Locale.ENGLISH)), Key.key(sound), volume, pitch);
     }
 }

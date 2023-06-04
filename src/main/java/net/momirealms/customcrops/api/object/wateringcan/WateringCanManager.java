@@ -37,6 +37,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 public class WateringCanManager extends Function {
 
@@ -98,7 +99,7 @@ public class WateringCanManager extends Function {
                         canSec.contains("pot-whitelist") ? canSec.getStringList("pot-whitelist").toArray(new String[0]) : null,
                         canSec.contains("sprinkler-whitelist") ? canSec.getStringList("sprinkler-whitelist").toArray(new String[0]) : null,
                         sound,
-                        canSec.contains("particle") ? Particle.valueOf(canSec.getString("particle", "WATER_SPLASH").toUpperCase()) : null,
+                        canSec.contains("particle") ? Particle.valueOf(canSec.getString("particle", "WATER_SPLASH").toUpperCase(Locale.ENGLISH)) : null,
                         methods
                 );
                 wateringCanConfigMap.put(canSec.getString("item"), wateringCanConfig);

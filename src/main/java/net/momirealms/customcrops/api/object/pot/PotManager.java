@@ -33,6 +33,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.Locale;
 
 public class PotManager extends Function {
 
@@ -96,7 +97,7 @@ public class PotManager extends Function {
                         section.getBoolean("hologram.fertilizer.enable", false) ? new FertilizerHologram(
                                 section.getString("hologram.fertilizer.content", ""),
                                 section.getDouble("hologram.fertilizer.vertical-offset"),
-                                HologramManager.Mode.valueOf(section.getString("hologram.type", "ARMOR_STAND").toUpperCase()),
+                                HologramManager.Mode.valueOf(section.getString("hologram.type", "ARMOR_STAND").toUpperCase(Locale.ENGLISH)),
                                 section.getInt("hologram.duration"),
                                 new TextDisplayMeta(
                                         section.getBoolean("hologram.text-display-options.has-shadow", false),
@@ -109,7 +110,7 @@ public class PotManager extends Function {
                         section.getBoolean("hologram.water.enable", false) ? new WaterAmountHologram(
                                 section.getString("hologram.water.content", ""),
                                 section.getDouble("hologram.water.vertical-offset"),
-                                HologramManager.Mode.valueOf(section.getString("hologram.type", "ARMOR_STAND").toUpperCase()),
+                                HologramManager.Mode.valueOf(section.getString("hologram.type", "ARMOR_STAND").toUpperCase(Locale.ENGLISH)),
                                 section.getInt("hologram.duration"),
                                 section.getString("hologram.water.water-bar.left"),
                                 section.getString("hologram.water.water-bar.full"),

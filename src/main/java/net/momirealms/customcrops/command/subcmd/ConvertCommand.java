@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 
 public class ConvertCommand extends AbstractSubCommand {
 
@@ -35,7 +36,7 @@ public class ConvertCommand extends AbstractSubCommand {
 
         confirm.remove(sender.getName());
 
-        String mode = args.get(0).toUpperCase();
+        String mode = args.get(0).toUpperCase(Locale.ENGLISH);
 
         String platform = CustomCrops.getInstance().getPlatform().name().toLowerCase();
         YamlConfiguration oldConfig = YamlConfiguration.loadConfiguration(new File(CustomCrops.getInstance().getDataFolder(), "crops_" + platform + ".yml"));

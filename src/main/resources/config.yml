@@ -120,6 +120,6 @@ other-settings:
   # MMOCore职业名
   MMOCore-profession-name: 'farmer'
   # Enable corruption fixer
-  enable-corruption-fixer: true
+  enable-corruption-fixer: false
   # Fixed corrupted pots when interacting
   corrupt-fix-range: 4

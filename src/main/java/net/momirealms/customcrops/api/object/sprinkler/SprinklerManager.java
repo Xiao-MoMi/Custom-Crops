@@ -42,6 +42,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.Locale;
 
 public class SprinklerManager extends Function implements Listener {
 
@@ -94,7 +95,7 @@ public class SprinklerManager extends Function implements Listener {
                 }
                 @Subst("namespace:key") String soundKey = sprinklerSec.getString("place-sound", "minecraft:block.bone_block.place");
                 Sound sound = sprinklerSec.contains("place-sound") ? Sound.sound(Key.key(soundKey), Sound.Source.PLAYER, 1, 1) : null;
-                ItemMode itemMode = ItemMode.valueOf(sprinklerSec.getString("type","ITEM_FRAME").toUpperCase());
+                ItemMode itemMode = ItemMode.valueOf(sprinklerSec.getString("type","ITEM_FRAME").toUpperCase(Locale.ENGLISH));
                 SprinklerConfig sprinklerConfig = new SprinklerConfig(
                         key,
                         sprinklerSec.getInt("storage", 3),
@@ -109,7 +110,7 @@ public class SprinklerManager extends Function implements Listener {
                         sprinklerSec.getBoolean("hologram.enable") ? new WaterAmountHologram(
                                 sprinklerSec.getString("hologram.content",""),
                                 sprinklerSec.getDouble("hologram.vertical-offset"),
-                                HologramManager.Mode.valueOf(sprinklerSec.getString("hologram.type", "ARMOR_STAND").toUpperCase()),
+                                HologramManager.Mode.valueOf(sprinklerSec.getString("hologram.type", "ARMOR_STAND").toUpperCase(Locale.ENGLISH)),
                                 sprinklerSec.getInt("hologram.duration"),
                                 sprinklerSec.getString("hologram.water-bar.left"),
                                 sprinklerSec.getString("hologram.water-bar.full"),
@@ -127,7 +128,7 @@ public class SprinklerManager extends Function implements Listener {
                                 sprinklerSec.getInt("animation.duration"),
                                 sprinklerSec.getString("animation.item"),
                                 sprinklerSec.getDouble("animation.vertical-offset"),
-                                ItemMode.valueOf(sprinklerSec.getString("animation.type", "ARMOR_STAND").toUpperCase())
+                                ItemMode.valueOf(sprinklerSec.getString("animation.type", "ARMOR_STAND").toUpperCase(Locale.ENGLISH))
                         ) : null
                         );
                 this.itemToKey.put(threeD, key);

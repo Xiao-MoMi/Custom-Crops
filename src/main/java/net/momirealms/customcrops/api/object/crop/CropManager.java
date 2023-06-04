@@ -42,6 +42,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Locale;
 
 public class CropManager extends Function implements Listener {
 
@@ -91,7 +92,7 @@ public class CropManager extends Function implements Listener {
             for (String key : config.getKeys(false)) {
                 ConfigurationSection cropSec = config.getConfigurationSection(key);
                 if (cropSec == null) continue;
-                ItemMode itemMode = ItemMode.valueOf(cropSec.getString("type", "TripWire").toUpperCase());
+                ItemMode itemMode = ItemMode.valueOf(cropSec.getString("type", "TripWire").toUpperCase(Locale.ENGLISH));
                 if (itemMode == ItemMode.TRIPWIRE && !hasCheckedTripwire) {
                     checkTripwire();
                 }

@@ -29,6 +29,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.generator.WorldInfo;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 public class SetSeasonCommand extends AbstractSubCommand {
@@ -48,7 +49,7 @@ public class SetSeasonCommand extends AbstractSubCommand {
             return true;
         }
         try {
-            CCSeason ccSeason = CCSeason.valueOf(args.get(1).toUpperCase());
+            CCSeason ccSeason = CCSeason.valueOf(args.get(1).toUpperCase(Locale.ENGLISH));
             SeasonData seasonData = CustomCrops.getInstance().getSeasonManager().unloadSeasonData(args.get(0));
             if (seasonData == null) {
                 AdventureUtils.sendMessage(sender, MessageManager.prefix + MessageManager.noSeason);
