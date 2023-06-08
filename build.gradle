@@ -21,6 +21,7 @@ repositories {
     maven {name = 'bg-software repo'; url = 'https://repo.bg-software.com/repository/api/'}
     maven {name = 'aswm repo'; url = 'https://repo.infernalsuite.com/repository/maven-snapshots/' }
     maven {name = 'aswm repo'; url = 'https://repo.rapture.pw/repository/maven-releases/' }
+    maven {name = 'mmo-repo'; url = 'https://nexus.phoenixdevt.fr/repository/maven-public/'}
 }
 
 dependencies {
@@ -37,11 +38,12 @@ dependencies {
     compileOnly ('net.objecthunter:exp4j:0.4.8')
     compileOnly ('io.lumine:Mythic-Dist:5.2.1')
     compileOnly ('com.infernalsuite.aswm:api:1.19.4-R0.1-SNAPSHOT')
+    compileOnly ('net.Indyuce:MMOItems-API:6.9.2-SNAPSHOT')
     compileOnly fileTree (dir:'libs',includes:['*.jar'])
-    implementation ('net.kyori:adventure-api:4.13.1')
+    implementation ('net.kyori:adventure-api:4.14.0')
     implementation ('net.kyori:adventure-platform-bukkit:4.3.0')
-    implementation ('net.kyori:adventure-text-minimessage:4.13.1')
-    implementation ("de.tr7zw:item-nbt-api:2.11.2")
+    implementation ('net.kyori:adventure-text-minimessage:4.14.0')
+    implementation ("de.tr7zw:item-nbt-api:2.11.3")
     implementation ('org.bstats:bstats-bukkit:3.0.1')
     implementation fileTree (dir:'libs',includes:['BiomeAPI.jar','ProtectionLib.jar'])
 }

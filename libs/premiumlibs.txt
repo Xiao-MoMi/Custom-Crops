@@ -1,7 +1,0 @@
-BattlePass-3.16.4
-ClueScrolls-4.8.6
-mcMMO
-MMOCore-1.11.3
-MMOItems-6.9.3
-oraxen-1.155.1
-RealisticSeasons-10.4.3
