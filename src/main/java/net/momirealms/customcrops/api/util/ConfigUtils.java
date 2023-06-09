@@ -490,7 +490,7 @@ public class ConfigUtils {
         if (ConfigManager.worldFolderPath.equals("")) {
             file = new File(world.getWorldFolder(), "customcrops" + File.separator + fileName);
         } else {
-            file = new File(ConfigManager.worldFolderPath, world + File.separator + "customcrops" + File.separator + fileName);
+            file = new File(ConfigManager.worldFolderPath, world.getName() + File.separator + "customcrops" + File.separator + fileName);
         }
         return file;
     }
