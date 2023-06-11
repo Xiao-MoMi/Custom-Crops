@@ -23,12 +23,12 @@ worlds:
     - world
 
 schedule-system:
-  # if disabled, you can do that manually with command /customcrops force [consume/sprinklerwork/cropgrow] or API
+  # If disabled, you can do that manually with command /customcrops force [consume/sprinklerwork/cropgrow] or API methods
   # 如果禁用，你可以使用指令/customcrops force [consume/sprinklerwork/cropgrow]手动操作或使用API
   enable: true
   # The average interval for a crop to gain one point (measured in seconds)
   # 平均每个农作物获得一生长点的时间间隔（秒）
-  point-gain-interval: 400
+  point-gain-interval: 300
   # Water amount and fertilizer would reduce every 3 points are gained
   # set it to -1 if you don't want CustomCrops to control consumption/sprinkler tasks
   # 默认每3个生长点进行一次水分、肥料消耗

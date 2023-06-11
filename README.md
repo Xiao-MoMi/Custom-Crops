@@ -11,5 +11,5 @@ https://afdian.net/@xiaomomi
 https://polymart.org/resource/customcrops.2625
 
 ### How to compile
-Just compile it with gradle build. Some premium plugins are used as 
-local libraries. If you don't need those integrations just remove them!
+
+Execute gradle build in your IDLE and get the jar in /libs/build folder
