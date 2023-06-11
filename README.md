@@ -12,4 +12,4 @@ https://polymart.org/resource/customcrops.2625
 
 ### How to compile
 
-Execute gradle build in your IDLE and get the jar in /libs/build folder
+Execute gradle build in your IDLE and get the jar in /build/libs folder
