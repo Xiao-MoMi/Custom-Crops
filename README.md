@@ -17,22 +17,22 @@ Execute gradle build in your IDLE and get the jar in /build/libs folder
 ### API Usage
 
 #### Events
-CropBreakEvent
-CropInteractEvent
-CropPlantEvent
-FertilizerUseEvent
-GreenhouseGlassBreakEvent
-GreenhouseGlassPlaceEvent
-PotBreakEvent
-PotInfoEvent
-PotInteractEvent
-PotPlaceEvent
-PotWaterEvent
-ScarecrowBreakEvent
-ScarecrowPlaceEvent
-SprinklerFillEvent
-SprinklerPlaceEvent
-SprinklerInteractEvent
+CropBreakEvent\
+CropInteractEvent\
+CropPlantEvent\
+FertilizerUseEvent\
+GreenhouseGlassBreakEvent\
+GreenhouseGlassPlaceEvent\
+PotBreakEvent\
+PotInfoEvent\
+PotInteractEvent\
+PotPlaceEvent\
+PotWaterEvent\
+ScarecrowBreakEvent\
+ScarecrowPlaceEvent\
+SprinklerFillEvent\
+SprinklerPlaceEvent\
+SprinklerInteractEvent\
 SprinklerBreakEvent
 
 #### Utils
