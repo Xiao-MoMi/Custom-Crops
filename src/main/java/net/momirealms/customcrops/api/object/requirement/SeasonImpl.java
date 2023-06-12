@@ -18,6 +18,7 @@
 package net.momirealms.customcrops.api.object.requirement;
 
 import net.momirealms.customcrops.CustomCrops;
+import net.momirealms.customcrops.api.object.action.Action;
 import net.momirealms.customcrops.api.object.basic.ConfigManager;
 import net.momirealms.customcrops.api.object.season.CCSeason;
 import net.momirealms.customcrops.api.object.world.SimpleLocation;
@@ -31,8 +32,8 @@ public class SeasonImpl extends AbstractRequirement implements Requirement {
 
     private final List<CCSeason> seasons;
 
-    public SeasonImpl(@Nullable String[] msg, List<CCSeason> seasons) {
-        super(msg);
+    public SeasonImpl(@Nullable String[] msg, @Nullable Action[] actions, List<CCSeason> seasons) {
+        super(msg, actions);
         this.seasons = seasons;
     }
 
@@ -53,7 +54,7 @@ public class SeasonImpl extends AbstractRequirement implements Requirement {
                 }
             }
         }
-        notMetMessage(currentState.getPlayer());
+        notMetMessage(currentState);
         return false;
     }
 }

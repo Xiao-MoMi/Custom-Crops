@@ -19,6 +19,7 @@ package net.momirealms.customcrops.api.object.fertilizer;
 
 import net.kyori.adventure.sound.Sound;
 import net.momirealms.customcrops.api.object.Pair;
+import net.momirealms.customcrops.api.object.requirement.Requirement;
 import org.bukkit.Particle;
 import org.jetbrains.annotations.Nullable;
 
@@ -29,8 +30,8 @@ public class SpeedGrow extends FertilizerConfig {
     private final List<Pair<Double, Integer>> pairs;
 
     public SpeedGrow(String key, FertilizerType fertilizerType, int times, List<Pair<Double, Integer>> pairs,
-                     @Nullable String[] pot_whitelist, boolean beforePlant, @Nullable Particle particle, @Nullable Sound sound, String icon) {
-        super(key, fertilizerType, times, 1, pot_whitelist, beforePlant, particle, sound, icon);
+                     @Nullable String[] pot_whitelist, boolean beforePlant, @Nullable Particle particle, @Nullable Sound sound, String icon, Requirement[] requirements) {
+        super(key, fertilizerType, times, 1, pot_whitelist, beforePlant, particle, sound, icon, requirements);
         this.pairs = pairs;
     }
 

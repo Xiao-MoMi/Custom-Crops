@@ -18,6 +18,7 @@
 package net.momirealms.customcrops.api.object.requirement;
 
 import net.momirealms.customcrops.CustomCrops;
+import net.momirealms.customcrops.api.object.action.Action;
 import net.momirealms.customcrops.integration.JobInterface;
 import org.jetbrains.annotations.Nullable;
 
@@ -26,8 +27,8 @@ public class JobLevelImpl extends AbstractRequirement implements Requirement {
     private final int level;
     private final String jobName;
 
-    public JobLevelImpl(@Nullable String[] msg, int level, String jobName) {
-        super(msg);
+    public JobLevelImpl(@Nullable String[] msg, @Nullable Action[] actions, int level, String jobName) {
+        super(msg, actions);
         this.level = level;
         this.jobName = jobName;
     }
@@ -39,7 +40,7 @@ public class JobLevelImpl extends AbstractRequirement implements Requirement {
         if (jobInterface.getLevel(currentState.getPlayer(), jobName) >= level) {
             return true;
         }
-        notMetMessage(currentState.getPlayer());
+        notMetMessage(currentState);
         return false;
     }
 }

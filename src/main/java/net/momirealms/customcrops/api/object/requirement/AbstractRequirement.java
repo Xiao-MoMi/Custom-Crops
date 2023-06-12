@@ -17,6 +17,8 @@
 
 package net.momirealms.customcrops.api.object.requirement;
 
+import net.momirealms.customcrops.api.object.action.Action;
+import net.momirealms.customcrops.api.object.world.SimpleLocation;
 import net.momirealms.customcrops.api.util.AdventureUtils;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
@@ -24,15 +26,23 @@ import org.jetbrains.annotations.Nullable;
 public abstract class AbstractRequirement {
 
     protected String[] msg;
+    protected Action[] actions;
 
-    protected AbstractRequirement(@Nullable String[] msg) {
+    protected AbstractRequirement(@Nullable String[] msg, @Nullable Action[] actions) {
         this.msg = msg;
+        this.actions = actions;
     }
 
-    public void notMetMessage(Player player) {
+    public void notMetMessage(CurrentState currentState) {
+        Player player = currentState.getPlayer();
         if (msg != null && player != null) {
             for (String str : msg) {
                 AdventureUtils.playerMessage(player, str);
+            }
+        }
+        if (actions != null) {
+            for (Action action : actions) {
+                action.doOn(player, SimpleLocation.getByBukkitLocation(currentState.getLocation()), null);
             }
         }
     }

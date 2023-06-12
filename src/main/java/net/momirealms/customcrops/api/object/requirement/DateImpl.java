@@ -17,6 +17,9 @@
 
 package net.momirealms.customcrops.api.object.requirement;
 
+import net.momirealms.customcrops.api.object.action.Action;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.Calendar;
 import java.util.HashSet;
 
@@ -24,8 +27,8 @@ public class DateImpl extends AbstractRequirement implements Requirement {
 
     private final HashSet<String> dates;
 
-    public DateImpl(String[] msg, HashSet<String> dates) {
-        super(msg);
+    public DateImpl(String[] msg, @Nullable Action[] actions, HashSet<String> dates) {
+        super(msg, actions);
         this.dates = dates;
     }
 
@@ -36,7 +39,7 @@ public class DateImpl extends AbstractRequirement implements Requirement {
         if (dates.contains(current)) {
             return true;
         }
-        notMetMessage(currentState.getPlayer());
+        notMetMessage(currentState);
         return false;
     }
 }

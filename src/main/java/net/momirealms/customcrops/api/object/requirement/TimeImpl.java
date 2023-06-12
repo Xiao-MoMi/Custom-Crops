@@ -17,6 +17,7 @@
 
 package net.momirealms.customcrops.api.object.requirement;
 
+import net.momirealms.customcrops.api.object.action.Action;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -25,8 +26,8 @@ public class TimeImpl extends AbstractRequirement implements Requirement {
 
     private final List<String> times;
 
-    public TimeImpl(@Nullable String[] msg, List<String> times) {
-        super(msg);
+    public TimeImpl(@Nullable String[] msg, @Nullable Action[] actions, List<String> times) {
+        super(msg, actions);
         this.times = times;
     }
 
@@ -39,7 +40,7 @@ public class TimeImpl extends AbstractRequirement implements Requirement {
                 return true;
             }
         }
-        notMetMessage(currentState.getPlayer());
+        notMetMessage(currentState);
         return false;
     }
 }

@@ -17,14 +17,15 @@
 
 package net.momirealms.customcrops.api.object.requirement;
 
+import net.momirealms.customcrops.api.object.action.Action;
 import org.jetbrains.annotations.Nullable;
 
 public class PermissionImpl extends AbstractRequirement implements Requirement {
 
     private final String permission;
 
-    public PermissionImpl(@Nullable String[] msg, String permission) {
-        super(msg);
+    public PermissionImpl(@Nullable String[] msg, @Nullable Action[] actions, String permission) {
+        super(msg, actions);
         this.permission = permission;
     }
 
@@ -37,7 +38,7 @@ public class PermissionImpl extends AbstractRequirement implements Requirement {
         if (currentState.getPlayer() == null || currentState.getPlayer().hasPermission(permission)) {
             return true;
         }
-        notMetMessage(currentState.getPlayer());
+        notMetMessage(currentState);
         return false;
     }
 }

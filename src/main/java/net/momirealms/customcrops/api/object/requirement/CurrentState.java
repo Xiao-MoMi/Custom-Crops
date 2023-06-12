@@ -25,8 +25,8 @@ public class CurrentState {
     private final Location location;
     private final Player player;
 
-    public CurrentState(Location crop_loc, Player player) {
-        this.location = crop_loc;
+    public CurrentState(Location location, Player player) {
+        this.location = location;
         this.player = player;
     }
 

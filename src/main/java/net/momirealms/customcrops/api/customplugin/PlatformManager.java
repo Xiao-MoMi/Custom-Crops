@@ -804,6 +804,15 @@ public class PlatformManager extends Function {
             FertilizerConfig fertilizerConfig = plugin.getFertilizerManager().getConfigByItemID(item_in_hand_id);
             if (fertilizerConfig != null) {
 
+                if (fertilizerConfig.getRequirements() != null) {
+                    CurrentState currentState = new CurrentState(location, player);
+                    for (Requirement requirement : fertilizerConfig.getRequirements()) {
+                        if (!requirement.isConditionMet(currentState)) {
+                            return true;
+                        }
+                    }
+                }
+
                 FertilizerUseEvent fertilizerUseEvent = new FertilizerUseEvent(player, item_in_hand, fertilizerConfig, location);
                 Bukkit.getPluginManager().callEvent(fertilizerUseEvent);
                 if (fertilizerUseEvent.isCancelled()) {

@@ -22,6 +22,7 @@ import net.kyori.adventure.sound.Sound;
 import net.momirealms.customcrops.CustomCrops;
 import net.momirealms.customcrops.api.object.Function;
 import net.momirealms.customcrops.api.object.Pair;
+import net.momirealms.customcrops.api.object.requirement.Requirement;
 import net.momirealms.customcrops.api.util.AdventureUtils;
 import net.momirealms.customcrops.api.util.ConfigUtils;
 import org.bukkit.Particle;
@@ -102,12 +103,13 @@ public class FertilizerManager extends Function {
                 @Subst("namespace:key") String soundKey = fertilizerSec.getString("sound", "minecraft:item.hoe.till");
                 Sound sound = fertilizerSec.contains("sound") ? Sound.sound(Key.key(soundKey), Sound.Source.PLAYER, 1, 1) : null;
                 String icon = fertilizerSec.getString("icon");
+                Requirement[] requirements = ConfigUtils.getRequirementsWithMsg(fertilizerSec.getConfigurationSection("requirements"));
                 switch (fertilizerType) {
-                    case SPEED_GROW -> fertilizerConfig = new SpeedGrow(key, fertilizerType, times, getChancePair(fertilizerSec), pot_whitelist, beforePlant, particle, sound, icon);
-                    case YIELD_INCREASE -> fertilizerConfig = new YieldIncrease(key, fertilizerType, times, fertilizerSec.getDouble("chance"), getChancePair(fertilizerSec), pot_whitelist, beforePlant, particle, sound, icon);
-                    case VARIATION -> fertilizerConfig = new Variation(key, fertilizerType, times, fertilizerSec.getDouble("chance"), pot_whitelist, beforePlant, particle, sound, icon);
-                    case QUALITY -> fertilizerConfig = new Quality(key, fertilizerType, times, fertilizerSec.getDouble("chance"), ConfigUtils.getQualityRatio(fertilizerSec.getString("ratio", "2/2/1")), pot_whitelist, beforePlant, particle, sound, icon);
-                    case SOIL_RETAIN -> fertilizerConfig = new SoilRetain(key, fertilizerType, times, fertilizerSec.getDouble("chance"), pot_whitelist, beforePlant, particle, sound, icon);
+                    case SPEED_GROW -> fertilizerConfig = new SpeedGrow(key, fertilizerType, times, getChancePair(fertilizerSec), pot_whitelist, beforePlant, particle, sound, icon, requirements);
+                    case YIELD_INCREASE -> fertilizerConfig = new YieldIncrease(key, fertilizerType, times, fertilizerSec.getDouble("chance"), getChancePair(fertilizerSec), pot_whitelist, beforePlant, particle, sound, icon, requirements);
+                    case VARIATION -> fertilizerConfig = new Variation(key, fertilizerType, times, fertilizerSec.getDouble("chance"), pot_whitelist, beforePlant, particle, sound, icon, requirements);
+                    case QUALITY -> fertilizerConfig = new Quality(key, fertilizerType, times, fertilizerSec.getDouble("chance"), ConfigUtils.getQualityRatio(fertilizerSec.getString("ratio", "2/2/1")), pot_whitelist, beforePlant, particle, sound, icon, requirements);
+                    case SOIL_RETAIN -> fertilizerConfig = new SoilRetain(key, fertilizerType, times, fertilizerSec.getDouble("chance"), pot_whitelist, beforePlant, particle, sound, icon, requirements);
                     default -> fertilizerConfig = null;
                 }
                 String item = fertilizerSec.getString("item");

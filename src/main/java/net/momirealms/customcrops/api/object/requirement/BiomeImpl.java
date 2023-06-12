@@ -18,6 +18,7 @@
 package net.momirealms.customcrops.api.object.requirement;
 
 import net.momirealms.biomeapi.BiomeAPI;
+import net.momirealms.customcrops.api.object.action.Action;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
@@ -26,8 +27,8 @@ public class BiomeImpl extends AbstractRequirement implements Requirement {
 
     private final HashSet<String> biomes;
 
-    public BiomeImpl(@Nullable String[] msg, HashSet<String> biomes) {
-        super(msg);
+    public BiomeImpl(@Nullable String[] msg, @Nullable Action[] actions, HashSet<String> biomes) {
+        super(msg, actions);
         this.biomes = biomes;
     }
 
@@ -37,7 +38,7 @@ public class BiomeImpl extends AbstractRequirement implements Requirement {
         if (biomes.contains(currentBiome)) {
             return true;
         }
-        notMetMessage(currentState.getPlayer());
+        notMetMessage(currentState);
         return false;
     }
 }

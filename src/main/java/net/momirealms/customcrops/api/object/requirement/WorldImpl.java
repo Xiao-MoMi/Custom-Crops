@@ -17,6 +17,7 @@
 
 package net.momirealms.customcrops.api.object.requirement;
 
+import net.momirealms.customcrops.api.object.action.Action;
 import org.bukkit.World;
 import org.jetbrains.annotations.Nullable;
 
@@ -26,8 +27,8 @@ public class WorldImpl extends AbstractRequirement implements Requirement {
 
     private final List<String> worlds;
 
-    public WorldImpl(@Nullable String[] msg, List<String> worlds) {
-        super(msg);
+    public WorldImpl(@Nullable String[] msg, @Nullable Action[] actions, List<String> worlds) {
+        super(msg, actions);
         this.worlds = worlds;
     }
 
@@ -37,7 +38,7 @@ public class WorldImpl extends AbstractRequirement implements Requirement {
         if (worlds.contains(world.getName())) {
             return true;
         }
-        notMetMessage(currentState.getPlayer());
+        notMetMessage(currentState);
         return false;
     }
 }

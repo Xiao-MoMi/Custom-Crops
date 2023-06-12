@@ -18,6 +18,7 @@
 package net.momirealms.customcrops.api.object.requirement;
 
 import net.momirealms.customcrops.CustomCrops;
+import net.momirealms.customcrops.api.object.action.Action;
 import net.momirealms.customcrops.integration.SkillInterface;
 import org.jetbrains.annotations.Nullable;
 
@@ -25,8 +26,8 @@ public class SkillLevelImpl extends AbstractRequirement implements Requirement {
 
     private final int level;
 
-    public SkillLevelImpl(@Nullable String[] msg, int level) {
-        super(msg);
+    public SkillLevelImpl(@Nullable String[] msg, @Nullable Action[] actions, int level) {
+        super(msg, actions);
         this.level = level;
     }
 
@@ -37,7 +38,7 @@ public class SkillLevelImpl extends AbstractRequirement implements Requirement {
          if (skillInterface.getLevel(currentState.getPlayer()) >= level) {
              return true;
          }
-         notMetMessage(currentState.getPlayer());
+         notMetMessage(currentState);
          return false;
     }
 }

@@ -18,6 +18,7 @@
 package net.momirealms.customcrops.api.object.fertilizer;
 
 import net.kyori.adventure.sound.Sound;
+import net.momirealms.customcrops.api.object.requirement.Requirement;
 import org.bukkit.Particle;
 import org.jetbrains.annotations.Nullable;
 
@@ -32,8 +33,9 @@ public abstract class FertilizerConfig {
     private final Particle particle;
     private final Sound sound;
     private final String icon;
+    private final Requirement[] requirements;
 
-    public FertilizerConfig(String key, FertilizerType fertilizerType, int times, double chance, @Nullable String[] pot_whitelist, boolean beforePlant, @Nullable Particle particle, @Nullable Sound sound, @Nullable String icon) {
+    public FertilizerConfig(String key, FertilizerType fertilizerType, int times, double chance, @Nullable String[] pot_whitelist, boolean beforePlant, @Nullable Particle particle, @Nullable Sound sound, @Nullable String icon, Requirement[] requirements) {
         this.times = times;
         this.chance = chance;
         this.key = key;
@@ -43,6 +45,7 @@ public abstract class FertilizerConfig {
         this.particle = particle;
         this.sound = sound;
         this.icon = icon;
+        this.requirements = requirements;
     }
 
     public int getTimes() {
@@ -86,5 +89,9 @@ public abstract class FertilizerConfig {
 
     public String getIcon() {
         return icon;
+    }
+
+    public Requirement[] getRequirements() {
+        return requirements;
     }
 }

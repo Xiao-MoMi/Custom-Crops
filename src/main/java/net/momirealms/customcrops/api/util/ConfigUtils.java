@@ -51,6 +51,7 @@ import org.bukkit.configuration.MemorySection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.checkerframework.checker.units.qual.N;
 import org.intellij.lang.annotations.Subst;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -205,26 +206,32 @@ public class ConfigUtils {
                 String type = innerSec.getString("type");
                 if (type == null) continue;
                 String[] msg = innerSec.getStringList("message").size() == 0 ? (innerSec.getString("message") == null ? null : new String[]{innerSec.getString("message")}) : innerSec.getStringList("message").toArray(new String[0]);
+                ConfigurationSection actionSec = innerSec.getConfigurationSection("actions");
                 switch (type) {
-                    case "biome" -> requirements.add(new BiomeImpl(msg, new HashSet<>(innerSec.getStringList("value"))));
-                    case "weather" -> requirements.add(new WeatherImpl(msg, innerSec.getStringList("value").toArray(new String[0])));
-                    case "ypos" -> requirements.add(new YPosImpl(msg, innerSec.getStringList("value")));
+                    case "biome" -> requirements.add(new BiomeImpl(msg, getActions(actionSec), new HashSet<>(innerSec.getStringList("value"))));
+                    case "weather" -> requirements.add(new WeatherImpl(msg, getActions(actionSec), innerSec.getStringList("value").toArray(new String[0])));
+                    case "ypos" -> requirements.add(new YPosImpl(msg, getActions(actionSec), innerSec.getStringList("value")));
                     case "season" -> {
                         if (!ConfigManager.enableSeason) continue;
-                        requirements.add(new SeasonImpl(msg, innerSec.getStringList("value").stream().map(str -> CCSeason.valueOf(str.toUpperCase(Locale.ENGLISH))).collect(Collectors.toList())));
+                        requirements.add(new SeasonImpl(msg, getActions(actionSec), innerSec.getStringList("value").stream().map(str -> CCSeason.valueOf(str.toUpperCase(Locale.ENGLISH))).collect(Collectors.toList())));
                     }
-                    case "world" -> requirements.add(new WorldImpl(msg, innerSec.getStringList("value")));
-                    case "permission" -> requirements.add(new PermissionImpl(msg, innerSec.getString("value")));
-                    case "time" -> requirements.add(new TimeImpl(msg, innerSec.getStringList("value")));
-                    case "skill-level" -> requirements.add(new SkillLevelImpl(msg, innerSec.getInt("value")));
-                    case "job-level" -> requirements.add(new JobLevelImpl(msg, innerSec.getInt("value.level"), innerSec.getString("value.job")));
-                    case "date" -> requirements.add(new DateImpl(msg, new HashSet<>(innerSec.getStringList("value"))));
-                    case "papi-condition" -> requirements.add(new CustomPapi(msg, Objects.requireNonNull(innerSec.getConfigurationSection("value")).getValues(false)));
+                    case "world" -> requirements.add(new WorldImpl(msg, getActions(actionSec), innerSec.getStringList("value")));
+                    case "permission" -> requirements.add(new PermissionImpl(msg, getActions(actionSec), innerSec.getString("value")));
+                    case "time" -> requirements.add(new TimeImpl(msg, getActions(actionSec), innerSec.getStringList("value")));
+                    case "skill-level" -> requirements.add(new SkillLevelImpl(msg, getActions(actionSec), innerSec.getInt("value")));
+                    case "job-level" -> requirements.add(new JobLevelImpl(msg, getActions(actionSec), innerSec.getInt("value.level"), innerSec.getString("value.job")));
+                    case "date" -> requirements.add(new DateImpl(msg, getActions(actionSec), new HashSet<>(innerSec.getStringList("value"))));
+                    case "papi-condition" -> requirements.add(new CustomPapi(msg, getActions(actionSec), Objects.requireNonNull(innerSec.getConfigurationSection("value")).getValues(false)));
                 }
             }
             return requirements.toArray(new Requirement[0]);
         }
         return null;
+    }
+
+    @Nullable
+    public static Action[] getActions(ConfigurationSection section) {
+        return getActions(section, null);
     }
 
     @Nullable

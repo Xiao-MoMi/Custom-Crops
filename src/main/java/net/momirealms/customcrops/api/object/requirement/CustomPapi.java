@@ -17,9 +17,11 @@
 
 package net.momirealms.customcrops.api.object.requirement;
 
+import net.momirealms.customcrops.api.object.action.Action;
 import net.momirealms.customcrops.api.object.requirement.papi.*;
 import org.bukkit.configuration.MemorySection;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,8 +31,8 @@ public class CustomPapi extends AbstractRequirement implements Requirement {
 
     private final List<PapiRequirement> papiRequirement;
 
-    public CustomPapi(String[] msg, Map<String, Object> expressions){
-        super(msg);
+    public CustomPapi(String[] msg, @Nullable Action[] actions, Map<String, Object> expressions){
+        super(msg, actions);
         papiRequirement = getRequirements(expressions);
     }
 
@@ -40,7 +42,7 @@ public class CustomPapi extends AbstractRequirement implements Requirement {
         if (currentState.getPlayer() == null) return true;
         for (PapiRequirement requirement : papiRequirement) {
             if (!requirement.isMet(player)) {
-                notMetMessage(player);
+                notMetMessage(currentState);
                 return false;
             }
         }

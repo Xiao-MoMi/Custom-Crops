@@ -17,6 +17,7 @@
 
 package net.momirealms.customcrops.api.object.requirement;
 
+import net.momirealms.customcrops.api.object.action.Action;
 import org.bukkit.World;
 import org.jetbrains.annotations.Nullable;
 
@@ -24,8 +25,8 @@ public class WeatherImpl extends AbstractRequirement implements Requirement {
 
     private final String[] weathers;
 
-    public WeatherImpl(@Nullable String[] msg, String[] weathers) {
-        super(msg);
+    public WeatherImpl(@Nullable String[] msg, @Nullable Action[] actions, String[] weathers) {
+        super(msg, actions);
         this.weathers = weathers;
     }
 
@@ -41,7 +42,7 @@ public class WeatherImpl extends AbstractRequirement implements Requirement {
                 return true;
             }
         }
-        notMetMessage(currentState.getPlayer());
+        notMetMessage(currentState);
         return false;
     }
 }
