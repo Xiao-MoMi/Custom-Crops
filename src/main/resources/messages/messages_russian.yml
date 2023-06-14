@@ -14,7 +14,7 @@ messages:
   summer: 'Лето'
   autumn: 'Осень'
   winter: 'Зима'
-  no-season: 'СЕЗОНЫ ОТКЛЮЧЕН В ЭТОМ МИРЕ'
+  no-season: 'СЕЗОНЫ ОТКЛЮЧЕНЫ В ЭТОМ МИРЕ'
   set-season: "<white>Успешно установлен сезон {season} в {world}."
   set-date: "<white>Успешно установлена дата {date} в {world}."
   world-not-exist: '<white>Мир {world} не существует.'
