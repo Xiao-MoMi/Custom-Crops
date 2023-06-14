@@ -19,6 +19,6 @@ messages:
   set-date: "<white>Успешно установлена дата {date} в {world}."
   world-not-exist: '<white>Мир {world} не существует.'
   season-not-exist: '<white>Сезон {season} не существует.'
-  force-sprinkler-work: "<white>Принудительно в {world}запущены спринклеры."
-  force-consume: "<white>Принудительно в {world} в горшках потратилась вода и удобрение."
+  force-sprinkler-work: "<white>Принудительно в {world} запущены спринклеры."
+  force-consume: "<white>Принудительно в {world} в горшках потратились вода и удобрение."
   force-grow: "<white>Принудительно в {world} посевы выросли на одну стадию."
