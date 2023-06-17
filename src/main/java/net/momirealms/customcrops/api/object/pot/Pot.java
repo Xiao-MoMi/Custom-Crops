@@ -73,6 +73,7 @@ public class Pot implements Serializable {
     whether to change block model
      */
     public boolean reduceWater() {
+        if (water == 0) return false;
         water--;
         water = Math.max(0, water);
         return water == 0;

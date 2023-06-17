@@ -429,7 +429,7 @@ public class CCWorld extends Function {
 
                 Fertilizer fertilizer = pot.getFertilizer();
                 boolean wet = pot.isWet();
-                if (!wet && fertilizer == null) {
+                if (!wet && fertilizer == null && !ConfigManager.onlyInLoadedChunks) {
                     removePotData(simpleLocation);
                 }
 
@@ -454,7 +454,9 @@ public class CCWorld extends Function {
                         String replacer = wet ? potConfig.getWetPot(fertilizer) : potConfig.getDryPot(fertilizer);
                         String id = plugin.getPlatformInterface().getBlockID(block);
                         if (ConfigManager.enableCorruptionFixer && id.equals("NOTE_BLOCK")) {
-                            plugin.getPlatformInterface().placeNoteBlock(location, replacer);
+                            corruptedPot.put(simpleLocation, pot.getPotKey());
+                            if (ConfigManager.debugCorruption) AdventureUtils.consoleMessage("[CustomCrops] Corrupted pot found at: " + simpleLocation);
+                            //plugin.getPlatformInterface().placeNoteBlock(location, replacer);
                             return;
                         }
                         String potKey = plugin.getPotManager().getPotKeyByBlockID(id);
