@@ -17,7 +17,12 @@
 
 package net.momirealms.customcrops.api.object.season;
 
+import net.momirealms.customcrops.CustomCrops;
+import net.momirealms.customcrops.api.event.SeasonChangeEvent;
 import net.momirealms.customcrops.api.object.basic.ConfigManager;
+import org.bukkit.Bukkit;
+
+import java.util.Objects;
 
 public class SeasonData {
 
@@ -50,6 +55,7 @@ public class SeasonData {
         if (date > ConfigManager.seasonInterval) {
             this.date = 1;
             this.ccSeason = getNextSeason(ccSeason);
+            CustomCrops.getInstance().getScheduler().runTask(this::callEvent);
         }
     }
 
@@ -64,7 +70,10 @@ public class SeasonData {
     }
 
     public void changeSeason(CCSeason ccSeason) {
-        this.ccSeason = ccSeason;
+        if (ccSeason != this.ccSeason) {
+            this.ccSeason = ccSeason;
+            callEvent();
+        }
     }
 
     public String getWorld() {
@@ -73,5 +82,10 @@ public class SeasonData {
 
     public void setDate(int date) {
         this.date = date;
+    }
+
+    private void callEvent() {
+        SeasonChangeEvent seasonChangeEvent = new SeasonChangeEvent(Objects.requireNonNull(Bukkit.getWorld(world)), ccSeason);
+        Bukkit.getPluginManager().callEvent(seasonChangeEvent);
     }
 }

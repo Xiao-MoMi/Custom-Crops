@@ -232,8 +232,7 @@ public class WorldDataManager extends Function {
         Sprinkler sprinkler = getSprinklerData(simpleLocation);
         if (sprinkler != null) {
             sprinkler.setWater(Math.min(add + sprinkler.getWater(), sprinklerConfig.getStorage()));
-        }
-        else {
+        } else {
             Sprinkler newSprinkler = new Sprinkler(sprinklerConfig.getKey(), Math.min(add, sprinklerConfig.getStorage()));
             addSprinklerData(simpleLocation, newSprinkler);
         }

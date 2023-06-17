@@ -24,8 +24,13 @@ import java.util.Random;
 public class RotationUtils {
 
     private static final Rotation[] rotations4 = {Rotation.NONE, Rotation.FLIPPED, Rotation.CLOCKWISE, Rotation.COUNTER_CLOCKWISE};
+    private static final float[] rotationsF = {0f, 90f, 180f, -90f};
 
     public static Rotation getRandomRotation() {
-        return rotations4[new Random().nextInt(rotations4.length-1)];
+        return rotations4[new Random().nextInt(4)];
+    }
+
+    public static float getRandomFloatRotation() {
+        return rotationsF[new Random().nextInt(4)];
     }
 }

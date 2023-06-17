@@ -155,7 +155,8 @@ public class CropManager extends Function implements Listener {
                         growConditions,
                         stageMap,
                         ConfigUtils.getBoneMeals(cropSec.getConfigurationSection("custom-bone-meal")),
-                        ConfigUtils.getActions(cropSec.getConfigurationSection("plant-actions"), null)
+                        ConfigUtils.getActions(cropSec.getConfigurationSection("plant-actions"), null),
+                        cropSec.getBoolean("random-rotation", false)
                 );
                 cropConfigMap.put(key, cropConfig);
                 if (seed != null) seedToCropConfig.put(seed, cropConfig);

@@ -41,6 +41,7 @@ public class CropConfig {
     private final Condition[] growConditions;
     private final BoneMeal[] boneMeals;
     private final Action[] plantActions;
+    private final boolean rotation;
 
     public CropConfig(String key,
                       ItemMode itemMode,
@@ -52,7 +53,8 @@ public class CropConfig {
                       Condition[] growConditions,
                       HashMap<Integer, StageConfig> stageMap,
                       BoneMeal[] boneMeals,
-                      Action[] plantActions
+                      Action[] plantActions,
+                      boolean rotation
     ) {
         this.key = key;
         this.itemMode = itemMode;
@@ -65,6 +67,7 @@ public class CropConfig {
         this.growConditions = growConditions;
         this.boneMeals = boneMeals;
         this.plantActions = plantActions;
+        this.rotation = rotation;
     }
 
     public String getKey() {
@@ -118,5 +121,9 @@ public class CropConfig {
     @Nullable
     public Action[] getPlantActions() {
         return plantActions;
+    }
+
+    public boolean isRotationEnabled() {
+        return rotation;
     }
 }

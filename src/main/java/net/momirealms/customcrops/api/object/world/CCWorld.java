@@ -42,11 +42,14 @@ import net.momirealms.customcrops.api.object.sprinkler.SprinklerConfig;
 import net.momirealms.customcrops.api.util.AdventureUtils;
 import net.momirealms.customcrops.api.util.ConfigUtils;
 import net.momirealms.customcrops.api.util.FakeEntityUtils;
+import net.momirealms.customcrops.api.util.RotationUtils;
 import net.momirealms.customcrops.helper.Log;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.type.Farmland;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.ItemDisplay;
+import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -54,10 +57,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.*;
 import java.lang.ref.Reference;
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.*;
 
 public class CCWorld extends Function {
@@ -72,7 +72,8 @@ public class CCWorld extends Function {
     private int cacheTimer;
     private int workCounter;
     private int consumeCounter;
-    private final HashSet<SimpleLocation> plantInPoint;
+    private final Set<SimpleLocation> plantInPoint;
+    private Set<ChunkCoordinate> loadInPoint;
     private final ConcurrentHashMap<SimpleLocation, String> corruptedPot;
     private final File chunksFolder;
     private final File dateFile;
@@ -91,12 +92,14 @@ public class CCWorld extends Function {
         this.schedule.setMaximumPoolSize(ConfigManager.maxPoolSize);
         this.schedule.setKeepAliveTime(ConfigManager.keepAliveTime, TimeUnit.SECONDS);
         this.schedule.setRejectedExecutionHandler(new ThreadPoolExecutor.DiscardPolicy());
-        this.plantInPoint = new HashSet<>(128);
+        this.plantInPoint = Collections.synchronizedSet(new HashSet<>(128));
+        this.loadInPoint = Collections.synchronizedSet(new HashSet<>(32));
         this.corruptedPot = new ConcurrentHashMap<>(128);
         this.cacheTimer = ConfigManager.cacheSaveInterval;
     }
 
     @Override
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     public void init() {
         loadDateData();
         loadCorruptedPots();
@@ -241,8 +244,7 @@ public class CCWorld extends Function {
                     long time = current.getTime();
                     this.tryDayCycleTask(time, day);
                     this.timerTask();
-                }
-                else {
+                } else {
                     AdventureUtils.consoleMessage("<red>[CustomCrops] World: " + worldName + " unloaded unexpectedly. Shutdown the schedule.");
                     this.schedule.shutdown();
                 }
@@ -278,31 +280,28 @@ public class CCWorld extends Function {
     }
 
     public void onReachPoint() {
+        if (ConfigManager.debugScheduler) Log.info("== Grow point ==");
         if (ConfigManager.enableScheduleSystem) {
-            if (ConfigManager.debugScheduler) Log.info("== Grow point ==");
+            // clear the locations where crops are planted in a point interval
             plantInPoint.clear();
-            int size = schedule.getQueue().size();
-            if (size != 0) {
-                schedule.getQueue().clear();
-                if (ConfigManager.debugScheduler) Log.info("== Clear queue ==");
-            }
+            // clear the chunk coordinates that has grown in a point interval
+            loadInPoint = Collections.synchronizedSet(new HashSet<>(chunkMap.keySet()));
+            // clear the queue if there exists unhandled tasks
+            schedule.getQueue().clear();
+            // arrange crop grow check task
             for (CCChunk chunk : chunkMap.values()) {
                 chunk.scheduleGrowTask(this, -1);
             }
-            if (workCounter > 0) {
-                workCounter--;
-            }
-            if (consumeCounter > 0) {
-                consumeCounter--;
-            }
+            workCounter--;
+            consumeCounter--;
             if (consumeCounter == 0) {
-                consumeCounter = ConfigManager.intervalConsume;
                 if (ConfigManager.debugScheduler) Log.info("== Consume time ==");
+                consumeCounter = ConfigManager.intervalConsume;
                 scheduleConsumeTask(-1);
             }
             if (workCounter == 0) {
-                workCounter = ConfigManager.intervalWork;
                 if (ConfigManager.debugScheduler) Log.info("== Work time ==");
+                workCounter = ConfigManager.intervalWork;
                 scheduleSprinklerWork(-1);
             }
         }
@@ -342,6 +341,9 @@ public class CCWorld extends Function {
                     delete = true;
                 } else {
                     chunkMap.put(chunkCoordinate, chunk);
+                    if (!loadInPoint.contains(chunkCoordinate)) {
+                        chunk.scheduleGrowTask(this, -1);
+                    }
                 }
             } catch (IOException | ClassNotFoundException e) {
                 e.printStackTrace();
@@ -561,7 +563,6 @@ public class CCWorld extends Function {
                             addWaterToPot(simpleLocation, amount, potKey);
                         }
                     } else if (ConfigManager.enableCorruptionFixer && blockID.equals("NOTE_BLOCK")) {
-                        // Only ItemsAdder can go to this step
                         Pot pot = getPotData(simpleLocation);
                         if (pot != null) {
                             // mark it as corrupted
@@ -577,11 +578,11 @@ public class CCWorld extends Function {
                                 }
                             }
                             corruptedPot.put(simpleLocation, potKey);
-                            if (ConfigManager.debugCorruption) AdventureUtils.consoleMessage("[CustomCrops] Trying to fix corrupted pot found at: " + simpleLocation);
+                            if (ConfigManager.debugCorruption) AdventureUtils.consoleMessage("[CustomCrops] Corrupted pot found at: " + simpleLocation);
                             // only custom blocks would corrupt
                             // so it's not necessary to check if the pot is a vanilla block
-                            String replacer = pot.isWet() ? pot.getConfig().getWetPot(pot.getFertilizer()) : pot.getConfig().getDryPot(pot.getFertilizer());
-                            plugin.getPlatformInterface().placeNoteBlock(location, replacer);
+                            // String replacer = pot.isWet() ? pot.getConfig().getWetPot(pot.getFertilizer()) : pot.getConfig().getDryPot(pot.getFertilizer());
+                            // plugin.getPlatformInterface().placeNoteBlock(location, replacer);
                         }
                     }
                 }
@@ -684,7 +685,7 @@ public class CCWorld extends Function {
         if (finalNextModel == null || location == null) return;
 
         CompletableFuture<Chunk> asyncGetChunk = location.getWorld().getChunkAtAsync(location.getBlockX() >> 4, location.getBlockZ() >> 4);
-        if (itemMode == ItemMode.ITEM_FRAME || itemMode == ItemMode.ITEM_DISPLAY) {
+        if (itemMode == ItemMode.ITEM_FRAME) {
             CompletableFuture<Boolean> loadEntities = asyncGetChunk.thenApply((chunk) -> {
                 chunk.getEntities();
                 return chunk.isEntitiesLoaded();
@@ -692,17 +693,31 @@ public class CCWorld extends Function {
             loadEntities.whenComplete((result, throwable) ->
                     plugin.getScheduler().runTask(() -> {
                         if (plugin.getPlatformInterface().removeCustomItem(location, itemMode)) {
-                            plugin.getPlatformInterface().placeCustomItem(location, finalNextModel, itemMode);
+                            ItemFrame itemFrame = plugin.getPlatformInterface().placeItemFrame(location, finalNextModel);
+                            if (itemFrame != null && cropConfig.isRotationEnabled()) itemFrame.setRotation(RotationUtils.getRandomRotation());
                         } else {
                             removeCropData(simpleLocation);
                         }
             }));
-        }
-        else {
+        } else if (itemMode == ItemMode.ITEM_DISPLAY) {
+            CompletableFuture<Boolean> loadEntities = asyncGetChunk.thenApply((chunk) -> {
+                chunk.getEntities();
+                return chunk.isEntitiesLoaded();
+            });
+            loadEntities.whenComplete((result, throwable) ->
+                    plugin.getScheduler().runTask(() -> {
+                        if (plugin.getPlatformInterface().removeCustomItem(location, itemMode)) {
+                            ItemDisplay itemDisplay = plugin.getPlatformInterface().placeItemDisplay(location, finalNextModel);
+                            if (itemDisplay != null && cropConfig.isRotationEnabled()) itemDisplay.setRotation(RotationUtils.getRandomFloatRotation(), 0);
+                        } else {
+                            removeCropData(simpleLocation);
+                        }
+                    }));
+        } else {
             asyncGetChunk.whenComplete((result, throwable) ->
                     plugin.getScheduler().runTask(() -> {
                         if (plugin.getPlatformInterface().removeCustomItem(location, itemMode)) {
-                            plugin.getPlatformInterface().placeCustomItem(location, finalNextModel, itemMode);
+                            plugin.getPlatformInterface().placeTripWire(location, finalNextModel);
                         } else {
                             removeCropData(simpleLocation);
                         }

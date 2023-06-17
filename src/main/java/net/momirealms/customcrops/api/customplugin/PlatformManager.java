@@ -45,11 +45,14 @@ import net.momirealms.customcrops.api.object.sprinkler.SprinklerConfig;
 import net.momirealms.customcrops.api.object.wateringcan.WateringCanConfig;
 import net.momirealms.customcrops.api.object.world.SimpleLocation;
 import net.momirealms.customcrops.api.util.AdventureUtils;
+import net.momirealms.customcrops.api.util.RotationUtils;
 import net.momirealms.protectionlib.ProtectionLib;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.ItemDisplay;
+import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
@@ -745,7 +748,18 @@ public class PlatformManager extends Function {
 
                 if (player.getGameMode() != GameMode.CREATIVE) item_in_hand.setAmount(item_in_hand.getAmount() - 1);
                 player.swingMainHand();
-                CustomCrops.getInstance().getPlatformInterface().placeCustomItem(crop_loc, cropPlantEvent.getCropModel(), cropConfig.getCropMode());
+                switch (cropConfig.getCropMode()) {
+                    case ITEM_DISPLAY -> {
+                        ItemDisplay itemDisplay = CustomCrops.getInstance().getPlatformInterface().placeItemDisplay(crop_loc, cropPlantEvent.getCropModel());
+                        if (itemDisplay != null && cropConfig.isRotationEnabled()) itemDisplay.setRotation(RotationUtils.getRandomFloatRotation(), 0);
+                    }
+                    case ITEM_FRAME -> {
+                        ItemFrame itemFrame = CustomCrops.getInstance().getPlatformInterface().placeItemFrame(crop_loc, cropPlantEvent.getCropModel());
+                        if (itemFrame != null && cropConfig.isRotationEnabled()) itemFrame.setRotation(RotationUtils.getRandomRotation());
+                    }
+                    case TRIPWIRE -> CustomCrops.getInstance().getPlatformInterface().placeTripWire(crop_loc, cropPlantEvent.getCropModel());
+                }
+
                 plugin.getWorldDataManager().addCropData(SimpleLocation.getByBukkitLocation(crop_loc), new GrowingCrop(cropConfig.getKey(), cropPlantEvent.getPoint()), true);
                 return true;
             }
