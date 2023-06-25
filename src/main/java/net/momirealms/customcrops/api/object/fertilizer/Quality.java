@@ -18,7 +18,9 @@
 package net.momirealms.customcrops.api.object.fertilizer;
 
 import net.kyori.adventure.sound.Sound;
+import net.momirealms.customcrops.api.object.basic.ConfigManager;
 import net.momirealms.customcrops.api.object.requirement.Requirement;
+import net.momirealms.customcrops.api.util.AdventureUtils;
 import org.bukkit.Particle;
 import org.jetbrains.annotations.Nullable;
 
@@ -26,10 +28,24 @@ public class Quality extends FertilizerConfig {
 
     private final double[] ratio;
 
-    public Quality(String key, FertilizerType fertilizerType, int times, double chance, double[] ratio,
-                   @Nullable String[] pot_whitelist, boolean beforePlant, @Nullable Particle particle, @Nullable Sound sound, @Nullable String icon, Requirement[] requirements) {
+    public Quality(
+            String key,
+            FertilizerType fertilizerType,
+            int times,
+            double chance,
+            double[] ratio,
+            @Nullable String[] pot_whitelist,
+            boolean beforePlant,
+            @Nullable Particle particle,
+            @Nullable Sound sound,
+            @Nullable String icon,
+            Requirement[] requirements
+    ) {
         super(key, fertilizerType, times, chance, pot_whitelist, beforePlant, particle, sound, icon, requirements);
         this.ratio = ratio;
+        if (this.ratio.length != ConfigManager.defaultRatio.length) {
+            AdventureUtils.consoleMessage("<red>[CustomCrops] Wrong format found at fertilizer: " + key + ". You should make sure that all the quality ratio are in the same format. For example when you set default-ratio to x/x/x/x/x in config.yml. You should set ratio to x/x/x/x/x in fertilizers to work");
+        }
     }
 
     public double[] getRatio() {

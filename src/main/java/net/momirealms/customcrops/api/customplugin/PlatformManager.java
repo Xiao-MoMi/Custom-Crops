@@ -751,7 +751,7 @@ public class PlatformManager extends Function {
                 switch (cropConfig.getCropMode()) {
                     case ITEM_DISPLAY -> {
                         ItemDisplay itemDisplay = CustomCrops.getInstance().getPlatformInterface().placeItemDisplay(crop_loc, cropPlantEvent.getCropModel());
-                        if (itemDisplay != null && cropConfig.isRotationEnabled()) itemDisplay.setRotation(RotationUtils.getRandomFloatRotation(), 0);
+                        if (itemDisplay != null && cropConfig.isRotationEnabled()) itemDisplay.setRotation(RotationUtils.getRandomFloatRotation(), itemDisplay.getLocation().getPitch());
                     }
                     case ITEM_FRAME -> {
                         ItemFrame itemFrame = CustomCrops.getInstance().getPlatformInterface().placeItemFrame(crop_loc, cropPlantEvent.getCropModel());

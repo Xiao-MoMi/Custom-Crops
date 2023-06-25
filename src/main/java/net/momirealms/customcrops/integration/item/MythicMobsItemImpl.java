@@ -19,6 +19,7 @@ package net.momirealms.customcrops.integration.item;
 
 import io.lumine.mythic.bukkit.MythicBukkit;
 import net.momirealms.customcrops.integration.ItemInterface;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
@@ -32,7 +33,7 @@ public class MythicMobsItemImpl implements ItemInterface {
 
     @Override
     @Nullable
-    public ItemStack build(String material) {
+    public ItemStack build(String material, Player player) {
         if (!material.startsWith("MythicMobs:")) return null;
         material = material.substring(11);
         if (mythicBukkit == null || mythicBukkit.isClosed()) {

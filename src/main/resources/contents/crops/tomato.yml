@@ -17,6 +17,9 @@ tomato:
   # 农作物的种子，如果你想用原版物品做种子，就使用大写字母
   seed: customcrops:tomato_seeds
 
+  # Only works in ITEM_FRAME / ITEM_DISPLAY mode
+  random-rotation: true
+
   # break/plant requirements
   # 破坏/种植农作物的需求
   requirements:

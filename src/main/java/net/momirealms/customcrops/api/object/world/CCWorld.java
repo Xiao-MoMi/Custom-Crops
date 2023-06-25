@@ -73,7 +73,7 @@ public class CCWorld extends Function {
     private int workCounter;
     private int consumeCounter;
     private final Set<SimpleLocation> plantInPoint;
-    private Set<ChunkCoordinate> loadInPoint;
+    private final Set<ChunkCoordinate> loadInPoint;
     private final ConcurrentHashMap<SimpleLocation, String> corruptedPot;
     private final File chunksFolder;
     private final File dateFile;
@@ -284,8 +284,11 @@ public class CCWorld extends Function {
         if (ConfigManager.enableScheduleSystem) {
             // clear the locations where crops are planted in a point interval
             plantInPoint.clear();
-            // clear the chunk coordinates that has grown in a point interval
-            loadInPoint = Collections.synchronizedSet(new HashSet<>(chunkMap.keySet()));
+            // log the chunk coordinates that has grown in a point interval
+            if (ConfigManager.onlyInLoadedChunks) {
+                loadInPoint.clear();
+                loadInPoint.addAll(chunkMap.keySet());
+            }
             // clear the queue if there exists unhandled tasks
             schedule.getQueue().clear();
             // arrange crop grow check task
@@ -710,7 +713,7 @@ public class CCWorld extends Function {
                     plugin.getScheduler().runTask(() -> {
                         if (plugin.getPlatformInterface().removeCustomItem(location, itemMode)) {
                             ItemDisplay itemDisplay = plugin.getPlatformInterface().placeItemDisplay(location, finalNextModel);
-                            if (itemDisplay != null && cropConfig.isRotationEnabled()) itemDisplay.setRotation(RotationUtils.getRandomFloatRotation(), 0);
+                            if (itemDisplay != null && cropConfig.isRotationEnabled()) itemDisplay.setRotation(RotationUtils.getRandomFloatRotation(), itemDisplay.getLocation().getPitch());
                         } else {
                             removeCropData(simpleLocation);
                         }

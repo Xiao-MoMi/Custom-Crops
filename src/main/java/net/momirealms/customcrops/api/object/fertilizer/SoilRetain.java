@@ -24,8 +24,18 @@ import org.jetbrains.annotations.Nullable;
 
 public class SoilRetain extends FertilizerConfig {
 
-    public SoilRetain(String key, FertilizerType fertilizerType, int times, double chance,
-                      @Nullable String[] pot_whitelist, boolean beforePlant, @Nullable Particle particle, @Nullable Sound sound, String icon, Requirement[] requirements) {
+    public SoilRetain(
+            String key,
+            FertilizerType fertilizerType,
+            int times,
+            double chance,
+            @Nullable String[] pot_whitelist,
+            boolean beforePlant,
+            @Nullable Particle particle,
+            @Nullable Sound sound,
+            String icon,
+            Requirement[] requirements
+    ) {
         super(key, fertilizerType, times, chance, pot_whitelist, beforePlant, particle, sound, icon, requirements);
     }
 }

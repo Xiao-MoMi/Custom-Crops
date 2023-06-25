@@ -35,7 +35,18 @@ public abstract class FertilizerConfig {
     private final String icon;
     private final Requirement[] requirements;
 
-    public FertilizerConfig(String key, FertilizerType fertilizerType, int times, double chance, @Nullable String[] pot_whitelist, boolean beforePlant, @Nullable Particle particle, @Nullable Sound sound, @Nullable String icon, Requirement[] requirements) {
+    public FertilizerConfig(
+            String key,
+            FertilizerType fertilizerType,
+            int times,
+            double chance,
+            @Nullable String[] pot_whitelist,
+            boolean beforePlant,
+            @Nullable Particle particle,
+            @Nullable Sound sound,
+            @Nullable String icon,
+            Requirement[] requirements
+    ) {
         this.times = times;
         this.chance = chance;
         this.key = key;

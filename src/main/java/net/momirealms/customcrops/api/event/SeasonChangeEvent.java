@@ -27,7 +27,7 @@ public class SeasonChangeEvent extends WorldEvent {
         return getHandlerList();
     }
 
-    public CCSeason getCcSeason() {
+    public CCSeason getCCSeason() {
         return ccSeason;
     }
 }

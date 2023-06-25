@@ -25,6 +25,7 @@ import net.momirealms.customcrops.api.util.ConfigUtils;
 import net.momirealms.customcrops.integration.item.DefaultImpl;
 import net.momirealms.customcrops.integration.item.MMOItemsItemImpl;
 import net.momirealms.customcrops.integration.item.MythicMobsItemImpl;
+import net.momirealms.customcrops.integration.item.NeigeItemsImpl;
 import net.momirealms.customcrops.integration.job.EcoJobsImpl;
 import net.momirealms.customcrops.integration.job.JobsRebornImpl;
 import net.momirealms.customcrops.integration.papi.PlaceholderManager;
@@ -40,6 +41,7 @@ import net.momirealms.customcrops.integration.skill.MMOCoreImpl;
 import net.momirealms.customcrops.integration.skill.mcMMOImpl;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
@@ -101,6 +103,10 @@ public class IntegrationManager extends Function {
             itemInterfaceList.add(new MMOItemsItemImpl());
             hookMessage("MMOItems");
         }
+        if (pluginManager.isPluginEnabled("NeigeItems")) {
+            itemInterfaceList.add(new NeigeItemsImpl());
+            hookMessage("NeigeItems");
+        }
         itemInterfaceList.add(new DefaultImpl());
         this.itemInterfaces = itemInterfaceList.toArray(new ItemInterface[0]);
     }
@@ -151,9 +157,14 @@ public class IntegrationManager extends Function {
 
     @NotNull
     public ItemStack build(String key) {
+        return build(key, null);
+    }
+
+    @NotNull
+    public ItemStack build(String key, Player player) {
         if (key != null) {
             for (ItemInterface itemInterface : itemInterfaces) {
-                ItemStack itemStack = itemInterface.build(key);
+                ItemStack itemStack = itemInterface.build(key, player);
                 if (itemStack != null) {
                     return itemStack;
                 }

@@ -2,6 +2,14 @@
 watering_can_1:
   # 物品 id
   item: customcrops:watering_can_1
+  # This is optional. It would decide the look of the watering can when having different water amount
+  # 可选配置，他会影响水壶在不同水量情况下的外观
+  #appearance:
+  #  # custom-model-data
+  #  0: 1000
+  #  1: 1001
+  #  2: 1002
+  #  3: 1003
   # 储水量
   capacity: 3
   # Effective Range

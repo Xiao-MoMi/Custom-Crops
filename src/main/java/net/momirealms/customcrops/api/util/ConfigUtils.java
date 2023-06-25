@@ -297,12 +297,17 @@ public class ConfigUtils {
                         if (lootSec == null) continue;
                         ArrayList<Loot> loots = new ArrayList<>();
                         if (lootSec.contains("quality-crops")) {
+                            String[] qualityLoots = new String[ConfigManager.defaultRatio.length];
+                            for (int i = 0; i < ConfigManager.defaultRatio.length; i++) {
+                                qualityLoots[i] = lootSec.getString("quality-crops.items." + (i+1));
+                                if (qualityLoots[i] == null) {
+                                    AdventureUtils.consoleMessage("<red>[CustomCrops] Error found at: " + model_id + " quality-crops.items." + (i+1) + ", which can't be null");
+                                }
+                            }
                             loots.add(new QualityLoot(
                                     lootSec.getInt("quality-crops.min"),
                                     lootSec.getInt("quality-crops.max"),
-                                    lootSec.getString("quality-crops.items.1"),
-                                    lootSec.getString("quality-crops.items.2"),
-                                    lootSec.getString("quality-crops.items.3")
+                                    qualityLoots
                             ));
                         }
                         if (lootSec.contains("other-items")) {
@@ -381,15 +386,14 @@ public class ConfigUtils {
     }
 
     public static double[] getQualityRatio(String str) {
-        double[] ratio = new double[2];
-        String[] split = str.split("/", 3);
-        double[] weight = new double[3];
-        weight[0] = Double.parseDouble(split[0]);
-        weight[1] = Double.parseDouble(split[1]);
-        weight[2] = Double.parseDouble(split[2]);
-        double weightTotal = weight[0] + weight[1] + weight[2];
-        ratio[0] = weight[0]/(weightTotal);
-        ratio[1] = 1 - weight[1]/(weightTotal);
+        String[] split = str.split("/");
+        double[] ratio = new double[split.length];
+        double weightTotal = Arrays.stream(split).mapToInt(Integer::parseInt).sum();
+        double temp = 0;
+        for (int i = 0; i < ratio.length; i++) {
+            temp += Integer.parseInt(split[i]);
+            ratio[i] = temp / weightTotal;
+        }
         return ratio;
     }
 

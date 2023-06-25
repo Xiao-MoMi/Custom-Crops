@@ -48,8 +48,8 @@ public class BetonQuestCCQuest extends CountingObjective implements Listener {
         super(instruction, "crop_to_harvest");
         crop_ids = new HashSet<>();
         Collections.addAll(crop_ids, instruction.getArray());
-        targetAmount = instruction.getInt();
-
+        targetAmount = instruction.getVarNum();
+        preCheckAmountNotLessThanOne(targetAmount);
         final String pack = instruction.getPackage().getQuestPath();
         final String loc = instruction.getOptional("playerLocation");
         final String range = instruction.getOptional("range");
@@ -59,10 +59,6 @@ public class BetonQuestCCQuest extends CountingObjective implements Listener {
         } else {
             playerLocation = null;
             rangeVar = null;
-        }
-
-        if (targetAmount <= 0) {
-            throw new InstructionParseException("Crop amount cannot be less than 0");
         }
     }
 

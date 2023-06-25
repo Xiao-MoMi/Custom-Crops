@@ -52,7 +52,7 @@ public class OtherLoot extends Loot {
             if (pot != null && pot.getFertilizer() != null && pot.getFertilizer().getConfig() instanceof YieldIncrease increase) {
                 random += increase.getAmountBonus();
             }
-            ItemStack drop = CustomCrops.getInstance().getIntegrationManager().build(getItemID());
+            ItemStack drop = CustomCrops.getInstance().getIntegrationManager().build(getItemID(), player);
             if (drop.getType() == Material.AIR) return;
             drop.setAmount(random);
             location.getWorld().dropItemNaturally(location, drop);

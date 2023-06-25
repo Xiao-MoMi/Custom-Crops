@@ -34,7 +34,13 @@ public class BoneMeal {
     private final Sound sound;
     private final Particle particle;
 
-    public BoneMeal(String item, @Nullable String returned, @NotNull ArrayList<Pair<Double, Integer>> pairs, @Nullable Sound sound, @Nullable Particle particle) {
+    public BoneMeal(
+            String item,
+            @Nullable String returned,
+            @NotNull ArrayList<Pair<Double, Integer>> pairs,
+            @Nullable Sound sound,
+            @Nullable Particle particle
+    ) {
         this.item = item;
         this.returned = returned;
         this.pairs = pairs;

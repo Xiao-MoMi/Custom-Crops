@@ -25,7 +25,9 @@ import org.bukkit.Particle;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 public class WateringCanConfig {
 
@@ -45,11 +47,27 @@ public class WateringCanConfig {
     private final String bar_empty;
     private final String bar_right;
     private final PositiveFillMethod[] positiveFillMethods;
+    private final HashMap<Integer, Integer> appearanceMap;
 
-    public WateringCanConfig(int width, int length, int storage,
-                             boolean hasDynamicLore, boolean hasActionBar, @Nullable List<String> loreTemplate, @Nullable String actionBarMsg,
-                             @Nullable String bar_left, @Nullable String bar_full, @Nullable String bar_empty, @Nullable String bar_right,
-                             String[] potWhitelist, String[] sprinkler_whitelist, @Nullable Sound sound, @Nullable Particle particle, @NotNull PositiveFillMethod[] positiveFillMethods) {
+    public WateringCanConfig(
+            int width,
+            int length,
+            int storage,
+            boolean hasDynamicLore,
+            boolean hasActionBar,
+            @Nullable List<String> loreTemplate,
+            @Nullable String actionBarMsg,
+            @Nullable String bar_left,
+            @Nullable String bar_full,
+            @Nullable String bar_empty,
+            @Nullable String bar_right,
+            String[] potWhitelist,
+            String[] sprinkler_whitelist,
+            @Nullable Sound sound,
+            @Nullable Particle particle,
+            @NotNull PositiveFillMethod[] positiveFillMethods,
+            @NotNull HashMap<Integer, Integer> appearanceMap
+    ) {
         this.width = width;
         this.length = length;
         this.storage = storage;
@@ -66,6 +84,7 @@ public class WateringCanConfig {
         this.sound = sound;
         this.particle = particle;
         this.positiveFillMethods = positiveFillMethods;
+        this.appearanceMap = appearanceMap;
     }
 
     public int getWidth() {
@@ -134,5 +153,9 @@ public class WateringCanConfig {
     @NotNull
     public PositiveFillMethod[] getPositiveFillMethods() {
         return positiveFillMethods;
+    }
+
+    public int getModelDataByWater(int water) {
+        return Optional.ofNullable(appearanceMap.get(water)).orElse(0);
     }
 }

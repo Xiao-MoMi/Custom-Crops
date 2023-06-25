@@ -177,7 +177,7 @@ public final class CustomCrops extends JavaPlugin {
     private void loadLibs() {
         TimeZone timeZone = TimeZone.getDefault();
         String libRepo = timeZone.getID().startsWith("Asia") ? "https://maven.aliyun.com/repository/public/" : "https://repo.maven.apache.org/maven2/";
-        LibraryLoader.load("dev.dejvokep","boosted-yaml","1.3", libRepo);
+        LibraryLoader.load("dev.dejvokep","boosted-yaml","1.3.1", libRepo);
         LibraryLoader.load("commons-io","commons-io","2.11.0", libRepo);
         LibraryLoader.load("net.objecthunter","exp4j","0.4.8", libRepo);
     }

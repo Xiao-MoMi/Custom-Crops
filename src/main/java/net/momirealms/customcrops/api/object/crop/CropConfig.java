@@ -43,18 +43,19 @@ public class CropConfig {
     private final Action[] plantActions;
     private final boolean rotation;
 
-    public CropConfig(String key,
-                      ItemMode itemMode,
-                      int max_points,
-                      String[] bottom_blocks,
-                      Requirement[] plantRequirements,
-                      Requirement[] breakRequirements,
-                      DeathCondition[] deathConditions,
-                      Condition[] growConditions,
-                      HashMap<Integer, StageConfig> stageMap,
-                      BoneMeal[] boneMeals,
-                      Action[] plantActions,
-                      boolean rotation
+    public CropConfig(
+          String key,
+          ItemMode itemMode,
+          int max_points,
+          String[] bottom_blocks,
+          Requirement[] plantRequirements,
+          Requirement[] breakRequirements,
+          DeathCondition[] deathConditions,
+          Condition[] growConditions,
+          HashMap<Integer, StageConfig> stageMap,
+          BoneMeal[] boneMeals,
+          Action[] plantActions,
+          boolean rotation
     ) {
         this.key = key;
         this.itemMode = itemMode;

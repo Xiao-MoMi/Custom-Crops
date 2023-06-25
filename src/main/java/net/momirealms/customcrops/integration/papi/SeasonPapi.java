@@ -55,38 +55,35 @@ public class SeasonPapi extends PlaceholderExpansion {
 
     @Override
     public @Nullable String onRequest(OfflinePlayer player, @NotNull String params) {
-        String[] split = params.split("_");
-        switch (split.length) {
-            case 1 -> {
-                switch (split[0]) {
-                    case "season" -> {
-                        Player online_player = player.getPlayer();
-                        if (online_player == null) return null;
-                        return plugin.getIntegrationManager().getSeasonInterface().getSeason(player.getPlayer().getWorld().getName()).getDisplay();
-                    }
-                    case "date" -> {
-                        Player online_player = player.getPlayer();
-                        if (online_player == null) return null;
-                        return String.valueOf(plugin.getIntegrationManager().getSeasonInterface().getDate(player.getPlayer().getWorld().getName()));
-                    }
-                    case "daysleft" -> {
-                        Player online_player = player.getPlayer();
-                        if (online_player == null) return null;
-                        return String.valueOf(1 + ConfigManager.seasonInterval - plugin.getIntegrationManager().getSeasonInterface().getDate(player.getPlayer().getWorld().getName()));
-                    }
+        String[] split = params.split("_", 2);
+        if (split[1] == null) {
+            switch (split[0]) {
+                case "season" -> {
+                    Player online_player = player.getPlayer();
+                    if (online_player == null) return null;
+                    return plugin.getIntegrationManager().getSeasonInterface().getSeason(player.getPlayer().getWorld().getName()).getDisplay();
+                }
+                case "date" -> {
+                    Player online_player = player.getPlayer();
+                    if (online_player == null) return null;
+                    return String.valueOf(plugin.getIntegrationManager().getSeasonInterface().getDate(player.getPlayer().getWorld().getName()));
+                }
+                case "daysleft" -> {
+                    Player online_player = player.getPlayer();
+                    if (online_player == null) return null;
+                    return String.valueOf(1 + ConfigManager.seasonInterval - plugin.getIntegrationManager().getSeasonInterface().getDate(player.getPlayer().getWorld().getName()));
                 }
             }
-            case 2 -> {
-                switch (split[0]) {
-                    case "season" -> {
-                        return plugin.getIntegrationManager().getSeasonInterface().getSeason(split[1]).getDisplay();
-                    }
-                    case "date" -> {
-                        return String.valueOf(plugin.getIntegrationManager().getSeasonInterface().getDate(split[1]));
-                    }
-                    case "daysleft" -> {
-                        return String.valueOf(1 + ConfigManager.seasonInterval - plugin.getIntegrationManager().getSeasonInterface().getDate(split[1]));
-                    }
+        } else {
+            switch (split[0]) {
+                case "season" -> {
+                    return plugin.getIntegrationManager().getSeasonInterface().getSeason(split[1]).getDisplay();
+                }
+                case "date" -> {
+                    return String.valueOf(plugin.getIntegrationManager().getSeasonInterface().getDate(split[1]));
+                }
+                case "daysleft" -> {
+                    return String.valueOf(1 + ConfigManager.seasonInterval - plugin.getIntegrationManager().getSeasonInterface().getDate(split[1]));
                 }
             }
         }

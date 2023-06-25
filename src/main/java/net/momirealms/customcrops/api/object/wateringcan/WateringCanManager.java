@@ -38,6 +38,7 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 public class WateringCanManager extends Function {
 
@@ -82,6 +83,13 @@ public class WateringCanManager extends Function {
                     AdventureUtils.consoleMessage("<red>[CustomCrops] You need to at least one fill-method for: " + key);
                     continue;
                 }
+                ConfigurationSection appearSec = canSec.getConfigurationSection("appearance");
+                HashMap<Integer, Integer> appearanceMap = new HashMap<>();
+                if (appearSec != null) {
+                    for (Map.Entry<String, Object> entry : appearSec.getValues(false).entrySet()) {
+                        appearanceMap.put(Integer.parseInt(entry.getKey()), (Integer) entry.getValue());
+                    }
+                }
                 @Subst("namespace:key") String soundKey = canSec.getString("sound", "minecraft:block.water.ambient");
                 Sound sound = canSec.contains("sound") ? Sound.sound(Key.key(soundKey), Sound.Source.PLAYER, 1, 1) : null;
                 WateringCanConfig wateringCanConfig = new WateringCanConfig(
@@ -100,7 +108,8 @@ public class WateringCanManager extends Function {
                         canSec.contains("sprinkler-whitelist") ? canSec.getStringList("sprinkler-whitelist").toArray(new String[0]) : null,
                         sound,
                         canSec.contains("particle") ? Particle.valueOf(canSec.getString("particle", "WATER_SPLASH").toUpperCase(Locale.ENGLISH)) : null,
-                        methods
+                        methods,
+                        appearanceMap
                 );
                 wateringCanConfigMap.put(canSec.getString("item"), wateringCanConfig);
             }
@@ -123,6 +132,10 @@ public class WateringCanManager extends Function {
             List<String> lore = display.getStringList("Lore");
             lore.clear();
             lore.addAll(config.getLore(water));
+        }
+        int cmd = config.getModelDataByWater(water);
+        if (cmd != 0) {
+            nbtItem.setInteger("CustomModelData", cmd);
         }
         itemStack.setItemMeta(nbtItem.getItem().getItemMeta());
     }

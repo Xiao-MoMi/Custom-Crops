@@ -29,8 +29,18 @@ public class SpeedGrow extends FertilizerConfig {
 
     private final List<Pair<Double, Integer>> pairs;
 
-    public SpeedGrow(String key, FertilizerType fertilizerType, int times, List<Pair<Double, Integer>> pairs,
-                     @Nullable String[] pot_whitelist, boolean beforePlant, @Nullable Particle particle, @Nullable Sound sound, String icon, Requirement[] requirements) {
+    public SpeedGrow(
+            String key,
+            FertilizerType fertilizerType,
+            int times,
+            List<Pair<Double, Integer>> pairs,
+            @Nullable String[] pot_whitelist,
+            boolean beforePlant,
+            @Nullable Particle particle,
+            @Nullable Sound sound,
+            String icon,
+            Requirement[] requirements
+    ) {
         super(key, fertilizerType, times, 1, pot_whitelist, beforePlant, particle, sound, icon, requirements);
         this.pairs = pairs;
     }
