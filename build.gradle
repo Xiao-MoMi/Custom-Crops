@@ -31,6 +31,7 @@ dependencies {
     compileOnly ('io.papermc.paper:paper-api:1.19.4-R0.1-SNAPSHOT')
     compileOnly ('me.clip:placeholderapi:2.11.3')
     compileOnly ('com.github.LoneDev6:api-itemsadder:3.4.1e')
+    compileOnly('com.github.oraxen:oraxen:1.157.2')
     compileOnly ('io.lumine:Mythic-Dist:5.0.3-SNAPSHOT')
     //compileOnly ('com.willfp:EcoSkills:3.0.0-b2') No read access
     compileOnly ('com.willfp:eco:6.60.0')
