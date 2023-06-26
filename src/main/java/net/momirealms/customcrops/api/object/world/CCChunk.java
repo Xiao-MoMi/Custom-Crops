@@ -18,6 +18,8 @@
 package net.momirealms.customcrops.api.object.world;
 
 import net.momirealms.customcrops.CustomCrops;
+import net.momirealms.customcrops.api.customplugin.PlatformInterface;
+import net.momirealms.customcrops.api.object.OfflineReplaceTask;
 import net.momirealms.customcrops.api.object.basic.ConfigManager;
 import net.momirealms.customcrops.api.object.crop.GrowingCrop;
 import net.momirealms.customcrops.api.object.fertilizer.Fertilizer;
@@ -31,12 +33,8 @@ import org.bukkit.block.data.type.Farmland;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.Serial;
-import java.io.Serializable;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Random;
-import java.util.Set;
+import java.io.*;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -48,6 +46,7 @@ public class CCChunk implements Serializable {
     private final ConcurrentHashMap<SimpleLocation, GrowingCrop> growingCropMap;
     private final ConcurrentHashMap<SimpleLocation, Pot> potMap;
     private final ConcurrentHashMap<SimpleLocation, Sprinkler> sprinklerMap;
+    private ConcurrentHashMap<SimpleLocation, OfflineReplaceTask> replaceTaskMap;
     private final Set<SimpleLocation> greenhouseSet;
     private final Set<SimpleLocation> scarecrowSet;
 
@@ -57,6 +56,20 @@ public class CCChunk implements Serializable {
         this.sprinklerMap = new ConcurrentHashMap<>(16);
         this.greenhouseSet = Collections.synchronizedSet(new HashSet<>(64));
         this.scarecrowSet = Collections.synchronizedSet(new HashSet<>(4));
+        this.replaceTaskMap = new ConcurrentHashMap<>(64);
+    }
+
+    @Serial
+    private void writeObject(ObjectOutputStream oos) throws IOException {
+        oos.defaultWriteObject();
+    }
+
+    @Serial
+    private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
+        ois.defaultReadObject();
+        if (replaceTaskMap == null) {
+            replaceTaskMap = new ConcurrentHashMap<>(64);
+        }
     }
 
     public void removeCropData(SimpleLocation simpleLocation) {
@@ -114,7 +127,7 @@ public class CCChunk implements Serializable {
     }
 
     public boolean isUseless() {
-        return growingCropMap.size() == 0 && potMap.size() == 0 && greenhouseSet.size() == 0 && sprinklerMap.size() == 0 && scarecrowSet.size() == 0;
+        return growingCropMap.size() == 0 && potMap.size() == 0 && greenhouseSet.size() == 0 && sprinklerMap.size() == 0 && scarecrowSet.size() == 0 && replaceTaskMap.size() == 0;
     }
 
     @Nullable
@@ -198,5 +211,40 @@ public class CCChunk implements Serializable {
         } else {
             CustomCrops.getInstance().getPlatformInterface().placeNoteBlock(location, replacer);
         }
+    }
+
+    public void executeReplaceTask() {
+        PlatformInterface platform = CustomCrops.getInstance().getPlatformInterface();
+        for (Map.Entry<SimpleLocation, OfflineReplaceTask> entry : replaceTaskMap.entrySet()) {
+            SimpleLocation simpleLocation = entry.getKey();
+            String id = entry.getValue().getId();
+            if (id == null) {
+                platform.removeCustomItem(entry.getKey().getBukkitLocation(), entry.getValue().getItemMode());
+                continue;
+            }
+            switch (entry.getValue().getItemType()) {
+                case POT -> {
+                    Pot pot =getPotData(simpleLocation);
+                    if (pot == null) {
+                        String blockID = platform.getBlockID(simpleLocation.getBukkitLocation().getBlock());
+                        String potKey = CustomCrops.getInstance().getPotManager().getPotKeyByBlockID(blockID);
+                        if (potKey == null) continue;
+                        pot = new Pot(potKey, null, 0);
+                    }
+                    changePotModel(simpleLocation, pot);
+                }
+                case CROP -> {
+                    Location location = simpleLocation.getBukkitLocation();
+                    if (platform.removeCustomItem(location, entry.getValue().getItemMode())) {
+                        platform.placeCustomItem(location, id, entry.getValue().getItemMode());
+                    }
+                }
+            }
+        }
+        replaceTaskMap.clear();
+    }
+
+    public void addReplaceTask(SimpleLocation simpleLocation, OfflineReplaceTask offlineReplaceTask) {
+        replaceTaskMap.put(simpleLocation, offlineReplaceTask);
     }
 }

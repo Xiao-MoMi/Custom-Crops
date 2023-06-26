@@ -69,6 +69,7 @@ public class ConfigManager extends Function {
     public static boolean onlyInLoadedChunks;
     public static boolean enableCorruptionFixer;
     public static boolean debugWorld;
+    public static boolean updateDuringLoading;
 
     private final HashMap<String, Integer> cropPerWorld;
     private final CustomCrops plugin;
@@ -99,15 +100,16 @@ public class ConfigManager extends Function {
         debugCorruption = config.getBoolean("debug.log-corruption-fixer", false);
         debugWorld = config.getBoolean("debug.log-world-state", false);
         loadWorlds(Objects.requireNonNull(config.getConfigurationSection("worlds")));
-        loadOptimization(Objects.requireNonNull(config.getConfigurationSection("optimization")));
         loadScheduleSystem(Objects.requireNonNull(config.getConfigurationSection("schedule-system")));
         loadMechanic(Objects.requireNonNull(config.getConfigurationSection("mechanics")));
         loadOtherSetting(Objects.requireNonNull(config.getConfigurationSection("other-settings")));
+        loadOptimization(Objects.requireNonNull(config.getConfigurationSection("optimization")));
     }
 
     private void loadOptimization(ConfigurationSection section) {
         enableLimitation = section.getBoolean("limitation.growing-crop-amount.enable", true);
         maxCropPerChunk = section.getInt("limitation.growing-crop-amount.default", 64);
+        updateDuringLoading = !ConfigManager.onlyInLoadedChunks && section.getBoolean("only-update-during-chunk-loading", false);
         List<String> worldSettings = section.getStringList("limitation.growing-crop-amount.worlds");
         for (String setting : worldSettings) {
             String[] split = setting.split(":", 2);

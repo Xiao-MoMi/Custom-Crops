@@ -1,5 +1,5 @@
 # Don't change
-config-version: '33'
+config-version: '34'
 # BStats
 metrics: true
 # Language: english / spanish / chinese / turkish / russian
@@ -67,6 +67,12 @@ optimization:
       # 指定世界的设置
       worlds:
         - world:64
+  # Experimental option (Only works when only-work-in-loaded-chunks is false)
+  # This option would make the plugin no longer invoke the unloaded chunks to replace crop models/pots
+  # Crops/Pots would only be updated during the chunk loading
+  # 实验性选项，启用以后农作物/种植盆的模型只会在区块加载时得到更新，不再异步加载区块替换模型
+  # 此选项仅在only-work-in-loaded-chunks为false时候生效
+  only-update-during-chunk-loading: false
 
 mechanics:
   # Does the system only work in loaded chunks (Requires you to stop the server before changing this setting)
@@ -74,6 +80,7 @@ mechanics:
   only-work-in-loaded-chunks: true
   # 17/2/1 = 85%/10%/5%
   # 2/2/1 = 40%/40%/20%
+  # You can customize more ranks like x/x/x/x/x
   default-quality-ratio: 17/2/1
   # Season mechanic
   # 季节机制

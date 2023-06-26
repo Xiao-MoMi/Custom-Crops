@@ -110,7 +110,7 @@ public class PotConfig {
         return key;
     }
 
-    public boolean isEnableFertilized() {
+    public boolean enableFertilizedLooks() {
         return enableFertilized;
     }
 }

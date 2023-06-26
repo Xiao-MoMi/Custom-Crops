@@ -58,8 +58,7 @@ public class Pot implements Serializable {
         if (water == 0) {
             this.water = Math.min(getConfig().getMaxStorage(), amount);
             return true;
-        }
-        else {
+        } else {
             this.water = Math.min(getConfig().getMaxStorage(), water + amount);
             return false;
         }

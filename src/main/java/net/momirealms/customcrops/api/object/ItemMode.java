@@ -17,11 +17,14 @@
 
 package net.momirealms.customcrops.api.object;
 
-public enum ItemMode {
+import java.io.Serializable;
+
+public enum ItemMode implements Serializable {
 
     ARMOR_STAND,
     TRIPWIRE,
     ITEM_FRAME,
     ITEM_DISPLAY,
+    NOTE_BLOCK,
     CHORUS
 }

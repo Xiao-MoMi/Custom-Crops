@@ -349,7 +349,7 @@ public interface PlatformInterface {
      * @param itemMode itemMode
      */
     default void placeCustomItem(Location location, String id, ItemMode itemMode) {
-        if (itemMode == ItemMode.TRIPWIRE)
+        if (itemMode == ItemMode.TRIPWIRE || itemMode == ItemMode.NOTE_BLOCK)
             placeTripWire(location, id);
         else if (itemMode == ItemMode.ITEM_FRAME)
             placeItemFrame(location, id);
@@ -366,7 +366,7 @@ public interface PlatformInterface {
      * @return success or not
      */
     default boolean removeCustomItem(Location location, ItemMode itemMode) {
-        if (itemMode == ItemMode.TRIPWIRE || itemMode == ItemMode.CHORUS)
+        if (itemMode == ItemMode.TRIPWIRE || itemMode == ItemMode.CHORUS || itemMode == ItemMode.NOTE_BLOCK)
             return removeCustomBlock(location);
         else if (itemMode == ItemMode.ITEM_FRAME)
             return removeItemFrame(location);

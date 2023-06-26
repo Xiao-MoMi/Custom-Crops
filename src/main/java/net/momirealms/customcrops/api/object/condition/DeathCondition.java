@@ -19,6 +19,9 @@ package net.momirealms.customcrops.api.object.condition;
 
 import net.momirealms.customcrops.CustomCrops;
 import net.momirealms.customcrops.api.object.ItemMode;
+import net.momirealms.customcrops.api.object.ItemType;
+import net.momirealms.customcrops.api.object.OfflineReplaceTask;
+import net.momirealms.customcrops.api.object.basic.ConfigManager;
 import net.momirealms.customcrops.api.object.world.SimpleLocation;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -49,32 +52,36 @@ public class DeathCondition {
     public void applyDeadModel(SimpleLocation simpleLocation, ItemMode itemMode) {
         Location location = simpleLocation.getBukkitLocation();
         if (location == null) return;
+
+        if (location.getWorld().isChunkLoaded(simpleLocation.getX() >> 4, simpleLocation.getZ() >> 4)) {
+            replaceDeadModels(location, itemMode);
+            return;
+        }
+
+        if (ConfigManager.updateDuringLoading) {
+            CustomCrops.getInstance().getWorldDataManager().addOfflineTask(simpleLocation, new OfflineReplaceTask(dead_model, ItemType.CROP, itemMode));
+            return;
+        }
+
         CompletableFuture<Chunk> asyncGetChunk = location.getWorld().getChunkAtAsync(location.getBlockX() >> 4, location.getBlockZ() >> 4);
         if (itemMode == ItemMode.ITEM_FRAME || itemMode == ItemMode.ITEM_DISPLAY) {
             CompletableFuture<Boolean> loadEntities = asyncGetChunk.thenApply((chunk) -> {
                 chunk.getEntities();
                 return chunk.isEntitiesLoaded();
             });
-            loadEntities.whenComplete((result, throwable) ->
-                    CustomCrops.getInstance().getScheduler().callSyncMethod(() -> {
-                        if (CustomCrops.getInstance().getPlatformInterface().removeCustomItem(location, itemMode)) {
-                            if (dead_model != null) {
-                                CustomCrops.getInstance().getPlatformInterface().placeCustomItem(location, dead_model, itemMode);
-                            }
-                        }
-                        return null;
-                    }));
+            loadEntities.whenComplete((result, throwable) -> replaceDeadModels(location, itemMode));
+        } else {
+            asyncGetChunk.whenComplete((result, throwable) -> replaceDeadModels(location, itemMode));
         }
-        else {
-            asyncGetChunk.whenComplete((result, throwable) ->
-                    CustomCrops.getInstance().getScheduler().callSyncMethod(() -> {
-                        if (CustomCrops.getInstance().getPlatformInterface().removeCustomItem(location, itemMode)) {
-                            if (dead_model != null) {
-                                CustomCrops.getInstance().getPlatformInterface().placeCustomItem(location, dead_model, itemMode);
-                            }
-                        }
-                        return null;
-                    }));
-        }
+    }
+
+    private void replaceDeadModels(Location location, ItemMode itemMode) {
+        CustomCrops.getInstance().getScheduler().runTask(() -> {
+            if (CustomCrops.getInstance().getPlatformInterface().removeCustomItem(location, itemMode)) {
+                if (dead_model != null) {
+                    CustomCrops.getInstance().getPlatformInterface().placeCustomItem(location, dead_model, itemMode);
+                }
+            }
+        });
     }
 }

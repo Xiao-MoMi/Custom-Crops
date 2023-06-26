@@ -19,6 +19,7 @@ package net.momirealms.customcrops.api.object.world;
 
 import net.momirealms.customcrops.CustomCrops;
 import net.momirealms.customcrops.api.object.Function;
+import net.momirealms.customcrops.api.object.OfflineReplaceTask;
 import net.momirealms.customcrops.api.object.basic.ConfigManager;
 import net.momirealms.customcrops.api.object.crop.GrowingCrop;
 import net.momirealms.customcrops.api.object.fertilizer.Fertilizer;
@@ -225,6 +226,13 @@ public class WorldDataManager extends Function {
         CCWorld ccWorld = worldMap.get(simpleLocation.getWorldName());
         if (ccWorld != null) {
             ccWorld.addPotData(simpleLocation, pot);
+        }
+    }
+
+    public void addOfflineTask(SimpleLocation simpleLocation, OfflineReplaceTask offlineReplaceTask) {
+        CCWorld ccWorld = worldMap.get(simpleLocation.getWorldName());
+        if (ccWorld != null) {
+            ccWorld.addOfflineReplaceTask(simpleLocation, offlineReplaceTask);
         }
     }
 
