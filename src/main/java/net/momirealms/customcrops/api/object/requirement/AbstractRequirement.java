@@ -33,7 +33,7 @@ public abstract class AbstractRequirement {
         this.actions = actions;
     }
 
-    public void notMetMessage(CurrentState currentState) {
+    public void notMetActions(CurrentState currentState) {
         Player player = currentState.getPlayer();
         if (msg != null && player != null) {
             for (String str : msg) {

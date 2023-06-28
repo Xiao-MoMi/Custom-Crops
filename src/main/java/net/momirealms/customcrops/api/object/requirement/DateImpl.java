@@ -39,7 +39,7 @@ public class DateImpl extends AbstractRequirement implements Requirement {
         if (dates.contains(current)) {
             return true;
         }
-        notMetMessage(currentState);
+        notMetActions(currentState);
         return false;
     }
 }

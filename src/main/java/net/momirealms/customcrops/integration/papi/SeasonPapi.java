@@ -56,7 +56,7 @@ public class SeasonPapi extends PlaceholderExpansion {
     @Override
     public @Nullable String onRequest(OfflinePlayer player, @NotNull String params) {
         String[] split = params.split("_", 2);
-        if (split[1] == null) {
+        if (split.length == 1) {
             switch (split[0]) {
                 case "season" -> {
                     Player online_player = player.getPlayer();
@@ -74,7 +74,7 @@ public class SeasonPapi extends PlaceholderExpansion {
                     return String.valueOf(1 + ConfigManager.seasonInterval - plugin.getIntegrationManager().getSeasonInterface().getDate(player.getPlayer().getWorld().getName()));
                 }
             }
-        } else {
+        } else if (split.length == 2) {
             switch (split[0]) {
                 case "season" -> {
                     return plugin.getIntegrationManager().getSeasonInterface().getSeason(split[1]).getDisplay();

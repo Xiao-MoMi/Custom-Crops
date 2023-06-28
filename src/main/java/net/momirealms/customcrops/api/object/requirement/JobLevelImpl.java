@@ -40,7 +40,7 @@ public class JobLevelImpl extends AbstractRequirement implements Requirement {
         if (jobInterface.getLevel(currentState.getPlayer(), jobName) >= level) {
             return true;
         }
-        notMetMessage(currentState);
+        notMetActions(currentState);
         return false;
     }
 }

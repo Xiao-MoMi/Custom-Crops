@@ -38,7 +38,7 @@ public class BiomeImpl extends AbstractRequirement implements Requirement {
         if (biomes.contains(currentBiome)) {
             return true;
         }
-        notMetMessage(currentState);
+        notMetActions(currentState);
         return false;
     }
 }

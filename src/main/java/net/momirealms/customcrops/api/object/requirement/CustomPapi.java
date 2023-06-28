@@ -42,7 +42,7 @@ public class CustomPapi extends AbstractRequirement implements Requirement {
         if (currentState.getPlayer() == null) return true;
         for (PapiRequirement requirement : papiRequirement) {
             if (!requirement.isMet(player)) {
-                notMetMessage(currentState);
+                notMetActions(currentState);
                 return false;
             }
         }

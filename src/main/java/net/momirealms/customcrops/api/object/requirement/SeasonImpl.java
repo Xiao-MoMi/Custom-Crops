@@ -54,7 +54,7 @@ public class SeasonImpl extends AbstractRequirement implements Requirement {
                 }
             }
         }
-        notMetMessage(currentState);
+        notMetActions(currentState);
         return false;
     }
 }

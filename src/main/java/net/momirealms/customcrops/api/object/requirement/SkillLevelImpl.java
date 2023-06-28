@@ -38,7 +38,7 @@ public class SkillLevelImpl extends AbstractRequirement implements Requirement {
          if (skillInterface.getLevel(currentState.getPlayer()) >= level) {
              return true;
          }
-         notMetMessage(currentState);
+         notMetActions(currentState);
          return false;
     }
 }

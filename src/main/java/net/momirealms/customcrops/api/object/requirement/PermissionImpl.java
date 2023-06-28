@@ -38,7 +38,7 @@ public class PermissionImpl extends AbstractRequirement implements Requirement {
         if (currentState.getPlayer() == null || currentState.getPlayer().hasPermission(permission)) {
             return true;
         }
-        notMetMessage(currentState);
+        notMetActions(currentState);
         return false;
     }
 }
