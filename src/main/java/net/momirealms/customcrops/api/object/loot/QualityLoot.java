@@ -58,6 +58,7 @@ public class QualityLoot extends Loot {
             for (int j = 0; j < qualityRatio.length; j++) {
                 if (random < qualityRatio[j]) {
                     dropItem(location, qualityLoots[j], player);
+                    break;
                 }
             }
         }
