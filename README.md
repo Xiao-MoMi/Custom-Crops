@@ -14,26 +14,40 @@ https://polymart.org/resource/customcrops.2625
 
 Execute gradle build in your IDLE and get the jar in /build/libs folder
 
-### API Usage
+### API Guide
+```access transformers
+public class YourClass {
+
+    private CustomCropsAPI api;
+    
+    public YourClass() {
+        api = CustomCropsAPI.getInstance();
+    }
+    
+    public yourMethod() {
+        api.xxx();
+    }
+}
+```
 
 #### Events
-CropBreakEvent\
-CropInteractEvent\
-CropPlantEvent\
-FertilizerUseEvent\
-GreenhouseGlassBreakEvent\
-GreenhouseGlassPlaceEvent\
-PotBreakEvent\
-PotInfoEvent\
-PotInteractEvent\
-PotPlaceEvent\
-PotWaterEvent\
-ScarecrowBreakEvent\
-ScarecrowPlaceEvent\
-SprinklerFillEvent\
-SprinklerPlaceEvent\
-SprinklerInteractEvent\
+```
+CropBreakEvent
+CropInteractEvent
+CropPlantEvent
+FertilizerUseEvent
+GreenhouseGlassBreakEvent
+GreenhouseGlassPlaceEvent
+PotBreakEvent
+PotInfoEvent
+PotInteractEvent
+PotPlaceEvent
+PotWaterEvent
+ScarecrowBreakEvent
+ScarecrowPlaceEvent
+SprinklerFillEvent
+SprinklerPlaceEvent
+SprinklerInteractEvent
 SprinklerBreakEvent
-
-#### Utils
-Use CustomCropsAPI.getInstance() to get the API instance
+SeasonChangeEvent
+```

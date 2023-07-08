@@ -1,1 +1,3 @@
 rootProject.name = 'CustomCrops'
+include(":plugin")
+include(":api")
