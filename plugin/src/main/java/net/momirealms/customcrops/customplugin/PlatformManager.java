@@ -223,28 +223,24 @@ public class PlatformManager extends Function {
         ItemStack item_in_hand = player.getInventory().getItemInMainHand();
         String item_in_hand_id = plugin.getPlatformInterface().getItemStackID(item_in_hand);
 
-        if (ProtectionLib.canBreak(player, location)) {
-            if (onInteractCrop(player, id, location, item_in_hand, item_in_hand_id, event)) {
-                return;
-            }
+        if (onInteractCrop(player, id, location, item_in_hand, item_in_hand_id, event)) {
+            return;
         }
 
-        if (ProtectionLib.canPlace(player, location)) {
-            if (onInteractWithSprinkler(player, location, item_in_hand, item_in_hand_id, blockFace)) {
-                return;
-            }
+        if (onInteractWithSprinkler(player, location, item_in_hand, item_in_hand_id, blockFace)) {
+            return;
+        }
 
-            if (onInteractSprinkler(player, id, location, item_in_hand, item_in_hand_id, event)) {
-                return;
-            }
+        if (onInteractSprinkler(player, id, location, item_in_hand, item_in_hand_id, event)) {
+            return;
+        }
 
-            if (onInteractPot(player, id, location, item_in_hand, item_in_hand_id, event)) {
-                return;
-            }
+        if (onInteractPot(player, id, location, item_in_hand, item_in_hand_id, event)) {
+            return;
+        }
 
-            if (onInteractWithWateringCan(player, item_in_hand_id, item_in_hand, id, location)) {
-                return;
-            }
+        if (onInteractWithWateringCan(player, item_in_hand_id, item_in_hand, id, location)) {
+            return;
         }
     }
 
@@ -404,6 +400,10 @@ public class PlatformManager extends Function {
             return false;
         }
 
+        if (!ProtectionLib.canPlace(player, location)) {
+            return true;
+        }
+
         SprinklerInteractEvent sprinklerInteractEvent = new SprinklerInteractEvent(player, item_in_hand, location, sprinklerConfig.getKey());
         Bukkit.getPluginManager().callEvent(sprinklerInteractEvent);
         if (sprinklerInteractEvent.isCancelled()) {
@@ -515,6 +515,10 @@ public class PlatformManager extends Function {
             return true;
         }
 
+        if (!ProtectionLib.canPlace(player, location)) {
+            return true;
+        }
+
         Location sprinkler_loc = location.clone().add(0,1,0);
         if (plugin.getPlatformInterface().detectAnyThing(sprinkler_loc)) return true;
 
@@ -540,6 +544,10 @@ public class PlatformManager extends Function {
 
         StageConfig stageConfig = plugin.getCropManager().getStageConfig(id);
         if (stageConfig == null) {
+            return true;
+        }
+
+        if (!ProtectionLib.canBreak(player, location)) {
             return true;
         }
 
@@ -692,6 +700,10 @@ public class PlatformManager extends Function {
         PotConfig potConfig = plugin.getPotManager().getPotConfig(pot_id);
         if (potConfig == null) {
             return false;
+        }
+
+        if (!ProtectionLib.canPlace(player, location)) {
+            return true;
         }
 
         PotInteractEvent potInteractEvent = new PotInteractEvent(player, item_in_hand, location, pot_id);
@@ -1069,6 +1081,12 @@ public class PlatformManager extends Function {
         WateringCanConfig wateringCanConfig = plugin.getWateringCanManager().getConfigByItemID(item_in_hand_id);
         if (wateringCanConfig == null) {
             return false;
+        }
+
+        if (location != null) {
+            if (!ProtectionLib.canPlace(player, location)) {
+                return true;
+            }
         }
 
         int current = plugin.getWateringCanManager().getCurrentWater(item_in_hand);
