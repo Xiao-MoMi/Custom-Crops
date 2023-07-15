@@ -19,7 +19,7 @@ package net.momirealms.customcrops.api;
 
 import org.bukkit.plugin.java.JavaPlugin;
 
-public class CustomCropsPlugin extends JavaPlugin {
+public abstract class CustomCropsPlugin extends JavaPlugin {
 
     protected CustomCropsAPI customCropsAPI;
 

@@ -109,7 +109,8 @@ public class WateringCanManager extends Function {
                         sound,
                         canSec.contains("particle") ? Particle.valueOf(canSec.getString("particle", "WATER_SPLASH").toUpperCase(Locale.ENGLISH)) : null,
                         methods,
-                        appearanceMap
+                        appearanceMap,
+                        ConfigUtils.getRequirementsWithMsg(canSec.getConfigurationSection("requirements"))
                 );
                 wateringCanConfigMap.put(canSec.getString("item"), wateringCanConfig);
             }

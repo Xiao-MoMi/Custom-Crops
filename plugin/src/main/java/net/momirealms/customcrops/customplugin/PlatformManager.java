@@ -416,7 +416,6 @@ public class PlatformManager extends Function {
             PassiveFillMethod[] passiveFillMethods = sprinklerConfig.getPassiveFillMethods();
             for (PassiveFillMethod passiveFillMethod : passiveFillMethods) {
                 if (passiveFillMethod.isRightItem(item_in_hand_id)) {
-
                     SprinklerFillEvent sprinklerFillEvent = new SprinklerFillEvent(player, sprinklerConfig.getKey(), item_in_hand, passiveFillMethod.getAmount(), location);
                     Bukkit.getPluginManager().callEvent(sprinklerFillEvent);
                     if (sprinklerFillEvent.isCancelled()) {
@@ -432,6 +431,16 @@ public class PlatformManager extends Function {
 
             WateringCanConfig wateringCanConfig = plugin.getWateringCanManager().getConfigByItemID(item_in_hand_id);
             if (wateringCanConfig != null) {
+
+                if (wateringCanConfig.getRequirements() != null) {
+                    CurrentState currentState = new CurrentState(location, player);
+                    for (Requirement requirement : wateringCanConfig.getRequirements()) {
+                        if (!requirement.isConditionMet(currentState)) {
+                            return true;
+                        }
+                    }
+                }
+
                 String[] sprinkler_whitelist = wateringCanConfig.getSprinklerWhitelist();
                 if (sprinkler_whitelist != null) {
                     inner: {
@@ -509,6 +518,15 @@ public class PlatformManager extends Function {
         SprinklerConfig sprinklerConfig = plugin.getSprinklerManager().getConfigByItemID(item_in_hand_id);
         if (sprinklerConfig == null) {
             return false;
+        }
+
+        if (sprinklerConfig.getRequirements() != null) {
+            CurrentState currentState = new CurrentState(location, player);
+            for (Requirement requirement : sprinklerConfig.getRequirements()) {
+                if (!requirement.isConditionMet(currentState)) {
+                    return true;
+                }
+            }
         }
 
         if (blockFace != BlockFace.UP || REPLACEABLE.contains(location.getBlock().getType())) {
@@ -604,6 +622,16 @@ public class PlatformManager extends Function {
 
                 WateringCanConfig wateringCanConfig = plugin.getWateringCanManager().getConfigByItemID(item_in_hand_id);
                 if (wateringCanConfig != null) {
+
+                    if (wateringCanConfig.getRequirements() != null) {
+                        CurrentState currentState = new CurrentState(location, player);
+                        for (Requirement requirement : wateringCanConfig.getRequirements()) {
+                            if (!requirement.isConditionMet(currentState)) {
+                                return true;
+                            }
+                        }
+                    }
+
                     String[] pot_whitelist = wateringCanConfig.getPotWhitelist();
                     if (pot_whitelist != null) {
                         inner: {
@@ -1083,11 +1111,6 @@ public class PlatformManager extends Function {
             return false;
         }
 
-        if (location != null) {
-            if (!ProtectionLib.canPlace(player, location)) {
-                return true;
-            }
-        }
 
         int current = plugin.getWateringCanManager().getCurrentWater(item_in_hand);
         if (current >= wateringCanConfig.getStorage()) return true;
@@ -1096,6 +1119,19 @@ public class PlatformManager extends Function {
 
         outer: {
             if (id != null && location != null) {
+                if (!ProtectionLib.canPlace(player, location)) {
+                    return true;
+                }
+
+                if (wateringCanConfig.getRequirements() != null) {
+                    CurrentState currentState = new CurrentState(location, player);
+                    for (Requirement requirement : wateringCanConfig.getRequirements()) {
+                        if (!requirement.isConditionMet(currentState)) {
+                            return true;
+                        }
+                    }
+                }
+
                 for (PositiveFillMethod positiveFillMethod : wateringCanConfig.getPositiveFillMethods()) {
                     if (positiveFillMethod.getId().equals(id)) {
                         add = positiveFillMethod.getAmount();
@@ -1117,14 +1153,26 @@ public class PlatformManager extends Function {
                 int index = 0;
                 for (String blockId : blockIds) {
                     if (positiveFillMethod.getId().equals(blockId)) {
+
+                        Block block = lineOfSight.get(index);
+                        if (!ProtectionLib.canPlace(player, block.getLocation()))
+                            return true;
+                        if (wateringCanConfig.getRequirements() != null) {
+                            CurrentState currentState = new CurrentState(block.getLocation(), player);
+                            for (Requirement requirement : wateringCanConfig.getRequirements()) {
+                                if (!requirement.isConditionMet(currentState)) {
+                                    return true;
+                                }
+                            }
+                        }
                         add = positiveFillMethod.getAmount();
-                        if (positiveFillMethod.getSound() != null) {
+
+                        if (positiveFillMethod.getSound() != null)
                             AdventureUtils.playerSound(player, positiveFillMethod.getSound());
-                        }
-                        if (positiveFillMethod.getParticle() != null) {
-                            Block block = lineOfSight.get(index);
+
+                        if (positiveFillMethod.getParticle() != null)
                             block.getWorld().spawnParticle(positiveFillMethod.getParticle(), block.getLocation().add(0.5,1.1, 0.5),5,0.1,0.1,0.1);
-                        }
+
                         break;
                     }
                     index++;

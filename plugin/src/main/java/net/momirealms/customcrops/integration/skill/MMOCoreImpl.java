@@ -18,6 +18,8 @@
 package net.momirealms.customcrops.integration.skill;
 
 import net.Indyuce.mmocore.MMOCore;
+import net.Indyuce.mmocore.api.MMOCoreAPI;
+import net.Indyuce.mmocore.api.player.PlayerData;
 import net.Indyuce.mmocore.experience.EXPSource;
 import net.Indyuce.mmocore.experience.Profession;
 import net.Indyuce.mmocore.manager.data.PlayerDataManager;
@@ -27,22 +29,20 @@ import org.bukkit.entity.Player;
 public class MMOCoreImpl implements SkillInterface {
 
     private final Profession profession;
-    private final PlayerDataManager playerDataManager;
 
     public MMOCoreImpl(String name) {
         profession = MMOCore.plugin.professionManager.get(name);
-        playerDataManager = MMOCore.plugin.dataProvider.getDataManager();
     }
 
     @Override
     public void addXp(Player player, double amount) {
         if (profession != null) {
-            profession.giveExperience(playerDataManager.get(player), amount, null ,EXPSource.OTHER);
+            profession.giveExperience(PlayerData.get(player.getUniqueId()), amount, null ,EXPSource.OTHER);
         }
     }
 
     @Override
     public int getLevel(Player player) {
-        return playerDataManager.get(player).getLevel();
+        return PlayerData.get(player.getUniqueId()).getCollectionSkills().getLevel(profession);
     }
 }

@@ -21,7 +21,10 @@ import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.momirealms.customcrops.api.object.fill.PositiveFillMethod;
+import net.momirealms.customcrops.api.object.requirement.CurrentState;
+import net.momirealms.customcrops.api.object.requirement.Requirement;
 import org.bukkit.Particle;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -48,6 +51,7 @@ public class WateringCanConfig {
     private final String bar_right;
     private final PositiveFillMethod[] positiveFillMethods;
     private final HashMap<Integer, Integer> appearanceMap;
+    private final Requirement[] requirements;
 
     public WateringCanConfig(
             int width,
@@ -66,7 +70,8 @@ public class WateringCanConfig {
             @Nullable Sound sound,
             @Nullable Particle particle,
             @NotNull PositiveFillMethod[] positiveFillMethods,
-            @NotNull HashMap<Integer, Integer> appearanceMap
+            @NotNull HashMap<Integer, Integer> appearanceMap,
+            @Nullable Requirement[] requirements
     ) {
         this.width = width;
         this.length = length;
@@ -85,6 +90,7 @@ public class WateringCanConfig {
         this.particle = particle;
         this.positiveFillMethods = positiveFillMethods;
         this.appearanceMap = appearanceMap;
+        this.requirements = requirements;
     }
 
     public int getWidth() {
@@ -157,5 +163,9 @@ public class WateringCanConfig {
 
     public int getModelDataByWater(int water) {
         return Optional.ofNullable(appearanceMap.get(water)).orElse(0);
+    }
+
+    public Requirement[] getRequirements() {
+        return requirements;
     }
 }

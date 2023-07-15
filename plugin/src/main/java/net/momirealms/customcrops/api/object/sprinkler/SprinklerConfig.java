@@ -21,6 +21,7 @@ import net.kyori.adventure.sound.Sound;
 import net.momirealms.customcrops.api.object.ItemMode;
 import net.momirealms.customcrops.api.object.fill.PassiveFillMethod;
 import net.momirealms.customcrops.api.object.hologram.WaterAmountHologram;
+import net.momirealms.customcrops.api.object.requirement.Requirement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -37,10 +38,24 @@ public class SprinklerConfig {
     private final PassiveFillMethod[] passiveFillMethods;
     private final WaterAmountHologram waterAmountHologram;
     private final SprinklerAnimation sprinklerAnimation;
+    private final Requirement[] requirements;
     private final int water;
 
-    public SprinklerConfig(String key, int storage, int range, int water, @Nullable String[] potWhitelist, @Nullable Sound sound, @NotNull ItemMode itemMode, @NotNull String threeD, @Nullable String twoD,
-                           @NotNull PassiveFillMethod[] passiveFillMethods, @Nullable WaterAmountHologram waterAmountHologram, SprinklerAnimation sprinklerAnimation) {
+    public SprinklerConfig(
+            String key,
+            int storage,
+            int range,
+            int water,
+            @Nullable String[] potWhitelist,
+            @Nullable Sound sound,
+            @NotNull ItemMode itemMode,
+            @NotNull String threeD,
+            @Nullable String twoD,
+            @NotNull PassiveFillMethod[] passiveFillMethods,
+            @Nullable WaterAmountHologram waterAmountHologram,
+            SprinklerAnimation sprinklerAnimation,
+            @Nullable Requirement[] requirements
+    ) {
         this.key = key;
         this.storage = storage;
         this.range = range;
@@ -53,6 +68,7 @@ public class SprinklerConfig {
         this.passiveFillMethods = passiveFillMethods;
         this.sprinklerAnimation = sprinklerAnimation;
         this.waterAmountHologram = waterAmountHologram;
+        this.requirements = requirements;
     }
 
     public String getKey() {
@@ -109,5 +125,10 @@ public class SprinklerConfig {
 
     public int getWaterFillAbility() {
         return water;
+    }
+
+    @Nullable
+    public Requirement[] getRequirements() {
+        return requirements;
     }
 }
