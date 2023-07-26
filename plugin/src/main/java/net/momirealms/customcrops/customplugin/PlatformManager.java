@@ -574,7 +574,7 @@ public class PlatformManager extends Function {
         if (item_in_hand_id.equals("AIR")) {
             InteractCrop interactCrop = stageConfig.getInteractByHand();
             if (interactCrop != null) {
-                if (interactCrop.canInteract(player, location))
+                if (!interactCrop.canInteract(player, location))
                     return true;
                 for (Action action : interactCrop.getActions())
                     action.doOn(player, SimpleLocation.getByBukkitLocation(location), cropConfig.getCropMode());
@@ -659,7 +659,7 @@ public class PlatformManager extends Function {
         if (interactActions != null) {
             for (InteractCrop interactCrop : interactActions) {
                 if (interactCrop.isRightItem(item_in_hand_id)) {
-                    if (interactCrop.canInteract(player, location))
+                    if (!interactCrop.canInteract(player, location))
                         continue;
                     if (player.getGameMode() != GameMode.CREATIVE) {
                         if (interactCrop.isConsumed())
