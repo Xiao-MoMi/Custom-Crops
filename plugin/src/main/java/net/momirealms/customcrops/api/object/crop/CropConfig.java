@@ -22,7 +22,10 @@ import net.momirealms.customcrops.api.object.ItemMode;
 import net.momirealms.customcrops.api.object.action.Action;
 import net.momirealms.customcrops.api.object.condition.Condition;
 import net.momirealms.customcrops.api.object.condition.DeathCondition;
+import net.momirealms.customcrops.api.object.requirement.CurrentState;
 import net.momirealms.customcrops.api.object.requirement.Requirement;
+import org.bukkit.Location;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -126,5 +129,27 @@ public class CropConfig {
 
     public boolean isRotationEnabled() {
         return rotation;
+    }
+
+    public boolean canPlant(Player player, Location location) {
+        if (plantRequirements == null) return true;
+        CurrentState currentState = new CurrentState(location, player);
+        for (Requirement requirement : plantRequirements) {
+            if (!requirement.isConditionMet(currentState)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public boolean canBreak(Player player, Location location) {
+        if (breakRequirements == null) return true;
+        CurrentState currentState = new CurrentState(location, player);
+        for (Requirement requirement : breakRequirements) {
+            if (!requirement.isConditionMet(currentState)) {
+                return false;
+            }
+        }
+        return true;
     }
 }

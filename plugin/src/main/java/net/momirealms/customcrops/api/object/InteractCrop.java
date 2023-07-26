@@ -19,7 +19,10 @@ package net.momirealms.customcrops.api.object;
 
 import net.momirealms.customcrops.CustomCrops;
 import net.momirealms.customcrops.api.object.action.Action;
+import net.momirealms.customcrops.api.object.requirement.CurrentState;
 import net.momirealms.customcrops.api.object.requirement.Requirement;
+import org.bukkit.Location;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
@@ -58,8 +61,14 @@ public class InteractCrop {
         return actions;
     }
 
-    @Nullable
-    public Requirement[] getRequirements() {
-        return requirements;
+    public boolean canInteract(Player player, Location location) {
+        if (requirements == null) return true;
+        CurrentState currentState = new CurrentState(location, player);
+        for (Requirement requirement : requirements) {
+            if (!requirement.isConditionMet(currentState)) {
+                return false;
+            }
+        }
+        return true;
     }
 }

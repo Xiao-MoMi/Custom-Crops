@@ -23,6 +23,7 @@ import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.momirealms.customcrops.api.object.fill.PositiveFillMethod;
 import net.momirealms.customcrops.api.object.requirement.CurrentState;
 import net.momirealms.customcrops.api.object.requirement.Requirement;
+import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -165,7 +166,26 @@ public class WateringCanConfig {
         return Optional.ofNullable(appearanceMap.get(water)).orElse(0);
     }
 
-    public Requirement[] getRequirements() {
-        return requirements;
+    public boolean canUse(Player player, Location location) {
+        if (requirements == null) return true;
+        CurrentState currentState = new CurrentState(location, player);
+        for (Requirement requirement : requirements) {
+            if (!requirement.isConditionMet(currentState)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public boolean isWhiteListedPot(String potID) {
+        if (potWhitelist != null) {
+            inner: {
+                for (String pot : potWhitelist)
+                    if (pot.equals(potID))
+                        break inner;
+                return false;
+            }
+        }
+        return true;
     }
 }

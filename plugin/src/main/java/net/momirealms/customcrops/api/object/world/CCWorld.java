@@ -57,13 +57,15 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.*;
+import java.lang.ref.Reference;
+import java.lang.ref.WeakReference;
 import java.util.*;
 import java.util.concurrent.*;
 
 public class CCWorld extends Function {
 
     private final String worldName;
-    private final World world;
+    private final Reference<World> world;
     private final ConcurrentHashMap<ChunkCoordinate, CCChunk> chunkMap;
     private final ScheduledThreadPoolExecutor schedule;
     private long currentDay;
@@ -86,7 +88,7 @@ public class CCWorld extends Function {
         this.chunksFolder = ConfigUtils.getFile(world, "chunks");
         this.dateFile = ConfigUtils.getFile(world, "data.yml");
         this.corruptedFile = ConfigUtils.getFile(world, "corrupted.yml");
-        this.world = world;
+        this.world = new WeakReference<>(world);
         this.chunkMap = new ConcurrentHashMap<>(64);
         this.schedule = new ScheduledThreadPoolExecutor(ConfigManager.corePoolSize);
         this.schedule.setMaximumPoolSize(ConfigManager.maxPoolSize);
@@ -127,7 +129,7 @@ public class CCWorld extends Function {
     }
 
     public void unload() {
-        if (this.timerTask != null) {
+        if (this.timerTask != null && !this.timerTask.isCancelled()) {
             this.timerTask.cancel(false);
             this.timerTask = null;
         }
@@ -235,17 +237,18 @@ public class CCWorld extends Function {
     private void scheduleTask() {
         if (this.timerTask == null) {
             this.timerTask = plugin.getScheduler().runTaskTimerAsync(() -> {
-                if (world != null) {
+                World worldInstance = world.get();
+                if (worldInstance != null) {
                     if (ConfigManager.debugScheduler) {
                         Log.info("Queue size: " + schedule.getQueue().size() + " Completed: " + schedule.getCompletedTaskCount());
                     }
-                    long day = world.getFullTime() / 24000;
-                    long time = world.getTime();
+                    long day = worldInstance.getFullTime() / 24000;
+                    long time = worldInstance.getTime();
                     this.tryDayCycleTask(time, day);
                     this.timerTask();
                 } else {
                     AdventureUtils.consoleMessage("<red>[CustomCrops] World: " + worldName + " unloaded unexpectedly. Shutdown the schedule.");
-                    this.schedule.shutdown();
+                    this.disable();
                 }
             }, 1000, 1000L);
         }
@@ -311,6 +314,9 @@ public class CCWorld extends Function {
 
     private void closePool() {
         this.schedule.shutdown();
+        if (this.timerTask != null && !this.timerTask.isCancelled()) {
+            this.timerTask.cancel(false);
+        }
     }
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
@@ -448,7 +454,7 @@ public class CCWorld extends Function {
                     return;
                 }
 
-                if (world.isChunkLoaded(simpleLocation.getX() >> 4, simpleLocation.getZ() >> 4)) {
+                if (world.get().isChunkLoaded(simpleLocation.getX() >> 4, simpleLocation.getZ() >> 4)) {
                     replacePot(simpleLocation, pot, potConfig);
                     return;
                 }
@@ -533,7 +539,7 @@ public class CCWorld extends Function {
 
             SprinklerAnimation sprinklerAnimation = sprinklerConfig.getSprinklerAnimation();
 
-            if (world.isChunkLoaded(simpleLocation.getX() >> 4, simpleLocation.getZ() >> 4) && sprinklerAnimation != null) {
+            if (world.get().isChunkLoaded(simpleLocation.getX() >> 4, simpleLocation.getZ() >> 4) && sprinklerAnimation != null) {
                 for (Player player : Bukkit.getOnlinePlayers()) {
                     SimpleLocation playerLoc = SimpleLocation.getByBukkitLocation(player.getLocation());
                     if (playerLoc.isNear(simpleLocation, 48)) {
@@ -572,7 +578,7 @@ public class CCWorld extends Function {
         @Override
         public void run() {
 
-            if (world.isChunkLoaded(simpleLocation.getX() >> 4, simpleLocation.getZ() >> 4)) {
+            if (world.get().isChunkLoaded(simpleLocation.getX() >> 4, simpleLocation.getZ() >> 4)) {
                 replacePot(simpleLocation, amount, whitelist);
                 return;
             }
@@ -584,7 +590,7 @@ public class CCWorld extends Function {
                 return;
             }
 
-            CompletableFuture<Chunk> asyncGetChunk = world.getChunkAtAsync(simpleLocation.getX() >> 4, simpleLocation.getZ() >> 4);
+            CompletableFuture<Chunk> asyncGetChunk = world.get().getChunkAtAsync(simpleLocation.getX() >> 4, simpleLocation.getZ() >> 4);
             asyncGetChunk.whenComplete((result, throwable) -> replacePot(simpleLocation, amount, whitelist));
         }
     }
@@ -721,7 +727,7 @@ public class CCWorld extends Function {
         String finalNextModel = nextModel;
         if (finalNextModel == null || location == null) return;
 
-        if (world.isChunkLoaded(location.getBlockX() >> 4, location.getBlockZ() >> 4)) {
+        if (world.get().isChunkLoaded(location.getBlockX() >> 4, location.getBlockZ() >> 4)) {
             switch (itemMode) {
                 case ITEM_FRAME -> replaceItemFrameCrop(location, finalNextModel, cropConfig.isRotationEnabled());
                 case ITEM_DISPLAY -> replaceItemDisplayCrop(location, finalNextModel, cropConfig.isRotationEnabled());

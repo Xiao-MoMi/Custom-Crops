@@ -18,8 +18,11 @@
 package net.momirealms.customcrops.api.object.fertilizer;
 
 import net.kyori.adventure.sound.Sound;
+import net.momirealms.customcrops.api.object.requirement.CurrentState;
 import net.momirealms.customcrops.api.object.requirement.Requirement;
+import org.bukkit.Location;
 import org.bukkit.Particle;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
 public abstract class FertilizerConfig {
@@ -104,5 +107,16 @@ public abstract class FertilizerConfig {
 
     public Requirement[] getRequirements() {
         return requirements;
+    }
+
+    public boolean canUse(Player player, Location location) {
+        if (requirements == null) return true;
+        CurrentState currentState = new CurrentState(location, player);
+        for (Requirement requirement : requirements) {
+            if (!requirement.isConditionMet(currentState)) {
+                return false;
+            }
+        }
+        return true;
     }
 }
