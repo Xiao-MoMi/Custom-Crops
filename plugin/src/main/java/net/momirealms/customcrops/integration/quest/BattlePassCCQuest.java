@@ -18,7 +18,8 @@
 package net.momirealms.customcrops.integration.quest;
 
 import io.github.battlepass.BattlePlugin;
-import io.github.battlepass.quests.quests.external.executor.ExternalQuestExecutor;
+import io.github.battlepass.api.events.server.PluginReloadEvent;
+import io.github.battlepass.quests.service.base.ExternalQuestContainer;
 import io.github.battlepass.registry.quest.QuestRegistry;
 import net.momirealms.customcrops.api.event.CropBreakEvent;
 import net.momirealms.customcrops.api.event.CropPlantEvent;
@@ -26,31 +27,49 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
-public class BattlePassCCQuest extends ExternalQuestExecutor implements Listener {
+public class BattlePassCCQuest implements Listener {
 
     public static void register() {
         QuestRegistry questRegistry = BattlePlugin.getApi().getQuestRegistry();
-        questRegistry.hook("customcrops", BattlePassCCQuest::new);
+        questRegistry.hook("customcrops", CropQuest::new);
     }
 
-    public BattlePassCCQuest(BattlePlugin battlePlugin) {
-        super(battlePlugin, "customcrops");
+    @EventHandler(ignoreCancelled = true)
+    public void onBattlePassReload(PluginReloadEvent event) {
+        register();
     }
 
-    @EventHandler
-    public void onHarvest(CropBreakEvent event) {
-        if (event.isCancelled()) return;
-        if (event.getEntity() instanceof Player player) {
-            String id = event.getCropItemID();
-            String[] split = id.split(":");
-            this.execute("harvest", player, (result) -> result.root(split[split.length - 1]));
+    private static class CropQuest extends ExternalQuestContainer {
+
+        public CropQuest(BattlePlugin battlePlugin) {
+            super(battlePlugin, "customcrops");
         }
-    }
 
-    @EventHandler
-    public void onPlant(CropPlantEvent event) {
-        if (event.isCancelled()) return;
-        String id = event.getCropKey();
-        this.execute("plant", event.getPlayer(), (result) -> result.root(id));
+        @EventHandler
+        public void onHarvest(CropBreakEvent event) {
+            if (event.isCancelled())
+                return;
+            if (event.getEntity() instanceof Player player) {
+                String id = event.getCropItemID();
+                String[] split = id.split(":");
+                this.executionBuilder("harvest")
+                        .player(player)
+                        .root(split[split.length - 1])
+                        .progress(1)
+                        .buildAndExecute();
+            }
+        }
+
+        @EventHandler
+        public void onPlant(CropPlantEvent event) {
+            if (event.isCancelled())
+                return;
+            String id = event.getCropKey();
+            this.executionBuilder("plant")
+                    .player(event.getPlayer())
+                    .root(id)
+                    .progress(1)
+                    .buildAndExecute();
+        }
     }
 }

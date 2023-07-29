@@ -219,6 +219,8 @@ public class ConfigUtils {
                     case "time" -> requirements.add(new TimeImpl(msg, getActions(actionSec), innerSec.getStringList("value")));
                     case "skill-level" -> requirements.add(new SkillLevelImpl(msg, getActions(actionSec), innerSec.getInt("value")));
                     case "job-level" -> requirements.add(new JobLevelImpl(msg, getActions(actionSec), innerSec.getInt("value.level"), innerSec.getString("value.job")));
+                    case "light" -> requirements.add(new LightLevelImpl(msg, getActions(actionSec), innerSec.getInt("value")));
+                    case "natural-light" -> requirements.add(new NaturalLightLevelImpl(msg, getActions(actionSec), innerSec.getInt("value")));
                     case "date" -> requirements.add(new DateImpl(msg, getActions(actionSec), new HashSet<>(innerSec.getStringList("value"))));
                     case "max-entity-amount-in-chunk" -> requirements.add(new EntityAmountInChunkImpl(msg, getActions(actionSec), innerSec.getInt("value")));
                     case "papi-condition" -> requirements.add(new CustomPapi(msg, getActions(actionSec), Objects.requireNonNull(innerSec.getConfigurationSection("value")).getValues(false)));

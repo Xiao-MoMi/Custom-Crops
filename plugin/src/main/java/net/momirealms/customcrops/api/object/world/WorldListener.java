@@ -17,8 +17,6 @@
 
 package net.momirealms.customcrops.api.object.world;
 
-import net.momirealms.customcrops.api.event.CropBreakEvent;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.world.ChunkLoadEvent;

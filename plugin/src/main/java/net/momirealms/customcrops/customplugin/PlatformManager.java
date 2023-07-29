@@ -734,27 +734,36 @@ public class PlatformManager extends Function {
                 if (cropPlantEvent.isCancelled())
                     return true;
 
-                Action[] plantActions = cropConfig.getPlantActions();
-                if (plantActions != null) {
-                    for (Action action : plantActions) {
-                        action.doOn(player, SimpleLocation.getByBukkitLocation(crop_loc), cropConfig.getCropMode());
-                    }
-                }
-
-                if (player.getGameMode() != GameMode.CREATIVE) item_in_hand.setAmount(item_in_hand.getAmount() - 1);
-                player.swingMainHand();
                 switch (cropConfig.getCropMode()) {
                     case ITEM_DISPLAY -> {
                         ItemDisplay itemDisplay = CustomCrops.getInstance().getPlatformInterface().placeItemDisplay(crop_loc, cropPlantEvent.getCropModel());
-                        if (itemDisplay != null && cropConfig.isRotationEnabled()) itemDisplay.setRotation(RotationUtils.getRandomFloatRotation(), itemDisplay.getLocation().getPitch());
+                        if (itemDisplay == null)
+                            return true;
+                        if (cropConfig.isRotationEnabled())
+                            itemDisplay.setRotation(RotationUtils.getRandomFloatRotation(), itemDisplay.getLocation().getPitch());
                     }
                     case ITEM_FRAME -> {
                         ItemFrame itemFrame = CustomCrops.getInstance().getPlatformInterface().placeItemFrame(crop_loc, cropPlantEvent.getCropModel());
-                        if (itemFrame != null && cropConfig.isRotationEnabled()) itemFrame.setRotation(RotationUtils.getRandomRotation());
+                        if (itemFrame == null)
+                            return true;
+                        if (cropConfig.isRotationEnabled())
+                            itemFrame.setRotation(RotationUtils.getRandomRotation());
                     }
                     case TRIPWIRE -> CustomCrops.getInstance().getPlatformInterface().placeTripWire(crop_loc, cropPlantEvent.getCropModel());
                 }
 
+                Action[] plantActions = cropConfig.getPlantActions();
+                if (plantActions != null) {
+                    for (Action action : plantActions) {
+                        action.doOn(
+                                player,
+                                SimpleLocation.getByBukkitLocation(crop_loc),
+                                cropConfig.getCropMode()
+                        );
+                    }
+                }
+                player.swingMainHand();
+                if (player.getGameMode() != GameMode.CREATIVE) item_in_hand.setAmount(item_in_hand.getAmount() - 1);
                 plugin.getWorldDataManager().addCropData(SimpleLocation.getByBukkitLocation(crop_loc), new GrowingCrop(cropConfig.getKey(), cropPlantEvent.getPoint()), true);
                 return true;
             }

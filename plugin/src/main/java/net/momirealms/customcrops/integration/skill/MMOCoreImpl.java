@@ -18,11 +18,9 @@
 package net.momirealms.customcrops.integration.skill;
 
 import net.Indyuce.mmocore.MMOCore;
-import net.Indyuce.mmocore.api.MMOCoreAPI;
 import net.Indyuce.mmocore.api.player.PlayerData;
 import net.Indyuce.mmocore.experience.EXPSource;
 import net.Indyuce.mmocore.experience.Profession;
-import net.Indyuce.mmocore.manager.data.PlayerDataManager;
 import net.momirealms.customcrops.integration.SkillInterface;
 import org.bukkit.entity.Player;
 

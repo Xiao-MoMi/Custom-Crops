@@ -178,13 +178,17 @@ public class IntegrationManager extends Function {
         if (pluginManager.isPluginEnabled("ClueScrolls")) {
             ClueScrollCCQuest quest = new ClueScrollCCQuest(plugin);
             Bukkit.getPluginManager().registerEvents(quest, plugin);
+            hookMessage("ClueScrolls");
         }
         if (pluginManager.isPluginEnabled("BetonQuest")) {
             if (Bukkit.getPluginManager().getPlugin("BetonQuest").getDescription().getVersion().startsWith("2")) BetonQuestCCQuest.register();
             else LegacyBetonQuestCCQuest.register();
+            hookMessage("BetonQuest");
         }
         if (pluginManager.isPluginEnabled("BattlePass")) {
-            BattlePassCCQuest.register();
+            BattlePassCCQuest battlePassCCQuest = new BattlePassCCQuest();
+            Bukkit.getPluginManager().registerEvents(battlePassCCQuest, plugin);
+            hookMessage("BattlePass");
         }
     }
 

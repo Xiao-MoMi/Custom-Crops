@@ -67,7 +67,9 @@ public class ItemsAdderPluginImpl implements PlatformInterface {
         if (entity instanceof ItemFrame itemFrame)
             return itemFrame;
         else {
-            AdventureUtils.consoleMessage("<red>[CustomCrops] ItemFrame not exists: " + id);
+            AdventureUtils.consoleMessage("<red>[CustomCrops] ItemFrame not placed: " + id + ". " +
+                    "If you are sure that you are using the right item type, " +
+                    "please set max max-furniture-vehicles-per-chunk to a higher value in IA config.yml.");
             customFurniture.remove(false);
         }
         return null;
@@ -85,7 +87,9 @@ public class ItemsAdderPluginImpl implements PlatformInterface {
         if (entity instanceof ItemDisplay itemDisplay)
             return itemDisplay;
         else {
-            AdventureUtils.consoleMessage("<red>[CustomCrops] ItemDisplay not exists: " + id);
+            AdventureUtils.consoleMessage("<red>[CustomCrops] ItemFrame not placed: " + id + ". " +
+                    "If you are sure that you are using the right item type, " +
+                    "please set max max-furniture-vehicles-per-chunk to a higher value in IA config.yml.");
             customFurniture.remove(false);
         }
         return null;
