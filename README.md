@@ -24,7 +24,7 @@ public class YourClass {
         api = CustomCropsAPI.getInstance();
     }
     
-    public yourMethod() {
+    public void yourMethod() {
         api.xxx();
     }
 }
