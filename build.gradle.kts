@@ -8,7 +8,7 @@ plugins {
 allprojects {
 
     project.group = "net.momirealms"
-    project.version = "3.3.1.4"
+    project.version = "3.3.1.5"
 
     apply<JavaPlugin>()
     apply(plugin = "java")
@@ -70,13 +70,6 @@ subprojects {
 
     tasks.javadoc.configure {
         options.quiet()
-    }
-
-    if ("api" == project.name) {
-        java {
-            withSourcesJar()
-            withJavadocJar()
-        }
     }
 }
 

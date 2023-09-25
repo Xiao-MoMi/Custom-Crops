@@ -208,6 +208,7 @@ public class ConfigUtils {
                 ConfigurationSection actionSec = innerSec.getConfigurationSection("actions");
                 switch (type) {
                     case "biome" -> requirements.add(new BiomeImpl(msg, getActions(actionSec), new HashSet<>(innerSec.getStringList("value"))));
+                    case "!biome" -> requirements.add(new BlackBiomeImpl(msg, getActions(actionSec), new HashSet<>(innerSec.getStringList("value"))));
                     case "weather" -> requirements.add(new WeatherImpl(msg, getActions(actionSec), innerSec.getStringList("value").toArray(new String[0])));
                     case "ypos" -> requirements.add(new YPosImpl(msg, getActions(actionSec), innerSec.getStringList("value")));
                     case "season" -> {

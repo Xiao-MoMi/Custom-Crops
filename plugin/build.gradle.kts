@@ -28,7 +28,7 @@ dependencies {
     implementation("net.kyori:adventure-platform-bukkit:4.3.0")
     implementation("net.kyori:adventure-text-minimessage:4.14.0")
     implementation("net.kyori:adventure-text-serializer-legacy:4.14.0")
-    implementation("de.tr7zw:item-nbt-api:2.11.3")
+    implementation("de.tr7zw:item-nbt-api:2.12.0")
     implementation("org.bstats:bstats-bukkit:3.0.1")
     implementation(files("libs/BiomeAPI.jar", "libs/ProtectionLib.jar"))
 }

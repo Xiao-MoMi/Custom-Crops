@@ -19,19 +19,20 @@ package net.momirealms.customcrops.integration.quest;
 
 import io.github.battlepass.BattlePlugin;
 import io.github.battlepass.api.events.server.PluginReloadEvent;
-import io.github.battlepass.quests.service.base.ExternalQuestContainer;
-import io.github.battlepass.registry.quest.QuestRegistry;
+import net.advancedplugins.bp.impl.actions.ActionRegistry;
+import net.advancedplugins.bp.impl.actions.external.executor.ActionQuestExecutor;
 import net.momirealms.customcrops.api.event.CropBreakEvent;
 import net.momirealms.customcrops.api.event.CropPlantEvent;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.plugin.java.JavaPlugin;
 
 public class BattlePassCCQuest implements Listener {
 
     public static void register() {
-        QuestRegistry questRegistry = BattlePlugin.getApi().getQuestRegistry();
-        questRegistry.hook("customcrops", CropQuest::new);
+        ActionRegistry actionRegistry = BattlePlugin.getPlugin().getActionRegistry();
+        actionRegistry.hook("customcrops", CropQuest::new);
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -39,9 +40,9 @@ public class BattlePassCCQuest implements Listener {
         register();
     }
 
-    private static class CropQuest extends ExternalQuestContainer {
+    private static class CropQuest extends ActionQuestExecutor {
 
-        public CropQuest(BattlePlugin battlePlugin) {
+        public CropQuest(JavaPlugin battlePlugin) {
             super(battlePlugin, "customcrops");
         }
 
