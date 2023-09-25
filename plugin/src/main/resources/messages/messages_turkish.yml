@@ -1,7 +1,7 @@
 # https://docs.advntr.dev/minimessage/format.html
 messages:
   prefix: '<gradient:#ff206c:#fdee55>[CustomCrops] </gradient>'
-  reload: '<white>Yenilendi <green>{time}ms <white>sürdü.'
+  reload: '<white>Yenilendi! <green>{time}ms <white>sürdü.'
   invalid-args: '<white>Geçersiz argümanlar. (argüman örneği: /customcrops <argüman>)'
   no-console: '<white>Bu komut sadece bir oyuncu tarafından kullanılabilir.'
   not-online: '<white>{player} adındaki oyuncu aktif değil.'
@@ -20,6 +20,7 @@ messages:
   set-date: "<white>{world} adlı dünyanın tarihi başarıyla {date} ile değiştirildi."
   world-not-exist: '<white>{world} adında bir dünya bulunamadı.'
   season-not-exist: '<white>{season} adında bir mevsim bulunamadı.'
-  force-sprinkler-work: "<white>{world}'nin sulama sistemlerinin çalışmasını zorladı"
-  force-consume: "<white>{world}'nin tenceresindeki su miktarını azaltmayı ve kalan gübre kullanımını zorladı"
-  force-grow: "<white>Forced {world}'s crops to grow one point."
+  force-sprinkler-work: "<white>{world} adındaki dünyadaki sulayıcılar çalışmaya zorlandı."
+  force-consume: "<white>{world} adındaki dünyadaki saksıların su miktarının ve gübrelerin kalan kullanımın azaltılması zorlandı."
+  # Not sure about force-grow. Does that mean like growing in one direction?
+  force-grow: "<white>{world} adındaki dünyadaki ekinlerin bir yöne doğru büyümesi zorlandı."

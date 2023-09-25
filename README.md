@@ -12,7 +12,7 @@ https://polymart.org/resource/customcrops.2625
 
 ### How to compile
 
-Execute gradle build in your IDLE and get the jar in /build/libs folder
+./gradlew build and get the jar in /target folder
 
 ### API Guide
 ```access transformers
@@ -24,7 +24,7 @@ public class YourClass {
         api = CustomCropsAPI.getInstance();
     }
     
-    public yourMethod() {
+    public void yourMethod() {
         api.xxx();
     }
 }
