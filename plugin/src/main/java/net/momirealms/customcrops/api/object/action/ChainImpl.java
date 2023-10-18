@@ -18,6 +18,8 @@
 package net.momirealms.customcrops.api.object.action;
 
 import net.momirealms.customcrops.api.object.ItemMode;
+import net.momirealms.customcrops.api.object.requirement.CurrentState;
+import net.momirealms.customcrops.api.object.requirement.Requirement;
 import net.momirealms.customcrops.api.object.world.SimpleLocation;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
@@ -26,15 +28,25 @@ public class ChainImpl implements Action {
 
     private final Action[] actions;
     private final double chance;
+    private final Requirement[] requirements;
 
-    public ChainImpl(Action[] actions, double chance) {
+    public ChainImpl(Action[] actions, Requirement[] requirements, double chance) {
         this.actions = actions;
+        this.requirements = requirements;
         this.chance = chance;
     }
 
     @Override
     public void doOn(@Nullable Player player, @Nullable SimpleLocation cropLoc, ItemMode itemMode) {
         if (Math.random() < chance) {
+            if (requirements != null && player != null) {
+                var state = new CurrentState(cropLoc == null ? player.getLocation() : cropLoc.getBukkitLocation(), player);
+                for (Requirement requirement : requirements) {
+                    if (!requirement.isConditionMet(state)) {
+                        return;
+                    }
+                }
+            }
             for (Action action : actions) {
                 action.doOn(player, cropLoc, itemMode);
             }

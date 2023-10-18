@@ -353,6 +353,7 @@ public class ConfigUtils {
                     }
                     case "chain" -> actions.add(new ChainImpl(
                             getActions(actionSec.getConfigurationSection("value"), model_id),
+                            getRequirementsWithMsg(actionSec.getConfigurationSection("requirements")),
                             actionSec.getDouble("chance")
                     ));
                     case "swing-hand" -> actions.add(new SwingHandImpl());
