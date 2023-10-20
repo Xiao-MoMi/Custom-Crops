@@ -39,8 +39,8 @@ public class CropBreakEvent extends Event implements Cancellable {
 
     public CropBreakEvent(
             @Nullable Entity entity,
-            @NotNull String cropItemID,
             @NotNull String cropKey,
+            @NotNull String cropItemID,
             @NotNull Location location
     ) {
         this.entity = entity;

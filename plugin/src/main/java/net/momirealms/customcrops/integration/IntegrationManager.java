@@ -188,6 +188,7 @@ public class IntegrationManager extends Function {
         if (pluginManager.isPluginEnabled("BattlePass")) {
             BattlePassCCQuest battlePassCCQuest = new BattlePassCCQuest();
             Bukkit.getPluginManager().registerEvents(battlePassCCQuest, plugin);
+            BattlePassCCQuest.register();
             hookMessage("BattlePass");
         }
     }
