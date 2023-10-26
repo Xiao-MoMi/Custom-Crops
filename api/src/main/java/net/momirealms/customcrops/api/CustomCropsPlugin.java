@@ -21,9 +21,15 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public abstract class CustomCropsPlugin extends JavaPlugin {
 
+    protected static CustomCropsPlugin instance;
+
     protected CustomCropsAPI customCropsAPI;
 
     public CustomCropsAPI getAPI() {
         return customCropsAPI;
+    }
+
+    public static CustomCropsPlugin getInstance() {
+        return instance;
     }
 }

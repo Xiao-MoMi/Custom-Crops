@@ -80,6 +80,7 @@ public final class CustomCrops extends CustomCropsPlugin {
     @Override
     public void onLoad(){
         plugin = this;
+        instance = this;
         this.loadLibs();
         ProtectionLib.initialize(this);
     }

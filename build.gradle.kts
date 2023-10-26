@@ -57,9 +57,18 @@ allprojects {
 }
 
 subprojects {
+    tasks.processResources {
+        val props = mapOf("version" to version)
+        inputs.properties(props)
+        filteringCharset = "UTF-8"
+        filesMatching("*plugin.yml") {
+            expand(props)
+        }
+    }
 
     tasks.withType<JavaCompile> {
         options.encoding = "UTF-8"
+        options.release.set(17)
     }
 
     tasks.shadowJar {
@@ -68,8 +77,17 @@ subprojects {
         archiveFileName.set("CustomCrops-" + project.name + "-" + project.version + ".jar")
     }
 
-    tasks.javadoc.configure {
-        options.quiet()
+    if ("api" == project.name) {
+        publishing {
+            publications {
+                create<MavenPublication>("mavenJava") {
+                    groupId = "net.momirealms"
+                    artifactId = "CustomCrops"
+                    version = rootProject.version.toString()
+                    artifact(tasks.shadowJar)
+                }
+            }
+        }
     }
 }
 

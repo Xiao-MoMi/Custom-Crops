@@ -130,10 +130,6 @@ public interface CustomCropsAPI {
      */
     @Nullable
     static CustomCropsAPI getInstance() {
-        Plugin plugin = Bukkit.getPluginManager().getPlugin("CustomCrops");
-        if (plugin instanceof CustomCropsPlugin cc) {
-            return cc.getAPI();
-        }
-        return null;
+        return CustomCropsPlugin.getInstance().getAPI();
     }
 }
