@@ -2,7 +2,7 @@
 config-version: '34'
 # BStats
 metrics: true
-# Language: english / spanish / chinese / turkish / russian
+# Language: english / french / spanish / chinese / turkish / russian
 lang: english
 # Debug
 debug:
