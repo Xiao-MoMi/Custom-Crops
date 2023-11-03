@@ -22,7 +22,7 @@ Execute ".\gradlew build" and get the jar at /target/CustomFishing-plugin-versio
 #### IDE
 Import the project and execute gradle build action.
 
-## Use CustomFishing API
+## Use CustomCrops API
 
 ### Maven
 
