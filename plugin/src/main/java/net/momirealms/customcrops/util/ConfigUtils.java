@@ -252,6 +252,10 @@ public class ConfigUtils {
                             actionSec.getStringList("value").toArray(new String[0]),
                             actionSec.getDouble("chance", 1))
                     );
+                    case "actionbar" -> actions.add(new ActionBarImpl(
+                            actionSec.getString("value"),
+                            actionSec.getDouble("chance", 1))
+                    );
                     case "command" -> actions.add(new CommandActionImpl(
                             actionSec.getStringList("value").toArray(new String[0]),
                             actionSec.getDouble("chance", 1))

@@ -16,7 +16,7 @@ dependencies {
     compileOnly("net.Indyuce:MMOItems-API:6.9.2-SNAPSHOT")
     compileOnly("pers.neige.neigeitems:NeigeItems:1.14.23")
     compileOnly("com.github.Archy-X:AureliumSkills:Beta1.3.21")
-    compileOnly("com.willfp:EcoSkills:3.8.1")
+    compileOnly("com.willfp:EcoSkills:3.36.1")
     compileOnly("com.github.Zrips:Jobs:4.17.2")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7")
     compileOnly("com.comphenix.protocol:ProtocolLib:5.0.0")
@@ -25,10 +25,10 @@ dependencies {
 
     implementation(project(":api"))
     implementation("net.kyori:adventure-api:4.14.0")
-    implementation("net.kyori:adventure-platform-bukkit:4.3.1")
+    implementation("net.kyori:adventure-platform-bukkit:4.3.3-SNAPSHOT")
     implementation("net.kyori:adventure-text-minimessage:4.14.0")
     implementation("net.kyori:adventure-text-serializer-legacy:4.14.0")
-    implementation("de.tr7zw:item-nbt-api:2.12.0")
+    implementation("de.tr7zw:item-nbt-api:2.12.2")
     implementation("org.bstats:bstats-bukkit:3.0.1")
     implementation(files("libs/BiomeAPI.jar", "libs/ProtectionLib.jar"))
 }
