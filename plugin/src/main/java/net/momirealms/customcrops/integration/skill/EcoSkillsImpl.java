@@ -18,7 +18,6 @@
 package net.momirealms.customcrops.integration.skill;
 
 import com.willfp.ecoskills.api.EcoSkillsAPI;
-import com.willfp.ecoskills.skills.Skill;
 import com.willfp.ecoskills.skills.Skills;
 import net.momirealms.customcrops.integration.SkillInterface;
 import org.bukkit.entity.Player;

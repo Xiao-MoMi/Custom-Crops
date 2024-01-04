@@ -157,12 +157,12 @@ public class AdventureUtils {
                         case 'd' -> stringBuilder.append("<light_purple>");
                         case 'e' -> stringBuilder.append("<yellow>");
                         case 'f' -> stringBuilder.append("<white>");
-                        case 'r' -> stringBuilder.append("<reset><!italic>");
-                        case 'l' -> stringBuilder.append("<bold>");
-                        case 'm' -> stringBuilder.append("<strikethrough>");
-                        case 'o' -> stringBuilder.append("<italic>");
-                        case 'n' -> stringBuilder.append("<underlined>");
-                        case 'k' -> stringBuilder.append("<obfuscated>");
+                        case 'r' -> stringBuilder.append("<reset>");
+                        case 'l' -> stringBuilder.append("<b>");
+                        case 'm' -> stringBuilder.append("<st>");
+                        case 'o' -> stringBuilder.append("<i>");
+                        case 'n' -> stringBuilder.append("<u>");
+                        case 'k' -> stringBuilder.append("<obf>");
                         case 'x' -> {
                             if (i + 13 >= chars.length
                                     || !isColorCode(chars[i+2])

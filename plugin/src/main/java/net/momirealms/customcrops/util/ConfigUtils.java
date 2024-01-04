@@ -302,6 +302,7 @@ public class ConfigUtils {
                     case "drop-items" -> {
                         ConfigurationSection lootSec = actionSec.getConfigurationSection("value");
                         if (lootSec == null) continue;
+                        boolean directToInv = lootSec.getBoolean("to-inventory", false);
                         ArrayList<Loot> loots = new ArrayList<>();
                         if (lootSec.contains("quality-crops")) {
                             String[] qualityLoots = new String[ConfigManager.defaultRatio.length];
@@ -330,7 +331,7 @@ public class ConfigUtils {
                                 loots.add(otherLoot);
                             }
                         }
-                        actions.add(new DropItemImpl(loots.toArray(new Loot[0])));
+                        actions.add(new DropItemImpl(loots.toArray(new Loot[0]), directToInv));
                     }
                     case "break" -> actions.add(new BreakImpl(
                             actionSec.getBoolean("value", true),

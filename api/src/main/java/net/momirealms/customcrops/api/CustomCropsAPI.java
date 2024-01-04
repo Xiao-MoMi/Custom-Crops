@@ -21,10 +21,8 @@ import net.momirealms.customcrops.api.object.CCGrowingCrop;
 import net.momirealms.customcrops.api.object.CCPot;
 import net.momirealms.customcrops.api.object.CCSprinkler;
 import net.momirealms.customcrops.api.object.CCWorldSeason;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.plugin.Plugin;
 
 import javax.annotation.Nullable;
 

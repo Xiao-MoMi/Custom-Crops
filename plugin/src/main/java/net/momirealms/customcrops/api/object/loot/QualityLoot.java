@@ -24,6 +24,7 @@ import net.momirealms.customcrops.api.object.fertilizer.Quality;
 import net.momirealms.customcrops.api.object.fertilizer.YieldIncrease;
 import net.momirealms.customcrops.api.object.pot.Pot;
 import net.momirealms.customcrops.api.object.world.SimpleLocation;
+import net.momirealms.customcrops.util.ItemUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -39,7 +40,7 @@ public class QualityLoot extends Loot {
     }
 
     @Override
-    public void drop(Player player, Location location) {
+    public void drop(Player player, Location location, boolean toInv) {
         SimpleLocation simpleLocation = SimpleLocation.getByBukkitLocation(location);
         Pot pot = CustomCrops.getInstance().getWorldDataManager().getPotData(simpleLocation.add(0,-1,0));
         int amount = getAmount(player);
@@ -56,16 +57,24 @@ public class QualityLoot extends Loot {
             double random = Math.random();
             for (int j = 0; j < qualityRatio.length; j++) {
                 if (random < qualityRatio[j]) {
-                    dropItem(location, qualityLoots[j], player);
+                    dropItem(location, qualityLoots[j], player, toInv);
                     break;
                 }
             }
         }
     }
 
-    private void dropItem(Location location, String id, Player player) {
+    private void dropItem(Location location, String id, Player player, boolean toInv) {
         ItemStack drop = CustomCrops.getInstance().getIntegrationManager().build(id, player);
         if (drop.getType() == Material.AIR) return;
-        location.getWorld().dropItemNaturally(location, drop);
+        if (toInv) {
+            int remain = ItemUtils.putLootsToBag(player.getInventory(), drop, drop.getAmount());
+            if (remain > 0) {
+                drop.setAmount(remain);
+                location.getWorld().dropItemNaturally(location, drop);
+            }
+        } else {
+            location.getWorld().dropItemNaturally(location, drop);
+        }
     }
 }

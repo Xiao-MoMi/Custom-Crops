@@ -38,9 +38,7 @@ public abstract class Loot {
         this.max = max;
     }
 
-    public void drop(@Nullable Player player, Location location) {
-        //empty
-    }
+    public abstract void drop(@Nullable Player player, Location location, boolean toInv);
 
     public int getMin() {
         return min;

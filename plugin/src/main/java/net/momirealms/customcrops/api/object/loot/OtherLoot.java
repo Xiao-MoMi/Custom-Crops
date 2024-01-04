@@ -21,6 +21,7 @@ import net.momirealms.customcrops.CustomCrops;
 import net.momirealms.customcrops.api.object.fertilizer.YieldIncrease;
 import net.momirealms.customcrops.api.object.pot.Pot;
 import net.momirealms.customcrops.api.object.world.SimpleLocation;
+import net.momirealms.customcrops.util.ItemUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -45,7 +46,8 @@ public class OtherLoot extends Loot {
         return chance;
     }
 
-    public void drop(Player player, Location location) {
+    @Override
+    public void drop(Player player, Location location, boolean toInv) {
         if (Math.random() < getChance()) {
             int random = getAmount(player);
             Pot pot = CustomCrops.getInstance().getWorldDataManager().getPotData(SimpleLocation.getByBukkitLocation(location).add(0,-1,0));
@@ -55,7 +57,16 @@ public class OtherLoot extends Loot {
             ItemStack drop = CustomCrops.getInstance().getIntegrationManager().build(getItemID(), player);
             if (drop.getType() == Material.AIR) return;
             drop.setAmount(random);
-            location.getWorld().dropItemNaturally(location, drop);
+
+            if (toInv) {
+                int remain = ItemUtils.putLootsToBag(player.getInventory(), drop, drop.getAmount());
+                if (remain > 0) {
+                    drop.setAmount(remain);
+                    location.getWorld().dropItemNaturally(location, drop);
+                }
+            } else {
+                location.getWorld().dropItemNaturally(location, drop);
+            }
         }
     }
 }

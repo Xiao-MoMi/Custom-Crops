@@ -24,19 +24,19 @@ import net.momirealms.customcrops.api.object.world.SimpleLocation;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
-public record DropItemImpl(Loot[] loots) implements Action {
+public record DropItemImpl(Loot[] loots, boolean toInv) implements Action {
 
     @Override
     public void doOn(@Nullable Player player, @Nullable SimpleLocation cropLoc, ItemMode itemMode) {
         if (cropLoc == null) return;
         if (player != null) {
             for (Loot loot : loots) {
-                loot.drop(player, cropLoc.getBukkitLocation());
+                loot.drop(player, cropLoc.getBukkitLocation(), toInv);
             }
         } else {
             CustomCrops.getInstance().getScheduler().runTask(() -> {
                 for (Loot loot : loots) {
-                    loot.drop(null, cropLoc.getBukkitLocation());
+                    loot.drop(null, cropLoc.getBukkitLocation(), toInv);
                 }
             });
         }
