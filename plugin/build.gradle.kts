@@ -20,16 +20,16 @@ dependencies {
     compileOnly("com.github.Zrips:Jobs:4.17.2")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7")
     compileOnly("com.comphenix.protocol:ProtocolLib:5.0.0")
-    compileOnly("pl.betoncraft:betonquest:1.12.10")
     compileOnly("net.Indyuce:MMOCore-API:1.12-SNAPSHOT")
+    compileOnly("org.betonquest:betonquest:2.0.0")
 
     implementation(project(":api"))
-    implementation("net.kyori:adventure-api:4.14.0")
+    implementation("net.kyori:adventure-api:4.15.0")
     implementation("net.kyori:adventure-platform-bukkit:4.3.3-SNAPSHOT")
-    implementation("net.kyori:adventure-text-minimessage:4.14.0")
-    implementation("net.kyori:adventure-text-serializer-legacy:4.14.0")
+    implementation("net.kyori:adventure-text-minimessage:4.15.0")
+    implementation("net.kyori:adventure-text-serializer-legacy:4.15.0")
     implementation("de.tr7zw:item-nbt-api:2.12.2")
-    implementation("org.bstats:bstats-bukkit:3.0.1")
+    implementation("org.bstats:bstats-bukkit:3.0.2")
     implementation(files("libs/BiomeAPI.jar", "libs/ProtectionLib.jar"))
 }
 

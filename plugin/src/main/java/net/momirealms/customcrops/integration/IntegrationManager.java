@@ -30,7 +30,6 @@ import net.momirealms.customcrops.integration.papi.PlaceholderManager;
 import net.momirealms.customcrops.integration.quest.BattlePassCCQuest;
 import net.momirealms.customcrops.integration.quest.BetonQuestCCQuest;
 import net.momirealms.customcrops.integration.quest.ClueScrollCCQuest;
-import net.momirealms.customcrops.integration.quest.LegacyBetonQuestCCQuest;
 import net.momirealms.customcrops.integration.season.CustomCropsSeasonImpl;
 import net.momirealms.customcrops.integration.season.RealisticSeasonsImpl;
 import net.momirealms.customcrops.integration.skill.AureliumsImpl;
@@ -181,8 +180,7 @@ public class IntegrationManager extends Function {
             hookMessage("ClueScrolls");
         }
         if (pluginManager.isPluginEnabled("BetonQuest")) {
-            if (Bukkit.getPluginManager().getPlugin("BetonQuest").getDescription().getVersion().startsWith("2")) BetonQuestCCQuest.register();
-            else LegacyBetonQuestCCQuest.register();
+            BetonQuestCCQuest.register();
             hookMessage("BetonQuest");
         }
         if (pluginManager.isPluginEnabled("BattlePass")) {
