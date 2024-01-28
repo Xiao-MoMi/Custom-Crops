@@ -22,6 +22,7 @@ import de.tr7zw.changeme.nbtapi.NBTItem;
 import io.th0rgal.oraxen.api.OraxenBlocks;
 import io.th0rgal.oraxen.api.OraxenFurniture;
 import io.th0rgal.oraxen.api.OraxenItems;
+import io.th0rgal.oraxen.api.events.furniture.OraxenFurnitureInteractEvent;
 import io.th0rgal.oraxen.items.ItemBuilder;
 import io.th0rgal.oraxen.mechanics.Mechanic;
 import io.th0rgal.oraxen.mechanics.provided.gameplay.block.BlockMechanic;
@@ -73,7 +74,7 @@ public class OraxenPluginImpl implements PlatformInterface {
             AdventureUtils.consoleMessage("<red>[CustomCrops] Furniture not exists: " + id);
             return null;
         }
-        Entity entity = mechanic.place(location, 0, BlockFace.UP);
+        Entity entity = mechanic.place(location, 0f, BlockFace.UP);
         if (entity instanceof ItemFrame itemFrame)
             return itemFrame;
         else {

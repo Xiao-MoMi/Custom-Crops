@@ -40,23 +40,16 @@ public class WorldDataManager extends Function {
     private final ConcurrentHashMap<String, CCWorld> worldMap;
     private final CustomCrops plugin;
     private final WorldListener worldListener;
-    private SlimeWorldListener slimeWorldListener;
 
     public WorldDataManager(CustomCrops plugin) {
         this.plugin = plugin;
         this.worldMap = new ConcurrentHashMap<>();
         this.worldListener = new WorldListener(this);
-        try {
-            Class.forName("com.infernalsuite.aswm.api.world.SlimeWorld");
-            this.slimeWorldListener = new SlimeWorldListener(this);
-        } catch (ClassNotFoundException ignored) {
-        }
     }
 
     @Override
     public void load() {
         Bukkit.getPluginManager().registerEvents(worldListener, plugin);
-        if (slimeWorldListener != null) Bukkit.getPluginManager().registerEvents(slimeWorldListener, plugin);
         for (CCWorld ccWorld : worldMap.values()) {
             ccWorld.load();
         }
@@ -65,7 +58,6 @@ public class WorldDataManager extends Function {
     @Override
     public void unload() {
         HandlerList.unregisterAll(worldListener);
-        if (slimeWorldListener != null) HandlerList.unregisterAll(slimeWorldListener);
         for (CCWorld ccWorld : worldMap.values()) {
             ccWorld.unload();
         }
