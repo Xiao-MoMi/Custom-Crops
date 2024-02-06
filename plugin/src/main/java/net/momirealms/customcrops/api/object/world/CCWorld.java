@@ -108,6 +108,10 @@ public class CCWorld extends Function {
         if (!chunksFolder.exists()) chunksFolder.mkdirs();
         if (!ConfigManager.onlyInLoadedChunks) {
             loadAllChunkData();
+        } else {
+            for (Chunk chunk : Objects.requireNonNull(world.get()).getLoadedChunks()) {
+                loadChunk(ChunkCoordinate.getByBukkitChunk(chunk));
+            }
         }
     }
 
