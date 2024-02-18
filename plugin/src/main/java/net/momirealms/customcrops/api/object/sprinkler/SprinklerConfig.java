@@ -40,6 +40,7 @@ public class SprinklerConfig {
     private final SprinklerAnimation sprinklerAnimation;
     private final Requirement[] requirements;
     private final int water;
+    private boolean infinite;
 
     public SprinklerConfig(
             String key,
@@ -54,7 +55,8 @@ public class SprinklerConfig {
             @NotNull PassiveFillMethod[] passiveFillMethods,
             @Nullable WaterAmountHologram waterAmountHologram,
             SprinklerAnimation sprinklerAnimation,
-            @Nullable Requirement[] requirements
+            @Nullable Requirement[] requirements,
+            boolean infinite
     ) {
         this.key = key;
         this.storage = storage;
@@ -69,6 +71,7 @@ public class SprinklerConfig {
         this.sprinklerAnimation = sprinklerAnimation;
         this.waterAmountHologram = waterAmountHologram;
         this.requirements = requirements;
+        this.infinite = infinite;
     }
 
     public String getKey() {
@@ -125,6 +128,10 @@ public class SprinklerConfig {
 
     public int getWaterFillAbility() {
         return water;
+    }
+
+    public boolean isInfinite() {
+        return infinite;
     }
 
     @Nullable

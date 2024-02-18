@@ -36,6 +36,7 @@ import net.momirealms.customcrops.customplugin.PlatformInterface;
 import net.momirealms.customcrops.util.AdventureUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Rotation;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
@@ -88,17 +89,26 @@ public class OraxenPluginImpl implements PlatformInterface {
     @Nullable
     @Override
     public ItemDisplay placeItemDisplay(Location location, String id) {
-        FurnitureMechanic mechanic = (FurnitureMechanic) FurnitureFactory.getInstance().getMechanic(id);
-        if (mechanic == null) {
-            AdventureUtils.consoleMessage("<red>[CustomCrops] Furniture not exists: " + id);
-            return null;
-        }
-        Entity entity = mechanic.place(location);
+//        FurnitureMechanic mechanic = (FurnitureMechanic) FurnitureFactory.getInstance().getMechanic(id);
+//        if (mechanic == null) {
+//            AdventureUtils.consoleMessage("<red>[CustomCrops] Furniture not exists: " + id);
+//            return null;
+//        }
+//        Entity entity = mechanic.place(location);
+//        if (entity instanceof ItemDisplay itemDisplay)
+//            return itemDisplay;
+//        else {
+//            AdventureUtils.consoleMessage("<red>[CustomCrops] ItemDisplay not exists: " + id);
+//            // use oraxen method to remove sub entities
+//            OraxenFurniture.remove(entity, null);
+//            return null;
+//        }
+
+        Entity entity = OraxenFurniture.place(id, location, Rotation.NONE, BlockFace.UP);
         if (entity instanceof ItemDisplay itemDisplay)
             return itemDisplay;
         else {
             AdventureUtils.consoleMessage("<red>[CustomCrops] ItemDisplay not exists: " + id);
-            // use oraxen method to remove sub entities
             OraxenFurniture.remove(entity, null);
             return null;
         }

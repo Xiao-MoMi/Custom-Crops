@@ -535,10 +535,12 @@ public class CCWorld extends Function {
                 return;
             }
 
-            int water = sprinkler.getWater();
-            sprinkler.setWater(--water);
-            if (water <= 0) {
-                removeSprinklerData(simpleLocation);
+            if (!sprinklerConfig.isInfinite()) {
+                int water = sprinkler.getWater();
+                sprinkler.setWater(--water);
+                if (water <= 0) {
+                    removeSprinklerData(simpleLocation);
+                }
             }
 
             SprinklerAnimation sprinklerAnimation = sprinklerConfig.getSprinklerAnimation();

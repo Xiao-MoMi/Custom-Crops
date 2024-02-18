@@ -44,12 +44,14 @@ import net.momirealms.customcrops.api.object.wateringcan.WateringCanConfig;
 import net.momirealms.customcrops.api.object.world.SimpleLocation;
 import net.momirealms.customcrops.customplugin.itemsadder.ItemsAdderHandler;
 import net.momirealms.customcrops.customplugin.oraxen.OraxenHandler;
+import net.momirealms.customcrops.helper.Log;
 import net.momirealms.customcrops.util.AdventureUtils;
 import net.momirealms.customcrops.util.RotationUtils;
 import net.momirealms.protectionlib.ProtectionLib;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.Waterlogged;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.ItemDisplay;
 import org.bukkit.entity.ItemFrame;
@@ -543,6 +545,11 @@ public class PlatformManager extends Function {
 
         if (player.getGameMode() != GameMode.CREATIVE) item_in_hand.setAmount(item_in_hand.getAmount() - 1);
         CustomCrops.getInstance().getPlatformInterface().placeCustomItem(sprinkler_loc, sprinklerConfig.getThreeD(), sprinklerConfig.getItemMode());
+
+        if (sprinklerConfig.isInfinite()) {
+            plugin.getWorldDataManager().addWaterToSprinkler(SimpleLocation.getByBukkitLocation(location), -1, sprinklerConfig);
+        }
+
         if (sprinklerConfig.getSound() != null) {
             AdventureUtils.playerSound(player, sprinklerConfig.getSound());
         }
@@ -1058,12 +1065,10 @@ public class PlatformManager extends Function {
 
         outer: {
             if (id != null && location != null) {
-
                 if (!ProtectionLib.canPlace(player, location))
                     return true;
                 if (!wateringCanConfig.canUse(player, location))
                     return true;
-
                 for (PositiveFillMethod positiveFillMethod : wateringCanConfig.getPositiveFillMethods()) {
                     if (positiveFillMethod.getId().equals(id)) {
                         add = positiveFillMethod.getAmount();
@@ -1079,7 +1084,15 @@ public class PlatformManager extends Function {
             }
 
             List<Block> lineOfSight = player.getLineOfSight(null, 5);
-            List<String> blockIds = lineOfSight.stream().map(block -> plugin.getPlatformInterface().getBlockID(block)).toList();
+            List<String> blockIds = lineOfSight.stream().map(block -> {
+                if (block == null) {
+                    return "AIR";
+                }
+                if (block.getBlockData() instanceof Waterlogged waterlogged && waterlogged.isWaterlogged()) {
+                    return "WATER";
+                }
+                return plugin.getPlatformInterface().getBlockID(block);
+            }).toList();
 
             for (PositiveFillMethod positiveFillMethod : wateringCanConfig.getPositiveFillMethods()) {
                 int index = 0;

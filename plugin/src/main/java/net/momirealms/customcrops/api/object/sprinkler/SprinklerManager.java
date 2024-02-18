@@ -130,8 +130,8 @@ public class SprinklerManager extends Function implements Listener {
                                 sprinklerSec.getDouble("animation.vertical-offset"),
                                 ItemMode.valueOf(sprinklerSec.getString("animation.type", "ARMOR_STAND").toUpperCase(Locale.ENGLISH))
                         ) : null,
-                        ConfigUtils.getRequirementsWithMsg(sprinklerSec.getConfigurationSection("requirements"))
-                        );
+                        ConfigUtils.getRequirementsWithMsg(sprinklerSec.getConfigurationSection("requirements")),
+                        sprinklerSec.getBoolean("infinite", false));
                 this.itemToKey.put(threeD, key);
                 if (twoD != null) this.itemToKey.put(twoD, key);
                 this.sprinklerConfigMap.put(key, sprinklerConfig);
