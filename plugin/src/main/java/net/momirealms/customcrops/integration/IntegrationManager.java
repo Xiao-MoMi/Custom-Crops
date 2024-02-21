@@ -30,6 +30,7 @@ import net.momirealms.customcrops.integration.papi.PlaceholderManager;
 import net.momirealms.customcrops.integration.quest.BattlePassCCQuest;
 import net.momirealms.customcrops.integration.quest.BetonQuestCCQuest;
 import net.momirealms.customcrops.integration.quest.ClueScrollCCQuest;
+import net.momirealms.customcrops.integration.season.AdvancedSeasonsImpl;
 import net.momirealms.customcrops.integration.season.CustomCropsSeasonImpl;
 import net.momirealms.customcrops.integration.season.RealisticSeasonsImpl;
 import net.momirealms.customcrops.integration.skill.AureliumsImpl;
@@ -115,6 +116,10 @@ public class IntegrationManager extends Function {
             this.seasonInterface = new RealisticSeasonsImpl();
             ConfigManager.rsHook = true;
             hookMessage("RealisticSeasons");
+        } else if (pluginManager.isPluginEnabled("AdvancedSeasons")) {
+            this.seasonInterface = new AdvancedSeasonsImpl();
+            ConfigManager.rsHook = true;
+            hookMessage("AdvancedSeasons");
         } else {
             this.seasonInterface = new CustomCropsSeasonImpl();
         }

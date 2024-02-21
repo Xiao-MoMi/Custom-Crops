@@ -18,9 +18,9 @@ worlds:
   # Requires a restart when changing mode or editing world list for the safety of data
   # 模式：白名单/黑名单
   # 修改本栏需要重启服务器
-  mode: whitelist
+  mode: blacklist
   list:
-    - world
+    - blacklist_world
 
 schedule-system:
   # If disabled, you can do that manually with command /customcrops force [consume/sprinklerwork/cropgrow] or API methods
