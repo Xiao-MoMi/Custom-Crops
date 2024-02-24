@@ -2,6 +2,7 @@ package net.momirealms.customcrops.mechanic.item.custom;
 
 import net.momirealms.customcrops.mechanic.item.ItemManagerImpl;
 import org.bukkit.Location;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
@@ -9,6 +10,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.jetbrains.annotations.Nullable;
@@ -64,6 +66,20 @@ public abstract class AbstractCustomListener implements Listener {
         );
     }
 
+    @EventHandler (ignoreCancelled = true)
+    public void onPlaceBlock(BlockPlaceEvent event) {
+        onPlaceBlock(
+                event.getPlayer(),
+                event.getBlock(),
+                event.getBlockPlaced().getType().name(),
+                event
+        );
+    }
+
+    public void onPlaceBlock(Player player, Block block, String blockID, Cancellable event) {
+        this.itemManager.handlePlayerPlaceBlock(player, block, blockID, event);
+    }
+
     /**
      * CustomCrops only reads necessary data from the event and would not modify it
      */
@@ -81,4 +97,5 @@ public abstract class AbstractCustomListener implements Listener {
     public void onInteractFurniture(Player player, Location location, String id, @Nullable Entity baseEntity, Cancellable event) {
         this.itemManager.handlePlayerInteractFurniture(player, location, id, baseEntity, event);
     }
+
 }

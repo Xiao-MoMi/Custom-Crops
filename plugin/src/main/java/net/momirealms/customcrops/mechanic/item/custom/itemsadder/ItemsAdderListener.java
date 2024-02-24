@@ -1,9 +1,9 @@
 package net.momirealms.customcrops.mechanic.item.custom.itemsadder;
 
 import dev.lone.itemsadder.api.CustomFurniture;
+import dev.lone.itemsadder.api.Events.CustomBlockPlaceEvent;
 import dev.lone.itemsadder.api.Events.FurnitureBreakEvent;
 import dev.lone.itemsadder.api.Events.FurnitureInteractEvent;
-import dev.lone.itemsadder.api.Events.FurniturePlaceEvent;
 import dev.lone.itemsadder.api.Events.FurniturePlaceSuccessEvent;
 import net.momirealms.customcrops.mechanic.item.ItemManagerImpl;
 import net.momirealms.customcrops.mechanic.item.custom.AbstractCustomListener;
@@ -14,6 +14,16 @@ public class ItemsAdderListener extends AbstractCustomListener {
 
     public ItemsAdderListener(ItemManagerImpl itemManager) {
         super(itemManager);
+    }
+
+    @EventHandler (ignoreCancelled = true)
+    public void onPlaceCustomBlock(CustomBlockPlaceEvent event) {
+        super.onPlaceBlock(
+                event.getPlayer(),
+                event.getBlock(),
+                event.getNamespacedID(),
+                event
+        );
     }
 
     @EventHandler (ignoreCancelled = true)

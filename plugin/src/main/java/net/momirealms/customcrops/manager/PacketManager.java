@@ -29,19 +29,19 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class PacketManagerImpl {
+public class PacketManager {
 
-    private static PacketManagerImpl instance;
+    private static PacketManager instance;
     private final ProtocolManager protocolManager;
     private final CustomCropsPlugin plugin;
 
-    public PacketManagerImpl(CustomCropsPlugin plugin) {
+    public PacketManager(CustomCropsPlugin plugin) {
         this.plugin = plugin;
         this.protocolManager = ProtocolLibrary.getProtocolManager();
         instance = this;
     }
 
-    public static PacketManagerImpl getInstance() {
+    public static PacketManager getInstance() {
         return instance;
     }
 

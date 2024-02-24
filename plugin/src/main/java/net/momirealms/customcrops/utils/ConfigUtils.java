@@ -10,10 +10,10 @@ import net.momirealms.customcrops.api.mechanic.action.Action;
 import net.momirealms.customcrops.api.mechanic.action.ActionTrigger;
 import net.momirealms.customcrops.api.mechanic.item.FertilizerType;
 import net.momirealms.customcrops.api.mechanic.item.water.PassiveFillMethod;
+import net.momirealms.customcrops.api.mechanic.item.water.PositiveFillMethod;
 import net.momirealms.customcrops.api.mechanic.misc.Value;
 import net.momirealms.customcrops.api.mechanic.requirement.Requirement;
 import net.momirealms.customcrops.api.mechanic.world.level.WorldSetting;
-import net.momirealms.customcrops.api.mechanic.item.water.PositiveFillMethod;
 import net.momirealms.customcrops.mechanic.misc.value.ExpressionValue;
 import net.momirealms.customcrops.mechanic.misc.value.PlainValue;
 import net.objecthunter.exp4j.ExpressionBuilder;
@@ -181,7 +181,8 @@ public class ConfigUtils {
                     PositiveFillMethod fillMethod = new PositiveFillMethod(
                             Preconditions.checkNotNull(innerSection.getString("target"), "fill-method target should not be null"),
                             innerSection.getInt("amount", 1),
-                            getActions(innerSection.getConfigurationSection("actions"))
+                            getActions(innerSection.getConfigurationSection("actions")),
+                            getRequirements(innerSection.getConfigurationSection("requirements"))
                     );
                     methods.add(fillMethod);
                 }
@@ -201,7 +202,8 @@ public class ConfigUtils {
                             innerSection.getString("return"),
                             innerSection.getInt("return-amount", 1),
                             innerSection.getInt("amount", 1),
-                            getActions(innerSection.getConfigurationSection("actions"))
+                            getActions(innerSection.getConfigurationSection("actions")),
+                            getRequirements(innerSection.getConfigurationSection("requirements"))
                     );
                     methods.add(fillMethod);
                 }

@@ -3,6 +3,7 @@ package net.momirealms.customcrops.api.mechanic.item;
 import net.momirealms.customcrops.api.common.item.KeyItem;
 import net.momirealms.customcrops.api.mechanic.action.ActionTrigger;
 import net.momirealms.customcrops.api.mechanic.item.water.PassiveFillMethod;
+import net.momirealms.customcrops.api.mechanic.requirement.Requirement;
 import net.momirealms.customcrops.api.mechanic.requirement.State;
 
 import java.util.HashSet;
@@ -22,4 +23,10 @@ public interface Pot extends KeyItem {
     String getDryItem();
 
     String getWetItem();
+
+    Requirement[] getPlaceRequirements();
+
+    Requirement[] getBreakRequirements();
+
+    Requirement[] getUseRequirements();
 }

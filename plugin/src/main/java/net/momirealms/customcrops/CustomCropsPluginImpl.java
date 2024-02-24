@@ -9,8 +9,9 @@ import net.momirealms.customcrops.libraries.classpath.ReflectionClassPathAppende
 import net.momirealms.customcrops.libraries.dependencies.Dependency;
 import net.momirealms.customcrops.libraries.dependencies.DependencyManager;
 import net.momirealms.customcrops.libraries.dependencies.DependencyManagerImpl;
-import net.momirealms.customcrops.manager.VersionManagerImpl;
 import net.momirealms.customcrops.manager.ConfigManagerImpl;
+import net.momirealms.customcrops.manager.PacketManager;
+import net.momirealms.customcrops.manager.VersionManagerImpl;
 import org.bukkit.Bukkit;
 
 import java.lang.reflect.Field;
@@ -20,6 +21,7 @@ import java.util.List;
 public class CustomCropsPluginImpl extends CustomCropsPlugin {
 
     private DependencyManager dependencyManager;
+    private PacketManager packetManager;
 
     @Override
     public void onLoad() {
@@ -44,6 +46,7 @@ public class CustomCropsPluginImpl extends CustomCropsPlugin {
         instance = this;
         this.versionManager = new VersionManagerImpl(this);
         this.configManager = new ConfigManagerImpl(this);
+        this.packetManager = new PacketManager(this);
         this.disableNBTAPILogs();
     }
 
@@ -101,6 +104,10 @@ public class CustomCropsPluginImpl extends CustomCropsPlugin {
 
     public DependencyManager getDependencyManager() {
         return dependencyManager;
+    }
+
+    public PacketManager getPacketManager() {
+        return packetManager;
     }
 
     @Override

@@ -1,8 +1,6 @@
 package net.momirealms.customcrops.api.mechanic.world.level;
 
-import net.momirealms.customcrops.api.common.Property;
 import net.momirealms.customcrops.api.mechanic.item.Pot;
-import net.momirealms.customcrops.api.mechanic.item.Sprinkler;
 import net.momirealms.customcrops.api.mechanic.world.CustomCropsBlock;
 
 public interface WorldPot extends CustomCropsBlock {

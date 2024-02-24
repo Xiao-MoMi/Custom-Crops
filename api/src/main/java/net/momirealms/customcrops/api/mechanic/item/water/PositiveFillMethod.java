@@ -18,13 +18,14 @@
 package net.momirealms.customcrops.api.mechanic.item.water;
 
 import net.momirealms.customcrops.api.mechanic.action.Action;
+import net.momirealms.customcrops.api.mechanic.requirement.Requirement;
 
 public class PositiveFillMethod extends AbstractFillMethod {
 
     private final String id;
 
-    public PositiveFillMethod(String id, int amount, Action[] actions) {
-        super(amount, actions);
+    public PositiveFillMethod(String id, int amount, Action[] actions, Requirement[] requirements) {
+        super(amount, actions, requirements);
         this.id = id;
     }
 

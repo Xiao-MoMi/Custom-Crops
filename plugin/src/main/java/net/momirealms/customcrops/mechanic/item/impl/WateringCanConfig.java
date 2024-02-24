@@ -26,11 +26,11 @@ import net.momirealms.customcrops.api.manager.AdventureManager;
 import net.momirealms.customcrops.api.manager.ConfigManager;
 import net.momirealms.customcrops.api.mechanic.action.Action;
 import net.momirealms.customcrops.api.mechanic.action.ActionTrigger;
-import net.momirealms.customcrops.api.mechanic.misc.image.WaterBar;
-import net.momirealms.customcrops.mechanic.item.AbstractEventItem;
 import net.momirealms.customcrops.api.mechanic.item.WateringCan;
-import net.momirealms.customcrops.api.mechanic.requirement.Requirement;
 import net.momirealms.customcrops.api.mechanic.item.water.PositiveFillMethod;
+import net.momirealms.customcrops.api.mechanic.misc.image.WaterBar;
+import net.momirealms.customcrops.api.mechanic.requirement.Requirement;
+import net.momirealms.customcrops.mechanic.item.AbstractEventItem;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -42,8 +42,9 @@ import java.util.List;
 
 public class WateringCanConfig extends AbstractEventItem implements WateringCan {
 
-    private String key;
+    private final String key;
     private final String itemID;
+    private final boolean infinite;
     private final int width;
     private final int length;
     private final int storage;
@@ -57,7 +58,9 @@ public class WateringCanConfig extends AbstractEventItem implements WateringCan 
     private final WaterBar waterBar;
 
     public WateringCanConfig(
+            String key,
             String itemID,
+            boolean infinite,
             int width,
             int length,
             int storage,
@@ -84,6 +87,8 @@ public class WateringCanConfig extends AbstractEventItem implements WateringCan 
         this.appearanceMap = appearanceMap;
         this.requirements = requirements;
         this.waterBar = waterBar;
+        this.key = key;
+        this.infinite = infinite;
     }
 
     @Override
@@ -119,7 +124,7 @@ public class WateringCanConfig extends AbstractEventItem implements WateringCan 
     @Override
     public void updateItem(ItemStack itemStack, int water) {
         NBTItem nbtItem = new NBTItem(itemStack);
-
+        if (isInfinite()) water = storage;
         if (hasDynamicLore()) {
             NBTCompound displayCompound = nbtItem.getOrCreateCompound("display");
             List<String> lore = displayCompound.getStringList("lore");
@@ -180,5 +185,15 @@ public class WateringCanConfig extends AbstractEventItem implements WateringCan 
     @Nullable
     public WaterBar getWaterBar() {
         return waterBar;
+    }
+
+    @Override
+    public Requirement[] getRequirements() {
+        return requirements;
+    }
+
+    @Override
+    public boolean isInfinite() {
+        return infinite;
     }
 }

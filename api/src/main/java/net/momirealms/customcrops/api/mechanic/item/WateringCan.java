@@ -1,8 +1,8 @@
 package net.momirealms.customcrops.api.mechanic.item;
 
-import net.momirealms.customcrops.api.common.item.EventItem;
 import net.momirealms.customcrops.api.common.item.KeyItem;
 import net.momirealms.customcrops.api.mechanic.misc.image.WaterBar;
+import net.momirealms.customcrops.api.mechanic.requirement.Requirement;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
@@ -32,4 +32,8 @@ public interface WateringCan extends KeyItem {
     List<String> getLore();
 
     @Nullable WaterBar getWaterBar();
+
+    Requirement[] getRequirements();
+
+    boolean isInfinite();
 }

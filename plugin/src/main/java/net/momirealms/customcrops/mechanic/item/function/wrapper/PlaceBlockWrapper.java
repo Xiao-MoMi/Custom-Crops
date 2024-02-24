@@ -9,10 +9,12 @@ public class PlaceBlockWrapper extends ConditionWrapper {
     private final Player player;
     private final ItemStack itemInHand;
     private final Block placedBlock;
+    private final String blockID;
 
-    public PlaceBlockWrapper(Player player, ItemStack itemInHand, Block placedBlock) {
+    public PlaceBlockWrapper(Player player, ItemStack itemInHand, Block placedBlock, String blockID) {
         this.player = player;
         this.itemInHand = itemInHand;
+        this.blockID = blockID;
         this.placedBlock = placedBlock;
     }
 
@@ -26,6 +28,10 @@ public class PlaceBlockWrapper extends ConditionWrapper {
 
     public Block getPlacedBlock() {
         return placedBlock;
+    }
+
+    public String getBlockID() {
+        return blockID;
     }
 }
 

@@ -26,5 +26,9 @@ public interface Sprinkler extends KeyItem {
 
     PassiveFillMethod[] getPassiveFillMethods();
 
-    Requirement[] getRequirements();
+    Requirement[] getPlaceRequirements();
+
+    Requirement[] getBreakRequirements();
+
+    Requirement[] getUseRequirements();
 }

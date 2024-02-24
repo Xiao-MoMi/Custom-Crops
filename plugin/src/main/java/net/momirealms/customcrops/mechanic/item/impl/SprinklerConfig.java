@@ -3,11 +3,11 @@ package net.momirealms.customcrops.mechanic.item.impl;
 import net.momirealms.customcrops.api.mechanic.action.Action;
 import net.momirealms.customcrops.api.mechanic.action.ActionTrigger;
 import net.momirealms.customcrops.api.mechanic.item.ItemCarrier;
+import net.momirealms.customcrops.api.mechanic.item.Sprinkler;
 import net.momirealms.customcrops.api.mechanic.item.water.PassiveFillMethod;
 import net.momirealms.customcrops.api.mechanic.misc.image.WaterBar;
 import net.momirealms.customcrops.api.mechanic.requirement.Requirement;
 import net.momirealms.customcrops.mechanic.item.AbstractEventItem;
-import net.momirealms.customcrops.api.mechanic.item.Sprinkler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -27,7 +27,9 @@ public class SprinklerConfig extends AbstractEventItem implements Sprinkler {
     private final HashSet<String> potWhitelist;
     private final ItemCarrier itemCarrier;
     private final PassiveFillMethod[] passiveFillMethods;
-    private final Requirement[] requirements;
+    private final Requirement[] placeRequirements;
+    private final Requirement[] breakRequirements;
+    private final Requirement[] useRequirements;
 
     public SprinklerConfig(
             String key,
@@ -42,7 +44,9 @@ public class SprinklerConfig extends AbstractEventItem implements Sprinkler {
             HashSet<String> potWhitelist,
             PassiveFillMethod[] passiveFillMethods,
             HashMap<ActionTrigger, Action[]> actionMap,
-            Requirement[] requirements
+            Requirement[] placeRequirements,
+            Requirement[] breakRequirements,
+            Requirement[] useRequirements
     ) {
         super(actionMap);
         this.key = key;
@@ -56,7 +60,9 @@ public class SprinklerConfig extends AbstractEventItem implements Sprinkler {
         this.waterBar = waterBar;
         this.potWhitelist = potWhitelist;
         this.passiveFillMethods = passiveFillMethods;
-        this.requirements = requirements;
+        this.placeRequirements = placeRequirements;
+        this.breakRequirements = breakRequirements;
+        this.useRequirements = useRequirements;
     }
 
     @Nullable
@@ -112,7 +118,17 @@ public class SprinklerConfig extends AbstractEventItem implements Sprinkler {
     }
 
     @Override
-    public Requirement[] getRequirements() {
-        return requirements;
+    public Requirement[] getPlaceRequirements() {
+        return placeRequirements;
+    }
+
+    @Override
+    public Requirement[] getBreakRequirements() {
+        return breakRequirements;
+    }
+
+    @Override
+    public Requirement[] getUseRequirements() {
+        return useRequirements;
     }
 }

@@ -17,9 +17,8 @@
 
 package net.momirealms.customcrops.api.mechanic.item.water;
 
-import net.momirealms.customcrops.api.CustomCropsPlugin;
 import net.momirealms.customcrops.api.mechanic.action.Action;
-import org.bukkit.inventory.ItemStack;
+import net.momirealms.customcrops.api.mechanic.requirement.Requirement;
 import org.jetbrains.annotations.Nullable;
 
 public class PassiveFillMethod extends AbstractFillMethod {
@@ -29,8 +28,8 @@ public class PassiveFillMethod extends AbstractFillMethod {
     private final String returned;
     private final int returnedAmount;
 
-    public PassiveFillMethod(String used, int usedAmount, @Nullable String returned, int returnedAmount, int amount, Action[] actions) {
-        super(amount, actions);
+    public PassiveFillMethod(String used, int usedAmount, @Nullable String returned, int returnedAmount, int amount, Action[] actions, Requirement[] requirements) {
+        super(amount, actions, requirements);
         this.used = used;
         this.returned = returned;
         this.usedAmount = usedAmount;

@@ -43,4 +43,8 @@ public interface CustomCropsChunk {
     int getPotAmount();
 
     int getSprinklerAmount();
+
+    void addPotAt(WorldPot pot, SimpleLocation location);
+
+    void addSprinklerAt(WorldSprinkler sprinkler, SimpleLocation location);
 }

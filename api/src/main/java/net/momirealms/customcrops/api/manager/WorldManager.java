@@ -12,7 +12,6 @@ import net.momirealms.customcrops.api.mechanic.world.level.WorldPot;
 import net.momirealms.customcrops.api.mechanic.world.level.WorldSprinkler;
 import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -97,4 +96,8 @@ public interface WorldManager extends Reloadable {
     void removeCropAt(@NotNull SimpleLocation location);
 
     boolean isReachLimit(SimpleLocation location, ItemType itemType);
+
+    void addPotAt(@NotNull WorldPot pot, @NotNull SimpleLocation location);
+
+    void addSprinklerAt(@NotNull WorldSprinkler sprinkler, @NotNull SimpleLocation location);
 }

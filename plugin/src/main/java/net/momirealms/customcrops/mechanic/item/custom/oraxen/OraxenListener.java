@@ -3,6 +3,8 @@ package net.momirealms.customcrops.mechanic.item.custom.oraxen;
 import io.th0rgal.oraxen.api.events.furniture.OraxenFurnitureBreakEvent;
 import io.th0rgal.oraxen.api.events.furniture.OraxenFurnitureInteractEvent;
 import io.th0rgal.oraxen.api.events.furniture.OraxenFurniturePlaceEvent;
+import io.th0rgal.oraxen.api.events.noteblock.OraxenNoteBlockPlaceEvent;
+import io.th0rgal.oraxen.api.events.stringblock.OraxenStringBlockPlaceEvent;
 import net.momirealms.customcrops.mechanic.item.ItemManagerImpl;
 import net.momirealms.customcrops.mechanic.item.custom.AbstractCustomListener;
 import org.bukkit.event.EventHandler;
@@ -11,6 +13,26 @@ public class OraxenListener extends AbstractCustomListener {
 
     public OraxenListener(ItemManagerImpl itemManager) {
         super(itemManager);
+    }
+
+    @EventHandler (ignoreCancelled = true)
+    public void onPlaceCustomBlock(OraxenNoteBlockPlaceEvent event) {
+        super.onPlaceBlock(
+                event.getPlayer(),
+                event.getBlock(),
+                event.getMechanic().getItemID(),
+                event
+        );
+    }
+
+    @EventHandler (ignoreCancelled = true)
+    public void onPlaceCustomBlock(OraxenStringBlockPlaceEvent event) {
+        super.onPlaceBlock(
+                event.getPlayer(),
+                event.getBlock(),
+                event.getMechanic().getItemID(),
+                event
+        );
     }
 
     @EventHandler (ignoreCancelled = true)

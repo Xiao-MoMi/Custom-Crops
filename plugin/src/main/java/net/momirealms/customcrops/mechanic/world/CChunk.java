@@ -5,9 +5,9 @@ import net.momirealms.customcrops.api.mechanic.item.Crop;
 import net.momirealms.customcrops.api.mechanic.item.Fertilizer;
 import net.momirealms.customcrops.api.mechanic.item.Pot;
 import net.momirealms.customcrops.api.mechanic.item.Sprinkler;
-import net.momirealms.customcrops.api.mechanic.world.level.*;
 import net.momirealms.customcrops.api.mechanic.world.ChunkCoordinate;
 import net.momirealms.customcrops.api.mechanic.world.SimpleLocation;
+import net.momirealms.customcrops.api.mechanic.world.level.*;
 import net.momirealms.customcrops.mechanic.world.block.MemoryPot;
 import net.momirealms.customcrops.mechanic.world.block.MemorySprinkler;
 import net.momirealms.customcrops.scheduler.task.CheckTask;
@@ -211,6 +211,20 @@ public class CChunk implements CustomCropsChunk {
             CustomCropsPlugin.get().debug("When adding water to pot at " + location + ", the pot data doesn't exist.");
         } else {
             optionalWorldPot.get().setWater(optionalWorldPot.get().getWater() + amount);
+        }
+    }
+
+    @Override
+    public void addPotAt(WorldPot pot, SimpleLocation location) {
+        if (loadedPots.put(location, pot) != null) {
+            CustomCropsPlugin.get().debug("Found duplicated pot data when adding pot at " + location);
+        }
+    }
+
+    @Override
+    public void addSprinklerAt(WorldSprinkler sprinkler, SimpleLocation location) {
+        if (loadedSprinklers.put(location, sprinkler) != null) {
+            CustomCropsPlugin.get().debug("Found duplicated sprinkler data when adding sprinkler at " + location);
         }
     }
 

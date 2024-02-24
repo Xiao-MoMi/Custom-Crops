@@ -23,6 +23,7 @@ public enum ActionTrigger {
     PLACE,
     GROW,
     ADD_WATER,
+    NO_WATER,
     CONSUME_WATER,
     FULL,
     WORK,
@@ -30,5 +31,6 @@ public enum ActionTrigger {
     WRONG_POT,
     WRONG_SPRINKLER,
     BEFORE_PLANT,
-    REACH_LIMIT
+    REACH_LIMIT,
+    INTERACT,
 }

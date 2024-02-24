@@ -18,17 +18,21 @@
 package net.momirealms.customcrops.api.mechanic.item.water;
 
 import net.momirealms.customcrops.api.manager.ActionManager;
+import net.momirealms.customcrops.api.manager.RequirementManager;
 import net.momirealms.customcrops.api.mechanic.action.Action;
+import net.momirealms.customcrops.api.mechanic.requirement.Requirement;
 import net.momirealms.customcrops.api.mechanic.requirement.State;
 
 public abstract class AbstractFillMethod {
 
     protected int amount;
     private final Action[] actions;
+    private final Requirement[] requirements;
 
-    protected AbstractFillMethod(int amount, Action[] actions) {
+    protected AbstractFillMethod(int amount, Action[] actions, Requirement[] requirements) {
         this.amount = amount;
         this.actions = actions;
+        this.requirements = requirements;
     }
 
     public int getAmount() {
@@ -37,5 +41,9 @@ public abstract class AbstractFillMethod {
 
     public void trigger(State state) {
         ActionManager.triggerActions(state, actions);
+    }
+
+    public boolean canFill(State state) {
+        return RequirementManager.isRequirementMet(state, requirements);
     }
 }

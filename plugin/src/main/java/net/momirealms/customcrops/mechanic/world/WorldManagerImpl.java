@@ -265,6 +265,26 @@ public class WorldManagerImpl implements WorldManager, Listener {
     }
 
     @Override
+    public void addPotAt(@NotNull WorldPot pot, @NotNull SimpleLocation location) {
+        CWorld cWorld = loadedWorlds.get(location.getWorldName());
+        if (cWorld == null) {
+            LogUtils.warn("Unsupported operation: Adding pot in unloaded world " + location);
+            return;
+        }
+        cWorld.addPotAt(pot, location);
+    }
+
+    @Override
+    public void addSprinklerAt(@NotNull WorldSprinkler sprinkler, @NotNull SimpleLocation location) {
+        CWorld cWorld = loadedWorlds.get(location.getWorldName());
+        if (cWorld == null) {
+            LogUtils.warn("Unsupported operation: Adding sprinkler in unloaded world " + location);
+            return;
+        }
+        cWorld.addSprinklerAt(sprinkler, location);
+    }
+
+    @Override
     public void removeSprinklerAt(@NotNull SimpleLocation location) {
         CWorld cWorld = loadedWorlds.get(location.getWorldName());
         if (cWorld == null) {

@@ -7,6 +7,7 @@ import net.momirealms.customcrops.api.mechanic.item.FertilizerType;
 import net.momirealms.customcrops.api.mechanic.item.Pot;
 import net.momirealms.customcrops.api.mechanic.item.water.PassiveFillMethod;
 import net.momirealms.customcrops.api.mechanic.misc.image.WaterBar;
+import net.momirealms.customcrops.api.mechanic.requirement.Requirement;
 import net.momirealms.customcrops.mechanic.item.AbstractEventItem;
 
 import java.util.HashMap;
@@ -22,6 +23,9 @@ public class PotConfig extends AbstractEventItem implements Pot {
     private final HashMap<FertilizerType, Pair<String, String>> fertilizedPotMap;
     private final PassiveFillMethod[] passiveFillMethods;
     private WaterBar waterBar;
+    private final Requirement[] placeRequirements;
+    private final Requirement[] breakRequirements;
+    private final Requirement[] useRequirements;
 
     public PotConfig(
             String key,
@@ -32,7 +36,10 @@ public class PotConfig extends AbstractEventItem implements Pot {
             HashMap<FertilizerType, Pair<String, String>> fertilizedPotMap,
             WaterBar waterBar,
             PassiveFillMethod[] passiveFillMethods,
-            HashMap<ActionTrigger, Action[]> actionMap
+            HashMap<ActionTrigger, Action[]> actionMap,
+            Requirement[] placeRequirements,
+            Requirement[] breakRequirements,
+            Requirement[] useRequirements
     ) {
         super(actionMap);
         this.storage = storage;
@@ -42,6 +49,9 @@ public class PotConfig extends AbstractEventItem implements Pot {
         this.dryModel = dryModel;
         this.wetModel = wetModel;
         this.waterBar = waterBar;
+        this.placeRequirements = placeRequirements;
+        this.breakRequirements = breakRequirements;
+        this.useRequirements = useRequirements;
     }
 
     @Override
@@ -79,5 +89,20 @@ public class PotConfig extends AbstractEventItem implements Pot {
     @Override
     public String getWetItem() {
         return wetModel;
+    }
+
+    @Override
+    public Requirement[] getPlaceRequirements() {
+        return placeRequirements;
+    }
+
+    @Override
+    public Requirement[] getBreakRequirements() {
+        return breakRequirements;
+    }
+
+    @Override
+    public Requirement[] getUseRequirements() {
+        return useRequirements;
     }
 }

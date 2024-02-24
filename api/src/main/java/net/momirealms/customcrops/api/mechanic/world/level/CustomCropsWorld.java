@@ -7,7 +7,6 @@ import net.momirealms.customcrops.api.mechanic.world.ChunkCoordinate;
 import net.momirealms.customcrops.api.mechanic.world.SimpleLocation;
 import net.momirealms.customcrops.api.mechanic.world.season.Season;
 import org.bukkit.World;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
@@ -65,4 +64,8 @@ public interface CustomCropsWorld {
     boolean isCropReachLimit(SimpleLocation location);
 
     boolean isSprinklerReachLimit(SimpleLocation location);
+
+    void addPotAt(WorldPot pot, SimpleLocation location);
+
+    void addSprinklerAt(WorldSprinkler sprinkler, SimpleLocation location);
 }
