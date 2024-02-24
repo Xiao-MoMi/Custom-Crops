@@ -3,25 +3,37 @@ quality_1:
   icon: '뀆'
   chance: 1
   times: 28
-  # 70%/20%/10%
   ratio: 7/2/1
-  item: customcrops:quality_1
+  item: {0}quality_1
   before-plant: true
-  particle: SCRAPE
-  sound: minecraft:item.hoe.till
   pot-whitelist:
     - default
+  events:
+    use:
+      sound_action:
+        type: sound
+        value:
+          source: player
+          key: minecraft:item.hoe.till
+          volume: 1
+          pitch: 1
+    wrong_pot:
+      actionbar_action:
+        type: actionbar
+        value: 'This fertilizer can only be used in pots.'
+    before_plant:
+      actionbar_action:
+        type: actionbar
+        value: 'You can only use this fertilizer before planting the crop.'
+
 quality_2:
   type: QUALITY
   icon: '뀇'
   chance: 1
   times: 28
-  # 55%/30%/15%
   ratio: 11/6/3
-  item: customcrops:quality_2
+  item: {0}quality_2
   before-plant: true
-  particle: SCRAPE
-  sound: minecraft:item.hoe.till
   pot-whitelist:
     - default
 quality_3:
@@ -29,11 +41,8 @@ quality_3:
   icon: '뀈'
   chance: 1
   times: 28
-  # 40%/40%/20%
   ratio: 2/2/1
-  item: customcrops:quality_3
+  item: {0}quality_3
   before-plant: true
-  particle: SCRAPE
-  sound: minecraft:item.hoe.till
   pot-whitelist:
     - default

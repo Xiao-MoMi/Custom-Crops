@@ -1,95 +1,70 @@
-# Crop key name
-# 农作物配置名
+# ID
 tomato:
   # Crop mode, make sure that type is consistent with IA/Oraxen configs
   # Otherwise some unexpected problems would occur
   # TRIPWIRE / ITEM_FRAME / ITEM_DISPLAY (1.19.4+)
-  # 农作物模式，请确保和你的资源包配置等一致，否则会出现bug
   type: TRIPWIRE
 
   # The crop can only be planted on certain pots
-  # Pot are stored in /CustomCrops/contents/pots
-  # 农作物只能在指定的种植盆中种植
   pot-whitelist:
     - default
 
-  # Crop's seed, if you want to use Vanilla items, just use Capital letters. (Example APPLE)
-  # 农作物的种子，如果你想用原版物品做种子，就使用大写字母
-  seed: customcrops:tomato_seeds
+  # Seed of the crop
+  seed: {0}tomato_seeds
 
   # Only works in ITEM_FRAME / ITEM_DISPLAY mode
   random-rotation: true
 
-  # break/plant requirements
-  # 破坏/种植农作物的需求
+  # Break/Plant requirements
   requirements:
-    break:
-      requirement_1:
-        # Requirement type, you can get a full list of requirements on wiki page
-        # 需求类型,wiki中有详细的全部需求类型和示范
-        type: permission
-        value: tomato.break
-        # The message to show when not meeting the requirement(Supports multiple lines)
-        # 不满足需求的提示，支持多行
-        message: "You don't have permission to harvest the tomato"
+    break: {}
     plant:
       requirement_1:
-        type: permission
-        value: tomato.plant
-        message: "You don't have permission to plant the tomato"
-      requirement_2:
         type: season
         value:
           - Spring
           - Autumn
-        message: "It's not a good season to plant tomato"
+        not-met-actions:
+          message_action:
+            type: message
+            value: "It's not a good season to plant tomato"
+  # Event settings
+  events:
+    plant:
+      # Send sound while planting
+      sound_action:
+        type: sound
+        value:
+          source: player
+          key: minecraft:item.hoe.till
+          volume: 1
+          pitch: 1
 
-  # plant actions
-  # 种植时发生的动作
-  plant-actions:
-    action_1:
-      # Requirement type, you can get a full list of actions on wiki page
-      # 动作类型,wiki中有详细的全部动作类型和示范
-      type: sound
-      value:
-        source: player
-        key: minecraft:item.hoe.till
-        volume: 1
-        pitch: 1
-
-  # This decides when the crop data would be removed from cache
-  # 这决定了农作物数据什么时候从缓存中移除
+  # This determines the maximum time for crops to grow
+  # When crops reach their maximum point, they will switch from growing crops to lazy crops so as not to burden the CPU.
   max-points: 6
-  # What should a crop do when gaining a certain amount of points
-  # 农作物在获取指定生长点数时候执行的动作
+  # This section determines the actions of crops at each point
   points:
     0:
-      # change the crop's model
-      # 改变农作物的模型
-      model: customcrops:tomato_stage_1
-      # As crop's models are different and have various height
-      # So sometimes the pot information hologram can't show in a proper place
-      # Set "hologram-offset-correction" to a high value would increase the
-      # vertical position of the hologram
-      # 因为不同农作物有不同的模型高度，所以在显示悬浮信息的时候，可能会导致模型遮挡了悬浮信息
-      # 因此设置 "hologram-offset-correction" 为更大值可以提升悬浮字的高度，以免遮挡
+      # If model is set, the crop will replace its appearance when it reaches this stage.
+      model: {0}tomato_stage_1
+      # Each crop has a different model height, so appropriate offsets should be made when displaying holograms.
       hologram-offset-correction: 0.2
-      # Available events: break/grow/interact-by-hand/interact-with-item
+      # Event settings
       events:
         break:
+          # 30% chance of dropping crop seeds
           action_1:
             type: drop-items
             value:
-              other-items:
-                loot_1:
-                  # Other plugin item compatibility(Can also be used in quality-crops)
-                  # MMOItems:TYPE:ID
-                  # MythicMobs:id
-                  item: customcrops:tomato_seeds
+              ignore-fertilizer: true
+              items:
+                item_1:
+                  item: {0}tomato_seeds
                   min: 1
                   max: 1
-                  # 0-1
                   chance: 0.3
+          # Triggers the sound effect of crops being destroyed
           action_2:
             type: sound
             value:
@@ -98,16 +73,17 @@ tomato:
               volume: 1
               pitch: 1
     1:
-      model: customcrops:tomato_stage_2
+      model: {0}tomato_stage_2
       hologram-offset-correction: 0.2
       events:
         break:
           action_1:
             type: drop-items
             value:
-              other-items:
+              ignore-fertilizer: true
+              items:
                 loot_1:
-                  item: customcrops:tomato_seeds
+                  item: {0}tomato_seeds
                   min: 1
                   max: 1
                   chance: 0.5

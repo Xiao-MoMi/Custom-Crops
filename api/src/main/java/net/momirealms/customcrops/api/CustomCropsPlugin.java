@@ -1,35 +1,71 @@
-/*
- *  Copyright (C) <2022> <XiaoMoMi>
- *
- *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
- */
-
 package net.momirealms.customcrops.api;
 
+import net.momirealms.customcrops.api.manager.*;
+import net.momirealms.customcrops.api.scheduler.Scheduler;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public abstract class CustomCropsPlugin extends JavaPlugin {
 
     protected static CustomCropsPlugin instance;
+    protected VersionManager versionManager;
+    protected ConfigManager configManager;
+    protected Scheduler scheduler;
+    protected RequirementManager requirementManager;
+    protected ActionManager actionManager;
+    protected IntegrationManager integrationManager;
+    protected CoolDownManager coolDownManager;
+    protected WorldManager worldManager;
+    protected ItemManager itemManager;
 
-    protected CustomCropsAPI customCropsAPI;
-
-    public CustomCropsAPI getAPI() {
-        return customCropsAPI;
+    public CustomCropsPlugin() {
+        instance = this;
     }
 
     public static CustomCropsPlugin getInstance() {
         return instance;
     }
+
+    public static CustomCropsPlugin get() {
+        return instance;
+    }
+
+    public VersionManager getVersionManager() {
+        return versionManager;
+    }
+
+    public ConfigManager getConfigManager() {
+        return configManager;
+    }
+
+    public Scheduler getScheduler() {
+        return scheduler;
+    }
+
+    public RequirementManager getRequirementManager() {
+        return requirementManager;
+    }
+
+    public IntegrationManager getIntegrationManager() {
+        return integrationManager;
+    }
+
+    public ActionManager getActionManager() {
+        return actionManager;
+    }
+
+    public CoolDownManager getCoolDownManager() {
+        return coolDownManager;
+    }
+
+    public WorldManager getWorldManager() {
+        return worldManager;
+    }
+
+    public ItemManager getItemManager() {
+        return itemManager;
+    }
+
+    public abstract boolean isHookedPluginEnabled(String plugin);
+
+    public abstract void debug(String debug);
 }

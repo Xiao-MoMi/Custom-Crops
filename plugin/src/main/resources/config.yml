@@ -1,132 +1,107 @@
 # Don't change
-config-version: '34'
-# BStats
+config-version: '35'
+# bStats
 metrics: true
 # Language: english / french / spanish / chinese / turkish / russian
 lang: english
 # Debug
-debug:
-  log-world-state: false
-  log-scheduler: false
-  log-corruption-fixer: false
+debug: false
 
 worlds:
-  # This is designed for servers that using a separate folder for worlds
-  # 如果你的服务器使用独立文件夹存储世界，请在此填入绝对地址
+  # This is designed for servers that using an independent folder for worlds
+  # Especially for realm systems
   absolute-world-folder-path: ''
+  # A list that would decide where the plugin mechanisms take effect
+  # Requires a restart to apply the changes
   # Mode: whitelist/blacklist
-  # Requires a restart when changing mode or editing world list for the safety of data
-  # 模式：白名单/黑名单
-  # 修改本栏需要重启服务器
   mode: blacklist
   list:
     - blacklist_world
 
-schedule-system:
-  # If disabled, you can do that manually with command /customcrops force [consume/sprinklerwork/cropgrow] or API methods
-  # 如果禁用，你可以使用指令/customcrops force [consume/sprinklerwork/cropgrow]手动操作或使用API
-  enable: true
-  # The average interval for a crop to gain one point (measured in seconds)
-  # 平均每个农作物获得一生长点的时间间隔（秒）
-  point-gain-interval: 300
-  # Water amount and fertilizer would reduce every 3 points are gained
-  # set it to -1 if you don't want CustomCrops to control consumption/sprinkler tasks
-  # 默认每3个生长点进行一次水分、肥料消耗
-  # 设置为-1以禁用CustomCrops对水分、肥料消耗/洒水器任务的掌管
-  consume-water-fertilizer-every-x-point: 3
-  # Sprinkler would work every 2 points are gained
-  sprinkler-work-every-x-point: 2
-  # Save cache to file interval (seconds)
-  # set "-1" to disable
-  # 保存缓存的时间间隔 (秒)
-  cache-save-interval: 12000
-  # Thread pool settings
-  # 线程池设置
-  thread-pool-settings:
-    # 核心线程池大小
-    corePoolSize: 1
-    # 最大线程池大小
-    maximumPoolSize: 4
-    # seconds (秒)
-    keepAliveTime: 10
-
-optimization:
-  # Recommend enabling this to prevent large quantities of crops/item frames from lagging the server
-  # When you are using both item_frame mode and ItemsAdder, you should set "max-furniture-vehicles-per-chunk" in ItemsAdder's config.yml to a higher value
-  # 推荐启用区块限制来防止玩家种植大量农作物
-  # 如果你使用ItemsAdder的展示框模式，你需要在ItemsAdder的配置文件中设置"max-furniture-vehicles-per-chunk"到较高值，否则农作物种植后会消失
-  limitation:
-    # Maximum amount of growing crops per chunk
-    # Note: This only limits **growing** crops
-    # If a crop is ripe, it would not be counted
-    # 每个区块的限制数量
-    growing-crop-amount:
+  settings:
+    _DEFAULT_:
+      # Whether to enable the plugin pre-made point system
+      # Disabling this option will make all mechanisms stop counting ticks unless you have full control over it using the API.
+      # If you don't know how to code with CustomCropsAPI, just keep it true, because it is enough to meet the needs of 99% of servers
       enable: true
-      default: 48
-      # settings for a specified world
-      # 指定世界的设置
-      worlds:
-        - world:64
-  # Experimental option (Only works when only-work-in-loaded-chunks is false)
-  # This option would make the plugin no longer invoke the unloaded chunks to replace crop models/pots
-  # Crops/Pots would only be updated during the chunk loading
-  # 实验性选项，启用以后农作物/种植盆的模型只会在区块加载时得到更新，不再异步加载区块替换模型
-  # 此选项仅在only-work-in-loaded-chunks为false时候生效
-  only-update-during-chunk-loading: false
+      # Point is another unit of measurement of time, it's similar to tick but it takes longer to increase
+      # For crops, we don’t need frequent ticks to make the entire mechanism work, so the default setting is 300 seconds.
+      # Please remember that modifying this option will affect the speed of the entire plugin mechanism
+      point-interval: 300
+      # Tick pots every N points
+      tick-pot-interval: 2
+      # Tick sprinklers every N points
+      tick-sprinkler-interval: 2
+      # Whether the plugin mechanism also works in unloaded chunks/worlds
+      offline-grow: false
+      # Whether season is enabled
+      season: false
+      # Limit the max amount of crops in one chunk
+      crop-per-chunk: 128
+      # Limit the max amount of pots in one chunk
+      pot-per-chunk: -1
+      # Limit the max amount of sprinklers in one chunk
+      sprinkler-per-chunk: 32
+    _WORLDS_:
+      world:
+        enable: true
+        point-interval: 300
+        tick-pot-interval: 2
+        tick-sprinkler-interval: 2
+        offline-grow: false
+        season: true
+        auto-season-change: true
+        season-duration: 28
+      world_nether:
+        enable: true
+        point-interval: 300
+        tick-pot-interval: 2
+        tick-sprinkler-interval: 2
+        offline-grow: false
+        season: false
+      world_the_end:
+        enable: false
 
 mechanics:
-  # Does the system only work in loaded chunks (Requires you to stop the server before changing this setting)
-  # 插件是否只在加载中的区块工作 (需要关闭服务器再设置此项)
-  only-work-in-loaded-chunks: true
+  # You can create more ranks by adding more "/" for instance x/x/x/x/x
+  # "x" is weight, represents the proportion of probability
   # 17/2/1 = 85%/10%/5%
-  # 2/2/1 = 40%/40%/20%
-  # You can customize more ranks like x/x/x/x/x
+  # 85% = 17/(17+2+1) * 100%
   default-quality-ratio: 17/2/1
-  # Season mechanic
-  # 季节机制
-  season:
-    enable: true
-    # If you want all the worlds to share the same season
-    # 是否全世界同步季节
-    sync-season:
-      enable: false
-      reference: world
-    # 自动季节交替
-    auto-season-change:
-      enable: true
-      # duration of each season (Minecraft days)
-      # 每个季节的时长
-      duration: 28
-    greenhouse:
-      enable: true
-      block: customcrops:greenhouse_glass
-      # effective range (Y axis)
-      # Y轴有效范围
-      range: 5
-  # scarecrow item id
-  # 稻草人物品id
+
+  # Scarecrow prevents crops from being ate by crows in one chunk
   scarecrow: customcrops:scarecrow
+
   # Vanilla farmland settings
-  # 原版耕地设置
   vanilla-farmland:
-    # disable vanilla farmland moisture mechanics
-    # 禁用原版耕地湿润机制
+    # Disable vanilla farmland moisture mechanics
+    # This option exists because some users prefer to use the vanilla farmland but the water system conflicts with the vanilla one
     disable-moisture-mechanic: false
-    # prevent entities from trampling the farmland
-    # 防止玩家踩踏耕地
+    # Prevent entities from trampling the farmland
     prevent-trampling: false
 
+  # Greenhouse glass prevents crops from withering due to season change
+  greenhouse:
+    enable: true
+    block: customcrops:greenhouse_glass
+
+  # Sync seasons
+  sync-season:
+    enable: true
+    reference: world
+
 other-settings:
-  # This option requires a skill-plugin hook
-  # Which would increase the amount of crops player get
-  # 这需要一个技能插件才能生效，可以根据玩家种植技能等级提供增益
-  skill-bonus:
-    enable: false
-    formula: '{base} + {level} * 0.01'
-  # MMOCore profession name
-  # MMOCore职业名
-  MMOCore-profession-name: 'farmer'
-  # Enable corruption fixer
-  enable-corruption-fixer: false
-  # Fixed corrupted pots when interacting
-  corrupt-fix-range: 4
+  # Thread pool settings
+  thread-pool-settings:
+    corePoolSize: 10
+    maximumPoolSize: 10
+    keepAliveTime: 30
+
+  # Using items from other plugins
+  item-detection-order: []
+
+  # Whether to protect the original lore of the item
+  # This uses the scoreboard component to identify the plugin's lore,
+  # which may conflict with some plugins that still use the deprecated SpigotAPI.
+  # Disable this if that occurs
+  protect-original-lore: true

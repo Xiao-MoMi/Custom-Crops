@@ -8,7 +8,7 @@ plugins {
 allprojects {
 
     project.group = "net.momirealms"
-    project.version = "3.3.1.14"
+    project.version = "3.4.0.0"
 
     apply<JavaPlugin>()
     apply(plugin = "java")
@@ -21,8 +21,8 @@ allprojects {
     }
 
     repositories {
-        maven("https://maven.aliyun.com/repository/public/")
         mavenCentral()
+        maven("https://maven.aliyun.com/repository/public/")
         maven("https://betonquest.org/nexus/repository/betonquest/")
         maven("https://maven.enginehub.org/repo/")
         maven("https://oss.sonatype.org/content/groups/public/")
@@ -40,6 +40,8 @@ allprojects {
         maven("https://r.irepo.space/maven/")
         maven("https://repo.auxilor.io/repository/maven-public/")
         maven("https://nexus.betonquest.org/repository/betonquest/")
+        maven("https://repo.infernalsuite.com/repository/maven-releases/")
+        maven("https://repo.rapture.pw/repository/maven-releases/")
     }
 
     dependencies {
