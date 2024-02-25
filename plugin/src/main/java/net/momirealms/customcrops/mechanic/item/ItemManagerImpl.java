@@ -3,6 +3,9 @@ package net.momirealms.customcrops.mechanic.item;
 import com.google.common.base.Preconditions;
 import net.momirealms.customcrops.api.CustomCropsPlugin;
 import net.momirealms.customcrops.api.event.PotBreakEvent;
+import net.momirealms.customcrops.api.event.PotPlaceEvent;
+import net.momirealms.customcrops.api.event.SprinklerBreakEvent;
+import net.momirealms.customcrops.api.event.SprinklerPlaceEvent;
 import net.momirealms.customcrops.api.integration.ItemLibrary;
 import net.momirealms.customcrops.api.manager.ConfigManager;
 import net.momirealms.customcrops.api.manager.ItemManager;
@@ -621,18 +624,24 @@ public class ItemManagerImpl implements ItemManager {
                                     }
                                     ItemStack itemInHand = interactBlockWrapper.getItemInHand();
                                     Location placed = interactBlockWrapper.getClickedBlock().getLocation().clone().add(0,1,0);
+                                    Player player = interactBlockWrapper.getPlayer();
                                     // check if the place is empty
                                     if (!customProvider.isAir(placed)) {
                                         return FunctionResult.RETURN;
                                     }
                                     // check place requirements
-                                    State state = new State(interactBlockWrapper.getPlayer(), itemInHand, placed);
+                                    State state = new State(player, itemInHand, placed);
                                     if (!RequirementManager.isRequirementMet(state, sprinkler.getPlaceRequirements())) {
                                         return FunctionResult.RETURN;
                                     }
                                     // check limitation
                                     if (plugin.getWorldManager().isReachLimit(SimpleLocation.getByBukkitLocation(placed), ItemType.SPRINKLER)) {
                                         sprinkler.trigger(ActionTrigger.REACH_LIMIT, state);
+                                        return FunctionResult.RETURN;
+                                    }
+                                    // fire event
+                                    SprinklerPlaceEvent placeEvent = new SprinklerPlaceEvent(player, itemInHand, placed, sprinkler);
+                                    if (EventUtils.fireAndCheckCancel(placeEvent)) {
                                         return FunctionResult.RETURN;
                                     }
                                     // place the sprinkler
@@ -645,7 +654,7 @@ public class ItemManagerImpl implements ItemManager {
                                         }
                                     }
                                     // reduce item
-                                    if (interactBlockWrapper.getPlayer().getGameMode() != GameMode.CREATIVE)
+                                    if (player.getGameMode() != GameMode.CREATIVE)
                                         itemInHand.setAmount(itemInHand.getAmount() - 1);
                                     sprinkler.trigger(ActionTrigger.PLACE, state);
                                     plugin.getWorldManager().addSprinklerAt(new MemorySprinkler(sprinkler.getKey(), 0, new HashMap<>()), SimpleLocation.getByBukkitLocation(placed));
@@ -711,14 +720,20 @@ public class ItemManagerImpl implements ItemManager {
                                     return FunctionResult.PASS;
                                 }
                                 Location location = placeFurnitureWrapper.getLocation();
+                                Player player = placeFurnitureWrapper.getPlayer();
                                 // check place requirements
-                                State state = new State(placeFurnitureWrapper.getPlayer(), placeFurnitureWrapper.getItemInHand(), location);
+                                State state = new State(player, placeFurnitureWrapper.getItemInHand(), location);
                                 if (!RequirementManager.isRequirementMet(state, sprinkler.getPlaceRequirements())) {
                                     return FunctionResult.CANCEL_EVENT_AND_RETURN;
                                 }
                                 // check limitation
                                 if (plugin.getWorldManager().isReachLimit(SimpleLocation.getByBukkitLocation(location), ItemType.SPRINKLER)) {
                                     sprinkler.trigger(ActionTrigger.REACH_LIMIT, state);
+                                    return FunctionResult.CANCEL_EVENT_AND_RETURN;
+                                }
+                                // fire event
+                                SprinklerPlaceEvent placeEvent = new SprinklerPlaceEvent(player, placeFurnitureWrapper.getItemInHand(), location, sprinkler);
+                                if (EventUtils.fireAndCheckCancel(placeEvent)) {
                                     return FunctionResult.CANCEL_EVENT_AND_RETURN;
                                 }
                                 // add data
@@ -736,6 +751,11 @@ public class ItemManagerImpl implements ItemManager {
                                 // check break requirements
                                 State state = new State(breakFurnitureWrapper.getPlayer(), breakFurnitureWrapper.getItemInHand(), breakFurnitureWrapper.getLocation());
                                 if (!RequirementManager.isRequirementMet(state, sprinkler.getBreakRequirements())) {
+                                    return FunctionResult.CANCEL_EVENT_AND_RETURN;
+                                }
+                                // fire event
+                                SprinklerBreakEvent breakEvent = new SprinklerBreakEvent(breakFurnitureWrapper.getPlayer(), breakFurnitureWrapper.getLocation(), sprinkler);
+                                if (EventUtils.fireAndCheckCancel(breakEvent)) {
                                     return FunctionResult.CANCEL_EVENT_AND_RETURN;
                                 }
                                 // remove data
@@ -978,10 +998,10 @@ public class ItemManagerImpl implements ItemManager {
                                     if (!RequirementManager.isRequirementMet(state, pot.getBreakRequirements())) {
                                         return FunctionResult.CANCEL_EVENT_AND_RETURN;
                                     }
-                                    // Fire pot event
+                                    // fire event
                                     PotBreakEvent breakEvent = new PotBreakEvent(blockWrapper.getPlayer(), blockWrapper.getBrokenBlock().getLocation(), pot);
                                     if (EventUtils.fireAndCheckCancel(breakEvent)) {
-                                        return FunctionResult.RETURN;
+                                        return FunctionResult.CANCEL_EVENT_AND_RETURN;
                                     }
                                     // remove data
                                     plugin.getWorldManager().removePotAt(SimpleLocation.getByBukkitLocation(blockWrapper.getBrokenBlock().getLocation()));
@@ -996,14 +1016,20 @@ public class ItemManagerImpl implements ItemManager {
                                         return FunctionResult.PASS;
                                     }
                                     Location location = blockWrapper.getPlacedBlock().getLocation();
+                                    Player player = blockWrapper.getPlayer();
                                     // check place requirements
-                                    State state = new State(blockWrapper.getPlayer(), blockWrapper.getItemInHand(), location);
+                                    State state = new State(player, blockWrapper.getItemInHand(), location);
                                     if (!RequirementManager.isRequirementMet(state, pot.getPlaceRequirements())) {
                                         return FunctionResult.CANCEL_EVENT_AND_RETURN;
                                     }
                                     // check limitation
                                     if (plugin.getWorldManager().isReachLimit(SimpleLocation.getByBukkitLocation(location), ItemType.POT)) {
-                                        pot.trigger(ActionTrigger.REACH_LIMIT, new State(blockWrapper.getPlayer(), blockWrapper.getItemInHand(), location));
+                                        pot.trigger(ActionTrigger.REACH_LIMIT, new State(player, blockWrapper.getItemInHand(), location));
+                                        return FunctionResult.CANCEL_EVENT_AND_RETURN;
+                                    }
+                                    // fire event
+                                    PotPlaceEvent potPlaceEvent = new PotPlaceEvent(player, location, pot);
+                                    if (EventUtils.fireAndCheckCancel(potPlaceEvent)) {
                                         return FunctionResult.CANCEL_EVENT_AND_RETURN;
                                     }
                                     // add data
