@@ -48,22 +48,6 @@ default:
     right: '뀁뀅'
   # Event settings
   events:
-    # Action trigger and the actions
-    tick_point:
-      # This action allows the pot to become moist under certain conditions
-      conditional_action:
-        type: conditional
-        conditions:
-          weather:
-            - rain
-            - rainstorm
-          rainfall: true  # Whether that location can make rainfall
-          snowfall: false  # Whether that location can make snowfall
-          is-highest-block: true
-        actions:
-          add_water_action:
-            type: add-water
-            value: 1
     add_water:
       particle_action:
         type: particle

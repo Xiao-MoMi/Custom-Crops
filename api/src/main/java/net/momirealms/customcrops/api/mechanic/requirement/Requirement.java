@@ -19,11 +19,5 @@ package net.momirealms.customcrops.api.mechanic.requirement;
 
 public interface Requirement {
 
-    /**
-     * Is condition met the requirement
-     *
-     * @param state state
-     * @return meet or not
-     */
     boolean isStateMet(State state);
 }

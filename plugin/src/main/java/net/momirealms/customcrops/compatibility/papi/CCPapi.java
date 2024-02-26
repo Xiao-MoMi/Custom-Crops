@@ -74,10 +74,10 @@ public class CCPapi extends PlaceholderExpansion {
         switch (split[0]) {
             case "season" -> {
                 if (split.length == 1) {
-                    return MessageManager.getSeasonTranslation(plugin.getIntegrationManager().getSeason(player.getWorld()));
+                    return MessageManager.seasonTranslation(plugin.getIntegrationManager().getSeason(player.getWorld()));
                 } else {
                     try {
-                        return MessageManager.getSeasonTranslation(plugin.getIntegrationManager().getSeason(Bukkit.getWorld(split[1])));
+                        return MessageManager.seasonTranslation(plugin.getIntegrationManager().getSeason(Bukkit.getWorld(split[1])));
                     } catch (NullPointerException e) {
                         LogUtils.severe("World " + split[1] + " does not exist");
                         e.printStackTrace();

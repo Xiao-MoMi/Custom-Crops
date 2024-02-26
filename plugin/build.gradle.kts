@@ -3,6 +3,9 @@ dependencies {
     compileOnly("dev.folia:folia-api:1.20.1-R0.1-SNAPSHOT")
     compileOnly("com.infernalsuite.aswm:api:1.20.4-R0.1-SNAPSHOT")
 
+    // Command
+    compileOnly("dev.jorel:commandapi-bukkit-core:9.3.0")
+
     // Common hooks
     compileOnly("me.clip:placeholderapi:2.11.5")
     compileOnly("com.comphenix.protocol:ProtocolLib:5.1.0")

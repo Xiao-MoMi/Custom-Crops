@@ -92,22 +92,20 @@ public class ActionManagerImpl implements ActionManager {
     }
 
     @Override
-    public void init() {
-        this.loadExpansions();
+    public void load() {
+        loadExpansions();
+    }
+
+    @Override
+    public void unload() {
+
     }
 
     @Override
     public void disable() {
+        actionBuilderMap.clear();
     }
 
-    /**
-     * Registers an ActionFactory for a specific action type.
-     * This method allows you to associate an ActionFactory with a custom action type.
-     *
-     * @param type           The custom action type to register.
-     * @param actionFactory  The ActionFactory responsible for creating actions of the specified type.
-     * @return True if the registration was successful (the action type was not already registered), false otherwise.
-     */
     @Override
     public boolean registerAction(String type, ActionFactory actionFactory) {
         if (this.actionBuilderMap.containsKey(type)) return false;
@@ -115,26 +113,11 @@ public class ActionManagerImpl implements ActionManager {
         return true;
     }
 
-    /**
-     * Unregisters an ActionFactory for a specific action type.
-     * This method allows you to remove the association between an action type and its ActionFactory.
-     *
-     * @param type The custom action type to unregister.
-     * @return True if the action type was successfully unregistered, false if it was not found.
-     */
     @Override
     public boolean unregisterAction(String type) {
         return this.actionBuilderMap.remove(type) != null;
     }
 
-    /**
-     * Retrieves an Action object based on the configuration provided in a ConfigurationSection.
-     * This method reads the type of action from the section, obtains the corresponding ActionFactory,
-     * and builds an Action object using the specified values and chance.
-     *
-     * @param section The ConfigurationSection containing the action configuration.
-     * @return An Action object created based on the configuration, or an EmptyAction instance if the action type is invalid.
-     */
     @Override
     public Action getAction(ConfigurationSection section) {
         ActionFactory factory = getActionFactory(section.getString("type"));
@@ -149,28 +132,13 @@ public class ActionManagerImpl implements ActionManager {
                 );
     }
 
-    /**
-     * Retrieves a mapping of ActionTriggers to arrays of Actions from a ConfigurationSection.
-     * This method iterates through the provided ConfigurationSection to extract action triggers
-     * and their associated arrays of Actions.
-     *
-     * @param section The ConfigurationSection containing action mappings.
-     * @return A HashMap where keys are ActionTriggers and values are arrays of Action objects.
-     */
     @Override
     @NotNull
     public HashMap<ActionTrigger, Action[]> getActionMap(ConfigurationSection section) {
-        // Create an empty HashMap to store the action mappings
         HashMap<ActionTrigger, Action[]> actionMap = new HashMap<>();
-
-        // If the provided ConfigurationSection is null, return the empty actionMap
         if (section == null) return actionMap;
-
-        // Iterate through all key-value pairs in the ConfigurationSection
         for (Map.Entry<String, Object> entry : section.getValues(false).entrySet()) {
             if (entry.getValue() instanceof ConfigurationSection innerSection) {
-                // Convert the key to an ActionTrigger enum (assuming it's in uppercase English)
-                // and map it to an array of Actions obtained from the inner section
                 try {
                     actionMap.put(
                             ActionTrigger.valueOf(entry.getKey().toUpperCase(Locale.ENGLISH)),
@@ -184,22 +152,12 @@ public class ActionManagerImpl implements ActionManager {
         return actionMap;
     }
 
-    /**
-     * Retrieves an array of Action objects from a ConfigurationSection.
-     * This method iterates through the provided ConfigurationSection to extract Action configurations
-     * and build an array of Action objects.
-     *
-     * @param section The ConfigurationSection containing action configurations.
-     * @return An array of Action objects created based on the configurations in the section.
-     */
     @NotNull
     @Override
     public Action[] getActions(ConfigurationSection section) {
-        // Create an ArrayList to store the Actions
         ArrayList<Action> actionList = new ArrayList<>();
         if (section == null) return actionList.toArray(new Action[0]);
 
-        // Iterate through all key-value pairs in the ConfigurationSection
         for (Map.Entry<String, Object> entry : section.getValues(false).entrySet()) {
             if (entry.getValue() instanceof ConfigurationSection innerSection) {
                 Action action = getAction(innerSection);
@@ -210,23 +168,12 @@ public class ActionManagerImpl implements ActionManager {
         return actionList.toArray(new Action[0]);
     }
 
-    /**
-     * Retrieves an ActionFactory associated with a specific action type.
-     *
-     * @param type The action type for which to retrieve the ActionFactory.
-     * @return The ActionFactory associated with the specified action type, or null if not found.
-     */
     @Nullable
     @Override
     public ActionFactory getActionFactory(String type) {
         return actionBuilderMap.get(type);
     }
 
-    /**
-     * Loads custom ActionExpansions from JAR files located in the expansion directory.
-     * This method scans the expansion folder for JAR files, loads classes that extend ActionExpansion,
-     * and registers them with the appropriate action type and ActionFactory.
-     */
     @SuppressWarnings("ResultOfMethodCallIgnored")
     private void loadExpansions() {
         File expansionFolder = new File(plugin.getDataFolder(), EXPANSION_FOLDER);

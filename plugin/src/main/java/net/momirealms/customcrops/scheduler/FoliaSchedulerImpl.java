@@ -26,9 +26,6 @@ import org.bukkit.Location;
 
 import java.util.Optional;
 
-/**
- * A scheduler implementation for "synchronous" tasks using Folia's RegionScheduler.
- */
 public class FoliaSchedulerImpl implements SyncScheduler {
 
     private final CustomCropsPlugin plugin;
@@ -37,39 +34,16 @@ public class FoliaSchedulerImpl implements SyncScheduler {
         this.plugin = plugin;
     }
 
-    /**
-     * Runs a "synchronous" task on the region thread using Folia's RegionScheduler.
-     *
-     * @param runnable The task to run.
-     * @param location The location associated with the task.
-     */
     @Override
     public void runSyncTask(Runnable runnable, Location location) {
         Bukkit.getRegionScheduler().execute(plugin, Optional.ofNullable(location).orElse(LocationUtils.getAnyLocationInstance()), runnable);
     }
 
-    /**
-     * Runs a "synchronous" task repeatedly with a specified delay and period using Folia's RegionScheduler.
-     *
-     * @param runnable The task to run.
-     * @param location The location associated with the task.
-     * @param delay    The delay in ticks before the first execution.
-     * @param period   The period between subsequent executions in ticks.
-     * @return A CancellableTask for managing the scheduled task.
-     */
     @Override
     public CancellableTask runTaskSyncTimer(Runnable runnable, Location location, long delay, long period) {
         return new FoliaCancellableTask(Bukkit.getRegionScheduler().runAtFixedRate(plugin, location, (scheduledTask -> runnable.run()), delay, period));
     }
 
-    /**
-     * Runs a "synchronous" task with a specified delay using Folia's RegionScheduler.
-     *
-     * @param runnable The task to run.
-     * @param location The location associated with the task.
-     * @param delay    The delay in ticks before the task execution.
-     * @return A CancellableTask for managing the scheduled task.
-     */
     @Override
     public CancellableTask runTaskSyncLater(Runnable runnable, Location location, long delay) {
         if (delay == 0) {
@@ -78,9 +52,6 @@ public class FoliaSchedulerImpl implements SyncScheduler {
         return new FoliaCancellableTask(Bukkit.getRegionScheduler().runDelayed(plugin, location, (scheduledTask -> runnable.run()), delay));
     }
 
-    /**
-     * Represents a scheduled task using Folia's RegionScheduler that can be cancelled.
-     */
     public static class FoliaCancellableTask implements CancellableTask {
 
         private final ScheduledTask scheduledTask;

@@ -2,11 +2,11 @@ package net.momirealms.customcrops.api.mechanic.condition;
 
 import org.bukkit.Location;
 
-public class CropCondition {
+public class CropState {
 
     private final Location location;
 
-    public CropCondition(Location location) {
+    public CropState(Location location) {
         this.location = location;
     }
 

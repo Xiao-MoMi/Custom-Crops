@@ -1,17 +1,41 @@
+/*
+ *  Copyright (C) <2022> <XiaoMoMi>
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package net.momirealms.customcrops;
 
 import de.tr7zw.changeme.nbtapi.utils.MinecraftVersion;
 import de.tr7zw.changeme.nbtapi.utils.VersionChecker;
 import net.momirealms.customcrops.api.CustomCropsPlugin;
 import net.momirealms.customcrops.api.manager.ConfigManager;
+import net.momirealms.customcrops.api.manager.CoolDownManager;
 import net.momirealms.customcrops.api.util.LogUtils;
+import net.momirealms.customcrops.compatibility.IntegrationManagerImpl;
 import net.momirealms.customcrops.libraries.classpath.ReflectionClassPathAppender;
 import net.momirealms.customcrops.libraries.dependencies.Dependency;
 import net.momirealms.customcrops.libraries.dependencies.DependencyManager;
 import net.momirealms.customcrops.libraries.dependencies.DependencyManagerImpl;
-import net.momirealms.customcrops.manager.ConfigManagerImpl;
-import net.momirealms.customcrops.manager.PacketManager;
-import net.momirealms.customcrops.manager.VersionManagerImpl;
+import net.momirealms.customcrops.manager.*;
+import net.momirealms.customcrops.mechanic.action.ActionManagerImpl;
+import net.momirealms.customcrops.mechanic.condition.ConditionManagerImpl;
+import net.momirealms.customcrops.mechanic.item.ItemManagerImpl;
+import net.momirealms.customcrops.mechanic.requirement.RequirementManagerImpl;
+import net.momirealms.customcrops.mechanic.world.WorldManagerImpl;
+import net.momirealms.customcrops.scheduler.SchedulerImpl;
+import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 
 import java.lang.reflect.Field;
@@ -22,6 +46,7 @@ public class CustomCropsPluginImpl extends CustomCropsPlugin {
 
     private DependencyManager dependencyManager;
     private PacketManager packetManager;
+    private CommandManager commandManager;
 
     @Override
     public void onLoad() {
@@ -44,19 +69,55 @@ public class CustomCropsPluginImpl extends CustomCropsPlugin {
     @Override
     public void onEnable() {
         instance = this;
+        this.adventure = new AdventureManagerImpl(this);
+        this.scheduler = new SchedulerImpl(this);
         this.versionManager = new VersionManagerImpl(this);
         this.configManager = new ConfigManagerImpl(this);
+        this.integrationManager = new IntegrationManagerImpl(this);
+        this.conditionManager = new ConditionManagerImpl(this);
+        this.actionManager = new ActionManagerImpl(this);
+        this.requirementManager = new RequirementManagerImpl(this);
+        this.coolDownManager = new CoolDownManager(this);
+        this.worldManager = new WorldManagerImpl(this);
+        this.itemManager = new ItemManagerImpl(this);
+        this.messageManager = new MessageManagerImpl(this);
         this.packetManager = new PacketManager(this);
+        this.commandManager = new CommandManager(this);
         this.disableNBTAPILogs();
+
+        if (ConfigManager.metrics()) new Metrics(this, 16593);
+        if (ConfigManager.checkUpdate()) {
+            this.versionManager.checkUpdate().thenAccept(result -> {
+                if (!result) this.getAdventure().sendConsoleMessage("[CustomCrops] You are using the latest version.");
+                else this.getAdventure().sendConsoleMessage("[CustomCrops] Update is available: <u>https://polymart.org/resource/2625<!u>");
+            });
+        }
     }
 
     @Override
     public void onDisable() {
         instance = null;
+        this.commandManager.disable();
+        this.adventure.disable();
+        this.requirementManager.disable();
+        this.actionManager.disable();
+        this.worldManager.disable();
+        this.itemManager.disable();
+        this.conditionManager.disable();
+        this.coolDownManager.disable();
+        ((SchedulerImpl) scheduler).shutdown();
     }
 
+    @Override
     public void reload() {
         this.configManager.reload();
+        this.itemManager.reload();
+        this.worldManager.reload();
+        this.actionManager.reload();
+        this.requirementManager.reload();
+        this.conditionManager.reload();
+        this.coolDownManager.reload();
+        ((SchedulerImpl) scheduler).reload();
     }
 
     /**

@@ -22,5 +22,4 @@ import net.momirealms.customcrops.api.mechanic.requirement.State;
 public interface Action {
 
     void trigger(State condition);
-
 }

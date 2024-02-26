@@ -1,18 +1,35 @@
+/*
+ *  Copyright (C) <2022> <XiaoMoMi>
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package net.momirealms.customcrops.api.mechanic.world.level;
 
 public class WorldSetting implements Cloneable {
 
-    private boolean enableScheduler;
-    private int pointInterval;
-    private int tickPotInterval;
-    private int tickSprinklerInterval;
-    private boolean offlineGrow;
-    private boolean enableSeason;
-    private boolean autoSeasonChange;
-    private int seasonDuration;
-    private int cropPerChunk;
-    private int potPerChunk;
-    private int sprinklerPerChunk;
+    private final boolean enableScheduler;
+    private final int pointInterval;
+    private final int tickPotInterval;
+    private final int tickSprinklerInterval;
+    private final boolean offlineGrow;
+    private final boolean enableSeason;
+    private final boolean autoSeasonChange;
+    private final int seasonDuration;
+    private final int cropPerChunk;
+    private final int potPerChunk;
+    private final int sprinklerPerChunk;
 
     private WorldSetting(
             boolean enableScheduler,

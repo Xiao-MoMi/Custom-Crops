@@ -1,5 +1,23 @@
+/*
+ *  Copyright (C) <2022> <XiaoMoMi>
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package net.momirealms.customcrops.manager;
 
+import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.sound.Sound;
@@ -8,6 +26,10 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.momirealms.customcrops.api.CustomCropsPlugin;
 import net.momirealms.customcrops.api.manager.AdventureManager;
 import net.momirealms.customcrops.api.manager.ConfigManager;
+import net.momirealms.customcrops.api.manager.MessageManager;
+import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 
 public class AdventureManagerImpl extends AdventureManager {
@@ -17,6 +39,7 @@ public class AdventureManagerImpl extends AdventureManager {
 
     public AdventureManagerImpl(CustomCropsPlugin plugin) {
         this.plugin = plugin;
+        init();
     }
 
     @Override
@@ -28,6 +51,28 @@ public class AdventureManagerImpl extends AdventureManager {
     public void disable() {
         if (this.audiences != null)
             this.audiences.close();
+    }
+
+    @Override
+    public void sendMessage(CommandSender sender, String text) {
+        if (text == null) return;
+        if (sender instanceof Player player) sendPlayerMessage(player, text);
+        else if (sender instanceof ConsoleCommandSender) sendConsoleMessage(text);
+    }
+
+
+    @Override
+    public void sendMessageWithPrefix(CommandSender sender, String text) {
+        if (text == null) return;
+        if (sender instanceof Player player) sendPlayerMessage(player, MessageManager.prefix() + text);
+        else if (sender instanceof ConsoleCommandSender) sendConsoleMessage(MessageManager.prefix() + text);
+    }
+
+    @Override
+    public void sendConsoleMessage(String text) {
+        if (text == null) return;
+        Audience au = audiences.sender(Bukkit.getConsoleSender());
+        au.sendMessage(getComponentFromMiniMessage(text));
     }
 
     @Override

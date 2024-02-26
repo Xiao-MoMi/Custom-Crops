@@ -43,21 +43,6 @@ allprojects {
         maven("https://repo.infernalsuite.com/repository/maven-releases/")
         maven("https://repo.rapture.pw/repository/maven-releases/")
     }
-
-    dependencies {
-        testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.3")
-        testImplementation("org.junit.jupiter:junit-jupiter-params:5.9.3")
-        testImplementation("org.junit.jupiter:junit-jupiter-engine:5.9.3")
-    }
-
-    tasks.processResources {
-        val props = mapOf("version" to version)
-        inputs.properties(props)
-        filteringCharset = "UTF-8"
-        filesMatching("plugin.yml") {
-            expand(props)
-        }
-    }
 }
 
 subprojects {

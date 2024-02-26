@@ -59,24 +59,20 @@ public class RequirementManagerImpl implements RequirementManager {
         this.registerInbuiltRequirements();
     }
 
+    @Override
     public void load() {
         this.loadExpansions();
     }
 
+    @Override
     public void unload() {
     }
 
+    @Override
     public void disable() {
         this.requirementBuilderMap.clear();
     }
 
-    /**
-     * Registers a custom requirement type with its corresponding factory.
-     *
-     * @param type               The type identifier of the requirement.
-     * @param requirementFactory The factory responsible for creating instances of the requirement.
-     * @return True if registration was successful, false if the type is already registered.
-     */
     @Override
     public boolean registerRequirement(String type, RequirementFactory requirementFactory) {
         if (this.requirementBuilderMap.containsKey(type)) return false;
@@ -84,12 +80,6 @@ public class RequirementManagerImpl implements RequirementManager {
         return true;
     }
 
-    /**
-     * Unregisters a custom requirement type.
-     *
-     * @param type The type identifier of the requirement to unregister.
-     * @return True if unregistration was successful, false if the type is not registered.
-     */
     @Override
     public boolean unregisterRequirement(String type) {
         return this.requirementBuilderMap.remove(type) != null;
@@ -124,13 +114,6 @@ public class RequirementManagerImpl implements RequirementManager {
         this.registerInListRequirement();
     }
 
-    /**
-     * Retrieves an array of requirements based on a configuration section.
-     *
-     * @param section The configuration section containing requirement definitions.
-     * @param advanced A flag indicating whether to use advanced requirements.
-     * @return An array of Requirement objects based on the configuration section
-     */
     @NotNull
     @Override
     public Requirement[] getRequirements(ConfigurationSection section, boolean advanced) {
@@ -149,17 +132,11 @@ public class RequirementManagerImpl implements RequirementManager {
         return requirements.toArray(new Requirement[0]);
     }
 
+    @Override
     public boolean hasRequirement(String type) {
         return requirementBuilderMap.containsKey(type);
     }
 
-    /**
-     * Retrieves a Requirement object based on a configuration section and advanced flag.
-     *
-     * @param section  The configuration section containing requirement definitions.
-     * @param advanced A flag indicating whether to use advanced requirements.
-     * @return A Requirement object based on the configuration section, or an EmptyRequirement if the section is null or invalid.
-     */
     @NotNull
     @Override
     public Requirement getRequirement(ConfigurationSection section, boolean advanced) {
@@ -189,15 +166,6 @@ public class RequirementManagerImpl implements RequirementManager {
         return builder.build(section.get("value"), actionList, advanced);
     }
 
-    /**
-     * Gets a requirement based on the provided key and value.
-     * If a valid RequirementFactory is found for the key, it is used to create the requirement.
-     * If no factory is found, a warning is logged, and an empty requirement instance is returned.
-     *
-     * @param type   The key representing the requirement type.
-     * @param value The value associated with the requirement.
-     * @return A Requirement instance based on the key and value, or an empty requirement if not found.
-     */
     @Override
     @NotNull
     public Requirement getRequirement(String type, Object value) {
@@ -209,12 +177,6 @@ public class RequirementManagerImpl implements RequirementManager {
         return factory.build(value);
     }
 
-    /**
-     * Retrieves a RequirementFactory based on the specified requirement type.
-     *
-     * @param type The requirement type for which to retrieve a factory.
-     * @return A RequirementFactory for the specified type, or null if no factory is found.
-     */
     @Override
     @Nullable
     public RequirementFactory getRequirementFactory(String type) {
@@ -853,25 +815,12 @@ public class RequirementManagerImpl implements RequirementManager {
         });
     }
 
-    /**
-     * Triggers a list of actions with the given state.
-     * If the list of actions is not null, each action in the list is triggered.
-     *
-     * @param actions   The list of actions to trigger.
-     * @param state The state associated with the actions.
-     */
     private void triggerActions(List<Action> actions, State state) {
         if (actions != null)
             for (Action action : actions)
                 action.trigger(state);
     }
 
-    /**
-     * Loads requirement expansions from external JAR files located in the expansion folder.
-     * Each expansion JAR should contain classes that extends the RequirementExpansion class.
-     * Expansions are registered and used to create custom requirements.
-     * If an error occurs while loading or initializing an expansion, a warning message is logged.
-     */
     @SuppressWarnings("ResultOfMethodCallIgnored")
     private void loadExpansions() {
         File expansionFolder = new File(plugin.getDataFolder(), EXPANSION_FOLDER);

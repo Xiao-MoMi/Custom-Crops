@@ -48,9 +48,6 @@ public class SchedulerImpl implements Scheduler {
         this.schedule.setRejectedExecutionHandler(new ThreadPoolExecutor.DiscardOldestPolicy());
     }
 
-    /**
-     * Reloads the scheduler configuration based on CustomFishingPlugin settings.
-     */
     public void reload() {
         try {
             this.schedule.setMaximumPoolSize(ConfigManager.maximumPoolSize());
@@ -61,30 +58,16 @@ public class SchedulerImpl implements Scheduler {
         }
     }
 
-    /**
-     * Shuts down the scheduler.
-     */
     public void shutdown() {
         if (this.schedule != null && !this.schedule.isShutdown())
             this.schedule.shutdown();
     }
 
-    /**
-     * Runs a task synchronously on the main server thread or region thread.
-     *
-     * @param runnable The task to run.
-     * @param location The location associated with the task.
-     */
     @Override
     public void runTaskSync(Runnable runnable, Location location) {
         this.syncScheduler.runSyncTask(runnable, location);
     }
 
-    /**
-     * Runs a task asynchronously.
-     *
-     * @param runnable The task to run.
-     */
     @Override
     public void runTaskAsync(Runnable runnable) {
         try {
@@ -94,28 +77,11 @@ public class SchedulerImpl implements Scheduler {
         }
     }
 
-    /**
-     * Runs a task synchronously with a specified delay and period.
-     *
-     * @param runnable    The task to run.
-     * @param location    The location associated with the task.
-     * @param delayTicks  The delay in ticks before the first execution.
-     * @param periodTicks The period between subsequent executions in ticks.
-     * @return A CancellableTask for managing the scheduled task.
-     */
     @Override
     public CancellableTask runTaskSyncTimer(Runnable runnable, Location location, long delayTicks, long periodTicks) {
         return this.syncScheduler.runTaskSyncTimer(runnable, location, delayTicks, periodTicks);
     }
 
-    /**
-     * Runs a task asynchronously with a specified delay.
-     *
-     * @param runnable  The task to run.
-     * @param delay     The delay before the task execution.
-     * @param timeUnit  The time unit for the delay.
-     * @return A CancellableTask for managing the scheduled task.
-     */
     @Override
     public CancellableTask runTaskAsyncLater(Runnable runnable, long delay, TimeUnit timeUnit) {
         return new ScheduledTask(schedule.schedule(() -> {
@@ -127,42 +93,16 @@ public class SchedulerImpl implements Scheduler {
         }, delay, timeUnit));
     }
 
-    /**
-     * Runs a task synchronously with a specified delay.
-     *
-     * @param runnable  The task to run.
-     * @param location  The location associated with the task.
-     * @param delay     The delay before the task execution.
-     * @param timeUnit  The time unit for the delay.
-     * @return A CancellableTask for managing the scheduled task.
-     */
     @Override
     public CancellableTask runTaskSyncLater(Runnable runnable, Location location, long delay, TimeUnit timeUnit) {
         return new ScheduledTask(schedule.schedule(() -> runTaskSync(runnable, location), delay, timeUnit));
     }
 
-    /**
-     * Runs a task synchronously with a specified delay in ticks.
-     *
-     * @param runnable    The task to run.
-     * @param location    The location associated with the task.
-     * @param delayTicks  The delay in ticks before the task execution.
-     * @return A CancellableTask for managing the scheduled task.
-     */
     @Override
     public CancellableTask runTaskSyncLater(Runnable runnable, Location location, long delayTicks) {
         return this.syncScheduler.runTaskSyncLater(runnable, location, delayTicks);
     }
 
-    /**
-     * Runs a task asynchronously with a specified delay and period.
-     *
-     * @param runnable    The task to run.
-     * @param delay       The delay before the first execution.
-     * @param period      The period between subsequent executions.
-     * @param timeUnit    The time unit for the delay and period.
-     * @return A CancellableTask for managing the scheduled task.
-     */
     @Override
     public CancellableTask runTaskAsyncTimer(Runnable runnable, long delay, long period, TimeUnit timeUnit) {
         return new ScheduledTask(schedule.scheduleAtFixedRate(() -> {
@@ -174,9 +114,6 @@ public class SchedulerImpl implements Scheduler {
         }, delay, period, timeUnit));
     }
 
-    /**
-     * Represents a thread-pool task that can be cancelled.
-     */
     public static class ScheduledTask implements CancellableTask {
 
         private final ScheduledFuture<?> scheduledFuture;

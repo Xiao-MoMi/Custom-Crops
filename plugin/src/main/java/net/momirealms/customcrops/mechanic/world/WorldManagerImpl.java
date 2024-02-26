@@ -1,7 +1,5 @@
 package net.momirealms.customcrops.mechanic.world;
 
-import dev.dejvokep.boostedyaml.YamlDocument;
-import dev.dejvokep.boostedyaml.block.implementation.Section;
 import net.momirealms.customcrops.api.CustomCropsPlugin;
 import net.momirealms.customcrops.api.manager.WorldManager;
 import net.momirealms.customcrops.api.mechanic.item.Fertilizer;
@@ -18,6 +16,8 @@ import net.momirealms.customcrops.mechanic.world.adaptor.SlimeWorldAdaptor;
 import net.momirealms.customcrops.utils.ConfigUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
@@ -95,13 +95,9 @@ public class WorldManagerImpl implements WorldManager, Listener {
     }
 
     private void loadConfig() {
-        YamlDocument config = ConfigUtils.getConfig("config.yml");
-        if (config == null) {
-            LogUtils.severe("Failed to load config.yml");
-            return;
-        }
+        YamlConfiguration config = ConfigUtils.getConfig("config.yml");
 
-        Section section = config.getSection("worlds");
+        ConfigurationSection section = config.getConfigurationSection("worlds");
         if (section == null) {
             LogUtils.severe("worlds section should not be null");
             return;
@@ -116,15 +112,15 @@ public class WorldManagerImpl implements WorldManager, Listener {
         }
 
         // limitation
-        Section settingSection = section.getSection("settings");
+        ConfigurationSection settingSection = section.getConfigurationSection("settings");
         if (settingSection == null) {
-            LogUtils.severe("scheduler section should not be null");
+            LogUtils.severe("worlds.settings section should not be null");
             return;
         }
 
-        Section defaultSchedulerSection = settingSection.getSection("_DEFAULT_");
+        ConfigurationSection defaultSchedulerSection = settingSection.getConfigurationSection("_DEFAULT_");
         if (defaultSchedulerSection == null) {
-            LogUtils.severe("_DEFAULT_ section should not be null");
+            LogUtils.severe("worlds.settings._DEFAULT_ section should not be null");
             return;
         }
 

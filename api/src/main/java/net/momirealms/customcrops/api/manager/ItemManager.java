@@ -1,11 +1,25 @@
+/*
+ *  Copyright (C) <2022> <XiaoMoMi>
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package net.momirealms.customcrops.api.manager;
 
 import net.momirealms.customcrops.api.common.Reloadable;
 import net.momirealms.customcrops.api.integration.ItemLibrary;
-import net.momirealms.customcrops.api.mechanic.item.Fertilizer;
-import net.momirealms.customcrops.api.mechanic.item.Pot;
-import net.momirealms.customcrops.api.mechanic.item.Sprinkler;
-import net.momirealms.customcrops.api.mechanic.item.WateringCan;
+import net.momirealms.customcrops.api.mechanic.item.*;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
@@ -73,6 +87,18 @@ public interface ItemManager extends Reloadable {
     Fertilizer getFertilizerByItemID(String id);
 
     Fertilizer getFertilizerByItemStack(@NotNull ItemStack itemStack);
+
+    Crop getCropByID(String id);
+
+    Crop getCropBySeedID(String id);
+
+    Crop getCropBySeedItemStack(ItemStack itemStack);
+
+    Crop getCropByStageID(String id);
+
+    Crop getCropByEntity(Entity entity);
+
+    Crop getCropByBlock(Block block);
 
     @NotNull
     Collection<Location> getPotInRange(Location baseLocation, int width, int length, float yaw, String potID);

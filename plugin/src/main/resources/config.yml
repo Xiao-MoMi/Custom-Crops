@@ -1,11 +1,17 @@
 # Don't change
 config-version: '35'
-# bStats
-metrics: true
-# Language: english / french / spanish / chinese / turkish / russian
-lang: english
+
 # Debug
 debug: false
+
+# BStats
+metrics: true
+
+# Check updates
+update-checker: true
+
+# Language: english / french / spanish / chinese / turkish / russian
+lang: english
 
 worlds:
   # This is designed for servers that using an independent folder for worlds
@@ -91,6 +97,10 @@ mechanics:
     reference: world
 
 other-settings:
+  # It's recommended to use MiniMessage format. If you insist on using legacy color code "&", enable the support below.
+  # Disable this would improve performance
+  legacy-color-code-support: true
+
   # Thread pool settings
   thread-pool-settings:
     corePoolSize: 10
@@ -103,5 +113,25 @@ other-settings:
   # Whether to protect the original lore of the item
   # This uses the scoreboard component to identify the plugin's lore,
   # which may conflict with some plugins that still use the deprecated SpigotAPI.
-  # Disable this if that occurs
-  protect-original-lore: true
+  protect-original-lore: false
+
+  # Offset characters' unicodes
+  # Never edit this unless you know what you are doing
+  offset-characters:
+    font: customcrops:offset_chars
+    '1': 
+    '2': 
+    '4': 
+    '8': 
+    '16': 
+    '32': 
+    '64': 
+    '128': 
+    '-1': 
+    '-2': 
+    '-4': 
+    '-8': 
+    '-16': 
+    '-32': 
+    '-64': 
+    '-128': 

@@ -32,5 +32,5 @@ public enum ActionTrigger {
     WRONG_SPRINKLER,
     BEFORE_PLANT,
     REACH_LIMIT,
-    INTERACT,
+    INTERACT, PLANT,
 }

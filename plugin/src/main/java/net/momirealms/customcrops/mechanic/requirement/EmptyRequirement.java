@@ -20,9 +20,6 @@ package net.momirealms.customcrops.mechanic.requirement;
 import net.momirealms.customcrops.api.mechanic.requirement.Requirement;
 import net.momirealms.customcrops.api.mechanic.requirement.State;
 
-/**
- * Represents an empty requirement that always returns true when checking conditions.
- */
 public class EmptyRequirement implements Requirement {
 
     public static EmptyRequirement instance = new EmptyRequirement();

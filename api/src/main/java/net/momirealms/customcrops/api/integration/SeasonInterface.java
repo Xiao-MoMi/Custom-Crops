@@ -27,9 +27,15 @@ public interface SeasonInterface {
      * Get a world's season
      *
      * @param world world
-     * @return spring, summer, autumn, winter or disabled
+     * @return spring, summer, autumn, winter or null
      */
     @Nullable Season getSeason(World world);
 
+    /**
+     * Get a world's date
+     *
+     * @param world world
+     * @return date
+     */
     int getDate(World world);
 }

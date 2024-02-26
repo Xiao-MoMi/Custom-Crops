@@ -23,9 +23,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.scheduler.BukkitTask;
 
-/**
- * A scheduler implementation for synchronous tasks using Bukkit's Scheduler.
- */
 public class BukkitSchedulerImpl implements SyncScheduler {
 
     private final CustomCropsPlugin plugin;
@@ -34,13 +31,6 @@ public class BukkitSchedulerImpl implements SyncScheduler {
         this.plugin = plugin;
     }
 
-    /**
-     * Runs a synchronous task on the main server thread using Bukkit's Scheduler.
-     * If already on the main thread, the task is executed immediately.
-     *
-     * @param runnable The task to run.
-     * @param location The location associated with the task.
-     */
     @Override
     public void runSyncTask(Runnable runnable, Location location) {
         if (Bukkit.isPrimaryThread())
@@ -49,28 +39,11 @@ public class BukkitSchedulerImpl implements SyncScheduler {
             Bukkit.getScheduler().runTask(plugin, runnable);
     }
 
-    /**
-     * Runs a synchronous task repeatedly with a specified delay and period using Bukkit's Scheduler.
-     *
-     * @param runnable The task to run.
-     * @param location The location associated with the task.
-     * @param delay    The delay in ticks before the first execution.
-     * @param period   The period between subsequent executions in ticks.
-     * @return A CancellableTask for managing the scheduled task.
-     */
     @Override
     public CancellableTask runTaskSyncTimer(Runnable runnable, Location location, long delay, long period) {
         return new BukkitCancellableTask(Bukkit.getScheduler().runTaskTimer(plugin, runnable, delay, period));
     }
 
-    /**
-     * Runs a synchronous task with a specified delay using Bukkit's Scheduler.
-     *
-     * @param runnable The task to run.
-     * @param location The location associated with the task.
-     * @param delay    The delay in ticks before the task execution.
-     * @return A CancellableTask for managing the scheduled task.
-     */
     @Override
     public CancellableTask runTaskSyncLater(Runnable runnable, Location location, long delay) {
         if (delay == 0) {
@@ -81,9 +54,6 @@ public class BukkitSchedulerImpl implements SyncScheduler {
         return new BukkitCancellableTask(Bukkit.getScheduler().runTaskLater(plugin, runnable, delay));
     }
 
-    /**
-     * Represents a scheduled task using Bukkit's Scheduler that can be cancelled.
-     */
     public static class BukkitCancellableTask implements CancellableTask {
 
         private final BukkitTask bukkitTask;

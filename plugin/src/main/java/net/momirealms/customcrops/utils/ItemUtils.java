@@ -1,6 +1,22 @@
+/*
+ *  Copyright (C) <2022> <XiaoMoMi>
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package net.momirealms.customcrops.utils;
 
-import net.momirealms.customcrops.api.util.LogUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -8,18 +24,10 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 public class ItemUtils {
 
-    public static int giveItem(Player player, ItemStack itemStack, int amount) {
+    public static void giveItem(Player player, ItemStack itemStack, int amount) {
         PlayerInventory inventory = player.getInventory();
         ItemMeta meta = itemStack.getItemMeta();
         int maxStackSize = itemStack.getMaxStackSize();
-
-        if (amount > maxStackSize * 100) {
-            LogUtils.warn("Detected too many items spawning. Lowering the amount to " + (maxStackSize * 100));
-            amount = maxStackSize * 100;
-        }
-
-        int actualAmount = amount;
-
         for (ItemStack other : inventory.getStorageContents()) {
             if (other != null) {
                 if (other.getType() == itemStack.getType() && other.getItemMeta().equals(meta)) {
@@ -30,13 +38,12 @@ public class ItemUtils {
                             amount -= delta;
                         } else {
                             other.setAmount(amount + other.getAmount());
-                            return actualAmount;
+                            return;
                         }
                     }
                 }
             }
         }
-
         if (amount > 0) {
             for (ItemStack other : inventory.getStorageContents()) {
                 if (other == null) {
@@ -49,12 +56,11 @@ public class ItemUtils {
                         ItemStack cloned = itemStack.clone();
                         cloned.setAmount(amount);
                         inventory.addItem(cloned);
-                        return actualAmount;
+                        return;
                     }
                 }
             }
         }
-
         if (amount > 0) {
             for (int i = 0; i < amount / maxStackSize; i++) {
                 ItemStack cloned = itemStack.clone();
@@ -68,7 +74,5 @@ public class ItemUtils {
                 player.getWorld().dropItem(player.getLocation(), cloned);
             }
         }
-
-        return actualAmount;
     }
 }

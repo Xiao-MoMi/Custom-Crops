@@ -1,47 +1,60 @@
+/*
+ *  Copyright (C) <2022> <XiaoMoMi>
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package net.momirealms.customcrops.utils;
 
 import com.google.common.base.Preconditions;
-import dev.dejvokep.boostedyaml.YamlDocument;
-import dev.dejvokep.boostedyaml.block.implementation.Section;
 import net.momirealms.customcrops.api.CustomCropsPlugin;
 import net.momirealms.customcrops.api.common.Pair;
 import net.momirealms.customcrops.api.manager.PlaceholderManager;
 import net.momirealms.customcrops.api.mechanic.action.Action;
 import net.momirealms.customcrops.api.mechanic.action.ActionTrigger;
+import net.momirealms.customcrops.api.mechanic.condition.*;
+import net.momirealms.customcrops.api.mechanic.item.BoneMeal;
 import net.momirealms.customcrops.api.mechanic.item.FertilizerType;
+import net.momirealms.customcrops.api.mechanic.item.ItemCarrier;
 import net.momirealms.customcrops.api.mechanic.item.water.PassiveFillMethod;
 import net.momirealms.customcrops.api.mechanic.item.water.PositiveFillMethod;
 import net.momirealms.customcrops.api.mechanic.misc.Value;
 import net.momirealms.customcrops.api.mechanic.requirement.Requirement;
 import net.momirealms.customcrops.api.mechanic.world.level.WorldSetting;
+import net.momirealms.customcrops.api.util.LogUtils;
+import net.momirealms.customcrops.mechanic.item.impl.CropConfig;
 import net.momirealms.customcrops.mechanic.misc.value.ExpressionValue;
 import net.momirealms.customcrops.mechanic.misc.value.PlainValue;
 import net.objecthunter.exp4j.ExpressionBuilder;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.*;
 
 public class ConfigUtils {
 
     private ConfigUtils() {}
 
-    @Nullable
-    public static YamlDocument getConfig(String file) {
+    public static YamlConfiguration getConfig(String file) {
         File config = new File(CustomCropsPlugin.get().getDataFolder(), file);
         if (!config.exists()) CustomCropsPlugin.get().saveResource(file, false);
-        try {
-            return YamlDocument.create(config);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
+        return YamlConfiguration.loadConfiguration(config);
     }
 
-    public static WorldSetting getWorldSettingFromSection(Section section) {
+    public static WorldSetting getWorldSettingFromSection(ConfigurationSection section) {
         return WorldSetting.of(
                 section.getBoolean("enable", true),
                 section.getInt("point-interval", 300),
@@ -279,5 +292,72 @@ public class ConfigUtils {
             }
         }
         return pairs;
+    }
+
+    public static BoneMeal[] getBoneMeals(ConfigurationSection section) {
+        ArrayList<BoneMeal> boneMeals = new ArrayList<>();
+        if (section != null) {
+            for (Map.Entry<String, Object> entry : section.getValues(false).entrySet()) {
+                if (entry.getValue() instanceof ConfigurationSection innerSection) {
+                    BoneMeal boneMeal = new BoneMeal(
+                            Preconditions.checkNotNull(innerSection.getString("item"), "Bone meal item can't be null"),
+                            innerSection.getInt("item-amount",1),
+                            innerSection.getString("return"),
+                            innerSection.getInt("return-amount",1),
+                            getIntChancePair(section.getConfigurationSection("chance")),
+                            getActions(section.getConfigurationSection("actions"))
+                    );
+                    boneMeals.add(boneMeal);
+                }
+            }
+        }
+        return boneMeals.toArray(new BoneMeal[0]);
+    }
+
+    public static DeathConditions[] getDeathConditions(ConfigurationSection section, ItemCarrier original) {
+        ArrayList<DeathConditions> conditions = new ArrayList<>();
+        if (section != null) {
+            for (Map.Entry<String, Object> entry : section.getValues(false).entrySet()) {
+                if (entry.getValue() instanceof ConfigurationSection inner) {
+                    DeathConditions deathConditions = new DeathConditions(
+                            getConditions(inner.getConfigurationSection("conditions")),
+                            inner.getString("model"),
+                            Optional.ofNullable(inner.getString("type")).map(ItemCarrier::valueOf).orElse(original)
+                    );
+                    conditions.add(deathConditions);
+                }
+            }
+        }
+        return conditions.toArray(new DeathConditions[0]);
+    }
+
+    public static Condition[] getConditions(ConfigurationSection section) {
+        return CustomCropsPlugin.get().getConditionManager().getConditions(section);
+    }
+
+    public static HashMap<Integer, CropConfig.CropStageConfig> getStageConfigs(ConfigurationSection section) {
+        HashMap<Integer, CropConfig.CropStageConfig> map = new HashMap<>();
+        if (section != null) {
+            for (Map.Entry<String, Object> entry : section.getValues(false).entrySet()) {
+                if (entry.getValue() instanceof ConfigurationSection inner) {
+                    try {
+                        int point = Integer.parseInt(entry.getKey());
+                        if (point < 0) {
+                            LogUtils.warn(entry.getKey() + " is not a valid number");
+                        } else {
+                            map.put(point, new CropConfig.CropStageConfig(
+                                    inner.getString("model"),
+                                    point,
+                                    inner.getDouble("hologram-offset-correction", 0d),
+                                    getActionMap(inner.getConfigurationSection("events"))
+                            ));
+                        }
+                    } catch (NumberFormatException e) {
+                        LogUtils.warn(entry.getKey() + " is not a valid number");
+                    }
+                }
+            }
+        }
+        return map;
     }
 }

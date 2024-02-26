@@ -246,34 +246,22 @@ tomato:
                   model: customcrops:tomato_stage_1
 
   # Custom grow conditions
-  # You can get a full list of grow conditions on wiki page.
-  # The default config tells that the crop would only grow in Spring and Autumn,
-  # and it requires at least a certain amount of water to grow.
-  # Though it would not grow in Summer, but it would still be alive. If you want
-  # the crop to die, see the "death-conditions" below.
-  # 自定义生长条件，默认配置是：农作物会在春和秋两个季节生长，并且要求种植盆水量大于3
   grow-conditions:
-    condition_1:
+    season_condition:
       type: suitable_season
       value:
         - Spring
         - Autumn
-    condition_2:
+    water_condition:
       type: water_more_than
-      value: 2
+      value: 0
 
   # Custom death conditions
-  # 自定义死亡条件
   death-conditions:
     no_water:
-      # You can customize the dead models according to the reasons
-      # 你可以根据死因设置不同的死亡模型
+      # You can customize the death stage models according to the reasons
       model: customcrops:crop_stage_death
       conditions:
-        # "&&" represents "And"
-        # "||" represents "Or"
-        # the default config tells that the crop would have 70% chance to die if the pot is dry
-        # 默认配置：农作物有70%概率在种植盆干燥情况下死亡
         '&&':
           condition_1:
             type: water_less_than
@@ -290,7 +278,6 @@ tomato:
             - Winter
     crow_attack:
       # Crop would be removed if "model" is not set
-      # 如果没有设置model，农作物会直接被移除，而不是替换模型
       conditions:
         condition_1:
           type: crow_attack
@@ -300,22 +287,10 @@ tomato:
             stand-model: customcrops:crow_stand
 
   # Custom bone meal
-  # 自定义骨粉
   custom-bone-meal:
     bone_meal_1:
       item: BONE_MEAL
-      particle: VILLAGER_HAPPY
-      sound: minecraft:item.bone_meal.use
-      # 20% chance to grow 2 points
-      # (100% - 20%) * 60% = 48% chance to grow 1 point
-      # 20%概率获得两个生长点数
-      # (100% - 20%) * 60% = 48% 概率获得一个生长点数
+      actions: {}
       chance:
         2: 0.2
         1: 0.6
-    bone_meal_2:
-      item: customcrops:custom_bone_meal
-      return: customcrops:custom_bone_meal_used
-      chance:
-        2: 0.4
-        1: 1
