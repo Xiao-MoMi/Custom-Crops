@@ -20,6 +20,7 @@ package net.momirealms.customcrops;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
+import net.momirealms.antigrieflib.AntiGriefLib;
 import net.momirealms.customcrops.api.CustomCropsAPIImpl;
 import net.momirealms.customcrops.api.CustomCropsPlugin;
 import net.momirealms.customcrops.api.object.basic.ConfigManager;
@@ -43,7 +44,6 @@ import net.momirealms.customcrops.helper.LibraryLoader;
 import net.momirealms.customcrops.helper.VersionHelper;
 import net.momirealms.customcrops.integration.IntegrationManager;
 import net.momirealms.customcrops.util.AdventureUtils;
-import net.momirealms.protectionlib.ProtectionLib;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -73,13 +73,16 @@ public final class CustomCrops extends CustomCropsPlugin {
     private HologramManager hologramManager;
     private VersionHelper versionHelper;
     private Scheduler scheduler;
+    private AntiGriefLib antiGriefLib;
 
     @Override
     public void onLoad(){
         plugin = this;
         instance = this;
         this.loadLibs();
-        ProtectionLib.initialize(this);
+        this.antiGriefLib = AntiGriefLib.builder(this)
+                .ignoreOP(true)
+                .build();
     }
 
     @Override
@@ -100,7 +103,6 @@ public final class CustomCrops extends CustomCropsPlugin {
         if (!this.loadPlatform()) return;
         this.registerCommands();
         AdventureUtils.consoleMessage("[CustomCrops] Running on <white>" + Bukkit.getVersion());
-        ProtectionLib.hook();
 
         this.scheduler = new Scheduler(this);
         this.configManager = new ConfigManager(this);
@@ -126,6 +128,8 @@ public final class CustomCrops extends CustomCropsPlugin {
         AdventureUtils.consoleMessage("[CustomCrops] Plugin Enabled!");
         if (ConfigManager.enableBStats) new Metrics(this, 16593);
         if (ConfigManager.checkUpdate) this.versionHelper.checkUpdate();
+
+        antiGriefLib.init();
     }
 
     public void reload() {
@@ -289,5 +293,9 @@ public final class CustomCrops extends CustomCropsPlugin {
 
     public Scheduler getScheduler() {
         return scheduler;
+    }
+
+    public AntiGriefLib getAntiGriefLib() {
+        return antiGriefLib;
     }
 }
