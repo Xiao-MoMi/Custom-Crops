@@ -30,8 +30,6 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.List;
-
 public class QualityLoot extends Loot {
 
     private final String[] qualityLoots;

@@ -20,7 +20,6 @@ package net.momirealms.customcrops.integration.season;
 import me.casperge.realisticseasons.api.SeasonsAPI;
 import net.advancedplugins.seasons.api.AdvancedSeasonsAPI;
 import net.momirealms.customcrops.api.object.season.CCSeason;
-import net.momirealms.customcrops.helper.Log;
 import net.momirealms.customcrops.integration.SeasonInterface;
 import org.bukkit.Bukkit;
 

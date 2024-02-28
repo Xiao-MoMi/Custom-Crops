@@ -1081,34 +1081,26 @@ public class PlatformManager extends Function {
                 }
             }
 
-            List<Block> lineOfSight = player.getLineOfSight(null, 5);
-            List<String> blockIds = lineOfSight.stream().map(block -> {
-                if (block == null) {
-                    return "AIR";
-                }
-                if (block.getBlockData() instanceof Waterlogged waterlogged && waterlogged.isWaterlogged()) {
-                    return "WATER";
-                }
-                return plugin.getPlatformInterface().getBlockID(block);
-            }).toList();
+            Block targetBlock = player.getTargetBlockExact(5, FluidCollisionMode.ALWAYS);
+            if (targetBlock == null)
+                return true;
+            String blockId = plugin.getPlatformInterface().getBlockID(targetBlock);
+            if (targetBlock.getBlockData() instanceof Waterlogged waterlogged && waterlogged.isWaterlogged()) {
+                blockId = "WATER";
+            }
 
             for (PositiveFillMethod positiveFillMethod : wateringCanConfig.getPositiveFillMethods()) {
-                int index = 0;
-                for (String blockId : blockIds) {
-                    if (positiveFillMethod.getId().equals(blockId)) {
-                        Block block = lineOfSight.get(index);
-                        if (!plugin.getAntiGriefLib().canPlace(player, block.getLocation()))
-                            return true;
-                        if (!wateringCanConfig.canUse(player, location))
-                            return true;
-                        add = positiveFillMethod.getAmount();
-                        if (positiveFillMethod.getSound() != null)
-                            AdventureUtils.playerSound(player, positiveFillMethod.getSound());
-                        if (positiveFillMethod.getParticle() != null)
-                            block.getWorld().spawnParticle(positiveFillMethod.getParticle(), block.getLocation().add(0.5,1.1, 0.5),5,0.1,0.1,0.1);
-                        break;
-                    }
-                    index++;
+                if (positiveFillMethod.getId().equals(blockId)) {
+                    if (!plugin.getAntiGriefLib().canPlace(player, targetBlock.getLocation()))
+                        return true;
+                    if (!wateringCanConfig.canUse(player, location))
+                        return true;
+                    add = positiveFillMethod.getAmount();
+                    if (positiveFillMethod.getSound() != null)
+                        AdventureUtils.playerSound(player, positiveFillMethod.getSound());
+                    if (positiveFillMethod.getParticle() != null)
+                        targetBlock.getWorld().spawnParticle(positiveFillMethod.getParticle(), targetBlock.getLocation().add(0.5,1.1, 0.5),5,0.1,0.1,0.1);
+                    break;
                 }
             }
         }

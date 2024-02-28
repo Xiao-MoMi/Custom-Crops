@@ -27,7 +27,7 @@ dependencies {
     implementation("net.kyori:adventure-platform-bukkit:4.3.2")
     implementation("net.kyori:adventure-text-minimessage:4.15.0")
     implementation("net.kyori:adventure-text-serializer-legacy:4.15.0")
-    implementation("com.github.Xiao-MoMi:AntiGriefLib:0.6")
+    implementation("com.github.Xiao-MoMi:AntiGriefLib:0.7")
     implementation("de.tr7zw:item-nbt-api:2.12.2")
     implementation("org.bstats:bstats-bukkit:3.0.2")
     implementation(files("libs/BiomeAPI.jar"))
