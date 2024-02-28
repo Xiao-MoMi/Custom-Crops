@@ -17,7 +17,6 @@
 
 package net.momirealms.customcrops.integration.season;
 
-import me.casperge.realisticseasons.api.SeasonsAPI;
 import net.advancedplugins.seasons.api.AdvancedSeasonsAPI;
 import net.momirealms.customcrops.api.object.season.CCSeason;
 import net.momirealms.customcrops.integration.SeasonInterface;
@@ -44,6 +43,6 @@ public class AdvancedSeasonsImpl implements SeasonInterface {
 
     @Override
     public int getDate(String world) {
-        return SeasonsAPI.getInstance().getDate(Bukkit.getWorld(world)).getDay();
+        return 0;
     }
 }
