@@ -19,30 +19,32 @@ package net.momirealms.customcrops.api.event;
 
 import net.momirealms.customcrops.api.mechanic.world.level.WorldPot;
 import org.bukkit.Location;
-import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
-import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+import org.bukkit.event.player.PlayerEvent;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
- * An event that triggered when breaking a pot
+ * This event is called when a player is interacting a pot
  */
-public class PotBreakEvent extends Event implements Cancellable {
+public class PotInteractEvent extends PlayerEvent implements Cancellable {
 
     private static final HandlerList handlers = new HandlerList();
     private boolean cancelled;
+    private final ItemStack itemInHand;
     private final Location location;
     private final WorldPot pot;
-    private final Entity entity;
 
-    public PotBreakEvent(
-            @Nullable Entity entity,
+    public PotInteractEvent(
+            @NotNull Player who,
+            @NotNull ItemStack itemInHand,
             @NotNull Location location,
             @NotNull WorldPot pot
     ) {
-        this.entity = entity;
+        super(who);
+        this.itemInHand = itemInHand;
         this.location = location;
         this.pot = pot;
     }
@@ -52,9 +54,13 @@ public class PotBreakEvent extends Event implements Cancellable {
         return cancelled;
     }
 
+    /**
+     * Cancelling this event would cancel PotInfoEvent too
+     * @param cancel true if you wish to cancel this event
+     */
     @Override
     public void setCancelled(boolean cancel) {
-        cancelled = cancel;
+        this.cancelled = cancel;
     }
 
     @NotNull
@@ -69,30 +75,30 @@ public class PotBreakEvent extends Event implements Cancellable {
     }
 
     /**
+     * Get the item in player's hand
+     * If there's nothing in hand, it would return AIR
+     * @return item in hand
+     */
+    @NotNull
+    public ItemStack getItemInHand() {
+        return itemInHand;
+    }
+
+    /**
      * Get the pot location
-     * @return location
+     * @return pot location
      */
     @NotNull
     public Location getLocation() {
         return location;
     }
 
-
     /**
      * Get the pot's data
-     * @return pot
+     * @return pot key
      */
     @NotNull
     public WorldPot getPot() {
         return pot;
-    }
-
-    /**
-     * It would be null if the event is not triggered by an entity
-     * @return entity
-     */
-    @Nullable
-    public Entity getEntity() {
-        return entity;
     }
 }

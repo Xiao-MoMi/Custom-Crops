@@ -50,7 +50,6 @@ public abstract class AbstractCustomListener implements Listener {
         Player player = event.getPlayer();
         this.itemManager.handlePlayerInteractBlock(
                 player,
-                player.getInventory().getItemInMainHand(),
                 event.getClickedBlock(),
                 event.getBlockFace(),
                 event
@@ -67,7 +66,6 @@ public abstract class AbstractCustomListener implements Listener {
         Player player = event.getPlayer();
         this.itemManager.handlePlayerInteractAir(
                 player,
-                player.getInventory().getItemInMainHand(),
                 event
         );
     }
@@ -77,7 +75,6 @@ public abstract class AbstractCustomListener implements Listener {
         Player player = event.getPlayer();
         this.itemManager.handlePlayerBreakBlock(
                 player,
-                player.getInventory().getItemInMainHand(),
                 event.getBlock(),
                 event
         );

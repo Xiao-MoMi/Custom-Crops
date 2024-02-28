@@ -17,7 +17,7 @@
 
 package net.momirealms.customcrops.api.event;
 
-import net.momirealms.customcrops.api.mechanic.world.level.WorldPot;
+import net.momirealms.customcrops.api.mechanic.world.level.WorldCrop;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.Cancellable;
@@ -27,24 +27,24 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * An event that triggered when breaking a pot
+ * An event that triggered when breaking a crop
  */
-public class PotBreakEvent extends Event implements Cancellable {
+public class CropBreakEvent extends Event implements Cancellable {
 
     private static final HandlerList handlers = new HandlerList();
     private boolean cancelled;
     private final Location location;
-    private final WorldPot pot;
     private final Entity entity;
+    private final WorldCrop worldCrop;
 
-    public PotBreakEvent(
+    public CropBreakEvent(
             @Nullable Entity entity,
             @NotNull Location location,
-            @NotNull WorldPot pot
+            @NotNull WorldCrop worldCrop
     ) {
         this.entity = entity;
         this.location = location;
-        this.pot = pot;
+        this.worldCrop = worldCrop;
     }
 
     @Override
@@ -54,7 +54,7 @@ public class PotBreakEvent extends Event implements Cancellable {
 
     @Override
     public void setCancelled(boolean cancel) {
-        cancelled = cancel;
+        this.cancelled = cancel;
     }
 
     @NotNull
@@ -69,7 +69,15 @@ public class PotBreakEvent extends Event implements Cancellable {
     }
 
     /**
-     * Get the pot location
+     * Get the crop's data
+     * @return crop data
+     */
+    public WorldCrop getWorldCrop() {
+        return worldCrop;
+    }
+
+    /**
+     * Get the crop location
      * @return location
      */
     @NotNull
@@ -77,18 +85,8 @@ public class PotBreakEvent extends Event implements Cancellable {
         return location;
     }
 
-
     /**
-     * Get the pot's data
-     * @return pot
-     */
-    @NotNull
-    public WorldPot getPot() {
-        return pot;
-    }
-
-    /**
-     * It would be null if the event is not triggered by an entity
+     * Would be null if the crop is not broken by an entity
      * @return entity
      */
     @Nullable

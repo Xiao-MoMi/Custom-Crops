@@ -27,8 +27,8 @@ public class InteractBlockWrapper extends InteractWrapper {
     private final Block clickedBlock;
     private final BlockFace clickedFace;
 
-    public InteractBlockWrapper(Player player, ItemStack itemInHand, Block clickedBlock, BlockFace clickedFace) {
-        super(player);
+    public InteractBlockWrapper(Player player, Block clickedBlock, BlockFace clickedFace) {
+        super(player, clickedBlock.getLocation());
         this.clickedBlock = clickedBlock;
         this.clickedFace = clickedFace;
     }

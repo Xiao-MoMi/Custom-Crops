@@ -48,12 +48,13 @@ dependencies {
     implementation(project(":api"))
     implementation("net.kyori:adventure-api:4.15.0")
     implementation("net.kyori:adventure-platform-bukkit:4.3.2")
+    implementation("com.github.Xiao-MoMi:AntiGriefLib:0.7")
+    implementation("com.github.Xiao-MoMi:BiomeAPI:0.2")
     compileOnly("net.kyori:adventure-text-minimessage:4.15.0")
     compileOnly("net.kyori:adventure-text-serializer-legacy:4.15.0")
     compileOnly("de.tr7zw:item-nbt-api:2.12.2")
     compileOnly("org.bstats:bstats-bukkit:3.0.2")
     compileOnly("com.esotericsoftware:kryo:5.6.0")
-    implementation(files("libs/BiomeAPI.jar", "libs/ProtectionLib.jar"))
 }
 
 tasks {
@@ -64,6 +65,6 @@ tasks {
 		relocate ("org.objenesis", "net.momirealms.customcrops.libraries.objenesis")
 		relocate ("org.bstats", "net.momirealms.customcrops.libraries.bstats")
 		relocate ("net.momirealms.biomeapi", "net.momirealms.customcrops.libraries.biomeapi")
-		relocate ("net.momirealms.protectionlib", "net.momirealms.customcrops.libraries.protectionlib")
+		relocate ("net.momirealms.antigrieflib", "net.momirealms.customcrops.libraries.antigrieflib")
     }
 }

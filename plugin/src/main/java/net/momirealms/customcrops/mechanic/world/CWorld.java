@@ -243,6 +243,16 @@ public class CWorld implements CustomCropsWorld {
     }
 
     @Override
+    public void addCropAt(WorldCrop crop, SimpleLocation location) {
+        CustomCropsChunk chunk = createOrGetChunk(location.getChunkCoordinate());
+        if (chunk != null) {
+            chunk.addCropAt(crop, location);
+        } else {
+            LogUtils.warn("Invalid operation: Adding pot in an unloaded chunk");
+        }
+    }
+
+    @Override
     public void removeSprinklerAt(SimpleLocation location) {
         Optional<CustomCropsChunk> chunk = getChunkAt(location.getChunkCoordinate());
         if (chunk.isPresent()) {

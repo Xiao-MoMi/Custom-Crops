@@ -246,6 +246,13 @@ public class CChunk implements CustomCropsChunk {
     }
 
     @Override
+    public void addCropAt(WorldCrop crop, SimpleLocation location) {
+        if (loadedCrops.put(location, crop) != null) {
+            CustomCropsPlugin.get().debug("Found duplicated crop data when adding crop at " + location);
+        }
+    }
+
+    @Override
     public void removeSprinklerAt(SimpleLocation location) {
         if (loadedSprinklers.remove(location) == null) {
             CustomCropsPlugin.get().debug("Failed to remove sprinkler from " + location + " because sprinkler doesn't exist.");

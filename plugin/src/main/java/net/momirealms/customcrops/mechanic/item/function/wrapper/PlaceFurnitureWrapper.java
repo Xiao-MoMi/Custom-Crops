@@ -27,7 +27,7 @@ public class PlaceFurnitureWrapper extends ConditionWrapper {
     private final Location location;
     private final String id;
 
-    public PlaceFurnitureWrapper(Player player, ItemStack itemInHand, Location location, String id) {
+    public PlaceFurnitureWrapper(Player player, Location location, String id) {
         super(player);
         this.location = location;
         this.id = id;

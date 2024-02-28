@@ -2,10 +2,7 @@ package net.momirealms.customcrops.mechanic.world;
 
 import net.momirealms.customcrops.api.CustomCropsPlugin;
 import net.momirealms.customcrops.api.manager.WorldManager;
-import net.momirealms.customcrops.api.mechanic.item.Fertilizer;
-import net.momirealms.customcrops.api.mechanic.item.ItemType;
-import net.momirealms.customcrops.api.mechanic.item.Pot;
-import net.momirealms.customcrops.api.mechanic.item.Sprinkler;
+import net.momirealms.customcrops.api.mechanic.item.*;
 import net.momirealms.customcrops.api.mechanic.world.ChunkCoordinate;
 import net.momirealms.customcrops.api.mechanic.world.SimpleLocation;
 import net.momirealms.customcrops.api.mechanic.world.level.*;
@@ -278,6 +275,21 @@ public class WorldManagerImpl implements WorldManager, Listener {
             return;
         }
         cWorld.addSprinklerAt(sprinkler, location);
+    }
+
+    @Override
+    public void addCropAt(@NotNull WorldCrop crop, @NotNull SimpleLocation location) {
+        CWorld cWorld = loadedWorlds.get(location.getWorldName());
+        if (cWorld == null) {
+            LogUtils.warn("Unsupported operation: Adding sprinkler in unloaded world " + location);
+            return;
+        }
+        cWorld.addCropAt(crop, location);
+    }
+
+    @Override
+    public void addPointToCrop(@NotNull Crop crop, @NotNull SimpleLocation location, int points) {
+
     }
 
     @Override

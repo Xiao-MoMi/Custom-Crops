@@ -20,6 +20,7 @@ package net.momirealms.customcrops;
 import de.tr7zw.changeme.nbtapi.utils.MinecraftVersion;
 import de.tr7zw.changeme.nbtapi.utils.VersionChecker;
 import net.momirealms.customcrops.api.CustomCropsPlugin;
+import net.momirealms.customcrops.api.event.CustomCropsReloadEvent;
 import net.momirealms.customcrops.api.manager.ConfigManager;
 import net.momirealms.customcrops.api.manager.CoolDownManager;
 import net.momirealms.customcrops.api.util.LogUtils;
@@ -35,6 +36,7 @@ import net.momirealms.customcrops.mechanic.item.ItemManagerImpl;
 import net.momirealms.customcrops.mechanic.requirement.RequirementManagerImpl;
 import net.momirealms.customcrops.mechanic.world.WorldManagerImpl;
 import net.momirealms.customcrops.scheduler.SchedulerImpl;
+import net.momirealms.customcrops.utils.EventUtils;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 
@@ -118,6 +120,7 @@ public class CustomCropsPluginImpl extends CustomCropsPlugin {
         this.conditionManager.reload();
         this.coolDownManager.reload();
         ((SchedulerImpl) scheduler).reload();
+        EventUtils.fireAndForget(new CustomCropsReloadEvent(this));
     }
 
     /**

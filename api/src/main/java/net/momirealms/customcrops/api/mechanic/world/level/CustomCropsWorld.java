@@ -85,4 +85,6 @@ public interface CustomCropsWorld {
     void addPotAt(WorldPot pot, SimpleLocation location);
 
     void addSprinklerAt(WorldSprinkler sprinkler, SimpleLocation location);
+
+    void addCropAt(WorldCrop crop, SimpleLocation location);
 }

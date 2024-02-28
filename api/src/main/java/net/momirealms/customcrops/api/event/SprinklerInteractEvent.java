@@ -17,34 +17,36 @@
 
 package net.momirealms.customcrops.api.event;
 
-import net.momirealms.customcrops.api.mechanic.world.level.WorldPot;
+import net.momirealms.customcrops.api.mechanic.world.level.WorldSprinkler;
 import org.bukkit.Location;
-import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
-import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+import org.bukkit.event.player.PlayerEvent;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
- * An event that triggered when breaking a pot
+ * An event that triggered when interacting a sprinkler
  */
-public class PotBreakEvent extends Event implements Cancellable {
+public class SprinklerInteractEvent extends PlayerEvent implements Cancellable {
 
     private static final HandlerList handlers = new HandlerList();
     private boolean cancelled;
     private final Location location;
-    private final WorldPot pot;
-    private final Entity entity;
+    private final WorldSprinkler sprinkler;
+    private final ItemStack itemInHand;
 
-    public PotBreakEvent(
-            @Nullable Entity entity,
+    public SprinklerInteractEvent(
+            @NotNull Player who,
+            @NotNull ItemStack itemInHand,
             @NotNull Location location,
-            @NotNull WorldPot pot
+            @NotNull WorldSprinkler sprinkler
     ) {
-        this.entity = entity;
+        super(who);
         this.location = location;
-        this.pot = pot;
+        this.sprinkler = sprinkler;
+        this.itemInHand = itemInHand;
     }
 
     @Override
@@ -54,7 +56,7 @@ public class PotBreakEvent extends Event implements Cancellable {
 
     @Override
     public void setCancelled(boolean cancel) {
-        cancelled = cancel;
+        this.cancelled = cancel;
     }
 
     @NotNull
@@ -69,7 +71,7 @@ public class PotBreakEvent extends Event implements Cancellable {
     }
 
     /**
-     * Get the pot location
+     * Get the sprinkler location
      * @return location
      */
     @NotNull
@@ -77,22 +79,21 @@ public class PotBreakEvent extends Event implements Cancellable {
         return location;
     }
 
-
     /**
-     * Get the pot's data
-     * @return pot
+     * Get the sprinkler's data
+     * @return sprinkler
      */
     @NotNull
-    public WorldPot getPot() {
-        return pot;
+    public WorldSprinkler getSprinkler() {
+        return sprinkler;
     }
 
     /**
-     * It would be null if the event is not triggered by an entity
-     * @return entity
+     * Get the item in player's hand
+     * @return item in hand
      */
-    @Nullable
-    public Entity getEntity() {
-        return entity;
+    @NotNull
+    public ItemStack getItemInHand() {
+        return itemInHand;
     }
 }

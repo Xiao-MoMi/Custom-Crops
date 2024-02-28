@@ -17,34 +17,36 @@
 
 package net.momirealms.customcrops.api.event;
 
-import net.momirealms.customcrops.api.mechanic.world.level.WorldPot;
+import net.momirealms.customcrops.api.mechanic.world.level.WorldCrop;
 import org.bukkit.Location;
-import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
-import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+import org.bukkit.event.player.PlayerEvent;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
- * An event that triggered when breaking a pot
+ * An event that triggered when a player interacts a crop
  */
-public class PotBreakEvent extends Event implements Cancellable {
+public class CropInteractEvent extends PlayerEvent implements Cancellable {
 
     private static final HandlerList handlers = new HandlerList();
     private boolean cancelled;
     private final Location location;
-    private final WorldPot pot;
-    private final Entity entity;
+    private final WorldCrop crop;
+    private final ItemStack itemInHand;
 
-    public PotBreakEvent(
-            @Nullable Entity entity,
+    public CropInteractEvent(
+            @NotNull Player who,
+            @NotNull ItemStack itemInHand,
             @NotNull Location location,
-            @NotNull WorldPot pot
+            @NotNull WorldCrop crop
     ) {
-        this.entity = entity;
+        super(who);
         this.location = location;
-        this.pot = pot;
+        this.crop = crop;
+        this.itemInHand = itemInHand;
     }
 
     @Override
@@ -54,7 +56,7 @@ public class PotBreakEvent extends Event implements Cancellable {
 
     @Override
     public void setCancelled(boolean cancel) {
-        cancelled = cancel;
+        this.cancelled = cancel;
     }
 
     @NotNull
@@ -69,7 +71,7 @@ public class PotBreakEvent extends Event implements Cancellable {
     }
 
     /**
-     * Get the pot location
+     * Get the crop location
      * @return location
      */
     @NotNull
@@ -77,22 +79,22 @@ public class PotBreakEvent extends Event implements Cancellable {
         return location;
     }
 
-
     /**
-     * Get the pot's data
-     * @return pot
+     * Get the item in player's hand
+     * If there's nothing in hand, it would return AIR
+     * @return item in hand
      */
     @NotNull
-    public WorldPot getPot() {
-        return pot;
+    public ItemStack getItemInHand() {
+        return itemInHand;
     }
 
     /**
-     * It would be null if the event is not triggered by an entity
-     * @return entity
+     * Get the crop's data
+     * @return crop
      */
-    @Nullable
-    public Entity getEntity() {
-        return entity;
+    @NotNull
+    public WorldCrop getCrop() {
+        return crop;
     }
 }
