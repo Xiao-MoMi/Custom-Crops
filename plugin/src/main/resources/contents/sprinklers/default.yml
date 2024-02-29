@@ -52,15 +52,11 @@ sprinkler_1:
           pitch: 1
     interact:
       hologram_action: {}
-
     work:
       fake_item_action: {}
-
     add_water:
       sound_action: {}
       particle_action: {}
-
-
 sprinkler_2:
   # □□□□□
   # □□□□□
@@ -89,7 +85,6 @@ sprinkler_2:
     full: '뀁뀃'
     empty: '뀁뀄'
     right: '뀁뀅'
-
 sprinkler_3:
   # □□□□□□□
   # □□□□□□□

@@ -59,6 +59,7 @@ public class PotConfig extends AbstractEventItem implements Pot {
             Requirement[] useRequirements
     ) {
         super(actionMap);
+        this.key = key;
         this.storage = storage;
         this.enableFertilizedAppearance = enableFertilizedAppearance;
         this.fertilizedPotMap = fertilizedPotMap;
@@ -78,7 +79,7 @@ public class PotConfig extends AbstractEventItem implements Pot {
 
     @Override
     public String getKey() {
-        return null;
+        return key;
     }
 
     @Override

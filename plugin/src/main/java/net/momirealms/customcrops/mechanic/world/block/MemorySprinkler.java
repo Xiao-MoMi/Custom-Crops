@@ -29,6 +29,10 @@ public class MemorySprinkler extends AbstractPropertyItem implements WorldSprink
 
     private int water;
 
+    private MemorySprinkler() {
+        super(null, null);
+    }
+
     public MemorySprinkler(String key, int water, HashMap<String, Property<?>> properties) {
         super(key, properties);
         this.water = water;

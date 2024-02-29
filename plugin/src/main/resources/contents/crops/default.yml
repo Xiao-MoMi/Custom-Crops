@@ -1,0 +1,124 @@
+# ID
+tomato:
+  # Item type
+  # TRIPWIRE / ITEM_FRAME / ITEM_DISPLAY (1.19.4+)
+  type: TRIPWIRE
+  # The crop can only be planted on whitelisted pots
+  pot-whitelist:
+    - default
+  # Seed of the crop
+  seed: {0}tomato_seeds
+  # Only works in ITEM_FRAME / ITEM_DISPLAY mode
+  random-rotation: true
+  # Break/Plant requirements
+  requirements:
+    break: {}
+    plant:
+      requirement_1:
+        type: season
+        value:
+          - Spring
+          - Autumn
+        not-met-actions:
+          message_action:
+            type: message
+            value: "It's not a good season to plant tomato"
+  # Event settings
+  events:
+    plant:
+      # Send sound while planting
+      sound_action:
+        type: sound
+        value:
+          source: player
+          key: minecraft:item.hoe.till
+          volume: 1
+          pitch: 1
+  # This determines the maximum time for crops to grow
+  max-points: 6
+  # This section determines the actions of crops at each point
+  points:
+    0:
+      # If model is set, the crop will replace its appearance when it reaches this stage.
+      model: {0}tomato_stage_1
+      # Each crop has a different model height, so appropriate offsets should be made when displaying holograms.
+      hologram-offset-correction: 0.2
+      # Event settings
+      events:
+        break:
+          # 30% chance of dropping crop seeds
+          action_1:
+            type: drop-items
+            value:
+              ignore-fertilizer: true
+              items:
+                item_1:
+                  item: {0}tomato_seeds
+                  min: 1
+                  max: 1
+                  chance: 0.3
+          # Triggers the sound effect of crops being destroyed
+          action_2:
+            type: sound
+            value:
+              source: player
+              key: minecraft:block.crop.break
+              volume: 1
+              pitch: 1
+    1:
+      model: {0}tomato_stage_2
+      hologram-offset-correction: 0.2
+      events: {}
+    3:
+      model: customcrops:tomato_stage_3
+      hologram-offset-correction: 0.2
+      events: {}
+    5:
+      model: customcrops:tomato_stage_4
+      hologram-offset-correction: 0.2
+      events: {}
+    6:
+      events: {}
+    # The crop would actually not gain so many points
+    # But you can set some special crops' loots here
+    99:
+      model: customcrops:tomato_stage_golden
+      events: {}
+  # Custom grow conditions
+  grow-conditions:
+    season_condition:
+      type: suitable_season
+      value:
+        - Spring
+        - Autumn
+    water_condition:
+      type: water_more_than
+      value: 0
+  # Custom death conditions
+  death-conditions:
+    no_water:
+      # You can customize the death stage models according to the reasons
+      model: customcrops:crop_stage_death
+      conditions:
+        '&&':
+          condition_1:
+            type: water_less_than
+            value: 1
+          condition_2:
+            type: random
+            value: 0.7
+    unsuitable_season:
+      model: customcrops:crop_stage_death
+      conditions:
+        condition_1:
+          type: unsuitable_season
+          value:
+            - Winter
+  # Custom bone meal
+  custom-bone-meal:
+    bone_meal_1:
+      item: BONE_MEAL
+      actions: {}
+      chance:
+        2: 0.2
+        1: 0.6

@@ -28,6 +28,10 @@ public class MemoryCrop extends AbstractPropertyItem implements WorldCrop {
 
     private int point;
 
+    private MemoryCrop() {
+        super(null, null);
+    }
+
     public MemoryCrop(String key, int point, HashMap<String, Property<?>> properties) {
         super(key, properties);
         this.point = point;

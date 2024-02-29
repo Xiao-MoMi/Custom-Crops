@@ -31,9 +31,14 @@ import net.momirealms.customcrops.api.mechanic.world.level.WorldInfoData;
 import net.momirealms.customcrops.api.util.LogUtils;
 import net.momirealms.customcrops.mechanic.world.CChunk;
 import net.momirealms.customcrops.mechanic.world.CWorld;
+import net.momirealms.customcrops.mechanic.world.block.MemoryCrop;
+import net.momirealms.customcrops.mechanic.world.block.MemoryPot;
+import net.momirealms.customcrops.mechanic.world.block.MemorySprinkler;
+import net.momirealms.customcrops.scheduler.task.CheckTask;
 import org.bukkit.NamespacedKey;
 import org.bukkit.World;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.world.WorldEvent;
 import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.event.world.WorldUnloadEvent;
 import org.bukkit.persistence.PersistentDataType;
@@ -42,6 +47,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.PriorityQueue;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class BukkitWorldAdaptor extends AbstractWorldAdaptor {
 
@@ -54,9 +63,19 @@ public class BukkitWorldAdaptor extends AbstractWorldAdaptor {
         super(worldManager);
         gson = new Gson();
         kryo = new Kryo();
-        kryo.register(CChunk.class);
-        kryo.register(ChunkCoordinate.class);
-        kryo.register(SimpleLocation.class);
+        kryo.setReferences(false);
+        kryo.register(PriorityQueue.class, 17);
+        kryo.register(ArrayList.class, 18);
+        kryo.register(ConcurrentHashMap.class, 19);
+        kryo.register(HashMap.class, 20);
+        kryo.register(ChunkCoordinate.class, 21);
+        kryo.register(SimpleLocation.class, 22);
+        kryo.register(CChunk.class, 23);
+        kryo.register(MemoryCrop.class, 24);
+        kryo.register(MemorySprinkler.class, 25);
+        kryo.register(MemoryPot.class, 26);
+        kryo.register(CheckTask.class, 27);
+        kryo.register(CheckTask.TaskType.class, 28);
     }
 
     @Override
@@ -72,10 +91,12 @@ public class BukkitWorldAdaptor extends AbstractWorldAdaptor {
         world.getPersistentDataContainer().set(key, PersistentDataType.STRING,
                 gson.toJson(cWorld.getInfoData()));
 
+        new File(world.getWorldFolder(), "customcrops").mkdir();
+
         try {
             // save chunks
             for (CustomCropsChunk chunk : cWorld.getChunkStorage()) {
-                Output output = new Output(new FileOutputStream(new File(world.getWorldFolder(), getChunkDataFile(chunk.getChunkCoordinate()))));
+                Output output = new Output(new FileOutputStream(getChunkDataFilePath(world, chunk.getChunkCoordinate())));
                 kryo.writeObject(output, chunk);
                 output.close();
             }
@@ -97,6 +118,8 @@ public class BukkitWorldAdaptor extends AbstractWorldAdaptor {
         String json = world.getPersistentDataContainer().get(key, PersistentDataType.STRING);
         WorldInfoData data = json == null ? WorldInfoData.empty() : gson.fromJson(json, WorldInfoData.class);
         cWorld.setInfoData(data);
+
+        new File(world.getWorldFolder(), "customcrops").mkdir();
     }
 
     @Override
@@ -138,18 +161,20 @@ public class BukkitWorldAdaptor extends AbstractWorldAdaptor {
             LogUtils.severe("Unexpected issue: World " + cWorld.getWorldName() + " unloaded before data loaded");
             return;
         }
-
         // create or get chunk files
         File data = getChunkDataFilePath(world, chunkCoordinate);
         if (!data.exists())
             return;
         try {
+            long time1 = System.currentTimeMillis();
             // load chunk into world
             Input input = new Input(new FileInputStream(data));
             CChunk chunk = kryo.readObject(input, CChunk.class);
             input.close();
             chunk.setWorld(cWorld);
             cWorld.loadChunk(chunk);
+            long time2 = System.currentTimeMillis();
+            System.out.println(time2 - time1 + "ms load " + chunkCoordinate);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -169,10 +194,13 @@ public class BukkitWorldAdaptor extends AbstractWorldAdaptor {
             return;
 
         try {
+            long time1 = System.currentTimeMillis();
             // save chunks
             Output output = new Output(new FileOutputStream(getChunkDataFilePath(world, chunkCoordinate)));
             kryo.writeObject(output, chunk);
             output.close();
+            long time2 = System.currentTimeMillis();
+            System.out.println(time2 - time1 + "ms unload " + chunkCoordinate);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -191,7 +219,7 @@ public class BukkitWorldAdaptor extends AbstractWorldAdaptor {
     }
 
     private String getChunkDataFile(ChunkCoordinate chunkCoordinate) {
-        return chunkCoordinate.x() + "," + chunkCoordinate.z() + ".cc";
+        return chunkCoordinate.x() + "," + chunkCoordinate.z() + ".ccd";
     }
 
     private File getChunkDataFilePath(World world, ChunkCoordinate chunkCoordinate) {

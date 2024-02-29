@@ -25,12 +25,15 @@ import org.jetbrains.annotations.Nullable;
 import java.io.Serializable;
 import java.util.Objects;
 
-public class SimpleLocation implements Serializable {
+public class SimpleLocation {
 
     private int x;
     private int y;
     private int z;
-    private final String worldName;
+    private String worldName;
+
+    private SimpleLocation() {
+    }
 
     public SimpleLocation(String worldName, int x, int y, int z){
         this.worldName = worldName;

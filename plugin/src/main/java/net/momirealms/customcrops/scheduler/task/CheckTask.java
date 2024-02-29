@@ -22,9 +22,12 @@ import org.jetbrains.annotations.NotNull;
 
 public class CheckTask implements Comparable<CheckTask> {
 
-    private final int time;
-    private final TaskType type;
-    private final SimpleLocation simpleLocation;
+    private int time;
+    private TaskType type;
+    private SimpleLocation simpleLocation;
+
+    private CheckTask() {
+    }
 
     public CheckTask(int time, TaskType type, SimpleLocation simpleLocation) {
         this.time = time;

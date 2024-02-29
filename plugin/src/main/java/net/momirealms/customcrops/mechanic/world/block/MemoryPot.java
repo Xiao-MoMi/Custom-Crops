@@ -31,6 +31,10 @@ public class MemoryPot extends AbstractPropertyItem implements WorldPot {
     private String fertilizer;
     private int fertilizerTimes;
 
+    private MemoryPot() {
+        super(null, null);
+    }
+
     public MemoryPot(String key, HashMap<String, Property<?>> properties) {
         super(key, properties);
     }

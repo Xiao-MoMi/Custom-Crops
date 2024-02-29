@@ -41,7 +41,8 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
-import java.io.File;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class ConfigUtils {
@@ -175,7 +176,7 @@ public class ConfigUtils {
             for (Map.Entry<String, Object> entry : section.getValues(false).entrySet()) {
                 if (entry.getValue() instanceof ConfigurationSection innerSection) {
                     try {
-                        ActionTrigger trigger = ActionTrigger.valueOf(entry.getKey());
+                        ActionTrigger trigger = ActionTrigger.valueOf(entry.getKey().toUpperCase(Locale.ENGLISH));
                         map.put(trigger, getActions(innerSection));
                     } catch (IllegalArgumentException e) {
                         e.printStackTrace();
@@ -359,5 +360,23 @@ public class ConfigUtils {
             }
         }
         return map;
+    }
+
+    public static void addDefaultNamespace(boolean has, File file) {
+        String line;
+        StringBuilder sb = new StringBuilder();
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8))) {
+            while ((line = reader.readLine()) != null) {
+                sb.append(line).append(System.lineSeparator());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try (BufferedWriter writer = new BufferedWriter(
+                new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8))) {
+            writer.write(sb.toString().replace("{0}", has ? "customcrops:" : "").replace("CHORUS", "TRIPWIRE").replace("<font:customcrops:default>", "<font:minecraft:customcrops>"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

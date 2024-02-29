@@ -18,6 +18,7 @@
 package net.momirealms.customcrops.mechanic.item;
 
 import com.google.common.base.Preconditions;
+import net.momirealms.antigrieflib.AntiGriefLib;
 import net.momirealms.customcrops.api.CustomCropsPlugin;
 import net.momirealms.customcrops.api.event.*;
 import net.momirealms.customcrops.api.integration.ItemLibrary;
@@ -43,6 +44,7 @@ import net.momirealms.customcrops.mechanic.item.custom.oraxen.OraxenListener;
 import net.momirealms.customcrops.mechanic.item.custom.oraxen.OraxenProvider;
 import net.momirealms.customcrops.mechanic.item.function.CFunction;
 import net.momirealms.customcrops.mechanic.item.function.FunctionResult;
+import net.momirealms.customcrops.mechanic.item.function.FunctionTrigger;
 import net.momirealms.customcrops.mechanic.item.function.wrapper.*;
 import net.momirealms.customcrops.mechanic.item.impl.CropConfig;
 import net.momirealms.customcrops.mechanic.item.impl.PotConfig;
@@ -79,7 +81,7 @@ public class ItemManagerImpl implements ItemManager {
     private CustomProvider customProvider;
     private final HashMap<String, ItemLibrary> itemLibraryMap;
     private ItemLibrary[] itemDetectionArray;
-    private final HashMap<String, TreeSet<CFunction>> itemID2FunctionMap;
+    private final HashMap<String, HashMap<FunctionTrigger, TreeSet<CFunction>>> itemID2FunctionMap;
     private final HashMap<String, WateringCan> id2WateringCanMap;
     private final HashMap<String, WateringCan> item2WateringCanMap;
     private final HashMap<String, Sprinkler> id2SprinklerMap;
@@ -93,9 +95,11 @@ public class ItemManagerImpl implements ItemManager {
     private final HashMap<String, Crop.Stage> stage2CropStageMap;
     private final HashMap<String, Fertilizer> id2FertilizerMap;
     private final HashMap<String, Fertilizer> item2FertilizerMap;
+    private final AntiGriefLib antiGrief;
 
-    public ItemManagerImpl(CustomCropsPlugin plugin) {
+    public ItemManagerImpl(CustomCropsPlugin plugin, AntiGriefLib antiGriefLib) {
         this.plugin = plugin;
+        this.antiGrief = antiGriefLib;
         this.itemLibraryMap = new HashMap<>();
         this.itemID2FunctionMap = new HashMap<>();
         this.id2WateringCanMap = new HashMap<>();
@@ -435,6 +439,7 @@ public class ItemManagerImpl implements ItemManager {
             File folder = new File(plugin.getDataFolder(), "contents" + File.separator + item);
             if (!folder.exists()) {
                 plugin.saveResource("contents" + File.separator + item + File.separator + "default.yml", true);
+                ConfigUtils.addDefaultNamespace(customProvider instanceof ItemsAdderProvider, new File(plugin.getDataFolder(), "contents" + File.separator + item + File.separator + "default.yml"));
             }
             List<File> files = ConfigUtils.getFilesRecursively(new File(plugin.getDataFolder(), "contents" + File.separator + item));
             for (File file : files) {
@@ -488,7 +493,7 @@ public class ItemManagerImpl implements ItemManager {
             return;
         }
 
-        this.registerItemFunction(itemID,
+        this.registerItemFunction(itemID, FunctionTrigger.INTERACT_AT,
                 /*
                  * Handle clicking pot with a watering can
                  */
@@ -748,7 +753,7 @@ public class ItemManagerImpl implements ItemManager {
         }
 
         if (sprinkler.get2DItemID() != null) {
-            this.registerItemFunction(sprinkler.get2DItemID(),
+            this.registerItemFunction(sprinkler.get2DItemID(), FunctionTrigger.INTERACT_AT,
                     /*
                      * 2D item -> 3D item
                      */
@@ -803,7 +808,39 @@ public class ItemManagerImpl implements ItemManager {
             );
         }
 
-        this.registerItemFunction(sprinkler.get3DItemID(),
+        this.registerItemFunction(sprinkler.get3DItemID(), FunctionTrigger.PLACE,
+                /*
+                 * This will only trigger if the sprinkler has only 3D items
+                 */
+                new CFunction(conditionWrapper -> {
+                    if (!(conditionWrapper instanceof PlaceFurnitureWrapper placeFurnitureWrapper)) {
+                        return FunctionResult.PASS;
+                    }
+                    Location location = placeFurnitureWrapper.getLocation();
+                    Player player = placeFurnitureWrapper.getPlayer();
+                    // check place requirements
+                    State state = new State(player, placeFurnitureWrapper.getItemInHand(), location);
+                    if (!RequirementManager.isRequirementMet(state, sprinkler.getPlaceRequirements())) {
+                        return FunctionResult.CANCEL_EVENT_AND_RETURN;
+                    }
+                    // check limitation
+                    if (plugin.getWorldManager().isReachLimit(SimpleLocation.getByBukkitLocation(location), ItemType.SPRINKLER)) {
+                        sprinkler.trigger(ActionTrigger.REACH_LIMIT, state);
+                        return FunctionResult.CANCEL_EVENT_AND_RETURN;
+                    }
+                    // fire event
+                    SprinklerPlaceEvent placeEvent = new SprinklerPlaceEvent(player, placeFurnitureWrapper.getItemInHand(), location, sprinkler);
+                    if (EventUtils.fireAndCheckCancel(placeEvent)) {
+                        return FunctionResult.CANCEL_EVENT_AND_RETURN;
+                    }
+                    // add data
+                    plugin.getWorldManager().addSprinklerAt(new MemorySprinkler(sprinkler.getKey(), 0, new HashMap<>()), SimpleLocation.getByBukkitLocation(location));
+                    sprinkler.trigger(ActionTrigger.PLACE, state);
+                    return FunctionResult.RETURN;
+                }, CFunction.FunctionPriority.NORMAL)
+        );
+
+        this.registerItemFunction(sprinkler.get3DItemID(), FunctionTrigger.BE_INTERACTED,
                 /*
                  * Interact the sprinkler
                  */
@@ -868,36 +905,10 @@ public class ItemManagerImpl implements ItemManager {
                     // trigger interact actions
                     sprinkler.trigger(ActionTrigger.INTERACT, state);
                     return FunctionResult.RETURN;
-                }, CFunction.FunctionPriority.NORMAL),
-                /*
-                 * This will only trigger if the sprinkler has only 3D items
-                 */
-                new CFunction(conditionWrapper -> {
-                    if (!(conditionWrapper instanceof PlaceFurnitureWrapper placeFurnitureWrapper)) {
-                        return FunctionResult.PASS;
-                    }
-                    Location location = placeFurnitureWrapper.getLocation();
-                    Player player = placeFurnitureWrapper.getPlayer();
-                    // check place requirements
-                    State state = new State(player, placeFurnitureWrapper.getItemInHand(), location);
-                    if (!RequirementManager.isRequirementMet(state, sprinkler.getPlaceRequirements())) {
-                        return FunctionResult.CANCEL_EVENT_AND_RETURN;
-                    }
-                    // check limitation
-                    if (plugin.getWorldManager().isReachLimit(SimpleLocation.getByBukkitLocation(location), ItemType.SPRINKLER)) {
-                        sprinkler.trigger(ActionTrigger.REACH_LIMIT, state);
-                        return FunctionResult.CANCEL_EVENT_AND_RETURN;
-                    }
-                    // fire event
-                    SprinklerPlaceEvent placeEvent = new SprinklerPlaceEvent(player, placeFurnitureWrapper.getItemInHand(), location, sprinkler);
-                    if (EventUtils.fireAndCheckCancel(placeEvent)) {
-                        return FunctionResult.CANCEL_EVENT_AND_RETURN;
-                    }
-                    // add data
-                    plugin.getWorldManager().addSprinklerAt(new MemorySprinkler(sprinkler.getKey(), 0, new HashMap<>()), SimpleLocation.getByBukkitLocation(location));
-                    sprinkler.trigger(ActionTrigger.PLACE, state);
-                    return FunctionResult.RETURN;
-                }, CFunction.FunctionPriority.NORMAL),
+                }, CFunction.FunctionPriority.NORMAL)
+        );
+
+        this.registerItemFunction(sprinkler.get3DItemID(), FunctionTrigger.BREAK,
                 /*
                  * Handle breaking sprinklers
                  */
@@ -1002,7 +1013,7 @@ public class ItemManagerImpl implements ItemManager {
             return;
         }
 
-        this.registerItemFunction(fertilizer.getItemID(),
+        this.registerItemFunction(fertilizer.getItemID(), FunctionTrigger.INTERACT_AT,
                 /*
                  * Processing logic for players to use fertilizer
                  */
@@ -1084,7 +1095,7 @@ public class ItemManagerImpl implements ItemManager {
             return;
         }
 
-        this.registerItemFunction(crop.getSeedItemID(),
+        this.registerItemFunction(crop.getSeedItemID(), FunctionTrigger.INTERACT_AT,
                 /*
                  * Handle crop planting
                  */
@@ -1145,7 +1156,7 @@ public class ItemManagerImpl implements ItemManager {
 
         for (Crop.Stage stage : crop.getStages()) {
             if (stage.getStageID() != null) {
-                this.registerItemFunction(stage.getStageID(),
+                this.registerItemFunction(stage.getStageID(), FunctionTrigger.BE_INTERACTED,
                         /*
                          * Add water to pot if player is clicking a crop
                          * Trigger crop interaction
@@ -1238,7 +1249,10 @@ public class ItemManagerImpl implements ItemManager {
                             // trigger interact actions
                             crop.trigger(ActionTrigger.INTERACT, cropState);
                             return FunctionResult.PASS;
-                        }, CFunction.FunctionPriority.HIGH),
+                        }, CFunction.FunctionPriority.HIGH)
+                );
+
+                this.registerItemFunction(stage.getStageID(), FunctionTrigger.BREAK,
                         /*
                          * Break the crop
                          */
@@ -1312,7 +1326,7 @@ public class ItemManagerImpl implements ItemManager {
         }
 
         for (String potItemID : pot.getPotBlocks()) {
-            this.registerItemFunction(potItemID,
+            this.registerItemFunction(potItemID, FunctionTrigger.BE_INTERACTED,
                     /*
                      * Interact the pot
                      */
@@ -1374,7 +1388,9 @@ public class ItemManagerImpl implements ItemManager {
                         // trigger actions
                         pot.trigger(ActionTrigger.INTERACT, state);
                         return FunctionResult.PASS;
-                    }, CFunction.FunctionPriority.NORMAL),
+                    }, CFunction.FunctionPriority.NORMAL)
+            );
+            this.registerItemFunction(potItemID, FunctionTrigger.BREAK,
                     /*
                      * Break the pot
                      */
@@ -1408,7 +1424,10 @@ public class ItemManagerImpl implements ItemManager {
                         plugin.getWorldManager().removePotAt(SimpleLocation.getByBukkitLocation(location));
                         pot.trigger(ActionTrigger.BREAK, state);
                         return FunctionResult.RETURN;
-                    }, CFunction.FunctionPriority.NORMAL),
+                    }, CFunction.FunctionPriority.NORMAL)
+            );
+
+            this.registerItemFunction(potItemID, FunctionTrigger.PLACE,
                     /*
                      * Place the pot
                      */
@@ -1437,21 +1456,26 @@ public class ItemManagerImpl implements ItemManager {
                         plugin.getWorldManager().addPotAt(new MemoryPot(pot.getKey(), new HashMap<>()), SimpleLocation.getByBukkitLocation(location));
                         pot.trigger(ActionTrigger.PLACE, state);
                         return FunctionResult.RETURN;
-                    }, CFunction.FunctionPriority.NORMAL)
-            );
+                    }, CFunction.FunctionPriority.NORMAL));
         }
     }
 
-    private void registerItemFunction(String item, CFunction... function) {
+    private void registerItemFunction(String item, FunctionTrigger trigger, CFunction... function) {
         if (itemID2FunctionMap.containsKey(item)) {
-            TreeSet<CFunction> previous = itemID2FunctionMap.get(item);
-            previous.addAll(List.of(function));
+            var previous = itemID2FunctionMap.get(item);
+            TreeSet<CFunction> previousFunctions = previous.get(trigger);
+            if (previousFunctions == null) {
+                previous.put(trigger, new TreeSet<>(List.of(function)));
+            } else {
+                previousFunctions.addAll(List.of(function));
+            }
         } else {
             TreeSet<CFunction> list = new TreeSet<>(List.of(function));
-            itemID2FunctionMap.put(item, list);
+            itemID2FunctionMap.put(item, new HashMap<>(Map.of(trigger, list)));
         }
     }
 
+    @SuppressWarnings("DuplicatedCode")
     public void handlePlayerInteractBlock(
             Player player,
             Block clickedBlock,
@@ -1461,21 +1485,24 @@ public class ItemManagerImpl implements ItemManager {
         if (!plugin.getWorldManager().isMechanicEnabled(player.getWorld()))
             return;
 
+        // check anti-grief
+        if (!antiGrief.canInteract(player, clickedBlock.getLocation()))
+            return;
+
         // check pot firstly because events might be cancelled
         var condition = new InteractBlockWrapper(player, clickedBlock, clickedFace);
         String blockID = customProvider.getBlockID(clickedBlock);
-        TreeSet<CFunction> blockFunctions = itemID2FunctionMap.get(blockID);
-        if (blockFunctions != null) {
-            if (handleFunctions(blockFunctions, condition, event)) {
-                return;
-            }
+        TreeSet<CFunction> blockFunctions = Optional.ofNullable(itemID2FunctionMap.get(blockID))
+                .map(map -> map.get(FunctionTrigger.BE_INTERACTED))
+                .orElse(null);
+        if (handleFunctions(blockFunctions, condition, event)) {
+            return;
         }
         // Then check item in hand
         String itemID = customProvider.getItemID(condition.getItemInHand());
-        TreeSet<CFunction> itemFunctions = itemID2FunctionMap.get(itemID);
-        if (itemFunctions != null) {
-            handleFunctions(itemFunctions, condition, event);
-        }
+        Optional.ofNullable(itemID2FunctionMap.get(itemID))
+                .map(map -> map.get(FunctionTrigger.INTERACT_AT))
+                .ifPresent(itemFunctions -> handleFunctions(itemFunctions, condition, event));
     }
 
     public void handlePlayerInteractAir(
@@ -1485,13 +1512,16 @@ public class ItemManagerImpl implements ItemManager {
         if (!plugin.getWorldManager().isMechanicEnabled(player.getWorld()))
             return;
 
+        // check anti-grief
+        if (!antiGrief.canInteract(player, player.getLocation()))
+            return;
+
         var condition = new InteractWrapper(player, null);
         // check item in hand
         String itemID = customProvider.getItemID(condition.getItemInHand());
-        TreeSet<CFunction> itemFunctions = itemID2FunctionMap.get(itemID);
-        if (itemFunctions != null) {
-            handleFunctions(itemFunctions, condition, event);
-        }
+        Optional.ofNullable(itemID2FunctionMap.get(itemID))
+                .map(map -> map.get(FunctionTrigger.INTERACT_AIR))
+                .ifPresent(cFunctions -> handleFunctions(cFunctions, condition, event));
     }
 
     public void handlePlayerBreakBlock(
@@ -1501,16 +1531,19 @@ public class ItemManagerImpl implements ItemManager {
     ) {
         if (!plugin.getWorldManager().isMechanicEnabled(player.getWorld()))
             return;
+
+        /*
+          No need to check anti-grief here as the event should be cancelled by the anti-grief plugin
+         */
+
         // check blocks, no need to check item in hand
         String blockID = customProvider.getBlockID(brokenBlock);
-        TreeSet<CFunction> functions = itemID2FunctionMap.get(blockID);
-        if (functions == null)
-            return;
-
-        var condition = new BreakBlockWrapper(player, brokenBlock);
-        handleFunctions(functions, condition, event);
+        Optional.ofNullable(itemID2FunctionMap.get(blockID))
+                .map(map -> map.get(FunctionTrigger.BREAK))
+                .ifPresent(cFunctions -> handleFunctions(cFunctions, new BreakBlockWrapper(player, brokenBlock), event));
     }
 
+    @SuppressWarnings("DuplicatedCode")
     public void handlePlayerInteractFurniture(
             Player player,
             Location location,
@@ -1521,20 +1554,21 @@ public class ItemManagerImpl implements ItemManager {
         if (!plugin.getWorldManager().isMechanicEnabled(player.getWorld()))
             return;
 
+        // check anti-grief
+        if (!antiGrief.canInteract(player, location))
+            return;
+
         var condition = new InteractFurnitureWrapper(player, location, id, baseEntity);
         // check furniture firstly
-        TreeSet<CFunction> functions = itemID2FunctionMap.get(id);
-        if (functions != null) {
-            if (handleFunctions(functions, condition, event)) {
-                return;
-            }
+        TreeSet<CFunction> functions = Optional.ofNullable(itemID2FunctionMap.get(id)).map(map -> map.get(FunctionTrigger.BE_INTERACTED)).orElse(null);
+        if (handleFunctions(functions, condition, event)) {
+            return;
         }
         // Then check item in hand
         String itemID = customProvider.getItemID(condition.getItemInHand());
-        TreeSet<CFunction> itemFunctions = itemID2FunctionMap.get(itemID);
-        if (itemFunctions != null) {
-            handleFunctions(itemFunctions, condition, event);
-        }
+        Optional.ofNullable(itemID2FunctionMap.get(itemID))
+                .map(map -> map.get(FunctionTrigger.INTERACT_AT))
+                .ifPresent(cFunctions -> handleFunctions(cFunctions, condition, event));
     }
 
     public void handlePlayerPlaceFurniture(
@@ -1545,13 +1579,15 @@ public class ItemManagerImpl implements ItemManager {
     ) {
         if (!plugin.getWorldManager().isMechanicEnabled(player.getWorld()))
             return;
-        // check furniture, no need to check item in hand
-        TreeSet<CFunction> functions = itemID2FunctionMap.get(id);
-        if (functions == null)
-            return;
 
-        var condition = new PlaceFurnitureWrapper(player, location, id);
-        handleFunctions(functions, condition, event);
+         /*
+          No need to check anti-grief here as the event should be cancelled by the anti-grief plugin
+         */
+
+        // check furniture, no need to check item in hand
+        Optional.ofNullable(itemID2FunctionMap.get(id))
+                .map(map -> map.get(FunctionTrigger.PLACE))
+                .ifPresent(cFunctions -> handleFunctions(cFunctions, new PlaceFurnitureWrapper(player, location, id), event));
     }
 
     public void handlePlayerBreakFurniture(
@@ -1562,28 +1598,33 @@ public class ItemManagerImpl implements ItemManager {
     ) {
         if (!plugin.getWorldManager().isMechanicEnabled(player.getWorld()))
             return;
-        // check furniture, no need to check item in hand
-        TreeSet<CFunction> functions = itemID2FunctionMap.get(id);
-        if (functions == null)
-            return;
 
-        var condition = new BreakFurnitureWrapper(player, location, id);
-        handleFunctions(functions, condition, event);
+         /*
+          No need to check anti-grief here as the event should be handled by ItemsAdder/Oraxen
+         */
+
+        // check furniture, no need to check item in hand
+        Optional.ofNullable(itemID2FunctionMap.get(id))
+                .map(map -> map.get(FunctionTrigger.BREAK))
+                .ifPresent(cFunctions -> handleFunctions(cFunctions, new BreakFurnitureWrapper(player, location, id), event));
     }
 
     public void handlePlayerPlaceBlock(Player player, Block block, String blockID, Cancellable event) {
         if (!plugin.getWorldManager().isMechanicEnabled(player.getWorld()))
             return;
-        // check furniture, no need to check item in hand
-        TreeSet<CFunction> functions = itemID2FunctionMap.get(blockID);
-        if (functions == null)
-            return;
 
-        var condition = new PlaceBlockWrapper(player, block, blockID);
-        handleFunctions(functions, condition, event);
+         /*
+          No need to check anti-grief here as the event should be cancelled by the anti-grief plugin
+         */
+
+        // check furniture, no need to check item in hand
+        Optional.ofNullable(itemID2FunctionMap.get(blockID))
+                .map(map -> map.get(FunctionTrigger.PLACE))
+                .ifPresent(cFunctions -> handleFunctions(cFunctions, new PlaceBlockWrapper(player, block, blockID), event));
     }
 
     private boolean handleFunctions(Collection<CFunction> functions, ConditionWrapper wrapper, @Nullable Cancellable event) {
+        if (functions == null) return false;
         for (CFunction function : functions) {
             FunctionResult result = function.apply(wrapper);
             if (result == FunctionResult.CANCEL_EVENT_AND_RETURN) {

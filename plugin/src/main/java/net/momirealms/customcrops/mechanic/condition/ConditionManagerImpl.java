@@ -20,8 +20,11 @@ package net.momirealms.customcrops.mechanic.condition;
 import net.momirealms.customcrops.api.CustomCropsPlugin;
 import net.momirealms.customcrops.api.manager.ConditionManager;
 import net.momirealms.customcrops.api.mechanic.condition.*;
+import net.momirealms.customcrops.api.mechanic.world.level.WorldPot;
+import net.momirealms.customcrops.api.mechanic.world.season.Season;
 import net.momirealms.customcrops.api.util.LogUtils;
 import net.momirealms.customcrops.utils.ClassUtils;
+import net.momirealms.customcrops.utils.ConfigUtils;
 import org.bukkit.configuration.ConfigurationSection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -29,10 +32,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ConditionManagerImpl implements ConditionManager {
 
@@ -43,6 +43,7 @@ public class ConditionManagerImpl implements ConditionManager {
     public ConditionManagerImpl(CustomCropsPlugin plugin) {
         this.plugin = plugin;
         this.conditionBuilderMap = new HashMap<>();
+        this.registerInbuiltConditions();
     }
 
     @Override
@@ -58,6 +59,11 @@ public class ConditionManagerImpl implements ConditionManager {
     @Override
     public void disable() {
         this.conditionBuilderMap.clear();
+    }
+
+    private void registerInbuiltConditions() {
+        this.registerSeasonCondition();
+        this.registerWaterCondition();
     }
 
     @Override
@@ -120,6 +126,52 @@ public class ConditionManagerImpl implements ConditionManager {
     @Override
     public ConditionFactory getConditionFactory(String type) {
         return conditionBuilderMap.get(type);
+    }
+
+    private void registerSeasonCondition() {
+        for (String name : List.of("season", "suitable_season")) {
+            registerCondition(name, (args) -> {
+                HashSet<String> seasons = new HashSet<>(ConfigUtils.stringListArgs(args).stream().map(it -> it.toUpperCase(Locale.ENGLISH)).toList());
+                return cropState -> {
+                    Season season = plugin.getIntegrationManager().getSeason(cropState.getLocation().getBukkitWorld());
+                    if (season == null)
+                        return true;
+                    return seasons.contains(season.name());
+                };
+            });
+        }
+        for (String name : List.of("!season", "!suitable_season", "unsuitable_season")) {
+            registerCondition(name, (args) -> {
+                HashSet<String> seasons = new HashSet<>(ConfigUtils.stringListArgs(args).stream().map(it -> it.toUpperCase(Locale.ENGLISH)).toList());
+                return cropState -> {
+                    Season season = plugin.getIntegrationManager().getSeason(cropState.getLocation().getBukkitWorld());
+                    if (season == null)
+                        return true;
+                    return !seasons.contains(season.name());
+                };
+            });
+        }
+    }
+
+    private void registerWaterCondition() {
+        for (String name : List.of("water_more_than")) {
+            registerCondition(name, (args) -> {
+                int value = (int) args;
+                return cropState -> {
+                    Optional<WorldPot> worldPot = plugin.getWorldManager().getPotAt(cropState.getLocation());
+                    return worldPot.filter(pot -> pot.getWater() > value).isPresent();
+                };
+            });
+        }
+        for (String name : List.of("water_less_than")) {
+            registerCondition(name, (args) -> {
+                int value = (int) args;
+                return cropState -> {
+                    Optional<WorldPot> worldPot = plugin.getWorldManager().getPotAt(cropState.getLocation());
+                    return worldPot.filter(pot -> pot.getWater() < value).isPresent();
+                };
+            });
+        }
     }
 
     @SuppressWarnings("ResultOfMethodCallIgnored")

@@ -1,16 +1,17 @@
 package net.momirealms.customcrops.api.mechanic.condition;
 
+import net.momirealms.customcrops.api.mechanic.world.SimpleLocation;
 import org.bukkit.Location;
 
 public class CropState {
 
-    private final Location location;
+    private final SimpleLocation location;
 
-    public CropState(Location location) {
+    public CropState(SimpleLocation location) {
         this.location = location;
     }
 
-    public Location getLocation() {
+    public SimpleLocation getLocation() {
         return location;
     }
 }

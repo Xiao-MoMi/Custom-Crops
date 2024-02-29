@@ -19,6 +19,7 @@ package net.momirealms.customcrops;
 
 import de.tr7zw.changeme.nbtapi.utils.MinecraftVersion;
 import de.tr7zw.changeme.nbtapi.utils.VersionChecker;
+import net.momirealms.antigrieflib.AntiGriefLib;
 import net.momirealms.customcrops.api.CustomCropsPlugin;
 import net.momirealms.customcrops.api.event.CustomCropsReloadEvent;
 import net.momirealms.customcrops.api.manager.ConfigManager;
@@ -49,6 +50,7 @@ public class CustomCropsPluginImpl extends CustomCropsPlugin {
     private DependencyManager dependencyManager;
     private PacketManager packetManager;
     private CommandManager commandManager;
+    private AntiGriefLib antiGriefLib;
 
     @Override
     public void onLoad() {
@@ -70,6 +72,11 @@ public class CustomCropsPluginImpl extends CustomCropsPlugin {
                         Dependency.ANTI_GRIEF
                 )
         ));
+
+        this.antiGriefLib = AntiGriefLib.builder(this)
+                .silentLogs(true)
+                .ignoreOP(true)
+                .build();
     }
 
     @Override
@@ -85,12 +92,15 @@ public class CustomCropsPluginImpl extends CustomCropsPlugin {
         this.requirementManager = new RequirementManagerImpl(this);
         this.coolDownManager = new CoolDownManager(this);
         this.worldManager = new WorldManagerImpl(this);
-        this.itemManager = new ItemManagerImpl(this);
+        this.itemManager = new ItemManagerImpl(this, antiGriefLib);
         this.messageManager = new MessageManagerImpl(this);
         this.packetManager = new PacketManager(this);
         this.commandManager = new CommandManager(this);
+        this.commandManager.init();
+        this.antiGriefLib.init();
         this.disableNBTAPILogs();
-
+        this.reload();
+        this.worldManager.init();
         if (ConfigManager.metrics()) new Metrics(this, 16593);
         if (ConfigManager.checkUpdate()) {
             this.versionManager.checkUpdate().thenAccept(result -> {

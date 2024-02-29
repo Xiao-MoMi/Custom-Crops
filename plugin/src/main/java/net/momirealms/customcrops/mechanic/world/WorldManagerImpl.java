@@ -1,5 +1,6 @@
 package net.momirealms.customcrops.mechanic.world;
 
+import io.papermc.paper.threadedregions.RegionizedServerInitEvent;
 import net.momirealms.customcrops.api.CustomCropsPlugin;
 import net.momirealms.customcrops.api.manager.WorldManager;
 import net.momirealms.customcrops.api.mechanic.item.*;
@@ -19,6 +20,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.world.ChunkLoadEvent;
+import org.bukkit.event.world.ChunkPopulateEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -144,6 +146,7 @@ public class WorldManagerImpl implements WorldManager, Listener {
             return loadedWorlds.get(worldName);
         CWorld cWorld = new CWorld(world, getInitWorldSetting(world));
         cWorld.startTick();
+        loadedWorlds.put(worldName, cWorld);
         return cWorld;
     }
 
@@ -151,7 +154,7 @@ public class WorldManagerImpl implements WorldManager, Listener {
     public boolean unloadWorld(@NotNull World world) {
         CustomCropsWorld customCropsWorld = loadedWorlds.remove(world.getName());
         if (customCropsWorld != null) {
-            customCropsWorld.startTick();
+            customCropsWorld.cancelTick();
             worldAdaptor.unload(customCropsWorld);
             return true;
         }
@@ -345,9 +348,11 @@ public class WorldManagerImpl implements WorldManager, Listener {
         }
     }
 
-    @EventHandler (ignoreCancelled = true)
+    @EventHandler
     public void onChunkLoad(ChunkLoadEvent event) {
         if (event.isNewChunk())
+            return;
+        if (!event.getChunk().isEntitiesLoaded())
             return;
         Optional<CustomCropsWorld> optional = getCustomCropsWorld(event.getWorld());
         if (optional.isEmpty())
@@ -369,8 +374,11 @@ public class WorldManagerImpl implements WorldManager, Listener {
         chunk.notifyUpdates();
     }
 
-    @EventHandler (ignoreCancelled = true)
+    @EventHandler
     public void onChunkUnload(ChunkUnloadEvent event) {
+        if (!event.isSaveChunk())
+            return;
+
         Optional<CustomCropsWorld> optional = getCustomCropsWorld(event.getWorld());
         if (optional.isEmpty())
             return;

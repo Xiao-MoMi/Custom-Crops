@@ -62,7 +62,6 @@ watering_can_1:
       actionbar_action:
         type: actionbar
         value: '{water_bar}'
-
 watering_can_2:
   item: {0}watering_can_2
   capacity: 4
@@ -101,7 +100,6 @@ watering_can_2:
       actionbar_action:
         type: actionbar
         value: '{water_bar}'
-
 watering_can_3:
   item: {0}watering_can_3
   capacity: 5
@@ -140,7 +138,6 @@ watering_can_3:
       actionbar_action:
         type: actionbar
         value: '{water_bar}'
-
 watering_can_4:
   item: {0}watering_can_4
   capacity: 3

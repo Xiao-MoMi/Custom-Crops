@@ -37,16 +37,19 @@ import java.util.concurrent.ConcurrentHashMap;
 public class CChunk implements CustomCropsChunk {
 
     private transient CWorld cWorld;
-    private final ChunkCoordinate chunkCoordinate;
-    private final ConcurrentHashMap<SimpleLocation, WorldCrop> loadedCrops;
-    private final ConcurrentHashMap<SimpleLocation, WorldSprinkler> loadedSprinklers;
-    private final ConcurrentHashMap<SimpleLocation, WorldPot> loadedPots;
-    private final PriorityQueue<CheckTask> queue;
-    private final ArrayList<ReplaceTask> replaceTasks;
+    private ChunkCoordinate chunkCoordinate;
+    private ConcurrentHashMap<SimpleLocation, WorldCrop> loadedCrops;
+    private ConcurrentHashMap<SimpleLocation, WorldSprinkler> loadedSprinklers;
+    private ConcurrentHashMap<SimpleLocation, WorldPot> loadedPots;
+    private PriorityQueue<CheckTask> queue;
+    private ArrayList<ReplaceTask> replaceTasks;
     private long lastLoadedTime;
     private int loadedSeconds;
     private int sprinklerTimes;
     private int potTimes;
+
+    private CChunk() {
+    }
 
     public CChunk(CWorld cWorld, ChunkCoordinate chunkCoordinate) {
         this.cWorld = cWorld;

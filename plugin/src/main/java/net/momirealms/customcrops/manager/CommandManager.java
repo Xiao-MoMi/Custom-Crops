@@ -24,6 +24,10 @@ import dev.jorel.commandapi.CommandPermission;
 import net.momirealms.customcrops.api.CustomCropsPlugin;
 import net.momirealms.customcrops.api.common.Initable;
 import net.momirealms.customcrops.api.manager.MessageManager;
+import net.momirealms.customcrops.api.mechanic.world.SimpleLocation;
+import net.momirealms.customcrops.mechanic.world.block.MemoryCrop;
+
+import java.util.HashMap;
 
 public class CommandManager implements Initable {
 
@@ -43,7 +47,8 @@ public class CommandManager implements Initable {
                 .withAliases("ccrops")
                 .withSubcommands(
                         getReloadCommand(),
-                        getAboutCommand()
+                        getAboutCommand(),
+                        getStressTest()
                 )
                 .register();
     }
@@ -70,6 +75,19 @@ public class CommandManager implements Initable {
             plugin.getAdventure().sendMessage(sender, "<#DA70D6>\uD83E\uDDEA Author: <#FFC0CB>XiaoMoMi");
             plugin.getAdventure().sendMessage(sender, "<#FF7F50>\uD83D\uDD25 Contributors: <#FFA07A>Cha_Shao<white>, <#FFA07A>TopOrigin<white>, <#FFA07A>AmazingCat");
             plugin.getAdventure().sendMessage(sender, "<#FFD700>⭐ <click:open_url:https://mo-mi.gitbook.io/xiaomomi-plugins/plugin-wiki/customcrops>Document</click> <#A9A9A9>| <#FAFAD2>⛏ <click:open_url:https://github.com/Xiao-MoMi/Custom-Crops>Github</click> <#A9A9A9>| <#48D1CC>\uD83D\uDD14 <click:open_url:https://polymart.org/resource/customcrops.2625>Polymart</click>");
+        });
+    }
+
+    private CommandAPICommand getStressTest() {
+        return new CommandAPICommand("test").executes((sender, args) -> {
+            for (int i = 0; i < 16; i++) {
+                for (int j = 0; j < 16; j++) {
+                    for (int k = -64; k < 320; k++) {
+                        SimpleLocation location = new SimpleLocation("world", 1024 + i, k, 1024 + j);
+                        plugin.getWorldManager().addCropAt(new MemoryCrop("test", 5, new HashMap<>()), location);
+                    }
+                }
+            }
         });
     }
 }
