@@ -59,11 +59,15 @@ public class CustomCropsPluginImpl extends CustomCropsPlugin {
                         Dependency.SLF4J_API,
                         Dependency.SLF4J_SIMPLE,
                         Dependency.COMMAND_API,
+                        Dependency.NBT_API,
                         Dependency.BOOSTED_YAML,
                         Dependency.ADVENTURE_TEXT_MINIMESSAGE,
                         Dependency.ADVENTURE_LEGACY_SERIALIZER,
                         Dependency.BSTATS_BASE,
-                        Dependency.BSTATS_BUKKIT
+                        Dependency.BSTATS_BUKKIT,
+                        Dependency.KRYO,
+                        Dependency.BIOME_API,
+                        Dependency.ANTI_GRIEF
                 )
         ));
     }
@@ -71,9 +75,9 @@ public class CustomCropsPluginImpl extends CustomCropsPlugin {
     @Override
     public void onEnable() {
         instance = this;
+        this.versionManager = new VersionManagerImpl(this);
         this.adventure = new AdventureManagerImpl(this);
         this.scheduler = new SchedulerImpl(this);
-        this.versionManager = new VersionManagerImpl(this);
         this.configManager = new ConfigManagerImpl(this);
         this.integrationManager = new IntegrationManagerImpl(this);
         this.conditionManager = new ConditionManagerImpl(this);

@@ -60,14 +60,6 @@ public enum Dependency {
             null,
             "jar-relocator"
     ),
-    KYORI_OPTION(
-            "net{}kyori",
-            "option",
-            "1.0.0",
-            null,
-            "kyori-option",
-            Relocation.of("option", "net{}kyori{}option")
-    ),
     ADVENTURE_API(
             "net{}kyori",
             "adventure-api",
@@ -164,14 +156,6 @@ public enum Dependency {
             "commandapi-bukkit",
             Relocation.of("commandapi", "dev{}jorel{}commandapi")
     ),
-    MARIADB_DRIVER(
-            "org{}mariadb{}jdbc",
-            "mariadb-java-client",
-            "3.3.2",
-            null,
-            "mariadb-java-client",
-            Relocation.of("mariadb", "org{}mariadb")
-    ),
     BOOSTED_YAML(
             "dev{}dejvokep",
             "boosted-yaml",
@@ -179,14 +163,6 @@ public enum Dependency {
             null,
             "boosted-yaml",
             Relocation.of("boostedyaml", "dev{}dejvokep{}boostedyaml")
-    ),
-    MYSQL_DRIVER(
-            "com{}mysql",
-            "mysql-connector-j",
-            "8.3.0",
-            null,
-            "mysql-connector-j",
-            Relocation.of("mysql", "com{}mysql")
     ),
     H2_DRIVER(
             "com.h2database",
@@ -202,14 +178,6 @@ public enum Dependency {
             null,
             "sqlite-jdbc"
     ),
-    HIKARI(
-            "com{}zaxxer",
-            "HikariCP",
-            "5.0.1",
-            null,
-            "HikariCP",
-            Relocation.of("hikari", "com{}zaxxer{}hikari")
-    ),
     SLF4J_SIMPLE(
             "org.slf4j",
             "slf4j-simple",
@@ -224,41 +192,29 @@ public enum Dependency {
             null,
             "slf4j-api"
     ),
-    MONGODB_DRIVER_CORE(
-            "org{}mongodb",
-            "mongodb-driver-core",
-            "4.11.1",
-            null,
-            "mongodb-driver-core",
-            Relocation.of("mongodb", "com{}mongodb"),
-            Relocation.of("bson", "org{}bson")
+    NBT_API(
+            "de{}tr7zw",
+            "item-nbt-api",
+            "2.12.2",
+            "codemc",
+            "item-nbt-api",
+            Relocation.of("changeme", "de{}tr7zw{}changeme")
     ),
-    MONGODB_DRIVER_SYNC(
-            "org{}mongodb",
-            "mongodb-driver-sync",
-            "4.11.1",
-            null,
-            "mongodb-driver-sync",
-            Relocation.of("mongodb", "com{}mongodb"),
-            Relocation.of("bson", "org{}bson")
+    ANTI_GRIEF(
+            "com{}github{}Xiao-MoMi",
+            "AntiGriefLib",
+            "0.7",
+            "jitpack",
+            "antigrief-lib",
+            Relocation.of("antigrieflib", "net{}momirealms{}antigrieflib")
     ),
-    MONGODB_DRIVER_BSON(
-            "org{}mongodb",
-            "bson",
-            "4.11.1",
-            null,
-            "mongodb-bson",
-            Relocation.of("mongodb", "com{}mongodb"),
-            Relocation.of("bson", "org{}bson")
-    ),
-    JEDIS(
-            "redis{}clients",
-            "jedis",
-            "5.1.0",
-            null,
-            "jedis",
-            Relocation.of("jedis", "redis{}clients{}jedis"),
-            Relocation.of("commonspool2", "org{}apache{}commons{}pool2")
+    BIOME_API(
+            "com{}github{}Xiao-MoMi",
+            "BiomeAPI",
+            "0.2",
+            "jitpack",
+            "biome-api",
+            Relocation.of("biomeapi", "net{}momirealms{}biomeapi")
     ),
     BSTATS_BASE(
             "org{}bstats",
@@ -276,13 +232,13 @@ public enum Dependency {
             "bstats-bukkit",
             Relocation.of("bstats", "org{}bstats")
     ),
-    COMMONS_POOL_2(
-            "org{}apache{}commons",
-            "commons-pool2",
-            "2.11.0",
+    KRYO(
+            "com{}esotericsoftware",
+            "kryo5",
+            "5.6.0",
             null,
-            "commons-pool2",
-            Relocation.of("commonspool2", "org{}apache{}commons{}pool2")
+            "kryo5",
+            Relocation.of("kryo", "com{}esotericsoftware{}kryo")
     ),
     GSON(
             "com.google.code.gson",

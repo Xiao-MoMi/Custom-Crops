@@ -17,9 +17,9 @@
 
 package net.momirealms.customcrops.mechanic.world.adaptor;
 
-import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryo.io.Input;
-import com.esotericsoftware.kryo.io.Output;
+import com.esotericsoftware.kryo.kryo5.Kryo;
+import com.esotericsoftware.kryo.kryo5.io.Input;
+import com.esotericsoftware.kryo.kryo5.io.Output;
 import com.google.gson.Gson;
 import net.momirealms.customcrops.api.CustomCropsPlugin;
 import net.momirealms.customcrops.api.manager.WorldManager;

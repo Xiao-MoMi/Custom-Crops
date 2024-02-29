@@ -1,6 +1,6 @@
 name: CustomCrops
 version: '${version}'
-main: net.momirealms.customcrops.CustomCrops
+main: net.momirealms.customcrops.CustomCropsPluginImpl
 api-version: 1.17
 load: POSTWORLD
 authors: [ XiaoMoMi ]

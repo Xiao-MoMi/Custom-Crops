@@ -48,20 +48,21 @@ dependencies {
     implementation(project(":api"))
     implementation("net.kyori:adventure-api:4.15.0")
     implementation("net.kyori:adventure-platform-bukkit:4.3.2")
-    implementation("com.github.Xiao-MoMi:AntiGriefLib:0.7")
-    implementation("com.github.Xiao-MoMi:BiomeAPI:0.2")
+    compileOnly("com.github.Xiao-MoMi:AntiGriefLib:0.7")
+    compileOnly("com.github.Xiao-MoMi:BiomeAPI:0.2")
     compileOnly("net.kyori:adventure-text-minimessage:4.15.0")
     compileOnly("net.kyori:adventure-text-serializer-legacy:4.15.0")
     compileOnly("de.tr7zw:item-nbt-api:2.12.2")
     compileOnly("org.bstats:bstats-bukkit:3.0.2")
-    compileOnly("com.esotericsoftware:kryo:5.6.0")
+    compileOnly("com.esotericsoftware:kryo5:5.6.0")
 }
 
 tasks {
     shadowJar {
-		relocate ("de.tr7zw", "net.momirealms.customcrops.libraries.tr7zw")
+		relocate ("de.tr7zw.changeme", "net.momirealms.customcrops.libraries.changeme")
+		relocate ("dev.jorel.commandapi", "net.momirealms.customcrops.libraries.commandapi")
 		relocate ("net.kyori", "net.momirealms.customcrops.libraries.kyori")
-		relocate ("com.esotericsoftware", "net.momirealms.customcrops.libraries.esotericsoftware")
+		relocate ("com.esotericsoftware.kryo", "net.momirealms.customcrops.libraries.kryo")
 		relocate ("org.objenesis", "net.momirealms.customcrops.libraries.objenesis")
 		relocate ("org.bstats", "net.momirealms.customcrops.libraries.bstats")
 		relocate ("net.momirealms.biomeapi", "net.momirealms.customcrops.libraries.biomeapi")

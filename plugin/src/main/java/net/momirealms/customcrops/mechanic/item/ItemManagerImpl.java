@@ -1466,7 +1466,9 @@ public class ItemManagerImpl implements ItemManager {
         String blockID = customProvider.getBlockID(clickedBlock);
         TreeSet<CFunction> blockFunctions = itemID2FunctionMap.get(blockID);
         if (blockFunctions != null) {
-            handleFunctions(blockFunctions, condition, event);
+            if (handleFunctions(blockFunctions, condition, event)) {
+                return;
+            }
         }
         // Then check item in hand
         String itemID = customProvider.getItemID(condition.getItemInHand());
@@ -1523,7 +1525,9 @@ public class ItemManagerImpl implements ItemManager {
         // check furniture firstly
         TreeSet<CFunction> functions = itemID2FunctionMap.get(id);
         if (functions != null) {
-            handleFunctions(functions, condition, event);
+            if (handleFunctions(functions, condition, event)) {
+                return;
+            }
         }
         // Then check item in hand
         String itemID = customProvider.getItemID(condition.getItemInHand());
@@ -1579,18 +1583,17 @@ public class ItemManagerImpl implements ItemManager {
         handleFunctions(functions, condition, event);
     }
 
-    private void handleFunctions(Collection<CFunction> functions, ConditionWrapper wrapper, @Nullable Cancellable event) {
-        if (event != null && event.isCancelled())
-            return;
+    private boolean handleFunctions(Collection<CFunction> functions, ConditionWrapper wrapper, @Nullable Cancellable event) {
         for (CFunction function : functions) {
             FunctionResult result = function.apply(wrapper);
             if (result == FunctionResult.CANCEL_EVENT_AND_RETURN) {
                 if (event != null) event.setCancelled(true);
-                break;
+                return true;
             }
             if (result == FunctionResult.RETURN)
-                break;
+                return true;
         }
+        return false;
     }
 
     @NotNull

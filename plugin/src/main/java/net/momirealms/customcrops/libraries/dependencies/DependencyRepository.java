@@ -40,6 +40,9 @@ import java.util.concurrent.TimeUnit;
  */
 public enum DependencyRepository {
 
+    /**
+     * Maven Central
+     */
     MAVEN_CENTRAL("maven", "https://repo1.maven.org/maven2/") {
         @Override
         protected URLConnection openConnection(Dependency dependency) throws IOException {
@@ -49,11 +52,18 @@ public enum DependencyRepository {
             return connection;
         }
     },
-
     /**
-     * Maven Central
+     * Maven Central Mirror
      */
-    MAVEN_CENTRAL_MIRROR("aliyun", "https://maven.aliyun.com/repository/public/");
+    MAVEN_CENTRAL_MIRROR("aliyun", "https://maven.aliyun.com/repository/public/"),
+    /**
+     * Code MC
+     */
+    CODE_MC("codemc", "https://repo.codemc.io/repository/maven-public/"),
+    /**
+     * Jitpack
+     */
+    JITPACK("jitpack", "https://jitpack.io/");
 
     private final String url;
     private final String id;
