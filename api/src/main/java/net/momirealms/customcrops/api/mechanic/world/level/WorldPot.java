@@ -22,6 +22,8 @@ import net.momirealms.customcrops.api.mechanic.world.CustomCropsBlock;
 
 public interface WorldPot extends CustomCropsBlock {
 
+    String getKey();
+
     int getWater();
 
     void setWater(int water);

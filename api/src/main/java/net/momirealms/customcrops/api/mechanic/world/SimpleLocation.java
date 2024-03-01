@@ -114,9 +114,9 @@ public class SimpleLocation {
         return Bukkit.getWorld(worldName);
     }
 
-    public static SimpleLocation getByString(String location, String world) {
-        String[] loc = location.split(",");
-        return new SimpleLocation(world, Integer.parseInt(loc[0]), Integer.parseInt(loc[1]), Integer.parseInt(loc[2]));
+    public static SimpleLocation getByString(String location) {
+        String[] loc = location.split(",", 4);
+        return new SimpleLocation(loc[0], Integer.parseInt(loc[1]), Integer.parseInt(loc[2]), Integer.parseInt(loc[3]));
     }
 
     public static SimpleLocation getByBukkitLocation(Location location) {

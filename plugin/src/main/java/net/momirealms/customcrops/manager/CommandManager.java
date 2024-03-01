@@ -84,7 +84,7 @@ public class CommandManager implements Initable {
                 for (int j = 0; j < 16; j++) {
                     for (int k = -64; k < 320; k++) {
                         SimpleLocation location = new SimpleLocation("world", 1024 + i, k, 1024 + j);
-                        plugin.getWorldManager().addCropAt(new MemoryCrop("test", 5, new HashMap<>()), location);
+                        plugin.getWorldManager().addCropAt(new MemoryCrop("test", 5), location);
                     }
                 }
             }

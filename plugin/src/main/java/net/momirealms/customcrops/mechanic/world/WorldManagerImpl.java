@@ -1,6 +1,5 @@
 package net.momirealms.customcrops.mechanic.world;
 
-import io.papermc.paper.threadedregions.RegionizedServerInitEvent;
 import net.momirealms.customcrops.api.CustomCropsPlugin;
 import net.momirealms.customcrops.api.manager.WorldManager;
 import net.momirealms.customcrops.api.mechanic.item.*;
@@ -13,15 +12,12 @@ import net.momirealms.customcrops.mechanic.world.adaptor.BukkitWorldAdaptor;
 import net.momirealms.customcrops.mechanic.world.adaptor.SlimeWorldAdaptor;
 import net.momirealms.customcrops.utils.ConfigUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
-import org.bukkit.event.world.ChunkLoadEvent;
-import org.bukkit.event.world.ChunkPopulateEvent;
-import org.bukkit.event.world.ChunkUnloadEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -29,6 +25,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 public class WorldManagerImpl implements WorldManager, Listener {
 
@@ -61,6 +58,9 @@ public class WorldManagerImpl implements WorldManager, Listener {
                 loadWorld(world);
             }
         }
+        plugin.getScheduler().runTaskAsyncTimer(() -> {
+            System.out.println(Bukkit.getWorld("world").getLoadedChunks().length);
+        },1,1, TimeUnit.SECONDS);
     }
 
     @Override
@@ -348,18 +348,21 @@ public class WorldManagerImpl implements WorldManager, Listener {
         }
     }
 
-    @EventHandler
-    public void onChunkLoad(ChunkLoadEvent event) {
-        if (event.isNewChunk())
-            return;
-        if (!event.getChunk().isEntitiesLoaded())
-            return;
-        Optional<CustomCropsWorld> optional = getCustomCropsWorld(event.getWorld());
+    /**
+     * Still need further investigations into why chunk load event is called twice
+     */
+    public void handleChunkLoad(Chunk bukkitChunk) {
+        Optional<CustomCropsWorld> optional = getCustomCropsWorld(bukkitChunk.getWorld());
         if (optional.isEmpty())
             return;
-
         CustomCropsWorld customCropsWorld = optional.get();
-        ChunkCoordinate chunkCoordinate = ChunkCoordinate.getByBukkitChunk(event.getChunk());
+        ChunkCoordinate chunkCoordinate = ChunkCoordinate.getByBukkitChunk(bukkitChunk);
+
+        Optional<CustomCropsChunk> previousData = customCropsWorld.getChunkAt(chunkCoordinate);
+        if (previousData.isPresent()) {
+            plugin.debug("Chunk is loaded twice. " + chunkCoordinate);
+            return;
+        }
 
         // load chunks
         this.worldAdaptor.loadDynamicData(customCropsWorld, chunkCoordinate);
@@ -374,17 +377,13 @@ public class WorldManagerImpl implements WorldManager, Listener {
         chunk.notifyUpdates();
     }
 
-    @EventHandler
-    public void onChunkUnload(ChunkUnloadEvent event) {
-        if (!event.isSaveChunk())
-            return;
-
-        Optional<CustomCropsWorld> optional = getCustomCropsWorld(event.getWorld());
+    public void handleChunkUnload(Chunk bukkitChunk) {
+        Optional<CustomCropsWorld> optional = getCustomCropsWorld(bukkitChunk.getWorld());
         if (optional.isEmpty())
             return;
 
         CustomCropsWorld customCropsWorld = optional.get();
-        ChunkCoordinate chunkCoordinate = ChunkCoordinate.getByBukkitChunk(event.getChunk());
+        ChunkCoordinate chunkCoordinate = ChunkCoordinate.getByBukkitChunk(bukkitChunk);
         this.worldAdaptor.unloadDynamicData(customCropsWorld, chunkCoordinate);
     }
 }

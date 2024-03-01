@@ -17,36 +17,29 @@
 
 package net.momirealms.customcrops.api.mechanic.world.level;
 
-import net.momirealms.customcrops.api.common.Property;
-
-import java.util.HashMap;
+import com.flowpowered.nbt.CompoundMap;
+import com.flowpowered.nbt.Tag;
 
 public class AbstractPropertyItem implements PropertyItem {
 
-    private String key;
-    private final HashMap<String, Property<?>> properties;
+    private final CompoundMap compoundMap;
 
-    public AbstractPropertyItem(String key, HashMap<String, Property<?>> properties) {
-        this.key = key;
-        this.properties = properties;
+    public AbstractPropertyItem(CompoundMap compoundMap) {
+        this.compoundMap = compoundMap;
     }
 
     @Override
-    public String getKey() {
-        return key;
+    public void setProperty(String key, Tag<?> tag) {
+        compoundMap.put(key, tag);
     }
 
     @Override
-    public <T> void setProperty(String name, Property<T> property) {
-        properties.put(name, property);
+    public Tag<?> getProperty(String name) {
+        return compoundMap.get(name);
     }
 
     @Override
-    public <T> T getProperty(String name, Class<T> type) {
-        Property<?> prop = properties.get(name);
-        if (prop != null) {
-            return type.cast(prop.get());
-        }
-        return null;
+    public CompoundMap getCompoundMap() {
+        return compoundMap;
     }
 }

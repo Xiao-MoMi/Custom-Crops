@@ -18,11 +18,11 @@
 package net.momirealms.customcrops.mechanic.world;
 
 import net.momirealms.customcrops.api.CustomCropsPlugin;
-import net.momirealms.customcrops.api.mechanic.item.Crop;
 import net.momirealms.customcrops.api.mechanic.item.Fertilizer;
 import net.momirealms.customcrops.api.mechanic.item.Pot;
 import net.momirealms.customcrops.api.mechanic.item.Sprinkler;
 import net.momirealms.customcrops.api.mechanic.world.ChunkCoordinate;
+import net.momirealms.customcrops.api.mechanic.world.CustomCropsBlock;
 import net.momirealms.customcrops.api.mechanic.world.SimpleLocation;
 import net.momirealms.customcrops.api.mechanic.world.level.*;
 import net.momirealms.customcrops.mechanic.world.block.MemoryPot;
@@ -38,29 +38,28 @@ public class CChunk implements CustomCropsChunk {
 
     private transient CWorld cWorld;
     private ChunkCoordinate chunkCoordinate;
-    private ConcurrentHashMap<SimpleLocation, WorldCrop> loadedCrops;
-    private ConcurrentHashMap<SimpleLocation, WorldSprinkler> loadedSprinklers;
-    private ConcurrentHashMap<SimpleLocation, WorldPot> loadedPots;
+    private ConcurrentHashMap<SimpleLocation, CustomCropsBlock> loadedBlocks;
     private PriorityQueue<CheckTask> queue;
     private ArrayList<ReplaceTask> replaceTasks;
     private long lastLoadedTime;
     private int loadedSeconds;
-    private int sprinklerTimes;
-    private int potTimes;
-
-    private CChunk() {
-    }
 
     public CChunk(CWorld cWorld, ChunkCoordinate chunkCoordinate) {
         this.cWorld = cWorld;
         this.chunkCoordinate = chunkCoordinate;
-        this.loadedCrops = new ConcurrentHashMap<>(64);
-        this.loadedPots = new ConcurrentHashMap<>(64);
-        this.loadedSprinklers = new ConcurrentHashMap<>(16);
+        this.loadedBlocks = new ConcurrentHashMap<>(64);
         this.queue = new PriorityQueue<>();
         this.replaceTasks = new ArrayList<>();
-        this.potTimes = 0;
-        this.sprinklerTimes = 0;
+    }
+
+    public CChunk(CWorld cWorld, ChunkCoordinate chunkCoordinate, int loadedSeconds, long lastLoadedTime, ConcurrentHashMap<SimpleLocation, CustomCropsBlock> loadedBlocks) {
+        this.cWorld = cWorld;
+        this.chunkCoordinate = chunkCoordinate;
+        this.loadedBlocks = loadedBlocks;
+        this.lastLoadedTime = lastLoadedTime;
+        this.loadedSeconds = loadedSeconds;
+        this.queue = new PriorityQueue<>();
+        this.replaceTasks = new ArrayList<>();
     }
 
     public void setWorld(CWorld cWorld) {
@@ -93,12 +92,13 @@ public class CChunk implements CustomCropsChunk {
         while (!queue.isEmpty() && queue.peek().getTime() <= loadedSeconds) {
             CheckTask task = queue.poll();
             if (task != null)
-                switch (task.getType()) {
-                    case POT -> tickPots(task.getSimpleLocation());
-                    case SPRINKLER -> tickSprinklers(task.getSimpleLocation());
-                    case CROP -> tickCrops(task.getSimpleLocation());
-                }
+                tick(task.getSimpleLocation());
         }
+    }
+
+    @Override
+    public long getLastLoadedTime() {
+        return lastLoadedTime;
     }
 
     @Override
@@ -120,52 +120,23 @@ public class CChunk implements CustomCropsChunk {
 
     public void arrangeTasks(WorldSetting setting) {
         int interval = setting.getPointInterval();
-        for (Map.Entry<SimpleLocation, WorldCrop> entry : this.loadedCrops.entrySet()) {
-            this.queue.add(new CheckTask(
-                    RandomUtils.getRandomInt(0, interval),
-                    CheckTask.TaskType.CROP,
-                    entry.getKey()
-            ));
-        }
-
-        this.potTimes++;
-        this.sprinklerTimes++;
-
-        if (this.potTimes >= setting.getTickPotInterval()) {
-            this.potTimes = 0;
-            for (Map.Entry<SimpleLocation, WorldPot> entry : this.loadedPots.entrySet()) {
-                this.queue.add(new CheckTask(
-                        RandomUtils.getRandomInt((int) ((double) interval * 0.05), interval),
-                        CheckTask.TaskType.POT,
-                        entry.getKey()
-                ));
-            }
-        }
-
-        if (this.sprinklerTimes >= setting.getTickSprinklerInterval()) {
-            this.sprinklerTimes = 0;
-            for (Map.Entry<SimpleLocation, WorldSprinkler> entry : this.loadedSprinklers.entrySet()) {
-                this.queue.add(new CheckTask(
-                        RandomUtils.getRandomInt(0, Math.max(1, (int) ((double) interval * 0.05))),
-                        CheckTask.TaskType.SPRINKLER,
+        for (Map.Entry<SimpleLocation, CustomCropsBlock> entry : this.loadedBlocks.entrySet()) {
+            switch (entry.getValue().getType()) {
+                case CROP -> this.queue.add(new CheckTask(
+                        RandomUtils.getRandomInt(0, interval),
                         entry.getKey()
                 ));
             }
         }
     }
 
+    private void tick(SimpleLocation location) {
+        CustomCropsBlock block = loadedBlocks.get(location);
+        if (block == null) return;
+
+    }
+
     private void tickCrops(SimpleLocation location) {
-        WorldCrop crop = loadedCrops.get(location);
-        if (crop == null)
-            return;
-
-        // remove outdated crops
-        Crop config = crop.getConfig();
-        if (config == null) {
-            loadedCrops.remove(location);
-            return;
-        }
-
 
     }
 
@@ -179,19 +150,19 @@ public class CChunk implements CustomCropsChunk {
 
     @Override
     public Optional<WorldCrop> getCropAt(SimpleLocation simpleLocation) {
-        WorldCrop crop = loadedCrops.get(simpleLocation);
+        WorldCrop crop = (loadedBlocks.get(simpleLocation) instanceof WorldCrop worldCrop) ? worldCrop : null;
         return Optional.ofNullable(crop);
     }
 
     @Override
     public Optional<WorldSprinkler> getSprinklerAt(SimpleLocation simpleLocation) {
-        WorldSprinkler sprinkler = loadedSprinklers.get(simpleLocation);
+        WorldSprinkler sprinkler = (loadedBlocks.get(simpleLocation) instanceof WorldSprinkler worldSprinkler) ? worldSprinkler : null;
         return Optional.ofNullable(sprinkler);
     }
 
     @Override
     public Optional<WorldPot> getPotAt(SimpleLocation simpleLocation) {
-        WorldPot pot = loadedPots.get(simpleLocation);
+        WorldPot pot = (loadedBlocks.get(simpleLocation) instanceof WorldPot worldPot) ? worldPot : null;
         return Optional.ofNullable(pot);
     }
 
@@ -199,7 +170,7 @@ public class CChunk implements CustomCropsChunk {
     public void addWaterToSprinkler(Sprinkler sprinkler, SimpleLocation location, int amount) {
         Optional<WorldSprinkler> optionalSprinkler = getSprinklerAt(location);
         if (optionalSprinkler.isEmpty()) {
-            loadedSprinklers.put(location, new MemorySprinkler(sprinkler.getKey(), amount, new HashMap<>()));
+            loadedBlocks.put(location, new MemorySprinkler(sprinkler.getKey(), amount));
             CustomCropsPlugin.get().debug("When adding water to sprinkler at " + location + ", the sprinkler data doesn't exist.");
         } else {
             optionalSprinkler.get().setWater(optionalSprinkler.get().getWater() + amount);
@@ -210,10 +181,10 @@ public class CChunk implements CustomCropsChunk {
     public void addFertilizerToPot(Pot pot, Fertilizer fertilizer, SimpleLocation location) {
         Optional<WorldPot> optionalWorldPot = getPotAt(location);
         if (optionalWorldPot.isEmpty()) {
-            MemoryPot memoryPot = new MemoryPot(pot.getKey(), new HashMap<>());
+            MemoryPot memoryPot = new MemoryPot(pot.getKey());
             memoryPot.setFertilizer(fertilizer.getKey());
             memoryPot.setFertilizerTimes(fertilizer.getTimes());
-            loadedPots.put(location, memoryPot);
+            loadedBlocks.put(location, memoryPot);
             CustomCropsPlugin.get().debug("When adding fertilizer to pot at " + location + ", the pot data doesn't exist.");
         } else {
             optionalWorldPot.get().setFertilizer(fertilizer.getKey());
@@ -225,9 +196,9 @@ public class CChunk implements CustomCropsChunk {
     public void addWaterToPot(Pot pot, SimpleLocation location, int amount) {
         Optional<WorldPot> optionalWorldPot = getPotAt(location);
         if (optionalWorldPot.isEmpty()) {
-            MemoryPot memoryPot = new MemoryPot(pot.getKey(), new HashMap<>());
+            MemoryPot memoryPot = new MemoryPot(pot.getKey());
             memoryPot.setWater(amount);
-            loadedPots.put(location, memoryPot);
+            loadedBlocks.put(location, memoryPot);
             CustomCropsPlugin.get().debug("When adding water to pot at " + location + ", the pot data doesn't exist.");
         } else {
             optionalWorldPot.get().setWater(optionalWorldPot.get().getWater() + amount);
@@ -236,58 +207,94 @@ public class CChunk implements CustomCropsChunk {
 
     @Override
     public void addPotAt(WorldPot pot, SimpleLocation location) {
-        if (loadedPots.put(location, pot) != null) {
+        if (loadedBlocks.put(location, pot) != null) {
             CustomCropsPlugin.get().debug("Found duplicated pot data when adding pot at " + location);
         }
     }
 
     @Override
     public void addSprinklerAt(WorldSprinkler sprinkler, SimpleLocation location) {
-        if (loadedSprinklers.put(location, sprinkler) != null) {
+        if (loadedBlocks.put(location, sprinkler) != null) {
             CustomCropsPlugin.get().debug("Found duplicated sprinkler data when adding sprinkler at " + location);
         }
     }
 
     @Override
     public void addCropAt(WorldCrop crop, SimpleLocation location) {
-        if (loadedCrops.put(location, crop) != null) {
-            CustomCropsPlugin.get().debug("Found duplicated crop data when adding crop at " + location);
+        CustomCropsBlock previous = loadedBlocks.put(location, crop);
+        if (previous != null) {
+            if (previous instanceof WorldCrop) {
+                CustomCropsPlugin.get().debug("Found duplicated crop data when adding crop at " + location);
+            } else {
+                CustomCropsPlugin.get().debug("Found unremoved data when adding crop at " + location + ". Previous type is " + previous.getType().name());
+            }
         }
     }
 
     @Override
     public void removeSprinklerAt(SimpleLocation location) {
-        if (loadedSprinklers.remove(location) == null) {
+        CustomCropsBlock removed = loadedBlocks.remove(location);
+        if (removed == null) {
             CustomCropsPlugin.get().debug("Failed to remove sprinkler from " + location + " because sprinkler doesn't exist.");
+        } else if (!(removed instanceof WorldSprinkler)) {
+            CustomCropsPlugin.get().debug("Removed sprinkler from " + location + " but the previous block type is " + removed.getType().name());
         }
     }
 
     @Override
     public void removePotAt(SimpleLocation location) {
-        if (loadedPots.remove(location) == null) {
+        CustomCropsBlock removed = loadedBlocks.remove(location);
+        if (removed == null) {
             CustomCropsPlugin.get().debug("Failed to remove pot from " + location + " because pot doesn't exist.");
+        } else if (!(removed instanceof WorldPot)) {
+            CustomCropsPlugin.get().debug("Removed pot from " + location + " but the previous block type is " + removed.getType().name());
         }
     }
 
     @Override
     public void removeCropAt(SimpleLocation location) {
-        if (loadedCrops.remove(location) == null) {
+        CustomCropsBlock removed = loadedBlocks.remove(location);
+        if (removed == null) {
             CustomCropsPlugin.get().debug("Failed to remove crop from " + location + " because crop doesn't exist.");
+        } else if (!(removed instanceof WorldCrop)) {
+            CustomCropsPlugin.get().debug("Removed crop from " + location + " but the previous block type is " + removed.getType().name());
         }
     }
 
     @Override
     public int getCropAmount() {
-        return loadedCrops.size();
+        int amount = 0;
+        for (CustomCropsBlock block : loadedBlocks.values()) {
+            if (block instanceof WorldCrop) {
+                amount++;
+            }
+        }
+        return amount;
     }
 
     @Override
     public int getPotAmount() {
-        return loadedPots.size();
+        int amount = 0;
+        for (CustomCropsBlock block : loadedBlocks.values()) {
+            if (block instanceof WorldPot) {
+                amount++;
+            }
+        }
+        return amount;
     }
 
     @Override
     public int getSprinklerAmount() {
-        return loadedSprinklers.size();
+        int amount = 0;
+        for (CustomCropsBlock block : loadedBlocks.values()) {
+            if (block instanceof WorldSprinkler) {
+                amount++;
+            }
+        }
+        return amount;
+    }
+
+    public Map<SimpleLocation, CustomCropsBlock> getLoadedBlocks() {
+        return loadedBlocks;
     }
 }

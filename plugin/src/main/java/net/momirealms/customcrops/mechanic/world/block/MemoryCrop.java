@@ -17,8 +17,13 @@
 
 package net.momirealms.customcrops.mechanic.world.block;
 
+import com.flowpowered.nbt.CompoundMap;
+import com.flowpowered.nbt.IntTag;
+import com.flowpowered.nbt.StringTag;
+import net.momirealms.customcrops.api.CustomCropsPlugin;
 import net.momirealms.customcrops.api.common.Property;
 import net.momirealms.customcrops.api.mechanic.item.Crop;
+import net.momirealms.customcrops.api.mechanic.item.ItemType;
 import net.momirealms.customcrops.api.mechanic.world.level.AbstractPropertyItem;
 import net.momirealms.customcrops.api.mechanic.world.level.WorldCrop;
 
@@ -26,29 +31,40 @@ import java.util.HashMap;
 
 public class MemoryCrop extends AbstractPropertyItem implements WorldCrop {
 
-    private int point;
-
-    private MemoryCrop() {
-        super(null, null);
+    public MemoryCrop(String key, int point) {
+        super(new CompoundMap());
+        setProperty("point", new IntTag("point", point));
+        setProperty("key", new StringTag("key", key));
     }
 
-    public MemoryCrop(String key, int point, HashMap<String, Property<?>> properties) {
-        super(key, properties);
-        this.point = point;
+    public MemoryCrop(CompoundMap properties) {
+        super(properties);
+    }
+
+    @Override
+    public String getKey() {
+        return getProperty("key").getAsStringTag()
+                .map(StringTag::getValue)
+                .orElse("");
     }
 
     @Override
     public int getPoint() {
-        return point;
+        return getProperty("point").getAsIntTag().map(IntTag::getValue).orElse(0);
     }
 
     @Override
     public void setPoint(int point) {
-        this.point = point;
+        setProperty("point", new IntTag("point", point));
     }
 
     @Override
     public Crop getConfig() {
-        return null;
+        return CustomCropsPlugin.get().getItemManager().getCropByID(getKey());
+    }
+
+    @Override
+    public ItemType getType() {
+        return ItemType.CROP;
     }
 }

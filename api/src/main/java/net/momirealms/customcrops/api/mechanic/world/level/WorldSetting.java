@@ -118,15 +118,15 @@ public class WorldSetting implements Cloneable {
     }
 
     public int getPotPerChunk() {
-        return potPerChunk < 0 ? Integer.MAX_VALUE : potPerChunk;
+        return potPerChunk;
     }
 
     public int getCropPerChunk() {
-        return cropPerChunk < 0 ? Integer.MAX_VALUE : cropPerChunk;
+        return cropPerChunk;
     }
 
     public int getSprinklerPerChunk() {
-        return sprinklerPerChunk < 0 ? Integer.MAX_VALUE : sprinklerPerChunk;
+        return sprinklerPerChunk;
     }
 
     @Override

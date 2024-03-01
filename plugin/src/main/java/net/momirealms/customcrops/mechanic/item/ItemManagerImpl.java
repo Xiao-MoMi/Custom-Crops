@@ -17,6 +17,7 @@
 
 package net.momirealms.customcrops.mechanic.item;
 
+import com.flowpowered.nbt.CompoundMap;
 import com.google.common.base.Preconditions;
 import net.momirealms.antigrieflib.AntiGriefLib;
 import net.momirealms.customcrops.api.CustomCropsPlugin;
@@ -802,7 +803,7 @@ public class ItemManagerImpl implements ItemManager {
                         if (player.getGameMode() != GameMode.CREATIVE)
                             itemInHand.setAmount(itemInHand.getAmount() - 1);
                         sprinkler.trigger(ActionTrigger.PLACE, state);
-                        plugin.getWorldManager().addSprinklerAt(new MemorySprinkler(sprinkler.getKey(), 0, new HashMap<>()), SimpleLocation.getByBukkitLocation(placed));
+                        plugin.getWorldManager().addSprinklerAt(new MemorySprinkler(sprinkler.getKey(), 0), SimpleLocation.getByBukkitLocation(placed));
                         return FunctionResult.PASS;
                     }, CFunction.FunctionPriority.NORMAL)
             );
@@ -834,7 +835,7 @@ public class ItemManagerImpl implements ItemManager {
                         return FunctionResult.CANCEL_EVENT_AND_RETURN;
                     }
                     // add data
-                    plugin.getWorldManager().addSprinklerAt(new MemorySprinkler(sprinkler.getKey(), 0, new HashMap<>()), SimpleLocation.getByBukkitLocation(location));
+                    plugin.getWorldManager().addSprinklerAt(new MemorySprinkler(sprinkler.getKey(), 0), SimpleLocation.getByBukkitLocation(location));
                     sprinkler.trigger(ActionTrigger.PLACE, state);
                     return FunctionResult.RETURN;
                 }, CFunction.FunctionPriority.NORMAL)
@@ -860,12 +861,12 @@ public class ItemManagerImpl implements ItemManager {
                     if (optionalSprinkler.isEmpty()) {
                         plugin.debug("Found a sprinkler without data interacted by " + player.getName() + " at " + location + ". " +
                                 "You can safely ignore this if you updated the plugin to 3.4+ recently.");
-                        plugin.getWorldManager().addSprinklerAt(new MemorySprinkler(sprinkler.getKey(), 0, new HashMap<>()), SimpleLocation.getByBukkitLocation(location));
+                        plugin.getWorldManager().addSprinklerAt(new MemorySprinkler(sprinkler.getKey(), 0), SimpleLocation.getByBukkitLocation(location));
                         return FunctionResult.RETURN;
                     }
                     if (!optionalSprinkler.get().getKey().equals(sprinkler.getKey())) {
                         LogUtils.warn("Found a sprinkler having inconsistent data interacted by " + player.getName() + " at " + location + ".");
-                        plugin.getWorldManager().addSprinklerAt(new MemorySprinkler(sprinkler.getKey(), 0, new HashMap<>()), SimpleLocation.getByBukkitLocation(location));
+                        plugin.getWorldManager().addSprinklerAt(new MemorySprinkler(sprinkler.getKey(), 0), SimpleLocation.getByBukkitLocation(location));
                         return FunctionResult.RETURN;
                     }
                     // fire the event
@@ -1149,7 +1150,7 @@ public class ItemManagerImpl implements ItemManager {
                     if (player.getGameMode() != GameMode.CREATIVE)
                         itemInHand.setAmount(itemInHand.getAmount() - 1);
                     crop.trigger(ActionTrigger.PLANT, state);
-                    plugin.getWorldManager().addCropAt(new MemoryCrop(crop.getKey(), 0, new HashMap<>()), SimpleLocation.getByBukkitLocation(seedLocation));
+                    plugin.getWorldManager().addCropAt(new MemoryCrop(crop.getKey(), 0), SimpleLocation.getByBukkitLocation(seedLocation));
                     return FunctionResult.RETURN;
                 }, CFunction.FunctionPriority.NORMAL)
         );
@@ -1186,12 +1187,12 @@ public class ItemManagerImpl implements ItemManager {
                             if (optionalCrop.isEmpty()) {
                                 plugin.debug("Found a crop without data interacted by " + player.getName() + " at " + cropLocation + ". " +
                                         "You can safely ignore this if you updated the plugin to 3.4+ recently.");
-                                plugin.getWorldManager().addCropAt(new MemoryCrop(crop.getKey(), stage.getPoint(), new HashMap<>()), SimpleLocation.getByBukkitLocation(cropLocation));
+                                plugin.getWorldManager().addCropAt(new MemoryCrop(crop.getKey(), stage.getPoint()), SimpleLocation.getByBukkitLocation(cropLocation));
                                 return FunctionResult.RETURN;
                             }
                             if (!optionalCrop.get().getKey().equals(crop.getKey())) {
                                 LogUtils.warn("Found a crop having inconsistent data interacted by " + player.getName() + " at " + cropLocation + ".");
-                                plugin.getWorldManager().addCropAt(new MemoryCrop(crop.getKey(), stage.getPoint(), new HashMap<>()), SimpleLocation.getByBukkitLocation(cropLocation));
+                                plugin.getWorldManager().addCropAt(new MemoryCrop(crop.getKey(), stage.getPoint()), SimpleLocation.getByBukkitLocation(cropLocation));
                                 return FunctionResult.RETURN;
                             }
                             CropInteractEvent interactEvent = new CropInteractEvent(conditionWrapper.getPlayer(), interactWrapper.getItemInHand(), cropLocation, optionalCrop.get());
@@ -1347,12 +1348,12 @@ public class ItemManagerImpl implements ItemManager {
                         if (optionalPot.isEmpty()) {
                             plugin.debug("Found a pot without data interacted by " + player.getName() + " at " + location + ". " +
                                     "You can safely ignore this if you updated the plugin to 3.4+ recently.");
-                            plugin.getWorldManager().addPotAt(new MemoryPot(pot.getKey(), new HashMap<>()), SimpleLocation.getByBukkitLocation(location));
+                            plugin.getWorldManager().addPotAt(new MemoryPot(pot.getKey()), SimpleLocation.getByBukkitLocation(location));
                             return FunctionResult.RETURN;
                         }
                         if (!optionalPot.get().getKey().equals(pot.getKey())) {
                             LogUtils.warn("Found a pot having inconsistent data interacted by " + player.getName() + " at " + location + ".");
-                            plugin.getWorldManager().addPotAt(new MemoryPot(pot.getKey(), new HashMap<>()), SimpleLocation.getByBukkitLocation(location));
+                            plugin.getWorldManager().addPotAt(new MemoryPot(pot.getKey()), SimpleLocation.getByBukkitLocation(location));
                             return FunctionResult.RETURN;
                         }
                         // fire the event
@@ -1453,7 +1454,7 @@ public class ItemManagerImpl implements ItemManager {
                             return FunctionResult.CANCEL_EVENT_AND_RETURN;
                         }
                         // add data
-                        plugin.getWorldManager().addPotAt(new MemoryPot(pot.getKey(), new HashMap<>()), SimpleLocation.getByBukkitLocation(location));
+                        plugin.getWorldManager().addPotAt(new MemoryPot(pot.getKey()), SimpleLocation.getByBukkitLocation(location));
                         pot.trigger(ActionTrigger.PLACE, state);
                         return FunctionResult.RETURN;
                     }, CFunction.FunctionPriority.NORMAL));

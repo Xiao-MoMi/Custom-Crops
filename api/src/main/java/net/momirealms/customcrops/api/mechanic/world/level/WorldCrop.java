@@ -22,6 +22,8 @@ import net.momirealms.customcrops.api.mechanic.world.CustomCropsBlock;
 
 public interface WorldCrop extends CustomCropsBlock {
 
+    String getKey();
+
     int getPoint();
 
     void setPoint(int point);

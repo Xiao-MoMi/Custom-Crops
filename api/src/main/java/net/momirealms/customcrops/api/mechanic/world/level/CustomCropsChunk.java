@@ -33,6 +33,8 @@ public interface CustomCropsChunk {
 
     void secondTimer();
 
+    long getLastLoadedTime();
+
     int getLoadedSeconds();
 
     void notifyUpdates();

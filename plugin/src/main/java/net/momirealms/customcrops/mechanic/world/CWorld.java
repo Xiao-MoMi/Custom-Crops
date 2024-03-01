@@ -29,29 +29,33 @@ import net.momirealms.customcrops.api.mechanic.world.season.Season;
 import net.momirealms.customcrops.api.scheduler.CancellableTask;
 import net.momirealms.customcrops.api.util.LogUtils;
 import net.momirealms.customcrops.utils.EventUtils;
+import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.ref.WeakReference;
-import java.util.Collection;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 public class CWorld implements CustomCropsWorld {
 
     private final WeakReference<World> world;
     private final ConcurrentHashMap<ChunkCoordinate, CChunk> loadedChunks;
+    private HashSet<ChunkCoordinate> loadedChunkCoords;
     private WorldSetting setting;
     private WorldInfoData infoData;
     private final String worldName;
     private CancellableTask worldTask;
     private int currentMinecraftDay;
+    private int updateChunkHolderTimer;
 
     public CWorld(World world, WorldSetting setting) {
         this.world = new WeakReference<>(world);
         this.setting = setting;
         this.loadedChunks = new ConcurrentHashMap<>();
+        this.loadedChunkCoords = new HashSet<>();
         this.worldName = world.getName();
         this.currentMinecraftDay = (int) (world.getFullTime() / 24000);
     }
@@ -69,12 +73,62 @@ public class CWorld implements CustomCropsWorld {
     }
 
     private void timer() {
+        updateChunkHolderTimer++;
+        if (updateChunkHolderTimer >= 10) {
+            updateChunkHolderTimer = 0;
+            handleChunkReplace();
+        }
+
         if (setting.isAutoSeasonChange()) {
             this.updateSeasonAndDate();
         }
         for (CChunk chunk : loadedChunks.values()) {
             chunk.arrangeTasks(getWorldSetting());
         }
+    }
+
+    private void handleChunkReplace() {
+        long time1 = System.currentTimeMillis();
+
+
+        Chunk[] loadedChunks = world.get().getLoadedChunks();
+        Set<ChunkCoordinate> chunks = new HashSet<>((int) (loadedChunks.length / 0.75) + 1);
+        for (Chunk chunk : loadedChunks) {
+            chunks.add(ChunkCoordinate.getByBukkitChunk(chunk));
+        }
+
+        // 计算新增的坐标（在chunks中但不在loadedChunkCoords中）
+        Set<ChunkCoordinate> added = new HashSet<>();
+        for (ChunkCoordinate chunk : chunks) {
+            if (!loadedChunkCoords.contains(chunk)) {
+                added.add(chunk);
+            }
+        }
+
+        // 计算被移除的坐标（在loadedChunkCoords中但不在chunks中）
+        Set<ChunkCoordinate> removed = new HashSet<>();
+        for (ChunkCoordinate loadedChunk : loadedChunkCoords) {
+            if (!chunks.contains(loadedChunk)) {
+                removed.add(loadedChunk);
+            }
+        }
+
+        // 更新当前坐标集，避免创建新集合如果loadedChunkCoords是可变的
+        loadedChunkCoords.clear();
+        loadedChunkCoords.addAll(chunks);
+
+        // 处理添加的坐标
+        for (ChunkCoordinate add : added) {
+            // 处理逻辑
+        }
+
+        // 处理移除的坐标
+        for (ChunkCoordinate remove : removed) {
+            // 处理逻辑
+        }
+
+        long time2 = System.currentTimeMillis();
+        System.out.println((time2 - time1) + "ms判断");
     }
 
     private void updateSeasonAndDate() {
@@ -139,10 +193,10 @@ public class CWorld implements CustomCropsWorld {
     public void loadChunk(CChunk chunk) {
         ChunkCoordinate chunkCoordinate = chunk.getChunkCoordinate();
         if (loadedChunks.containsKey(chunkCoordinate)) {
-            LogUtils.warn("Invalid operation: Loaded chunk is loaded again.");
+            LogUtils.warn("Invalid operation: Loaded chunk is loaded again." + chunkCoordinate);
             return;
         }
-        loadedChunks.put(chunk.getChunkCoordinate(), chunk);
+        loadedChunks.put(chunkCoordinate, chunk);
         return;
     }
 
@@ -307,6 +361,7 @@ public class CWorld implements CustomCropsWorld {
             LogUtils.warn("Invalid operation: Querying pot amount from an unloaded chunk");
             return true;
         }
+        if (setting.getPotPerChunk() < 0) return false;
         return chunk.getPotAmount() >= setting.getPotPerChunk();
     }
 
@@ -317,6 +372,7 @@ public class CWorld implements CustomCropsWorld {
             LogUtils.warn("Invalid operation: Querying crop amount from an unloaded chunk");
             return true;
         }
+        if (setting.getCropPerChunk() < 0) return false;
         return chunk.getCropAmount() >= setting.getCropPerChunk();
     }
 
@@ -327,6 +383,9 @@ public class CWorld implements CustomCropsWorld {
             LogUtils.warn("Invalid operation: Querying sprinkler amount from an unloaded chunk");
             return true;
         }
+        if (setting.getSprinklerPerChunk() < 0) return false;
         return chunk.getSprinklerAmount() >= setting.getSprinklerPerChunk();
     }
+
+
 }

@@ -17,60 +17,77 @@
 
 package net.momirealms.customcrops.mechanic.world.block;
 
+import com.flowpowered.nbt.CompoundMap;
+import com.flowpowered.nbt.IntTag;
+import com.flowpowered.nbt.StringTag;
+import com.flowpowered.nbt.Tag;
 import net.momirealms.customcrops.api.CustomCropsPlugin;
-import net.momirealms.customcrops.api.common.Property;
+import net.momirealms.customcrops.api.mechanic.item.ItemType;
 import net.momirealms.customcrops.api.mechanic.item.Pot;
 import net.momirealms.customcrops.api.mechanic.world.level.AbstractPropertyItem;
 import net.momirealms.customcrops.api.mechanic.world.level.WorldPot;
 
-import java.util.HashMap;
-
 public class MemoryPot extends AbstractPropertyItem implements WorldPot {
 
-    private int water;
-    private String fertilizer;
-    private int fertilizerTimes;
-
-    private MemoryPot() {
-        super(null, null);
+    public MemoryPot(CompoundMap compoundMap) {
+        super(compoundMap);
     }
 
-    public MemoryPot(String key, HashMap<String, Property<?>> properties) {
-        super(key, properties);
+    public MemoryPot(String key) {
+        super(new CompoundMap());
+        setProperty("key", new StringTag("key", key));
+        setProperty("water", new IntTag("water", 0));
+        setProperty("fertilizer-times", new IntTag("fertilizer-times", 0));
+    }
+
+    @Override
+    public String getKey() {
+        return getProperty("key").getAsStringTag()
+                .map(StringTag::getValue)
+                .orElse("");
     }
 
     @Override
     public int getWater() {
-        return water;
+        return getProperty("water").getAsIntTag().map(IntTag::getValue).orElse(0);
     }
 
     @Override
     public void setWater(int water) {
-        this.water = Math.min(water, getConfig().getStorage());
+        setProperty("water", new IntTag("water", water));
     }
 
     @Override
     public String getFertilizer() {
-        return fertilizer;
+        Tag<?> tag = getProperty("fertilizer");
+        if (tag == null) return null;
+        return tag.getAsStringTag()
+                .map(StringTag::getValue)
+                .orElse(null);
     }
 
     @Override
     public void setFertilizer(String fertilizer) {
-        this.fertilizer = fertilizer;
+        setProperty("fertilizer", new StringTag("fertilizer", fertilizer));
     }
 
     @Override
     public int getFertilizerTimes() {
-        return fertilizerTimes;
+        return getProperty("fertilizer-times").getAsIntTag().map(IntTag::getValue).orElse(0);
     }
 
     @Override
     public void setFertilizerTimes(int fertilizerTimes) {
-        this.fertilizerTimes = fertilizerTimes;
+        setProperty("fertilizer-times", new IntTag("fertilizer-times", fertilizerTimes));
     }
 
     @Override
     public Pot getConfig() {
         return CustomCropsPlugin.get().getItemManager().getPotByID(getKey());
+    }
+
+    @Override
+    public ItemType getType() {
+        return ItemType.POT;
     }
 }

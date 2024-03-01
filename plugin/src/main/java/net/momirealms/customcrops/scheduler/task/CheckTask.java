@@ -23,15 +23,13 @@ import org.jetbrains.annotations.NotNull;
 public class CheckTask implements Comparable<CheckTask> {
 
     private int time;
-    private TaskType type;
     private SimpleLocation simpleLocation;
 
     private CheckTask() {
     }
 
-    public CheckTask(int time, TaskType type, SimpleLocation simpleLocation) {
+    public CheckTask(int time, SimpleLocation simpleLocation) {
         this.time = time;
-        this.type = type;
         this.simpleLocation = simpleLocation;
     }
 
@@ -43,18 +41,8 @@ public class CheckTask implements Comparable<CheckTask> {
         return time;
     }
 
-    public TaskType getType() {
-        return type;
-    }
-
     @Override
     public int compareTo(@NotNull CheckTask o) {
         return Integer.compare(this.time, o.time);
-    }
-
-    public enum TaskType {
-        CROP,
-        SPRINKLER,
-        POT
     }
 }

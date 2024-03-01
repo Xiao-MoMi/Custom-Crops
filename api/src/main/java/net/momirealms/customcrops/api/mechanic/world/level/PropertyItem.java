@@ -17,12 +17,16 @@
 
 package net.momirealms.customcrops.api.mechanic.world.level;
 
+import com.flowpowered.nbt.CompoundMap;
+import com.flowpowered.nbt.Tag;
 import net.momirealms.customcrops.api.common.Property;
 import net.momirealms.customcrops.api.common.item.KeyItem;
 
-public interface PropertyItem extends KeyItem {
+public interface PropertyItem {
 
-    <T> void setProperty(String name, Property<T> property);
+    void setProperty(String key, Tag<?> tag);
 
-    <T> T getProperty(String name, Class<T> type);
+    Tag<?> getProperty(String name);
+
+    CompoundMap getCompoundMap();
 }
