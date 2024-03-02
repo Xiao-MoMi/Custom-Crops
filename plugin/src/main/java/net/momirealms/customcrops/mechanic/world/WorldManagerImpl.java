@@ -16,8 +16,11 @@ import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
+import org.bukkit.event.world.ChunkLoadEvent;
+import org.bukkit.event.world.ChunkUnloadEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -58,9 +61,6 @@ public class WorldManagerImpl implements WorldManager, Listener {
                 loadWorld(world);
             }
         }
-        plugin.getScheduler().runTaskAsyncTimer(() -> {
-            System.out.println(Bukkit.getWorld("world").getLoadedChunks().length);
-        },1,1, TimeUnit.SECONDS);
     }
 
     @Override
@@ -385,5 +385,29 @@ public class WorldManagerImpl implements WorldManager, Listener {
         CustomCropsWorld customCropsWorld = optional.get();
         ChunkCoordinate chunkCoordinate = ChunkCoordinate.getByBukkitChunk(bukkitChunk);
         this.worldAdaptor.unloadDynamicData(customCropsWorld, chunkCoordinate);
+    }
+
+    @EventHandler
+    public void onChunkLoad(ChunkLoadEvent event) {
+
+        if (event.getChunk().getX() != 64 || event.getChunk().getZ() != 64 || !event.getChunk().getWorld().getName().equals("world")) {
+            return;
+        }
+
+        handleChunkLoad(event.getChunk());
+
+        LogUtils.warn("64,64 loaded");
+    }
+
+    @EventHandler
+    public void onChunkUnLoad(ChunkUnloadEvent event) {
+
+        if (event.getChunk().getX() != 64 || event.getChunk().getZ() != 64 || !event.getChunk().getWorld().getName().equals("world")) {
+            return;
+        }
+
+        handleChunkUnload(event.getChunk());
+
+        LogUtils.warn("64,64 unloaded");
     }
 }

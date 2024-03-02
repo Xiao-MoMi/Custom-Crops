@@ -90,7 +90,6 @@ public class CWorld implements CustomCropsWorld {
     private void handleChunkReplace() {
         long time1 = System.currentTimeMillis();
 
-
         Chunk[] loadedChunks = world.get().getLoadedChunks();
         Set<ChunkCoordinate> chunks = new HashSet<>((int) (loadedChunks.length / 0.75) + 1);
         for (Chunk chunk : loadedChunks) {
@@ -128,7 +127,7 @@ public class CWorld implements CustomCropsWorld {
         }
 
         long time2 = System.currentTimeMillis();
-        System.out.println((time2 - time1) + "ms判断");
+        CustomCropsPlugin.get().debug((time2 - time1) + "ms判断");
     }
 
     private void updateSeasonAndDate() {

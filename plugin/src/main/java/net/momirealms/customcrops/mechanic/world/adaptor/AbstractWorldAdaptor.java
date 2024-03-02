@@ -85,9 +85,12 @@ public abstract class AbstractWorldAdaptor implements Listener {
             List<CompoundTag> blocksToSave = serializableChunk.getBlocks();
             byte[] serializedBlocks = serializeBlocks(blocksToSave);
 
+            long time1 = System.currentTimeMillis();
             int maxCompressedLength = compressor.maxCompressedLength(serializedBlocks.length);
             byte[] compressed = new byte[maxCompressedLength];
             int compressedLength = compressor.compress(serializedBlocks, 0, serializedBlocks.length, compressed, 0, maxCompressedLength);
+            long time2 = System.currentTimeMillis();
+            System.out.println("压缩花了" + (time2 - time1) + "ms");
 
             outStream.writeInt(compressedLength);
             outStream.writeInt(serializedBlocks.length);
@@ -107,7 +110,10 @@ public abstract class AbstractWorldAdaptor implements Listener {
         int loadedSeconds = dataStream.readInt();
         long lastLoadedTime = dataStream.readLong();
 
+        long time1 = System.currentTimeMillis();
         byte[] blockData = readCompressedBytes(dataStream);
+        long time2 = System.currentTimeMillis();
+        System.out.println("解压缩花了" + (time2 - time1) + "ms");
         var blockMap = deserializeBlocks(world.getWorldName(), blockData);
 
         return new CChunk(world, chunkCoordinate, loadedSeconds, lastLoadedTime, blockMap);
@@ -124,13 +130,12 @@ public abstract class AbstractWorldAdaptor implements Listener {
             if (block != null) {
                 CompoundMap values = block.getValue();
                 String type = values.get("type").getAsStringTag().get().getValue();
-                int x = values.get("x").getAsIntTag().get().getValue();
-                int y = values.get("y").getAsIntTag().get().getValue();
-                int z = values.get("z").getAsIntTag().get().getValue();
+                int[] pos = values.get("pos").getAsIntArrayTag().get().getValue();
+                SimpleLocation location = new SimpleLocation(world, pos[0], pos[1], pos[2]);
                 switch (type) {
-                    case "CROP" -> blockMap.put(new SimpleLocation(world, x, y, z), new MemoryCrop(values.get("data").getAsCompoundTag().get().getValue()));
-                    case "POT" -> blockMap.put(new SimpleLocation(world, x, y, z), new MemoryPot(values.get("data").getAsCompoundTag().get().getValue()));
-                    case "SPRINKLER" -> blockMap.put(new SimpleLocation(world, x, y, z), new MemorySprinkler(values.get("data").getAsCompoundTag().get().getValue()));
+                    case "CROP" -> blockMap.put(location, new MemoryCrop(values.get("data").getAsCompoundTag().get().getValue()));
+                    case "POT" -> blockMap.put(location, new MemoryPot(values.get("data").getAsCompoundTag().get().getValue()));
+                    case "SPRINKLER" -> blockMap.put(location, new MemorySprinkler(values.get("data").getAsCompoundTag().get().getValue()));
                 }
             }
         }

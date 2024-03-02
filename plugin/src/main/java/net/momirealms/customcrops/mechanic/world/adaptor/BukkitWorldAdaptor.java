@@ -150,13 +150,14 @@ public class BukkitWorldAdaptor extends AbstractWorldAdaptor {
 
         long time1 = System.currentTimeMillis();
         try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(getChunkDataFilePath(world, chunkCoordinate)))) {
-            byte[] bytes = bis.readAllBytes();
-            DataInputStream dataStream = new DataInputStream(new ByteArrayInputStream(bytes));
+            DataInputStream dataStream = new DataInputStream(bis);
+            long time2 = System.currentTimeMillis();
+            System.out.println(time2 - time1 + "ms load bytes " + chunkCoordinate);
             CChunk chunk = deserialize(cWorld, dataStream);
             dataStream.close();
             cWorld.loadChunk(chunk);
-            long time2 = System.currentTimeMillis();
-            System.out.println(time2 - time1 + "ms load " + chunkCoordinate);
+            long time3 = System.currentTimeMillis();
+            System.out.println(time3 - time2 + "ms load  ser" + chunkCoordinate);
         } catch (IOException e) {
             e.printStackTrace();
         }

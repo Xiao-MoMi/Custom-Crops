@@ -21,11 +21,13 @@ import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.CommandAPIBukkitConfig;
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.CommandPermission;
+import dev.lone.itemsadder.api.CustomBlock;
 import net.momirealms.customcrops.api.CustomCropsPlugin;
 import net.momirealms.customcrops.api.common.Initable;
 import net.momirealms.customcrops.api.manager.MessageManager;
 import net.momirealms.customcrops.api.mechanic.world.SimpleLocation;
 import net.momirealms.customcrops.mechanic.world.block.MemoryCrop;
+import net.momirealms.customcrops.mechanic.world.block.MemoryPot;
 
 import java.util.HashMap;
 
@@ -84,7 +86,7 @@ public class CommandManager implements Initable {
                 for (int j = 0; j < 16; j++) {
                     for (int k = -64; k < 320; k++) {
                         SimpleLocation location = new SimpleLocation("world", 1024 + i, k, 1024 + j);
-                        plugin.getWorldManager().addCropAt(new MemoryCrop("test", 5), location);
+                        plugin.getWorldManager().addCropAt(new MemoryCrop("tomato", 0), location);
                     }
                 }
             }
