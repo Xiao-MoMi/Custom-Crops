@@ -32,7 +32,6 @@ public class NBTUtils {
             List<Integer> coordinates = blockToPosMap.computeIfAbsent(block, k -> new ArrayList<>());
             coordinates.add(coordinate.getPosition());
         }
-        System.out.println(blockToPosMap.size());
         for (Map.Entry<CustomCropsBlock, List<Integer>> entry : blockToPosMap.entrySet()) {
             tags.add(new CompoundTag("", toCompoundMap(entry.getKey(), entry.getValue())));
         }

@@ -29,7 +29,6 @@ import net.momirealms.customcrops.mechanic.world.block.MemoryPot;
 import net.momirealms.customcrops.mechanic.world.block.MemorySprinkler;
 import net.momirealms.customcrops.scheduler.task.CheckTask;
 import net.momirealms.customcrops.scheduler.task.ReplaceTask;
-import net.momirealms.customcrops.utils.RandomUtils;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -233,7 +232,7 @@ public class CChunk implements CustomCropsChunk {
 
     @Override
     public void removeSprinklerAt(SimpleLocation location) {
-        CustomCropsBlock removed = loadedBlocks.remove(location);
+        CustomCropsBlock removed = loadedBlocks.remove(ChunkPos.getByLocation(location));
         if (removed == null) {
             CustomCropsPlugin.get().debug("Failed to remove sprinkler from " + location + " because sprinkler doesn't exist.");
         } else if (!(removed instanceof WorldSprinkler)) {
@@ -243,7 +242,7 @@ public class CChunk implements CustomCropsChunk {
 
     @Override
     public void removePotAt(SimpleLocation location) {
-        CustomCropsBlock removed = loadedBlocks.remove(location);
+        CustomCropsBlock removed = loadedBlocks.remove(ChunkPos.getByLocation(location));
         if (removed == null) {
             CustomCropsPlugin.get().debug("Failed to remove pot from " + location + " because pot doesn't exist.");
         } else if (!(removed instanceof WorldPot)) {
@@ -253,7 +252,7 @@ public class CChunk implements CustomCropsChunk {
 
     @Override
     public void removeCropAt(SimpleLocation location) {
-        CustomCropsBlock removed = loadedBlocks.remove(location);
+        CustomCropsBlock removed = loadedBlocks.remove(ChunkPos.getByLocation(location));
         if (removed == null) {
             CustomCropsPlugin.get().debug("Failed to remove crop from " + location + " because crop doesn't exist.");
         } else if (!(removed instanceof WorldCrop)) {

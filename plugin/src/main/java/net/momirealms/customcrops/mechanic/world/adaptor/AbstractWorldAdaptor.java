@@ -22,6 +22,7 @@ import com.flowpowered.nbt.CompoundTag;
 import com.flowpowered.nbt.Tag;
 import com.flowpowered.nbt.stream.NBTInputStream;
 import com.flowpowered.nbt.stream.NBTOutputStream;
+import com.github.luben.zstd.Zstd;
 import net.jpountz.lz4.LZ4Compressor;
 import net.jpountz.lz4.LZ4Factory;
 import net.jpountz.lz4.LZ4FastDecompressor;
@@ -82,14 +83,19 @@ public abstract class AbstractWorldAdaptor implements Listener {
             List<CompoundTag> blocksToSave = serializableChunk.getBlocks();
             byte[] serializedBlocks = serializeBlocks(blocksToSave);
 
-            long time1 = System.currentTimeMillis();
-            int maxCompressedLength = compressor.maxCompressedLength(serializedBlocks.length);
-            byte[] compressed = new byte[maxCompressedLength];
-            int compressedLength = compressor.compress(serializedBlocks, 0, serializedBlocks.length, compressed, 0, maxCompressedLength);
-            long time2 = System.currentTimeMillis();
-            System.out.println("压缩花了" + (time2 - time1) + "ms");
+            // lz4
+//            long time1 = System.currentTimeMillis();
+//            int maxCompressedLength = compressor.maxCompressedLength(serializedBlocks.length);
+//            byte[] compressed = new byte[maxCompressedLength];
+//            int compressedLength = compressor.compress(serializedBlocks, 0, serializedBlocks.length, compressed, 0, maxCompressedLength);
+//            long time2 = System.currentTimeMillis();
+//            System.out.println("压缩花了" + (time2 - time1) + "ms");
 
-            outStream.writeInt(compressedLength);
+            // zstd
+            byte[] compressed = Zstd.compress(serializedBlocks);
+
+
+            outStream.writeInt(compressed.length);
             outStream.writeInt(serializedBlocks.length);
             outStream.write(compressed);
 
@@ -167,8 +173,13 @@ public abstract class AbstractWorldAdaptor implements Listener {
         byte[] compressedData = new byte[compressedLength];
         byte[] decompressedData = new byte[decompressedLength];
 
+        // zstd
         dataStream.read(compressedData);
-        decompressor.decompress(compressedData, 0, decompressedData, 0, decompressedLength);
+        Zstd.decompress(decompressedData, compressedData);
+
+        // lz4
+//        dataStream.read(compressedData);
+//        decompressor.decompress(compressedData, 0, decompressedData, 0, decompressedLength);
         return decompressedData;
     }
 

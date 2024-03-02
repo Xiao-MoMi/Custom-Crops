@@ -385,6 +385,4 @@ public class CWorld implements CustomCropsWorld {
         if (setting.getSprinklerPerChunk() < 0) return false;
         return chunk.getSprinklerAmount() >= setting.getSprinklerPerChunk();
     }
-
-
 }

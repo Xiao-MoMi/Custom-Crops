@@ -57,6 +57,7 @@ dependencies {
 //    compileOnly("com.esotericsoftware:kryo5:5.6.0")
     implementation("org.lz4:lz4-java:1.8.0")
     implementation("com.flowpowered:flow-nbt:2.0.2")
+    implementation("com.github.luben:zstd-jni:1.5.5-11")
 }
 
 tasks {
