@@ -28,6 +28,7 @@ import net.momirealms.customcrops.api.mechanic.world.level.AbstractPropertyItem;
 import net.momirealms.customcrops.api.mechanic.world.level.WorldCrop;
 
 import java.util.HashMap;
+import java.util.Objects;
 
 public class MemoryCrop extends AbstractPropertyItem implements WorldCrop {
 
@@ -66,5 +67,18 @@ public class MemoryCrop extends AbstractPropertyItem implements WorldCrop {
     @Override
     public ItemType getType() {
         return ItemType.CROP;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        AbstractPropertyItem that = (AbstractPropertyItem) o;
+        return Objects.equals(getCompoundMap(), that.getCompoundMap());
+    }
+
+    @Override
+    public int hashCode() {
+        return getKey().hashCode() + getPoint() * 17;
     }
 }

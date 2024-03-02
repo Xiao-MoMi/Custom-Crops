@@ -30,10 +30,7 @@ import net.momirealms.customcrops.api.mechanic.world.ChunkCoordinate;
 import net.momirealms.customcrops.api.mechanic.world.CustomCropsBlock;
 import net.momirealms.customcrops.api.mechanic.world.SimpleLocation;
 import net.momirealms.customcrops.api.mechanic.world.level.CustomCropsWorld;
-import net.momirealms.customcrops.mechanic.world.CChunk;
-import net.momirealms.customcrops.mechanic.world.CWorld;
-import net.momirealms.customcrops.mechanic.world.NBTUtils;
-import net.momirealms.customcrops.mechanic.world.SerializableChunk;
+import net.momirealms.customcrops.mechanic.world.*;
 import net.momirealms.customcrops.mechanic.world.block.MemoryCrop;
 import net.momirealms.customcrops.mechanic.world.block.MemoryPot;
 import net.momirealms.customcrops.mechanic.world.block.MemorySprinkler;
@@ -115,27 +112,37 @@ public abstract class AbstractWorldAdaptor implements Listener {
         long time2 = System.currentTimeMillis();
         System.out.println("解压缩花了" + (time2 - time1) + "ms");
         var blockMap = deserializeBlocks(world.getWorldName(), blockData);
+        long time3 = System.currentTimeMillis();
+        System.out.println("反序列化方块花了" + (time3 - time2) + "ms");
 
         return new CChunk(world, chunkCoordinate, loadedSeconds, lastLoadedTime, blockMap);
     }
 
-    private ConcurrentHashMap<SimpleLocation, CustomCropsBlock> deserializeBlocks(String world, byte[] bytes) throws IOException {
+    private ConcurrentHashMap<ChunkPos, CustomCropsBlock> deserializeBlocks(String world, byte[] bytes) throws IOException {
         DataInputStream chunkData = new DataInputStream(new ByteArrayInputStream(bytes));
         int blocks = chunkData.readInt();
-        ConcurrentHashMap<SimpleLocation, CustomCropsBlock> blockMap = new ConcurrentHashMap<>(blocks);
+        ConcurrentHashMap<ChunkPos, CustomCropsBlock> blockMap = new ConcurrentHashMap<>(blocks);
         for (int i = 0; i < blocks; i++) {
             byte[] blockData = new byte[chunkData.readInt()];
             chunkData.read(blockData);
-            Tag<CompoundMap> block = readCompound(blockData);
-            if (block != null) {
-                CompoundMap values = block.getValue();
-                String type = values.get("type").getAsStringTag().get().getValue();
-                int[] pos = values.get("pos").getAsIntArrayTag().get().getValue();
-                SimpleLocation location = new SimpleLocation(world, pos[0], pos[1], pos[2]);
-                switch (type) {
-                    case "CROP" -> blockMap.put(location, new MemoryCrop(values.get("data").getAsCompoundTag().get().getValue()));
-                    case "POT" -> blockMap.put(location, new MemoryPot(values.get("data").getAsCompoundTag().get().getValue()));
-                    case "SPRINKLER" -> blockMap.put(location, new MemorySprinkler(values.get("data").getAsCompoundTag().get().getValue()));
+            CompoundMap block = readCompound(blockData).getValue();
+            String type = block.get("type").getAsStringTag().get().getValue();
+            CompoundMap data = block.get("data").getAsCompoundTag().get().getValue();
+            switch (type) {
+                case "CROP" -> {
+                    for (int pos : block.get("pos").getAsIntArrayTag().get().getValue()) {
+                        blockMap.put(new ChunkPos(pos), new MemoryCrop(data));
+                    }
+                }
+                case "POT" -> {
+                    for (int pos : block.get("pos").getAsIntArrayTag().get().getValue()) {
+                        blockMap.put(new ChunkPos(pos), new MemoryPot(data));
+                    }
+                }
+                case "SPRINKLER" -> {
+                    for (int pos : block.get("pos").getAsIntArrayTag().get().getValue()) {
+                        blockMap.put(new ChunkPos(pos), new MemorySprinkler(data));
+                    }
                 }
             }
         }

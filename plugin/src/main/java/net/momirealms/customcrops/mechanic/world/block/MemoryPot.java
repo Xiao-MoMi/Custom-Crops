@@ -27,6 +27,8 @@ import net.momirealms.customcrops.api.mechanic.item.Pot;
 import net.momirealms.customcrops.api.mechanic.world.level.AbstractPropertyItem;
 import net.momirealms.customcrops.api.mechanic.world.level.WorldPot;
 
+import java.util.Objects;
+
 public class MemoryPot extends AbstractPropertyItem implements WorldPot {
 
     public MemoryPot(CompoundMap compoundMap) {
@@ -89,5 +91,18 @@ public class MemoryPot extends AbstractPropertyItem implements WorldPot {
     @Override
     public ItemType getType() {
         return ItemType.POT;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        AbstractPropertyItem that = (AbstractPropertyItem) o;
+        return Objects.equals(getCompoundMap(), that.getCompoundMap());
+    }
+
+    @Override
+    public int hashCode() {
+        return getKey().hashCode() + getWater() * 17;
     }
 }

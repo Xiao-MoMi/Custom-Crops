@@ -84,9 +84,37 @@ public class CommandManager implements Initable {
         return new CommandAPICommand("test").executes((sender, args) -> {
             for (int i = 0; i < 16; i++) {
                 for (int j = 0; j < 16; j++) {
-                    for (int k = -64; k < 320; k++) {
+                    for (int k = -64; k < 0; k++) {
                         SimpleLocation location = new SimpleLocation("world", 1024 + i, k, 1024 + j);
                         plugin.getWorldManager().addCropAt(new MemoryCrop("tomato", 0), location);
+                    }
+                    for (int k = 1; k < 64; k++) {
+                        SimpleLocation location = new SimpleLocation("world", 1024 + i, k, 1024 + j);
+                        plugin.getWorldManager().addCropAt(new MemoryCrop("tomato", 1), location);
+                    }
+                    for (int k = 65; k < 128; k++) {
+                        SimpleLocation location = new SimpleLocation("world", 1024 + i, k, 1024 + j);
+                        plugin.getWorldManager().addCropAt(new MemoryCrop("tomato", 2), location);
+                    }
+                    for (int k = 129; k < 165; k++) {
+                        SimpleLocation location = new SimpleLocation("world", 1024 + i, k, 1024 + j);
+                        plugin.getWorldManager().addPotAt(new MemoryPot("default"), location);
+                    }
+                    for (int k = 166; k < 190; k++) {
+                        SimpleLocation location = new SimpleLocation("world", 1024 + i, k, 1024 + j);
+                        plugin.getWorldManager().addPotAt(new MemoryPot("sprinkler"), location);
+                    }
+                    for (int k = 191; k < 250; k++) {
+                        SimpleLocation location = new SimpleLocation("world", 1024 + i, k, 1024 + j);
+                        plugin.getWorldManager().addCropAt(new MemoryCrop("tomato", 3), location);
+                    }
+                    for (int k = 251; k < 300; k++) {
+                        SimpleLocation location = new SimpleLocation("world", 1024 + i, k, 1024 + j);
+                        plugin.getWorldManager().addCropAt(new MemoryCrop("sbsbssbsb", 3), location);
+                    }
+                    for (int k = 301; k < 320; k++) {
+                        SimpleLocation location = new SimpleLocation("world", 1024 + i, k, 1024 + j);
+                        plugin.getWorldManager().addCropAt(new MemoryCrop("sbsbssbsb", 2), location);
                     }
                 }
             }
