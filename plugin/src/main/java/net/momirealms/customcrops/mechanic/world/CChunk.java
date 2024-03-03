@@ -30,7 +30,10 @@ import net.momirealms.customcrops.mechanic.world.block.MemorySprinkler;
 import net.momirealms.customcrops.scheduler.task.CheckTask;
 import net.momirealms.customcrops.scheduler.task.ReplaceTask;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.Optional;
+import java.util.PriorityQueue;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class CChunk implements CustomCropsChunk {
@@ -42,6 +45,7 @@ public class CChunk implements CustomCropsChunk {
     private ArrayList<ReplaceTask> replaceTasks;
     private long lastLoadedTime;
     private int loadedSeconds;
+    private int unloadedSeconds;
 
     public CChunk(CWorld cWorld, ChunkCoordinate chunkCoordinate) {
         this.cWorld = cWorld;
@@ -49,6 +53,7 @@ public class CChunk implements CustomCropsChunk {
         this.loadedBlocks = new ConcurrentHashMap<>(64);
         this.queue = new PriorityQueue<>();
         this.replaceTasks = new ArrayList<>();
+        this.unloadedSeconds = 0;
     }
 
     public CChunk(CWorld cWorld, ChunkCoordinate chunkCoordinate, int loadedSeconds, long lastLoadedTime, ConcurrentHashMap<ChunkPos, CustomCropsBlock> loadedBlocks) {
@@ -59,6 +64,7 @@ public class CChunk implements CustomCropsChunk {
         this.loadedSeconds = loadedSeconds;
         this.queue = new PriorityQueue<>();
         this.replaceTasks = new ArrayList<>();
+        this.unloadedSeconds = 0;
     }
 
     public void setWorld(CWorld cWorld) {
@@ -295,5 +301,13 @@ public class CChunk implements CustomCropsChunk {
 
     public Map<ChunkPos, CustomCropsBlock> getLoadedBlocks() {
         return loadedBlocks;
+    }
+
+    public int getUnloadedSeconds() {
+        return unloadedSeconds;
+    }
+
+    public void setUnloadedSeconds(int unloadedSeconds) {
+        this.unloadedSeconds = unloadedSeconds;
     }
 }

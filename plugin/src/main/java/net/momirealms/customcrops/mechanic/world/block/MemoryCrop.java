@@ -21,13 +21,11 @@ import com.flowpowered.nbt.CompoundMap;
 import com.flowpowered.nbt.IntTag;
 import com.flowpowered.nbt.StringTag;
 import net.momirealms.customcrops.api.CustomCropsPlugin;
-import net.momirealms.customcrops.api.common.Property;
 import net.momirealms.customcrops.api.mechanic.item.Crop;
 import net.momirealms.customcrops.api.mechanic.item.ItemType;
 import net.momirealms.customcrops.api.mechanic.world.level.AbstractPropertyItem;
 import net.momirealms.customcrops.api.mechanic.world.level.WorldCrop;
 
-import java.util.HashMap;
 import java.util.Objects;
 
 public class MemoryCrop extends AbstractPropertyItem implements WorldCrop {

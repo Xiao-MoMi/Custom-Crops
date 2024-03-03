@@ -21,15 +21,12 @@ import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.CommandAPIBukkitConfig;
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.CommandPermission;
-import dev.lone.itemsadder.api.CustomBlock;
 import net.momirealms.customcrops.api.CustomCropsPlugin;
 import net.momirealms.customcrops.api.common.Initable;
 import net.momirealms.customcrops.api.manager.MessageManager;
 import net.momirealms.customcrops.api.mechanic.world.SimpleLocation;
 import net.momirealms.customcrops.mechanic.world.block.MemoryCrop;
 import net.momirealms.customcrops.mechanic.world.block.MemoryPot;
-
-import java.util.HashMap;
 
 public class CommandManager implements Initable {
 

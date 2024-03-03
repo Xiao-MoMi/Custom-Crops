@@ -20,8 +20,6 @@ package net.momirealms.customcrops.api.mechanic.world;
 import org.bukkit.Chunk;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.Serializable;
-
 public record ChunkCoordinate(int x, int z) {
 
     private static final ChunkCoordinate empty = new ChunkCoordinate(0, 0);

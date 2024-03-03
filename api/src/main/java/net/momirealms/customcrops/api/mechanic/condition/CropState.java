@@ -1,7 +1,6 @@
 package net.momirealms.customcrops.api.mechanic.condition;
 
 import net.momirealms.customcrops.api.mechanic.world.SimpleLocation;
-import org.bukkit.Location;
 
 public class CropState {
 

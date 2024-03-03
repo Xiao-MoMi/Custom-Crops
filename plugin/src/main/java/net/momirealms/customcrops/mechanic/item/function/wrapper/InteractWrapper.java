@@ -19,7 +19,6 @@ package net.momirealms.customcrops.mechanic.item.function.wrapper;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
 public class InteractWrapper extends ConditionWrapper {
 

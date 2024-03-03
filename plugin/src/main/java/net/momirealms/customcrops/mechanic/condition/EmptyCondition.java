@@ -17,10 +17,8 @@
 
 package net.momirealms.customcrops.mechanic.condition;
 
-import net.momirealms.customcrops.api.mechanic.action.Action;
 import net.momirealms.customcrops.api.mechanic.condition.Condition;
 import net.momirealms.customcrops.api.mechanic.condition.CropState;
-import net.momirealms.customcrops.api.mechanic.requirement.State;
 
 public class EmptyCondition implements Condition {
 

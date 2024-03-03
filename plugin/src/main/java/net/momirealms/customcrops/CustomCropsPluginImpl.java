@@ -112,7 +112,6 @@ public class CustomCropsPluginImpl extends CustomCropsPlugin {
 
     @Override
     public void onDisable() {
-        instance = null;
         this.commandManager.disable();
         this.adventure.disable();
         this.requirementManager.disable();
@@ -122,6 +121,7 @@ public class CustomCropsPluginImpl extends CustomCropsPlugin {
         this.conditionManager.disable();
         this.coolDownManager.disable();
         ((SchedulerImpl) scheduler).shutdown();
+        instance = null;
     }
 
     @Override

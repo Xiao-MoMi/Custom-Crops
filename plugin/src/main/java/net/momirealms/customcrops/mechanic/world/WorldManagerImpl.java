@@ -1,3 +1,20 @@
+/*
+ *  Copyright (C) <2022> <XiaoMoMi>
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package net.momirealms.customcrops.mechanic.world;
 
 import net.momirealms.customcrops.api.CustomCropsPlugin;
@@ -28,7 +45,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
 
 public class WorldManagerImpl implements WorldManager, Listener {
 
@@ -45,11 +61,12 @@ public class WorldManagerImpl implements WorldManager, Listener {
         this.plugin = plugin;
         this.loadedWorlds = new ConcurrentHashMap<>();
         this.worldSettingMap = new HashMap<>();
+        this.loadConfig();
         try {
             Class.forName("com.infernalsuite.aswm.api.world.SlimeWorld");
             this.worldAdaptor = new SlimeWorldAdaptor(this);
         } catch (ClassNotFoundException ignore) {
-            this.worldAdaptor = new BukkitWorldAdaptor(this);
+            this.worldAdaptor = new BukkitWorldAdaptor(this, absoluteWorldFolder);
         }
     }
 
@@ -66,7 +83,6 @@ public class WorldManagerImpl implements WorldManager, Listener {
     @Override
     public void load() {
         this.registerListener();
-        this.loadConfig();
     }
 
     @Override
@@ -106,10 +122,6 @@ public class WorldManagerImpl implements WorldManager, Listener {
         this.whiteListOrBlackList = section.getString("mode", "blacklist").equalsIgnoreCase("whitelist");
         this.worldList = new HashSet<>(section.getStringList("list"));
 
-        if (this.worldAdaptor instanceof BukkitWorldAdaptor adaptor) {
-            adaptor.setWorldPath(this.absoluteWorldFolder);
-        }
-
         // limitation
         ConfigurationSection settingSection = section.getConfigurationSection("settings");
         if (settingSection == null) {
@@ -144,7 +156,8 @@ public class WorldManagerImpl implements WorldManager, Listener {
         String worldName = world.getName();
         if (loadedWorlds.containsKey(worldName))
             return loadedWorlds.get(worldName);
-        CWorld cWorld = new CWorld(world, getInitWorldSetting(world));
+        CWorld cWorld = new CWorld(this, world, getInitWorldSetting(world));
+        worldAdaptor.init(cWorld);
         cWorld.startTick();
         loadedWorlds.put(worldName, cWorld);
         return cWorld;
@@ -360,7 +373,6 @@ public class WorldManagerImpl implements WorldManager, Listener {
 
         Optional<CustomCropsChunk> previousData = customCropsWorld.getChunkAt(chunkCoordinate);
         if (previousData.isPresent()) {
-            plugin.debug("Chunk is loaded twice. " + chunkCoordinate);
             return;
         }
 
@@ -389,25 +401,16 @@ public class WorldManagerImpl implements WorldManager, Listener {
 
     @EventHandler
     public void onChunkLoad(ChunkLoadEvent event) {
-
-        if (event.getChunk().getX() != 64 || event.getChunk().getZ() != 64 || !event.getChunk().getWorld().getName().equals("world")) {
-            return;
-        }
-
         handleChunkLoad(event.getChunk());
-
-        LogUtils.warn("64,64 loaded");
     }
 
     @EventHandler
     public void onChunkUnLoad(ChunkUnloadEvent event) {
-
-        if (event.getChunk().getX() != 64 || event.getChunk().getZ() != 64 || !event.getChunk().getWorld().getName().equals("world")) {
-            return;
-        }
-
         handleChunkUnload(event.getChunk());
+    }
 
-        LogUtils.warn("64,64 unloaded");
+    @Override
+    public void saveChunkToFile(CustomCropsChunk chunk) {
+        this.worldAdaptor.saveDynamicData(chunk.getCustomCropsWorld(), chunk);
     }
 }

@@ -20,11 +20,8 @@ package net.momirealms.customcrops.scheduler;
 import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import net.momirealms.customcrops.api.CustomCropsPlugin;
 import net.momirealms.customcrops.api.scheduler.CancellableTask;
-import net.momirealms.customcrops.api.util.LocationUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-
-import java.util.Optional;
 
 public class FoliaSchedulerImpl implements SyncScheduler {
 
@@ -36,18 +33,31 @@ public class FoliaSchedulerImpl implements SyncScheduler {
 
     @Override
     public void runSyncTask(Runnable runnable, Location location) {
-        Bukkit.getRegionScheduler().execute(plugin, Optional.ofNullable(location).orElse(LocationUtils.getAnyLocationInstance()), runnable);
+        if (location == null) {
+            Bukkit.getGlobalRegionScheduler().execute(plugin, runnable);
+        } else {
+            Bukkit.getRegionScheduler().execute(plugin, location, runnable);
+        }
     }
 
     @Override
     public CancellableTask runTaskSyncTimer(Runnable runnable, Location location, long delay, long period) {
+        if (location == null) {
+            return new FoliaCancellableTask(Bukkit.getGlobalRegionScheduler().runAtFixedRate(plugin, (scheduledTask -> runnable.run()), delay, period));
+        }
         return new FoliaCancellableTask(Bukkit.getRegionScheduler().runAtFixedRate(plugin, location, (scheduledTask -> runnable.run()), delay, period));
     }
 
     @Override
     public CancellableTask runTaskSyncLater(Runnable runnable, Location location, long delay) {
         if (delay == 0) {
+            if (location == null) {
+                return new FoliaCancellableTask(Bukkit.getGlobalRegionScheduler().run(plugin, (scheduledTask -> runnable.run())));
+            }
             return new FoliaCancellableTask(Bukkit.getRegionScheduler().run(plugin, location, (scheduledTask -> runnable.run())));
+        }
+        if (location == null) {
+            return new FoliaCancellableTask(Bukkit.getGlobalRegionScheduler().runDelayed(plugin, (scheduledTask -> runnable.run()), delay));
         }
         return new FoliaCancellableTask(Bukkit.getRegionScheduler().runDelayed(plugin, location, (scheduledTask -> runnable.run()), delay));
     }

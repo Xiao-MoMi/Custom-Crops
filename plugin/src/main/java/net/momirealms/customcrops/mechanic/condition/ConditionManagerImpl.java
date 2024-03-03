@@ -19,7 +19,9 @@ package net.momirealms.customcrops.mechanic.condition;
 
 import net.momirealms.customcrops.api.CustomCropsPlugin;
 import net.momirealms.customcrops.api.manager.ConditionManager;
-import net.momirealms.customcrops.api.mechanic.condition.*;
+import net.momirealms.customcrops.api.mechanic.condition.Condition;
+import net.momirealms.customcrops.api.mechanic.condition.ConditionExpansion;
+import net.momirealms.customcrops.api.mechanic.condition.ConditionFactory;
 import net.momirealms.customcrops.api.mechanic.world.level.WorldPot;
 import net.momirealms.customcrops.api.mechanic.world.season.Season;
 import net.momirealms.customcrops.api.util.LogUtils;

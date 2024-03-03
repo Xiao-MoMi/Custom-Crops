@@ -13,6 +13,7 @@ update-checker: true
 # Language: english / french / spanish / chinese / turkish / russian
 lang: english
 
+# This section requires a restart to apply
 worlds:
   # This is designed for servers that using an independent folder for worlds
   # Especially for realm systems
@@ -68,6 +69,7 @@ worlds:
       world_the_end:
         enable: false
 
+# Mechanics settings
 mechanics:
   # You can create more ranks by adding more "/" for instance x/x/x/x/x
   # "x" is weight, represents the proportion of probability

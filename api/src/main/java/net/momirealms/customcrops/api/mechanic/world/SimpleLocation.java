@@ -22,7 +22,6 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.Serializable;
 import java.util.Objects;
 
 public class SimpleLocation {

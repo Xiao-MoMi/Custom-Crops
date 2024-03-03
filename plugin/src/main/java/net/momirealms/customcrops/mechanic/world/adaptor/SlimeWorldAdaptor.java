@@ -21,6 +21,7 @@ import com.infernalsuite.aswm.api.SlimePlugin;
 import com.infernalsuite.aswm.api.events.LoadSlimeWorldEvent;
 import net.momirealms.customcrops.api.manager.WorldManager;
 import net.momirealms.customcrops.api.mechanic.world.ChunkCoordinate;
+import net.momirealms.customcrops.api.mechanic.world.level.CustomCropsChunk;
 import net.momirealms.customcrops.api.mechanic.world.level.CustomCropsWorld;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
@@ -49,17 +50,13 @@ public class SlimeWorldAdaptor extends AbstractWorldAdaptor {
     public void onWorldUnload(WorldUnloadEvent event) {
     }
 
-
+    @Override
     public void unload(CustomCropsWorld customCropsWorld) {
 
     }
 
-    public void init(CustomCropsWorld customCropsWorld) {
-
-    }
-
     @Override
-    public void loadAllData(CustomCropsWorld customCropsWorld) {
+    public void init(CustomCropsWorld customCropsWorld) {
 
     }
 
@@ -70,6 +67,11 @@ public class SlimeWorldAdaptor extends AbstractWorldAdaptor {
 
     @Override
     public void unloadDynamicData(CustomCropsWorld customCropsWorld, ChunkCoordinate chunkCoordinate) {
+
+    }
+
+    @Override
+    public void saveDynamicData(CustomCropsWorld ccWorld, CustomCropsChunk chunk) {
 
     }
 

@@ -19,8 +19,6 @@ package net.momirealms.customcrops.api.mechanic.world.level;
 
 import com.flowpowered.nbt.CompoundMap;
 import com.flowpowered.nbt.Tag;
-import net.momirealms.customcrops.api.common.Property;
-import net.momirealms.customcrops.api.common.item.KeyItem;
 
 public interface PropertyItem {
 

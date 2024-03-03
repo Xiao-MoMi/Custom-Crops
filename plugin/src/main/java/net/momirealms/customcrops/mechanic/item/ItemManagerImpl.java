@@ -17,7 +17,6 @@
 
 package net.momirealms.customcrops.mechanic.item;
 
-import com.flowpowered.nbt.CompoundMap;
 import com.google.common.base.Preconditions;
 import net.momirealms.antigrieflib.AntiGriefLib;
 import net.momirealms.customcrops.api.CustomCropsPlugin;

@@ -17,15 +17,24 @@
 
 package net.momirealms.customcrops.mechanic.world.adaptor;
 
+import com.flowpowered.nbt.CompoundMap;
+import com.flowpowered.nbt.CompoundTag;
+import com.flowpowered.nbt.stream.NBTInputStream;
+import com.flowpowered.nbt.stream.NBTOutputStream;
+import com.github.luben.zstd.Zstd;
 import com.google.gson.Gson;
 import net.momirealms.customcrops.api.CustomCropsPlugin;
 import net.momirealms.customcrops.api.manager.WorldManager;
 import net.momirealms.customcrops.api.mechanic.world.ChunkCoordinate;
+import net.momirealms.customcrops.api.mechanic.world.CustomCropsBlock;
+import net.momirealms.customcrops.api.mechanic.world.level.CustomCropsChunk;
 import net.momirealms.customcrops.api.mechanic.world.level.CustomCropsWorld;
 import net.momirealms.customcrops.api.mechanic.world.level.WorldInfoData;
 import net.momirealms.customcrops.api.util.LogUtils;
-import net.momirealms.customcrops.mechanic.world.CChunk;
-import net.momirealms.customcrops.mechanic.world.CWorld;
+import net.momirealms.customcrops.mechanic.world.*;
+import net.momirealms.customcrops.mechanic.world.block.MemoryCrop;
+import net.momirealms.customcrops.mechanic.world.block.MemoryPot;
+import net.momirealms.customcrops.mechanic.world.block.MemorySprinkler;
 import org.bukkit.NamespacedKey;
 import org.bukkit.World;
 import org.bukkit.event.EventHandler;
@@ -34,30 +43,21 @@ import org.bukkit.event.world.WorldUnloadEvent;
 import org.bukkit.persistence.PersistentDataType;
 
 import java.io.*;
+import java.nio.ByteOrder;
+import java.util.Collection;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class BukkitWorldAdaptor extends AbstractWorldAdaptor {
 
     private static final NamespacedKey key = new NamespacedKey(CustomCropsPlugin.get(), "data");
     private final Gson gson;
-    private String worldFolder;
+    private final String worldFolder;
 
-    public BukkitWorldAdaptor(WorldManager worldManager) {
+    public BukkitWorldAdaptor(WorldManager worldManager, String worldFolder) {
         super(worldManager);
-        gson = new Gson();
-//        kryo = new Kryo();
-//        kryo.setReferences(false);
-//        kryo.register(PriorityQueue.class, 17);
-//        kryo.register(ArrayList.class, 18);
-//        kryo.register(ConcurrentHashMap.class, 19);
-//        kryo.register(HashMap.class, 20);
-//        kryo.register(ChunkCoordinate.class, 21);
-//        kryo.register(SimpleLocation.class, 22);
-//        kryo.register(CChunk.class, 23);
-//        kryo.register(MemoryCrop.class, 24);
-//        kryo.register(MemorySprinkler.class, 25);
-//        kryo.register(MemoryPot.class, 26);
-//        kryo.register(CheckTask.class, 27);
-//        kryo.register(CheckTask.TaskType.class, 28);
+        this.gson = new Gson();
+        this.worldFolder = worldFolder;
     }
 
     @Override
@@ -75,16 +75,9 @@ public class BukkitWorldAdaptor extends AbstractWorldAdaptor {
 
         new File(world.getWorldFolder(), "customcrops").mkdir();
 
-//        try {
-//            // save chunks
-//            for (CustomCropsChunk chunk : cWorld.getChunkStorage()) {
-////                Output output = new Output(new FileOutputStream(getChunkDataFilePath(world, chunk.getChunkCoordinate())));
-//////                kryo.writeObject(output, chunk);
-////                output.close();
-//            }
-//        } catch (FileNotFoundException e) {
-//            e.printStackTrace();
-//        }
+        for (CChunk chunk : cWorld.getAllChunksToSave()) {
+            saveDynamicData(cWorld, chunk);
+        }
     }
 
     @Override
@@ -105,37 +98,6 @@ public class BukkitWorldAdaptor extends AbstractWorldAdaptor {
     }
 
     @Override
-    @SuppressWarnings("ResultOfMethodCallIgnored")
-    public void loadAllData(CustomCropsWorld customCropsWorld) {
-        CWorld cWorld = (CWorld) customCropsWorld;
-        World world = cWorld.getWorld();
-        if (world == null) {
-            LogUtils.severe("Unexpected issue: World " + cWorld.getWorldName() + " unloaded before data loaded");
-            return;
-        }
-
-        // create or get chunk files
-        File folder = new File(world.getWorldFolder(), "customcrops");
-        if (!folder.exists())
-            folder.mkdir();
-        File[] chunks = folder.listFiles();
-        if (chunks == null)
-            return;
-//        try {
-//            // load chunk into world
-//            for (File chunkFile : chunks) {
-//                Input input = new Input(new FileInputStream(chunkFile));
-//                CChunk chunk = kryo.readObject(input, CChunk.class);
-//                input.close();
-//                chunk.setWorld(cWorld);
-//                cWorld.loadChunk(chunk);
-//            }
-//        } catch (FileNotFoundException e) {
-//            e.printStackTrace();
-//        }
-    }
-
-    @Override
     public void loadDynamicData(CustomCropsWorld customCropsWorld, ChunkCoordinate chunkCoordinate) {
         CWorld cWorld = (CWorld) customCropsWorld;
         World world = cWorld.getWorld();
@@ -148,66 +110,52 @@ public class BukkitWorldAdaptor extends AbstractWorldAdaptor {
         if (!data.exists())
             return;
 
+        // load lazy chunks firstly
+        CustomCropsChunk lazyChunk = customCropsWorld.getLazyChunkAt(chunkCoordinate);
+        if (lazyChunk != null) {
+            CChunk cChunk = (CChunk) lazyChunk;
+            cChunk.setUnloadedSeconds(0);
+            cWorld.loadChunk(cChunk);
+            return;
+        }
+
+        // load chunk from local files
         long time1 = System.currentTimeMillis();
         try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(getChunkDataFilePath(world, chunkCoordinate)))) {
             DataInputStream dataStream = new DataInputStream(bis);
-            long time2 = System.currentTimeMillis();
-            System.out.println(time2 - time1 + "ms load bytes " + chunkCoordinate);
             CChunk chunk = deserialize(cWorld, dataStream);
             dataStream.close();
             cWorld.loadChunk(chunk);
-            long time3 = System.currentTimeMillis();
-            System.out.println(time3 - time2 + "ms load  ser" + chunkCoordinate);
+            long time2 = System.currentTimeMillis();
+            CustomCropsPlugin.get().debug("Took " + (time2-time1) + "ms to load chunk " + chunkCoordinate);
         } catch (IOException e) {
+            LogUtils.severe("Failed to load CustomCrops data.");
             e.printStackTrace();
         }
-//        try {
-//            long time1 = System.currentTimeMillis();
-//            // load chunk into world
-//            Input input = new Input(new FileInputStream(data));
-//            CChunk chunk = kryo.readObject(input, CChunk.class);
-//            input.close();
-//            chunk.setWorld(cWorld);
-//            cWorld.loadChunk(chunk);
-//            long time2 = System.currentTimeMillis();
-//            System.out.println(time2 - time1 + "ms load " + chunkCoordinate);
-//        } catch (FileNotFoundException e) {
-//            e.printStackTrace();
-//        }
     }
 
     @Override
-    public void unloadDynamicData(CustomCropsWorld customCropsWorld, ChunkCoordinate chunkCoordinate) {
-        CWorld cWorld = (CWorld) customCropsWorld;
+    public void unloadDynamicData(CustomCropsWorld ccWorld, ChunkCoordinate chunkCoordinate) {
+        CWorld cWorld = (CWorld) ccWorld;
         World world = cWorld.getWorld();
         if (world == null) {
             LogUtils.severe("Unexpected issue: World " + cWorld.getWorldName() + " unloaded before data loaded");
             return;
         }
+        cWorld.unloadChunk(chunkCoordinate);
+    }
 
-        CChunk chunk = cWorld.unloadChunk(chunkCoordinate);
-        if (chunk == null)
-            return;
-
+    @Override
+    public void saveDynamicData(CustomCropsWorld ccWorld, CustomCropsChunk chunk) {
         long time1 = System.currentTimeMillis();
-        try (BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(getChunkDataFilePath(world, chunkCoordinate)))) {
-            bos.write(serialize(chunk));
+        try (BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(getChunkDataFilePath(ccWorld.getWorld(), chunk.getChunkCoordinate())))) {
+            bos.write(serialize((CChunk) chunk));
             long time2 = System.currentTimeMillis();
-            System.out.println(time2 - time1 + "ms unload " + chunkCoordinate);
+            CustomCropsPlugin.get().debug("Took " + (time2-time1) + "ms to save chunk " + chunk.getChunkCoordinate());
         } catch (IOException e) {
+            LogUtils.severe("Failed to save CustomCrops data.");
             e.printStackTrace();
         }
-//        try {
-//            long time1 = System.currentTimeMillis();
-//            // save chunks
-//            Output output = new Output(new FileOutputStream(getChunkDataFilePath(world, chunkCoordinate)));
-//            kryo.writeObject(output, chunk);
-//            output.close();
-//            long time2 = System.currentTimeMillis();
-//            System.out.println(time2 - time1 + "ms unload " + chunkCoordinate);
-//        } catch (FileNotFoundException e) {
-//            e.printStackTrace();
-//        }
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -227,10 +175,126 @@ public class BukkitWorldAdaptor extends AbstractWorldAdaptor {
     }
 
     private File getChunkDataFilePath(World world, ChunkCoordinate chunkCoordinate) {
-        return new File(world.getWorldFolder(), "customcrops" + File.separator + getChunkDataFile(chunkCoordinate));
+        if (worldFolder.isEmpty()) {
+            return new File(world.getWorldFolder(), "customcrops" + File.separator + getChunkDataFile(chunkCoordinate));
+        } else {
+            return new File(worldFolder, world.getName() + File.separator + "customcrops" + File.separator + getChunkDataFile(chunkCoordinate));
+        }
     }
 
-    public void setWorldPath(String folder) {
-        this.worldFolder = folder;
+    public byte[] serialize(CChunk chunk) {
+        ByteArrayOutputStream outByteStream = new ByteArrayOutputStream();
+        DataOutputStream outStream = new DataOutputStream(outByteStream);
+        SerializableChunk serializableChunk = SerializationUtils.toSerializableChunk(chunk);
+
+        try {
+            outStream.writeByte(version);
+            outStream.writeInt(serializableChunk.getX());
+            outStream.writeInt(serializableChunk.getX());
+            outStream.writeInt(serializableChunk.getLoadedSeconds());
+            outStream.writeLong(serializableChunk.getLastLoadedTime());
+
+            List<CompoundTag> blocksToSave = serializableChunk.getBlocks();
+            byte[] serializedBlocks = serializeBlocks(blocksToSave);
+            byte[] compressed = Zstd.compress(serializedBlocks);
+
+            outStream.writeInt(compressed.length);
+            outStream.writeInt(serializedBlocks.length);
+            outStream.write(compressed);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return outByteStream.toByteArray();
+    }
+
+    public CChunk deserialize(CWorld world, DataInputStream dataStream) throws IOException {
+        int worldVersion = dataStream.readByte();
+        int x = dataStream.readInt();
+        int z = dataStream.readInt();
+        ChunkCoordinate chunkCoordinate = new ChunkCoordinate(x, z);
+        int loadedSeconds = dataStream.readInt();
+        long lastLoadedTime = dataStream.readLong();
+        byte[] blockData = readCompressedBytes(dataStream);
+        var blockMap = deserializeBlocks(blockData);
+        return new CChunk(world, chunkCoordinate, loadedSeconds, lastLoadedTime, blockMap);
+    }
+
+    private ConcurrentHashMap<ChunkPos, CustomCropsBlock> deserializeBlocks(byte[] bytes) throws IOException {
+        DataInputStream chunkData = new DataInputStream(new ByteArrayInputStream(bytes));
+        int blocks = chunkData.readInt();
+        ConcurrentHashMap<ChunkPos, CustomCropsBlock> blockMap = new ConcurrentHashMap<>(blocks);
+        for (int i = 0; i < blocks; i++) {
+            byte[] blockData = new byte[chunkData.readInt()];
+            chunkData.read(blockData);
+            CompoundMap block = readCompound(blockData).getValue();
+            String type = (String) block.get("type").getValue();
+            CompoundMap data = (CompoundMap) block.get("data").getValue();
+            switch (type) {
+                case "CROP" -> {
+                    for (int pos : (int[]) block.get("pos").getValue()) {
+                        blockMap.put(new ChunkPos(pos), new MemoryCrop(data));
+                    }
+                }
+                case "POT" -> {
+                    for (int pos : (int[]) block.get("pos").getValue()) {
+                        blockMap.put(new ChunkPos(pos), new MemoryPot(data));
+                    }
+                }
+                case "SPRINKLER" -> {
+                    for (int pos : (int[]) block.get("pos").getValue()) {
+                        blockMap.put(new ChunkPos(pos), new MemorySprinkler(data));
+                    }
+                }
+            }
+        }
+        return blockMap;
+    }
+
+    private byte[] serializeBlocks(Collection<CompoundTag> blocks) throws IOException {
+        ByteArrayOutputStream outByteStream = new ByteArrayOutputStream(16384);
+        DataOutputStream outStream = new DataOutputStream(outByteStream);
+        outStream.writeInt(blocks.size());
+        for (CompoundTag block : blocks) {
+            byte[] blockData = serializeCompoundTag(block);
+            outStream.writeInt(blockData.length);
+            outStream.write(blockData);
+        }
+        return outByteStream.toByteArray();
+    }
+
+    private byte[] readCompressedBytes(DataInputStream dataStream) throws IOException {
+        int compressedLength = dataStream.readInt();
+        int decompressedLength = dataStream.readInt();
+        byte[] compressedData = new byte[compressedLength];
+        byte[] decompressedData = new byte[decompressedLength];
+
+        dataStream.read(compressedData);
+        Zstd.decompress(decompressedData, compressedData);
+        return decompressedData;
+    }
+
+    private CompoundTag readCompound(byte[] bytes) throws IOException {
+        if (bytes.length == 0)
+            return null;
+        NBTInputStream nbtInputStream = new NBTInputStream(
+                new ByteArrayInputStream(bytes),
+                NBTInputStream.NO_COMPRESSION,
+                ByteOrder.BIG_ENDIAN
+        );
+        return (CompoundTag) nbtInputStream.readTag();
+    }
+
+    private byte[] serializeCompoundTag(CompoundTag tag) throws IOException {
+        if (tag == null || tag.getValue().isEmpty())
+            return new byte[0];
+        ByteArrayOutputStream outByteStream = new ByteArrayOutputStream();
+        NBTOutputStream outStream = new NBTOutputStream(
+                outByteStream,
+                NBTInputStream.NO_COMPRESSION,
+                ByteOrder.BIG_ENDIAN
+        );
+        outStream.writeTag(tag);
+        return outByteStream.toByteArray();
     }
 }

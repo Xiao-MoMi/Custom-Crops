@@ -20,9 +20,6 @@ package net.momirealms.customcrops.api.mechanic.world.level;
 import com.flowpowered.nbt.CompoundMap;
 import com.flowpowered.nbt.Tag;
 
-import java.util.HashMap;
-import java.util.Objects;
-
 public class AbstractPropertyItem implements PropertyItem {
 
     private final CompoundMap compoundMap;

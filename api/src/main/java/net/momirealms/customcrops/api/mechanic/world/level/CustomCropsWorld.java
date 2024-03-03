@@ -35,18 +35,23 @@ public interface CustomCropsWorld {
 
     void cancelTick();
 
+    CustomCropsChunk getLazyChunkAt(ChunkCoordinate chunkCoordinate);
+
     WorldSetting getWorldSetting();
 
     void setWorldSetting(WorldSetting setting);
 
     Collection<? extends CustomCropsChunk> getChunkStorage();
 
-    @Nullable
     World getWorld();
 
     String getWorldName();
 
     Optional<CustomCropsChunk> getChunkAt(ChunkCoordinate chunkCoordinate);
+
+    void loadChunk(CustomCropsChunk chunk);
+
+    void unloadChunk(ChunkCoordinate chunkCoordinate);
 
     void setInfoData(WorldInfoData infoData);
 
