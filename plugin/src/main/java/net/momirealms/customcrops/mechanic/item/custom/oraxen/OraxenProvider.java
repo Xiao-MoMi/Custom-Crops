@@ -35,10 +35,15 @@ import org.bukkit.inventory.ItemStack;
 public class OraxenProvider implements CustomProvider {
 
     @Override
-    public void removeBlock(Location location) {
-        if (OraxenBlocks.remove(location, null, false)) {
-            location.getBlock().setType(Material.AIR);
+    public boolean removeBlock(Location location) {
+        Block block = location.getBlock();
+        if (block.getType() == Material.AIR) {
+            return false;
         }
+        if (OraxenBlocks.remove(location, null, false)) {
+            block.setType(Material.AIR);
+        }
+        return true;
     }
 
     @Override
@@ -49,6 +54,11 @@ public class OraxenProvider implements CustomProvider {
     @Override
     public void placeFurniture(Location location, String id) {
          OraxenFurniture.place(id, location, Rotation.NONE, BlockFace.UP);
+    }
+
+    @Override
+    public void removeFurniture(Entity entity) {
+        OraxenFurniture.remove(entity, null);
     }
 
     @Override
@@ -85,5 +95,10 @@ public class OraxenProvider implements CustomProvider {
             return entity.getType().name();
         }
         return mechanic.getItemID();
+    }
+
+    @Override
+    public boolean isFurniture(Entity entity) {
+        return OraxenFurniture.isFurniture(entity);
     }
 }

@@ -127,6 +127,7 @@ public class CustomCropsPluginImpl extends CustomCropsPlugin {
     @Override
     public void reload() {
         this.configManager.reload();
+        this.messageManager.reload();
         this.itemManager.reload();
         this.worldManager.reload();
         this.actionManager.reload();

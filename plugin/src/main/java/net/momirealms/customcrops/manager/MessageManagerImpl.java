@@ -75,6 +75,11 @@ public class MessageManagerImpl extends MessageManager implements Reloadable {
     }
 
     @Override
+    public void reload() {
+        load();
+    }
+
+    @Override
     public String getPrefix() {
         return prefix;
     }

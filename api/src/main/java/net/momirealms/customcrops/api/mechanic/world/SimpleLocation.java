@@ -118,7 +118,7 @@ public class SimpleLocation {
         return new SimpleLocation(loc[0], Integer.parseInt(loc[1]), Integer.parseInt(loc[2]), Integer.parseInt(loc[3]));
     }
 
-    public static SimpleLocation getByBukkitLocation(Location location) {
+    public static SimpleLocation of(Location location) {
         return new SimpleLocation(location.getWorld().getName(), location.getBlockX(), location.getBlockY(), location.getBlockZ());
     }
 

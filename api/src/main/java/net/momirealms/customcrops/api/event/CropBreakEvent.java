@@ -40,7 +40,7 @@ public class CropBreakEvent extends Event implements Cancellable {
     public CropBreakEvent(
             @Nullable Entity entity,
             @NotNull Location location,
-            @NotNull WorldCrop worldCrop
+            @Nullable WorldCrop worldCrop
     ) {
         this.entity = entity;
         this.location = location;
@@ -69,9 +69,10 @@ public class CropBreakEvent extends Event implements Cancellable {
     }
 
     /**
-     * Get the crop's data
+     * Get the crop's data, it might be null if it's spawned by other plugins in the wild
      * @return crop data
      */
+    @Nullable
     public WorldCrop getWorldCrop() {
         return worldCrop;
     }

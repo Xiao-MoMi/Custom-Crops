@@ -30,10 +30,14 @@ import org.bukkit.inventory.ItemStack;
 public class ItemsAdderProvider implements CustomProvider {
 
     @Override
-    public void removeBlock(Location location) {
+    public boolean removeBlock(Location location) {
+        Block block = location.getBlock();
+        if (block.getType() == Material.AIR)
+            return false;
         if (!CustomBlock.remove(location)) {
-            location.getBlock().setType(Material.AIR);
+            block.setType(Material.AIR);
         }
+        return true;
     }
 
     @Override
@@ -44,6 +48,11 @@ public class ItemsAdderProvider implements CustomProvider {
     @Override
     public void placeFurniture(Location location, String id) {
         CustomFurniture.spawnPreciseNonSolid(id, location);
+    }
+
+    @Override
+    public void removeFurniture(Entity entity) {
+        CustomFurniture.remove(entity, false);
     }
 
     @Override
@@ -80,5 +89,10 @@ public class ItemsAdderProvider implements CustomProvider {
             return entity.getType().name();
         }
         return customFurniture.getNamespacedID();
+    }
+
+    @Override
+    public boolean isFurniture(Entity entity) {
+        return CustomFurniture.byAlreadySpawned(entity) != null;
     }
 }

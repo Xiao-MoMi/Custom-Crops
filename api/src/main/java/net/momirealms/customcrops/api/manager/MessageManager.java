@@ -49,4 +49,6 @@ public abstract class MessageManager {
     protected abstract String getReload();
 
     protected abstract String getSeasonTranslation(Season season);
+
+    public abstract void reload();
 }
