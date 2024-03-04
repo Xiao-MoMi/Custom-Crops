@@ -17,10 +17,12 @@
 
 package net.momirealms.customcrops.mechanic.item.custom;
 
+import net.momirealms.customcrops.api.mechanic.item.Sprinkler;
 import net.momirealms.customcrops.mechanic.item.ItemManagerImpl;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.EventHandler;
@@ -28,8 +30,10 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.entity.ItemSpawnEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 public abstract class AbstractCustomListener implements Listener {
@@ -90,6 +94,20 @@ public abstract class AbstractCustomListener implements Listener {
         );
     }
 
+    @EventHandler (ignoreCancelled = true)
+    public void onItemSpawn(ItemSpawnEvent event) {
+        Item item = event.getEntity();
+        ItemStack itemStack = item.getItemStack();
+        Sprinkler sprinkler = this.itemManager.getSprinklerBy3DItemStack(itemStack);
+        if (sprinkler != null) {
+            ItemStack newItem = this.itemManager.getItemStack(null, sprinkler.get2DItemID());
+            if (newItem != null) {
+                newItem.setAmount(itemStack.getAmount());
+                item.setItemStack(newItem);
+            }
+        }
+    }
+
     public void onPlaceBlock(Player player, Block block, String blockID, Cancellable event) {
         this.itemManager.handlePlayerPlaceBlock(player, block, blockID, event);
     }
@@ -111,5 +129,4 @@ public abstract class AbstractCustomListener implements Listener {
     public void onInteractFurniture(Player player, Location location, String id, @Nullable Entity baseEntity, Cancellable event) {
         this.itemManager.handlePlayerInteractFurniture(player, location, id, baseEntity, event);
     }
-
 }

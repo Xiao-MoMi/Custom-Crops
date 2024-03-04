@@ -10,7 +10,7 @@ metrics: true
 # Check updates
 update-checker: true
 
-# Language: english / french / spanish / chinese / turkish / russian
+# Language
 lang: english
 
 # This section requires a restart to apply

@@ -105,20 +105,19 @@ public class BukkitWorldAdaptor extends AbstractWorldAdaptor {
             LogUtils.severe("Unexpected issue: World " + cWorld.getWorldName() + " unloaded before data loaded");
             return;
         }
-        // create or get chunk files
-        File data = getChunkDataFilePath(world, chunkCoordinate);
-        if (!data.exists())
-            return;
 
         // load lazy chunks firstly
-        CustomCropsChunk lazyChunk = customCropsWorld.getLazyChunkAt(chunkCoordinate);
+        CustomCropsChunk lazyChunk = customCropsWorld.removeLazyChunkAt(chunkCoordinate);
         if (lazyChunk != null) {
             CChunk cChunk = (CChunk) lazyChunk;
             cChunk.setUnloadedSeconds(0);
             cWorld.loadChunk(cChunk);
             return;
         }
-
+        // create or get chunk files
+        File data = getChunkDataFilePath(world, chunkCoordinate);
+        if (!data.exists())
+            return;
         // load chunk from local files
         long time1 = System.currentTimeMillis();
         try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(getChunkDataFilePath(world, chunkCoordinate)))) {
@@ -142,6 +141,7 @@ public class BukkitWorldAdaptor extends AbstractWorldAdaptor {
             LogUtils.severe("Unexpected issue: World " + cWorld.getWorldName() + " unloaded before data loaded");
             return;
         }
+
         cWorld.unloadChunk(chunkCoordinate);
     }
 
@@ -190,7 +190,7 @@ public class BukkitWorldAdaptor extends AbstractWorldAdaptor {
         try {
             outStream.writeByte(version);
             outStream.writeInt(serializableChunk.getX());
-            outStream.writeInt(serializableChunk.getX());
+            outStream.writeInt(serializableChunk.getZ());
             outStream.writeInt(serializableChunk.getLoadedSeconds());
             outStream.writeLong(serializableChunk.getLastLoadedTime());
 

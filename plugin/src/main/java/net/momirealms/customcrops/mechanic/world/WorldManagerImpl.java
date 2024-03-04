@@ -370,12 +370,10 @@ public class WorldManagerImpl implements WorldManager, Listener {
             return;
         CustomCropsWorld customCropsWorld = optional.get();
         ChunkCoordinate chunkCoordinate = ChunkCoordinate.getByBukkitChunk(bukkitChunk);
-
         Optional<CustomCropsChunk> previousData = customCropsWorld.getChunkAt(chunkCoordinate);
         if (previousData.isPresent()) {
             return;
         }
-
         // load chunks
         this.worldAdaptor.loadDynamicData(customCropsWorld, chunkCoordinate);
 

@@ -35,7 +35,7 @@ public interface CustomCropsWorld {
 
     void cancelTick();
 
-    CustomCropsChunk getLazyChunkAt(ChunkCoordinate chunkCoordinate);
+    CustomCropsChunk removeLazyChunkAt(ChunkCoordinate chunkCoordinate);
 
     WorldSetting getWorldSetting();
 

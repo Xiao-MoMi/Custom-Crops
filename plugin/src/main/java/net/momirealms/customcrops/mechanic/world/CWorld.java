@@ -128,8 +128,8 @@ public class CWorld implements CustomCropsWorld {
     }
 
     @Override
-    public CustomCropsChunk getLazyChunkAt(ChunkCoordinate chunkCoordinate) {
-        return lazyChunks.get(chunkCoordinate);
+    public CustomCropsChunk removeLazyChunkAt(ChunkCoordinate chunkCoordinate) {
+        return lazyChunks.remove(chunkCoordinate);
     }
 
     @Override

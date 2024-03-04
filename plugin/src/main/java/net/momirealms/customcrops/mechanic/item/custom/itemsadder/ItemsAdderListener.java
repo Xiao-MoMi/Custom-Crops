@@ -47,6 +47,8 @@ public class ItemsAdderListener extends AbstractCustomListener {
     public void onPlaceFurniture(FurniturePlaceSuccessEvent event) {
         Entity entity = event.getBukkitEntity();
         if (entity == null) return;
+        // player would be null if furniture is placed with API
+        if (event.getPlayer() == null) return;
         super.onPlaceFurniture(
                 event.getPlayer(),
                 entity.getLocation(),

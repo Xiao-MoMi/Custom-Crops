@@ -212,15 +212,25 @@ public class CChunk implements CustomCropsChunk {
 
     @Override
     public void addPotAt(WorldPot pot, SimpleLocation location) {
-        if (loadedBlocks.put(ChunkPos.getByLocation(location), pot) != null) {
-            CustomCropsPlugin.get().debug("Found duplicated pot data when adding pot at " + location);
+        CustomCropsBlock previous = loadedBlocks.put(ChunkPos.getByLocation(location), pot);
+        if (previous != null) {
+            if (previous instanceof WorldPot) {
+                CustomCropsPlugin.get().debug("Found duplicated pot data when adding pot at " + location);
+            } else {
+                CustomCropsPlugin.get().debug("Found unremoved data when adding crop at " + location + ". Previous type is " + previous.getType().name());
+            }
         }
     }
 
     @Override
     public void addSprinklerAt(WorldSprinkler sprinkler, SimpleLocation location) {
-        if (loadedBlocks.put(ChunkPos.getByLocation(location), sprinkler) != null) {
-            CustomCropsPlugin.get().debug("Found duplicated sprinkler data when adding sprinkler at " + location);
+        CustomCropsBlock previous = loadedBlocks.put(ChunkPos.getByLocation(location), sprinkler);
+        if (previous != null) {
+            if (previous instanceof WorldSprinkler) {
+                CustomCropsPlugin.get().debug("Found duplicated sprinkler data when adding sprinkler at " + location);
+            } else {
+                CustomCropsPlugin.get().debug("Found unremoved data when adding crop at " + location + ". Previous type is " + previous.getType().name());
+            }
         }
     }
 
