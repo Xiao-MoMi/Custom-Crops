@@ -43,6 +43,9 @@ sprinkler_1:
   # Event settings
   events:
     place:
+      swing_hand_action:
+        type: swing-hand
+        value: true
       sound_action:
         type: sound
         value:

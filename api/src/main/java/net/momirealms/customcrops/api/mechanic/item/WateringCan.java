@@ -22,11 +22,13 @@ import net.momirealms.customcrops.api.mechanic.action.ActionTrigger;
 import net.momirealms.customcrops.api.mechanic.misc.image.WaterBar;
 import net.momirealms.customcrops.api.mechanic.requirement.Requirement;
 import net.momirealms.customcrops.api.mechanic.requirement.State;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 public interface WateringCan extends KeyItem {
 
@@ -40,7 +42,7 @@ public interface WateringCan extends KeyItem {
 
     boolean hasDynamicLore();
 
-    void updateItem(ItemStack itemStack, int water);
+    void updateItem(Player player, ItemStack itemStack, int water, Map<String, String> args);
 
     int getCurrentWater(ItemStack itemStack);
 

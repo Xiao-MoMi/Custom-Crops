@@ -36,6 +36,7 @@ public abstract class CustomCropsPlugin extends JavaPlugin {
     protected AdventureManager adventure;
     protected MessageManager messageManager;
     protected ConditionManager conditionManager;
+    protected PlaceholderManager placeholderManager;
 
     public CustomCropsPlugin() {
         instance = this;
@@ -107,6 +108,11 @@ public abstract class CustomCropsPlugin extends JavaPlugin {
     /* Get condition manager */
     public ConditionManager getConditionManager() {
         return conditionManager;
+    }
+
+    /* Get placeholder manager */
+    public PlaceholderManager getPlaceholderManager() {
+        return placeholderManager;
     }
 
     public abstract boolean isHookedPluginEnabled(String plugin);

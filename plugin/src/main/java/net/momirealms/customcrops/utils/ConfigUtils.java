@@ -375,7 +375,11 @@ public class ConfigUtils {
         }
         try (BufferedWriter writer = new BufferedWriter(
                 new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8))) {
-            writer.write(sb.toString().replace("{0}", has ? "customcrops:" : "").replace("CHORUS", "TRIPWIRE").replace("<font:customcrops:default>", "<font:minecraft:customcrops>"));
+            String finalStr = sb.toString();
+            if (!has) {
+                finalStr = finalStr.replace("CHORUS", "TRIPWIRE").replace("<font:customcrops:default>", "<font:minecraft:customcrops>");
+            }
+            writer.write(finalStr.replace("{0}", has ? "customcrops:" : ""));
         } catch (IOException e) {
             e.printStackTrace();
         }

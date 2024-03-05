@@ -54,7 +54,6 @@ dependencies {
     compileOnly("net.kyori:adventure-text-serializer-legacy:4.15.0")
     compileOnly("de.tr7zw:item-nbt-api:2.12.2")
     compileOnly("org.bstats:bstats-bukkit:3.0.2")
-//    compileOnly("com.esotericsoftware:kryo5:5.6.0")
     implementation("org.lz4:lz4-java:1.8.0")
     implementation("com.flowpowered:flow-nbt:2.0.2")
     implementation("com.github.luben:zstd-jni:1.5.5-11")
@@ -64,8 +63,7 @@ tasks {
     shadowJar {
 		relocate ("de.tr7zw.changeme", "net.momirealms.customcrops.libraries.changeme")
 		relocate ("dev.jorel.commandapi", "net.momirealms.customcrops.libraries.commandapi")
-		relocate ("net.kyori", "net.momirealms.customcrops.libraries.kyori")
-//		relocate ("com.esotericsoftware.kryo", "net.momirealms.customcrops.libraries.kryo")
+		relocate ("net.kyori", "net.momirealms.customcrops.libraries")
 		relocate ("org.objenesis", "net.momirealms.customcrops.libraries.objenesis")
 		relocate ("org.bstats", "net.momirealms.customcrops.libraries.bstats")
 		relocate ("net.momirealms.biomeapi", "net.momirealms.customcrops.libraries.biomeapi")

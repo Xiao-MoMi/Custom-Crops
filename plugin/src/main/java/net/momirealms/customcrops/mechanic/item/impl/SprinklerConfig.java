@@ -148,4 +148,9 @@ public class SprinklerConfig extends AbstractEventItem implements Sprinkler {
     public Requirement[] getUseRequirements() {
         return useRequirements;
     }
+
+    @Override
+    public WaterBar getWaterBar() {
+        return waterBar;
+    }
 }

@@ -17,13 +17,16 @@
 
 package net.momirealms.customcrops.api.manager;
 
+import net.momirealms.customcrops.api.common.Reloadable;
 import org.bukkit.entity.Player;
 
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
-public abstract class PlaceholderManager {
+public abstract class PlaceholderManager implements Reloadable {
 
+    public static final Pattern pattern = Pattern.compile("\\{[^{}]+}");
     private static PlaceholderManager instance;
 
     public PlaceholderManager() {
@@ -37,4 +40,8 @@ public abstract class PlaceholderManager {
     public abstract String parse(Player player, String text, Map<String, String> vars);
 
     public abstract List<String> parse(Player player, List<String> text, Map<String, String> vars);
+
+    public abstract List<String> detectPlaceholders(String text);
+
+    public abstract String setPlaceholders(Player player, String text);
 }

@@ -49,19 +49,52 @@ watering_can_1:
     right: '뀁뀅'
   # Event settings
   events:
-    # Action trigger and the actions
-    add_water:
-      # The name of the action, it's totally customized
+    # No water
+    no_water:
       sound_action:
         type: sound
         value:
-          key: "minecraft:block.note_block.bell"
+          key: "minecraft:item.bundle.insert"
           source: 'player'
           volume: 1
           pitch: 1
       actionbar_action:
         type: actionbar
-        value: '{water_bar}'
+        value: '<red><bold>[X] Water has been used out'
+    # Consume water
+    consume_water:
+      # The name of the action, it's totally customized
+      sound_action:
+        type: sound
+        value:
+          key: "minecraft:block.water.ambient"
+          source: 'player'
+          volume: 1
+          pitch: 1
+      actionbar_action:
+        type: actionbar
+        value: '<font:customcrops:default>{water_bar}</font>'
+    # Add water to the watering-can
+    add_water:
+      # The name of the action, it's totally customized
+      particle_action:
+        type: particle
+        value:
+          particle: WATER_SPLASH
+          x: 0.5
+          y: 1.3
+          z: 0.5
+          count: 5
+      sound_action:
+        type: sound
+        value:
+          key: "minecraft:item.bucket.empty"
+          source: 'player'
+          volume: 1
+          pitch: 1
+      actionbar_action:
+        type: actionbar
+        value: '<font:customcrops:default>{water_bar}</font>'
 watering_can_2:
   item: {0}watering_can_2
   capacity: 4
@@ -89,17 +122,47 @@ watering_can_2:
     empty: '뀁뀄'
     right: '뀁뀅'
   events:
-    add_water:
+    no_water:
       sound_action:
         type: sound
         value:
-          key: "minecraft:block.note_block.bell"
+          key: "minecraft:item.bundle.insert"
           source: 'player'
           volume: 1
           pitch: 1
       actionbar_action:
         type: actionbar
-        value: '{water_bar}'
+        value: '<red><bold>[X] Water has been used out'
+    consume_water:
+      sound_action:
+        type: sound
+        value:
+          key: "minecraft:block.water.ambient"
+          source: 'player'
+          volume: 1
+          pitch: 1
+      actionbar_action:
+        type: actionbar
+        value: '<font:customcrops:default>{water_bar}</font>'
+    add_water:
+      particle_action:
+        type: particle
+        value:
+          particle: WATER_SPLASH
+          x: 0.5
+          y: 1.3
+          z: 0.5
+          count: 5
+      sound_action:
+        type: sound
+        value:
+          key: "minecraft:item.bucket.empty"
+          source: 'player'
+          volume: 1
+          pitch: 1
+      actionbar_action:
+        type: actionbar
+        value: '<font:customcrops:default>{water_bar}</font>'
 watering_can_3:
   item: {0}watering_can_3
   capacity: 5
@@ -127,17 +190,47 @@ watering_can_3:
     empty: '뀁뀄'
     right: '뀁뀅'
   events:
-    add_water:
+    no_water:
       sound_action:
         type: sound
         value:
-          key: "minecraft:block.note_block.bell"
+          key: "minecraft:item.bundle.insert"
           source: 'player'
           volume: 1
           pitch: 1
       actionbar_action:
         type: actionbar
-        value: '{water_bar}'
+        value: '<red><bold>[X] Water has been used out'
+    consume_water:
+      sound_action:
+        type: sound
+        value:
+          key: "minecraft:block.water.ambient"
+          source: 'player'
+          volume: 1
+          pitch: 1
+      actionbar_action:
+        type: actionbar
+        value: '<font:customcrops:default>{water_bar}</font>'
+    add_water:
+      particle_action:
+        type: particle
+        value:
+          particle: WATER_SPLASH
+          x: 0.5
+          y: 1.3
+          z: 0.5
+          count: 5
+      sound_action:
+        type: sound
+        value:
+          key: "minecraft:item.bucket.empty"
+          source: 'player'
+          volume: 1
+          pitch: 1
+      actionbar_action:
+        type: actionbar
+        value: '<font:customcrops:default>{water_bar}</font>'
 watering_can_4:
   item: {0}watering_can_4
   capacity: 3
@@ -165,14 +258,44 @@ watering_can_4:
     empty: '뀁뀄'
     right: '뀁뀅'
   events:
-    add_water:
+    no_water:
       sound_action:
         type: sound
         value:
-          key: "minecraft:block.note_block.bell"
+          key: "minecraft:item.bundle.insert"
           source: 'player'
           volume: 1
           pitch: 1
       actionbar_action:
         type: actionbar
-        value: '{water_bar}'
+        value: '<red><bold>[X] Water has been used out'
+    consume_water:
+      sound_action:
+        type: sound
+        value:
+          key: "minecraft:block.water.ambient"
+          source: 'player'
+          volume: 1
+          pitch: 1
+      actionbar_action:
+        type: actionbar
+        value: '<font:customcrops:default>{water_bar}</font>'
+    add_water:
+      particle_action:
+        type: particle
+        value:
+          particle: WATER_SPLASH
+          x: 0.5
+          y: 1.3
+          z: 0.5
+          count: 5
+      sound_action:
+        type: sound
+        value:
+          key: "minecraft:item.bucket.empty"
+          source: 'player'
+          volume: 1
+          pitch: 1
+      actionbar_action:
+        type: actionbar
+        value: '<font:customcrops:default>{water_bar}</font>'

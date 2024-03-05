@@ -24,12 +24,15 @@ import java.util.function.Function;
 
 public class CFunction implements Comparable<CFunction> {
 
+    private static int functionID = 0;
     private final Function<ConditionWrapper, FunctionResult> function;
     private final FunctionPriority priority;
+    private final int id;
 
     public CFunction(Function<ConditionWrapper, FunctionResult> function, FunctionPriority priority) {
         this.function = function;
         this.priority = priority;
+        this.id = functionID++;
     }
 
     public FunctionResult apply(ConditionWrapper wrapper) {
@@ -46,7 +49,16 @@ public class CFunction implements Comparable<CFunction> {
 
     @Override
     public int compareTo(@NotNull CFunction o) {
-        return Integer.compare(this.priority.ordinal(), o.priority.ordinal());
+        if (this.priority.ordinal() > o.priority.ordinal()) {
+            return 1;
+        } else if (this.priority.ordinal() < o.priority.ordinal()) {
+            return -1;
+        }
+        return Integer.compare(this.id, o.id);
+    }
+
+    public static void resetID() {
+        functionID = 0;
     }
 
     public enum FunctionPriority {

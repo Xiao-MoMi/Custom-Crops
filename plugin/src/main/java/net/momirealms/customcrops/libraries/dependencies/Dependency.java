@@ -232,14 +232,6 @@ public enum Dependency {
             "bstats-bukkit",
             Relocation.of("bstats", "org{}bstats")
     ),
-    KRYO(
-            "com{}esotericsoftware",
-            "kryo5",
-            "5.6.0",
-            null,
-            "kryo5",
-            Relocation.of("kryo", "com{}esotericsoftware{}kryo")
-    ),
     GSON(
             "com.google.code.gson",
             "gson",

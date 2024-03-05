@@ -17,12 +17,15 @@
 
 package net.momirealms.customcrops.manager;
 
+import com.comphenix.protocol.PacketType;
+import com.comphenix.protocol.events.PacketContainer;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.title.Title;
 import net.momirealms.customcrops.api.CustomCropsPlugin;
 import net.momirealms.customcrops.api.manager.AdventureManager;
 import net.momirealms.customcrops.api.manager.ConfigManager;
@@ -31,6 +34,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
+
+import java.lang.reflect.InvocationTargetException;
+import java.time.Duration;
 
 public class AdventureManagerImpl extends AdventureManager {
 
@@ -77,22 +83,35 @@ public class AdventureManagerImpl extends AdventureManager {
 
     @Override
     public void sendPlayerMessage(Player player, String text) {
-
+        Audience au = audiences.player(player);
+        au.sendMessage(getComponentFromMiniMessage(text));
     }
 
     @Override
-    public void sendActionbar(Player player, String random) {
-
+    public void sendActionbar(Player player, String text) {
+        Audience au = audiences.player(player);
+        au.sendActionBar(getComponentFromMiniMessage(text));
     }
 
     @Override
     public void sendSound(Player player, Sound.Source source, Key key, float pitch, float volume) {
-
+        sendSound(player, Sound.sound(key, source, volume, pitch));
     }
 
     @Override
     public void sendSound(Player player, Sound sound) {
+        Audience au = audiences.player(player);
+        au.playSound(sound);
+    }
 
+    @Override
+    public void sendTitle(Player player, String title, String subTitle, int fadeIn, int stay, int fadeOut) {
+        Audience au = audiences.player(player);
+        au.showTitle(Title.title(getComponentFromMiniMessage(title), getComponentFromMiniMessage(subTitle), Title.Times.times(
+                Duration.ofMillis(fadeIn * 50L),
+                Duration.ofMillis(stay * 50L),
+                Duration.ofMillis(fadeOut * 50L)
+        )));
     }
 
     @Override
@@ -179,10 +198,5 @@ public class AdventureManagerImpl extends AdventureManager {
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean isColorCode(char c) {
         return c == '§' || c == '&';
-    }
-
-    @Override
-    public void sendTitle(Player player, String title, String subTitle, int fadeIn, int stay, int fadeOut) {
-
     }
 }

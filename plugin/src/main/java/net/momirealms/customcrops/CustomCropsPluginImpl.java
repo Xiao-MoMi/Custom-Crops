@@ -67,7 +67,6 @@ public class CustomCropsPluginImpl extends CustomCropsPlugin {
                         Dependency.ADVENTURE_LEGACY_SERIALIZER,
                         Dependency.BSTATS_BASE,
                         Dependency.BSTATS_BUKKIT,
-                        Dependency.KRYO,
                         Dependency.BIOME_API,
                         Dependency.ANTI_GRIEF
                 )
@@ -96,6 +95,7 @@ public class CustomCropsPluginImpl extends CustomCropsPlugin {
         this.messageManager = new MessageManagerImpl(this);
         this.packetManager = new PacketManager(this);
         this.commandManager = new CommandManager(this);
+        this.placeholderManager = new PlaceholderManagerImpl(this);
         this.commandManager.init();
         this.antiGriefLib.init();
         this.disableNBTAPILogs();
@@ -120,6 +120,7 @@ public class CustomCropsPluginImpl extends CustomCropsPlugin {
         this.itemManager.disable();
         this.conditionManager.disable();
         this.coolDownManager.disable();
+        this.placeholderManager.disable();
         ((SchedulerImpl) scheduler).shutdown();
         instance = null;
     }
@@ -134,6 +135,7 @@ public class CustomCropsPluginImpl extends CustomCropsPlugin {
         this.requirementManager.reload();
         this.conditionManager.reload();
         this.coolDownManager.reload();
+        this.placeholderManager.reload();
         ((SchedulerImpl) scheduler).reload();
         EventUtils.fireAndForget(new CustomCropsReloadEvent(this));
     }

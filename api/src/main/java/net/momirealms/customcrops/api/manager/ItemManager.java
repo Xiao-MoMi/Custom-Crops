@@ -100,6 +100,8 @@ public interface ItemManager extends Reloadable {
 
     Crop getCropByBlock(Block block);
 
+    void updatePotState(Location location, Pot pot, boolean hasWater, String fertilizer);
+
     @NotNull
     Collection<Location> getPotInRange(Location baseLocation, int width, int length, float yaw, String potID);
 }

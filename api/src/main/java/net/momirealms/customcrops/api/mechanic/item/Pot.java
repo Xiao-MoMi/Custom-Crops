@@ -20,6 +20,7 @@ package net.momirealms.customcrops.api.mechanic.item;
 import net.momirealms.customcrops.api.common.item.KeyItem;
 import net.momirealms.customcrops.api.mechanic.action.ActionTrigger;
 import net.momirealms.customcrops.api.mechanic.item.water.PassiveFillMethod;
+import net.momirealms.customcrops.api.mechanic.misc.image.WaterBar;
 import net.momirealms.customcrops.api.mechanic.requirement.Requirement;
 import net.momirealms.customcrops.api.mechanic.requirement.State;
 
@@ -46,4 +47,8 @@ public interface Pot extends KeyItem {
     Requirement[] getUseRequirements();
 
     void trigger(ActionTrigger trigger, State state);
+
+    WaterBar getWaterBar();
+
+    String getBlockState(boolean water, FertilizerType type);
 }

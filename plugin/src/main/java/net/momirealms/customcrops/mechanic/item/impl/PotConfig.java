@@ -36,7 +36,7 @@ public class PotConfig extends AbstractEventItem implements Pot {
     private final int storage;
     private final String dryModel;
     private final String wetModel;
-    private boolean enableFertilizedAppearance;
+    private final boolean enableFertilizedAppearance;
     private final HashMap<FertilizerType, Pair<String, String>> fertilizedPotMap;
     private final PassiveFillMethod[] passiveFillMethods;
     private WaterBar waterBar;
@@ -74,7 +74,7 @@ public class PotConfig extends AbstractEventItem implements Pot {
 
     @Override
     public int getStorage() {
-        return 0;
+        return storage;
     }
 
     @Override
@@ -122,5 +122,19 @@ public class PotConfig extends AbstractEventItem implements Pot {
     @Override
     public Requirement[] getUseRequirements() {
         return useRequirements;
+    }
+
+    @Override
+    public WaterBar getWaterBar() {
+        return waterBar;
+    }
+
+    @Override
+    public String getBlockState(boolean water, FertilizerType type) {
+        if (type != null && enableFertilizedAppearance) {
+            return water ? fertilizedPotMap.get(type).right() : fertilizedPotMap.get(type).left();
+        } else {
+            return water ? wetModel : dryModel;
+        }
     }
 }

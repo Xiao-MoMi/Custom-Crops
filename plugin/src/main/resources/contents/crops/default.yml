@@ -26,6 +26,10 @@ tomato:
   # Event settings
   events:
     plant:
+      # Swing the main hand
+      swing_hand_action:
+        type: swing-hand
+        value: true
       # Send sound while planting
       sound_action:
         type: sound

@@ -37,6 +37,8 @@ import net.momirealms.customcrops.utils.ClassUtils;
 import net.momirealms.customcrops.utils.ConfigUtils;
 import net.momirealms.customcrops.utils.ItemUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.Color;
+import org.bukkit.Particle;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.ExperienceOrb;
 import org.bukkit.entity.Player;
@@ -89,6 +91,8 @@ public class ActionManagerImpl implements ActionManager {
         this.registerGiveItemAction();
         this.registerMoneyAction();
         this.registerTimerAction();
+        this.registerParticleAction();
+        this.registerSwingHandAction();
     }
 
     @Override
@@ -338,6 +342,84 @@ public class ActionManagerImpl implements ActionManager {
                 state.getPlayer().giveExp((int) value.get(state.getPlayer()));
                 AdventureManagerImpl.getInstance().sendSound(state.getPlayer(), Sound.Source.PLAYER, Key.key("minecraft:entity.experience_orb.pickup"), 1, 1);
             };
+        });
+    }
+
+    private void registerSwingHandAction() {
+        registerAction("swing-hand", (args, chance) -> {
+            boolean arg = (boolean) args;
+            return state -> {
+                if (Math.random() > chance) return;
+                state.getPlayer().swingHand(arg ? EquipmentSlot.HAND : EquipmentSlot.OFF_HAND);
+            };
+        });
+    }
+
+    private void registerParticleAction() {
+        registerAction("particle", (args, chance) -> {
+            if (args instanceof ConfigurationSection section) {
+                Particle particleType = Particle.valueOf(section.getString("particle", "ASH").toUpperCase(Locale.ENGLISH));
+                double x = section.getDouble("x",0);
+                double y = section.getDouble("y",0);
+                double z = section.getDouble("z",0);
+                double offSetX = section.getDouble("offset-x",0);
+                double offSetY = section.getDouble("offset-y",0);
+                double offSetZ = section.getDouble("offset-z",0);
+                int count = section.getInt("count", 1);
+                double extra = section.getDouble("extra", 0);
+                float scale = (float) section.getDouble("scale", 1d);
+
+                ItemStack itemStack;
+                if (section.contains("itemStack"))
+                    itemStack = CustomCropsPlugin.get()
+                            .getItemManager()
+                            .getItemStack(null, section.getString("itemStack"));
+                else
+                    itemStack = null;
+
+                Color color;
+                if (section.contains("color")) {
+                    String[] rgb = section.getString("color","255,255,255").split(",");
+                    color = Color.fromRGB(Integer.parseInt(rgb[0]), Integer.parseInt(rgb[1]), Integer.parseInt(rgb[2]));
+                } else {
+                    color = null;
+                }
+
+                Color toColor;
+                if (section.contains("color")) {
+                    String[] rgb = section.getString("to-color","255,255,255").split(",");
+                    toColor = Color.fromRGB(Integer.parseInt(rgb[0]), Integer.parseInt(rgb[1]), Integer.parseInt(rgb[2]));
+                } else {
+                    toColor = null;
+                }
+
+                return state -> {
+                    if (Math.random() > chance) return;
+                    state.getLocation().getWorld().spawnParticle(
+                            particleType,
+                            state.getLocation().getX() + x,
+                            state.getLocation().getY() + y,
+                            state.getLocation().getZ() + z,
+                            count,
+                            offSetX,
+                            offSetY,
+                            offSetZ,
+                            extra,
+                            itemStack != null ?
+                                    itemStack :
+                                    (color != null && toColor != null ?
+                                            new Particle.DustTransition(color, toColor, scale) :
+                                            (color != null ?
+                                                    new Particle.DustOptions(color, scale) :
+                                                    null
+                                            )
+                                    )
+                    );
+                };
+            } else {
+                LogUtils.warn("Illegal value format found at action: particle");
+                return EmptyAction.instance;
+            }
         });
     }
 

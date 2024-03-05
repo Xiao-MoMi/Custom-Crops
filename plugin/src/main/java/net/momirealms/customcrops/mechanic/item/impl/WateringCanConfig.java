@@ -24,6 +24,7 @@ import net.kyori.adventure.text.ScoreComponent;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.momirealms.customcrops.api.manager.AdventureManager;
 import net.momirealms.customcrops.api.manager.ConfigManager;
+import net.momirealms.customcrops.api.manager.PlaceholderManager;
 import net.momirealms.customcrops.api.mechanic.action.Action;
 import net.momirealms.customcrops.api.mechanic.action.ActionTrigger;
 import net.momirealms.customcrops.api.mechanic.item.WateringCan;
@@ -32,6 +33,7 @@ import net.momirealms.customcrops.api.mechanic.misc.image.WaterBar;
 import net.momirealms.customcrops.api.mechanic.requirement.Requirement;
 import net.momirealms.customcrops.mechanic.item.AbstractEventItem;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -39,6 +41,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 public class WateringCanConfig extends AbstractEventItem implements WateringCan {
 
@@ -122,7 +125,7 @@ public class WateringCanConfig extends AbstractEventItem implements WateringCan 
     }
 
     @Override
-    public void updateItem(ItemStack itemStack, int water) {
+    public void updateItem(Player player, ItemStack itemStack, int water, Map<String, String> args) {
         NBTItem nbtItem = new NBTItem(itemStack);
         if (isInfinite()) water = storage;
         if (hasDynamicLore()) {
@@ -141,9 +144,7 @@ public class WateringCanConfig extends AbstractEventItem implements WateringCan 
             for (String newLore : getLore()) {
                 ScoreComponent.Builder builder = Component.score().name("cc").objective("water");
                 builder.append(AdventureManager.getInstance().getComponentFromMiniMessage(
-                        newLore.replace("{current}", String.valueOf(water))
-                                .replace("{storage}", String.valueOf(getStorage()))
-                                .replace("{water_bar}", getWaterBar() == null ? "" : getWaterBar().getWaterBar(water, getStorage()))
+                        PlaceholderManager.getInstance().parse(player, newLore, args)
                 ));
                 lore.add(GsonComponentSerializer.gson().serialize(builder.build()));
             }

@@ -36,10 +36,32 @@ default:
       return: BUCKET
       # The amount of water to add
       amount: 3
+      actions:
+        sound_action:
+          type: sound
+          value:
+            source: player
+            key: minecraft:item.bucket.fill
+            volume: 1
+            pitch: 1
+        swing_hand_action:
+          type: swing-hand
+          value: true
     method_2:
-      item: WATER
+      item: POTION
       return: GLASS_BOTTLE
       amount: 1
+      actions:
+        sound_action:
+          type: sound
+          value:
+            source: player
+            key: minecraft:item.bottle.fill
+            volume: 1
+            pitch: 1
+        swing_hand_action:
+          type: swing-hand
+          value: true
   # Water bar image settings
   water-bar:
     left: '뀂'
@@ -51,7 +73,14 @@ default:
     add_water:
       particle_action:
         type: particle
-        value: {}
+        value:
+          particle: WATER_SPLASH
+          x: 0.5
+          y: 1.3
+          z: 0.5
+          count: 5
+          offset-x: 0.3
+          offset-z: 0.3
     interact:
       # This action allows to display hologram while holding the specified item.
       conditional_action:

@@ -17,6 +17,7 @@
 
 package net.momirealms.customcrops.mechanic.item.custom;
 
+import net.momirealms.customcrops.api.mechanic.item.Pot;
 import net.momirealms.customcrops.api.mechanic.item.Sprinkler;
 import net.momirealms.customcrops.mechanic.item.ItemManagerImpl;
 import org.bukkit.Location;
@@ -98,13 +99,25 @@ public abstract class AbstractCustomListener implements Listener {
     public void onItemSpawn(ItemSpawnEvent event) {
         Item item = event.getEntity();
         ItemStack itemStack = item.getItemStack();
-        Sprinkler sprinkler = this.itemManager.getSprinklerBy3DItemStack(itemStack);
+        String itemID = this.itemManager.getItemID(itemStack);
+        Sprinkler sprinkler = this.itemManager.getSprinklerBy3DItemID(itemID);
         if (sprinkler != null) {
             ItemStack newItem = this.itemManager.getItemStack(null, sprinkler.get2DItemID());
             if (newItem != null) {
                 newItem.setAmount(itemStack.getAmount());
                 item.setItemStack(newItem);
             }
+            return;
+        }
+
+        Pot pot = this.itemManager.getPotByBlockID(itemID);
+        if (pot != null) {
+            ItemStack newItem = this.itemManager.getItemStack(null, pot.getDryItem());
+            if (newItem != null) {
+                newItem.setAmount(itemStack.getAmount());
+                item.setItemStack(newItem);
+            }
+            return;
         }
     }
 
@@ -112,16 +125,10 @@ public abstract class AbstractCustomListener implements Listener {
         this.itemManager.handlePlayerPlaceBlock(player, block, blockID, event);
     }
 
-    /**
-     * CustomCrops only reads necessary data from the event and would not modify it
-     */
     public void onBreakFurniture(Player player, Location location, String id, Cancellable event) {
         this.itemManager.handlePlayerBreakFurniture(player, location, id, event);
     }
 
-    /**
-     * CustomCrops only reads necessary data from the event and would not modify it
-     */
     public void onPlaceFurniture(Player player, Location location, String id, Cancellable event) {
         this.itemManager.handlePlayerPlaceFurniture(player, location, id, event);
     }
