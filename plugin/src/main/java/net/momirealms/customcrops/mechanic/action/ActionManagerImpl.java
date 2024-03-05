@@ -227,6 +227,10 @@ public class ActionManagerImpl implements ActionManager {
         }
     }
 
+    private void registerFakeItemAction() {
+
+    }
+
     private void registerMessageAction() {
         registerAction("message", (args, chance) -> {
             ArrayList<String> msg = ConfigUtils.stringListArgs(args);
@@ -729,9 +733,6 @@ public class ActionManagerImpl implements ActionManager {
                 return EmptyAction.instance;
             }
         });
-    }
-
-    private void registerFakeItemAction() {
     }
 
     private void registerChainAction() {

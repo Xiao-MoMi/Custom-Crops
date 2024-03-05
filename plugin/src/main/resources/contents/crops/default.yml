@@ -158,7 +158,60 @@ tomato:
     # But you can set some special crops' loots here
     99:
       model: {0}tomato_stage_golden
-      events: {}
+      requirements:
+        break:
+          requirement_1:
+            type: item-in-hand
+            value:
+              item: GOLDEN_HOE
+              amount: 1
+            not-met-actions:
+              actionbar_action:
+                type: actionbar
+                value: "<red><bold>[X] Hold a golden hoe to harvest the golden tomato"
+      events:
+        break:
+          action_1:
+            type: drop-items
+            value:
+              ignore-fertilizer: true
+              item: {0}tomato_seeds
+              min: 1
+              max: 2
+            chance: 1
+          action_2:
+            type: drop-items
+            value:
+              ignore-fertilizer: false
+              item: {0}golden_tomato
+              min: 1
+              max: 4
+            chance: 1
+          action_3:
+            type: durability
+            value: -1
+        interact:
+          action_1:
+            type: conditional
+            value:
+              conditions:
+                requirement_1:
+                  type: item-in-hand
+                  value:
+                    item: GOLDEN_HOE
+                    amount: 1
+              actions:
+                action_1:
+                  type: break
+                  value: true
+                action_2:
+                  type: swing-hand
+                  value: true
+                action_3:
+                  type: plant
+                  value:
+                    point: 0
+                    crop: tomato
   # Custom grow conditions
   grow-conditions:
     season_condition:
