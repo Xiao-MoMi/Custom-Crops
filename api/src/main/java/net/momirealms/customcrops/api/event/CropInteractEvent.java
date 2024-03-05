@@ -25,6 +25,7 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * An event that triggered when a player interacts a crop
@@ -41,7 +42,7 @@ public class CropInteractEvent extends PlayerEvent implements Cancellable {
             @NotNull Player who,
             @NotNull ItemStack itemInHand,
             @NotNull Location location,
-            @NotNull WorldCrop crop
+            @Nullable WorldCrop crop
     ) {
         super(who);
         this.location = location;
@@ -90,10 +91,10 @@ public class CropInteractEvent extends PlayerEvent implements Cancellable {
     }
 
     /**
-     * Get the crop's data
-     * @return crop
+     * Get the crop's data, it might be null if it's spawned by other plugins in the wild
+     * @return crop data
      */
-    @NotNull
+    @Nullable
     public WorldCrop getCrop() {
         return crop;
     }

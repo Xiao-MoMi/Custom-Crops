@@ -38,6 +38,7 @@ public class ConfigManagerImpl extends ConfigManager {
     private boolean protectLore;
     private String[] itemDetectionOrder;
     private boolean checkUpdate;
+    private double[] defaultQualityRatio;
 
     public ConfigManagerImpl(CustomCropsPlugin plugin) {
         this.plugin = plugin;
@@ -61,12 +62,17 @@ public class ConfigManagerImpl extends ConfigManager {
         maximumPoolSize = otherSettings.getInt("thread-pool-settings.maximumPoolSize", 10);
         corePoolSize = otherSettings.getInt("thread-pool-settings.corePoolSize", 10);
         keepAliveTime = otherSettings.getInt("thread-pool-settings.keepAliveTime", 30);
-
         itemDetectionOrder = otherSettings.getStringList("item-detection-order").toArray(new String[0]);
-
         protectLore = otherSettings.getBoolean("protect-original-lore", false);
-
         legacyColorSupport = otherSettings.getBoolean("legacy-color-code-support", true);
+
+        ConfigurationSection mechanics = config.getConfigurationSection("mechanics");
+        if (mechanics == null) {
+            LogUtils.severe("mechanics section should not be null");
+            return;
+        }
+
+        defaultQualityRatio = ConfigUtils.getQualityRatio(mechanics.getString("default-quality-ratio", "17/2/1"));
     }
 
     @Override
@@ -92,6 +98,11 @@ public class ConfigManagerImpl extends ConfigManager {
     @Override
     public int getKeepAliveTime() {
         return keepAliveTime;
+    }
+
+    @Override
+    protected double[] getDefaultQualityRatio() {
+        return defaultQualityRatio;
     }
 
     @Override

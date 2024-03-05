@@ -128,7 +128,7 @@ public class BukkitWorldAdaptor extends AbstractWorldAdaptor {
             long time2 = System.currentTimeMillis();
             CustomCropsPlugin.get().debug("Took " + (time2-time1) + "ms to load chunk " + chunkCoordinate);
         } catch (IOException e) {
-            LogUtils.severe("Failed to load CustomCrops data.");
+            LogUtils.severe("Failed to load CustomCrops data at " + chunkCoordinate);
             e.printStackTrace();
         }
     }

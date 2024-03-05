@@ -71,6 +71,12 @@ public abstract class ConfigManager implements Reloadable {
         return instance.hasCheckUpdate();
     }
 
+    public static double[] defaultQualityRatio() {
+        return instance.getDefaultQualityRatio();
+    }
+
+    protected abstract double[] getDefaultQualityRatio();
+
     protected abstract String getLang();
 
     protected abstract boolean getDebugMode();

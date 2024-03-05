@@ -17,10 +17,12 @@
 
 package net.momirealms.customcrops.api.mechanic.world.level;
 
+import net.momirealms.customcrops.api.mechanic.item.Crop;
 import net.momirealms.customcrops.api.mechanic.item.Fertilizer;
 import net.momirealms.customcrops.api.mechanic.item.Pot;
 import net.momirealms.customcrops.api.mechanic.item.Sprinkler;
 import net.momirealms.customcrops.api.mechanic.world.ChunkCoordinate;
+import net.momirealms.customcrops.api.mechanic.world.CustomCropsBlock;
 import net.momirealms.customcrops.api.mechanic.world.SimpleLocation;
 
 import java.util.Optional;
@@ -45,6 +47,8 @@ public interface CustomCropsChunk {
 
     Optional<WorldPot> getPotAt(SimpleLocation simpleLocation);
 
+    Optional<CustomCropsBlock> getBlockAt(SimpleLocation location);
+
     void addWaterToSprinkler(Sprinkler sprinkler, SimpleLocation location, int amount);
 
     void addFertilizerToPot(Pot pot, Fertilizer fertilizer, SimpleLocation location);
@@ -57,6 +61,8 @@ public interface CustomCropsChunk {
 
     void removeCropAt(SimpleLocation location);
 
+    CustomCropsBlock removeAnythingAt(SimpleLocation location);
+
     int getCropAmount();
 
     int getPotAmount();
@@ -68,4 +74,6 @@ public interface CustomCropsChunk {
     void addSprinklerAt(WorldSprinkler sprinkler, SimpleLocation location);
 
     void addCropAt(WorldCrop crop, SimpleLocation location);
+
+    void addPointToCrop(Crop crop, SimpleLocation location, int points);
 }

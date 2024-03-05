@@ -130,7 +130,7 @@ public class WateringCanConfig extends AbstractEventItem implements WateringCan 
         if (isInfinite()) water = storage;
         if (hasDynamicLore()) {
             NBTCompound displayCompound = nbtItem.getOrCreateCompound("display");
-            List<String> lore = displayCompound.getStringList("lore");
+            List<String> lore = displayCompound.getStringList("Lore");
             if (ConfigManager.protectLore()) {
                 lore.removeIf(line -> {
                     Component component = GsonComponentSerializer.gson().deserialize(line);

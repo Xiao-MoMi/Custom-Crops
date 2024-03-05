@@ -85,34 +85,36 @@ default:
       # This action allows to display hologram while holding the specified item.
       conditional_action:
         type: conditional
-        conditions:
-          item_check:
-            type: item-in-hand
-            value:
-              hand: main
-              amount: 1
-              item: {0}soil_surveyor
-        actions:
-          # If the fertilizer doesn't exist, this line would not appear
-          conditional_fertilizer_action:
-            type: conditional
-            conditions:
-              has-fertilizer: true
-            actions:
-              fertilizer_hologram:
-                type: hologram
-                value:
-                  duration: 20
-                  text: '<font:customcrops:default>{icon}</font> {left_times}/{max_times}'
-                  position: other
-                  range: 0
-                  y: 0.8
-          # Display the amount of water in pot
-          water_hologram:
-            type: hologram
-            value:
-              duration: 20
-              text: '<font:customcrops:default>{water_bar}</font>'
-              position: other
-              range: 0
-              y: 0.5
+        value:
+          conditions:
+            item_check:
+              type: item-in-hand
+              value:
+                hand: main
+                amount: 1
+                item: {0}soil_surveyor
+          actions:
+            # If the fertilizer doesn't exist, this line would not appear
+            conditional_fertilizer_action:
+              type: conditional
+              value:
+                conditions:
+                  has-fertilizer: true
+                actions:
+                  fertilizer_hologram:
+                    type: hologram
+                    value:
+                      duration: 20
+                      text: '<font:customcrops:default>{icon}</font> {left_times}/{max_times}'
+                      position: other
+                      range: 0
+                      y: 0.8
+            # Display the amount of water in pot
+            water_hologram:
+              type: hologram
+              value:
+                duration: 20
+                text: '<font:customcrops:default>{water_bar}</font>'
+                position: other
+                range: 0
+                y: 0.5

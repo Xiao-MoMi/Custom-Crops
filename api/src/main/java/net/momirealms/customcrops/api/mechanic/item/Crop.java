@@ -71,5 +71,9 @@ public interface Crop extends KeyItem {
         int getPoint();
 
         void trigger(ActionTrigger trigger, State state);
+
+        Requirement[] getInteractRequirements();
+
+        Requirement[] getBreakRequirements();
     }
 }

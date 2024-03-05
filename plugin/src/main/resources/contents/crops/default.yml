@@ -38,6 +38,14 @@ tomato:
           key: minecraft:item.hoe.till
           volume: 1
           pitch: 1
+    break:
+      sound_action:
+        type: sound
+        value:
+          source: player
+          key: minecraft:block.crop.break
+          volume: 1
+          pitch: 1
   # This determines the maximum time for crops to grow
   max-points: 6
   # This section determines the actions of crops at each point
@@ -55,38 +63,101 @@ tomato:
             type: drop-items
             value:
               ignore-fertilizer: true
-              items:
-                item_1:
-                  item: {0}tomato_seeds
-                  min: 1
-                  max: 1
-                  chance: 0.3
-          # Triggers the sound effect of crops being destroyed
-          action_2:
-            type: sound
-            value:
-              source: player
-              key: minecraft:block.crop.break
-              volume: 1
-              pitch: 1
+              item: {0}tomato_seeds
+              min: 1
+              max: 1
+            chance: 0.3
     1:
       model: {0}tomato_stage_2
       hologram-offset-correction: 0.2
-      events: {}
+      events:
+        break:
+          action_1:
+            type: drop-items
+            value:
+              ignore-fertilizer: true
+              item: {0}tomato_seeds
+              min: 1
+              max: 1
+            chance: 0.5
     3:
-      model: customcrops:tomato_stage_3
+      model: {0}tomato_stage_3
       hologram-offset-correction: 0.2
-      events: {}
+      events:
+        break:
+          action_1:
+            type: drop-items
+            value:
+              ignore-fertilizer: true
+              item: {0}tomato_seeds
+              min: 1
+              max: 1
+            chance: 0.7
     5:
-      model: customcrops:tomato_stage_4
+      model: {0}tomato_stage_4
       hologram-offset-correction: 0.2
-      events: {}
+      events:
+        interact:
+          action_1:
+            type: conditional
+            value:
+              conditions:
+                requirement_1:
+                  type: item-in-hand
+                  value:
+                    item: "AIR"
+              actions:
+                action_1:
+                  type: break
+                  value: true
+                action_2:
+                  type: swing-hand
+                  value: true
+                action_3:
+                  type: plant
+                  value:
+                    point: 0
+                    crop: tomato
+        grow:
+          action_1:
+            type: variation
+            value:
+              golden:
+                item: {0}tomato_stage_golden
+                type: TRIPWIRE
+                chance: 0.01
+        break:
+          action_1:
+            type: drop-items
+            value:
+              ignore-fertilizer: true
+              item: {0}tomato_seeds
+              min: 1
+              max: 2
+            chance: 1
+          action_2:
+            type: quality-crops
+            value:
+              min: 1
+              max: 4
+              items:
+                1: {0}tomato
+                2: {0}tomato_silver_star
+                3: {0}tomato_golden_star
     6:
-      events: {}
+      events:
+        grow:
+          action_1:
+            type: variation
+            value:
+              gigantic:
+                item: {0}gigantic_tomato
+                type: CHORUS
+                chance: 0.02
     # The crop would actually not gain so many points
     # But you can set some special crops' loots here
     99:
-      model: customcrops:tomato_stage_golden
+      model: {0}tomato_stage_golden
       events: {}
   # Custom grow conditions
   grow-conditions:
@@ -102,7 +173,7 @@ tomato:
   death-conditions:
     no_water:
       # You can customize the death stage models according to the reasons
-      model: customcrops:crop_stage_death
+      model: {0}crop_stage_death
       conditions:
         '&&':
           condition_1:
@@ -112,7 +183,7 @@ tomato:
             type: random
             value: 0.7
     unsuitable_season:
-      model: customcrops:crop_stage_death
+      model: {0}crop_stage_death
       conditions:
         condition_1:
           type: unsuitable_season
@@ -122,7 +193,28 @@ tomato:
   custom-bone-meal:
     bone_meal_1:
       item: BONE_MEAL
-      actions: {}
+      actions:
+        swing_action:
+          type: swing-hand
+          value: true
+        particle_action:
+          type: particle
+          value:
+            particle: VILLAGER_HAPPY
+            x: 0.5
+            y: 0.5
+            z: 0.5
+            count: 5
+            offset-x: 0.3
+            offset-y: 0.3
+            offset-z: 0.3
+        sound_action:
+          type: sound
+          value:
+            source: player
+            key: minecraft:item.bone_meal.use
+            volume: 1
+            pitch: 1
       chance:
         2: 0.2
         1: 0.6

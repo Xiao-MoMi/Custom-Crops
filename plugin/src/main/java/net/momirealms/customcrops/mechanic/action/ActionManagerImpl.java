@@ -21,24 +21,37 @@ import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
 import net.momirealms.customcrops.api.CustomCropsPlugin;
 import net.momirealms.customcrops.api.common.Pair;
-import net.momirealms.customcrops.api.manager.ActionManager;
-import net.momirealms.customcrops.api.manager.AdventureManager;
-import net.momirealms.customcrops.api.manager.PlaceholderManager;
+import net.momirealms.customcrops.api.event.CropBreakEvent;
+import net.momirealms.customcrops.api.event.CropPlantEvent;
+import net.momirealms.customcrops.api.event.PotBreakEvent;
+import net.momirealms.customcrops.api.event.SprinklerBreakEvent;
+import net.momirealms.customcrops.api.manager.*;
 import net.momirealms.customcrops.api.mechanic.action.Action;
 import net.momirealms.customcrops.api.mechanic.action.ActionExpansion;
 import net.momirealms.customcrops.api.mechanic.action.ActionFactory;
 import net.momirealms.customcrops.api.mechanic.action.ActionTrigger;
+import net.momirealms.customcrops.api.mechanic.item.*;
+import net.momirealms.customcrops.api.mechanic.item.fertilizer.QualityCrop;
+import net.momirealms.customcrops.api.mechanic.item.fertilizer.Variation;
+import net.momirealms.customcrops.api.mechanic.item.fertilizer.YieldIncrease;
 import net.momirealms.customcrops.api.mechanic.requirement.Requirement;
+import net.momirealms.customcrops.api.mechanic.world.CustomCropsBlock;
+import net.momirealms.customcrops.api.mechanic.world.SimpleLocation;
+import net.momirealms.customcrops.api.mechanic.world.level.WorldCrop;
+import net.momirealms.customcrops.api.mechanic.world.level.WorldPot;
+import net.momirealms.customcrops.api.mechanic.world.level.WorldSprinkler;
 import net.momirealms.customcrops.api.scheduler.CancellableTask;
 import net.momirealms.customcrops.api.util.LogUtils;
 import net.momirealms.customcrops.compatibility.VaultHook;
 import net.momirealms.customcrops.manager.AdventureManagerImpl;
+import net.momirealms.customcrops.mechanic.item.impl.VariationCrop;
+import net.momirealms.customcrops.mechanic.world.block.MemoryCrop;
 import net.momirealms.customcrops.utils.ClassUtils;
 import net.momirealms.customcrops.utils.ConfigUtils;
+import net.momirealms.customcrops.utils.EventUtils;
 import net.momirealms.customcrops.utils.ItemUtils;
-import org.bukkit.Bukkit;
-import org.bukkit.Color;
-import org.bukkit.Particle;
+import org.bukkit.*;
+import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.ExperienceOrb;
 import org.bukkit.entity.Player;
@@ -93,6 +106,11 @@ public class ActionManagerImpl implements ActionManager {
         this.registerTimerAction();
         this.registerParticleAction();
         this.registerSwingHandAction();
+        this.registerDropItemsAction();
+        this.registerBreakAction();
+        this.registerPlantAction();
+        this.registerQualityCropsAction();
+        this.registerVariationAction();
     }
 
     @Override
@@ -355,6 +373,245 @@ public class ActionManagerImpl implements ActionManager {
         });
     }
 
+    private void registerVariationAction() {
+        registerAction("variation", (args, chance) -> {
+            if (args instanceof ConfigurationSection section) {
+                ArrayList<VariationCrop> variationCrops = new ArrayList<>();
+                for (String inner_key : section.getKeys(false)) {
+                    VariationCrop variationCrop = new VariationCrop(
+                            section.getString(inner_key + ".item"),
+                            ItemCarrier.valueOf(section.getString(inner_key + ".type", "TripWire").toUpperCase(Locale.ENGLISH)),
+                            section.getDouble(inner_key + ".chance")
+                    );
+                    variationCrops.add(variationCrop);
+                }
+                VariationCrop[] variations = variationCrops.toArray(new VariationCrop[0]);
+                return state -> {
+                    if (Math.random() > chance) return;
+                    double bonus = 0;
+                    Optional<WorldPot> pot = plugin.getWorldManager().getPotAt(SimpleLocation.of(state.getLocation().clone().subtract(0,1,0)));
+                    if (pot.isPresent()) {
+                        String fertilizerKey = pot.get().getFertilizer();
+                        if (fertilizerKey != null) {
+                            Fertilizer fertilizer = plugin.getItemManager().getFertilizerByID(fertilizerKey);
+                            if (fertilizer instanceof Variation variation) {
+                                bonus += variation.getChanceBonus();
+                            }
+                        }
+                    }
+                    for (VariationCrop variationCrop : variations) {
+                        if (Math.random() < variationCrop.getChance() + bonus) {
+                            plugin.getItemManager().removeAnythingAt(state.getLocation());
+                            plugin.getWorldManager().removeAnythingAt(SimpleLocation.of(state.getLocation()));
+                            plugin.getItemManager().placeItem(state.getLocation(), variationCrop.getItemCarrier(), variationCrop.getItemID());
+                            break;
+                        }
+                    }
+                };
+            } else {
+                LogUtils.warn("Illegal value format found at action: variation");
+                return EmptyAction.instance;
+            }
+        });
+    }
+
+    private void registerQualityCropsAction() {
+        registerAction("quality-crops", (args, chance) -> {
+            if (args instanceof ConfigurationSection section) {
+                int min = section.getInt("min");
+                int max = Math.max(min, section.getInt("max"));
+                boolean toInv = section.getBoolean("to-inventory", false);
+                String[] qualityLoots = new String[ConfigManager.defaultQualityRatio().length];
+                for (int i = 1; i <= ConfigManager.defaultQualityRatio().length; i++) {
+                    qualityLoots[i-1] = section.getString("items." + i);
+                    if (qualityLoots[i-1] == null) {
+                        LogUtils.warn("items." + i + " should not be null");
+                        qualityLoots[i-1] = "";
+                    }
+                }
+                return state -> {
+                    if (Math.random() > chance) return;
+                    double[] ratio = ConfigManager.defaultQualityRatio();
+                    int random = ThreadLocalRandom.current().nextInt(min, max + 1);
+                    Optional<WorldPot> pot = plugin.getWorldManager().getPotAt(SimpleLocation.of(state.getLocation().clone().subtract(0,1,0)));
+                    if (pot.isPresent()) {
+                        String fertilizerKey = pot.get().getFertilizer();
+                        if (fertilizerKey != null) {
+                            Fertilizer fertilizer = plugin.getItemManager().getFertilizerByID(fertilizerKey);
+                            if (fertilizer instanceof YieldIncrease yieldIncrease) {
+                                random += yieldIncrease.getAmountBonus();
+                            } else if (fertilizer instanceof QualityCrop qualityCrop && Math.random() < qualityCrop.getChance()) {
+                                ratio = qualityCrop.getRatio();
+                            }
+                        }
+                    }
+                    for (int i = 0; i < random; i++) {
+                        double r1 = Math.random();
+                        for (int j = 0; j < ratio.length; j++) {
+                            if (r1 < ratio[j]) {
+                                ItemStack drop = plugin.getItemManager().getItemStack(state.getPlayer(), qualityLoots[j]);
+                                if (drop == null || drop.getType() == Material.AIR) return;
+                                if (toInv) {
+                                    ItemUtils.giveItem(state.getPlayer(), drop, 1);
+                                } else {
+                                    state.getLocation().getWorld().dropItemNaturally(state.getLocation(), drop);
+                                }
+                                break;
+                            }
+                        }
+                    }
+                };
+            } else {
+                LogUtils.warn("Illegal value format found at action: quality-crops");
+                return EmptyAction.instance;
+            }
+        });
+    }
+
+    private void registerDropItemsAction() {
+        registerAction("drop-items", (args, chance) -> {
+            if (args instanceof ConfigurationSection section) {
+                boolean ignoreFertilizer = section.getBoolean("ignore-fertilizer", true);
+                String item = section.getString("item");
+                int min = section.getInt("min");
+                int max = Math.max(min, section.getInt("max"));
+                boolean toInv = section.getBoolean("to-inventory", false);
+                return state -> {
+                    if (Math.random() > chance) return;
+                    ItemStack itemStack = plugin.getItemManager().getItemStack(state.getPlayer(), item);
+                    if (itemStack != null) {
+                        int random = ThreadLocalRandom.current().nextInt(min, max + 1);
+                        if (!ignoreFertilizer) {
+                            Optional<WorldPot> pot = plugin.getWorldManager().getPotAt(SimpleLocation.of(state.getLocation().clone().subtract(0,1,0)));
+                            if (pot.isPresent()) {
+                                String fertilizerKey = pot.get().getFertilizer();
+                                if (fertilizerKey != null) {
+                                    Fertilizer fertilizer = plugin.getItemManager().getFertilizerByID(fertilizerKey);
+                                    if (fertilizer instanceof YieldIncrease yieldIncrease) {
+                                        random += yieldIncrease.getAmountBonus();
+                                    }
+                                }
+                            }
+                        }
+                        itemStack.setAmount(random);
+                        if (toInv) {
+                            ItemUtils.giveItem(state.getPlayer(), itemStack, random);
+                        } else {
+                            state.getLocation().getWorld().dropItemNaturally(state.getLocation(), itemStack);
+                        }
+                    } else {
+                        LogUtils.warn("Item: " + item + " doesn't exist");
+                    }
+                };
+            } else {
+                LogUtils.warn("Illegal value format found at action: drop-items");
+                return EmptyAction.instance;
+            }
+        });
+    }
+
+    private void registerPlantAction() {
+        registerAction("plant", (args, chance) -> {
+            if (args instanceof ConfigurationSection section) {
+                int point = section.getInt("point", 0);
+                String key = section.getString("crop");
+                return state -> {
+                    if (Math.random() > chance) return;
+                    if (key == null) return;
+                    Crop crop = plugin.getItemManager().getCropByID(key);
+                    if (crop == null) {
+                        LogUtils.warn("Crop: " + key + " doesn't exist.");
+                        return;
+                    }
+                    Location location = state.getLocation();
+                    Pot pot = plugin.getItemManager().getPotByBlock(location.getBlock().getRelative(BlockFace.DOWN));
+                    if (pot == null) {
+                        plugin.debug("Crop should be planted on a pot at " + location);
+                        return;
+                    }
+                    // check whitelist
+                    if (!crop.getPotWhitelist().contains(pot.getKey())) {
+                        crop.trigger(ActionTrigger.WRONG_POT, state);
+                        return;
+                    }
+                    // check plant requirements
+                    if (!RequirementManager.isRequirementMet(state, crop.getPlantRequirements())) {
+                        return;
+                    }
+                    // check limitation
+                    if (plugin.getWorldManager().isReachLimit(SimpleLocation.of(location), ItemType.CROP)) {
+                        crop.trigger(ActionTrigger.REACH_LIMIT, state);
+                        return;
+                    }
+                    // fire event
+                    CropPlantEvent plantEvent = new CropPlantEvent(state.getPlayer(), state.getItemInHand(), location, crop, 0);
+                    if (EventUtils.fireAndCheckCancel(plantEvent)) {
+                        return;
+                    }
+                    // place the crop
+                    switch (crop.getItemCarrier()) {
+                        case ITEM_FRAME, ITEM_DISPLAY, TRIPWIRE -> plugin.getItemManager().placeItem(location, crop.getItemCarrier(), crop.getStageItemByPoint(point));
+                        default -> {
+                            LogUtils.warn("Unsupported type for crop: " + crop.getItemCarrier().name());
+                            return;
+                        }
+                    }
+                    plugin.getWorldManager().addCropAt(new MemoryCrop(crop.getKey(), point), SimpleLocation.of(location));
+                };
+            } else {
+                LogUtils.warn("Illegal value format found at action: plant");
+                return EmptyAction.instance;
+            }
+        });
+    }
+
+    private void registerBreakAction() {
+        registerAction("break", (args, chance) -> {
+            boolean arg = (boolean) args;
+            return state -> {
+                if (Math.random() > chance) return;
+                Optional<CustomCropsBlock> removed = plugin.getWorldManager().getBlockAt(SimpleLocation.of(state.getLocation()));
+                if (removed.isPresent()) {
+                    switch (removed.get().getType()) {
+                        case SPRINKLER -> {
+                            WorldSprinkler sprinkler = (WorldSprinkler) removed.get();
+                            SprinklerBreakEvent event = new SprinklerBreakEvent(state.getPlayer(), state.getLocation(), sprinkler);
+                            if (EventUtils.fireAndCheckCancel(event))
+                                return;
+                            if (arg) sprinkler.getConfig().trigger(ActionTrigger.BREAK, state);
+                            plugin.getItemManager().removeAnythingAt(state.getLocation());
+                            plugin.getWorldManager().removeAnythingAt(SimpleLocation.of(state.getLocation()));
+                        }
+                        case CROP -> {
+                            WorldCrop crop = (WorldCrop) removed.get();
+                            CropBreakEvent event = new CropBreakEvent(state.getPlayer(), state.getLocation(), crop);
+                            if (EventUtils.fireAndCheckCancel(event))
+                                return;
+                            Crop cropConfig = crop.getConfig();
+                            if (arg) {
+                                cropConfig.trigger(ActionTrigger.BREAK, state);
+                                cropConfig.getStageByItemID(cropConfig.getStageItemByPoint(crop.getPoint())).trigger(ActionTrigger.BREAK, state);
+                            }
+                            plugin.getItemManager().removeAnythingAt(state.getLocation());
+                            plugin.getWorldManager().removeAnythingAt(SimpleLocation.of(state.getLocation()));
+                        }
+                        case POT -> {
+                            WorldPot pot = (WorldPot) removed.get();
+                            PotBreakEvent event = new PotBreakEvent(state.getPlayer(), state.getLocation(), pot);
+                            if (EventUtils.fireAndCheckCancel(event))
+                                return;
+                            if (arg) pot.getConfig().trigger(ActionTrigger.BREAK, state);
+                            plugin.getItemManager().removeAnythingAt(state.getLocation());
+                            plugin.getWorldManager().removeAnythingAt(SimpleLocation.of(state.getLocation()));
+                        }
+                    }
+                } else {
+                    plugin.getItemManager().removeAnythingAt(state.getLocation());
+                }
+            };
+        });
+    }
+
     private void registerParticleAction() {
         registerAction("particle", (args, chance) -> {
             if (args instanceof ConfigurationSection section) {
@@ -443,23 +700,17 @@ public class ActionManagerImpl implements ActionManager {
 
     private void registerItemDurabilityAction() {
         registerAction("durability", (args, chance) -> {
-            if (args instanceof ConfigurationSection section) {
-                EquipmentSlot slot = EquipmentSlot.valueOf(section.getString("slot", "hand").toUpperCase(Locale.ENGLISH));
-                int amount = section.getInt("amount", 1);
-                return state -> {
-                    if (Math.random() > chance) return;
-                    Player player = state.getPlayer();
-                    ItemStack itemStack = player.getInventory().getItem(slot);
-                    if (amount > 0) {
-                        //ItemUtils.increaseDurability(itemStack, amount, true);
-                    } else {
-                        //ItemUtils.decreaseDurability(state.getPlayer(), itemStack, -amount, true);
-                    }
-                };
-            } else {
-                LogUtils.warn("Illegal value format found at action: durability");
-                return EmptyAction.instance;
-            }
+            int amount = (int) args;
+            return state -> {
+                if (Math.random() > chance) return;
+                ItemStack itemStack = state.getItemInHand();
+                if (amount > 0) {
+                    ItemUtils.increaseDurability(itemStack, amount);
+                } else {
+                    if (state.getPlayer().getGameMode() == GameMode.CREATIVE) return;
+                    ItemUtils.decreaseDurability(state.getPlayer(), itemStack, -amount);
+                }
+            };
         });
     }
 
@@ -711,7 +962,7 @@ public class ActionManagerImpl implements ActionManager {
         registerAction("conditional", (args, chance) -> {
             if (args instanceof ConfigurationSection section) {
                 Action[] actions = getActions(section.getConfigurationSection("actions"));
-                Requirement[] requirements = plugin.getRequirementManager().getRequirements(section.getConfigurationSection("states"), true);
+                Requirement[] requirements = plugin.getRequirementManager().getRequirements(section.getConfigurationSection("conditions"), true);
                 return state -> {
                     if (Math.random() > chance) return;
                     if (requirements != null)
@@ -725,7 +976,7 @@ public class ActionManagerImpl implements ActionManager {
                     }
                 };
             } else {
-                LogUtils.warn("Illegal value format found at action: stateal");
+                LogUtils.warn("Illegal value format found at action: conditional");
                 return EmptyAction.instance;
             }
         });

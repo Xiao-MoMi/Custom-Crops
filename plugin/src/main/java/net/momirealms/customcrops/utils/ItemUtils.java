@@ -17,7 +17,12 @@
 
 package net.momirealms.customcrops.utils;
 
+import de.tr7zw.changeme.nbtapi.NBTItem;
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerItemDamageEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -73,6 +78,44 @@ public class ItemUtils {
                 cloned.setAmount(left);
                 player.getWorld().dropItem(player.getLocation(), cloned);
             }
+        }
+    }
+
+    public static void increaseDurability(ItemStack itemStack, int amount) {
+        if (itemStack == null || itemStack.getType() == Material.AIR)
+            return;
+        NBTItem nbtItem = new NBTItem(itemStack);
+        if (nbtItem.getByte("Unbreakable") == 1) {
+            return;
+        }
+        int damage = Math.max(nbtItem.getInteger("Damage") - amount, 0);
+        nbtItem.setInteger("Damage", damage);
+        itemStack.setItemMeta(nbtItem.getItem().getItemMeta());
+    }
+
+    public static void decreaseDurability(Player player, ItemStack itemStack, int amount) {
+        if (itemStack == null || itemStack.getType() == Material.AIR)
+            return;
+        NBTItem nbtItem = new NBTItem(itemStack);
+         ItemMeta previousMeta = itemStack.getItemMeta().clone();
+        PlayerItemDamageEvent itemDamageEvent = new PlayerItemDamageEvent(player, itemStack, amount, amount);
+        Bukkit.getPluginManager().callEvent(itemDamageEvent);
+        if (!itemStack.getItemMeta().equals(previousMeta) || itemDamageEvent.isCancelled()) {
+            return;
+        }
+        int unBreakingLevel = itemStack.getEnchantmentLevel(Enchantment.DURABILITY);
+        if (Math.random() > (double) 1 / (unBreakingLevel + 1)) {
+            return;
+        }
+        if (nbtItem.getByte("Unbreakable") == 1) {
+            return;
+        }
+        int damage = nbtItem.getInteger("Damage") + amount;
+        if (damage > itemStack.getType().getMaxDurability()) {
+            itemStack.setAmount(0);
+        } else {
+            nbtItem.setInteger("Damage", damage);
+            itemStack.setItemMeta(nbtItem.getItem().getItemMeta());
         }
     }
 }

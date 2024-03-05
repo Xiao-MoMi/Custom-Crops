@@ -148,7 +148,9 @@ public class CropConfig extends AbstractEventItem implements Crop {
         if (point >= 0) {
             Stage stage = point2StageConfigMap.get(point);
             if (stage != null) {
-                return stage.getStageID();
+                String id = stage.getStageID();
+                if (id == null) return getStageItemByPoint(point-1);
+                return id;
             } else {
                 return getStageItemByPoint(point-1);
             }
@@ -183,17 +185,23 @@ public class CropConfig extends AbstractEventItem implements Crop {
 
         private final int point;
         private final double hologramOffset;
+        private final Requirement[] interactRequirements;
+        private final Requirement[] breakRequirements;
 
         public CropStageConfig(
                 @Nullable String stageID,
                 int point,
                 double hologramOffset,
-                HashMap<ActionTrigger, Action[]> actionMap
+                HashMap<ActionTrigger, Action[]> actionMap,
+                Requirement[] interactRequirements,
+                Requirement[] breakRequirements
         ) {
             super(actionMap);
             this.stageID = stageID;
             this.point = point;
             this.hologramOffset = hologramOffset;
+            this.interactRequirements = interactRequirements;
+            this.breakRequirements = breakRequirements;
         }
 
         @Override
@@ -210,6 +218,16 @@ public class CropConfig extends AbstractEventItem implements Crop {
         @Override
         public int getPoint() {
             return point;
+        }
+
+        @Override
+        public Requirement[] getInteractRequirements() {
+            return interactRequirements;
+        }
+
+        @Override
+        public Requirement[] getBreakRequirements() {
+            return breakRequirements;
         }
     }
 }

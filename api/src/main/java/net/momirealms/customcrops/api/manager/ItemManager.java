@@ -40,6 +40,10 @@ public interface ItemManager extends Reloadable {
 
     ItemStack getItemStack(Player player, String id);
 
+    void placeItem(Location location, ItemCarrier carrier, String id);
+
+    void removeAnythingAt(Location location);
+
     @Nullable
     WateringCan getWateringCanByID(@NotNull String id);
 
@@ -99,6 +103,8 @@ public interface ItemManager extends Reloadable {
     Crop getCropByEntity(Entity entity);
 
     Crop getCropByBlock(Block block);
+
+    Crop.Stage getCropStageByStageID(String id);
 
     void updatePotState(Location location, Pot pot, boolean hasWater, String fertilizer);
 

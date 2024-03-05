@@ -21,6 +21,7 @@ import net.momirealms.customcrops.api.CustomCropsPlugin;
 import net.momirealms.customcrops.api.manager.WorldManager;
 import net.momirealms.customcrops.api.mechanic.item.*;
 import net.momirealms.customcrops.api.mechanic.world.ChunkCoordinate;
+import net.momirealms.customcrops.api.mechanic.world.CustomCropsBlock;
 import net.momirealms.customcrops.api.mechanic.world.SimpleLocation;
 import net.momirealms.customcrops.api.mechanic.world.level.*;
 import net.momirealms.customcrops.api.util.LogUtils;
@@ -244,6 +245,13 @@ public class WorldManagerImpl implements WorldManager, Listener {
     }
 
     @Override
+    public Optional<CustomCropsBlock> getBlockAt(SimpleLocation location) {
+        CWorld cWorld = loadedWorlds.get(location.getWorldName());
+        if (cWorld == null) return Optional.empty();
+        return cWorld.getBlockAt(location);
+    }
+
+    @Override
     public void addWaterToSprinkler(@NotNull Sprinkler sprinkler, @NotNull SimpleLocation location, int amount) {
         CWorld cWorld = loadedWorlds.get(location.getWorldName());
         if (cWorld == null) {
@@ -305,7 +313,12 @@ public class WorldManagerImpl implements WorldManager, Listener {
 
     @Override
     public void addPointToCrop(@NotNull Crop crop, @NotNull SimpleLocation location, int points) {
-
+        CWorld cWorld = loadedWorlds.get(location.getWorldName());
+        if (cWorld == null) {
+            LogUtils.warn("Unsupported operation: Adding point to crop in unloaded world " + location);
+            return;
+        }
+        cWorld.addPointToCrop(crop, location, points);
     }
 
     @Override
@@ -336,6 +349,16 @@ public class WorldManagerImpl implements WorldManager, Listener {
             return;
         }
         cWorld.removeCropAt(location);
+    }
+
+    @Override
+    public CustomCropsBlock removeAnythingAt(SimpleLocation location) {
+        CWorld cWorld = loadedWorlds.get(location.getWorldName());
+        if (cWorld == null) {
+            LogUtils.warn("Unsupported operation: Removing anything from unloaded world " + location);
+            return null;
+        }
+        return cWorld.removeAnythingAt(location);
     }
 
     @Override

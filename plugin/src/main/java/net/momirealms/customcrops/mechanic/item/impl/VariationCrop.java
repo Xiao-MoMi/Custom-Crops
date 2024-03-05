@@ -15,22 +15,31 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.momirealms.customcrops.api.mechanic.action;
+package net.momirealms.customcrops.mechanic.item.impl;
 
-public enum ActionTrigger {
+import net.momirealms.customcrops.api.mechanic.item.ItemCarrier;
 
-    BREAK,
-    PLACE,
-    GROW,
-    ADD_WATER,
-    NO_WATER,
-    CONSUME_WATER,
-    FULL,
-    WORK,
-    USE,
-    WRONG_POT,
-    WRONG_SPRINKLER,
-    BEFORE_PLANT,
-    REACH_LIMIT,
-    INTERACT, PLANT, RIPE,
+public class VariationCrop {
+
+    private final String id;
+    private final ItemCarrier itemMode;
+    private final double chance;
+
+    public VariationCrop(String id, ItemCarrier itemMode, double chance) {
+        this.id = id;
+        this.itemMode = itemMode;
+        this.chance = chance;
+    }
+
+    public String getItemID() {
+        return id;
+    }
+
+    public ItemCarrier getItemCarrier() {
+        return itemMode;
+    }
+
+    public double getChance() {
+        return chance;
+    }
 }

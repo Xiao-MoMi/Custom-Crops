@@ -306,8 +306,8 @@ public class ConfigUtils {
                             innerSection.getInt("item-amount",1),
                             innerSection.getString("return"),
                             innerSection.getInt("return-amount",1),
-                            getIntChancePair(section.getConfigurationSection("chance")),
-                            getActions(section.getConfigurationSection("actions"))
+                            getIntChancePair(innerSection.getConfigurationSection("chance")),
+                            getActions(innerSection.getConfigurationSection("actions"))
                     );
                     boneMeals.add(boneMeal);
                 }
@@ -351,7 +351,9 @@ public class ConfigUtils {
                                     inner.getString("model"),
                                     point,
                                     inner.getDouble("hologram-offset-correction", 0d),
-                                    getActionMap(inner.getConfigurationSection("events"))
+                                    getActionMap(inner.getConfigurationSection("events")),
+                                    getRequirements(inner.getConfigurationSection("requirements.interact")),
+                                    getRequirements(inner.getConfigurationSection("requirements.break"))
                             ));
                         }
                     } catch (NumberFormatException e) {

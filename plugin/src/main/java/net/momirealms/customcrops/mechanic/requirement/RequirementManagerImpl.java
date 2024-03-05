@@ -34,9 +34,11 @@ import net.momirealms.customcrops.compatibility.VaultHook;
 import net.momirealms.customcrops.compatibility.papi.ParseUtils;
 import net.momirealms.customcrops.utils.ClassUtils;
 import net.momirealms.customcrops.utils.ConfigUtils;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.MemorySection;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
@@ -112,6 +114,7 @@ public class RequirementManagerImpl implements RequirementManager {
         this.registerEnvironmentRequirement();
         this.registerPotionEffectRequirement();
         this.registerInListRequirement();
+        this.registerItemInHandRequirement();
     }
 
     @NotNull
@@ -509,6 +512,31 @@ public class RequirementManagerImpl implements RequirementManager {
                 };
             } else {
                 LogUtils.warn("Wrong value format found at !startsWith requirement.");
+                return EmptyRequirement.instance;
+            }
+        });
+    }
+
+    private void registerItemInHandRequirement() {
+        registerRequirement("item-in-hand", (args, actions, advanced) -> {
+            if (args instanceof ConfigurationSection section) {
+                int amount = section.getInt("amount", 0);
+                List<String> items = ConfigUtils.stringListArgs(section.get("item"));
+                return condition -> {
+                    ItemStack itemStack = condition.getItemInHand();
+                    if (itemStack == null) itemStack = new ItemStack(Material.AIR);
+                    String id;
+                    if (itemStack.getType() == Material.AIR || itemStack.getAmount() == 0) {
+                        id = "AIR";
+                    } else {
+                        id = plugin.getItemManager().getItemID(itemStack);
+                    }
+                    if ((items.contains(id) || items.contains("*")) && itemStack.getAmount() >= amount) return true;
+                    if (advanced) triggerActions(actions, condition);
+                    return false;
+                };
+            } else {
+                LogUtils.warn("Wrong value format found at item-in-hand requirement.");
                 return EmptyRequirement.instance;
             }
         });

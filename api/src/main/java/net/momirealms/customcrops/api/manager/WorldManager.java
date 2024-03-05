@@ -19,6 +19,7 @@ package net.momirealms.customcrops.api.manager;
 
 import net.momirealms.customcrops.api.common.Reloadable;
 import net.momirealms.customcrops.api.mechanic.item.*;
+import net.momirealms.customcrops.api.mechanic.world.CustomCropsBlock;
 import net.momirealms.customcrops.api.mechanic.world.SimpleLocation;
 import net.momirealms.customcrops.api.mechanic.world.level.*;
 import org.bukkit.World;
@@ -94,6 +95,8 @@ public interface WorldManager extends Reloadable {
     @NotNull
     Optional<WorldCrop> getCropAt(@NotNull SimpleLocation location);
 
+    Optional<CustomCropsBlock> getBlockAt(SimpleLocation location);
+
     void addWaterToSprinkler(@NotNull Sprinkler sprinkler, @NotNull SimpleLocation location, int amount);
 
     void addFertilizerToPot(@NotNull Pot pot, @NotNull Fertilizer fertilizer, @NotNull SimpleLocation location);
@@ -117,4 +120,6 @@ public interface WorldManager extends Reloadable {
     void addPointToCrop(@NotNull Crop crop, @NotNull SimpleLocation location, int points);
 
     void saveChunkToFile(CustomCropsChunk chunk);
+
+    CustomCropsBlock removeAnythingAt(SimpleLocation location);
 }

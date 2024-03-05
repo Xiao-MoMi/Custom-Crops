@@ -57,4 +57,8 @@ public class State {
     public void setArg(String key, String value) {
         args.put(key, value);
     }
+
+    public String getArg(String key) {
+        return args.get(key);
+    }
 }

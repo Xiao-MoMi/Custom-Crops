@@ -18,17 +18,22 @@
 package net.momirealms.customcrops.mechanic.world;
 
 import net.momirealms.customcrops.api.CustomCropsPlugin;
+import net.momirealms.customcrops.api.mechanic.action.ActionTrigger;
+import net.momirealms.customcrops.api.mechanic.item.Crop;
 import net.momirealms.customcrops.api.mechanic.item.Fertilizer;
 import net.momirealms.customcrops.api.mechanic.item.Pot;
 import net.momirealms.customcrops.api.mechanic.item.Sprinkler;
+import net.momirealms.customcrops.api.mechanic.requirement.State;
 import net.momirealms.customcrops.api.mechanic.world.ChunkCoordinate;
 import net.momirealms.customcrops.api.mechanic.world.CustomCropsBlock;
 import net.momirealms.customcrops.api.mechanic.world.SimpleLocation;
 import net.momirealms.customcrops.api.mechanic.world.level.*;
+import net.momirealms.customcrops.mechanic.world.block.MemoryCrop;
 import net.momirealms.customcrops.mechanic.world.block.MemoryPot;
 import net.momirealms.customcrops.mechanic.world.block.MemorySprinkler;
 import net.momirealms.customcrops.scheduler.task.CheckTask;
 import net.momirealms.customcrops.scheduler.task.ReplaceTask;
+import org.bukkit.Location;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -172,6 +177,11 @@ public class CChunk implements CustomCropsChunk {
     }
 
     @Override
+    public Optional<CustomCropsBlock> getBlockAt(SimpleLocation location) {
+        return Optional.ofNullable(loadedBlocks.get(ChunkPos.getByLocation(location)));
+    }
+
+    @Override
     public void addWaterToSprinkler(Sprinkler sprinkler, SimpleLocation location, int amount) {
         Optional<WorldSprinkler> optionalSprinkler = getSprinklerAt(location);
         if (optionalSprinkler.isEmpty()) {
@@ -249,6 +259,33 @@ public class CChunk implements CustomCropsChunk {
     }
 
     @Override
+    public void addPointToCrop(Crop crop, SimpleLocation location, int points) {
+        if (points <= 0) return;
+        Optional<WorldCrop> cropData = getCropAt(location);
+        int previousPoint = 0;
+        if (cropData.isPresent()) {
+            WorldCrop worldCrop = cropData.get();
+            previousPoint = worldCrop.getPoint();
+            worldCrop.setPoint(previousPoint + points);
+        } else {
+            loadedBlocks.put(ChunkPos.getByLocation(location), new MemoryCrop(crop.getKey(), points));
+        }
+        Location bkLoc = location.getBukkitLocation();
+        int x = Math.min(previousPoint + points, crop.getMaxPoints());
+        for (int i = previousPoint + 1; i <= x; i++) {
+            Crop.Stage stage = crop.getStageByPoint(i);
+            if (stage != null) {
+                stage.trigger(ActionTrigger.GROW, new State(null, null, bkLoc));
+            }
+        }
+        String pre = crop.getStageItemByPoint(previousPoint);
+        String after = crop.getStageItemByPoint(x);
+        if (pre.equals(after)) return;
+        CustomCropsPlugin.get().getItemManager().removeAnythingAt(bkLoc);
+        CustomCropsPlugin.get().getItemManager().placeItem(bkLoc, crop.getItemCarrier(), after);
+    }
+
+    @Override
     public void removeSprinklerAt(SimpleLocation location) {
         CustomCropsBlock removed = loadedBlocks.remove(ChunkPos.getByLocation(location));
         if (removed == null) {
@@ -276,6 +313,11 @@ public class CChunk implements CustomCropsChunk {
         } else if (!(removed instanceof WorldCrop)) {
             CustomCropsPlugin.get().debug("Removed crop from " + location + " but the previous block type is " + removed.getType().name());
         }
+    }
+
+    @Override
+    public CustomCropsBlock removeAnythingAt(SimpleLocation location) {
+        return loadedBlocks.remove(ChunkPos.getByLocation(location));
     }
 
     @Override

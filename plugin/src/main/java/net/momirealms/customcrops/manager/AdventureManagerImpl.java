@@ -17,8 +17,6 @@
 
 package net.momirealms.customcrops.manager;
 
-import com.comphenix.protocol.PacketType;
-import com.comphenix.protocol.events.PacketContainer;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
@@ -35,7 +33,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 
-import java.lang.reflect.InvocationTargetException;
 import java.time.Duration;
 
 public class AdventureManagerImpl extends AdventureManager {

@@ -21,10 +21,12 @@ import net.momirealms.customcrops.api.CustomCropsPlugin;
 import net.momirealms.customcrops.api.common.Pair;
 import net.momirealms.customcrops.api.event.SeasonChangeEvent;
 import net.momirealms.customcrops.api.manager.WorldManager;
+import net.momirealms.customcrops.api.mechanic.item.Crop;
 import net.momirealms.customcrops.api.mechanic.item.Fertilizer;
 import net.momirealms.customcrops.api.mechanic.item.Pot;
 import net.momirealms.customcrops.api.mechanic.item.Sprinkler;
 import net.momirealms.customcrops.api.mechanic.world.ChunkCoordinate;
+import net.momirealms.customcrops.api.mechanic.world.CustomCropsBlock;
 import net.momirealms.customcrops.api.mechanic.world.SimpleLocation;
 import net.momirealms.customcrops.api.mechanic.world.level.*;
 import net.momirealms.customcrops.api.mechanic.world.season.Season;
@@ -223,6 +225,13 @@ public class CWorld implements CustomCropsWorld {
     }
 
     @Override
+    public Optional<CustomCropsBlock> getBlockAt(SimpleLocation location) {
+        CChunk chunk = loadedChunks.get(location.getChunkCoordinate());
+        if (chunk == null) return Optional.empty();
+        return chunk.getBlockAt(location);
+    }
+
+    @Override
     public void addWaterToSprinkler(Sprinkler sprinkler, SimpleLocation location, int amount) {
         CustomCropsChunk chunk = createOrGetChunk(location.getChunkCoordinate());
         if (chunk != null) {
@@ -283,6 +292,16 @@ public class CWorld implements CustomCropsWorld {
     }
 
     @Override
+    public void addPointToCrop(Crop crop, SimpleLocation location, int points) {
+        CustomCropsChunk chunk = createOrGetChunk(location.getChunkCoordinate());
+        if (chunk != null) {
+            chunk.addPointToCrop(crop, location, points);
+        } else {
+            LogUtils.warn("Invalid operation: Adding points to crop in an unloaded chunk");
+        }
+    }
+
+    @Override
     public void removeSprinklerAt(SimpleLocation location) {
         Optional<CustomCropsChunk> chunk = getChunkAt(location.getChunkCoordinate());
         if (chunk.isPresent()) {
@@ -309,6 +328,17 @@ public class CWorld implements CustomCropsWorld {
             chunk.get().removeCropAt(location);
         } else {
             LogUtils.warn("Invalid operation: Removing crop from an unloaded chunk");
+        }
+    }
+
+    @Override
+    public CustomCropsBlock removeAnythingAt(SimpleLocation location) {
+        Optional<CustomCropsChunk> chunk = getChunkAt(location.getChunkCoordinate());
+        if (chunk.isPresent()) {
+            return chunk.get().removeAnythingAt(location);
+        } else {
+            LogUtils.warn("Invalid operation: Removing anything from an unloaded chunk");
+            return null;
         }
     }
 
