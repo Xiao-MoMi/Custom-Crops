@@ -20,23 +20,17 @@ package net.momirealms.customcrops.mechanic.item.function.wrapper;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
-public class PlaceBlockWrapper extends ConditionWrapper {
+public class PlaceBlockWrapper extends PlaceWrapper {
 
     private final Block placedBlock;
-    private final String blockID;
 
     public PlaceBlockWrapper(Player player, Block placedBlock, String blockID) {
-        super(player);
-        this.blockID = blockID;
+        super(player, placedBlock.getLocation(), blockID);
         this.placedBlock = placedBlock;
     }
 
     public Block getPlacedBlock() {
         return placedBlock;
-    }
-
-    public String getBlockID() {
-        return blockID;
     }
 }
 

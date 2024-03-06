@@ -19,6 +19,8 @@ package net.momirealms.customcrops.mechanic.world.adaptor;
 
 import com.flowpowered.nbt.CompoundMap;
 import com.flowpowered.nbt.CompoundTag;
+import com.flowpowered.nbt.IntArrayTag;
+import com.flowpowered.nbt.StringTag;
 import com.flowpowered.nbt.stream.NBTInputStream;
 import com.flowpowered.nbt.stream.NBTOutputStream;
 import com.github.luben.zstd.Zstd;
@@ -26,15 +28,14 @@ import com.google.gson.Gson;
 import net.momirealms.customcrops.api.CustomCropsPlugin;
 import net.momirealms.customcrops.api.manager.WorldManager;
 import net.momirealms.customcrops.api.mechanic.world.ChunkCoordinate;
+import net.momirealms.customcrops.api.mechanic.world.ChunkPos;
 import net.momirealms.customcrops.api.mechanic.world.CustomCropsBlock;
 import net.momirealms.customcrops.api.mechanic.world.level.CustomCropsChunk;
 import net.momirealms.customcrops.api.mechanic.world.level.CustomCropsWorld;
 import net.momirealms.customcrops.api.mechanic.world.level.WorldInfoData;
 import net.momirealms.customcrops.api.util.LogUtils;
 import net.momirealms.customcrops.mechanic.world.*;
-import net.momirealms.customcrops.mechanic.world.block.MemoryCrop;
-import net.momirealms.customcrops.mechanic.world.block.MemoryPot;
-import net.momirealms.customcrops.mechanic.world.block.MemorySprinkler;
+import net.momirealms.customcrops.mechanic.world.block.*;
 import org.bukkit.NamespacedKey;
 import org.bukkit.World;
 import org.bukkit.event.EventHandler;
@@ -44,8 +45,7 @@ import org.bukkit.persistence.PersistentDataType;
 
 import java.io.*;
 import java.nio.ByteOrder;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class BukkitWorldAdaptor extends AbstractWorldAdaptor {
@@ -185,7 +185,7 @@ public class BukkitWorldAdaptor extends AbstractWorldAdaptor {
     public byte[] serialize(CChunk chunk) {
         ByteArrayOutputStream outByteStream = new ByteArrayOutputStream();
         DataOutputStream outStream = new DataOutputStream(outByteStream);
-        SerializableChunk serializableChunk = SerializationUtils.toSerializableChunk(chunk);
+        SerializableChunk serializableChunk = toSerializableChunk(chunk);
 
         try {
             outStream.writeByte(version);
@@ -194,12 +194,12 @@ public class BukkitWorldAdaptor extends AbstractWorldAdaptor {
             outStream.writeInt(serializableChunk.getLoadedSeconds());
             outStream.writeLong(serializableChunk.getLastLoadedTime());
 
-            List<CompoundTag> blocksToSave = serializableChunk.getBlocks();
-            byte[] serializedBlocks = serializeBlocks(blocksToSave);
-            byte[] compressed = Zstd.compress(serializedBlocks);
+            List<SerializableSection> sectionsToSave = serializableChunk.getSections();
+            byte[] serializedSections = serializeSections(sectionsToSave);
+            byte[] compressed = Zstd.compress(serializedSections);
 
             outStream.writeInt(compressed.length);
-            outStream.writeInt(serializedBlocks.length);
+            outStream.writeInt(serializedSections.length);
             outStream.write(compressed);
 
         } catch (IOException e) {
@@ -216,39 +216,83 @@ public class BukkitWorldAdaptor extends AbstractWorldAdaptor {
         int loadedSeconds = dataStream.readInt();
         long lastLoadedTime = dataStream.readLong();
         byte[] blockData = readCompressedBytes(dataStream);
-        var blockMap = deserializeBlocks(blockData);
-        return new CChunk(world, chunkCoordinate, loadedSeconds, lastLoadedTime, blockMap);
+        var sectionMap = deserializeSections(world.getWorldName(), chunkCoordinate, blockData);
+        return new CChunk(world, chunkCoordinate, loadedSeconds, lastLoadedTime, sectionMap);
     }
 
-    private ConcurrentHashMap<ChunkPos, CustomCropsBlock> deserializeBlocks(byte[] bytes) throws IOException {
+    private ConcurrentHashMap<Integer, CSection> deserializeSections(String world, ChunkCoordinate coordinate, byte[] bytes) throws IOException {
         DataInputStream chunkData = new DataInputStream(new ByteArrayInputStream(bytes));
-        int blocks = chunkData.readInt();
-        ConcurrentHashMap<ChunkPos, CustomCropsBlock> blockMap = new ConcurrentHashMap<>(blocks);
-        for (int i = 0; i < blocks; i++) {
-            byte[] blockData = new byte[chunkData.readInt()];
-            chunkData.read(blockData);
-            CompoundMap block = readCompound(blockData).getValue();
-            String type = (String) block.get("type").getValue();
-            CompoundMap data = (CompoundMap) block.get("data").getValue();
-            switch (type) {
-                case "CROP" -> {
-                    for (int pos : (int[]) block.get("pos").getValue()) {
-                        blockMap.put(new ChunkPos(pos), new MemoryCrop(data));
+        ConcurrentHashMap<Integer, CSection> sectionMap = new ConcurrentHashMap<>();
+
+        int sections = chunkData.readInt();
+        // read sections
+        for (int i = 0; i < sections; i++) {
+            ConcurrentHashMap<ChunkPos, CustomCropsBlock> blockMap = new ConcurrentHashMap<>();
+
+            int sectionID = chunkData.readInt();
+            byte[] sectionBytes = new byte[chunkData.readInt()];
+            chunkData.read(sectionBytes);
+
+            DataInputStream sectionData = new DataInputStream(new ByteArrayInputStream(sectionBytes));
+            int blockAmount = sectionData.readInt();
+            // read blocks
+            for (int j = 0; j < blockAmount; j++){
+                byte[] blockData = new byte[sectionData.readInt()];
+                sectionData.read(blockData);
+                CompoundMap block = readCompound(blockData).getValue();
+                String type = (String) block.get("type").getValue();
+                CompoundMap data = (CompoundMap) block.get("data").getValue();
+                switch (type) {
+                    case "CROP" -> {
+                        for (int pos : (int[]) block.get("pos").getValue()) {
+                            ChunkPos chunkPos = new ChunkPos(pos);
+                            blockMap.put(chunkPos, new MemoryCrop(chunkPos.getLocation(world, coordinate), new CompoundMap(data)));
+                        }
                     }
-                }
-                case "POT" -> {
-                    for (int pos : (int[]) block.get("pos").getValue()) {
-                        blockMap.put(new ChunkPos(pos), new MemoryPot(data));
+                    case "POT" -> {
+                        for (int pos : (int[]) block.get("pos").getValue()) {
+                            ChunkPos chunkPos = new ChunkPos(pos);
+                            blockMap.put(chunkPos, new MemoryPot(chunkPos.getLocation(world, coordinate), new CompoundMap(data)));
+                        }
                     }
-                }
-                case "SPRINKLER" -> {
-                    for (int pos : (int[]) block.get("pos").getValue()) {
-                        blockMap.put(new ChunkPos(pos), new MemorySprinkler(data));
+                    case "SPRINKLER" -> {
+                        for (int pos : (int[]) block.get("pos").getValue()) {
+                            ChunkPos chunkPos = new ChunkPos(pos);
+                            blockMap.put(chunkPos, new MemorySprinkler(chunkPos.getLocation(world, coordinate), new CompoundMap(data)));
+                        }
+                    }
+                    case "SCARECROW" -> {
+                        for (int pos : (int[]) block.get("pos").getValue()) {
+                            ChunkPos chunkPos = new ChunkPos(pos);
+                            blockMap.put(chunkPos, new MemoryScarecrow(chunkPos.getLocation(world, coordinate), new CompoundMap(data)));
+                        }
+                    }
+                    case "GLASS" -> {
+                        for (int pos : (int[]) block.get("pos").getValue()) {
+                            ChunkPos chunkPos = new ChunkPos(pos);
+                            blockMap.put(chunkPos, new MemoryGlass(chunkPos.getLocation(world, coordinate), new CompoundMap(data)));
+                        }
                     }
                 }
             }
+            CSection cSection = new CSection(sectionID, blockMap);
+            sectionMap.put(sectionID, cSection);
         }
-        return blockMap;
+
+        return sectionMap;
+    }
+
+    private byte[] serializeSections(List<SerializableSection> sectionsToSave) throws IOException {
+        ByteArrayOutputStream outByteStream = new ByteArrayOutputStream(16384);
+        DataOutputStream outStream = new DataOutputStream(outByteStream);
+        outStream.writeInt(sectionsToSave.size());
+        for (SerializableSection section : sectionsToSave) {
+            outStream.writeInt(section.getSectionID());
+            byte[] blockData = serializeBlocks(section.getBlocks());
+            outStream.writeInt(blockData.length);
+            outStream.write(blockData);
+        }
+        return outByteStream.toByteArray();
     }
 
     private byte[] serializeBlocks(Collection<CompoundTag> blocks) throws IOException {
@@ -272,6 +316,49 @@ public class BukkitWorldAdaptor extends AbstractWorldAdaptor {
         dataStream.read(compressedData);
         Zstd.decompress(decompressedData, compressedData);
         return decompressedData;
+    }
+
+    public SerializableChunk toSerializableChunk(CChunk chunk) {
+        ChunkCoordinate chunkCoordinate = chunk.getChunkCoordinate();
+        return new SerializableChunk(
+                chunkCoordinate.x(),
+                chunkCoordinate.z(),
+                chunk.getLoadedSeconds(),
+                chunk.getLastLoadedTime(),
+                Arrays.stream(chunk.getSectionsForSerialization()).map(this::toSerializableSection).toList(),
+                new ArrayList<>()
+        );
+    }
+
+    private SerializableSection toSerializableSection(CSection section) {
+        return new SerializableSection(section.getSectionID(), toCompoundTags(section.getBlockMap()));
+    }
+
+    private List<CompoundTag> toCompoundTags(Map<ChunkPos, CustomCropsBlock> blocks) {
+        ArrayList<CompoundTag> tags = new ArrayList<>(blocks.size());
+        Map<CustomCropsBlock, List<Integer>> blockToPosMap = new HashMap<>();
+        for (Map.Entry<ChunkPos, CustomCropsBlock> entry : blocks.entrySet()) {
+            ChunkPos coordinate = entry.getKey();
+            CustomCropsBlock block = entry.getValue();
+            List<Integer> coordinates = blockToPosMap.computeIfAbsent(block, k -> new ArrayList<>());
+            coordinates.add(coordinate.getPosition());
+        }
+        for (Map.Entry<CustomCropsBlock, List<Integer>> entry : blockToPosMap.entrySet()) {
+            tags.add(new CompoundTag("", toCompoundMap(entry.getKey(), entry.getValue())));
+        }
+        return tags;
+    }
+
+    private CompoundMap toCompoundMap(CustomCropsBlock block, List<Integer> pos) {
+        CompoundMap map = new CompoundMap();
+        int[] result = new int[pos.size()];
+        for (int i = 0; i < pos.size(); i++) {
+            result[i] = pos.get(i);
+        }
+        map.put(new StringTag("type", block.getType().name()));
+        map.put(new IntArrayTag("pos", result));
+        map.put(new CompoundTag("data", block.getCompoundMap()));
+        return map;
     }
 
     private CompoundTag readCompound(byte[] bytes) throws IOException {

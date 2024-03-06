@@ -22,18 +22,21 @@ import net.momirealms.customcrops.api.CustomCropsPlugin;
 import net.momirealms.customcrops.api.common.Pair;
 import net.momirealms.customcrops.api.integration.LevelInterface;
 import net.momirealms.customcrops.api.integration.SeasonInterface;
+import net.momirealms.customcrops.api.manager.ConfigManager;
 import net.momirealms.customcrops.api.manager.RequirementManager;
 import net.momirealms.customcrops.api.mechanic.action.Action;
 import net.momirealms.customcrops.api.mechanic.requirement.Requirement;
 import net.momirealms.customcrops.api.mechanic.requirement.RequirementExpansion;
 import net.momirealms.customcrops.api.mechanic.requirement.RequirementFactory;
 import net.momirealms.customcrops.api.mechanic.requirement.State;
+import net.momirealms.customcrops.api.mechanic.world.SimpleLocation;
 import net.momirealms.customcrops.api.mechanic.world.season.Season;
 import net.momirealms.customcrops.api.util.LogUtils;
 import net.momirealms.customcrops.compatibility.VaultHook;
 import net.momirealms.customcrops.compatibility.papi.ParseUtils;
 import net.momirealms.customcrops.utils.ClassUtils;
 import net.momirealms.customcrops.utils.ConfigUtils;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
@@ -115,6 +118,7 @@ public class RequirementManagerImpl implements RequirementManager {
         this.registerPotionEffectRequirement();
         this.registerInListRequirement();
         this.registerItemInHandRequirement();
+        this.registerSneakRequirement();
     }
 
     @NotNull
@@ -390,6 +394,23 @@ public class RequirementManagerImpl implements RequirementManager {
         });
     }
 
+    private void registerSneakRequirement() {
+        registerRequirement("sneak", (args, actions, advanced) -> {
+            boolean sneak = (boolean) args;
+            return state -> {
+                if (sneak) {
+                    if (state.getPlayer().isSneaking())
+                        return true;
+                } else {
+                    if (!state.getPlayer().isSneaking())
+                        return true;
+                }
+                if (advanced) triggerActions(actions, state);
+                return false;
+            };
+        });
+    }
+
     private void registerPermissionRequirement() {
         registerRequirement("permission", (args, actions, advanced) -> {
             List<String> perms = ConfigUtils.stringListArgs(args);
@@ -418,11 +439,19 @@ public class RequirementManagerImpl implements RequirementManager {
         registerRequirement("season", (args, actions, advanced) -> {
             List<String> seasons = ConfigUtils.stringListArgs(args);
             return state -> {
+                Location location = state.getLocation();
                 SeasonInterface seasonInterface = plugin.getIntegrationManager().getSeasonInterface();
                 if (seasonInterface == null) return true;
-                Season season = seasonInterface.getSeason(state.getLocation().getWorld());
+                Season season = seasonInterface.getSeason(location.getWorld());
                 if (season == null) return true;
                 if (seasons.contains(season.name())) return true;
+                if (ConfigManager.enableGreenhouse()) {
+                    for (int i = 1; i <= ConfigManager.greenhouseRange(); i++) {
+                        if (plugin.getWorldManager().getGlassAt(SimpleLocation.of(location.clone().add(0,i,0))).isPresent()) {
+                            return true;
+                        }
+                    }
+                }
                 if (advanced) triggerActions(actions, state);
                 return false;
             };

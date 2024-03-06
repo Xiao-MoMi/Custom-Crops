@@ -29,6 +29,8 @@ import java.util.Optional;
 
 public interface CustomCropsChunk {
 
+    void notifyOfflineUpdates();
+
     CustomCropsWorld getCustomCropsWorld();
 
     ChunkCoordinate getChunkCoordinate();
@@ -39,13 +41,15 @@ public interface CustomCropsChunk {
 
     int getLoadedSeconds();
 
-    void notifyUpdates();
+    Optional<WorldCrop> getCropAt(SimpleLocation location);
 
-    Optional<WorldCrop> getCropAt(SimpleLocation simpleLocation);
+    Optional<WorldSprinkler> getSprinklerAt(SimpleLocation location);
 
-    Optional<WorldSprinkler> getSprinklerAt(SimpleLocation simpleLocation);
+    Optional<WorldPot> getPotAt(SimpleLocation location);
 
-    Optional<WorldPot> getPotAt(SimpleLocation simpleLocation);
+    Optional<WorldGlass> getGlassAt(SimpleLocation location);
+
+    Optional<WorldScarecrow> getScarecrowAt(SimpleLocation location);
 
     Optional<CustomCropsBlock> getBlockAt(SimpleLocation location);
 
@@ -61,7 +65,13 @@ public interface CustomCropsChunk {
 
     void removeCropAt(SimpleLocation location);
 
-    CustomCropsBlock removeAnythingAt(SimpleLocation location);
+    void removeGlassAt(SimpleLocation location);
+
+    void removeScarecrowAt(SimpleLocation location);
+
+    CustomCropsBlock removeBlockAt(SimpleLocation location);
+
+    CustomCropsBlock addBlockAt(CustomCropsBlock block, SimpleLocation location);
 
     int getCropAmount();
 
@@ -76,4 +86,20 @@ public interface CustomCropsChunk {
     void addCropAt(WorldCrop crop, SimpleLocation location);
 
     void addPointToCrop(Crop crop, SimpleLocation location, int points);
+
+    void addGlassAt(WorldGlass glass, SimpleLocation location);
+
+    void addScarecrowAt(WorldScarecrow scarecrow, SimpleLocation location);
+
+    void updateLastLoadedTime();
+
+    CustomCropsSection[] getSections();
+
+    CustomCropsSection getSection(int sectionID);
+
+    int getUnloadedSeconds();
+
+    void setUnloadedSeconds(int unloadedSeconds);
+
+    boolean canPrune();
 }

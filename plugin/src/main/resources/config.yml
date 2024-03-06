@@ -13,59 +13,72 @@ update-checker: true
 # Language
 lang: english
 
-# This section requires a restart to apply
+# NOTE: This section requires a restart to apply
+# NOTE: This section requires a restart to apply
+# NOTE: This section requires a restart to apply
 worlds:
   # This is designed for servers that using an independent folder for worlds
   # Especially for realm systems
   absolute-world-folder-path: ''
   # A list that would decide where the plugin mechanisms take effect
-  # Requires a restart to apply the changes
   # Mode: whitelist/blacklist
   mode: blacklist
   list:
     - blacklist_world
-
   settings:
     _DEFAULT_:
-      # Whether to enable the plugin pre-made point system
+      # Whether to enable the plugin's pre-made system
       # Disabling this option will make all mechanisms stop counting ticks unless you have full control over it using the API.
-      # If you don't know how to code with CustomCropsAPI, just keep it true, because it is enough to meet the needs of 99% of servers
+      # If you don't know how to code with CustomCropsAPI, just keep it true, because it is enough to meet the needs of 99% of users.
       enable: true
-      # Point is another unit of measurement of time, it's similar to tick but it takes longer to increase
-      # For crops, we don’t need frequent ticks to make the entire mechanism work, so the default setting is 300 seconds.
-      # Please remember that modifying this option will affect the speed of the entire plugin mechanism
-      point-interval: 300
-      # Tick pots every N points
-      tick-pot-interval: 2
-      # Tick sprinklers every N points
-      tick-sprinkler-interval: 2
-      # Whether the plugin mechanism also works in unloaded chunks/worlds
-      offline-grow: false
-      # Whether season is enabled
-      season: false
-      # Limit the max amount of crops in one chunk
-      crop-per-chunk: 128
-      # Limit the max amount of pots in one chunk
-      pot-per-chunk: -1
-      # Limit the max amount of sprinklers in one chunk
-      sprinkler-per-chunk: 32
-    _WORLDS_:
-      world:
+      # Season mechanisms
+      season:
         enable: true
-        point-interval: 300
-        tick-pot-interval: 2
-        tick-sprinkler-interval: 2
-        offline-grow: false
-        season: true
         auto-season-change: true
         season-duration: 28
+      # The smallest tick unit
+      min-tick-unit: 300
+      # Random tick speed
+      random-tick-speed: 3
+      # Settings for crops
+      crop:
+        # [RANDOM_TICK]
+        # Random tick mode is similar to the vanilla one
+        # Crops will grow when randomly selected
+        # [SCHEDULED_TICK]
+        # Scheduler mode provides more reliable growth schedule management
+        # which allows crops to grow at almost the same speed
+        mode: RANDOM_TICK
+        tick-interval: 1
+        # Limit the max amount of crops in one chunk
+        max-per-chunk: 150
+      # Settings for pots
+      pot:
+        # RANDOM_TICK / SCHEDULED_TICK
+        mode: SCHEDULED_TICK
+        tick-interval: 2
+        # Limit the max amount of pots in one chunk
+        max-per-chunk: -1
+      # Settings for sprinklers
+      sprinkler:
+        # RANDOM_TICK / SCHEDULED_TICK
+        mode: SCHEDULED_TICK
+        tick-interval: 2
+        # Limit the max amount of sprinklers in one chunk
+        max-per-chunk: 20
+      # Offline growth is a special mode for crops
+      # Take server performance into account, enabling this option will not load the unloaded chunks
+      # On the contrary, CustomCrops get how long crops have grown by comparing the unload and load timestamps
+      offline-growth:
+        enable: false
+        # Maximum offline time recorded in seconds
+        # Please do not set this option to a value that is too large,
+        # as it may cause chunks that have been unloaded for a long time
+        # to consume too much server performance during loading
+        max-offline-seconds: 1200
+    _WORLDS_:
       world_nether:
-        enable: true
-        point-interval: 300
-        tick-pot-interval: 2
-        tick-sprinkler-interval: 2
-        offline-grow: false
-        season: false
+        enable: false
       world_the_end:
         enable: false
 
@@ -77,8 +90,11 @@ mechanics:
   # 85% = 17/(17+2+1) * 100%
   default-quality-ratio: 17/2/1
 
-  # Scarecrow prevents crops from being ate by crows in one chunk
-  scarecrow: customcrops:scarecrow
+  # Scarecrow prevents crops from being attacked by crows
+  scarecrow:
+    enable: true
+    id: {0}scarecrow
+    range: 7
 
   # Vanilla farmland settings
   vanilla-farmland:
@@ -88,10 +104,11 @@ mechanics:
     # Prevent entities from trampling the farmland
     prevent-trampling: false
 
-  # Greenhouse glass prevents crops from withering due to season change
+  # Greenhouse glass prevents crops from withering from season changing
   greenhouse:
     enable: true
-    block: customcrops:greenhouse_glass
+    id: {0}greenhouse_glass
+    range: 5
 
   # Sync seasons
   sync-season:
@@ -116,24 +133,3 @@ other-settings:
   # This uses the scoreboard component to identify the plugin's lore,
   # which may conflict with some plugins that still use the deprecated SpigotAPI.
   protect-original-lore: false
-
-  # Offset characters' unicodes
-  # Never edit this unless you know what you are doing
-  offset-characters:
-    font: customcrops:offset_chars
-    '1': 
-    '2': 
-    '4': 
-    '8': 
-    '16': 
-    '32': 
-    '64': 
-    '128': 
-    '-1': 
-    '-2': 
-    '-4': 
-    '-8': 
-    '-16': 
-    '-32': 
-    '-64': 
-    '-128': 

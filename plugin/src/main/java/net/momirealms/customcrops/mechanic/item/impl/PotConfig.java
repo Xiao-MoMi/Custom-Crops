@@ -32,21 +32,23 @@ import java.util.HashSet;
 
 public class PotConfig extends AbstractEventItem implements Pot {
 
-    private String key;
+    private final String key;
     private final int storage;
     private final String dryModel;
     private final String wetModel;
     private final boolean enableFertilizedAppearance;
     private final HashMap<FertilizerType, Pair<String, String>> fertilizedPotMap;
     private final PassiveFillMethod[] passiveFillMethods;
-    private WaterBar waterBar;
+    private final WaterBar waterBar;
     private final Requirement[] placeRequirements;
     private final Requirement[] breakRequirements;
     private final Requirement[] useRequirements;
+    private final boolean acceptRainDrop;
 
     public PotConfig(
             String key,
             int storage,
+            boolean acceptRainDrop,
             String dryModel,
             String wetModel,
             boolean enableFertilizedAppearance,
@@ -61,6 +63,7 @@ public class PotConfig extends AbstractEventItem implements Pot {
         super(actionMap);
         this.key = key;
         this.storage = storage;
+        this.acceptRainDrop = acceptRainDrop;
         this.enableFertilizedAppearance = enableFertilizedAppearance;
         this.fertilizedPotMap = fertilizedPotMap;
         this.passiveFillMethods = passiveFillMethods;
@@ -127,6 +130,11 @@ public class PotConfig extends AbstractEventItem implements Pot {
     @Override
     public WaterBar getWaterBar() {
         return waterBar;
+    }
+
+    @Override
+    public boolean isRainDropAccepted() {
+        return acceptRainDrop;
     }
 
     @Override

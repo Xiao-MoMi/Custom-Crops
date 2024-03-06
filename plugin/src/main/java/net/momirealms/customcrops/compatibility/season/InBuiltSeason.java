@@ -18,6 +18,7 @@
 package net.momirealms.customcrops.compatibility.season;
 
 import net.momirealms.customcrops.api.integration.SeasonInterface;
+import net.momirealms.customcrops.api.manager.ConfigManager;
 import net.momirealms.customcrops.api.manager.WorldManager;
 import net.momirealms.customcrops.api.mechanic.world.level.CustomCropsWorld;
 import net.momirealms.customcrops.api.mechanic.world.season.Season;
@@ -34,6 +35,10 @@ public class InBuiltSeason implements SeasonInterface {
 
     @Override
     public @Nullable Season getSeason(World world) {
+        if (ConfigManager.syncSeasons())
+            world = ConfigManager.referenceWorld();
+        if (world == null)
+            return null;
         return worldManager
                 .getCustomCropsWorld(world)
                 .map(CustomCropsWorld::getSeason)
@@ -42,6 +47,10 @@ public class InBuiltSeason implements SeasonInterface {
 
     @Override
     public int getDate(World world) {
+        if (ConfigManager.syncSeasons())
+            world = ConfigManager.referenceWorld();
+        if (world == null)
+            return 0;
         return worldManager
                 .getCustomCropsWorld(world)
                 .map(cropsWorld -> cropsWorld.getInfoData().getDate())

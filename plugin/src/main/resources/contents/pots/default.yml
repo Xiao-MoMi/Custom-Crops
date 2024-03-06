@@ -1,4 +1,3 @@
-# Link
 # ID
 default:
   # Maximum water storage capacity
@@ -8,6 +7,10 @@ default:
     # Pot models
     dry: {0}dry_pot
     wet: {0}wet_pot
+  # Does the pot absorb raindrop
+  absorb-rainwater: true
+  # Does nearby water make the pot wet
+  absorb-nearby-water: false
   # Set unique looks for pots with different fertilizer statuses
   fertilized-pots:
     enable: false

@@ -83,7 +83,7 @@ public class CWorld implements CustomCropsWorld {
         for (Map.Entry<ChunkCoordinate, CChunk> lazyEntry : lazyChunks.entrySet()) {
             CChunk chunk = lazyEntry.getValue();
             int sec = chunk.getUnloadedSeconds() + 1;
-            if (sec >= 30) {
+            if (sec >= 10) {
                 chunksToSave.add(Pair.of(lazyEntry.getKey(), chunk));
             } else {
                 chunk.setUnloadedSeconds(sec);
@@ -179,6 +179,7 @@ public class CWorld implements CustomCropsWorld {
     public void unloadChunk(ChunkCoordinate chunkCoordinate) {
         CChunk chunk = loadedChunks.remove(chunkCoordinate);
         if (chunk != null) {
+            chunk.updateLastLoadedTime();
             lazyChunks.put(chunkCoordinate, chunk);
         }
     }
@@ -222,6 +223,20 @@ public class CWorld implements CustomCropsWorld {
         CChunk chunk = loadedChunks.get(location.getChunkCoordinate());
         if (chunk == null) return Optional.empty();
         return chunk.getCropAt(location);
+    }
+
+    @Override
+    public Optional<WorldGlass> getGlassAt(SimpleLocation location) {
+        CChunk chunk = loadedChunks.get(location.getChunkCoordinate());
+        if (chunk == null) return Optional.empty();
+        return chunk.getGlassAt(location);
+    }
+
+    @Override
+    public Optional<WorldScarecrow> getScarecrowAt(SimpleLocation location) {
+        CChunk chunk = loadedChunks.get(location.getChunkCoordinate());
+        if (chunk == null) return Optional.empty();
+        return chunk.getScarecrowAt(location);
     }
 
     @Override
@@ -277,7 +292,7 @@ public class CWorld implements CustomCropsWorld {
         if (chunk != null) {
             chunk.addSprinklerAt(sprinkler, location);
         } else {
-            LogUtils.warn("Invalid operation: Adding pot in an unloaded chunk");
+            LogUtils.warn("Invalid operation: Adding sprinkler in an unloaded chunk");
         }
     }
 
@@ -287,7 +302,7 @@ public class CWorld implements CustomCropsWorld {
         if (chunk != null) {
             chunk.addCropAt(crop, location);
         } else {
-            LogUtils.warn("Invalid operation: Adding pot in an unloaded chunk");
+            LogUtils.warn("Invalid operation: Adding crop in an unloaded chunk");
         }
     }
 
@@ -298,6 +313,26 @@ public class CWorld implements CustomCropsWorld {
             chunk.addPointToCrop(crop, location, points);
         } else {
             LogUtils.warn("Invalid operation: Adding points to crop in an unloaded chunk");
+        }
+    }
+
+    @Override
+    public void addGlassAt(WorldGlass glass, SimpleLocation location) {
+        CustomCropsChunk chunk = createOrGetChunk(location.getChunkCoordinate());
+        if (chunk != null) {
+            chunk.addGlassAt(glass, location);
+        } else {
+            LogUtils.warn("Invalid operation: Adding glass in an unloaded chunk");
+        }
+    }
+
+    @Override
+    public void addScarecrowAt(WorldScarecrow scarecrow, SimpleLocation location) {
+        CustomCropsChunk chunk = createOrGetChunk(location.getChunkCoordinate());
+        if (chunk != null) {
+            chunk.addScarecrowAt(scarecrow, location);
+        } else {
+            LogUtils.warn("Invalid operation: Adding scarecrow in an unloaded chunk");
         }
     }
 
@@ -332,10 +367,30 @@ public class CWorld implements CustomCropsWorld {
     }
 
     @Override
+    public void removeGlassAt(SimpleLocation location) {
+        Optional<CustomCropsChunk> chunk = getChunkAt(location.getChunkCoordinate());
+        if (chunk.isPresent()) {
+            chunk.get().removeGlassAt(location);
+        } else {
+            LogUtils.warn("Invalid operation: Removing glass from an unloaded chunk");
+        }
+    }
+
+    @Override
+    public void removeScarecrowAt(SimpleLocation location) {
+        Optional<CustomCropsChunk> chunk = getChunkAt(location.getChunkCoordinate());
+        if (chunk.isPresent()) {
+            chunk.get().removeScarecrowAt(location);
+        } else {
+            LogUtils.warn("Invalid operation: Removing scarecrow from an unloaded chunk");
+        }
+    }
+
+    @Override
     public CustomCropsBlock removeAnythingAt(SimpleLocation location) {
         Optional<CustomCropsChunk> chunk = getChunkAt(location.getChunkCoordinate());
         if (chunk.isPresent()) {
-            return chunk.get().removeAnythingAt(location);
+            return chunk.get().removeBlockAt(location);
         } else {
             LogUtils.warn("Invalid operation: Removing anything from an unloaded chunk");
             return null;

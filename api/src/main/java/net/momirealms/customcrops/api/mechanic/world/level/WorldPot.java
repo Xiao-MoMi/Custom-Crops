@@ -37,4 +37,6 @@ public interface WorldPot extends CustomCropsBlock {
     void setFertilizerTimes(int fertilizerTimes);
 
     Pot getConfig();
+
+    void tickWater();
 }

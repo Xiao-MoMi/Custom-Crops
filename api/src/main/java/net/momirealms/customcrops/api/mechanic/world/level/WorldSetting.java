@@ -20,7 +20,8 @@ package net.momirealms.customcrops.api.mechanic.world.level;
 public class WorldSetting implements Cloneable {
 
     private final boolean enableScheduler;
-    private final int pointInterval;
+    private final int minTickUnit;
+    private final int tickCropInterval;
     private final int tickPotInterval;
     private final int tickSprinklerInterval;
     private final boolean offlineGrow;
@@ -30,11 +31,19 @@ public class WorldSetting implements Cloneable {
     private final int cropPerChunk;
     private final int potPerChunk;
     private final int sprinklerPerChunk;
+    private final int randomTickSpeed;
+    private final boolean tickCropRandomly;
+    private final boolean tickPotRandomly;
+    private final boolean tickSprinklerRandomly;
 
     private WorldSetting(
             boolean enableScheduler,
-            int pointInterval,
+            int minTickUnit,
+            boolean tickCropRandomly,
+            int tickCropInterval,
+            boolean tickPotRandomly,
             int tickPotInterval,
+            boolean tickSprinklerRandomly,
             int tickSprinklerInterval,
             boolean offlineGrow,
             boolean enableSeason,
@@ -42,10 +51,12 @@ public class WorldSetting implements Cloneable {
             int seasonDuration,
             int cropPerChunk,
             int potPerChunk,
-            int sprinklerPerChunk
+            int sprinklerPerChunk,
+            int randomTickSpeed
     ) {
         this.enableScheduler = enableScheduler;
-        this.pointInterval = pointInterval;
+        this.minTickUnit = minTickUnit;
+        this.tickCropInterval = tickCropInterval;
         this.tickPotInterval = tickPotInterval;
         this.tickSprinklerInterval = tickSprinklerInterval;
         this.offlineGrow = offlineGrow;
@@ -55,12 +66,20 @@ public class WorldSetting implements Cloneable {
         this.cropPerChunk = cropPerChunk;
         this.potPerChunk = potPerChunk;
         this.sprinklerPerChunk = sprinklerPerChunk;
+        this.randomTickSpeed = randomTickSpeed;
+        this.tickCropRandomly = tickCropRandomly;
+        this.tickPotRandomly = tickPotRandomly;
+        this.tickSprinklerRandomly = tickSprinklerRandomly;
     }
 
     public static WorldSetting of(
             boolean enableScheduler,
-            int pointInterval,
+            int minTickUnit,
+            boolean tickCropRandomly,
+            int tickCropInterval,
+            boolean tickPotRandomly,
             int tickPotInterval,
+            boolean tickSprinklerRandomly,
             int tickSprinklerInterval,
             boolean offlineGrow,
             boolean enableSeason,
@@ -68,12 +87,17 @@ public class WorldSetting implements Cloneable {
             int seasonDuration,
             int cropPerChunk,
             int potPerChunk,
-            int sprinklerPerChunk
+            int sprinklerPerChunk,
+            int randomTickSpeed
     ) {
         return new WorldSetting(
                 enableScheduler,
-                pointInterval,
+                minTickUnit,
+                tickCropRandomly,
+                tickCropInterval,
+                tickPotRandomly,
                 tickPotInterval,
+                tickSprinklerRandomly,
                 tickSprinklerInterval,
                 offlineGrow,
                 enableSeason,
@@ -81,7 +105,8 @@ public class WorldSetting implements Cloneable {
                 seasonDuration,
                 cropPerChunk,
                 potPerChunk,
-                sprinklerPerChunk
+                sprinklerPerChunk,
+                randomTickSpeed
         );
     }
 
@@ -89,8 +114,12 @@ public class WorldSetting implements Cloneable {
         return enableScheduler;
     }
 
-    public int getPointInterval() {
-        return pointInterval;
+    public int getMinTickUnit() {
+        return minTickUnit;
+    }
+
+    public int getTickCropInterval() {
+        return tickCropInterval;
     }
 
     public int getTickPotInterval() {
@@ -129,6 +158,10 @@ public class WorldSetting implements Cloneable {
         return sprinklerPerChunk;
     }
 
+    public int getRandomTickSpeed() {
+        return randomTickSpeed;
+    }
+
     @Override
     public WorldSetting clone() {
         try {
@@ -136,5 +169,17 @@ public class WorldSetting implements Cloneable {
         } catch (CloneNotSupportedException e) {
             throw new AssertionError();
         }
+    }
+
+    public boolean randomTickCrop() {
+        return tickCropRandomly;
+    }
+
+    public boolean randomTickSprinkler() {
+        return tickSprinklerRandomly;
+    }
+
+    public boolean randomTickPot() {
+        return tickPotRandomly;
     }
 }

@@ -68,6 +68,10 @@ public interface CustomCropsWorld {
 
     Optional<WorldCrop> getCropAt(SimpleLocation location);
 
+    Optional<WorldGlass> getGlassAt(SimpleLocation location);
+
+    Optional<WorldScarecrow> getScarecrowAt(SimpleLocation location);
+
     Optional<CustomCropsBlock> getBlockAt(SimpleLocation location);
 
     void addWaterToSprinkler(Sprinkler sprinkler, SimpleLocation location, int amount);
@@ -81,6 +85,10 @@ public interface CustomCropsWorld {
     void removePotAt(SimpleLocation location);
 
     void removeCropAt(SimpleLocation location);
+
+    void removeGlassAt(SimpleLocation location);
+
+    void removeScarecrowAt(SimpleLocation location);
 
     CustomCropsBlock removeAnythingAt(SimpleLocation location);
 
@@ -100,4 +108,8 @@ public interface CustomCropsWorld {
     void addCropAt(WorldCrop crop, SimpleLocation location);
 
     void addPointToCrop(Crop crop, SimpleLocation location, int points);
+
+    void addGlassAt(WorldGlass glass, SimpleLocation location);
+
+    void addScarecrowAt(WorldScarecrow scarecrow, SimpleLocation location);
 }

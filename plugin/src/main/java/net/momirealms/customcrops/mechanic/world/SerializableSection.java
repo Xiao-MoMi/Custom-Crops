@@ -15,31 +15,27 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.momirealms.customcrops.api.mechanic.world.level;
+package net.momirealms.customcrops.mechanic.world;
 
-import com.flowpowered.nbt.CompoundMap;
-import com.flowpowered.nbt.Tag;
+import com.flowpowered.nbt.CompoundTag;
 
-public class AbstractPropertyItem implements PropertyItem {
+import java.util.List;
 
-    private final CompoundMap compoundMap;
+public class SerializableSection {
 
-    public AbstractPropertyItem(CompoundMap compoundMap) {
-        this.compoundMap = compoundMap;
+    private final int sectionID;
+    private final List<CompoundTag> blocks;
+
+    public SerializableSection(int sectionID, List<CompoundTag> blocks) {
+        this.sectionID = sectionID;
+        this.blocks = blocks;
     }
 
-    @Override
-    public void setProperty(String key, Tag<?> tag) {
-        compoundMap.put(key, tag);
+    public int getSectionID() {
+        return sectionID;
     }
 
-    @Override
-    public Tag<?> getProperty(String name) {
-        return compoundMap.get(name);
-    }
-
-    @Override
-    public CompoundMap getCompoundMap() {
-        return compoundMap;
+    public List<CompoundTag> getBlocks() {
+        return blocks;
     }
 }

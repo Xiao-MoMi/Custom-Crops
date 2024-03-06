@@ -18,55 +18,27 @@
 package net.momirealms.customcrops.mechanic.world.block;
 
 import com.flowpowered.nbt.CompoundMap;
-import com.flowpowered.nbt.IntTag;
-import com.flowpowered.nbt.StringTag;
-import net.momirealms.customcrops.api.CustomCropsPlugin;
 import net.momirealms.customcrops.api.mechanic.item.ItemType;
-import net.momirealms.customcrops.api.mechanic.item.Sprinkler;
 import net.momirealms.customcrops.api.mechanic.world.SimpleLocation;
 import net.momirealms.customcrops.api.mechanic.world.level.AbstractCustomCropsBlock;
 import net.momirealms.customcrops.api.mechanic.world.level.CustomCropsChunk;
-import net.momirealms.customcrops.api.mechanic.world.level.WorldSprinkler;
+import net.momirealms.customcrops.api.mechanic.world.level.WorldScarecrow;
 
 import java.util.Objects;
 
-public class MemorySprinkler extends AbstractCustomCropsBlock implements WorldSprinkler {
+public class MemoryScarecrow extends AbstractCustomCropsBlock implements WorldScarecrow {
 
-    public MemorySprinkler(SimpleLocation location, CompoundMap compoundMap) {
-        super(location, compoundMap);
-    }
-
-    public MemorySprinkler(SimpleLocation location, String key, int water) {
+    public MemoryScarecrow(SimpleLocation location) {
         super(location, new CompoundMap());
-        setProperty("water", new IntTag("water", water));
-        setProperty("key", new StringTag("key", key));
     }
 
-    @Override
-    public int getWater() {
-        return getProperty("water").getAsIntTag().map(IntTag::getValue).orElse(0);
-    }
-
-    @Override
-    public void setWater(int water) {
-        setProperty("water", new IntTag("water", water));
-    }
-
-    @Override
-    public String getKey() {
-        return getProperty("key").getAsStringTag()
-                .map(StringTag::getValue)
-                .orElse("");
-    }
-
-    @Override
-    public Sprinkler getConfig() {
-        return CustomCropsPlugin.get().getItemManager().getSprinklerByID(getKey());
+    public MemoryScarecrow(SimpleLocation location, CompoundMap properties) {
+        super(location, properties);
     }
 
     @Override
     public ItemType getType() {
-        return ItemType.SPRINKLER;
+        return ItemType.SCARECROW;
     }
 
     @Override
@@ -79,7 +51,7 @@ public class MemorySprinkler extends AbstractCustomCropsBlock implements WorldSp
 
     @Override
     public int hashCode() {
-        return getKey().hashCode() + getWater() * 17;
+        return 28371283;
     }
 
     @Override

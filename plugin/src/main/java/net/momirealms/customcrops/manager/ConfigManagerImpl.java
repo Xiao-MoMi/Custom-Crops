@@ -21,8 +21,13 @@ import net.momirealms.customcrops.api.CustomCropsPlugin;
 import net.momirealms.customcrops.api.manager.ConfigManager;
 import net.momirealms.customcrops.api.util.LogUtils;
 import net.momirealms.customcrops.utils.ConfigUtils;
+import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
+
+import java.lang.ref.WeakReference;
+import java.util.Objects;
 
 public class ConfigManagerImpl extends ConfigManager {
 
@@ -38,7 +43,17 @@ public class ConfigManagerImpl extends ConfigManager {
     private boolean protectLore;
     private String[] itemDetectionOrder;
     private boolean checkUpdate;
+    private boolean disableMoisture;
+    private boolean preventTrampling;
+    private boolean greenhouse;
+    private boolean scarecrow;
     private double[] defaultQualityRatio;
+    private String greenhouseID;
+    private String scarecrowID;
+    private int greenhouseRange;
+    private int scarecrowRange;
+    private boolean syncSeasons;
+    private WeakReference<World> referenceWorld;
 
     public ConfigManagerImpl(CustomCropsPlugin plugin) {
         this.plugin = plugin;
@@ -73,6 +88,20 @@ public class ConfigManagerImpl extends ConfigManager {
         }
 
         defaultQualityRatio = ConfigUtils.getQualityRatio(mechanics.getString("default-quality-ratio", "17/2/1"));
+        disableMoisture = mechanics.getBoolean("vanilla-farmland.disable-moisture-mechanic", false);
+        preventTrampling = mechanics.getBoolean("vanilla-farmland.prevent-trampling", false);
+        greenhouse = mechanics.getBoolean("greenhouse.enable", true);
+        greenhouseID = mechanics.getString("greenhouse.id");
+        greenhouseRange = mechanics.getInt("greenhouse.range", 5);
+
+        scarecrow = mechanics.getBoolean("scarecrow.enable", true);
+        scarecrowID = mechanics.getString("scarecrow.id");
+        scarecrowRange = mechanics.getInt("scarecrow.range", 7);
+
+        syncSeasons = mechanics.getBoolean("sync-season.enable", true);
+        if (syncSeasons) {
+            referenceWorld = new WeakReference<>(Bukkit.getWorld(Objects.requireNonNull(mechanics.getString("sync-season.reference"))));
+        }
     }
 
     @Override
@@ -133,5 +162,55 @@ public class ConfigManagerImpl extends ConfigManager {
     @Override
     public boolean hasCheckUpdate() {
         return checkUpdate;
+    }
+
+    @Override
+    public boolean isDisableMoisture() {
+        return disableMoisture;
+    }
+
+    @Override
+    public boolean isPreventTrampling() {
+        return preventTrampling;
+    }
+
+    @Override
+    public boolean isGreenhouseEnabled() {
+        return greenhouse;
+    }
+
+    @Override
+    public String getGreenhouseID() {
+        return greenhouseID;
+    }
+
+    @Override
+    public int getGreenhouseRange() {
+        return greenhouseRange;
+    }
+
+    @Override
+    public boolean isScarecrowEnabled() {
+        return scarecrow;
+    }
+
+    @Override
+    public String getScarecrowID() {
+        return scarecrowID;
+    }
+
+    @Override
+    public int getScarecrowRange() {
+        return scarecrowRange;
+    }
+
+    @Override
+    public boolean isSyncSeasons() {
+        return syncSeasons;
+    }
+
+    @Override
+    public World getReferenceWorld() {
+        return referenceWorld.get();
     }
 }

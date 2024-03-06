@@ -15,14 +15,9 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.momirealms.customcrops.mechanic.item.function.wrapper;
+package net.momirealms.customcrops.api.mechanic.world.level;
 
-import org.bukkit.Location;
-import org.bukkit.entity.Player;
+import net.momirealms.customcrops.api.mechanic.world.CustomCropsBlock;
 
-public class PlaceFurnitureWrapper extends PlaceWrapper {
-
-    public PlaceFurnitureWrapper(Player player, Location location, String id) {
-        super(player, location, id);
-    }
+public interface WorldGlass extends CustomCropsBlock {
 }

@@ -18,6 +18,7 @@
 package net.momirealms.customcrops.api.manager;
 
 import net.momirealms.customcrops.api.common.Reloadable;
+import org.bukkit.World;
 
 public abstract class ConfigManager implements Reloadable {
 
@@ -75,6 +76,46 @@ public abstract class ConfigManager implements Reloadable {
         return instance.getDefaultQualityRatio();
     }
 
+    public static boolean preventTrampling() {
+        return instance.isPreventTrampling();
+    }
+
+    public static boolean disableMoisture() {
+        return instance.isDisableMoisture();
+    }
+
+    public static boolean syncSeasons() {
+        return instance.isSyncSeasons();
+    }
+
+    public static boolean enableGreenhouse() {
+        return instance.isGreenhouseEnabled();
+    }
+
+    public static World referenceWorld() {
+        return instance.getReferenceWorld();
+    }
+
+    public static int greenhouseRange() {
+        return instance.getGreenhouseRange();
+    }
+
+    public static int scarecrowRange() {
+        return instance.getScarecrowRange();
+    }
+
+    public static String greenhouseID() {
+        return instance.getGreenhouseID();
+    }
+
+    public static boolean enableScarecrow() {
+        return instance.isScarecrowEnabled();
+    }
+
+    public static String scarecrowID() {
+        return instance.getScarecrowID();
+    }
+
     protected abstract double[] getDefaultQualityRatio();
 
     protected abstract String getLang();
@@ -96,4 +137,24 @@ public abstract class ConfigManager implements Reloadable {
     public abstract boolean hasMetrics();
 
     public abstract boolean hasCheckUpdate();
+
+    public abstract boolean isDisableMoisture();
+
+    public abstract boolean isPreventTrampling();
+
+    public abstract boolean isGreenhouseEnabled();
+
+    public abstract String getGreenhouseID();
+
+    public abstract int getGreenhouseRange();
+
+    public abstract boolean isScarecrowEnabled();
+
+    public abstract String getScarecrowID();
+
+    public abstract int getScarecrowRange();
+
+    public abstract boolean isSyncSeasons();
+
+    public abstract World getReferenceWorld();
 }

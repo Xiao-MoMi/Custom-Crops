@@ -560,7 +560,7 @@ public class ActionManagerImpl implements ActionManager {
                             return;
                         }
                     }
-                    plugin.getWorldManager().addCropAt(new MemoryCrop(crop.getKey(), point), SimpleLocation.of(location));
+                    plugin.getWorldManager().addCropAt(new MemoryCrop(SimpleLocation.of(location), crop.getKey(), point), SimpleLocation.of(location));
                 };
             } else {
                 LogUtils.warn("Illegal value format found at action: plant");

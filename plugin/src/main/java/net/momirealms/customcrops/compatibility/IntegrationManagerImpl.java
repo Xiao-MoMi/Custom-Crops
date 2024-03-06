@@ -27,6 +27,9 @@ import net.momirealms.customcrops.compatibility.item.MMOItemsItemImpl;
 import net.momirealms.customcrops.compatibility.item.MythicMobsItemImpl;
 import net.momirealms.customcrops.compatibility.item.NeigeItemsItemImpl;
 import net.momirealms.customcrops.compatibility.item.ZaphkielItemImpl;
+import net.momirealms.customcrops.compatibility.season.AdvancedSeasonsImpl;
+import net.momirealms.customcrops.compatibility.season.InBuiltSeason;
+import net.momirealms.customcrops.compatibility.season.RealisticSeasonsImpl;
 import org.bukkit.World;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
@@ -61,6 +64,15 @@ public class IntegrationManagerImpl implements IntegrationManager {
         if (plugin.isHookedPluginEnabled("MythicMobs")) {
             plugin.getItemManager().registerItemLibrary(new MythicMobsItemImpl());
             hookMessage("MythicMobs");
+        }
+        if (plugin.isHookedPluginEnabled("RealisticSeasons")) {
+            this.seasonInterface = new RealisticSeasonsImpl();
+            hookMessage("RealisticSeasons");
+        } else if (plugin.isHookedPluginEnabled("AdvancedSeasons")) {
+            this.seasonInterface = new AdvancedSeasonsImpl();
+            hookMessage("AdvancedSeasons");
+        } else {
+            this.seasonInterface = new InBuiltSeason(plugin.getWorldManager());
         }
     }
 

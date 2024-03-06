@@ -50,5 +50,7 @@ public interface Pot extends KeyItem {
 
     WaterBar getWaterBar();
 
+    boolean isRainDropAccepted();
+
     String getBlockState(boolean water, FertilizerType type);
 }

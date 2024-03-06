@@ -95,6 +95,10 @@ public interface WorldManager extends Reloadable {
     @NotNull
     Optional<WorldCrop> getCropAt(@NotNull SimpleLocation location);
 
+    @NotNull Optional<WorldGlass> getGlassAt(@NotNull SimpleLocation location);
+
+    @NotNull Optional<WorldScarecrow> getScarecrowAt(@NotNull SimpleLocation location);
+
     Optional<CustomCropsBlock> getBlockAt(SimpleLocation location);
 
     void addWaterToSprinkler(@NotNull Sprinkler sprinkler, @NotNull SimpleLocation location, int amount);
@@ -102,6 +106,10 @@ public interface WorldManager extends Reloadable {
     void addFertilizerToPot(@NotNull Pot pot, @NotNull Fertilizer fertilizer, @NotNull SimpleLocation location);
 
     void addWaterToPot(@NotNull Pot pot, @NotNull SimpleLocation location, int amount);
+
+    void addGlassAt(@NotNull WorldGlass glass, @NotNull SimpleLocation location);
+
+    void addScarecrowAt(@NotNull WorldScarecrow scarecrow, @NotNull SimpleLocation location);
 
     void removeSprinklerAt(@NotNull SimpleLocation location);
 
@@ -120,6 +128,10 @@ public interface WorldManager extends Reloadable {
     void addPointToCrop(@NotNull Crop crop, @NotNull SimpleLocation location, int points);
 
     void saveChunkToFile(CustomCropsChunk chunk);
+
+    void removeGlassAt(@NotNull SimpleLocation location);
+
+    void removeScarecrowAt(@NotNull SimpleLocation location);
 
     CustomCropsBlock removeAnythingAt(SimpleLocation location);
 }

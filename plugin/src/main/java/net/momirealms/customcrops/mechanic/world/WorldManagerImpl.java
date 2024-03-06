@@ -244,6 +244,22 @@ public class WorldManagerImpl implements WorldManager, Listener {
         return cWorld.getCropAt(location);
     }
 
+    @NotNull
+    @Override
+    public Optional<WorldGlass> getGlassAt(@NotNull SimpleLocation location) {
+        CWorld cWorld = loadedWorlds.get(location.getWorldName());
+        if (cWorld == null) return Optional.empty();
+        return cWorld.getGlassAt(location);
+    }
+
+    @NotNull
+    @Override
+    public Optional<WorldScarecrow> getScarecrowAt(@NotNull SimpleLocation location) {
+        CWorld cWorld = loadedWorlds.get(location.getWorldName());
+        if (cWorld == null) return Optional.empty();
+        return cWorld.getScarecrowAt(location);
+    }
+
     @Override
     public Optional<CustomCropsBlock> getBlockAt(SimpleLocation location) {
         CWorld cWorld = loadedWorlds.get(location.getWorldName());
@@ -305,7 +321,7 @@ public class WorldManagerImpl implements WorldManager, Listener {
     public void addCropAt(@NotNull WorldCrop crop, @NotNull SimpleLocation location) {
         CWorld cWorld = loadedWorlds.get(location.getWorldName());
         if (cWorld == null) {
-            LogUtils.warn("Unsupported operation: Adding sprinkler in unloaded world " + location);
+            LogUtils.warn("Unsupported operation: Adding crop in unloaded world " + location);
             return;
         }
         cWorld.addCropAt(crop, location);
@@ -319,6 +335,26 @@ public class WorldManagerImpl implements WorldManager, Listener {
             return;
         }
         cWorld.addPointToCrop(crop, location, points);
+    }
+
+    @Override
+    public void addGlassAt(@NotNull WorldGlass glass, @NotNull SimpleLocation location) {
+        CWorld cWorld = loadedWorlds.get(location.getWorldName());
+        if (cWorld == null) {
+            LogUtils.warn("Unsupported operation: Adding glass in unloaded world " + location);
+            return;
+        }
+        cWorld.addGlassAt(glass, location);
+    }
+
+    @Override
+    public void addScarecrowAt(@NotNull WorldScarecrow scarecrow, @NotNull SimpleLocation location) {
+        CWorld cWorld = loadedWorlds.get(location.getWorldName());
+        if (cWorld == null) {
+            LogUtils.warn("Unsupported operation: Adding scarecrow in unloaded world " + location);
+            return;
+        }
+        cWorld.addScarecrowAt(scarecrow, location);
     }
 
     @Override
@@ -349,6 +385,26 @@ public class WorldManagerImpl implements WorldManager, Listener {
             return;
         }
         cWorld.removeCropAt(location);
+    }
+
+    @Override
+    public void removeGlassAt(@NotNull SimpleLocation location) {
+        CWorld cWorld = loadedWorlds.get(location.getWorldName());
+        if (cWorld == null) {
+            LogUtils.warn("Unsupported operation: Removing crop from unloaded world " + location);
+            return;
+        }
+        cWorld.removeGlassAt(location);
+    }
+
+    @Override
+    public void removeScarecrowAt(@NotNull SimpleLocation location) {
+        CWorld cWorld = loadedWorlds.get(location.getWorldName());
+        if (cWorld == null) {
+            LogUtils.warn("Unsupported operation: Removing scarecrow from unloaded world " + location);
+            return;
+        }
+        cWorld.removeScarecrowAt(location);
     }
 
     @Override
@@ -400,6 +456,9 @@ public class WorldManagerImpl implements WorldManager, Listener {
         // load chunks
         this.worldAdaptor.loadDynamicData(customCropsWorld, chunkCoordinate);
 
+        // offline grow part
+        if (!customCropsWorld.getWorldSetting().isOfflineGrow()) return;
+
         // If chunk data not exists, return
         Optional<CustomCropsChunk> optionalChunk = customCropsWorld.getChunkAt(chunkCoordinate);
         if (optionalChunk.isEmpty()) {
@@ -407,7 +466,8 @@ public class WorldManagerImpl implements WorldManager, Listener {
         }
 
         CustomCropsChunk chunk = optionalChunk.get();
-        chunk.notifyUpdates();
+        bukkitChunk.getEntities();
+        chunk.notifyOfflineUpdates();
     }
 
     public void handleChunkUnload(Chunk bukkitChunk) {

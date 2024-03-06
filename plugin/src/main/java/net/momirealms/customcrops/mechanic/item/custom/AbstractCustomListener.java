@@ -17,10 +17,12 @@
 
 package net.momirealms.customcrops.mechanic.item.custom;
 
+import net.momirealms.customcrops.api.manager.ConfigManager;
 import net.momirealms.customcrops.api.mechanic.item.Pot;
 import net.momirealms.customcrops.api.mechanic.item.Sprinkler;
 import net.momirealms.customcrops.mechanic.item.ItemManagerImpl;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
@@ -31,6 +33,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.block.MoistureChangeEvent;
+import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.ItemSpawnEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
@@ -119,6 +123,22 @@ public abstract class AbstractCustomListener implements Listener {
             }
             return;
         }
+    }
+
+    @EventHandler (ignoreCancelled = true)
+    public void onTrampling(EntityChangeBlockEvent event) {
+        Block block = event.getBlock();
+        if (block.getType() == Material.FARMLAND && event.getTo() == Material.DIRT) {
+            if (ConfigManager.preventTrampling()) {
+                event.setCancelled(true);
+            }
+        }
+    }
+
+    @EventHandler (ignoreCancelled = true)
+    public void onMoistureChange(MoistureChangeEvent event) {
+        if (ConfigManager.disableMoisture())
+            event.setCancelled(true);
     }
 
     public void onPlaceBlock(Player player, Block block, String blockID, Cancellable event) {

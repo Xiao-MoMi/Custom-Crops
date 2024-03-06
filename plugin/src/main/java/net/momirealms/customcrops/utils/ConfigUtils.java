@@ -59,17 +59,35 @@ public class ConfigUtils {
     public static WorldSetting getWorldSettingFromSection(ConfigurationSection section) {
         return WorldSetting.of(
                 section.getBoolean("enable", true),
-                section.getInt("point-interval", 300),
-                section.getInt("tick-pot-interval", 2),
-                section.getInt("tick-sprinkler-interval", 2),
-                section.getBoolean("offline-grow", true),
+                section.getInt("min-tick-unit", 300),
+                getRandomTickModeByString(section.getString("crop.mode")),
+                section.getInt("crop.tick-interval", 1),
+                getRandomTickModeByString(section.getString("pot.mode")),
+                section.getInt("pot.tick-interval", 2),
+                getRandomTickModeByString(section.getString("sprinkler.mode")),
+                section.getInt("sprinkler.tick-interval", 2),
+                section.getBoolean("offline-grow", false),
                 section.getBoolean("season", false),
                 section.getBoolean("auto-season-change", false),
                 section.getInt("season-duration", 28),
-                section.getInt("crop-per-chunk", 128),
-                section.getInt("pot-per-chunk", -1),
-                section.getInt("sprinkler-per-chunk", 32)
+                section.getInt("crop.max-per-chunk", 128),
+                section.getInt("pot.max-per-chunk", -1),
+                section.getInt("sprinkler.max-per-chunk", 32),
+                section.getInt("random-tick-speed", 0)
         );
+    }
+
+    public static boolean getRandomTickModeByString(String str) {
+        if (str == null) {
+            return false;
+        }
+        if (str.equalsIgnoreCase("RANDOM_TICK")) {
+            return true;
+        }
+        if (str.equalsIgnoreCase("SCHEDULED_TICK")) {
+            return false;
+        }
+        throw new IllegalArgumentException("Invalid mode found when loading world settings: " + str);
     }
 
     public static boolean isVanillaItem(String item) {

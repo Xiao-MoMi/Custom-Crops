@@ -25,14 +25,13 @@ import net.momirealms.customcrops.api.mechanic.item.Pot;
 import net.momirealms.customcrops.api.mechanic.item.Sprinkler;
 import net.momirealms.customcrops.api.mechanic.requirement.State;
 import net.momirealms.customcrops.api.mechanic.world.ChunkCoordinate;
+import net.momirealms.customcrops.api.mechanic.world.ChunkPos;
 import net.momirealms.customcrops.api.mechanic.world.CustomCropsBlock;
 import net.momirealms.customcrops.api.mechanic.world.SimpleLocation;
 import net.momirealms.customcrops.api.mechanic.world.level.*;
-import net.momirealms.customcrops.mechanic.world.block.MemoryCrop;
 import net.momirealms.customcrops.mechanic.world.block.MemoryPot;
 import net.momirealms.customcrops.mechanic.world.block.MemorySprinkler;
-import net.momirealms.customcrops.scheduler.task.CheckTask;
-import net.momirealms.customcrops.scheduler.task.ReplaceTask;
+import net.momirealms.customcrops.scheduler.task.TickTask;
 import org.bukkit.Location;
 
 import java.util.ArrayList;
@@ -40,14 +39,14 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.PriorityQueue;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class CChunk implements CustomCropsChunk {
 
     private transient CWorld cWorld;
-    private ChunkCoordinate chunkCoordinate;
-    private ConcurrentHashMap<ChunkPos, CustomCropsBlock> loadedBlocks;
-    private PriorityQueue<CheckTask> queue;
-    private ArrayList<ReplaceTask> replaceTasks;
+    private final ChunkCoordinate chunkCoordinate;
+    private final ConcurrentHashMap<Integer, CSection> loadedSections;
+    private final PriorityQueue<TickTask> queue;
     private long lastLoadedTime;
     private int loadedSeconds;
     private int unloadedSeconds;
@@ -55,21 +54,32 @@ public class CChunk implements CustomCropsChunk {
     public CChunk(CWorld cWorld, ChunkCoordinate chunkCoordinate) {
         this.cWorld = cWorld;
         this.chunkCoordinate = chunkCoordinate;
-        this.loadedBlocks = new ConcurrentHashMap<>(64);
+        this.loadedSections = new ConcurrentHashMap<>(64);
         this.queue = new PriorityQueue<>();
-        this.replaceTasks = new ArrayList<>();
         this.unloadedSeconds = 0;
+        this.updateLastLoadedTime();
     }
 
-    public CChunk(CWorld cWorld, ChunkCoordinate chunkCoordinate, int loadedSeconds, long lastLoadedTime, ConcurrentHashMap<ChunkPos, CustomCropsBlock> loadedBlocks) {
+    public CChunk(CWorld cWorld, ChunkCoordinate chunkCoordinate, int loadedSeconds, long lastLoadedTime, ConcurrentHashMap<Integer, CSection> loadedSections) {
         this.cWorld = cWorld;
         this.chunkCoordinate = chunkCoordinate;
-        this.loadedBlocks = loadedBlocks;
+        this.loadedSections = loadedSections;
         this.lastLoadedTime = lastLoadedTime;
         this.loadedSeconds = loadedSeconds;
         this.queue = new PriorityQueue<>();
-        this.replaceTasks = new ArrayList<>();
         this.unloadedSeconds = 0;
+    }
+
+    @Override
+    public void updateLastLoadedTime() {
+        this.lastLoadedTime = System.currentTimeMillis();
+    }
+
+    @Override
+    public void notifyOfflineUpdates() {
+        long delta = this.lastLoadedTime - System.currentTimeMillis();
+        int seconds = (int) (delta / 1000);
+
     }
 
     public void setWorld(CWorld cWorld) {
@@ -90,19 +100,55 @@ public class CChunk implements CustomCropsChunk {
     public void secondTimer() {
         this.loadedSeconds++;
 
-        int interval = cWorld.getWorldSetting().getPointInterval();
+        WorldSetting setting = cWorld.getWorldSetting();
+        int interval = setting.getMinTickUnit();
         // if loadedSeconds reach another recycle, rearrange the tasks
         if (this.loadedSeconds >= interval) {
             this.loadedSeconds = 0;
             this.queue.clear();
-            this.arrangeTasks(cWorld.getWorldSetting());
+            this.arrangeTasks(setting);
         }
 
-        // execute the tasks in queue
+        // scheduled tick
         while (!queue.isEmpty() && queue.peek().getTime() <= loadedSeconds) {
-            CheckTask task = queue.poll();
-            if (task != null)
-                tick(task.getSimpleLocation());
+            TickTask task = queue.poll();
+            if (task != null) {
+
+            }
+        }
+
+        // random tick
+        ThreadLocalRandom random = ThreadLocalRandom.current();
+        int randomTicks = setting.getRandomTickSpeed() * 20;
+        for (CustomCropsSection section : getSections()) {
+            int sectionID = section.getSectionID();
+            int baseY = sectionID * 16;
+            for (int i = 0; i < randomTicks; i++) {
+                int x = random.nextInt(16);
+                int y = random.nextInt(16) + baseY;
+                int z = random.nextInt(16);
+                CustomCropsBlock block = section.getBlockAt(new ChunkPos(x,y,z));
+                if (block != null) {
+                    switch (block.getType()) {
+                        case CROP -> {
+                            if (setting.randomTickCrop()) {
+                                block.tick(setting.getTickCropInterval(), this);
+                            }
+                        }
+                        case SPRINKLER -> {
+                            if (setting.randomTickSprinkler()) {
+                                block.tick(setting.getTickSprinklerInterval(), this);
+                            }
+                        }
+                        case POT -> {
+                            ((WorldPot) block).tickWater();
+                            if (setting.randomTickPot()) {
+                                block.tick(setting.getTickPotInterval(), this);
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -116,76 +162,41 @@ public class CChunk implements CustomCropsChunk {
         return this.loadedSeconds;
     }
 
-    @Override
-    public void notifyUpdates() {
-        if (this.replaceTasks.size() == 0)
-            return;
-
-        for (ReplaceTask replaceTask : this.replaceTasks) {
-
-        }
-
-        this.replaceTasks.clear();
-    }
-
     public void arrangeTasks(WorldSetting setting) {
-        int interval = setting.getPointInterval();
-        for (Map.Entry<ChunkPos, CustomCropsBlock> entry : this.loadedBlocks.entrySet()) {
-            switch (entry.getValue().getType()) {
-//                case CROP -> this.queue.add(new CheckTask(
-//                        RandomUtils.getRandomInt(0, interval),
-//                        entry.getKey()
-//                ));
-            }
-        }
-    }
-
-    private void tick(SimpleLocation location) {
-        CustomCropsBlock block = loadedBlocks.get(location);
-        if (block == null) return;
-
-    }
-
-    private void tickCrops(SimpleLocation location) {
-
-    }
-
-    private void tickPots(SimpleLocation location) {
-
-    }
-
-    private void tickSprinklers(SimpleLocation location) {
+        int interval = setting.getMinTickUnit();
 
     }
 
     @Override
     public Optional<WorldCrop> getCropAt(SimpleLocation simpleLocation) {
-        WorldCrop crop = (loadedBlocks.get(ChunkPos.getByLocation(simpleLocation)) instanceof WorldCrop worldCrop) ? worldCrop : null;
-        return Optional.ofNullable(crop);
+        return getBlockAt(simpleLocation).map(customCropsBlock -> customCropsBlock instanceof WorldCrop worldCrop ? worldCrop : null);
     }
 
     @Override
     public Optional<WorldSprinkler> getSprinklerAt(SimpleLocation simpleLocation) {
-        WorldSprinkler sprinkler = (loadedBlocks.get(ChunkPos.getByLocation(simpleLocation)) instanceof WorldSprinkler worldSprinkler) ? worldSprinkler : null;
-        return Optional.ofNullable(sprinkler);
+        return getBlockAt(simpleLocation).map(customCropsBlock -> customCropsBlock instanceof WorldSprinkler worldSprinkler ? worldSprinkler : null);
     }
 
     @Override
     public Optional<WorldPot> getPotAt(SimpleLocation simpleLocation) {
-        WorldPot pot = (loadedBlocks.get(ChunkPos.getByLocation(simpleLocation)) instanceof WorldPot worldPot) ? worldPot : null;
-        return Optional.ofNullable(pot);
+        return getBlockAt(simpleLocation).map(customCropsBlock -> customCropsBlock instanceof WorldPot worldPot ? worldPot : null);
     }
 
     @Override
-    public Optional<CustomCropsBlock> getBlockAt(SimpleLocation location) {
-        return Optional.ofNullable(loadedBlocks.get(ChunkPos.getByLocation(location)));
+    public Optional<WorldGlass> getGlassAt(SimpleLocation simpleLocation) {
+        return getBlockAt(simpleLocation).map(customCropsBlock -> customCropsBlock instanceof WorldGlass worldGlass ? worldGlass : null);
+    }
+
+    @Override
+    public Optional<WorldScarecrow> getScarecrowAt(SimpleLocation simpleLocation) {
+        return getBlockAt(simpleLocation).map(customCropsBlock -> customCropsBlock instanceof WorldScarecrow worldScarecrow ? worldScarecrow : null);
     }
 
     @Override
     public void addWaterToSprinkler(Sprinkler sprinkler, SimpleLocation location, int amount) {
         Optional<WorldSprinkler> optionalSprinkler = getSprinklerAt(location);
         if (optionalSprinkler.isEmpty()) {
-            loadedBlocks.put(ChunkPos.getByLocation(location), new MemorySprinkler(sprinkler.getKey(), amount));
+            addBlockAt(new MemorySprinkler(location, sprinkler.getKey(), amount), location);
             CustomCropsPlugin.get().debug("When adding water to sprinkler at " + location + ", the sprinkler data doesn't exist.");
         } else {
             optionalSprinkler.get().setWater(optionalSprinkler.get().getWater() + amount);
@@ -196,10 +207,10 @@ public class CChunk implements CustomCropsChunk {
     public void addFertilizerToPot(Pot pot, Fertilizer fertilizer, SimpleLocation location) {
         Optional<WorldPot> optionalWorldPot = getPotAt(location);
         if (optionalWorldPot.isEmpty()) {
-            MemoryPot memoryPot = new MemoryPot(pot.getKey());
+            MemoryPot memoryPot = new MemoryPot(location, pot.getKey());
             memoryPot.setFertilizer(fertilizer.getKey());
             memoryPot.setFertilizerTimes(fertilizer.getTimes());
-            loadedBlocks.put(ChunkPos.getByLocation(location), memoryPot);
+            addBlockAt(memoryPot, location);
             CustomCropsPlugin.get().debug("When adding fertilizer to pot at " + location + ", the pot data doesn't exist.");
         } else {
             optionalWorldPot.get().setFertilizer(fertilizer.getKey());
@@ -211,9 +222,9 @@ public class CChunk implements CustomCropsChunk {
     public void addWaterToPot(Pot pot, SimpleLocation location, int amount) {
         Optional<WorldPot> optionalWorldPot = getPotAt(location);
         if (optionalWorldPot.isEmpty()) {
-            MemoryPot memoryPot = new MemoryPot(pot.getKey());
+            MemoryPot memoryPot = new MemoryPot(location, pot.getKey());
             memoryPot.setWater(amount);
-            loadedBlocks.put(ChunkPos.getByLocation(location), memoryPot);
+            addBlockAt(memoryPot, location);
             CustomCropsPlugin.get().getItemManager().updatePotState(location.getBukkitLocation(), pot, true, null);
             CustomCropsPlugin.get().debug("When adding water to pot at " + location + ", the pot data doesn't exist.");
         } else {
@@ -224,7 +235,7 @@ public class CChunk implements CustomCropsChunk {
 
     @Override
     public void addPotAt(WorldPot pot, SimpleLocation location) {
-        CustomCropsBlock previous = loadedBlocks.put(ChunkPos.getByLocation(location), pot);
+        CustomCropsBlock previous = addBlockAt(pot, location);
         if (previous != null) {
             if (previous instanceof WorldPot) {
                 CustomCropsPlugin.get().debug("Found duplicated pot data when adding pot at " + location);
@@ -236,7 +247,7 @@ public class CChunk implements CustomCropsChunk {
 
     @Override
     public void addSprinklerAt(WorldSprinkler sprinkler, SimpleLocation location) {
-        CustomCropsBlock previous = loadedBlocks.put(ChunkPos.getByLocation(location), sprinkler);
+        CustomCropsBlock previous = addBlockAt(sprinkler, location);
         if (previous != null) {
             if (previous instanceof WorldSprinkler) {
                 CustomCropsPlugin.get().debug("Found duplicated sprinkler data when adding sprinkler at " + location);
@@ -248,7 +259,7 @@ public class CChunk implements CustomCropsChunk {
 
     @Override
     public void addCropAt(WorldCrop crop, SimpleLocation location) {
-        CustomCropsBlock previous = loadedBlocks.put(ChunkPos.getByLocation(location), crop);
+        CustomCropsBlock previous = addBlockAt(crop, location);
         if (previous != null) {
             if (previous instanceof WorldCrop) {
                 CustomCropsPlugin.get().debug("Found duplicated crop data when adding crop at " + location);
@@ -268,7 +279,8 @@ public class CChunk implements CustomCropsChunk {
             previousPoint = worldCrop.getPoint();
             worldCrop.setPoint(previousPoint + points);
         } else {
-            loadedBlocks.put(ChunkPos.getByLocation(location), new MemoryCrop(crop.getKey(), points));
+            //loadedBlocks.put(ChunkPos.getByLocation(location), new MemoryCrop(crop.getKey(), points));
+            return;
         }
         Location bkLoc = location.getBukkitLocation();
         int x = Math.min(previousPoint + points, crop.getMaxPoints());
@@ -286,8 +298,32 @@ public class CChunk implements CustomCropsChunk {
     }
 
     @Override
+    public void addGlassAt(WorldGlass glass, SimpleLocation location) {
+        CustomCropsBlock previous = addBlockAt(glass, location);
+        if (previous != null) {
+            if (previous instanceof WorldGlass) {
+                CustomCropsPlugin.get().debug("Found duplicated glass data when adding crop at " + location);
+            } else {
+                CustomCropsPlugin.get().debug("Found unremoved data when adding glass at " + location + ". Previous type is " + previous.getType().name());
+            }
+        }
+    }
+
+    @Override
+    public void addScarecrowAt(WorldScarecrow scarecrow, SimpleLocation location) {
+        CustomCropsBlock previous = addBlockAt(scarecrow, location);
+        if (previous != null) {
+            if (previous instanceof WorldScarecrow) {
+                CustomCropsPlugin.get().debug("Found duplicated glass data when adding scarecrow at " + location);
+            } else {
+                CustomCropsPlugin.get().debug("Found unremoved data when adding scarecrow at " + location + ". Previous type is " + previous.getType().name());
+            }
+        }
+    }
+
+    @Override
     public void removeSprinklerAt(SimpleLocation location) {
-        CustomCropsBlock removed = loadedBlocks.remove(ChunkPos.getByLocation(location));
+        CustomCropsBlock removed = removeBlockAt(location);
         if (removed == null) {
             CustomCropsPlugin.get().debug("Failed to remove sprinkler from " + location + " because sprinkler doesn't exist.");
         } else if (!(removed instanceof WorldSprinkler)) {
@@ -297,7 +333,7 @@ public class CChunk implements CustomCropsChunk {
 
     @Override
     public void removePotAt(SimpleLocation location) {
-        CustomCropsBlock removed = loadedBlocks.remove(ChunkPos.getByLocation(location));
+        CustomCropsBlock removed = removeBlockAt(location);
         if (removed == null) {
             CustomCropsPlugin.get().debug("Failed to remove pot from " + location + " because pot doesn't exist.");
         } else if (!(removed instanceof WorldPot)) {
@@ -307,7 +343,7 @@ public class CChunk implements CustomCropsChunk {
 
     @Override
     public void removeCropAt(SimpleLocation location) {
-        CustomCropsBlock removed = loadedBlocks.remove(ChunkPos.getByLocation(location));
+        CustomCropsBlock removed = removeBlockAt(location);
         if (removed == null) {
             CustomCropsPlugin.get().debug("Failed to remove crop from " + location + " because crop doesn't exist.");
         } else if (!(removed instanceof WorldCrop)) {
@@ -316,16 +352,62 @@ public class CChunk implements CustomCropsChunk {
     }
 
     @Override
-    public CustomCropsBlock removeAnythingAt(SimpleLocation location) {
-        return loadedBlocks.remove(ChunkPos.getByLocation(location));
+    public void removeGlassAt(SimpleLocation location) {
+        CustomCropsBlock removed = removeBlockAt(location);
+        if (removed == null) {
+            CustomCropsPlugin.get().debug("Failed to remove glass from " + location + " because glass doesn't exist.");
+        } else if (!(removed instanceof WorldGlass)) {
+            CustomCropsPlugin.get().debug("Removed glass from " + location + " but the previous block type is " + removed.getType().name());
+        }
+    }
+
+    @Override
+    public void removeScarecrowAt(SimpleLocation location) {
+        CustomCropsBlock removed = removeBlockAt(location);
+        if (removed == null) {
+            CustomCropsPlugin.get().debug("Failed to remove scarecrow from " + location + " because scarecrow doesn't exist.");
+        } else if (!(removed instanceof WorldScarecrow)) {
+            CustomCropsPlugin.get().debug("Removed scarecrow from " + location + " but the previous block type is " + removed.getType().name());
+        }
+    }
+
+    @Override
+    public CustomCropsBlock removeBlockAt(SimpleLocation location) {
+        ChunkPos pos = ChunkPos.getByLocation(location);
+        CSection section = loadedSections.get(pos.getSectionID());
+        if (section == null) return null;
+        return section.removeBlockAt(pos);
+    }
+
+    @Override
+    public CustomCropsBlock addBlockAt(CustomCropsBlock block, SimpleLocation location) {
+        ChunkPos pos = ChunkPos.getByLocation(location);
+        CSection section = loadedSections.get(pos.getSectionID());
+        if (section == null) {
+            section = new CSection(pos.getSectionID());
+            loadedSections.put(pos.getSectionID(), section);
+        }
+        return section.addBlockAt(pos, block);
+    }
+
+    @Override
+    public Optional<CustomCropsBlock> getBlockAt(SimpleLocation location) {
+        ChunkPos pos = ChunkPos.getByLocation(location);
+        CSection section = loadedSections.get(pos.getSectionID());
+        if (section == null) {
+            return Optional.empty();
+        }
+        return Optional.ofNullable(section.getBlockAt(pos));
     }
 
     @Override
     public int getCropAmount() {
         int amount = 0;
-        for (CustomCropsBlock block : loadedBlocks.values()) {
-            if (block instanceof WorldCrop) {
-                amount++;
+        for (CustomCropsSection section : getSections()) {
+            for (CustomCropsBlock block : section.getBlocks()) {
+                if (block instanceof WorldCrop) {
+                    amount++;
+                }
             }
         }
         return amount;
@@ -334,9 +416,11 @@ public class CChunk implements CustomCropsChunk {
     @Override
     public int getPotAmount() {
         int amount = 0;
-        for (CustomCropsBlock block : loadedBlocks.values()) {
-            if (block instanceof WorldPot) {
-                amount++;
+        for (CustomCropsSection section : getSections()) {
+            for (CustomCropsBlock block : section.getBlocks()) {
+                if (block instanceof WorldPot) {
+                    amount++;
+                }
             }
         }
         return amount;
@@ -345,23 +429,48 @@ public class CChunk implements CustomCropsChunk {
     @Override
     public int getSprinklerAmount() {
         int amount = 0;
-        for (CustomCropsBlock block : loadedBlocks.values()) {
-            if (block instanceof WorldSprinkler) {
-                amount++;
+        for (CustomCropsSection section : getSections()) {
+            for (CustomCropsBlock block : section.getBlocks()) {
+                if (block instanceof WorldSprinkler) {
+                    amount++;
+                }
             }
         }
         return amount;
     }
 
-    public Map<ChunkPos, CustomCropsBlock> getLoadedBlocks() {
-        return loadedBlocks;
+    public CSection[] getSectionsForSerialization() {
+        ArrayList<CSection> sections = new ArrayList<>();
+        for (Map.Entry<Integer, CSection> entry : loadedSections.entrySet()) {
+            if (!entry.getValue().canPrune()) {
+                sections.add(entry.getValue());
+            }
+        }
+        return sections.toArray(new CSection[0]);
     }
 
+    @Override
+    public CustomCropsSection[] getSections() {
+        return loadedSections.values().toArray(new CustomCropsSection[0]);
+    }
+
+    @Override
+    public CustomCropsSection getSection(int sectionID) {
+        return loadedSections.get(sectionID);
+    }
+
+    @Override
     public int getUnloadedSeconds() {
         return unloadedSeconds;
     }
 
+    @Override
     public void setUnloadedSeconds(int unloadedSeconds) {
         this.unloadedSeconds = unloadedSeconds;
+    }
+
+    @Override
+    public boolean canPrune() {
+        return loadedSections.size() == 0;
     }
 }

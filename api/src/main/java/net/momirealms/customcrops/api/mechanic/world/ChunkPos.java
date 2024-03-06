@@ -15,9 +15,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.momirealms.customcrops.mechanic.world;
-
-import net.momirealms.customcrops.api.mechanic.world.SimpleLocation;
+package net.momirealms.customcrops.api.mechanic.world;
 
 import java.util.Objects;
 
@@ -37,6 +35,10 @@ public class ChunkPos {
         return new ChunkPos(location.getX() % 16, location.getY(), location.getZ() % 16);
     }
 
+    public SimpleLocation getLocation(String world, ChunkCoordinate coordinate) {
+        return new SimpleLocation(world, coordinate.x() * 16 + getX(), getY(), coordinate.z() * 16 + getZ());
+    }
+
     public int getPosition() {
         return position;
     }
@@ -47,6 +49,10 @@ public class ChunkPos {
 
     public int getZ() {
         return (position >> 24) & 0xF;
+    }
+
+    public int getSectionID() {
+        return getY() / 16;
     }
 
     public int getY() {

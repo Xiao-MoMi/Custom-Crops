@@ -15,34 +15,28 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.momirealms.customcrops.scheduler.task;
+package net.momirealms.customcrops.mechanic.item.function.wrapper;
 
-import net.momirealms.customcrops.api.mechanic.world.SimpleLocation;
-import org.jetbrains.annotations.NotNull;
+import org.bukkit.Location;
+import org.bukkit.entity.Player;
 
-public class CheckTask implements Comparable<CheckTask> {
+public class PlaceWrapper extends ConditionWrapper {
 
-    private int time;
-    private SimpleLocation simpleLocation;
+    private final Location location;
+    private final String id;
 
-    private CheckTask() {
+    public PlaceWrapper(Player player, Location location, String id) {
+        super(player);
+        this.location = location;
+        this.id = id;
     }
 
-    public CheckTask(int time, SimpleLocation simpleLocation) {
-        this.time = time;
-        this.simpleLocation = simpleLocation;
+    public Location getLocation() {
+        return location;
     }
 
-    public SimpleLocation getSimpleLocation() {
-        return simpleLocation;
-    }
-
-    public int getTime() {
-        return time;
-    }
-
-    @Override
-    public int compareTo(@NotNull CheckTask o) {
-        return Integer.compare(this.time, o.time);
+    public String getId() {
+        return id;
     }
 }
+
