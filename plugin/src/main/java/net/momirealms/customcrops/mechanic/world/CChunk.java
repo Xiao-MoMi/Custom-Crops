@@ -145,7 +145,7 @@ public class CChunk implements CustomCropsChunk {
                             }
                         }
                         case POT -> {
-                            ((WorldPot) block).tickWater();
+                            ((WorldPot) block).tickWater(this);
                             if (setting.randomTickPot()) {
                                 block.tick(setting.getTickPotInterval(), this);
                             }
@@ -236,13 +236,11 @@ public class CChunk implements CustomCropsChunk {
         Optional<WorldPot> optionalWorldPot = getPotAt(location);
         if (optionalWorldPot.isEmpty()) {
             MemoryPot memoryPot = new MemoryPot(location, pot.getKey());
-            memoryPot.setFertilizer(fertilizer.getKey());
-            memoryPot.setFertilizerTimes(fertilizer.getTimes());
+            memoryPot.setFertilizer(fertilizer);
             addBlockAt(memoryPot, location);
             CustomCropsPlugin.get().debug("When adding fertilizer to pot at " + location + ", the pot data doesn't exist.");
         } else {
-            optionalWorldPot.get().setFertilizer(fertilizer.getKey());
-            optionalWorldPot.get().setFertilizerTimes(fertilizer.getTimes());
+            optionalWorldPot.get().setFertilizer(fertilizer);
         }
     }
 
@@ -301,17 +299,14 @@ public class CChunk implements CustomCropsChunk {
     public void addPointToCrop(Crop crop, SimpleLocation location, int points) {
         if (points <= 0) return;
         Optional<WorldCrop> cropData = getCropAt(location);
-        int previousPoint = 0;
-        if (cropData.isPresent()) {
-            WorldCrop worldCrop = cropData.get();
-            previousPoint = worldCrop.getPoint();
-            worldCrop.setPoint(previousPoint + points);
-        } else {
-            //loadedBlocks.put(ChunkPos.getByLocation(location), new MemoryCrop(crop.getKey(), points));
+        if (cropData.isEmpty()) {
             return;
         }
-        Location bkLoc = location.getBukkitLocation();
+        WorldCrop worldCrop = cropData.get();
+        int previousPoint = worldCrop.getPoint();
         int x = Math.min(previousPoint + points, crop.getMaxPoints());
+        worldCrop.setPoint(x);
+        Location bkLoc = location.getBukkitLocation();
         for (int i = previousPoint + 1; i <= x; i++) {
             Crop.Stage stage = crop.getStageByPoint(i);
             if (stage != null) {

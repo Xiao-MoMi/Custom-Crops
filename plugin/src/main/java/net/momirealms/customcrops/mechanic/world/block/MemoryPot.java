@@ -22,12 +22,16 @@ import com.flowpowered.nbt.IntTag;
 import com.flowpowered.nbt.StringTag;
 import com.flowpowered.nbt.Tag;
 import net.momirealms.customcrops.api.CustomCropsPlugin;
+import net.momirealms.customcrops.api.mechanic.item.Fertilizer;
 import net.momirealms.customcrops.api.mechanic.item.ItemType;
 import net.momirealms.customcrops.api.mechanic.item.Pot;
 import net.momirealms.customcrops.api.mechanic.world.SimpleLocation;
 import net.momirealms.customcrops.api.mechanic.world.level.AbstractCustomCropsBlock;
 import net.momirealms.customcrops.api.mechanic.world.level.CustomCropsChunk;
 import net.momirealms.customcrops.api.mechanic.world.level.WorldPot;
+import net.momirealms.customcrops.api.util.LogUtils;
+import org.bukkit.World;
+import org.bukkit.block.Block;
 
 import java.util.Objects;
 
@@ -62,17 +66,21 @@ public class MemoryPot extends AbstractCustomCropsBlock implements WorldPot {
     }
 
     @Override
-    public String getFertilizer() {
+    public Fertilizer getFertilizer() {
         Tag<?> tag = getData("fertilizer");
         if (tag == null) return null;
         return tag.getAsStringTag()
-                .map(StringTag::getValue)
+                .map(strTag -> {
+                    String key = strTag.getValue();
+                    return CustomCropsPlugin.get().getItemManager().getFertilizerByID(key);
+                })
                 .orElse(null);
     }
 
     @Override
-    public void setFertilizer(String fertilizer) {
-        setData("fertilizer", new StringTag("fertilizer", fertilizer));
+    public void setFertilizer(Fertilizer fertilizer) {
+        setData("fertilizer", new StringTag("fertilizer", fertilizer.getKey()));
+        setData("fertilizer-times", new IntTag("fertilizer-times", fertilizer.getTimes()));
     }
 
     @Override
@@ -81,19 +89,38 @@ public class MemoryPot extends AbstractCustomCropsBlock implements WorldPot {
     }
 
     @Override
-    public void setFertilizerTimes(int fertilizerTimes) {
-        setData("fertilizer-times", new IntTag("fertilizer-times", fertilizerTimes));
-    }
-
-    @Override
     public Pot getConfig() {
         return CustomCropsPlugin.get().getItemManager().getPotByID(getKey());
     }
 
     @Override
-    public void tickWater() {
-        if (getConfig().isRainDropAccepted()) {
-
+    public void tickWater(CustomCropsChunk chunk) {
+        Pot pot = getConfig();
+        if (pot == null) {
+            LogUtils.warn("Found a pot without config at " + getLocation() + ". Try removing the data.");
+            CustomCropsPlugin.get().getWorldManager().removePotAt(getLocation());
+            return;
+        }
+        if (pot.isRainDropAccepted()) {
+            SimpleLocation location = getLocation();
+            World world = location.getBukkitWorld();
+            if (world != null) {
+                if (world.hasStorm() || (!world.isClearWeather() && !world.isThundering())) {
+                    double temperature = world.getTemperature(location.getX(), location.getY(), location.getZ());
+                    if (temperature > 0.15 && temperature < 0.85) {
+                        Block highest = world.getHighestBlockAt(location.getX(), location.getZ());
+                        if (highest.getLocation().getY() == location.getY()) {
+                            int previous = getWater();
+                            setWater(Math.min(previous + 1, pot.getStorage()));
+                            if (previous == 0) {
+                                CustomCropsPlugin.get().getScheduler().runTaskSync(() -> {
+                                    CustomCropsPlugin.get().getItemManager().updatePotState(location.getBukkitLocation(), pot, true, getFertilizer());
+                                }, location.getBukkitLocation());
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 

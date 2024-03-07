@@ -97,7 +97,7 @@ public class CWorld implements CustomCropsWorld {
             this.updateSeasonAndDate();
         }
         for (CChunk chunk : loadedChunks.values()) {
-            chunk.arrangeTasks(getWorldSetting());
+            chunk.secondTimer();
         }
     }
 

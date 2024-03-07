@@ -20,15 +20,26 @@ package net.momirealms.customcrops.mechanic.world.block;
 import com.flowpowered.nbt.CompoundMap;
 import com.flowpowered.nbt.IntTag;
 import com.flowpowered.nbt.StringTag;
+import com.flowpowered.nbt.Tag;
 import net.momirealms.customcrops.api.CustomCropsPlugin;
+import net.momirealms.customcrops.api.mechanic.action.ActionTrigger;
+import net.momirealms.customcrops.api.mechanic.condition.Condition;
+import net.momirealms.customcrops.api.mechanic.condition.DeathConditions;
 import net.momirealms.customcrops.api.mechanic.item.Crop;
+import net.momirealms.customcrops.api.mechanic.item.Fertilizer;
 import net.momirealms.customcrops.api.mechanic.item.ItemType;
+import net.momirealms.customcrops.api.mechanic.item.fertilizer.SpeedGrow;
+import net.momirealms.customcrops.api.mechanic.requirement.State;
 import net.momirealms.customcrops.api.mechanic.world.SimpleLocation;
 import net.momirealms.customcrops.api.mechanic.world.level.AbstractCustomCropsBlock;
 import net.momirealms.customcrops.api.mechanic.world.level.CustomCropsChunk;
 import net.momirealms.customcrops.api.mechanic.world.level.WorldCrop;
+import net.momirealms.customcrops.api.mechanic.world.level.WorldPot;
+import net.momirealms.customcrops.api.util.LogUtils;
+import org.bukkit.Location;
 
 import java.util.Objects;
+import java.util.Optional;
 
 public class MemoryCrop extends AbstractCustomCropsBlock implements WorldCrop {
 
@@ -36,6 +47,7 @@ public class MemoryCrop extends AbstractCustomCropsBlock implements WorldCrop {
         super(location, new CompoundMap());
         setData("point", new IntTag("point", point));
         setData("key", new StringTag("key", key));
+        setData("tick", new IntTag("tick", 0));
     }
 
     public MemoryCrop(SimpleLocation location, CompoundMap properties) {
@@ -56,7 +68,6 @@ public class MemoryCrop extends AbstractCustomCropsBlock implements WorldCrop {
 
     @Override
     public void setPoint(int point) {
-        point = Math.min(point, getConfig().getMaxPoints());
         setData("point", new IntTag("point", point));
     }
 
@@ -85,6 +96,91 @@ public class MemoryCrop extends AbstractCustomCropsBlock implements WorldCrop {
 
     @Override
     public void tick(int interval, CustomCropsChunk chunk) {
+        if (interval == 1) {
+            tick(chunk);
+            return;
+        }
+        Tag<?> tag = getData("tick");
+        int tick = 0;
+        if (tag != null) {
+            tick = tag.getAsIntTag().map(IntTag::getValue).orElse(0);
+        }
+        if (++tick >= interval) {
+            setData("tick", new IntTag("tick", 0));
+            tick(chunk);
+        } else {
+            setData("tick", new IntTag("tick", tick));
+        }
+    }
 
+    private void tick(CustomCropsChunk chunk) {
+        Crop crop = getConfig();
+        if (crop == null) {
+            LogUtils.warn("Found a crop without config at " + getLocation() + ". Try removing the data.");
+            CustomCropsPlugin.get().getWorldManager().removeCropAt(getLocation());
+            return;
+        }
+
+        SimpleLocation location = getLocation();
+        Location bukkitLocation = location.getBukkitLocation();
+
+        int previous = getPoint();
+
+        // check death conditions
+        for (DeathConditions deathConditions : crop.getDeathConditions()) {
+            for (Condition condition : deathConditions.getConditions()) {
+                if (condition.isConditionMet(this)) {
+                    CustomCropsPlugin.get().getScheduler().runTaskSyncLater(() -> {
+                        CustomCropsPlugin.get().getWorldManager().removeCropAt(location);
+                        CustomCropsPlugin.get().getItemManager().removeAnythingAt(bukkitLocation);
+                        if (deathConditions.getDeathItem() != null) {
+                            CustomCropsPlugin.get().getItemManager().placeItem(bukkitLocation, deathConditions.getItemCarrier(), deathConditions.getDeathItem());
+                        }
+                    }, bukkitLocation, deathConditions.getDeathDelay());
+                    return;
+                }
+            }
+        }
+
+        // don't check grow conditions if it's already ripe
+        if (previous >= crop.getMaxPoints()) {
+            return;
+        }
+
+        // check grow conditions
+        for (Condition condition : crop.getGrowConditions().getConditions()) {
+            if (!condition.isConditionMet(this)) {
+                return;
+            }
+        }
+
+        // check pot & fertilizer
+        Optional<WorldPot> pot = chunk.getPotAt(location.copy().add(0,-1,0));
+        if (pot.isEmpty()) {
+            return;
+        }
+
+        int point = 1;
+        Fertilizer fertilizer = pot.get().getFertilizer();
+        if (fertilizer instanceof SpeedGrow speedGrow) {
+            point += speedGrow.getPointBonus();
+        }
+
+        int x = Math.min(previous + point, crop.getMaxPoints());
+        setPoint(x);
+        String pre = crop.getStageItemByPoint(previous);
+        String after = crop.getStageItemByPoint(x);
+
+        CustomCropsPlugin.get().getScheduler().runTaskSync(() -> {
+            for (int i = previous + 1; i <= x; i++) {
+                Crop.Stage stage = crop.getStageByPoint(i);
+                if (stage != null) {
+                    stage.trigger(ActionTrigger.GROW, new State(null, null, bukkitLocation));
+                }
+            }
+            if (pre.equals(after)) return;
+            CustomCropsPlugin.get().getItemManager().removeAnythingAt(bukkitLocation);
+            CustomCropsPlugin.get().getItemManager().placeItem(bukkitLocation, crop.getItemCarrier(), after);
+        }, bukkitLocation);
     }
 }

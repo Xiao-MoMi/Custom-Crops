@@ -91,7 +91,7 @@ public class BukkitWorldAdaptor extends AbstractWorldAdaptor {
 
         // init world basic info
         String json = world.getPersistentDataContainer().get(key, PersistentDataType.STRING);
-        WorldInfoData data = json == null ? WorldInfoData.empty() : gson.fromJson(json, WorldInfoData.class);
+        WorldInfoData data = (json == null || json.equals("null")) ? WorldInfoData.empty() : gson.fromJson(json, WorldInfoData.class);
         cWorld.setInfoData(data);
 
         new File(world.getWorldFolder(), "customcrops").mkdir();

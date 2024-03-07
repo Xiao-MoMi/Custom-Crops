@@ -34,8 +34,8 @@ worlds:
       # Season mechanisms
       season:
         enable: true
-        auto-season-change: true
-        season-duration: 28
+        auto-alternation: true
+        duration: 28
       # The smallest tick unit
       min-tick-unit: 300
       # Random tick speed

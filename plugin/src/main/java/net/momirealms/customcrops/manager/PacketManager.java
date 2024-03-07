@@ -22,7 +22,6 @@ import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.PacketContainer;
 import net.momirealms.customcrops.api.CustomCropsPlugin;
-import net.momirealms.customcrops.api.util.LogUtils;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -46,14 +45,11 @@ public class PacketManager {
     }
 
     public void send(Player player, PacketContainer packet) {
-        if (!player.isOnline()) {
-            LogUtils.warn(player.getName() + " not online");
-        }
-        this.plugin.debug("Packet sent: " + packet.getType() + " to " + player.getName());
         this.protocolManager.sendServerPacket(player, packet);
     }
 
     public void send(Player player, PacketContainer... packets) {
+        if (!player.isOnline()) return;
         if (plugin.getVersionManager().isVersionNewerThan1_19_R3()) {
             List<PacketContainer> bundle = new ArrayList<>(Arrays.asList(packets));
             PacketContainer bundlePacket = new PacketContainer(PacketType.Play.Server.BUNDLE);

@@ -17,7 +17,9 @@
 
 package net.momirealms.customcrops.api.mechanic.condition;
 
+import net.momirealms.customcrops.api.mechanic.world.CustomCropsBlock;
+
 public interface Condition {
 
-    boolean isConditionMet(CropState cropState);
+    boolean isConditionMet(CustomCropsBlock block);
 }

@@ -18,14 +18,14 @@
 package net.momirealms.customcrops.mechanic.condition;
 
 import net.momirealms.customcrops.api.mechanic.condition.Condition;
-import net.momirealms.customcrops.api.mechanic.condition.CropState;
+import net.momirealms.customcrops.api.mechanic.world.CustomCropsBlock;
 
 public class EmptyCondition implements Condition {
 
     public static EmptyCondition instance = new EmptyCondition();
 
     @Override
-    public boolean isConditionMet(CropState cropState) {
+    public boolean isConditionMet(CustomCropsBlock block) {
         return true;
     }
 }

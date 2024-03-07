@@ -242,6 +242,18 @@ tomato:
           type: unsuitable_season
           value:
             - Winter
+    crow_attack:
+      # Crop would be removed if "model" is not set
+      # model: {0}crop_stage_death
+      conditions:
+        condition_1:
+          type: crow_attack
+          value:
+            chance: 0.005
+            fly-model: {0}crow_fly
+            stand-model: {0}crow_stand
+      # delay 150 ticks for the crop to be removed
+      delay: 150
   # Custom bone meal
   custom-bone-meal:
     bone_meal_1:

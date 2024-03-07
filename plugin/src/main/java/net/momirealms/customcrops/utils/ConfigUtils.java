@@ -67,9 +67,9 @@ public class ConfigUtils {
                 getRandomTickModeByString(section.getString("sprinkler.mode")),
                 section.getInt("sprinkler.tick-interval", 2),
                 section.getBoolean("offline-grow", false),
-                section.getBoolean("season", false),
-                section.getBoolean("auto-season-change", false),
-                section.getInt("season-duration", 28),
+                section.getBoolean("season.enable", false),
+                section.getBoolean("season.auto-alternation", false),
+                section.getInt("season.duration", 28),
                 section.getInt("crop.max-per-chunk", 128),
                 section.getInt("pot.max-per-chunk", -1),
                 section.getInt("sprinkler.max-per-chunk", 32),
@@ -342,7 +342,8 @@ public class ConfigUtils {
                     DeathConditions deathConditions = new DeathConditions(
                             getConditions(inner.getConfigurationSection("conditions")),
                             inner.getString("model"),
-                            Optional.ofNullable(inner.getString("type")).map(ItemCarrier::valueOf).orElse(original)
+                            Optional.ofNullable(inner.getString("type")).map(ItemCarrier::valueOf).orElse(original),
+                            inner.getInt("delay", 0)
                     );
                     conditions.add(deathConditions);
                 }

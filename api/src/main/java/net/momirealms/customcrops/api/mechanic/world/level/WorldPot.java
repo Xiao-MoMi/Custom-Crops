@@ -17,6 +17,7 @@
 
 package net.momirealms.customcrops.api.mechanic.world.level;
 
+import net.momirealms.customcrops.api.mechanic.item.Fertilizer;
 import net.momirealms.customcrops.api.mechanic.item.Pot;
 import net.momirealms.customcrops.api.mechanic.world.CustomCropsBlock;
 
@@ -28,15 +29,13 @@ public interface WorldPot extends CustomCropsBlock {
 
     void setWater(int water);
 
-    String getFertilizer();
+    Fertilizer getFertilizer();
 
-    void setFertilizer(String fertilizer);
+    void setFertilizer(Fertilizer fertilizer);
 
     int getFertilizerTimes();
 
-    void setFertilizerTimes(int fertilizerTimes);
-
     Pot getConfig();
 
-    void tickWater();
+    void tickWater(CustomCropsChunk chunk);
 }

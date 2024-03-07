@@ -35,6 +35,10 @@ public abstract class VersionManager {
         return instance.isVersionNewerThan1_19_R3();
     }
 
+    public static boolean isHigherThan1_19_R2() {
+        return instance.isVersionNewerThan1_19_R2();
+    }
+
     public abstract boolean hasRegionScheduler();
 
     public static boolean folia() {

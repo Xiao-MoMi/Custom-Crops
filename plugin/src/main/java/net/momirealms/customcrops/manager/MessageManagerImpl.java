@@ -66,6 +66,7 @@ public class MessageManagerImpl extends MessageManager implements Reloadable {
 
     @Override
     public String getSeasonTranslation(Season season) {
+        if (season == null) return noSeason;
         return switch (season) {
             case SPRING -> spring;
             case SUMMER -> summer;

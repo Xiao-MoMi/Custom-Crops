@@ -395,12 +395,9 @@ public class ActionManagerImpl implements ActionManager {
                     double bonus = 0;
                     Optional<WorldPot> pot = plugin.getWorldManager().getPotAt(SimpleLocation.of(state.getLocation().clone().subtract(0,1,0)));
                     if (pot.isPresent()) {
-                        String fertilizerKey = pot.get().getFertilizer();
-                        if (fertilizerKey != null) {
-                            Fertilizer fertilizer = plugin.getItemManager().getFertilizerByID(fertilizerKey);
-                            if (fertilizer instanceof Variation variation) {
-                                bonus += variation.getChanceBonus();
-                            }
+                        Fertilizer fertilizer = pot.get().getFertilizer();
+                        if (fertilizer instanceof Variation variation) {
+                            bonus += variation.getChanceBonus();
                         }
                     }
                     for (VariationCrop variationCrop : variations) {
@@ -439,14 +436,11 @@ public class ActionManagerImpl implements ActionManager {
                     int random = ThreadLocalRandom.current().nextInt(min, max + 1);
                     Optional<WorldPot> pot = plugin.getWorldManager().getPotAt(SimpleLocation.of(state.getLocation().clone().subtract(0,1,0)));
                     if (pot.isPresent()) {
-                        String fertilizerKey = pot.get().getFertilizer();
-                        if (fertilizerKey != null) {
-                            Fertilizer fertilizer = plugin.getItemManager().getFertilizerByID(fertilizerKey);
-                            if (fertilizer instanceof YieldIncrease yieldIncrease) {
-                                random += yieldIncrease.getAmountBonus();
-                            } else if (fertilizer instanceof QualityCrop qualityCrop && Math.random() < qualityCrop.getChance()) {
-                                ratio = qualityCrop.getRatio();
-                            }
+                        Fertilizer fertilizer = pot.get().getFertilizer();
+                        if (fertilizer instanceof YieldIncrease yieldIncrease) {
+                            random += yieldIncrease.getAmountBonus();
+                        } else if (fertilizer instanceof QualityCrop qualityCrop && Math.random() < qualityCrop.getChance()) {
+                            ratio = qualityCrop.getRatio();
                         }
                     }
                     for (int i = 0; i < random; i++) {
@@ -488,12 +482,9 @@ public class ActionManagerImpl implements ActionManager {
                         if (!ignoreFertilizer) {
                             Optional<WorldPot> pot = plugin.getWorldManager().getPotAt(SimpleLocation.of(state.getLocation().clone().subtract(0,1,0)));
                             if (pot.isPresent()) {
-                                String fertilizerKey = pot.get().getFertilizer();
-                                if (fertilizerKey != null) {
-                                    Fertilizer fertilizer = plugin.getItemManager().getFertilizerByID(fertilizerKey);
-                                    if (fertilizer instanceof YieldIncrease yieldIncrease) {
-                                        random += yieldIncrease.getAmountBonus();
-                                    }
+                                Fertilizer fertilizer = pot.get().getFertilizer();
+                                if (fertilizer instanceof YieldIncrease yieldIncrease) {
+                                    random += yieldIncrease.getAmountBonus();
                                 }
                             }
                         }

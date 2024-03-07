@@ -106,7 +106,7 @@ public interface ItemManager extends Reloadable {
 
     Crop.Stage getCropStageByStageID(String id);
 
-    void updatePotState(Location location, Pot pot, boolean hasWater, String fertilizer);
+    void updatePotState(Location location, Pot pot, boolean hasWater, Fertilizer fertilizer);
 
     @NotNull
     Collection<Location> getPotInRange(Location baseLocation, int width, int length, float yaw, String potID);

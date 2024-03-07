@@ -98,6 +98,7 @@ public class CustomCropsPluginImpl extends CustomCropsPlugin {
         this.placeholderManager = new PlaceholderManagerImpl(this);
         this.commandManager.init();
         this.antiGriefLib.init();
+        this.integrationManager.init();
         this.disableNBTAPILogs();
         this.reload();
         this.worldManager.init();

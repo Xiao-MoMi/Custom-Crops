@@ -37,6 +37,7 @@ public class WorldInfoData {
     }
 
     public Season getSeason() {
+        if (season == null) season = Season.SPRING;
         return season;
     }
 
@@ -50,5 +51,13 @@ public class WorldInfoData {
 
     public void setDate(int date) {
         this.date = date;
+    }
+
+    @Override
+    public String toString() {
+        return "WorldInfoData{" +
+                "season=" + season +
+                ", date=" + date +
+                '}';
     }
 }

@@ -119,6 +119,7 @@ public class RequirementManagerImpl implements RequirementManager {
         this.registerInListRequirement();
         this.registerItemInHandRequirement();
         this.registerSneakRequirement();
+        this.registerTemperatureRequirement();
     }
 
     @NotNull
@@ -211,6 +212,21 @@ public class RequirementManagerImpl implements RequirementManager {
                 int y = state.getLocation().getBlockY();
                 for (Pair<Integer, Integer> pair : timePairs)
                     if (y >= pair.left() && y <= pair.right())
+                        return true;
+                if (advanced) triggerActions(actions, state);
+                return false;
+            };
+        });
+    }
+
+    private void registerTemperatureRequirement() {
+        registerRequirement("temperature", (args, actions, advanced) -> {
+            List<Pair<Integer, Integer>> tempPairs = ConfigUtils.stringListArgs(args).stream().map(it -> ConfigUtils.splitStringIntegerArgs(it, "~")).toList();
+            return state -> {
+                Location location = state.getLocation();
+                double temp = location.getWorld().getTemperature(location.getBlockX(), location.getBlockY(), location.getBlockZ());
+                for (Pair<Integer, Integer> pair : tempPairs)
+                    if (temp >= pair.left() && temp <= pair.right())
                         return true;
                 if (advanced) triggerActions(actions, state);
                 return false;
@@ -349,7 +365,8 @@ public class RequirementManagerImpl implements RequirementManager {
             return state -> {
                 String currentWeather;
                 World world = state.getLocation().getWorld();
-                if (world.isThundering()) currentWeather = "thunder";
+                if (world.hasStorm()) currentWeather = "rainstorm";
+                else if (world.isThundering()) currentWeather = "thunder";
                 else if (world.isClearWeather()) currentWeather = "clear";
                 else currentWeather = "rain";
                 for (String weather : weathers)
@@ -437,7 +454,7 @@ public class RequirementManagerImpl implements RequirementManager {
 
     private void registerSeasonRequirement() {
         registerRequirement("season", (args, actions, advanced) -> {
-            List<String> seasons = ConfigUtils.stringListArgs(args);
+            HashSet<String> seasons = new HashSet<>(ConfigUtils.stringListArgs(args).stream().map(str -> str.toUpperCase(Locale.ENGLISH)).toList());
             return state -> {
                 Location location = state.getLocation();
                 SeasonInterface seasonInterface = plugin.getIntegrationManager().getSeasonInterface();
@@ -716,7 +733,7 @@ public class RequirementManagerImpl implements RequirementManager {
         registerRequirement("in-list", (args, actions, advanced) -> {
             if (args instanceof ConfigurationSection section) {
                 String papi = section.getString("papi", "");
-                List<String> values = ConfigUtils.stringListArgs(section.get("values"));
+                HashSet<String> values = new HashSet<>(ConfigUtils.stringListArgs(section.get("values")));
                 return state -> {
                     String p1 = papi.startsWith("%") ? ParseUtils.setPlaceholders(state.getPlayer(), papi) : papi;
                     if (values.contains(p1)) return true;
@@ -731,7 +748,7 @@ public class RequirementManagerImpl implements RequirementManager {
         registerRequirement("!in-list", (args, actions, advanced) -> {
             if (args instanceof ConfigurationSection section) {
                 String papi = section.getString("papi", "");
-                List<String> values = ConfigUtils.stringListArgs(section.get("values"));
+                HashSet<String> values = new HashSet<>(ConfigUtils.stringListArgs(section.get("values")));
                 return state -> {
                     String p1 = papi.startsWith("%") ? ParseUtils.setPlaceholders(state.getPlayer(), papi) : papi;
                     if (!values.contains(p1)) return true;

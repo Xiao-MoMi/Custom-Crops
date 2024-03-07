@@ -27,6 +27,7 @@ import net.momirealms.customcrops.api.manager.ItemManager;
 import net.momirealms.customcrops.api.manager.RequirementManager;
 import net.momirealms.customcrops.api.mechanic.action.ActionTrigger;
 import net.momirealms.customcrops.api.mechanic.condition.Conditions;
+import net.momirealms.customcrops.api.mechanic.condition.DeathConditions;
 import net.momirealms.customcrops.api.mechanic.item.*;
 import net.momirealms.customcrops.api.mechanic.item.water.PassiveFillMethod;
 import net.momirealms.customcrops.api.mechanic.item.water.PositiveFillMethod;
@@ -94,6 +95,7 @@ public class ItemManagerImpl implements ItemManager {
     private final HashMap<String, Fertilizer> id2FertilizerMap;
     private final HashMap<String, Fertilizer> item2FertilizerMap;
     private final AntiGriefLib antiGrief;
+    private final HashSet<String> deadCrops;
 
     public ItemManagerImpl(CustomCropsPlugin plugin, AntiGriefLib antiGriefLib) {
         this.plugin = plugin;
@@ -113,6 +115,7 @@ public class ItemManagerImpl implements ItemManager {
         this.id2FertilizerMap = new HashMap<>();
         this.item2FertilizerMap = new HashMap<>();
         this.stage2CropStageMap = new HashMap<>();
+        this.deadCrops = new HashSet<>();
         if (Bukkit.getPluginManager().isPluginEnabled("Oraxen")) {
             listener = new OraxenListener(this);
             customProvider = new OraxenProvider();
@@ -157,6 +160,7 @@ public class ItemManagerImpl implements ItemManager {
         this.stage2CropStageMap.clear();
         this.id2FertilizerMap.clear();
         this.item2FertilizerMap.clear();
+        this.deadCrops.clear();
         CFunction.resetID();
     }
 
@@ -479,10 +483,102 @@ public class ItemManagerImpl implements ItemManager {
                 }
             }
         }
+        this.loadDeadCrops();
         if (ConfigManager.enableGreenhouse())
             this.loadGreenhouse();
         if (ConfigManager.enableScarecrow())
             this.loadScarecrow();
+    }
+
+    private void loadDeadCrops() {
+        // register functions for dead crops
+        // or just keep it empty and let ItemsAdder/Oraxen handle the events
+        for (String id : deadCrops) {
+            this.registerItemFunction(id, FunctionTrigger.BE_INTERACTED,
+                    new CFunction(conditionWrapper -> {
+                        if (!(conditionWrapper instanceof InteractFurnitureWrapper furnitureWrapper)) {
+                            return FunctionResult.PASS;
+                        }
+                        Player player = furnitureWrapper.getPlayer();
+                        Location cropLocation = furnitureWrapper.getLocation();
+                        ItemStack itemInHand = furnitureWrapper.getItemInHand();
+                        String itemID = getItemID(itemInHand);
+                        int itemAmount = itemInHand.getAmount();
+                        Location potLocation = cropLocation.clone().subtract(0,1,0);
+                        Pot pot = getPotByBlock(potLocation.getBlock());
+                        State potState = new State(player, itemInHand, potLocation);
+                        // check pot use requirements
+                        if (pot != null && RequirementManager.isRequirementMet(potState, pot.getUseRequirements())) {
+                            // get water in pot
+                            int waterInPot = plugin.getWorldManager().getPotAt(SimpleLocation.of(potLocation)).map(WorldPot::getWater).orElse(0);
+                            // water the pot
+                            for (PassiveFillMethod method : pot.getPassiveFillMethods()) {
+                                if (method.getUsed().equals(itemID) && itemAmount >= method.getUsedAmount()) {
+                                    if (method.canFill(potState)) {
+                                        if (waterInPot < pot.getStorage()) {
+                                            if (player.getGameMode() != GameMode.CREATIVE) {
+                                                itemInHand.setAmount(itemAmount - method.getUsedAmount());
+                                                if (method.getReturned() != null) {
+                                                    ItemStack returned = getItemStack(player, method.getReturned());
+                                                    ItemUtils.giveItem(player, returned, method.getReturnedAmount());
+                                                }
+                                            }
+                                            method.trigger(potState);
+                                            pot.trigger(ActionTrigger.ADD_WATER, potState);
+                                            plugin.getWorldManager().addWaterToPot(pot, SimpleLocation.of(potLocation), method.getAmount());
+                                        } else {
+                                            pot.trigger(ActionTrigger.FULL, potState);
+                                        }
+                                    }
+                                    return FunctionResult.RETURN;
+                                }
+                            }
+                        }
+                        return FunctionResult.PASS;
+                    }, CFunction.FunctionPriority.NORMAL),
+                    new CFunction(conditionWrapper -> {
+                        if (!(conditionWrapper instanceof InteractBlockWrapper blockWrapper)) {
+                            return FunctionResult.PASS;
+                        }
+                        Player player = blockWrapper.getPlayer();
+                        Location cropLocation = blockWrapper.getLocation();
+                        ItemStack itemInHand = blockWrapper.getItemInHand();
+                        String itemID = getItemID(itemInHand);
+                        int itemAmount = itemInHand.getAmount();
+                        Location potLocation = cropLocation.clone().subtract(0,1,0);
+                        Pot pot = getPotByBlock(potLocation.getBlock());
+                        State potState = new State(player, itemInHand, potLocation);
+                        // check pot use requirements
+                        if (pot != null && RequirementManager.isRequirementMet(potState, pot.getUseRequirements())) {
+                            // get water in pot
+                            int waterInPot = plugin.getWorldManager().getPotAt(SimpleLocation.of(potLocation)).map(WorldPot::getWater).orElse(0);
+                            // water the pot
+                            for (PassiveFillMethod method : pot.getPassiveFillMethods()) {
+                                if (method.getUsed().equals(itemID) && itemAmount >= method.getUsedAmount()) {
+                                    if (method.canFill(potState)) {
+                                        if (waterInPot < pot.getStorage()) {
+                                            if (player.getGameMode() != GameMode.CREATIVE) {
+                                                itemInHand.setAmount(itemAmount - method.getUsedAmount());
+                                                if (method.getReturned() != null) {
+                                                    ItemStack returned = getItemStack(player, method.getReturned());
+                                                    ItemUtils.giveItem(player, returned, method.getReturnedAmount());
+                                                }
+                                            }
+                                            method.trigger(potState);
+                                            pot.trigger(ActionTrigger.ADD_WATER, potState);
+                                            plugin.getWorldManager().addWaterToPot(pot, SimpleLocation.of(potLocation), method.getAmount());
+                                        } else {
+                                            pot.trigger(ActionTrigger.FULL, potState);
+                                        }
+                                    }
+                                    return FunctionResult.RETURN;
+                                }
+                            }
+                        }
+                        return FunctionResult.PASS;
+                    }, CFunction.FunctionPriority.NORMAL)
+            );
+        }
     }
 
     private void loadGreenhouse() {
@@ -621,8 +717,9 @@ public class ItemManagerImpl implements ItemManager {
                         return FunctionResult.PASS;
                     }
                     // is a crop
-                    Crop crop = getCropByBlock(blockWrapper.getClickedBlock());
-                    if (crop == null) {
+                    String id = customProvider.getBlockID(blockWrapper.getClickedBlock());
+                    Crop crop = getCropByStageID(id);
+                    if (crop == null && !deadCrops.contains(id)) {
                         return FunctionResult.PASS;
                     }
                     // get pot block
@@ -642,7 +739,7 @@ public class ItemManagerImpl implements ItemManager {
                         return FunctionResult.RETURN;
                     }
                     // check crop interact requirements
-                    if (!RequirementManager.isRequirementMet(state, crop.getInteractRequirements())) {
+                    if (crop != null && !RequirementManager.isRequirementMet(state, crop.getInteractRequirements())) {
                         return FunctionResult.RETURN;
                     }
                     // check pot use requirements
@@ -679,8 +776,9 @@ public class ItemManagerImpl implements ItemManager {
                         return FunctionResult.PASS;
                     }
                     // is a crop
-                    Crop crop = getCropByStageID(furnitureWrapper.getID());
-                    if (crop == null) {
+                    String id = furnitureWrapper.getID();
+                    Crop crop = getCropByStageID(id);
+                    if (crop == null && !deadCrops.contains(id)) {
                         return FunctionResult.PASS;
                     }
                     // get pot block
@@ -700,7 +798,7 @@ public class ItemManagerImpl implements ItemManager {
                         return FunctionResult.RETURN;
                     }
                     // check crop interact requirements
-                    if (!RequirementManager.isRequirementMet(state, crop.getInteractRequirements())) {
+                    if (crop != null && !RequirementManager.isRequirementMet(state, crop.getInteractRequirements())) {
                         return FunctionResult.RETURN;
                     }
                     // check pot use requirements
@@ -863,6 +961,53 @@ public class ItemManagerImpl implements ItemManager {
                     }
                     return FunctionResult.PASS;
                 }, CFunction.FunctionPriority.LOW)
+        );
+
+        this.registerItemFunction(itemID, FunctionTrigger.INTERACT_AIR,
+                new CFunction(conditionWrapper -> {
+                    if (!(conditionWrapper instanceof InteractWrapper interactWrapper)) {
+                        return FunctionResult.PASS;
+                    }
+                    if (wateringCan.isInfinite()) {
+                        return FunctionResult.PASS;
+                    }
+                    // get the clicked block
+                    Block targetBlock = interactWrapper.getPlayer().getTargetBlockExact(5, FluidCollisionMode.ALWAYS);
+                    if (targetBlock == null)
+                        return FunctionResult.PASS;
+                    // check watering-can requirements
+                    State state = new State(interactWrapper.getPlayer(), interactWrapper.getItemInHand(), targetBlock.getLocation());
+                    if (!RequirementManager.isRequirementMet(state, wateringCan.getRequirements())) {
+                        return FunctionResult.RETURN;
+                    }
+                    // get the exact block id
+                    String blockID = customProvider.getBlockID(targetBlock);
+                    if (targetBlock.getBlockData() instanceof Waterlogged waterlogged && waterlogged.isWaterlogged()) {
+                        blockID = "WATER";
+                    }
+                    int water = wateringCan.getCurrentWater(interactWrapper.getItemInHand());
+                    PositiveFillMethod[] methods = wateringCan.getPositiveFillMethods();
+                    for (PositiveFillMethod method : methods) {
+                        if (method.getId().equals(blockID)) {
+                            if (method.canFill(state)) {
+                                if (water < wateringCan.getStorage()) {
+                                    water += method.getAmount();
+                                    water = Math.min(water, wateringCan.getStorage());
+                                    state.setArg("{storage}", String.valueOf(wateringCan.getStorage()));
+                                    state.setArg("{current}", String.valueOf(water));
+                                    state.setArg("{water_bar}", wateringCan.getWaterBar() == null ? "" : wateringCan.getWaterBar().getWaterBar(water, wateringCan.getStorage()));
+                                    wateringCan.updateItem(interactWrapper.getPlayer(), interactWrapper.getItemInHand(), water, state.getArgs());
+                                    wateringCan.trigger(ActionTrigger.ADD_WATER, state);
+                                    method.trigger(state);
+                                } else {
+                                    wateringCan.trigger(ActionTrigger.FULL, state);
+                                }
+                            }
+                            return FunctionResult.RETURN;
+                        }
+                    }
+                    return FunctionResult.PASS;
+                }, CFunction.FunctionPriority.NORMAL)
         );
     }
 
@@ -1245,7 +1390,7 @@ public class ItemManagerImpl implements ItemManager {
 
                     // add data
                     plugin.getWorldManager().addFertilizerToPot(pot, fertilizer, simpleLocation);
-                    updatePotState(location, pot, hasWater, fertilizer.getKey());
+                    updatePotState(location, pot, hasWater, fertilizer);
                     if (interactBlockWrapper.getPlayer().getGameMode() != GameMode.CREATIVE) {
                         itemInHand.setAmount(itemInHand.getAmount() - 1);
                     }
@@ -1259,8 +1404,9 @@ public class ItemManagerImpl implements ItemManager {
                     }
                     // is a crop
                     Block clicked = interactBlockWrapper.getClickedBlock();
-                    Crop crop = getCropByBlock(clicked);
-                    if (crop == null) {
+                    String id = customProvider.getBlockID(clicked);
+                    Crop crop = getCropByStageID(id);
+                    if (crop == null && !deadCrops.contains(id)) {
                         return FunctionResult.PASS;
                     }
                     ItemStack itemInHand = interactBlockWrapper.getItemInHand();
@@ -1305,7 +1451,7 @@ public class ItemManagerImpl implements ItemManager {
 
                     // add data
                     plugin.getWorldManager().addFertilizerToPot(pot, fertilizer, simpleLocation);
-                    updatePotState(potLocation, pot, hasWater, fertilizer.getKey());
+                    updatePotState(potLocation, pot, hasWater, fertilizer);
                     if (interactBlockWrapper.getPlayer().getGameMode() != GameMode.CREATIVE) {
                         itemInHand.setAmount(itemInHand.getAmount() - 1);
                     }
@@ -1318,8 +1464,9 @@ public class ItemManagerImpl implements ItemManager {
                         return FunctionResult.PASS;
                     }
                     // is a crop
-                    Crop crop = getCropByStageID(furnitureWrapper.getID());
-                    if (crop == null) {
+                    String id = furnitureWrapper.getID();
+                    Crop crop = getCropByStageID(id);
+                    if (crop == null && !deadCrops.contains(id)) {
                         return FunctionResult.PASS;
                     }
                     ItemStack itemInHand = furnitureWrapper.getItemInHand();
@@ -1364,7 +1511,7 @@ public class ItemManagerImpl implements ItemManager {
 
                     // add data
                     plugin.getWorldManager().addFertilizerToPot(pot, fertilizer, simpleLocation);
-                    updatePotState(potLocation, pot, hasWater, fertilizer.getKey());
+                    updatePotState(potLocation, pot, hasWater, fertilizer);
                     if (furnitureWrapper.getPlayer().getGameMode() != GameMode.CREATIVE) {
                         itemInHand.setAmount(itemInHand.getAmount() - 1);
                     }
@@ -1408,6 +1555,12 @@ public class ItemManagerImpl implements ItemManager {
         if (!this.registerCrop(crop)) {
             LogUtils.warn("Failed to register new crop: " + key + " due to duplicated entries.");
             return;
+        }
+
+        for (DeathConditions deathConditions : crop.getDeathConditions()) {
+            if (deathConditions.getDeathItem() != null) {
+                deadCrops.add(deathConditions.getDeathItem());
+            }
         }
 
         this.registerItemFunction(crop.getSeedItemID(), FunctionTrigger.INTERACT_AT,
@@ -1758,6 +1911,7 @@ public class ItemManagerImpl implements ItemManager {
                         }
                         Location cropLocation = location.clone().add(0,1,0);
                         String cropStageID = customProvider.getSomethingAt(cropLocation);
+                        // remove crops
                         Crop.Stage stage = stage2CropStageMap.get(cropStageID);
                         if (stage != null) {
                             // if crops are above, check the break requirements for crops
@@ -1792,6 +1946,10 @@ public class ItemManagerImpl implements ItemManager {
                                 LogUtils.warn("Invalid crop stage: " + cropStageID);
                                 customProvider.removeAnythingAt(cropLocation);
                             }
+                        }
+                        // remove dead crops
+                        if (deadCrops.contains(cropStageID)) {
+                            customProvider.removeAnythingAt(cropLocation);
                         }
 
                         SimpleLocation simpleLocation = SimpleLocation.of(location);
@@ -2029,17 +2187,16 @@ public class ItemManagerImpl implements ItemManager {
     }
 
     @Override
-    public void updatePotState(Location location, Pot pot, boolean hasWater, String fertilizer) {
-        FertilizerType type = null;
-        if (fertilizer != null) {
-            Fertilizer fer = getFertilizerByID(fertilizer);
-            if (fer != null)
-                type = fer.getFertilizerType();
-            else {
-                LogUtils.warn("Invalid fertilizer id: " + fertilizer);
-            }
-        }
-        this.customProvider.placeBlock(location, pot.getBlockState(hasWater, type));
+    public void updatePotState(Location location, Pot pot, boolean hasWater, Fertilizer fertilizer) {
+        this.customProvider.placeBlock(
+                location,
+                pot.getBlockState(
+                        hasWater,
+                        Optional.ofNullable(fertilizer)
+                                .map(Fertilizer::getFertilizerType)
+                                .orElse(null)
+                )
+        );
     }
 
     @NotNull
