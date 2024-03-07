@@ -26,17 +26,14 @@ public class WorldInfoData {
     private Season season;
     @SerializedName("date")
     private int date;
-    @SerializedName("alive")
-    private long lastAliveTime;
 
-    public WorldInfoData(Season season, int date, long lastAliveTime) {
+    public WorldInfoData(Season season, int date) {
         this.season = season;
         this.date = date;
-        this.lastAliveTime = lastAliveTime;
     }
 
     public static WorldInfoData empty() {
-        return new WorldInfoData(Season.SPRING, 1, System.currentTimeMillis());
+        return new WorldInfoData(Season.SPRING, 1);
     }
 
     public Season getSeason() {
@@ -53,13 +50,5 @@ public class WorldInfoData {
 
     public void setDate(int date) {
         this.date = date;
-    }
-
-    public long getLastAliveTime() {
-        return lastAliveTime;
-    }
-
-    public void setLastAliveTime(long lastAliveTime) {
-        this.lastAliveTime = lastAliveTime;
     }
 }

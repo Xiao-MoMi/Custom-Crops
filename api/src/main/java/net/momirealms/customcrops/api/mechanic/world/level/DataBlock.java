@@ -15,25 +15,19 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.momirealms.customcrops.api.common.property;
+package net.momirealms.customcrops.api.mechanic.world.level;
 
-import net.momirealms.customcrops.api.common.Property;
+import com.flowpowered.nbt.Tag;
+import net.momirealms.customcrops.api.mechanic.world.SimpleLocation;
+import net.momirealms.customcrops.api.mechanic.world.SynchronizedCompoundMap;
 
-public class SimpleProperty<T> implements Property<T> {
+public interface DataBlock {
 
-    private T value;
+    void setData(String key, Tag<?> tag);
 
-    public SimpleProperty(T value) {
-        this.value = value;
-    }
+    Tag<?> getData(String key);
 
-    @Override
-    public T get() {
-        return value;
-    }
+    SynchronizedCompoundMap getCompoundMap();
 
-    @Override
-    public void set(T value) {
-        this.value = value;
-    }
+    SimpleLocation getLocation();
 }

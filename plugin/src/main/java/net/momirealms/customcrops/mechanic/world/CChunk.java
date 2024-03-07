@@ -19,10 +19,7 @@ package net.momirealms.customcrops.mechanic.world;
 
 import net.momirealms.customcrops.api.CustomCropsPlugin;
 import net.momirealms.customcrops.api.mechanic.action.ActionTrigger;
-import net.momirealms.customcrops.api.mechanic.item.Crop;
-import net.momirealms.customcrops.api.mechanic.item.Fertilizer;
-import net.momirealms.customcrops.api.mechanic.item.Pot;
-import net.momirealms.customcrops.api.mechanic.item.Sprinkler;
+import net.momirealms.customcrops.api.mechanic.item.*;
 import net.momirealms.customcrops.api.mechanic.requirement.State;
 import net.momirealms.customcrops.api.mechanic.world.ChunkCoordinate;
 import net.momirealms.customcrops.api.mechanic.world.ChunkPos;
@@ -113,7 +110,14 @@ public class CChunk implements CustomCropsChunk {
         while (!queue.isEmpty() && queue.peek().getTime() <= loadedSeconds) {
             TickTask task = queue.poll();
             if (task != null) {
+                ChunkPos pos = task.getChunkPos();
+                CSection section = loadedSections.get(pos.getSectionID());
+                if (section != null) {
+                    CustomCropsBlock block = section.getBlockAt(pos);
+                    if (block != null && block.getType() == task.getType()) {
 
+                    }
+                }
             }
         }
 
@@ -164,7 +168,31 @@ public class CChunk implements CustomCropsChunk {
 
     public void arrangeTasks(WorldSetting setting) {
         int interval = setting.getMinTickUnit();
-
+        ThreadLocalRandom random = ThreadLocalRandom.current();
+        for (CustomCropsSection section : getSections()) {
+            for (Map.Entry<ChunkPos, CustomCropsBlock> entry : section.getBlockMap().entrySet()) {
+                ItemType type = entry.getValue().getType();
+                switch (type) {
+                    case CROP -> {
+                        if (setting.randomTickCrop()) continue;
+                    }
+                    case POT -> {
+                        if (setting.randomTickPot()) continue;
+                    }
+                    case SPRINKLER -> {
+                        if (setting.randomTickSprinkler()) continue;
+                    }
+                    case SCARECROW, GREENHOUSE -> {
+                        continue;
+                    }
+                }
+                this.queue.add(new TickTask(
+                        random.nextInt(0, interval),
+                        entry.getKey(),
+                        type
+                ));
+            }
+        }
     }
 
     @Override

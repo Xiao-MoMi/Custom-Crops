@@ -34,8 +34,8 @@ public class MemoryCrop extends AbstractCustomCropsBlock implements WorldCrop {
 
     public MemoryCrop(SimpleLocation location, String key, int point) {
         super(location, new CompoundMap());
-        setProperty("point", new IntTag("point", point));
-        setProperty("key", new StringTag("key", key));
+        setData("point", new IntTag("point", point));
+        setData("key", new StringTag("key", key));
     }
 
     public MemoryCrop(SimpleLocation location, CompoundMap properties) {
@@ -44,20 +44,20 @@ public class MemoryCrop extends AbstractCustomCropsBlock implements WorldCrop {
 
     @Override
     public String getKey() {
-        return getProperty("key").getAsStringTag()
+        return getData("key").getAsStringTag()
                 .map(StringTag::getValue)
                 .orElse("");
     }
 
     @Override
     public int getPoint() {
-        return getProperty("point").getAsIntTag().map(IntTag::getValue).orElse(0);
+        return getData("point").getAsIntTag().map(IntTag::getValue).orElse(0);
     }
 
     @Override
     public void setPoint(int point) {
         point = Math.min(point, getConfig().getMaxPoints());
-        setProperty("point", new IntTag("point", point));
+        setData("point", new IntTag("point", point));
     }
 
     @Override

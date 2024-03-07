@@ -20,32 +20,34 @@ package net.momirealms.customcrops.api.mechanic.world.level;
 import com.flowpowered.nbt.CompoundMap;
 import com.flowpowered.nbt.Tag;
 import net.momirealms.customcrops.api.mechanic.world.SimpleLocation;
+import net.momirealms.customcrops.api.mechanic.world.SynchronizedCompoundMap;
 
-public class AbstractCustomCropsBlock implements PropertyItem {
+public class AbstractCustomCropsBlock implements DataBlock {
 
     private final SimpleLocation location;
-    private final CompoundMap compoundMap;
+    private final SynchronizedCompoundMap compoundMap;
 
     public AbstractCustomCropsBlock(SimpleLocation location, CompoundMap compoundMap) {
-        this.compoundMap = compoundMap;
+        this.compoundMap = new SynchronizedCompoundMap(compoundMap);
         this.location = location;
     }
 
     @Override
-    public void setProperty(String key, Tag<?> tag) {
+    public void setData(String key, Tag<?> tag) {
         compoundMap.put(key, tag);
     }
 
     @Override
-    public Tag<?> getProperty(String name) {
+    public Tag<?> getData(String name) {
         return compoundMap.get(name);
     }
 
     @Override
-    public CompoundMap getCompoundMap() {
+    public SynchronizedCompoundMap getCompoundMap() {
         return compoundMap;
     }
 
+    @Override
     public SimpleLocation getLocation() {
         return location;
     }

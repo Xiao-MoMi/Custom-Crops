@@ -17,6 +17,7 @@
 
 package net.momirealms.customcrops.scheduler.task;
 
+import net.momirealms.customcrops.api.mechanic.item.ItemType;
 import net.momirealms.customcrops.api.mechanic.world.ChunkPos;
 import org.jetbrains.annotations.NotNull;
 
@@ -25,11 +26,13 @@ public class TickTask implements Comparable<TickTask> {
     private static int taskID;
     private final int time;
     private final ChunkPos chunkPos;
+    private final ItemType type;
     private final int id;
 
-    public TickTask(int time, ChunkPos chunkPos) {
+    public TickTask(int time, ChunkPos chunkPos, ItemType type) {
         this.time = time;
         this.chunkPos = chunkPos;
+        this.type = type;
         this.id = taskID++;
     }
 
@@ -39,6 +42,10 @@ public class TickTask implements Comparable<TickTask> {
 
     public int getTime() {
         return time;
+    }
+
+    public ItemType getType() {
+        return type;
     }
 
     @Override

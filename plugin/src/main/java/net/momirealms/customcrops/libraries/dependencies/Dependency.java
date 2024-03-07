@@ -238,7 +238,7 @@ public enum Dependency {
             "2.10.1",
             null,
             "gson"
-    ),;
+    );
 
     private final String mavenRepoPath;
     private final String version;

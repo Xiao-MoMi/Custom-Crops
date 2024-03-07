@@ -39,31 +39,31 @@ public class MemoryPot extends AbstractCustomCropsBlock implements WorldPot {
 
     public MemoryPot(SimpleLocation location, String key) {
         super(location, new CompoundMap());
-        setProperty("key", new StringTag("key", key));
-        setProperty("water", new IntTag("water", 0));
-        setProperty("fertilizer-times", new IntTag("fertilizer-times", 0));
+        setData("key", new StringTag("key", key));
+        setData("water", new IntTag("water", 0));
+        setData("fertilizer-times", new IntTag("fertilizer-times", 0));
     }
 
     @Override
     public String getKey() {
-        return getProperty("key").getAsStringTag()
+        return getData("key").getAsStringTag()
                 .map(StringTag::getValue)
                 .orElse("");
     }
 
     @Override
     public int getWater() {
-        return getProperty("water").getAsIntTag().map(IntTag::getValue).orElse(0);
+        return getData("water").getAsIntTag().map(IntTag::getValue).orElse(0);
     }
 
     @Override
     public void setWater(int water) {
-        setProperty("water", new IntTag("water", water));
+        setData("water", new IntTag("water", water));
     }
 
     @Override
     public String getFertilizer() {
-        Tag<?> tag = getProperty("fertilizer");
+        Tag<?> tag = getData("fertilizer");
         if (tag == null) return null;
         return tag.getAsStringTag()
                 .map(StringTag::getValue)
@@ -72,17 +72,17 @@ public class MemoryPot extends AbstractCustomCropsBlock implements WorldPot {
 
     @Override
     public void setFertilizer(String fertilizer) {
-        setProperty("fertilizer", new StringTag("fertilizer", fertilizer));
+        setData("fertilizer", new StringTag("fertilizer", fertilizer));
     }
 
     @Override
     public int getFertilizerTimes() {
-        return getProperty("fertilizer-times").getAsIntTag().map(IntTag::getValue).orElse(0);
+        return getData("fertilizer-times").getAsIntTag().map(IntTag::getValue).orElse(0);
     }
 
     @Override
     public void setFertilizerTimes(int fertilizerTimes) {
-        setProperty("fertilizer-times", new IntTag("fertilizer-times", fertilizerTimes));
+        setData("fertilizer-times", new IntTag("fertilizer-times", fertilizerTimes));
     }
 
     @Override
@@ -92,7 +92,9 @@ public class MemoryPot extends AbstractCustomCropsBlock implements WorldPot {
 
     @Override
     public void tickWater() {
+        if (getConfig().isRainDropAccepted()) {
 
+        }
     }
 
     @Override

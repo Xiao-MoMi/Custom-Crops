@@ -18,9 +18,9 @@
 package net.momirealms.customcrops.api.mechanic.world;
 
 import net.momirealms.customcrops.api.mechanic.item.ItemType;
-import net.momirealms.customcrops.api.mechanic.world.level.PropertyItem;
+import net.momirealms.customcrops.api.mechanic.world.level.DataBlock;
 
-public interface CustomCropsBlock extends PropertyItem, Tickable {
+public interface CustomCropsBlock extends DataBlock, Tickable {
 
     ItemType getType();
 }

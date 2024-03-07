@@ -357,7 +357,7 @@ public class BukkitWorldAdaptor extends AbstractWorldAdaptor {
         }
         map.put(new StringTag("type", block.getType().name()));
         map.put(new IntArrayTag("pos", result));
-        map.put(new CompoundTag("data", block.getCompoundMap()));
+        map.put(new CompoundTag("data", block.getCompoundMap().getOriginalMap()));
         return map;
     }
 

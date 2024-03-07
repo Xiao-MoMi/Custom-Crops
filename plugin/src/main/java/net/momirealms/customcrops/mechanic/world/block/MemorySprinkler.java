@@ -38,23 +38,23 @@ public class MemorySprinkler extends AbstractCustomCropsBlock implements WorldSp
 
     public MemorySprinkler(SimpleLocation location, String key, int water) {
         super(location, new CompoundMap());
-        setProperty("water", new IntTag("water", water));
-        setProperty("key", new StringTag("key", key));
+        setData("water", new IntTag("water", water));
+        setData("key", new StringTag("key", key));
     }
 
     @Override
     public int getWater() {
-        return getProperty("water").getAsIntTag().map(IntTag::getValue).orElse(0);
+        return getData("water").getAsIntTag().map(IntTag::getValue).orElse(0);
     }
 
     @Override
     public void setWater(int water) {
-        setProperty("water", new IntTag("water", water));
+        setData("water", new IntTag("water", water));
     }
 
     @Override
     public String getKey() {
-        return getProperty("key").getAsStringTag()
+        return getData("key").getAsStringTag()
                 .map(StringTag::getValue)
                 .orElse("");
     }

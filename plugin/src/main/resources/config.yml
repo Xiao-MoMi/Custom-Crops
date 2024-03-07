@@ -56,7 +56,7 @@ worlds:
       pot:
         # RANDOM_TICK / SCHEDULED_TICK
         mode: SCHEDULED_TICK
-        tick-interval: 2
+        tick-interval: 3
         # Limit the max amount of pots in one chunk
         max-per-chunk: -1
       # Settings for sprinklers
