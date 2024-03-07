@@ -22,13 +22,14 @@ import com.flowpowered.nbt.IntTag;
 import com.flowpowered.nbt.StringTag;
 import net.momirealms.customcrops.api.CustomCropsPlugin;
 import net.momirealms.customcrops.api.mechanic.item.ItemType;
+import net.momirealms.customcrops.api.mechanic.item.Pot;
 import net.momirealms.customcrops.api.mechanic.item.Sprinkler;
 import net.momirealms.customcrops.api.mechanic.world.SimpleLocation;
-import net.momirealms.customcrops.api.mechanic.world.level.AbstractCustomCropsBlock;
-import net.momirealms.customcrops.api.mechanic.world.level.CustomCropsChunk;
-import net.momirealms.customcrops.api.mechanic.world.level.WorldSprinkler;
+import net.momirealms.customcrops.api.mechanic.world.level.*;
+import net.momirealms.customcrops.api.util.LogUtils;
 
 import java.util.Objects;
+import java.util.Optional;
 
 public class MemorySprinkler extends AbstractCustomCropsBlock implements WorldSprinkler {
 
@@ -83,7 +84,54 @@ public class MemorySprinkler extends AbstractCustomCropsBlock implements WorldSp
     }
 
     @Override
-    public void tick(int interval, CustomCropsChunk chunk) {
+    public void tick(int interval) {
+        if (canTick(interval)) {
+            tick();
+        }
+    }
 
+    private void tick() {
+        Sprinkler sprinkler = getConfig();
+        if (sprinkler == null) {
+            LogUtils.warn("Found a sprinkler without config at " + getLocation() + ". Try removing the data.");
+            CustomCropsPlugin.get().getWorldManager().removeSprinklerAt(getLocation());
+            return;
+        }
+
+        if (!sprinkler.isInfinite()) {
+            int water = getWater();
+            if (water <= 0) {
+                return;
+            }
+            setWater(water - 1);
+        }
+
+        int range = sprinkler.getRange();
+        SimpleLocation location = getLocation();
+        CustomCropsWorld world = CustomCropsPlugin.get().getWorldManager().getCustomCropsWorld(location.getWorldName()).get();
+        for (int i = -range; i <= range; i++) {
+            for (int j = -range; j <= range; j++) {
+                for (int k : new int[]{0,1}) {
+                    SimpleLocation potLocation = location.copy().add(i,k,j);
+                    Optional<WorldPot> pot = world.getPotAt(potLocation);
+                    if (pot.isPresent()) {
+                        WorldPot worldPot = pot.get();
+                        if (sprinkler.getPotWhitelist().contains(worldPot.getKey())) {
+                            Pot potConfig = worldPot.getConfig();
+                            if (potConfig != null) {
+                                int current = worldPot.getWater();
+                                if (current >= potConfig.getStorage()) {
+                                    continue;
+                                }
+                                worldPot.setWater(current + sprinkler.getWater());
+                                if (current == 0) {
+                                    CustomCropsPlugin.get().getScheduler().runTaskSync(() -> CustomCropsPlugin.get().getItemManager().updatePotState(potLocation.getBukkitLocation(), potConfig, true, worldPot.getFertilizer()), potLocation.getBukkitLocation());
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }

@@ -55,7 +55,7 @@ public class MemoryGlass extends AbstractCustomCropsBlock implements WorldGlass 
     }
 
     @Override
-    public void tick(int interval, CustomCropsChunk chunk) {
+    public void tick(int interval) {
 
     }
 }

@@ -44,11 +44,13 @@ public class PotConfig extends AbstractEventItem implements Pot {
     private final Requirement[] breakRequirements;
     private final Requirement[] useRequirements;
     private final boolean acceptRainDrop;
+    private final boolean acceptNearbyWater;
 
     public PotConfig(
             String key,
             int storage,
             boolean acceptRainDrop,
+            boolean acceptNearbyWater,
             String dryModel,
             String wetModel,
             boolean enableFertilizedAppearance,
@@ -64,6 +66,7 @@ public class PotConfig extends AbstractEventItem implements Pot {
         this.key = key;
         this.storage = storage;
         this.acceptRainDrop = acceptRainDrop;
+        this.acceptNearbyWater = acceptNearbyWater;
         this.enableFertilizedAppearance = enableFertilizedAppearance;
         this.fertilizedPotMap = fertilizedPotMap;
         this.passiveFillMethods = passiveFillMethods;
@@ -135,6 +138,11 @@ public class PotConfig extends AbstractEventItem implements Pot {
     @Override
     public boolean isRainDropAccepted() {
         return acceptRainDrop;
+    }
+
+    @Override
+    public boolean isNearbyWaterAccepted() {
+        return acceptNearbyWater;
     }
 
     @Override

@@ -33,14 +33,13 @@ import net.momirealms.customcrops.api.mechanic.world.season.Season;
 import net.momirealms.customcrops.api.scheduler.CancellableTask;
 import net.momirealms.customcrops.api.util.LogUtils;
 import net.momirealms.customcrops.utils.EventUtils;
+import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
@@ -162,7 +161,7 @@ public class CWorld implements CustomCropsWorld {
 
     @Override
     public Optional<CustomCropsChunk> getChunkAt(ChunkCoordinate chunkCoordinate) {
-        return Optional.ofNullable(loadedChunks.get(chunkCoordinate));
+        return Optional.ofNullable(createOrGetChunk(chunkCoordinate));
     }
 
     @Override
@@ -248,91 +247,91 @@ public class CWorld implements CustomCropsWorld {
 
     @Override
     public void addWaterToSprinkler(Sprinkler sprinkler, SimpleLocation location, int amount) {
-        CustomCropsChunk chunk = createOrGetChunk(location.getChunkCoordinate());
-        if (chunk != null) {
-            chunk.addWaterToSprinkler(sprinkler, location, amount);
+        Optional<CustomCropsChunk> chunk = getChunkAt(location.getChunkCoordinate());
+        if (chunk.isPresent()) {
+            chunk.get().addWaterToSprinkler(sprinkler, location, amount);
         } else {
-            LogUtils.warn("Invalid operation: Adding water to sprinkler in an unloaded chunk");
+            LogUtils.warn("Invalid operation: Adding water to sprinkler in a not generated chunk");
         }
     }
 
     @Override
     public void addFertilizerToPot(Pot pot, Fertilizer fertilizer, SimpleLocation location) {
-        CustomCropsChunk chunk = createOrGetChunk(location.getChunkCoordinate());
-        if (chunk != null) {
-            chunk.addFertilizerToPot(pot, fertilizer, location);
+        Optional<CustomCropsChunk> chunk = getChunkAt(location.getChunkCoordinate());
+        if (chunk.isPresent()) {
+            chunk.get().addFertilizerToPot(pot, fertilizer, location);
         } else {
-            LogUtils.warn("Invalid operation: Adding fertilizer to pot in an unloaded chunk");
+            LogUtils.warn("Invalid operation: Adding fertilizer to pot in a not generated chunk");
         }
     }
 
     @Override
     public void addWaterToPot(Pot pot, SimpleLocation location, int amount) {
-        CustomCropsChunk chunk = createOrGetChunk(location.getChunkCoordinate());
-        if (chunk != null) {
-            chunk.addWaterToPot(pot, location, amount);
+        Optional<CustomCropsChunk> chunk = getChunkAt(location.getChunkCoordinate());
+        if (chunk.isPresent()) {
+            chunk.get().addWaterToPot(pot, location, amount);
         } else {
-            LogUtils.warn("Invalid operation: Adding water to pot in an unloaded chunk");
+            LogUtils.warn("Invalid operation: Adding water to pot in a not generated chunk");
         }
     }
 
     @Override
     public void addPotAt(WorldPot pot, SimpleLocation location) {
-        CustomCropsChunk chunk = createOrGetChunk(location.getChunkCoordinate());
-        if (chunk != null) {
-            chunk.addPotAt(pot, location);
+        Optional<CustomCropsChunk> chunk = getChunkAt(location.getChunkCoordinate());
+        if (chunk.isPresent()) {
+            chunk.get().addPotAt(pot, location);
         } else {
-            LogUtils.warn("Invalid operation: Adding pot in an unloaded chunk");
+            LogUtils.warn("Invalid operation: Adding pot in a not generated chunk");
         }
     }
 
     @Override
     public void addSprinklerAt(WorldSprinkler sprinkler, SimpleLocation location) {
-        CustomCropsChunk chunk = createOrGetChunk(location.getChunkCoordinate());
-        if (chunk != null) {
-            chunk.addSprinklerAt(sprinkler, location);
+        Optional<CustomCropsChunk> chunk = getChunkAt(location.getChunkCoordinate());
+        if (chunk.isPresent()) {
+            chunk.get().addSprinklerAt(sprinkler, location);
         } else {
-            LogUtils.warn("Invalid operation: Adding sprinkler in an unloaded chunk");
+            LogUtils.warn("Invalid operation: Adding sprinkler in a not generated chunk");
         }
     }
 
     @Override
     public void addCropAt(WorldCrop crop, SimpleLocation location) {
-        CustomCropsChunk chunk = createOrGetChunk(location.getChunkCoordinate());
-        if (chunk != null) {
-            chunk.addCropAt(crop, location);
+        Optional<CustomCropsChunk> chunk = getChunkAt(location.getChunkCoordinate());
+        if (chunk.isPresent()) {
+            chunk.get().addCropAt(crop, location);
         } else {
-            LogUtils.warn("Invalid operation: Adding crop in an unloaded chunk");
+            LogUtils.warn("Invalid operation: Adding crop in a not generated chunk");
         }
     }
 
     @Override
     public void addPointToCrop(Crop crop, SimpleLocation location, int points) {
-        CustomCropsChunk chunk = createOrGetChunk(location.getChunkCoordinate());
-        if (chunk != null) {
-            chunk.addPointToCrop(crop, location, points);
+        Optional<CustomCropsChunk> chunk = getChunkAt(location.getChunkCoordinate());
+        if (chunk.isPresent()) {
+            chunk.get().addPointToCrop(crop, location, points);
         } else {
-            LogUtils.warn("Invalid operation: Adding points to crop in an unloaded chunk");
+            LogUtils.warn("Invalid operation: Adding points to crop in a not generated chunk");
         }
     }
 
     @Override
     public void addGlassAt(WorldGlass glass, SimpleLocation location) {
-        CustomCropsChunk chunk = createOrGetChunk(location.getChunkCoordinate());
-        if (chunk != null) {
-            chunk.addGlassAt(glass, location);
+        Optional<CustomCropsChunk> chunk = getChunkAt(location.getChunkCoordinate());
+        if (chunk.isPresent()) {
+            chunk.get().addGlassAt(glass, location);
         } else {
-            LogUtils.warn("Invalid operation: Adding glass in an unloaded chunk");
+            LogUtils.warn("Invalid operation: Adding glass in a not generated chunk");
         }
     }
 
     @Override
     public void addScarecrowAt(WorldScarecrow scarecrow, SimpleLocation location) {
-        CustomCropsChunk chunk = createOrGetChunk(location.getChunkCoordinate());
-        if (chunk != null) {
-            chunk.addScarecrowAt(scarecrow, location);
+        Optional<CustomCropsChunk> chunk = getChunkAt(location.getChunkCoordinate());
+        if (chunk.isPresent()) {
+            chunk.get().addScarecrowAt(scarecrow, location);
         } else {
-            LogUtils.warn("Invalid operation: Adding scarecrow in an unloaded chunk");
+            LogUtils.warn("Invalid operation: Adding scarecrow in a not generated chunk");
         }
     }
 
@@ -342,7 +341,7 @@ public class CWorld implements CustomCropsWorld {
         if (chunk.isPresent()) {
             chunk.get().removeSprinklerAt(location);
         } else {
-            LogUtils.warn("Invalid operation: Removing sprinkler from an unloaded chunk");
+            LogUtils.warn("Invalid operation: Removing sprinkler from a not generated chunk");
         }
     }
 
@@ -352,7 +351,7 @@ public class CWorld implements CustomCropsWorld {
         if (chunk.isPresent()) {
             chunk.get().removePotAt(location);
         } else {
-            LogUtils.warn("Invalid operation: Removing pot from an unloaded chunk");
+            LogUtils.warn("Invalid operation: Removing pot from a not generated chunk");
         }
     }
 
@@ -362,7 +361,7 @@ public class CWorld implements CustomCropsWorld {
         if (chunk.isPresent()) {
             chunk.get().removeCropAt(location);
         } else {
-            LogUtils.warn("Invalid operation: Removing crop from an unloaded chunk");
+            LogUtils.warn("Invalid operation: Removing crop from a not generated chunk");
         }
     }
 
@@ -372,7 +371,7 @@ public class CWorld implements CustomCropsWorld {
         if (chunk.isPresent()) {
             chunk.get().removeGlassAt(location);
         } else {
-            LogUtils.warn("Invalid operation: Removing glass from an unloaded chunk");
+            LogUtils.warn("Invalid operation: Removing glass from a not generated chunk");
         }
     }
 
@@ -382,7 +381,7 @@ public class CWorld implements CustomCropsWorld {
         if (chunk.isPresent()) {
             chunk.get().removeScarecrowAt(location);
         } else {
-            LogUtils.warn("Invalid operation: Removing scarecrow from an unloaded chunk");
+            LogUtils.warn("Invalid operation: Removing scarecrow from a not generated chunk");
         }
     }
 
@@ -392,7 +391,7 @@ public class CWorld implements CustomCropsWorld {
         if (chunk.isPresent()) {
             return chunk.get().removeBlockAt(location);
         } else {
-            LogUtils.warn("Invalid operation: Removing anything from an unloaded chunk");
+            LogUtils.warn("Invalid operation: Removing anything from a not generated chunk");
             return null;
         }
     }
@@ -411,41 +410,49 @@ public class CWorld implements CustomCropsWorld {
             chunk = new CChunk(this, chunkCoordinate);
             loadChunk(chunk);
             return chunk;
+        } else {
+            if (bukkitWorld.isChunkGenerated(chunkCoordinate.x(), chunkCoordinate.z())) {
+                Chunk bukkitChunk = bukkitWorld.getChunkAt(chunkCoordinate.x(), chunkCoordinate.z());
+                worldManager.handleChunkLoad(bukkitChunk);
+                chunk = loadedChunks.get(chunkCoordinate);
+                return Objects.requireNonNullElseGet(chunk, () -> new CChunk(this, chunkCoordinate));
+            } else {
+                return null;
+            }
         }
-        return null;
     }
 
     @Override
     public boolean isPotReachLimit(SimpleLocation location) {
-        CustomCropsChunk chunk = createOrGetChunk(location.getChunkCoordinate());
-        if (chunk == null) {
-            LogUtils.warn("Invalid operation: Querying pot amount from an unloaded chunk");
+        Optional<CustomCropsChunk> chunk = getChunkAt(location.getChunkCoordinate());
+        if (chunk.isEmpty()) {
+            LogUtils.warn("Invalid operation: Querying pot amount from a not generated chunk");
             return true;
         }
         if (setting.getPotPerChunk() < 0) return false;
-        return chunk.getPotAmount() >= setting.getPotPerChunk();
+        return chunk.get().getPotAmount() >= setting.getPotPerChunk();
     }
 
     @Override
     public boolean isCropReachLimit(SimpleLocation location) {
-        CustomCropsChunk chunk = createOrGetChunk(location.getChunkCoordinate());
-        if (chunk == null) {
-            LogUtils.warn("Invalid operation: Querying crop amount from an unloaded chunk");
+        Optional<CustomCropsChunk> chunk = getChunkAt(location.getChunkCoordinate());
+        if (chunk.isEmpty()) {
+            LogUtils.warn("Invalid operation: Querying crop amount from a not generated chunk");
             return true;
         }
         if (setting.getCropPerChunk() < 0) return false;
-        return chunk.getCropAmount() >= setting.getCropPerChunk();
+        return chunk.get().getCropAmount() >= setting.getCropPerChunk();
     }
 
     @Override
     public boolean isSprinklerReachLimit(SimpleLocation location) {
-        CustomCropsChunk chunk = createOrGetChunk(location.getChunkCoordinate());
-        if (chunk == null) {
-            LogUtils.warn("Invalid operation: Querying sprinkler amount from an unloaded chunk");
+        Optional<CustomCropsChunk> chunk = getChunkAt(location.getChunkCoordinate());
+        if (chunk.isEmpty()) {
+            LogUtils.warn("Invalid operation: Querying sprinkler amount from a not generated chunk");
             return true;
         }
         if (setting.getSprinklerPerChunk() < 0) return false;
-        return chunk.getSprinklerAmount() >= setting.getSprinklerPerChunk();
+        return chunk.get().getSprinklerAmount() >= setting.getSprinklerPerChunk();
     }
 
     public Collection<CChunk> getAllChunksToSave() {

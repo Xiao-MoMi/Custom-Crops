@@ -33,7 +33,11 @@ public interface WorldPot extends CustomCropsBlock {
 
     void setFertilizer(Fertilizer fertilizer);
 
+    void removeFertilizer();
+
     int getFertilizerTimes();
+
+    void setFertilizerTimes(int times);
 
     Pot getConfig();
 

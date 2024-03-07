@@ -35,8 +35,10 @@ import net.momirealms.customcrops.api.mechanic.item.fertilizer.QualityCrop;
 import net.momirealms.customcrops.api.mechanic.item.fertilizer.Variation;
 import net.momirealms.customcrops.api.mechanic.item.fertilizer.YieldIncrease;
 import net.momirealms.customcrops.api.mechanic.requirement.Requirement;
+import net.momirealms.customcrops.api.mechanic.world.ChunkCoordinate;
 import net.momirealms.customcrops.api.mechanic.world.CustomCropsBlock;
 import net.momirealms.customcrops.api.mechanic.world.SimpleLocation;
+import net.momirealms.customcrops.api.mechanic.world.level.CustomCropsWorld;
 import net.momirealms.customcrops.api.mechanic.world.level.WorldCrop;
 import net.momirealms.customcrops.api.mechanic.world.level.WorldPot;
 import net.momirealms.customcrops.api.mechanic.world.level.WorldSprinkler;
@@ -111,6 +113,7 @@ public class ActionManagerImpl implements ActionManager {
         this.registerPlantAction();
         this.registerQualityCropsAction();
         this.registerVariationAction();
+        this.registerForceTickAction();
     }
 
     @Override
@@ -374,6 +377,17 @@ public class ActionManagerImpl implements ActionManager {
                 if (Math.random() > chance) return;
                 state.getPlayer().swingHand(arg ? EquipmentSlot.HAND : EquipmentSlot.OFF_HAND);
             };
+        });
+    }
+
+    private void registerForceTickAction() {
+        registerAction("force-tick", (args, chance) -> state -> {
+            if (Math.random() > chance) return;
+            Location location = state.getLocation();
+            plugin.getWorldManager().getCustomCropsWorld(location.getWorld())
+                    .flatMap(world -> world.getChunkAt(ChunkCoordinate.getByBukkitChunk(location.getChunk())))
+                    .flatMap(chunk -> chunk.getBlockAt(SimpleLocation.of(location)))
+                    .ifPresent(block -> block.tick(1));
         });
     }
 

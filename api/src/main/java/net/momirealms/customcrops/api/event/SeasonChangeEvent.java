@@ -26,7 +26,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * An async event triggered when season changes
  */
-public final class SeasonChangeEvent extends Event {
+public class SeasonChangeEvent extends Event {
 
     private static final HandlerList handlers = new HandlerList();
     private final Season season;

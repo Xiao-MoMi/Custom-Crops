@@ -465,7 +465,7 @@ public class ItemManagerImpl implements ItemManager {
             File folder = new File(plugin.getDataFolder(), "contents" + File.separator + item);
             if (!folder.exists()) {
                 plugin.saveResource("contents" + File.separator + item + File.separator + "default.yml", true);
-                ConfigUtils.addDefaultNamespace(customProvider instanceof ItemsAdderProvider, new File(plugin.getDataFolder(), "contents" + File.separator + item + File.separator + "default.yml"));
+                ConfigUtils.addDefaultNamespace(new File(plugin.getDataFolder(), "contents" + File.separator + item + File.separator + "default.yml"));
             }
             List<File> files = ConfigUtils.getFilesRecursively(new File(plugin.getDataFolder(), "contents" + File.separator + item));
             for (File file : files) {
@@ -1785,7 +1785,7 @@ public class ItemManagerImpl implements ItemManager {
         boolean enableFertilizedAppearance = section.getBoolean("fertilized-pots.enable", false);
 
         PotConfig pot = new PotConfig(
-                key, storage, section.getBoolean("absorb-rainwater", true),
+                key, storage, section.getBoolean("absorb-rainwater", true), section.getBoolean("absorb-nearby-water", false),
                 dryModel, wetModel,
                 enableFertilizedAppearance,
                 enableFertilizedAppearance ? ConfigUtils.getFertilizedPotMap(section.getConfigurationSection("fertilized-pots")) : new HashMap<>(),

@@ -22,6 +22,7 @@ import net.momirealms.customcrops.api.mechanic.item.*;
 import net.momirealms.customcrops.api.mechanic.world.CustomCropsBlock;
 import net.momirealms.customcrops.api.mechanic.world.SimpleLocation;
 import net.momirealms.customcrops.api.mechanic.world.level.*;
+import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
 
@@ -126,6 +127,10 @@ public interface WorldManager extends Reloadable {
     void addCropAt(@NotNull WorldCrop crop, @NotNull SimpleLocation location);
 
     void addPointToCrop(@NotNull Crop crop, @NotNull SimpleLocation location, int points);
+
+    void handleChunkLoad(Chunk bukkitChunk);
+
+    void handleChunkUnload(Chunk bukkitChunk);
 
     void saveChunkToFile(CustomCropsChunk chunk);
 

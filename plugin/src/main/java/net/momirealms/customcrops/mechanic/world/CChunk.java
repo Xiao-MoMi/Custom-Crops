@@ -136,18 +136,18 @@ public class CChunk implements CustomCropsChunk {
                     switch (block.getType()) {
                         case CROP -> {
                             if (setting.randomTickCrop()) {
-                                block.tick(setting.getTickCropInterval(), this);
+                                block.tick(setting.getTickCropInterval());
                             }
                         }
                         case SPRINKLER -> {
                             if (setting.randomTickSprinkler()) {
-                                block.tick(setting.getTickSprinklerInterval(), this);
+                                block.tick(setting.getTickSprinklerInterval());
                             }
                         }
                         case POT -> {
                             ((WorldPot) block).tickWater(this);
                             if (setting.randomTickPot()) {
-                                block.tick(setting.getTickPotInterval(), this);
+                                block.tick(setting.getTickPotInterval());
                             }
                         }
                     }

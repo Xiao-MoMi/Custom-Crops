@@ -18,6 +18,7 @@
 package net.momirealms.customcrops.api.mechanic.world.level;
 
 import com.flowpowered.nbt.CompoundMap;
+import com.flowpowered.nbt.IntTag;
 import com.flowpowered.nbt.Tag;
 import net.momirealms.customcrops.api.mechanic.world.SimpleLocation;
 import net.momirealms.customcrops.api.mechanic.world.SynchronizedCompoundMap;
@@ -50,5 +51,23 @@ public class AbstractCustomCropsBlock implements DataBlock {
     @Override
     public SimpleLocation getLocation() {
         return location;
+    }
+
+    public boolean canTick(int interval) {
+        if (interval == 1) {
+            return true;
+        }
+        Tag<?> tag = getData("tick");
+        int tick = 0;
+        if (tag != null) {
+            tick = tag.getAsIntTag().map(IntTag::getValue).orElse(0);
+        }
+        if (++tick >= interval) {
+            setData("tick", new IntTag("tick", 0));
+            return true;
+        } else {
+            setData("tick", new IntTag("tick", tick));
+        }
+        return false;
     }
 }

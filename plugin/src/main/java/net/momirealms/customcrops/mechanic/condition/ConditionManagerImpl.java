@@ -28,7 +28,6 @@ import net.momirealms.customcrops.api.mechanic.condition.ConditionFactory;
 import net.momirealms.customcrops.api.mechanic.item.Fertilizer;
 import net.momirealms.customcrops.api.mechanic.world.SimpleLocation;
 import net.momirealms.customcrops.api.mechanic.world.level.CustomCropsWorld;
-import net.momirealms.customcrops.api.mechanic.world.level.WorldGlass;
 import net.momirealms.customcrops.api.mechanic.world.level.WorldPot;
 import net.momirealms.customcrops.api.mechanic.world.season.Season;
 import net.momirealms.customcrops.api.util.LogUtils;
@@ -172,8 +171,8 @@ public class ConditionManagerImpl implements ConditionManager {
                         Optional<CustomCropsWorld> world = plugin.getWorldManager().getCustomCropsWorld(location.getWorldName());
                         if (world.isEmpty()) return false;
                         CustomCropsWorld customCropsWorld = world.get();
-                        for (int i = -range; i < range; i++) {
-                            for (int j = -range; j < range; j++) {
+                        for (int i = -range; i <= range; i++) {
+                            for (int j = -range; j <= range; j++) {
                                 for (int k : new int[]{0,-1,1}) {
                                     if (customCropsWorld.getScarecrowAt(location.copy().add(i, k, j)).isPresent()) {
                                         return false;

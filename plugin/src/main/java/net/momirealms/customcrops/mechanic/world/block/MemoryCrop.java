@@ -20,7 +20,6 @@ package net.momirealms.customcrops.mechanic.world.block;
 import com.flowpowered.nbt.CompoundMap;
 import com.flowpowered.nbt.IntTag;
 import com.flowpowered.nbt.StringTag;
-import com.flowpowered.nbt.Tag;
 import net.momirealms.customcrops.api.CustomCropsPlugin;
 import net.momirealms.customcrops.api.mechanic.action.ActionTrigger;
 import net.momirealms.customcrops.api.mechanic.condition.Condition;
@@ -95,25 +94,13 @@ public class MemoryCrop extends AbstractCustomCropsBlock implements WorldCrop {
     }
 
     @Override
-    public void tick(int interval, CustomCropsChunk chunk) {
-        if (interval == 1) {
-            tick(chunk);
-            return;
-        }
-        Tag<?> tag = getData("tick");
-        int tick = 0;
-        if (tag != null) {
-            tick = tag.getAsIntTag().map(IntTag::getValue).orElse(0);
-        }
-        if (++tick >= interval) {
-            setData("tick", new IntTag("tick", 0));
-            tick(chunk);
-        } else {
-            setData("tick", new IntTag("tick", tick));
+    public void tick(int interval) {
+        if (canTick(interval)) {
+            tick();
         }
     }
 
-    private void tick(CustomCropsChunk chunk) {
+    private void tick() {
         Crop crop = getConfig();
         if (crop == null) {
             LogUtils.warn("Found a crop without config at " + getLocation() + ". Try removing the data.");
@@ -155,7 +142,7 @@ public class MemoryCrop extends AbstractCustomCropsBlock implements WorldCrop {
         }
 
         // check pot & fertilizer
-        Optional<WorldPot> pot = chunk.getPotAt(location.copy().add(0,-1,0));
+        Optional<WorldPot> pot = CustomCropsPlugin.get().getWorldManager().getPotAt(location.copy().add(0,-1,0));
         if (pot.isEmpty()) {
             return;
         }

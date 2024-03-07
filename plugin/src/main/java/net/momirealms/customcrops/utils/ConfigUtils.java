@@ -38,6 +38,7 @@ import net.momirealms.customcrops.mechanic.item.impl.CropConfig;
 import net.momirealms.customcrops.mechanic.misc.value.ExpressionValue;
 import net.momirealms.customcrops.mechanic.misc.value.PlainValue;
 import net.objecthunter.exp4j.ExpressionBuilder;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -52,7 +53,10 @@ public class ConfigUtils {
 
     public static YamlConfiguration getConfig(String file) {
         File config = new File(CustomCropsPlugin.get().getDataFolder(), file);
-        if (!config.exists()) CustomCropsPlugin.get().saveResource(file, false);
+        if (!config.exists()) {
+            CustomCropsPlugin.get().saveResource(file, false);
+            addDefaultNamespace(config);
+        }
         return YamlConfiguration.loadConfiguration(config);
     }
 
@@ -384,7 +388,8 @@ public class ConfigUtils {
         return map;
     }
 
-    public static void addDefaultNamespace(boolean has, File file) {
+    public static void addDefaultNamespace(File file) {
+        boolean has = Bukkit.getPluginManager().getPlugin("ItemsAdder") != null;
         String line;
         StringBuilder sb = new StringBuilder();
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8))) {
