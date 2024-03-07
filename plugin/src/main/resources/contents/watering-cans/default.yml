@@ -10,6 +10,8 @@ watering_can_1:
   #  3: 1003
   # Maximum water storage capacity
   capacity: 3
+  # Amount of water added to pot in a single interaction
+  water: 1
   # Effective Range
   effective-range:
     width: 1

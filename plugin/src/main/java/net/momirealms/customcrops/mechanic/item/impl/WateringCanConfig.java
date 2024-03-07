@@ -51,6 +51,7 @@ public class WateringCanConfig extends AbstractEventItem implements WateringCan 
     private final int width;
     private final int length;
     private final int storage;
+    private final int water;
     private final HashSet<String> potWhitelist;
     private final HashSet<String> sprinklerWhitelist;
     private final boolean hasDynamicLore;
@@ -67,6 +68,7 @@ public class WateringCanConfig extends AbstractEventItem implements WateringCan 
             int width,
             int length,
             int storage,
+            int water,
             boolean hasDynamicLore,
             List<String> lore,
             HashSet<String> potWhitelist,
@@ -92,6 +94,7 @@ public class WateringCanConfig extends AbstractEventItem implements WateringCan 
         this.waterBar = waterBar;
         this.key = key;
         this.infinite = infinite;
+        this.water = water;
     }
 
     @Override
@@ -112,6 +115,11 @@ public class WateringCanConfig extends AbstractEventItem implements WateringCan 
     @Override
     public int getStorage() {
         return storage;
+    }
+
+    @Override
+    public int getWater() {
+        return water;
     }
 
     @Override

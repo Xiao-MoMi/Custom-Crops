@@ -40,6 +40,8 @@ public interface WateringCan extends KeyItem {
 
     int getStorage();
 
+    int getWater();
+
     boolean hasDynamicLore();
 
     void updateItem(Player player, ItemStack itemStack, int water, Map<String, String> args);

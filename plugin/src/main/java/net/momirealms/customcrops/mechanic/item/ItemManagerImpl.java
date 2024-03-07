@@ -648,7 +648,6 @@ public class ItemManagerImpl implements ItemManager {
     @SuppressWarnings("DuplicatedCode")
     private void loadWateringCan(String key, ConfigurationSection section) {
         String itemID = section.getString("item");
-        int capacity = section.getInt("capacity");
         int width = section.getInt("effective-range.width");
         int length = section.getInt("effective-range.length");
         HashSet<String> potWhiteList = new HashSet<>(section.getStringList("pot-whitelist"));
@@ -659,7 +658,7 @@ public class ItemManagerImpl implements ItemManager {
         WateringCanConfig wateringCan = new WateringCanConfig(
                 key,
                 itemID, section.getBoolean("infinite", false), width,
-                length, capacity,
+                length, section.getInt("capacity"), section.getInt("water"),
                 hasDynamicLore, lore,
                 potWhiteList, sprinklerWhiteList,
                 ConfigUtils.getPositiveFillMethods(section.getConfigurationSection("fill-method")),
@@ -719,7 +718,7 @@ public class ItemManagerImpl implements ItemManager {
                         wateringCan.trigger(ActionTrigger.CONSUME_WATER, state);
                         Collection<Location> pots = getPotInRange(clicked, wateringCan.getWidth(), wateringCan.getLength(), player.getLocation().getYaw(), pot.getKey());
                         for (Location location : pots) {
-                            plugin.getWorldManager().addWaterToPot(pot, SimpleLocation.of(location), 1);
+                            plugin.getWorldManager().addWaterToPot(pot, SimpleLocation.of(location), wateringCan.getWater());
                             pot.trigger(ActionTrigger.ADD_WATER, new State(player, itemStack, location));
                         }
                     } else {
@@ -781,7 +780,7 @@ public class ItemManagerImpl implements ItemManager {
                         wateringCan.trigger(ActionTrigger.CONSUME_WATER, state);
                         Collection<Location> pots = getPotInRange(potBlock.getLocation(), wateringCan.getWidth(), wateringCan.getLength(), player.getLocation().getYaw(), pot.getKey());
                         for (Location location : pots) {
-                            plugin.getWorldManager().addWaterToPot(pot, SimpleLocation.of(location), 1);
+                            plugin.getWorldManager().addWaterToPot(pot, SimpleLocation.of(location), wateringCan.getWater());
                             pot.trigger(ActionTrigger.ADD_WATER, new State(player, itemStack, location));
                         }
                     } else {
@@ -840,7 +839,7 @@ public class ItemManagerImpl implements ItemManager {
                         wateringCan.trigger(ActionTrigger.CONSUME_WATER, state);
                         Collection<Location> pots = getPotInRange(potBlock.getLocation(), wateringCan.getWidth(), wateringCan.getLength(), player.getLocation().getYaw(), pot.getKey());
                         for (Location location : pots) {
-                            plugin.getWorldManager().addWaterToPot(pot, SimpleLocation.of(location), 1);
+                            plugin.getWorldManager().addWaterToPot(pot, SimpleLocation.of(location), wateringCan.getWater());
                             pot.trigger(ActionTrigger.ADD_WATER, new State(player, itemStack, location));
                         }
                     } else {
