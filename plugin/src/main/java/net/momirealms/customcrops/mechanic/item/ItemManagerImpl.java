@@ -587,6 +587,11 @@ public class ItemManagerImpl implements ItemManager {
                     if (!(conditionWrapper instanceof PlaceWrapper placeWrapper)) {
                         return FunctionResult.PASS;
                     }
+                    // fire event
+                    GreenhouseGlassPlaceEvent event = new GreenhouseGlassPlaceEvent(placeWrapper.getPlayer(), placeWrapper.getLocation());
+                    if (EventUtils.fireAndCheckCancel(event))
+                        return FunctionResult.CANCEL_EVENT_AND_RETURN;
+
                     SimpleLocation simpleLocation = SimpleLocation.of(placeWrapper.getLocation());
                     plugin.getWorldManager().addGlassAt(new MemoryGlass(simpleLocation), simpleLocation);
                     return FunctionResult.RETURN;
@@ -597,6 +602,11 @@ public class ItemManagerImpl implements ItemManager {
                     if (!(conditionWrapper instanceof BreakWrapper breakWrapper)) {
                         return FunctionResult.PASS;
                     }
+                    // fire event
+                    GreenhouseGlassBreakEvent event = new GreenhouseGlassBreakEvent(breakWrapper.getPlayer(), breakWrapper.getLocation());
+                    if (EventUtils.fireAndCheckCancel(event))
+                        return FunctionResult.CANCEL_EVENT_AND_RETURN;
+
                     plugin.getWorldManager().removeGlassAt(SimpleLocation.of(breakWrapper.getLocation()));
                     return FunctionResult.RETURN;
                 }, CFunction.FunctionPriority.NORMAL)
@@ -609,6 +619,11 @@ public class ItemManagerImpl implements ItemManager {
                     if (!(conditionWrapper instanceof PlaceWrapper placeWrapper)) {
                         return FunctionResult.PASS;
                     }
+                    // fire event
+                    ScarecrowPlaceEvent event = new ScarecrowPlaceEvent(placeWrapper.getPlayer(), placeWrapper.getLocation());
+                    if (EventUtils.fireAndCheckCancel(event))
+                        return FunctionResult.CANCEL_EVENT_AND_RETURN;
+
                     SimpleLocation simpleLocation = SimpleLocation.of(placeWrapper.getLocation());
                     plugin.getWorldManager().addScarecrowAt(new MemoryScarecrow(simpleLocation), simpleLocation);
                     return FunctionResult.RETURN;
@@ -619,6 +634,11 @@ public class ItemManagerImpl implements ItemManager {
                     if (!(conditionWrapper instanceof BreakWrapper breakWrapper)) {
                         return FunctionResult.PASS;
                     }
+                    // fire event
+                    ScarecrowBreakEvent event = new ScarecrowBreakEvent(breakWrapper.getPlayer(), breakWrapper.getLocation());
+                    if (EventUtils.fireAndCheckCancel(event))
+                        return FunctionResult.CANCEL_EVENT_AND_RETURN;
+
                     plugin.getWorldManager().removeScarecrowAt(SimpleLocation.of(breakWrapper.getLocation()));
                     return FunctionResult.RETURN;
                 }, CFunction.FunctionPriority.NORMAL)
