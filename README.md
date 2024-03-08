@@ -23,7 +23,7 @@ https://polymart.org/resource/customcrops.2625
 #### Command Line
 Install JDK 17 and set the JDK installation path to JAVA_HOME as an environment variable.\
 Start powershell and change directory to the project folder.\
-Execute ".\gradlew build" and get the jar at /target/CustomFishing-plugin-version.jar.
+Execute ".\gradlew build" and get the jar at /target/CustomCrops-plugin-version.jar.
 
 #### IDE
 Import the project and execute gradle build action.

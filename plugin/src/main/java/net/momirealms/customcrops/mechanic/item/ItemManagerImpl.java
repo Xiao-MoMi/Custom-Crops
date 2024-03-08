@@ -695,7 +695,7 @@ public class ItemManagerImpl implements ItemManager {
                     if (pot == null) {
                         return FunctionResult.PASS;
                     }
-                    final Player player = blockWrapper.getPlayer();;
+                    final Player player = blockWrapper.getPlayer();
                     final ItemStack itemStack = blockWrapper.getItemInHand();
                     final Location clicked = blockWrapper.getClickedBlock().getLocation();
                     State state = new State(player, itemStack, clicked);
@@ -749,7 +749,7 @@ public class ItemManagerImpl implements ItemManager {
                         return FunctionResult.RETURN;
                     }
 
-                    final Player player = blockWrapper.getPlayer();;
+                    final Player player = blockWrapper.getPlayer();
                     final ItemStack itemStack = blockWrapper.getItemInHand();
                     final Location clicked = blockWrapper.getClickedBlock().getLocation();
                     State state = new State(player, itemStack, clicked);
