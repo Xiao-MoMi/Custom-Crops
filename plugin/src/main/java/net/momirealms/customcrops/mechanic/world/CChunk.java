@@ -19,7 +19,10 @@ package net.momirealms.customcrops.mechanic.world;
 
 import net.momirealms.customcrops.api.CustomCropsPlugin;
 import net.momirealms.customcrops.api.mechanic.action.ActionTrigger;
-import net.momirealms.customcrops.api.mechanic.item.*;
+import net.momirealms.customcrops.api.mechanic.item.Crop;
+import net.momirealms.customcrops.api.mechanic.item.Fertilizer;
+import net.momirealms.customcrops.api.mechanic.item.Pot;
+import net.momirealms.customcrops.api.mechanic.item.Sprinkler;
 import net.momirealms.customcrops.api.mechanic.requirement.State;
 import net.momirealms.customcrops.api.mechanic.world.ChunkCoordinate;
 import net.momirealms.customcrops.api.mechanic.world.ChunkPos;
@@ -31,10 +34,7 @@ import net.momirealms.customcrops.mechanic.world.block.MemorySprinkler;
 import net.momirealms.customcrops.scheduler.task.TickTask;
 import org.bukkit.Location;
 
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.Optional;
-import java.util.PriorityQueue;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -44,6 +44,7 @@ public class CChunk implements CustomCropsChunk {
     private final ChunkCoordinate chunkCoordinate;
     private final ConcurrentHashMap<Integer, CSection> loadedSections;
     private final PriorityQueue<TickTask> queue;
+    private final Set<ChunkPos> tickedBlocks;
     private long lastLoadedTime;
     private int loadedSeconds;
     private int unloadedSeconds;
@@ -54,17 +55,27 @@ public class CChunk implements CustomCropsChunk {
         this.loadedSections = new ConcurrentHashMap<>(64);
         this.queue = new PriorityQueue<>();
         this.unloadedSeconds = 0;
+        this.tickedBlocks = Collections.synchronizedSet(new HashSet<>());
         this.updateLastLoadedTime();
     }
 
-    public CChunk(CWorld cWorld, ChunkCoordinate chunkCoordinate, int loadedSeconds, long lastLoadedTime, ConcurrentHashMap<Integer, CSection> loadedSections) {
+    public CChunk(
+            CWorld cWorld,
+            ChunkCoordinate chunkCoordinate,
+            int loadedSeconds,
+            long lastLoadedTime,
+            ConcurrentHashMap<Integer, CSection> loadedSections,
+            PriorityQueue<TickTask> queue,
+            HashSet<ChunkPos> tickedBlocks
+    ) {
         this.cWorld = cWorld;
         this.chunkCoordinate = chunkCoordinate;
         this.loadedSections = loadedSections;
         this.lastLoadedTime = lastLoadedTime;
         this.loadedSeconds = loadedSeconds;
-        this.queue = new PriorityQueue<>();
+        this.queue = queue;
         this.unloadedSeconds = 0;
+        this.tickedBlocks = Collections.synchronizedSet(tickedBlocks);
     }
 
     @Override
@@ -95,15 +106,17 @@ public class CChunk implements CustomCropsChunk {
 
     @Override
     public void secondTimer() {
-        this.loadedSeconds++;
-
         WorldSetting setting = cWorld.getWorldSetting();
         int interval = setting.getMinTickUnit();
+        this.loadedSeconds++;
         // if loadedSeconds reach another recycle, rearrange the tasks
         if (this.loadedSeconds >= interval) {
             this.loadedSeconds = 0;
+            this.tickedBlocks.clear();
             this.queue.clear();
-            this.arrangeTasks(setting);
+            if (setting.isScheduledTick()) {
+                this.arrangeTasks(setting.getMinTickUnit());
+            }
         }
 
         // scheduled tick
@@ -182,17 +195,26 @@ public class CChunk implements CustomCropsChunk {
         return this.loadedSeconds;
     }
 
-    public void arrangeTasks(WorldSetting setting) {
-        if (setting.randomTickSprinkler() && setting.randomTickCrop() && setting.randomTickPot())
-            return;
-        int interval = setting.getMinTickUnit();
+    public void arrangeTasks(int unit) {
         ThreadLocalRandom random = ThreadLocalRandom.current();
         for (CustomCropsSection section : getSections()) {
             for (Map.Entry<ChunkPos, CustomCropsBlock> entry : section.getBlockMap().entrySet()) {
                 this.queue.add(new TickTask(
-                        random.nextInt(0, interval),
+                        random.nextInt(0, unit),
                         entry.getKey()
                 ));
+                this.tickedBlocks.add(entry.getKey());
+            }
+        }
+    }
+
+    public void tryCreatingTaskForNewBlock(ChunkPos pos) {
+        WorldSetting setting = cWorld.getWorldSetting();
+        if (setting.isScheduledTick() && !tickedBlocks.contains(pos)) {
+            tickedBlocks.add(pos);
+            int random = ThreadLocalRandom.current().nextInt(0, setting.getMinTickUnit());
+            if (random > loadedSeconds) {
+                queue.add(new TickTask(random, pos));
             }
         }
     }
@@ -412,6 +434,7 @@ public class CChunk implements CustomCropsChunk {
             section = new CSection(pos.getSectionID());
             loadedSections.put(pos.getSectionID(), section);
         }
+        this.tryCreatingTaskForNewBlock(pos);
         return section.addBlockAt(pos, block);
     }
 
@@ -497,5 +520,13 @@ public class CChunk implements CustomCropsChunk {
     @Override
     public boolean canPrune() {
         return loadedSections.size() == 0;
+    }
+
+    public PriorityQueue<TickTask> getQueue() {
+        return queue;
+    }
+
+    public Set<ChunkPos> getTickedBlocks() {
+        return tickedBlocks;
     }
 }

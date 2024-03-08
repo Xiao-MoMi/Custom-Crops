@@ -75,4 +75,13 @@ public class ChunkPos {
     public int hashCode() {
         return Objects.hash(position);
     }
+
+    @Override
+    public String toString() {
+        return "ChunkPos{" +
+                "x=" + getX() +
+                "y=" + getY() +
+                "z=" + getZ() +
+                '}';
+    }
 }

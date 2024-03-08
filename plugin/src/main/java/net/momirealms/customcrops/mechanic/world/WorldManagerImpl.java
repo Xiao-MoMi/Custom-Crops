@@ -79,8 +79,7 @@ public class WorldManagerImpl implements WorldManager, Listener {
         }
         for (World world : Bukkit.getWorlds()) {
             if (isMechanicEnabled(world)) {
-                CustomCropsWorld customCropsWorld = loadWorld(world);
-                customCropsWorld.setWorldSetting(getInitWorldSetting(world));
+                loadWorld(world);
             } else {
                 unloadWorld(world);
             }
@@ -156,12 +155,19 @@ public class WorldManagerImpl implements WorldManager, Listener {
     @Override
     public CustomCropsWorld loadWorld(@NotNull World world) {
         String worldName = world.getName();
-        if (loadedWorlds.containsKey(worldName))
-            return loadedWorlds.get(worldName);
-        CWorld cWorld = new CWorld(this, world, getInitWorldSetting(world));
+        if (loadedWorlds.containsKey(worldName)) {
+            CWorld cWorld = loadedWorlds.get(worldName);
+            cWorld.setWorldSetting(getInitWorldSetting(world));
+            return cWorld;
+        }
+        CWorld cWorld = new CWorld(this, world);
         worldAdaptor.init(cWorld);
-        cWorld.startTick();
         loadedWorlds.put(worldName, cWorld);
+        cWorld.setWorldSetting(getInitWorldSetting(world));
+        cWorld.startTick();
+        for (Chunk chunk : world.getLoadedChunks()) {
+            handleChunkLoad(chunk);
+        }
         return cWorld;
     }
 

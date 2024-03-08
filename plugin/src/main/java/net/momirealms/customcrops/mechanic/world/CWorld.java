@@ -54,10 +54,9 @@ public class CWorld implements CustomCropsWorld {
     private CancellableTask worldTask;
     private int currentMinecraftDay;
 
-    public CWorld(WorldManager worldManager, World world, WorldSetting setting) {
+    public CWorld(WorldManager worldManager, World world) {
         this.world = new WeakReference<>(world);
         this.worldManager = worldManager;
-        this.setting = setting;
         this.loadedChunks = new ConcurrentHashMap<>();
         this.lazyChunks = new ConcurrentHashMap<>();
         this.worldName = world.getName();

@@ -17,7 +17,6 @@
 
 package net.momirealms.customcrops.scheduler.task;
 
-import net.momirealms.customcrops.api.mechanic.item.ItemType;
 import net.momirealms.customcrops.api.mechanic.world.ChunkPos;
 import org.jetbrains.annotations.NotNull;
 

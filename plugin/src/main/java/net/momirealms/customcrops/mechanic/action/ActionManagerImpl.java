@@ -38,7 +38,6 @@ import net.momirealms.customcrops.api.mechanic.requirement.Requirement;
 import net.momirealms.customcrops.api.mechanic.world.ChunkCoordinate;
 import net.momirealms.customcrops.api.mechanic.world.CustomCropsBlock;
 import net.momirealms.customcrops.api.mechanic.world.SimpleLocation;
-import net.momirealms.customcrops.api.mechanic.world.level.CustomCropsWorld;
 import net.momirealms.customcrops.api.mechanic.world.level.WorldCrop;
 import net.momirealms.customcrops.api.mechanic.world.level.WorldPot;
 import net.momirealms.customcrops.api.mechanic.world.level.WorldSprinkler;

@@ -18,6 +18,7 @@
 package net.momirealms.customcrops.mechanic.world;
 
 import com.flowpowered.nbt.CompoundTag;
+import com.flowpowered.nbt.IntArrayTag;
 
 import java.util.List;
 
@@ -28,15 +29,17 @@ public class SerializableChunk {
     private final int loadedSeconds;
     private final long lastLoadedTime;
     private final List<SerializableSection> sections;
-    private final List<CompoundTag> queuedTasks;
+    private final int[] queuedTasks;
+    private final int[] ticked;
 
-    public SerializableChunk(int x, int z, int loadedSeconds, long lastLoadedTime, List<SerializableSection> sections, List<CompoundTag> queuedTasks) {
+    public SerializableChunk(int x, int z, int loadedSeconds, long lastLoadedTime, List<SerializableSection> sections, int[] queuedTasks, int[] ticked) {
         this.x = x;
         this.z = z;
         this.lastLoadedTime = lastLoadedTime;
         this.loadedSeconds = loadedSeconds;
         this.sections = sections;
         this.queuedTasks = queuedTasks;
+        this.ticked = ticked;
     }
 
     public int getLoadedSeconds() {
@@ -59,7 +62,11 @@ public class SerializableChunk {
         return sections;
     }
 
-    public List<CompoundTag> getQueuedTasks() {
+    public int[] getQueuedTasks() {
         return queuedTasks;
+    }
+
+    public int[] getTicked() {
+        return ticked;
     }
 }

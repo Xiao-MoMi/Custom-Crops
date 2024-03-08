@@ -35,6 +35,7 @@ public class WorldSetting implements Cloneable {
     private final boolean tickCropRandomly;
     private final boolean tickPotRandomly;
     private final boolean tickSprinklerRandomly;
+    private final boolean scheduledTick;
 
     private WorldSetting(
             boolean enableScheduler,
@@ -70,6 +71,7 @@ public class WorldSetting implements Cloneable {
         this.tickCropRandomly = tickCropRandomly;
         this.tickPotRandomly = tickPotRandomly;
         this.tickSprinklerRandomly = tickSprinklerRandomly;
+        this.scheduledTick = !(tickCropRandomly && tickPotRandomly && tickSprinklerRandomly);
     }
 
     public static WorldSetting of(
@@ -160,6 +162,10 @@ public class WorldSetting implements Cloneable {
 
     public int getRandomTickSpeed() {
         return randomTickSpeed;
+    }
+
+    public boolean isScheduledTick() {
+        return scheduledTick;
     }
 
     @Override

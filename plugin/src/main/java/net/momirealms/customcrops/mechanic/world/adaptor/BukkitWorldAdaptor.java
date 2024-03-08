@@ -36,6 +36,7 @@ import net.momirealms.customcrops.api.mechanic.world.level.WorldInfoData;
 import net.momirealms.customcrops.api.util.LogUtils;
 import net.momirealms.customcrops.mechanic.world.*;
 import net.momirealms.customcrops.mechanic.world.block.*;
+import net.momirealms.customcrops.scheduler.task.TickTask;
 import org.bukkit.NamespacedKey;
 import org.bukkit.World;
 import org.bukkit.event.EventHandler;
@@ -159,8 +160,9 @@ public class BukkitWorldAdaptor extends AbstractWorldAdaptor {
 
     @EventHandler(ignoreCancelled = true)
     public void onWorldLoad(WorldLoadEvent event) {
-        if (worldManager.isMechanicEnabled(event.getWorld()))
-            worldManager.loadWorld(event.getWorld());
+        if (worldManager.isMechanicEnabled(event.getWorld())) {
+            worldManager.loadWorld(event.getWorld());;
+        }
     }
 
     @EventHandler (ignoreCancelled = true)
@@ -189,22 +191,13 @@ public class BukkitWorldAdaptor extends AbstractWorldAdaptor {
         ByteArrayOutputStream outByteStream = new ByteArrayOutputStream();
         DataOutputStream outStream = new DataOutputStream(outByteStream);
         SerializableChunk serializableChunk = toSerializableChunk(chunk);
-
         try {
             outStream.writeByte(version);
-            outStream.writeInt(serializableChunk.getX());
-            outStream.writeInt(serializableChunk.getZ());
-            outStream.writeInt(serializableChunk.getLoadedSeconds());
-            outStream.writeLong(serializableChunk.getLastLoadedTime());
-
-            List<SerializableSection> sectionsToSave = serializableChunk.getSections();
-            byte[] serializedSections = serializeSections(sectionsToSave);
+            byte[] serializedSections = serializeChunk(serializableChunk);
             byte[] compressed = Zstd.compress(serializedSections);
-
             outStream.writeInt(compressed.length);
             outStream.writeInt(serializedSections.length);
             outStream.write(compressed);
-
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -213,29 +206,43 @@ public class BukkitWorldAdaptor extends AbstractWorldAdaptor {
 
     public CChunk deserialize(CWorld world, DataInputStream dataStream) throws IOException {
         int worldVersion = dataStream.readByte();
-        int x = dataStream.readInt();
-        int z = dataStream.readInt();
-        ChunkCoordinate chunkCoordinate = new ChunkCoordinate(x, z);
-        int loadedSeconds = dataStream.readInt();
-        long lastLoadedTime = dataStream.readLong();
         byte[] blockData = readCompressedBytes(dataStream);
-        var sectionMap = deserializeSections(world.getWorldName(), chunkCoordinate, blockData);
-        return new CChunk(world, chunkCoordinate, loadedSeconds, lastLoadedTime, sectionMap);
+        return deserializeChunk(world, blockData);
     }
 
-    private ConcurrentHashMap<Integer, CSection> deserializeSections(String world, ChunkCoordinate coordinate, byte[] bytes) throws IOException {
+    private CChunk deserializeChunk(CWorld cWorld, byte[] bytes) throws IOException {
+        String world = cWorld.getWorldName();
         DataInputStream chunkData = new DataInputStream(new ByteArrayInputStream(bytes));
+        // read coordinate
+        int x = chunkData.readInt();
+        int z = chunkData.readInt();
+        ChunkCoordinate coordinate = new ChunkCoordinate(x, z);
+        // read loading info
+        int loadedSeconds = chunkData.readInt();
+        long lastLoadedTime = chunkData.readLong();
+        // read task queue
+        int tasksSize = chunkData.readInt();
+        PriorityQueue<TickTask> queue = new PriorityQueue<>(tasksSize);
+        for (int i = 0; i < tasksSize; i++) {
+            int time = chunkData.readInt();
+            ChunkPos pos = new ChunkPos(chunkData.readInt());
+            queue.add(new TickTask(time, pos));
+        }
+        // read ticked blocks
+        int tickedSize = chunkData.readInt();
+        HashSet<ChunkPos> tickedSet = new HashSet<>(tickedSize);
+        for (int i = 0; i < tickedSize; i++) {
+            tickedSet.add(new ChunkPos(chunkData.readInt()));
+        }
+        // read block data
         ConcurrentHashMap<Integer, CSection> sectionMap = new ConcurrentHashMap<>();
-
         int sections = chunkData.readInt();
         // read sections
         for (int i = 0; i < sections; i++) {
             ConcurrentHashMap<ChunkPos, CustomCropsBlock> blockMap = new ConcurrentHashMap<>();
-
             int sectionID = chunkData.readInt();
             byte[] sectionBytes = new byte[chunkData.readInt()];
             chunkData.read(sectionBytes);
-
             DataInputStream sectionData = new DataInputStream(new ByteArrayInputStream(sectionBytes));
             int blockAmount = sectionData.readInt();
             // read blocks
@@ -282,12 +289,30 @@ public class BukkitWorldAdaptor extends AbstractWorldAdaptor {
             sectionMap.put(sectionID, cSection);
         }
 
-        return sectionMap;
+        return new CChunk(cWorld, coordinate, loadedSeconds, lastLoadedTime, sectionMap, queue, tickedSet);
     }
 
-    private byte[] serializeSections(List<SerializableSection> sectionsToSave) throws IOException {
+    private byte[] serializeChunk(SerializableChunk chunk) throws IOException {
         ByteArrayOutputStream outByteStream = new ByteArrayOutputStream(16384);
         DataOutputStream outStream = new DataOutputStream(outByteStream);
+        outStream.writeInt(chunk.getX());
+        outStream.writeInt(chunk.getZ());
+        outStream.writeInt(chunk.getLoadedSeconds());
+        outStream.writeLong(chunk.getLastLoadedTime());
+        // write queue
+        int[] queue = chunk.getQueuedTasks();
+        outStream.writeInt(queue.length / 2);
+        for (int i : queue) {
+            outStream.writeInt(i);
+        }
+        // write ticked blocks
+        int[] tickedSet = chunk.getTicked();
+        outStream.writeInt(tickedSet.length);
+        for (int i : tickedSet) {
+            outStream.writeInt(i);
+        }
+        // write block data
+        List<SerializableSection> sectionsToSave = chunk.getSections();
         outStream.writeInt(sectionsToSave.size());
         for (SerializableSection section : sectionsToSave) {
             outStream.writeInt(section.getSectionID());
@@ -329,8 +354,31 @@ public class BukkitWorldAdaptor extends AbstractWorldAdaptor {
                 chunk.getLoadedSeconds(),
                 chunk.getLastLoadedTime(),
                 Arrays.stream(chunk.getSectionsForSerialization()).map(this::toSerializableSection).toList(),
-                new ArrayList<>()
+                queueToIntArray(chunk.getQueue()),
+                tickedBlocksToArray(chunk.getTickedBlocks())
         );
+    }
+
+    private int[] tickedBlocksToArray(Set<ChunkPos> set) {
+        int[] ticked = new int[set.size()];
+        int i = 0;
+        for (ChunkPos pos : set) {
+            ticked[i] = pos.getPosition();
+            i++;
+        }
+        return ticked;
+    }
+
+    private int[] queueToIntArray(PriorityQueue<TickTask> queue) {
+        int size = queue.size() * 2;
+        int[] tasks = new int[size];
+        int i = 0;
+        for (TickTask task : queue) {
+            tasks[i * 2] = task.getTime();
+            tasks[i * 2 + 1] = task.getChunkPos().getPosition();
+            i++;
+        }
+        return tasks;
     }
 
     private SerializableSection toSerializableSection(CSection section) {

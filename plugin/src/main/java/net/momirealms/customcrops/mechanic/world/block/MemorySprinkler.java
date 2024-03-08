@@ -25,7 +25,10 @@ import net.momirealms.customcrops.api.mechanic.item.ItemType;
 import net.momirealms.customcrops.api.mechanic.item.Pot;
 import net.momirealms.customcrops.api.mechanic.item.Sprinkler;
 import net.momirealms.customcrops.api.mechanic.world.SimpleLocation;
-import net.momirealms.customcrops.api.mechanic.world.level.*;
+import net.momirealms.customcrops.api.mechanic.world.level.AbstractCustomCropsBlock;
+import net.momirealms.customcrops.api.mechanic.world.level.CustomCropsWorld;
+import net.momirealms.customcrops.api.mechanic.world.level.WorldPot;
+import net.momirealms.customcrops.api.mechanic.world.level.WorldSprinkler;
 import net.momirealms.customcrops.api.util.LogUtils;
 
 import java.util.Objects;
@@ -85,9 +88,7 @@ public class MemorySprinkler extends AbstractCustomCropsBlock implements WorldSp
 
     @Override
     public void tick(int interval) {
-        System.out.println("我tm洒水器被tick了");
         if (canTick(interval)) {
-            System.out.println("我tm洒水器tick了");
             tick();
         }
     }
