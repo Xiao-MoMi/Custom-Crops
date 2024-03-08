@@ -58,8 +58,19 @@ sprinkler_1:
     work:
       fake_item_action: {}
     add_water:
-      sound_action: {}
-      particle_action: {}
+      particle_action:
+        type: particle
+        value:
+          particle: WATER_SPLASH
+          y: 0.7
+          count: 5
+      sound_action:
+        type: sound
+        value:
+          key: "minecraft:item.bucket.empty"
+          source: 'player'
+          volume: 1
+          pitch: 1
 sprinkler_2:
   # □□□□□
   # □□□□□

@@ -17,7 +17,9 @@ softdepend:
   - ClueScrolls
   - mcMMO
   - AureliumSkills
+  - AuraSkills
   - MMOCore
   - EcoSkills
-  - RealisticSeasons
   - Jobs
+  - RealisticSeasons
+  - AdvancedSeasons

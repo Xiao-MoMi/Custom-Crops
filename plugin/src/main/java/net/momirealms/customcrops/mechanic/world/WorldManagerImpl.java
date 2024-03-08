@@ -62,28 +62,29 @@ public class WorldManagerImpl implements WorldManager, Listener {
         this.plugin = plugin;
         this.loadedWorlds = new ConcurrentHashMap<>();
         this.worldSettingMap = new HashMap<>();
-        this.loadConfig();
         try {
             Class.forName("com.infernalsuite.aswm.api.world.SlimeWorld");
             this.worldAdaptor = new SlimeWorldAdaptor(this);
         } catch (ClassNotFoundException ignore) {
-            this.worldAdaptor = new BukkitWorldAdaptor(this, absoluteWorldFolder);
-        }
-    }
-
-    @Override
-    public void init() {
-        this.load();
-        for (World world : Bukkit.getWorlds()) {
-            if (isMechanicEnabled(world)) {
-                loadWorld(world);
-            }
+            this.worldAdaptor = new BukkitWorldAdaptor(this);
         }
     }
 
     @Override
     public void load() {
         this.registerListener();
+        this.loadConfig();
+        if (this.worldAdaptor instanceof BukkitWorldAdaptor adaptor) {
+            adaptor.setWorldFolder(absoluteWorldFolder);
+        }
+        for (World world : Bukkit.getWorlds()) {
+            if (isMechanicEnabled(world)) {
+                CustomCropsWorld customCropsWorld = loadWorld(world);
+                customCropsWorld.setWorldSetting(getInitWorldSetting(world));
+            } else {
+                unloadWorld(world);
+            }
+        }
     }
 
     @Override
@@ -450,8 +451,7 @@ public class WorldManagerImpl implements WorldManager, Listener {
             return;
         CustomCropsWorld customCropsWorld = optional.get();
         ChunkCoordinate chunkCoordinate = ChunkCoordinate.getByBukkitChunk(bukkitChunk);
-        Optional<CustomCropsChunk> previousData = customCropsWorld.getChunkAt(chunkCoordinate);
-        if (previousData.isPresent()) {
+        if (customCropsWorld.isChunkLoaded(chunkCoordinate)) {
             return;
         }
         // load chunks

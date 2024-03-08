@@ -114,8 +114,24 @@ public class CChunk implements CustomCropsChunk {
                 CSection section = loadedSections.get(pos.getSectionID());
                 if (section != null) {
                     CustomCropsBlock block = section.getBlockAt(pos);
-                    if (block != null && block.getType() == task.getType()) {
-
+                    if (block == null) continue;
+                    switch (block.getType()) {
+                        case SCARECROW, GREENHOUSE -> {}
+                        case POT -> {
+                            if (!setting.randomTickPot()) {
+                                block.tick(setting.getTickPotInterval());
+                            }
+                        }
+                        case CROP -> {
+                            if (!setting.randomTickCrop()) {
+                                block.tick(setting.getTickCropInterval());
+                            }
+                        }
+                        case SPRINKLER -> {
+                            if (!setting.randomTickSprinkler()) {
+                                block.tick(setting.getTickSprinklerInterval());
+                            }
+                        }
                     }
                 }
             }
@@ -123,7 +139,7 @@ public class CChunk implements CustomCropsChunk {
 
         // random tick
         ThreadLocalRandom random = ThreadLocalRandom.current();
-        int randomTicks = setting.getRandomTickSpeed() * 20;
+        int randomTicks = setting.getRandomTickSpeed();
         for (CustomCropsSection section : getSections()) {
             int sectionID = section.getSectionID();
             int baseY = sectionID * 16;
@@ -167,29 +183,15 @@ public class CChunk implements CustomCropsChunk {
     }
 
     public void arrangeTasks(WorldSetting setting) {
+        if (setting.randomTickSprinkler() && setting.randomTickCrop() && setting.randomTickPot())
+            return;
         int interval = setting.getMinTickUnit();
         ThreadLocalRandom random = ThreadLocalRandom.current();
         for (CustomCropsSection section : getSections()) {
             for (Map.Entry<ChunkPos, CustomCropsBlock> entry : section.getBlockMap().entrySet()) {
-                ItemType type = entry.getValue().getType();
-                switch (type) {
-                    case CROP -> {
-                        if (setting.randomTickCrop()) continue;
-                    }
-                    case POT -> {
-                        if (setting.randomTickPot()) continue;
-                    }
-                    case SPRINKLER -> {
-                        if (setting.randomTickSprinkler()) continue;
-                    }
-                    case SCARECROW, GREENHOUSE -> {
-                        continue;
-                    }
-                }
                 this.queue.add(new TickTask(
                         random.nextInt(0, interval),
-                        entry.getKey(),
-                        type
+                        entry.getKey()
                 ));
             }
         }

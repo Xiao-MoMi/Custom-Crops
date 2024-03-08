@@ -49,6 +49,8 @@ public interface CustomCropsWorld {
 
     String getWorldName();
 
+    boolean isChunkLoaded(ChunkCoordinate chunkCoordinate);
+
     Optional<CustomCropsChunk> getChunkAt(ChunkCoordinate chunkCoordinate);
 
     void loadChunk(CustomCropsChunk chunk);
@@ -91,9 +93,6 @@ public interface CustomCropsWorld {
     void removeScarecrowAt(SimpleLocation location);
 
     CustomCropsBlock removeAnythingAt(SimpleLocation location);
-
-    @Nullable
-    CustomCropsChunk createOrGetChunk(ChunkCoordinate chunkCoordinate);
 
     boolean isPotReachLimit(SimpleLocation location);
 

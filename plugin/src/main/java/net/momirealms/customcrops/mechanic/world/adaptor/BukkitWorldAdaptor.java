@@ -52,12 +52,11 @@ public class BukkitWorldAdaptor extends AbstractWorldAdaptor {
 
     private static final NamespacedKey key = new NamespacedKey(CustomCropsPlugin.get(), "data");
     private final Gson gson;
-    private final String worldFolder;
+    private String worldFolder;
 
-    public BukkitWorldAdaptor(WorldManager worldManager, String worldFolder) {
+    public BukkitWorldAdaptor(WorldManager worldManager) {
         super(worldManager);
         this.gson = new Gson();
-        this.worldFolder = worldFolder;
     }
 
     @Override
@@ -180,6 +179,10 @@ public class BukkitWorldAdaptor extends AbstractWorldAdaptor {
         } else {
             return new File(worldFolder, world.getName() + File.separator + "customcrops" + File.separator + getChunkDataFile(chunkCoordinate));
         }
+    }
+
+    public void setWorldFolder(String folder) {
+        this.worldFolder = folder;
     }
 
     public byte[] serialize(CChunk chunk) {

@@ -33,7 +33,6 @@ import net.momirealms.customcrops.api.mechanic.world.season.Season;
 import net.momirealms.customcrops.api.scheduler.CancellableTask;
 import net.momirealms.customcrops.api.util.LogUtils;
 import net.momirealms.customcrops.utils.EventUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.jetbrains.annotations.Nullable;
@@ -157,6 +156,11 @@ public class CWorld implements CustomCropsWorld {
     @Override
     public String getWorldName() {
         return worldName;
+    }
+
+    @Override
+    public boolean isChunkLoaded(ChunkCoordinate chunkCoordinate) {
+        return loadedChunks.containsKey(chunkCoordinate);
     }
 
     @Override
@@ -397,8 +401,7 @@ public class CWorld implements CustomCropsWorld {
     }
 
     @Nullable
-    @Override
-    public CustomCropsChunk createOrGetChunk(ChunkCoordinate chunkCoordinate) {
+    private CustomCropsChunk createOrGetChunk(ChunkCoordinate chunkCoordinate) {
         World bukkitWorld = world.get();
         if (bukkitWorld == null)
             return null;

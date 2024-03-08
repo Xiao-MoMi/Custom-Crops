@@ -27,6 +27,7 @@ import net.momirealms.customcrops.compatibility.item.MMOItemsItemImpl;
 import net.momirealms.customcrops.compatibility.item.MythicMobsItemImpl;
 import net.momirealms.customcrops.compatibility.item.NeigeItemsItemImpl;
 import net.momirealms.customcrops.compatibility.item.ZaphkielItemImpl;
+import net.momirealms.customcrops.compatibility.level.*;
 import net.momirealms.customcrops.compatibility.season.AdvancedSeasonsImpl;
 import net.momirealms.customcrops.compatibility.season.InBuiltSeason;
 import net.momirealms.customcrops.compatibility.season.RealisticSeasonsImpl;
@@ -64,6 +65,30 @@ public class IntegrationManagerImpl implements IntegrationManager {
         if (plugin.isHookedPluginEnabled("MythicMobs")) {
             plugin.getItemManager().registerItemLibrary(new MythicMobsItemImpl());
             hookMessage("MythicMobs");
+        }
+        if (plugin.isHookedPluginEnabled("EcoJobs")) {
+            registerLevelPlugin("EcoJobs", new EcoJobsImpl());
+            hookMessage("EcoJobs");
+        }
+        if (plugin.isHookedPluginEnabled("AureliumSkills")) {
+            registerLevelPlugin("AureliumSkills", new AureliumSkillsImpl());
+            hookMessage("AureliumSkills");
+        }
+        if (plugin.isHookedPluginEnabled("EcoSkills")) {
+            registerLevelPlugin("EcoSkills", new EcoSkillsImpl());
+            hookMessage("EcoSkills");
+        }
+        if (plugin.isHookedPluginEnabled("mcMMO")) {
+            registerLevelPlugin("mcMMO", new McMMOImpl());
+            hookMessage("mcMMO");
+        }
+        if (plugin.isHookedPluginEnabled("MMOCore")) {
+            registerLevelPlugin("MMOCore", new MMOCoreImpl());
+            hookMessage("MMOCore");
+        }
+        if (plugin.isHookedPluginEnabled("AuraSkills")) {
+            registerLevelPlugin("AuraSkills", new AuraSkillsImpl());
+            hookMessage("AuraSkills");
         }
         if (plugin.isHookedPluginEnabled("RealisticSeasons")) {
             this.seasonInterface = new RealisticSeasonsImpl();

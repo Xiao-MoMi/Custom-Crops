@@ -658,7 +658,7 @@ public class ItemManagerImpl implements ItemManager {
         WateringCanConfig wateringCan = new WateringCanConfig(
                 key,
                 itemID, section.getBoolean("infinite", false), width,
-                length, section.getInt("capacity"), section.getInt("water"),
+                length, section.getInt("capacity", 3), section.getInt("water", 1),
                 hasDynamicLore, lore,
                 potWhiteList, sprinklerWhiteList,
                 ConfigUtils.getPositiveFillMethods(section.getConfigurationSection("fill-method")),
@@ -1199,7 +1199,7 @@ public class ItemManagerImpl implements ItemManager {
                         for (PassiveFillMethod method : sprinkler.getPassiveFillMethods()) {
                             if (method.getUsed().equals(itemID) && itemAmount >= method.getUsedAmount()) {
                                 if (method.canFill(state)) {
-                                    if (waterInSprinkler > sprinkler.getStorage()) {
+                                    if (waterInSprinkler < sprinkler.getStorage()) {
                                         if (player.getGameMode() != GameMode.CREATIVE) {
                                             itemInHand.setAmount(itemAmount - method.getUsedAmount());
                                             if (method.getReturned() != null) {

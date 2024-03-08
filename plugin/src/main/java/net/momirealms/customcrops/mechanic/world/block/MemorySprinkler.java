@@ -85,7 +85,9 @@ public class MemorySprinkler extends AbstractCustomCropsBlock implements WorldSp
 
     @Override
     public void tick(int interval) {
+        System.out.println("我tm洒水器被tick了");
         if (canTick(interval)) {
+            System.out.println("我tm洒水器tick了");
             tick();
         }
     }
@@ -111,7 +113,7 @@ public class MemorySprinkler extends AbstractCustomCropsBlock implements WorldSp
         CustomCropsWorld world = CustomCropsPlugin.get().getWorldManager().getCustomCropsWorld(location.getWorldName()).get();
         for (int i = -range; i <= range; i++) {
             for (int j = -range; j <= range; j++) {
-                for (int k : new int[]{0,1}) {
+                for (int k : new int[]{-1,0}) {
                     SimpleLocation potLocation = location.copy().add(i,k,j);
                     Optional<WorldPot> pot = world.getPotAt(potLocation);
                     if (pot.isPresent()) {
