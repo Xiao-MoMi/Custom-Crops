@@ -1,105 +1,128 @@
-# Pot key name
+# ID
 default:
-  # The max water storage
-  # 最大储水量
+  # Maximum water storage capacity
   max-water-storage: 5
+  # The most basic settings
   base:
-    # basic models, use capital letters if you want to use vanilla blocks
-    # Example: FARMLAND
-    # 基础模型，如果你想要使用原版方块请使用大写字母，例如FARMLAND（耕地）
-    dry: customcrops:dry_pot
-    wet: customcrops:wet_pot
-  # If you want fertilized pots to have different looks
-  # 如果你想让施肥的种植盆有不同的外观
+    # Pot models
+    dry: {0}dry_pot
+    wet: {0}wet_pot
+  # Does the pot absorb raindrop
+  absorb-rainwater: true
+  # Does nearby water make the pot wet
+  absorb-nearby-water: false
+  # Set unique looks for pots with different fertilizer statuses
   fertilized-pots:
     enable: false
     quality:
-      dry: customcrops:dry_pot
-      wet: customcrops:wet_pot
+      dry: {0}dry_pot
+      wet: {0}wet_pot
     yield-increase:
-      dry: customcrops:dry_pot
-      wet: customcrops:wet_pot
+      dry: {0}dry_pot
+      wet: {0}wet_pot
     variation:
-      dry: customcrops:dry_pot
-      wet: customcrops:wet_pot
+      dry: {0}dry_pot
+      wet: {0}wet_pot
     soil-retain:
-      dry: customcrops:dry_pot
-      wet: customcrops:wet_pot
+      dry: {0}dry_pot
+      wet: {0}wet_pot
     speed-grow:
-      dry: customcrops:dry_pot
-      wet: customcrops:wet_pot
-  # Methods to fill the pot
-  # 浇水的方法
+      dry: {0}dry_pot
+      wet: {0}wet_pot
+  # Methods to fill the watering can
   fill-method:
+    # The name of the method, it's totally customized
     method_1:
       # The item to use
-      # 使用的物品
       item: WATER_BUCKET
-      # The item returned
-      # 返还的物品
+      # The item returned (Optional)
       return: BUCKET
-      # water amount to add
-      # 增加的水量
+      # The amount of water to add
       amount: 3
-      # 粒子效果
-      particle: WATER_SPLASH
-      # 声音
-      sound: minecraft:block.water.ambient
+      actions:
+        sound_action:
+          type: sound
+          value:
+            source: player
+            key: minecraft:item.bucket.fill
+            volume: 1
+            pitch: 1
+        swing_hand_action:
+          type: swing-hand
+          value: true
     method_2:
-      item: WATER
+      item: POTION
       return: GLASS_BOTTLE
       amount: 1
-      particle: WATER_SPLASH
-      sound: minecraft:block.water.ambient
-    method_3:
-      item: SNOWBALL
-      amount: 1
-      particle: WATER_SPLASH
-      sound: minecraft:block.water.ambient
-    method_4:
-      # This is just an example
-      # "customcrops:magic_water" actually not exists
-      # 这只是个示例， "customcrops:magic_water"事实上不存在
-      item: customcrops:magic_water
-      amount: 5
-      particle: WATER_SPLASH
-      sound: minecraft:block.water.ambient
-  # Pot info hologram
-  # 种植盆悬浮信息
-  hologram:
-    # ARMOR_STAND / TEXT_DISPLAY (1.19.4+)
-    # 显示载体
-    type: ARMOR_STAND
-    # in seconds
-    # 持续时间
-    duration: 2
-    # remove this if you want players can see the pot info even with empty hands
-    # 如果你想要空手也能查看种植盆信息，那么移除这个项目
-    require-item: customcrops:soil_surveyor
-    # Fertilizer info
-    # 肥料信息
-    fertilizer:
-      enable: true
-      vertical-offset: 0.8
-      content: '<font:customcrops:default>{icon}</font> {left_times}/{max_times}'
-    # Water info
-    # 水分信息
-    water:
-      enable: true
-      vertical-offset: 1.05
-      # Available placeholders
-      # {current} current water 当前水量
-      # {storage} max water 最大储水量
-      # {water_bar} water bar image 水条
-      content: '<font:customcrops:default>{water_bar}</font>'
-      water-bar:
-        left: '뀂'
-        full: '뀁뀃'
-        empty: '뀁뀄'
-        right: '뀁뀅'
-    text-display-options:
-      background-color: 0,0,0,0
-      has-shadow: false
-      is-see-through: false
-      use-default-background-color: false
-      text-opacity: -1
+      actions:
+        sound_action:
+          type: sound
+          value:
+            source: player
+            key: minecraft:item.bottle.fill
+            volume: 1
+            pitch: 1
+        swing_hand_action:
+          type: swing-hand
+          value: true
+  # Water bar image settings
+  water-bar:
+    left: '뀂'
+    full: '뀁뀃'
+    empty: '뀁뀄'
+    right: '뀁뀅'
+  # Event settings
+  events:
+    add_water:
+      particle_action:
+        type: particle
+        value:
+          particle: WATER_SPLASH
+          x: 0.5
+          y: 1.3
+          z: 0.5
+          count: 5
+          offset-x: 0.3
+          offset-z: 0.3
+    interact:
+      # This action allows to display hologram while holding the specified item.
+      conditional_action:
+        type: conditional
+        value:
+          conditions:
+            requirement_1:
+              type: item-in-hand
+              value:
+                hand: main
+                amount: 1
+                item: {0}soil_surveyor
+          actions:
+            # If the fertilizer doesn't exist, this line would not appear
+            conditional_fertilizer_action:
+              type: conditional
+              value:
+                conditions:
+                  requirement_1:
+                    type: fertilizer
+                    value:
+                      has: true
+                actions:
+                  fertilizer_hologram:
+                    type: hologram
+                    value:
+                      duration: 20
+                      text: '<font:customcrops:default>{icon}</font> {left_times}/{max_times} '
+                      apply-correction: true
+                      x: 0.5
+                      y: 0.83
+                      z: 0.5
+            # Display the amount of water in pot
+            water_hologram:
+              type: hologram
+              value:
+                duration: 20
+                text: '<font:customcrops:default>{water_bar}</font>'
+                apply-correction: true
+                x: 0.5
+                y: 0.6
+                z: 0.5

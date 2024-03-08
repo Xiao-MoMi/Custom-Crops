@@ -17,6 +17,7 @@
 
 package net.momirealms.customcrops.api.event;
 
+import net.momirealms.customcrops.api.mechanic.item.Pot;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
@@ -32,16 +33,16 @@ public class PotPlaceEvent extends PlayerEvent implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
     private boolean cancelled;
     private final Location location;
-    private final String potKey;
+    private final Pot pot;
 
     public PotPlaceEvent(
             @NotNull Player who,
             @NotNull Location location,
-            @NotNull String potKey
+            @NotNull Pot pot
     ) {
         super(who);
         this.location = location;
-        this.potKey = potKey;
+        this.pot = pot;
     }
 
     @Override
@@ -75,11 +76,11 @@ public class PotPlaceEvent extends PlayerEvent implements Cancellable {
     }
 
     /**
-     * Get the placed pot config key
-     * @return pot key
+     * Get the placed pot's config
+     * @return pot
      */
     @NotNull
-    public String getPotKey() {
-        return potKey;
+    public Pot getPot() {
+        return pot;
     }
 }

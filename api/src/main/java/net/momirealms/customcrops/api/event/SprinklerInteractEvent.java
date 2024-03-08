@@ -17,6 +17,7 @@
 
 package net.momirealms.customcrops.api.event;
 
+import net.momirealms.customcrops.api.mechanic.world.level.WorldSprinkler;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
@@ -33,18 +34,18 @@ public class SprinklerInteractEvent extends PlayerEvent implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
     private boolean cancelled;
     private final Location location;
-    private final String sprinklerKey;
+    private final WorldSprinkler sprinkler;
     private final ItemStack itemInHand;
 
     public SprinklerInteractEvent(
             @NotNull Player who,
             @NotNull ItemStack itemInHand,
             @NotNull Location location,
-            @NotNull String sprinklerKey
+            @NotNull WorldSprinkler sprinkler
     ) {
         super(who);
         this.location = location;
-        this.sprinklerKey = sprinklerKey;
+        this.sprinkler = sprinkler;
         this.itemInHand = itemInHand;
     }
 
@@ -79,12 +80,12 @@ public class SprinklerInteractEvent extends PlayerEvent implements Cancellable {
     }
 
     /**
-     * Get the sprinkler config key
-     * @return sprinkler key
+     * Get the sprinkler's data
+     * @return sprinkler
      */
     @NotNull
-    public String getSprinklerKey() {
-        return sprinklerKey;
+    public WorldSprinkler getSprinkler() {
+        return sprinkler;
     }
 
     /**

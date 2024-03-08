@@ -17,19 +17,107 @@
 
 package net.momirealms.customcrops.api;
 
+import net.momirealms.customcrops.api.manager.*;
+import net.momirealms.customcrops.api.scheduler.Scheduler;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public abstract class CustomCropsPlugin extends JavaPlugin {
 
     protected static CustomCropsPlugin instance;
+    protected VersionManager versionManager;
+    protected ConfigManager configManager;
+    protected Scheduler scheduler;
+    protected RequirementManager requirementManager;
+    protected ActionManager actionManager;
+    protected IntegrationManager integrationManager;
+    protected CoolDownManager coolDownManager;
+    protected WorldManager worldManager;
+    protected ItemManager itemManager;
+    protected AdventureManager adventure;
+    protected MessageManager messageManager;
+    protected ConditionManager conditionManager;
+    protected PlaceholderManager placeholderManager;
 
-    protected CustomCropsAPI customCropsAPI;
-
-    public CustomCropsAPI getAPI() {
-        return customCropsAPI;
+    public CustomCropsPlugin() {
+        instance = this;
     }
 
     public static CustomCropsPlugin getInstance() {
         return instance;
     }
+
+    public static CustomCropsPlugin get() {
+        return instance;
+    }
+
+    /* Get version manager */
+    public VersionManager getVersionManager() {
+        return versionManager;
+    }
+
+    /* Get config manager */
+    public ConfigManager getConfigManager() {
+        return configManager;
+    }
+
+    /* Get scheduler */
+    public Scheduler getScheduler() {
+        return scheduler;
+    }
+
+    /* Get requirement manager */
+    public RequirementManager getRequirementManager() {
+        return requirementManager;
+    }
+
+    /* Get integration manager */
+    public IntegrationManager getIntegrationManager() {
+        return integrationManager;
+    }
+
+    /* Get action manager */
+    public ActionManager getActionManager() {
+        return actionManager;
+    }
+
+    /* Get cool down manager */
+    public CoolDownManager getCoolDownManager() {
+        return coolDownManager;
+    }
+
+    /* Get world data manager */
+    public WorldManager getWorldManager() {
+        return worldManager;
+    }
+
+    /* Get item manager */
+    public ItemManager getItemManager() {
+        return itemManager;
+    }
+
+    /* Get message manager */
+    public MessageManager getMessageManager() {
+        return messageManager;
+    }
+
+    /* Get adventure manager */
+    public AdventureManager getAdventure() {
+        return adventure;
+    }
+
+    /* Get condition manager */
+    public ConditionManager getConditionManager() {
+        return conditionManager;
+    }
+
+    /* Get placeholder manager */
+    public PlaceholderManager getPlaceholderManager() {
+        return placeholderManager;
+    }
+
+    public abstract boolean isHookedPluginEnabled(String plugin);
+
+    public abstract void debug(String debug);
+
+    public abstract void reload();
 }

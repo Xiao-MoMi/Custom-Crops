@@ -1,9 +1,14 @@
-![2022-08-15_02 51 28](https://user-images.githubusercontent.com/70987828/184551011-7da1dca5-faab-473c-b6a5-d2489b135ca9.png)
-
-# This project is currently under recoding
-
 # Custom-Crops
-StardewValley Like Farming System
+![CodeFactor Grade](https://img.shields.io/codefactor/grade/github/Xiao-MoMi/Custom-Crops)
+![bStats Servers](https://img.shields.io/bstats/servers/16593)
+![bStats Players](https://img.shields.io/bstats/players/16593)
+![GitHub](https://img.shields.io/github/license/Xiao-MoMi/Custom-Crops)
+[![](https://jitpack.io/v/Xiao-MoMi/Custom-Crops.svg)](https://jitpack.io/#Xiao-MoMi/Custom-Crops)
+<a href="https://mo-mi.gitbook.io/xiaomomi-plugins/plugin-wiki/customcrops" alt="GitBook">
+<img src="https://img.shields.io/badge/docs-gitbook-brightgreen" alt="Gitbook"/>
+</a>
+
+Ultra-customizable planting experience for Minecraft servers
 
 ### Support the developer
 
@@ -68,42 +73,4 @@ repositories {
 dependencies {
     compileOnly("com.github.Xiao-MoMi:Custom-Crops:{LATEST}")
 }
-```
-
-### API Guide
-```access transformers
-public class YourClass {
-
-    private CustomCropsAPI api;
-    
-    public YourClass() {
-        api = CustomCropsAPI.getInstance();
-    }
-    
-    public void yourMethod() {
-        api.xxx();
-    }
-}
-```
-
-#### Events
-```
-CropBreakEvent
-CropInteractEvent
-CropPlantEvent
-FertilizerUseEvent
-GreenhouseGlassBreakEvent
-GreenhouseGlassPlaceEvent
-PotBreakEvent
-PotInfoEvent
-PotInteractEvent
-PotPlaceEvent
-PotWaterEvent
-ScarecrowBreakEvent
-ScarecrowPlaceEvent
-SprinklerFillEvent
-SprinklerPlaceEvent
-SprinklerInteractEvent
-SprinklerBreakEvent
-SeasonChangeEvent
 ```

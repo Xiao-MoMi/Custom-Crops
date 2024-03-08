@@ -17,6 +17,7 @@
 
 package net.momirealms.customcrops.api.event;
 
+import net.momirealms.customcrops.api.mechanic.world.level.WorldCrop;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
@@ -24,6 +25,7 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * An event that triggered when a player interacts a crop
@@ -33,21 +35,18 @@ public class CropInteractEvent extends PlayerEvent implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
     private boolean cancelled;
     private final Location location;
-    private final String cropItemID;
-    private final String cropKey;
+    private final WorldCrop crop;
     private final ItemStack itemInHand;
 
     public CropInteractEvent(
             @NotNull Player who,
             @NotNull ItemStack itemInHand,
             @NotNull Location location,
-            @NotNull String cropItemID,
-            @NotNull String cropKey
+            @Nullable WorldCrop crop
     ) {
         super(who);
-        this.cropItemID = cropItemID;
         this.location = location;
-        this.cropKey = cropKey;
+        this.crop = crop;
         this.itemInHand = itemInHand;
     }
 
@@ -92,20 +91,11 @@ public class CropInteractEvent extends PlayerEvent implements Cancellable {
     }
 
     /**
-     * Get the crop model item id
-     * @return model item id
+     * Get the crop's data, it might be null if it's spawned by other plugins in the wild
+     * @return crop data
      */
-    @NotNull
-    public String getCropItemID() {
-        return cropItemID;
-    }
-
-    /**
-     * Get the crop config key
-     * @return crop key
-     */
-    @NotNull
-    public String getCropKey() {
-        return cropKey;
+    @Nullable
+    public WorldCrop getCrop() {
+        return crop;
     }
 }

@@ -17,6 +17,7 @@
 
 package net.momirealms.customcrops.api.event;
 
+import net.momirealms.customcrops.api.mechanic.item.Crop;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
@@ -33,25 +34,22 @@ public class CropPlantEvent extends PlayerEvent implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
     private boolean cancelled;
     private final ItemStack itemInHand;
-    private final String cropKey;
+    private final Crop crop;
     private final Location location;
     private int point;
-    private String cropItemID;
 
     public CropPlantEvent(
             @NotNull Player who,
             @NotNull ItemStack itemInHand,
             @NotNull Location location,
-            @NotNull String cropKey,
-            int point,
-            @NotNull String cropItemID
+            @NotNull Crop crop,
+            int point
     ) {
         super(who);
         this.itemInHand = itemInHand;
         this.location = location;
-        this.cropKey = cropKey;
+        this.crop = crop;
         this.point = point;
-        this.cropItemID = cropItemID;
     }
 
     @Override
@@ -85,16 +83,18 @@ public class CropPlantEvent extends PlayerEvent implements Cancellable {
     }
 
     /**
-     * Get the crop config key
-     * @return crop key
+     * Get the crop's config
+     *
+     * @return crop
      */
     @NotNull
-    public String getCropKey() {
-        return cropKey;
+    public Crop getCrop() {
+        return crop;
     }
 
     /**
-     * Get the crop location
+     * Get the crop's location
+     *
      * @return location
      */
     @NotNull
@@ -105,7 +105,7 @@ public class CropPlantEvent extends PlayerEvent implements Cancellable {
     /**
      * Get the initial point
      * It would be 0 when planting
-     * but might be a value higher than 0 when replanting
+     *
      * @return point
      */
     public int getPoint() {
@@ -118,22 +118,5 @@ public class CropPlantEvent extends PlayerEvent implements Cancellable {
      */
     public void setPoint(int point) {
         this.point = point;
-    }
-
-    /**
-     * Get the crop stage model item id
-     * @return crop model
-     */
-    @NotNull
-    public String getCropModel() {
-        return cropItemID;
-    }
-
-    /**
-     * Set the crop model item id
-     * @param cropItemID crop model item id
-     */
-    public void setCropModel(String cropItemID) {
-        this.cropItemID = cropItemID;
     }
 }

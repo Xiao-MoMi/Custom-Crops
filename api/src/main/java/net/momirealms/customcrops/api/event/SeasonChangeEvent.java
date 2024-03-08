@@ -17,25 +17,27 @@
 
 package net.momirealms.customcrops.api.event;
 
-import net.momirealms.customcrops.api.object.CCWorldSeason;
+import net.momirealms.customcrops.api.mechanic.world.season.Season;
 import org.bukkit.World;
+import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
-import org.bukkit.event.world.WorldEvent;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * An event that triggered when season changes
+ * An async event triggered when season changes
  */
-public class SeasonChangeEvent extends WorldEvent {
+public class SeasonChangeEvent extends Event {
 
     private static final HandlerList handlers = new HandlerList();
-    private final CCWorldSeason season;
+    private final Season season;
+    private final World world;
 
     public SeasonChangeEvent(
             @NotNull World world,
-            @NotNull CCWorldSeason season
+            @NotNull Season season
     ) {
-        super(world);
+        super(true);
+        this.world = world;
         this.season = season;
     }
 
@@ -55,7 +57,15 @@ public class SeasonChangeEvent extends WorldEvent {
      * @return season
      */
     @NotNull
-    public CCWorldSeason getSeason() {
+    public Season getSeason() {
         return season;
+    }
+
+    /**
+     * Get the world
+     * @return world
+     */
+    public World getWorld() {
+        return world;
     }
 }

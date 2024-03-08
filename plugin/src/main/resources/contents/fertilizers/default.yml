@@ -1,0 +1,711 @@
+quality_1:
+  type: QUALITY
+  icon: '뀆'
+  chance: 1
+  times: 28
+  ratio: 7/2/1
+  item: {0}quality_1
+  before-plant: true
+  pot-whitelist:
+    - default
+  events:
+    use:
+      particle_action:
+        type: particle
+        value:
+          particle: SCRAPE
+          x: 0.5
+          y: 1.3
+          z: 0.5
+          count: 5
+          offset-x: 0.3
+          offset-z: 0.3
+      sound_action:
+        type: sound
+        value:
+          source: player
+          key: minecraft:item.hoe.till
+          volume: 1
+          pitch: 1
+    wrong_pot:
+      sound_action:
+        type: sound
+        value:
+          key: "minecraft:item.bundle.insert"
+          source: 'player'
+          volume: 1
+          pitch: 1
+      actionbar_action:
+        type: actionbar
+        value: '<red><bold>[X] This fertilizer can only be used in pots.'
+    before_plant:
+      sound_action:
+        type: sound
+        value:
+          key: "minecraft:item.bundle.insert"
+          source: 'player'
+          volume: 1
+          pitch: 1
+      actionbar_action:
+        type: actionbar
+        value: '<red><bold>[X] You can only use this fertilizer before planting the crop.'
+quality_2:
+  type: QUALITY
+  icon: '뀇'
+  chance: 1
+  times: 28
+  ratio: 11/6/3
+  item: {0}quality_2
+  before-plant: true
+  pot-whitelist:
+    - default
+  events:
+    use:
+      particle_action:
+        type: particle
+        value:
+          particle: WAX_OFF
+          x: 0.5
+          y: 1.3
+          z: 0.5
+          count: 5
+          offset-x: 0.3
+          offset-z: 0.3
+      sound_action:
+        type: sound
+        value:
+          source: player
+          key: minecraft:item.hoe.till
+          volume: 1
+          pitch: 1
+    wrong_pot:
+      sound_action:
+        type: sound
+        value:
+          key: "minecraft:item.bundle.insert"
+          source: 'player'
+          volume: 1
+          pitch: 1
+      actionbar_action:
+        type: actionbar
+        value: '<red><bold>[X] This fertilizer can only be used in pots.'
+    before_plant:
+      sound_action:
+        type: sound
+        value:
+          key: "minecraft:item.bundle.insert"
+          source: 'player'
+          volume: 1
+          pitch: 1
+      actionbar_action:
+        type: actionbar
+        value: '<red><bold>[X] You can only use this fertilizer before planting the crop.'
+quality_3:
+  type: QUALITY
+  icon: '뀈'
+  chance: 1
+  times: 28
+  ratio: 2/2/1
+  item: {0}quality_3
+  before-plant: true
+  pot-whitelist:
+    - default
+  events:
+    use:
+      particle_action:
+        type: particle
+        value:
+          particle: WAX_ON
+          x: 0.5
+          y: 1.3
+          z: 0.5
+          count: 5
+          offset-x: 0.3
+          offset-z: 0.3
+      sound_action:
+        type: sound
+        value:
+          source: player
+          key: minecraft:item.hoe.till
+          volume: 1
+          pitch: 1
+    wrong_pot:
+      sound_action:
+        type: sound
+        value:
+          key: "minecraft:item.bundle.insert"
+          source: 'player'
+          volume: 1
+          pitch: 1
+      actionbar_action:
+        type: actionbar
+        value: '<red><bold>[X] This fertilizer can only be used in pots.'
+    before_plant:
+      sound_action:
+        type: sound
+        value:
+          key: "minecraft:item.bundle.insert"
+          source: 'player'
+          volume: 1
+          pitch: 1
+      actionbar_action:
+        type: actionbar
+        value: '<red><bold>[X] You can only use this fertilizer before planting the crop.'
+soil_retain_1:
+  type: SOIL_RETAIN
+  icon: '뀉'
+  chance: 0.1
+  times: 28
+  item: {0}soil_retain_1
+  before-plant: false
+  particle: SPELL
+  sound: minecraft:item.hoe.till
+  pot-whitelist:
+    - default
+  events:
+    use:
+      particle_action:
+        type: particle
+        value:
+          particle: SPELL
+          x: 0.5
+          y: 1.3
+          z: 0.5
+          count: 5
+          offset-x: 0.3
+          offset-z: 0.3
+      sound_action:
+        type: sound
+        value:
+          source: player
+          key: minecraft:item.hoe.till
+          volume: 1
+          pitch: 1
+    wrong_pot:
+      sound_action:
+        type: sound
+        value:
+          key: "minecraft:item.bundle.insert"
+          source: 'player'
+          volume: 1
+          pitch: 1
+      actionbar_action:
+        type: actionbar
+        value: '<red><bold>[X] This fertilizer can only be used in pots.'
+soil_retain_2:
+  type: SOIL_RETAIN
+  icon: '뀊'
+  chance: 0.2
+  times: 28
+  item: {0}soil_retain_2
+  before-plant: false
+  particle: SPELL
+  sound: minecraft:item.hoe.till
+  pot-whitelist:
+    - default
+  events:
+    use:
+      particle_action:
+        type: particle
+        value:
+          particle: SPELL
+          x: 0.5
+          y: 1.3
+          z: 0.5
+          count: 5
+          offset-x: 0.3
+          offset-z: 0.3
+      sound_action:
+        type: sound
+        value:
+          source: player
+          key: minecraft:item.hoe.till
+          volume: 1
+          pitch: 1
+    wrong_pot:
+      sound_action:
+        type: sound
+        value:
+          key: "minecraft:item.bundle.insert"
+          source: 'player'
+          volume: 1
+          pitch: 1
+      actionbar_action:
+        type: actionbar
+        value: '<red><bold>[X] This fertilizer can only be used in pots.'
+soil_retain_3:
+  type: SOIL_RETAIN
+  icon: '뀋'
+  chance: 0.3
+  times: 28
+  item: {0}soil_retain_3
+  before-plant: false
+  particle: SPELL
+  sound: minecraft:item.hoe.till
+  pot-whitelist:
+    - default
+  events:
+    use:
+      particle_action:
+        type: particle
+        value:
+          particle: SPELL
+          x: 0.5
+          y: 1.3
+          z: 0.5
+          count: 5
+          offset-x: 0.3
+          offset-z: 0.3
+      sound_action:
+        type: sound
+        value:
+          source: player
+          key: minecraft:item.hoe.till
+          volume: 1
+          pitch: 1
+    wrong_pot:
+      sound_action:
+        type: sound
+        value:
+          key: "minecraft:item.bundle.insert"
+          source: 'player'
+          volume: 1
+          pitch: 1
+      actionbar_action:
+        type: actionbar
+        value: '<red><bold>[X] This fertilizer can only be used in pots.'
+speed_grow_1:
+  type: SPEED_GROW
+  icon: '뀌'
+  times: 14
+  item: {0}speed_grow_1
+  before-plant: true
+  pot-whitelist:
+    - default
+  chance:
+    1: 0.5
+  events:
+    use:
+      particle_action:
+        type: particle
+        value:
+          particle: SPELL_WITCH
+          x: 0.5
+          y: 1.3
+          z: 0.5
+          count: 5
+          offset-x: 0.3
+          offset-z: 0.3
+      sound_action:
+        type: sound
+        value:
+          source: player
+          key: minecraft:item.hoe.till
+          volume: 1
+          pitch: 1
+    wrong_pot:
+      sound_action:
+        type: sound
+        value:
+          key: "minecraft:item.bundle.insert"
+          source: 'player'
+          volume: 1
+          pitch: 1
+      actionbar_action:
+        type: actionbar
+        value: '<red><bold>[X] This fertilizer can only be used in pots.'
+    before_plant:
+      sound_action:
+        type: sound
+        value:
+          key: "minecraft:item.bundle.insert"
+          source: 'player'
+          volume: 1
+          pitch: 1
+      actionbar_action:
+        type: actionbar
+        value: '<red><bold>[X] You can only use this fertilizer before planting the crop.'
+speed_grow_2:
+  type: SPEED_GROW
+  icon: '뀍'
+  times: 14
+  item: {0}speed_grow_2
+  before-plant: true
+  particle: SPELL_WITCH
+  sound: minecraft:item.hoe.till
+  pot-whitelist:
+    - default
+  chance:
+    2: 0.1
+    1: 0.7
+  events:
+    use:
+      particle_action:
+        type: particle
+        value:
+          particle: SPELL_WITCH
+          x: 0.5
+          y: 1.3
+          z: 0.5
+          count: 5
+          offset-x: 0.3
+          offset-z: 0.3
+      sound_action:
+        type: sound
+        value:
+          source: player
+          key: minecraft:item.hoe.till
+          volume: 1
+          pitch: 1
+    wrong_pot:
+      sound_action:
+        type: sound
+        value:
+          key: "minecraft:item.bundle.insert"
+          source: 'player'
+          volume: 1
+          pitch: 1
+      actionbar_action:
+        type: actionbar
+        value: '<red><bold>[X] This fertilizer can only be used in pots.'
+    before_plant:
+      sound_action:
+        type: sound
+        value:
+          key: "minecraft:item.bundle.insert"
+          source: 'player'
+          volume: 1
+          pitch: 1
+      actionbar_action:
+        type: actionbar
+        value: '<red><bold>[X] You can only use this fertilizer before planting the crop.'
+speed_grow_3:
+  type: SPEED_GROW
+  icon: '뀎'
+  times: 14
+  item: {0}speed_grow_3
+  before-plant: true
+  particle: SPELL_WITCH
+  sound: minecraft:item.hoe.till
+  pot-whitelist:
+    - default
+  chance:
+    3: 0.1
+    2: 0.4
+    1: 0.8
+  events:
+    use:
+      particle_action:
+        type: particle
+        value:
+          particle: SPELL_WITCH
+          x: 0.5
+          y: 1.3
+          z: 0.5
+          count: 5
+          offset-x: 0.3
+          offset-z: 0.3
+      sound_action:
+        type: sound
+        value:
+          source: player
+          key: minecraft:item.hoe.till
+          volume: 1
+          pitch: 1
+    wrong_pot:
+      sound_action:
+        type: sound
+        value:
+          key: "minecraft:item.bundle.insert"
+          source: 'player'
+          volume: 1
+          pitch: 1
+      actionbar_action:
+        type: actionbar
+        value: '<red><bold>[X] This fertilizer can only be used in pots.'
+    before_plant:
+      sound_action:
+        type: sound
+        value:
+          key: "minecraft:item.bundle.insert"
+          source: 'player'
+          volume: 1
+          pitch: 1
+      actionbar_action:
+        type: actionbar
+        value: '<red><bold>[X] You can only use this fertilizer before planting the crop.'
+variation_1:
+  type: VARIATION
+  icon: '뀒'
+  times: 14
+  chance: 0.02
+  item: {0}variation_1
+  before-plant: false
+  pot-whitelist:
+    - default
+  events:
+    use:
+      particle_action:
+        type: particle
+        value:
+          particle: SOUL
+          x: 0.5
+          y: 1.3
+          z: 0.5
+          count: 5
+          offset-x: 0.3
+          offset-z: 0.3
+      sound_action:
+        type: sound
+        value:
+          source: player
+          key: minecraft:item.hoe.till
+          volume: 1
+          pitch: 1
+    wrong_pot:
+      sound_action:
+        type: sound
+        value:
+          key: "minecraft:item.bundle.insert"
+          source: 'player'
+          volume: 1
+          pitch: 1
+      actionbar_action:
+        type: actionbar
+        value: '<red><bold>[X] This fertilizer can only be used in pots.'
+variation_2:
+  type: VARIATION
+  icon: '뀓'
+  times: 14
+  chance: 0.04
+  item: {0}variation_2
+  before-plant: false
+  pot-whitelist:
+    - default
+  events:
+    use:
+      particle_action:
+        type: particle
+        value:
+          particle: SOUL
+          x: 0.5
+          y: 1.3
+          z: 0.5
+          count: 5
+          offset-x: 0.3
+          offset-z: 0.3
+      sound_action:
+        type: sound
+        value:
+          source: player
+          key: minecraft:item.hoe.till
+          volume: 1
+          pitch: 1
+    wrong_pot:
+      sound_action:
+        type: sound
+        value:
+          key: "minecraft:item.bundle.insert"
+          source: 'player'
+          volume: 1
+          pitch: 1
+      actionbar_action:
+        type: actionbar
+        value: '<red><bold>[X] This fertilizer can only be used in pots.'
+variation_3:
+  type: VARIATION
+  icon: '뀔'
+  times: 14
+  chance: 0.08
+  item: {0}variation_3
+  before-plant: false
+  pot-whitelist:
+    - default
+  events:
+    use:
+      particle_action:
+        type: particle
+        value:
+          particle: SOUL
+          x: 0.5
+          y: 1.3
+          z: 0.5
+          count: 5
+          offset-x: 0.3
+          offset-z: 0.3
+      sound_action:
+        type: sound
+        value:
+          source: player
+          key: minecraft:item.hoe.till
+          volume: 1
+          pitch: 1
+    wrong_pot:
+      sound_action:
+        type: sound
+        value:
+          key: "minecraft:item.bundle.insert"
+          source: 'player'
+          volume: 1
+          pitch: 1
+      actionbar_action:
+        type: actionbar
+        value: '<red><bold>[X] This fertilizer can only be used in pots.'
+yield_increase_1:
+  type: YIELD_INCREASE
+  icon: '뀏'
+  times: 14
+  item: {0}yield_increase_1
+  before-plant: true
+  pot-whitelist:
+    - default
+  chance:
+    3: 0.1
+    2: 0.4
+    1: 0.8
+  events:
+    use:
+      particle_action:
+        type: particle
+        value:
+          particle: TOTEM
+          x: 0.5
+          y: 1.3
+          z: 0.5
+          count: 5
+          offset-x: 0.3
+          offset-z: 0.3
+      sound_action:
+        type: sound
+        value:
+          source: player
+          key: minecraft:item.hoe.till
+          volume: 1
+          pitch: 1
+    wrong_pot:
+      sound_action:
+        type: sound
+        value:
+          key: "minecraft:item.bundle.insert"
+          source: 'player'
+          volume: 1
+          pitch: 1
+      actionbar_action:
+        type: actionbar
+        value: '<red><bold>[X] This fertilizer can only be used in pots.'
+    before_plant:
+      sound_action:
+        type: sound
+        value:
+          key: "minecraft:item.bundle.insert"
+          source: 'player'
+          volume: 1
+          pitch: 1
+      actionbar_action:
+        type: actionbar
+        value: '<red><bold>[X] You can only use this fertilizer before planting the crop.'
+yield_increase_2:
+  type: YIELD_INCREASE
+  icon: '뀐'
+  times: 14
+  item: {0}yield_increase_2
+  before-plant: true
+  pot-whitelist:
+    - default
+  chance:
+    3: 0.2
+    2: 0.6
+    1: 1
+  events:
+    use:
+      particle_action:
+        type: particle
+        value:
+          particle: TOTEM
+          x: 0.5
+          y: 1.3
+          z: 0.5
+          count: 5
+          offset-x: 0.3
+          offset-z: 0.3
+      sound_action:
+        type: sound
+        value:
+          source: player
+          key: minecraft:item.hoe.till
+          volume: 1
+          pitch: 1
+    wrong_pot:
+      sound_action:
+        type: sound
+        value:
+          key: "minecraft:item.bundle.insert"
+          source: 'player'
+          volume: 1
+          pitch: 1
+      actionbar_action:
+        type: actionbar
+        value: '<red><bold>[X] This fertilizer can only be used in pots.'
+    before_plant:
+      sound_action:
+        type: sound
+        value:
+          key: "minecraft:item.bundle.insert"
+          source: 'player'
+          volume: 1
+          pitch: 1
+      actionbar_action:
+        type: actionbar
+        value: '<red><bold>[X] You can only use this fertilizer before planting the crop.'
+yield_increase_3:
+  type: YIELD_INCREASE
+  icon: '뀑'
+  times: 14
+  item: {0}yield_increase_3
+  before-plant: true
+  pot-whitelist:
+    - default
+  chance:
+    3: 0.4
+    2: 1
+  events:
+    use:
+      particle_action:
+        type: particle
+        value:
+          particle: TOTEM
+          x: 0.5
+          y: 1.3
+          z: 0.5
+          count: 5
+          offset-x: 0.3
+          offset-z: 0.3
+      sound_action:
+        type: sound
+        value:
+          source: player
+          key: minecraft:item.hoe.till
+          volume: 1
+          pitch: 1
+    wrong_pot:
+      sound_action:
+        type: sound
+        value:
+          key: "minecraft:item.bundle.insert"
+          source: 'player'
+          volume: 1
+          pitch: 1
+      actionbar_action:
+        type: actionbar
+        value: '<red><bold>[X] This fertilizer can only be used in pots.'
+    before_plant:
+      sound_action:
+        type: sound
+        value:
+          key: "minecraft:item.bundle.insert"
+          source: 'player'
+          volume: 1
+          pitch: 1
+      actionbar_action:
+        type: actionbar
+        value: '<red><bold>[X] You can only use this fertilizer before planting the crop.'

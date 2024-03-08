@@ -8,7 +8,7 @@ plugins {
 allprojects {
 
     project.group = "net.momirealms"
-    project.version = "3.3.1.16"
+    project.version = "3.4.0.0"
 
     apply<JavaPlugin>()
     apply(plugin = "java")
@@ -21,8 +21,8 @@ allprojects {
     }
 
     repositories {
-        maven("https://maven.aliyun.com/repository/public/")
         mavenCentral()
+        maven("https://maven.aliyun.com/repository/public/")
         maven("https://betonquest.org/nexus/repository/betonquest/")
         maven("https://maven.enginehub.org/repo/")
         maven("https://oss.sonatype.org/content/groups/public/")
@@ -40,21 +40,9 @@ allprojects {
         maven("https://r.irepo.space/maven/")
         maven("https://repo.auxilor.io/repository/maven-public/")
         maven("https://nexus.betonquest.org/repository/betonquest/")
-    }
-
-    dependencies {
-        testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.3")
-        testImplementation("org.junit.jupiter:junit-jupiter-params:5.9.3")
-        testImplementation("org.junit.jupiter:junit-jupiter-engine:5.9.3")
-    }
-
-    tasks.processResources {
-        val props = mapOf("version" to version)
-        inputs.properties(props)
-        filteringCharset = "UTF-8"
-        filesMatching("plugin.yml") {
-            expand(props)
-        }
+        maven("https://repo.infernalsuite.com/repository/maven-releases/")
+        maven("https://repo.rapture.pw/repository/maven-releases/")
+        maven("https://s01.oss.sonatype.org/content/repositories/snapshots/")
     }
 }
 
