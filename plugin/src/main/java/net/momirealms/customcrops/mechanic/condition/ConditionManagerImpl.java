@@ -91,6 +91,7 @@ public class ConditionManagerImpl implements ConditionManager {
         this.registerBiomeRequirement();
         this.registerFertilizerCondition();
         this.registerCrowAttackCondition();
+        this.registerPotCondition();
     }
 
     @Override
@@ -212,6 +213,23 @@ public class ConditionManagerImpl implements ConditionManager {
         registerCondition("random", (args -> {
             double value = ConfigUtils.getDoubleValue(args);
             return block -> Math.random() < value;
+        }));
+    }
+
+    private void registerPotCondition() {
+        registerCondition("pot", (args -> {
+            HashSet<String> pots = new HashSet<>(ConfigUtils.stringListArgs(args));
+            return block -> {
+                Optional<WorldPot> worldPot = plugin.getWorldManager().getPotAt(block.getLocation().copy().add(0,-1,0));
+                return worldPot.filter(pot -> pots.contains(pot.getKey())).isPresent();
+            };
+        }));
+        registerCondition("!pot", (args -> {
+            HashSet<String> pots = new HashSet<>(ConfigUtils.stringListArgs(args));
+            return block -> {
+                Optional<WorldPot> worldPot = plugin.getWorldManager().getPotAt(block.getLocation().copy().add(0,-1,0));
+                return worldPot.filter(pot -> !pots.contains(pot.getKey())).isPresent();
+            };
         }));
     }
 

@@ -80,29 +80,34 @@ public class AdventureManagerImpl extends AdventureManager {
 
     @Override
     public void sendPlayerMessage(Player player, String text) {
+        if (player == null) return;
         Audience au = audiences.player(player);
         au.sendMessage(getComponentFromMiniMessage(text));
     }
 
     @Override
     public void sendActionbar(Player player, String text) {
+        if (player == null) return;
         Audience au = audiences.player(player);
         au.sendActionBar(getComponentFromMiniMessage(text));
     }
 
     @Override
     public void sendSound(Player player, Sound.Source source, Key key, float pitch, float volume) {
+        if (player == null) return;
         sendSound(player, Sound.sound(key, source, volume, pitch));
     }
 
     @Override
     public void sendSound(Player player, Sound sound) {
+        if (player == null) return;
         Audience au = audiences.player(player);
         au.playSound(sound);
     }
 
     @Override
     public void sendTitle(Player player, String title, String subTitle, int fadeIn, int stay, int fadeOut) {
+        if (player == null) return;
         Audience au = audiences.player(player);
         au.showTitle(Title.title(getComponentFromMiniMessage(title), getComponentFromMiniMessage(subTitle), Title.Times.times(
                 Duration.ofMillis(fadeIn * 50L),

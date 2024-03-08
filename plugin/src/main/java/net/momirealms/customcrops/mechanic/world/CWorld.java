@@ -20,6 +20,7 @@ package net.momirealms.customcrops.mechanic.world;
 import net.momirealms.customcrops.api.CustomCropsPlugin;
 import net.momirealms.customcrops.api.common.Pair;
 import net.momirealms.customcrops.api.event.SeasonChangeEvent;
+import net.momirealms.customcrops.api.manager.ConfigManager;
 import net.momirealms.customcrops.api.manager.WorldManager;
 import net.momirealms.customcrops.api.mechanic.item.Crop;
 import net.momirealms.customcrops.api.mechanic.item.Fertilizer;
@@ -200,6 +201,9 @@ public class CWorld implements CustomCropsWorld {
     @Nullable
     public Season getSeason() {
         if (setting.isEnableSeason()) {
+            if (ConfigManager.syncSeasons() && ConfigManager.referenceWorld() != world) {
+                return worldManager.getCustomCropsWorld(ConfigManager.referenceWorld()).map(customCropsWorld -> customCropsWorld.getInfoData().getSeason()).orElse(null);
+            }
             return infoData.getSeason();
         } else {
             return null;

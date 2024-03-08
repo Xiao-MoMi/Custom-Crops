@@ -50,6 +50,7 @@ public class CustomCropsPluginImpl extends CustomCropsPlugin {
     private DependencyManager dependencyManager;
     private PacketManager packetManager;
     private CommandManager commandManager;
+    private HologramManager hologramManager;
     private AntiGriefLib antiGriefLib;
 
     @Override
@@ -96,6 +97,7 @@ public class CustomCropsPluginImpl extends CustomCropsPlugin {
         this.packetManager = new PacketManager(this);
         this.commandManager = new CommandManager(this);
         this.placeholderManager = new PlaceholderManagerImpl(this);
+        this.hologramManager = new HologramManager(this);
         this.commandManager.init();
         this.antiGriefLib.init();
         this.integrationManager.init();
@@ -137,6 +139,7 @@ public class CustomCropsPluginImpl extends CustomCropsPlugin {
         this.conditionManager.reload();
         this.coolDownManager.reload();
         this.placeholderManager.reload();
+        this.hologramManager.reload();
         ((SchedulerImpl) scheduler).reload();
         EventUtils.fireAndForget(new CustomCropsReloadEvent(this));
     }
@@ -190,6 +193,10 @@ public class CustomCropsPluginImpl extends CustomCropsPlugin {
 
     public PacketManager getPacketManager() {
         return packetManager;
+    }
+
+    public HologramManager getHologramManager() {
+        return hologramManager;
     }
 
     @Override

@@ -1043,6 +1043,7 @@ public class ItemManagerImpl implements ItemManager {
                 itemCarrier,
                 section.getString("2D-item"),
                 Preconditions.checkNotNull(section.getString("3D-item"), "3D-item can't be null"),
+                section.getString("3D-item-with-water"),
                 range,
                 storage,
                 water,
@@ -1848,6 +1849,7 @@ public class ItemManagerImpl implements ItemManager {
                         Optional<WorldPot> optionalPot = plugin.getWorldManager().getPotAt(simpleLocation);
                         if (optionalPot.isEmpty()) {
                             plugin.debug("Found a pot without data interacted by " + player.getName() + " at " + location);
+                            plugin.getWorldManager().addPotAt(new MemoryPot(simpleLocation, pot.getKey()), simpleLocation);
                             return FunctionResult.RETURN;
                         }
                         if (!optionalPot.get().getKey().equals(pot.getKey())) {
@@ -1906,6 +1908,10 @@ public class ItemManagerImpl implements ItemManager {
                             state.setArg("{current}", String.valueOf(worldPot.get().getWater()));
                             state.setArg("{storage}", String.valueOf(pot.getStorage()));
                             state.setArg("{water_bar}", pot.getWaterBar() == null ? "" : pot.getWaterBar().getWaterBar(worldPot.get().getWater(), pot.getStorage()));
+                            state.setArg("{left_times}", String.valueOf(worldPot.get().getFertilizerTimes()));
+                            state.setArg("{max_times}", String.valueOf(Optional.ofNullable(worldPot.get().getFertilizer()).map(fertilizer -> fertilizer.getTimes()).orElse(0)));
+                            state.setArg("{icon}", Optional.ofNullable(worldPot.get().getFertilizer()).map(fertilizer -> fertilizer.getIcon()).orElse(""));
+
                             // trigger actions
                             pot.trigger(ActionTrigger.INTERACT, state);
                         }, location, 1);
@@ -2189,6 +2195,55 @@ public class ItemManagerImpl implements ItemManager {
         Optional.ofNullable(itemID2FunctionMap.get(blockID))
                 .map(map -> map.get(FunctionTrigger.PLACE))
                 .ifPresent(cFunctions -> handleFunctions(cFunctions, new PlaceBlockWrapper(player, block, blockID), event));
+    }
+
+    public void handleEntityBreakBlock(Entity entity, Block block, Cancellable event) {
+        if (entity instanceof Player player) {
+            handlePlayerBreakBlock(player, block, event);
+        } else {
+            Pot pot = getPotByBlock(block);
+            if (pot != null) {
+                // prevent entities from breaking pots with requirements
+                if (pot.getBreakRequirements().length != 0) {
+                    event.setCancelled(true);
+                    return;
+                }
+
+                Location cropLocation = block.getLocation().clone().add(0,1,0);
+                String cropStageID = customProvider.getSomethingAt(cropLocation);
+                Crop.Stage stage = stage2CropStageMap.get(cropStageID);
+                if (stage != null) {
+                    //State state = new State(null, new ItemStack(Material.AIR), cropLocation);
+                    // if crops are above, check the break requirements for crops
+                    Crop crop = getCropByStageID(cropStageID);
+                    if (crop.getBreakRequirements().length != 0 || stage.getBreakRequirements().length != 0) {
+                        event.setCancelled(true);
+                        return;
+                    }
+                    Optional<WorldCrop> optionalWorldCrop = plugin.getWorldManager().getCropAt(SimpleLocation.of(cropLocation));
+                    if (optionalWorldCrop.isPresent()) {
+                        if (!optionalWorldCrop.get().getKey().equals(crop.getKey())) {
+                            LogUtils.warn("Found a crop having inconsistent data broken by " + entity.getType() + " at " + cropLocation + ".");
+                        }
+                    } else {
+                        plugin.debug("Found a crop without data broken by " + entity.getType() + " at " + cropLocation + ". " +
+                                "You can safely ignore this if the crop is spawned in the wild.");
+                    }
+                    // trigger actions
+                    //stage.trigger(ActionTrigger.BREAK, state);
+                    //crop.trigger(ActionTrigger.BREAK, state);
+                    plugin.getWorldManager().removeCropAt(SimpleLocation.of(cropLocation));
+                    customProvider.removeAnythingAt(cropLocation);
+                }
+
+                if (deadCrops.contains(cropStageID)) {
+                    customProvider.removeAnythingAt(cropLocation);
+                }
+
+                plugin.getWorldManager().removePotAt(SimpleLocation.of(block.getLocation()));
+                //pot.trigger(ActionTrigger.BREAK, new State(null, new ItemStack(Material.AIR), block.getLocation()));
+            }
+        }
     }
 
     private boolean handleFunctions(Collection<CFunction> functions, ConditionWrapper wrapper, @Nullable Cancellable event) {

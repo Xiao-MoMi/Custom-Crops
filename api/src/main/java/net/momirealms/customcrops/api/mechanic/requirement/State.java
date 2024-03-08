@@ -20,6 +20,7 @@ package net.momirealms.customcrops.api.mechanic.requirement;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,11 +32,17 @@ public class State {
     private final Location location;
     private final HashMap<String, String> args;
 
-    public State(Player player, ItemStack itemInHand, Location location) {
+    public State(Player player, ItemStack itemInHand, @NotNull Location location) {
         this.player = player;
         this.itemInHand = itemInHand;
-        this.location = location;
+        this.location = location.toBlockLocation();
         this.args = new HashMap<>();
+        if (player != null) {
+            setArg("{player}", player.getName());
+        }
+        setArg("{x}", String.valueOf(location.getBlockX()));
+        setArg("{y}", String.valueOf(location.getBlockY()));
+        setArg("{z}", String.valueOf(location.getBlockZ()));
     }
 
     public Player getPlayer() {

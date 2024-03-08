@@ -40,6 +40,7 @@ public class SprinklerConfig extends AbstractEventItem implements Sprinkler {
     private final boolean infinite;
     private final String twoDItem;
     private final String threeDItem;
+    private final String threeDItemWithWater;
     private final WaterBar waterBar;
     private final HashSet<String> potWhitelist;
     private final ItemCarrier itemCarrier;
@@ -53,6 +54,7 @@ public class SprinklerConfig extends AbstractEventItem implements Sprinkler {
             ItemCarrier itemCarrier,
             String twoDItem,
             String threeDItem,
+            String threeDItemWithWater,
             int range,
             int storage,
             int water,
@@ -70,6 +72,7 @@ public class SprinklerConfig extends AbstractEventItem implements Sprinkler {
         this.itemCarrier = itemCarrier;
         this.twoDItem = twoDItem;
         this.threeDItem = threeDItem;
+        this.threeDItemWithWater = threeDItemWithWater;
         this.range = range;
         this.storage = storage;
         this.infinite = infinite;
@@ -92,6 +95,12 @@ public class SprinklerConfig extends AbstractEventItem implements Sprinkler {
     @Override
     public String get3DItemID() {
         return threeDItem;
+    }
+
+    @Override
+    @Nullable
+    public String get3DItemWithWater() {
+        return threeDItemWithWater;
     }
 
     @Override

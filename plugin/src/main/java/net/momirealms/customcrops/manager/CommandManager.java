@@ -17,16 +17,22 @@
 
 package net.momirealms.customcrops.manager;
 
-import dev.jorel.commandapi.CommandAPI;
-import dev.jorel.commandapi.CommandAPIBukkitConfig;
-import dev.jorel.commandapi.CommandAPICommand;
-import dev.jorel.commandapi.CommandPermission;
+import dev.jorel.commandapi.*;
+import dev.jorel.commandapi.arguments.ArgumentSuggestions;
+import dev.jorel.commandapi.arguments.IntegerArgument;
+import dev.jorel.commandapi.arguments.StringArgument;
+import dev.jorel.commandapi.arguments.WorldArgument;
 import net.momirealms.customcrops.api.CustomCropsPlugin;
 import net.momirealms.customcrops.api.common.Initable;
+import net.momirealms.customcrops.api.integration.SeasonInterface;
 import net.momirealms.customcrops.api.manager.MessageManager;
-import net.momirealms.customcrops.api.mechanic.world.SimpleLocation;
-import net.momirealms.customcrops.mechanic.world.block.MemoryCrop;
-import net.momirealms.customcrops.mechanic.world.block.MemoryPot;
+import net.momirealms.customcrops.api.mechanic.world.level.CustomCropsWorld;
+import net.momirealms.customcrops.api.mechanic.world.season.Season;
+import net.momirealms.customcrops.compatibility.season.InBuiltSeason;
+import org.bukkit.World;
+
+import java.util.Locale;
+import java.util.Optional;
 
 public class CommandManager implements Initable {
 
@@ -47,7 +53,9 @@ public class CommandManager implements Initable {
                 .withSubcommands(
                         getReloadCommand(),
                         getAboutCommand(),
-                        getStressTest()
+                        getSeasonCommand(),
+                        getDateCommand()
+                        //getStressTest()
                 )
                 .register();
     }
@@ -77,44 +85,136 @@ public class CommandManager implements Initable {
         });
     }
 
-    private CommandAPICommand getStressTest() {
-        return new CommandAPICommand("test").executes((sender, args) -> {
-            for (int i = 0; i < 16; i++) {
-                for (int j = 0; j < 16; j++) {
-                    for (int k = -64; k < 0; k++) {
-                        SimpleLocation location = new SimpleLocation("world", 1024 + i, k, 1024 + j);
-                        plugin.getWorldManager().addCropAt(new MemoryCrop(location, "tomato", 0), location);
-                    }
-                    for (int k = 1; k < 64; k++) {
-                        SimpleLocation location = new SimpleLocation("world", 1024 + i, k, 1024 + j);
-                        plugin.getWorldManager().addCropAt(new MemoryCrop(location, "tomato", 1), location);
-                    }
-                    for (int k = 65; k < 128; k++) {
-                        SimpleLocation location = new SimpleLocation("world", 1024 + i, k, 1024 + j);
-                        plugin.getWorldManager().addCropAt(new MemoryCrop(location, "tomato", 2), location);
-                    }
-                    for (int k = 129; k < 165; k++) {
-                        SimpleLocation location = new SimpleLocation("world", 1024 + i, k, 1024 + j);
-                        plugin.getWorldManager().addPotAt(new MemoryPot(location, "default"), location);
-                    }
-                    for (int k = 166; k < 190; k++) {
-                        SimpleLocation location = new SimpleLocation("world", 1024 + i, k, 1024 + j);
-                        plugin.getWorldManager().addPotAt(new MemoryPot(location, "sprinkler"), location);
-                    }
-                    for (int k = 191; k < 250; k++) {
-                        SimpleLocation location = new SimpleLocation("world", 1024 + i, k, 1024 + j);
-                        plugin.getWorldManager().addCropAt(new MemoryCrop(location, "tomato", 3), location);
-                    }
-                    for (int k = 251; k < 300; k++) {
-                        SimpleLocation location = new SimpleLocation("world", 1024 + i, k, 1024 + j);
-                        plugin.getWorldManager().addCropAt(new MemoryCrop(location, "sbsbssbsb", 3), location);
-                    }
-                    for (int k = 301; k < 320; k++) {
-                        SimpleLocation location = new SimpleLocation("world", 1024 + i, k, 1024 + j);
-                        plugin.getWorldManager().addCropAt(new MemoryCrop(location, "sbsbssbsb", 2), location);
-                    }
-                }
-            }
-        });
+    private CommandAPICommand getDateCommand() {
+        return new CommandAPICommand("date")
+                .withSubcommands(
+                        new CommandAPICommand("get")
+                                .withArguments(new WorldArgument("world"))
+                                .executes((sender, args) -> {
+                                    World world = (World) args.get("world");
+                                    plugin.getAdventure().sendMessageWithPrefix(sender, String.valueOf(plugin.getIntegrationManager().getDate(world)));
+                                }),
+                        new CommandAPICommand("set")
+                                .withArguments(new WorldArgument("world"))
+                                .withArguments(new IntegerArgument("date",1))
+                                .executes((sender, args) -> {
+                                    World world = (World) args.get("world");
+                                    int date = (int) args.getOrDefault("date", 1);
+                                    SeasonInterface seasonInterface = plugin.getIntegrationManager().getSeasonInterface();
+                                    if (!(seasonInterface instanceof InBuiltSeason inBuiltSeason)) {
+                                        plugin.getAdventure().sendMessageWithPrefix(sender, "Detected that you are using a season plugin. Please set date in that plugin.");
+                                        return;
+                                    }
+                                    Optional<CustomCropsWorld> customCropsWorld = plugin.getWorldManager().getCustomCropsWorld(world);
+                                    if (customCropsWorld.isEmpty()) {
+                                        plugin.getAdventure().sendMessageWithPrefix(sender, "CustomCrops is not enabled in that world");
+                                        return;
+                                    }
+                                    if (!customCropsWorld.get().getWorldSetting().isEnableSeason()) {
+                                        plugin.getAdventure().sendMessageWithPrefix(sender, "Season is not enabled in that world");
+                                        return;
+                                    }
+                                    if (date > customCropsWorld.get().getWorldSetting().getSeasonDuration()) {
+                                        plugin.getAdventure().sendMessageWithPrefix(sender, "Date should be a value no higher than season duration");
+                                        return;
+                                    }
+                                    String pre = String.valueOf(inBuiltSeason.getDate(world));
+                                    customCropsWorld.get().getInfoData().setDate(date);
+                                    plugin.getAdventure().sendMessageWithPrefix(sender, "Date in world("+world.getName()+"): " + pre + " -> " + date);
+                                })
+                );
     }
+
+    private CommandAPICommand getSeasonCommand() {
+        return new CommandAPICommand("season")
+                .withSubcommands(
+                        new CommandAPICommand("get")
+                                .withArguments(new WorldArgument("world"))
+                                .executes((sender, args) -> {
+                                    World world = (World) args.get("world");
+                                    plugin.getAdventure().sendMessageWithPrefix(sender, MessageManager.seasonTranslation(plugin.getIntegrationManager().getSeason(world)));
+                                }),
+                        new CommandAPICommand("set")
+                                .withArguments(new WorldArgument("world"))
+                                .withArguments(new StringArgument("season")
+                                        .replaceSuggestions(ArgumentSuggestions.stringsWithTooltips(info ->
+                                                new IStringTooltip[] {
+                                                        StringTooltip.ofString("Spring", MessageManager.seasonTranslation(Season.SPRING)),
+                                                        StringTooltip.ofString("Summer", MessageManager.seasonTranslation(Season.SUMMER)),
+                                                        StringTooltip.ofString("Autumn", MessageManager.seasonTranslation(Season.AUTUMN)),
+                                                        StringTooltip.ofString("Winter", MessageManager.seasonTranslation(Season.WINTER))
+                                                }
+                                        ))
+                                )
+                                .executes((sender, args) -> {
+                                    World world = (World) args.get("world");
+                                    String seasonName = (String) args.get("season");
+
+                                    SeasonInterface seasonInterface = plugin.getIntegrationManager().getSeasonInterface();
+                                    if (!(seasonInterface instanceof InBuiltSeason inBuiltSeason)) {
+                                        plugin.getAdventure().sendMessageWithPrefix(sender, "Detected that you are using a season plugin. Please set season in that plugin.");
+                                        return;
+                                    }
+                                    String pre = MessageManager.seasonTranslation(inBuiltSeason.getSeason(world));
+                                    Optional<CustomCropsWorld> customCropsWorld = plugin.getWorldManager().getCustomCropsWorld(world);
+                                    if (customCropsWorld.isEmpty()) {
+                                        plugin.getAdventure().sendMessageWithPrefix(sender, "CustomCrops is not enabled in that world");
+                                        return;
+                                    }
+                                    if (!customCropsWorld.get().getWorldSetting().isEnableSeason()) {
+                                        plugin.getAdventure().sendMessageWithPrefix(sender, "Season is not enabled in that world");
+                                        return;
+                                    }
+                                    try {
+                                        Season season = Season.valueOf(seasonName.toUpperCase(Locale.ENGLISH));
+                                        customCropsWorld.get().getInfoData().setSeason(season);
+                                        String next = MessageManager.seasonTranslation(season);
+                                        plugin.getAdventure().sendMessageWithPrefix(sender, "Season in world("+world.getName()+"): " + pre + " -> " + next);
+                                    } catch (IllegalArgumentException e) {
+                                        plugin.getAdventure().sendMessageWithPrefix(sender, "That season doesn't exist");
+                                    }
+                                })
+                );
+    }
+
+//    private CommandAPICommand getStressTest() {
+//        return new CommandAPICommand("test").executes((sender, args) -> {
+//            for (int i = 0; i < 16; i++) {
+//                for (int j = 0; j < 16; j++) {
+//                    for (int k = -64; k < 0; k++) {
+//                        SimpleLocation location = new SimpleLocation("world", 1024 + i, k, 1024 + j);
+//                        plugin.getWorldManager().addCropAt(new MemoryCrop(location, "tomato", 0), location);
+//                    }
+//                    for (int k = 1; k < 64; k++) {
+//                        SimpleLocation location = new SimpleLocation("world", 1024 + i, k, 1024 + j);
+//                        plugin.getWorldManager().addCropAt(new MemoryCrop(location, "tomato", 1), location);
+//                    }
+//                    for (int k = 65; k < 128; k++) {
+//                        SimpleLocation location = new SimpleLocation("world", 1024 + i, k, 1024 + j);
+//                        plugin.getWorldManager().addCropAt(new MemoryCrop(location, "tomato", 2), location);
+//                    }
+//                    for (int k = 129; k < 165; k++) {
+//                        SimpleLocation location = new SimpleLocation("world", 1024 + i, k, 1024 + j);
+//                        plugin.getWorldManager().addPotAt(new MemoryPot(location, "default"), location);
+//                    }
+//                    for (int k = 166; k < 190; k++) {
+//                        SimpleLocation location = new SimpleLocation("world", 1024 + i, k, 1024 + j);
+//                        plugin.getWorldManager().addPotAt(new MemoryPot(location, "sprinkler"), location);
+//                    }
+//                    for (int k = 191; k < 250; k++) {
+//                        SimpleLocation location = new SimpleLocation("world", 1024 + i, k, 1024 + j);
+//                        plugin.getWorldManager().addCropAt(new MemoryCrop(location, "tomato", 3), location);
+//                    }
+//                    for (int k = 251; k < 300; k++) {
+//                        SimpleLocation location = new SimpleLocation("world", 1024 + i, k, 1024 + j);
+//                        plugin.getWorldManager().addCropAt(new MemoryCrop(location, "sbsbssbsb", 3), location);
+//                    }
+//                    for (int k = 301; k < 320; k++) {
+//                        SimpleLocation location = new SimpleLocation("world", 1024 + i, k, 1024 + j);
+//                        plugin.getWorldManager().addCropAt(new MemoryCrop(location, "sbsbssbsb", 2), location);
+//                    }
+//                }
+//            }
+//        });
+//    }
 }

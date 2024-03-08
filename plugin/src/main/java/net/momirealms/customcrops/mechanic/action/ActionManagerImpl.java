@@ -19,6 +19,7 @@ package net.momirealms.customcrops.mechanic.action;
 
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
+import net.kyori.adventure.text.Component;
 import net.momirealms.customcrops.api.CustomCropsPlugin;
 import net.momirealms.customcrops.api.common.Pair;
 import net.momirealms.customcrops.api.event.CropBreakEvent;
@@ -34,6 +35,7 @@ import net.momirealms.customcrops.api.mechanic.item.*;
 import net.momirealms.customcrops.api.mechanic.item.fertilizer.QualityCrop;
 import net.momirealms.customcrops.api.mechanic.item.fertilizer.Variation;
 import net.momirealms.customcrops.api.mechanic.item.fertilizer.YieldIncrease;
+import net.momirealms.customcrops.api.mechanic.misc.Value;
 import net.momirealms.customcrops.api.mechanic.requirement.Requirement;
 import net.momirealms.customcrops.api.mechanic.world.ChunkCoordinate;
 import net.momirealms.customcrops.api.mechanic.world.CustomCropsBlock;
@@ -45,7 +47,9 @@ import net.momirealms.customcrops.api.scheduler.CancellableTask;
 import net.momirealms.customcrops.api.util.LogUtils;
 import net.momirealms.customcrops.compatibility.VaultHook;
 import net.momirealms.customcrops.manager.AdventureManagerImpl;
+import net.momirealms.customcrops.manager.HologramManager;
 import net.momirealms.customcrops.mechanic.item.impl.VariationCrop;
+import net.momirealms.customcrops.mechanic.misc.TempFakeItem;
 import net.momirealms.customcrops.mechanic.world.block.MemoryCrop;
 import net.momirealms.customcrops.utils.ClassUtils;
 import net.momirealms.customcrops.utils.ConfigUtils;
@@ -113,6 +117,7 @@ public class ActionManagerImpl implements ActionManager {
         this.registerQualityCropsAction();
         this.registerVariationAction();
         this.registerForceTickAction();
+        this.registerHologramAction();
     }
 
     @Override
@@ -198,39 +203,76 @@ public class ActionManagerImpl implements ActionManager {
         return actionBuilderMap.get(type);
     }
 
-    @SuppressWarnings("ResultOfMethodCallIgnored")
-    private void loadExpansions() {
-        File expansionFolder = new File(plugin.getDataFolder(), EXPANSION_FOLDER);
-        if (!expansionFolder.exists())
-            expansionFolder.mkdirs();
+    private void registerHologramAction() {
+        registerAction("hologram", (args, chance) -> {
+            if (args instanceof ConfigurationSection section) {
+                String text = section.getString("text", "");
+                int duration = section.getInt("duration", 20);
+                double x = section.getDouble("x");
+                double y = section.getDouble("y");
+                double z = section.getDouble("z");
+                boolean applyCorrection = section.getBoolean("apply-correction", false);
+                boolean onlyShowToOne = !section.getBoolean("visible-to-all", false);
+                return condition -> {
+                    if (Math.random() > chance) return;
+                    Location location = condition.getLocation().clone().add(x,y,z);
+                    SimpleLocation simpleLocation = SimpleLocation.of(location);
+                    if (applyCorrection) {
+                        SimpleLocation cropLocation = simpleLocation.copy().add(0,1,0);
+                        Optional<WorldCrop> crop = plugin.getWorldManager().getCropAt(cropLocation);
+                        if (crop.isPresent()) {
+                            WorldCrop worldCrop = crop.get();
+                            Crop config = worldCrop.getConfig();
+                            Crop.Stage stage = config.getStageByItemID(config.getStageItemByPoint(worldCrop.getPoint()));
+                            if (stage != null) {
+                                location.add(0, stage.getHologramOffset(), 0);
+                            }
+                        }
+                    }
 
-        List<Class<? extends ActionExpansion>> classes = new ArrayList<>();
-        File[] expansionJars = expansionFolder.listFiles();
-        if (expansionJars == null) return;
-        for (File expansionJar : expansionJars) {
-            if (expansionJar.getName().endsWith(".jar")) {
-                try {
-                    Class<? extends ActionExpansion> expansionClass = ClassUtils.findClass(expansionJar, ActionExpansion.class);
-                    classes.add(expansionClass);
-                } catch (IOException | ClassNotFoundException e) {
-                    LogUtils.warn("Failed to load expansion: " + expansionJar.getName(), e);
-                }
+                    ArrayList<Player> viewers = new ArrayList<>();
+                    if (onlyShowToOne) {
+                        if (condition.getPlayer() == null) return;
+                        viewers.add(condition.getPlayer());
+                    } else {
+                        for (Player player : Bukkit.getOnlinePlayers()) {
+                            if (simpleLocation.isNear(SimpleLocation.of(player.getLocation()), 48)) {
+                                viewers.add(player);
+                            }
+                        }
+                    }
+                    Component component = AdventureManager.getInstance().getComponentFromMiniMessage(PlaceholderManager.getInstance().parse(condition.getPlayer(), text, condition.getArgs()));
+                    for (Player viewer : viewers) {
+                        HologramManager.getInstance().showHologram(viewer, location, component, duration * 50);
+                    }
+                };
+            } else {
+                LogUtils.warn("Illegal value format found at action: hologram");
+                return EmptyAction.instance;
             }
-        }
-        try {
-            for (Class<? extends ActionExpansion> expansionClass : classes) {
-                ActionExpansion expansion = expansionClass.getDeclaredConstructor().newInstance();
-                unregisterAction(expansion.getActionType());
-                registerAction(expansion.getActionType(), expansion.getActionFactory());
-                LogUtils.info("Loaded action expansion: " + expansion.getActionType() + "[" + expansion.getVersion() + "]" + " by " + expansion.getAuthor() );
-            }
-        } catch (InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException e) {
-            LogUtils.warn("Error occurred when creating expansion instance.", e);
-        }
+        });
     }
 
     private void registerFakeItemAction() {
-
+        registerAction("fake-item", (args, chance) -> {
+            if (args instanceof ConfigurationSection section) {
+                String item = section.getString("item", "");
+                int duration = section.getInt("duration", 20);
+                double x = section.getDouble("x");
+                double y = section.getDouble("y");
+                double z = section.getDouble("z");
+                boolean onlyShowToOne = !section.getBoolean("visible-to-all", true);
+                return condition -> {
+                    if (Math.random() > chance) return;
+                    if (item.equals("")) return;
+                    Location location = condition.getLocation().clone().add(x,y,z);
+                    new TempFakeItem(location, item, duration, onlyShowToOne ? condition.getPlayer() : null).start();
+                };
+            } else {
+                LogUtils.warn("Illegal value format found at action: fake-item");
+                return EmptyAction.instance;
+            }
+        });
     }
 
     private void registerMessageAction() {
@@ -386,7 +428,21 @@ public class ActionManagerImpl implements ActionManager {
             plugin.getWorldManager().getCustomCropsWorld(location.getWorld())
                     .flatMap(world -> world.getChunkAt(ChunkCoordinate.getByBukkitChunk(location.getChunk())))
                     .flatMap(chunk -> chunk.getBlockAt(SimpleLocation.of(location)))
-                    .ifPresent(block -> block.tick(1));
+                    .ifPresent(block -> {
+                        block.tick(1);
+                        if (block instanceof WorldSprinkler sprinkler) {
+                            Sprinkler config = sprinkler.getConfig();
+                            state.setArg("{current}", String.valueOf(sprinkler.getWater()));
+                            state.setArg("{water_bar}", config.getWaterBar() == null ? "" : config.getWaterBar().getWaterBar(sprinkler.getWater(), config.getStorage()));
+                        } else if (block instanceof WorldPot pot) {
+                            Pot config = pot.getConfig();
+                            state.setArg("{current}", String.valueOf(pot.getWater()));
+                            state.setArg("{water_bar}", config.getWaterBar() == null ? "" : config.getWaterBar().getWaterBar(pot.getWater(), config.getStorage()));
+                            state.setArg("{left_times}", String.valueOf(pot.getFertilizerTimes()));
+                            state.setArg("{max_times}", String.valueOf(Optional.ofNullable(pot.getFertilizer()).map(Fertilizer::getTimes).orElse(0)));
+                            state.setArg("{icon}", Optional.ofNullable(pot.getFertilizer()).map(Fertilizer::getIcon).orElse(""));
+                        }
+                    });
         });
     }
 
@@ -432,8 +488,8 @@ public class ActionManagerImpl implements ActionManager {
     private void registerQualityCropsAction() {
         registerAction("quality-crops", (args, chance) -> {
             if (args instanceof ConfigurationSection section) {
-                int min = section.getInt("min");
-                int max = Math.max(min, section.getInt("max"));
+                Value min = ConfigUtils.getValue(section.get("min"));
+                Value max = ConfigUtils.getValue(section.get("max"));
                 boolean toInv = section.getBoolean("to-inventory", false);
                 String[] qualityLoots = new String[ConfigManager.defaultQualityRatio().length];
                 for (int i = 1; i <= ConfigManager.defaultQualityRatio().length; i++) {
@@ -446,7 +502,7 @@ public class ActionManagerImpl implements ActionManager {
                 return state -> {
                     if (Math.random() > chance) return;
                     double[] ratio = ConfigManager.defaultQualityRatio();
-                    int random = ThreadLocalRandom.current().nextInt(min, max + 1);
+                    int random = (int) ThreadLocalRandom.current().nextDouble(min.get(state.getPlayer()), max.get(state.getPlayer()) + 1);
                     Optional<WorldPot> pot = plugin.getWorldManager().getPotAt(SimpleLocation.of(state.getLocation().clone().subtract(0,1,0)));
                     if (pot.isPresent()) {
                         Fertilizer fertilizer = pot.get().getFertilizer();
@@ -484,14 +540,14 @@ public class ActionManagerImpl implements ActionManager {
             if (args instanceof ConfigurationSection section) {
                 boolean ignoreFertilizer = section.getBoolean("ignore-fertilizer", true);
                 String item = section.getString("item");
-                int min = section.getInt("min");
-                int max = Math.max(min, section.getInt("max"));
+                Value min = ConfigUtils.getValue(section.get("min"));
+                Value max = ConfigUtils.getValue(section.get("max"));
                 boolean toInv = section.getBoolean("to-inventory", false);
                 return state -> {
                     if (Math.random() > chance) return;
                     ItemStack itemStack = plugin.getItemManager().getItemStack(state.getPlayer(), item);
                     if (itemStack != null) {
-                        int random = ThreadLocalRandom.current().nextInt(min, max + 1);
+                        int random = (int) ThreadLocalRandom.current().nextDouble(min.get(state.getPlayer()), (max.get(state.getPlayer()) + 1));
                         if (!ignoreFertilizer) {
                             Optional<WorldPot> pot = plugin.getWorldManager().getPotAt(SimpleLocation.of(state.getLocation().clone().subtract(0,1,0)));
                             if (pot.isPresent()) {
@@ -1039,5 +1095,36 @@ public class ActionManagerImpl implements ActionManager {
                 return EmptyAction.instance;
             }
         });
+    }
+
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+    private void loadExpansions() {
+        File expansionFolder = new File(plugin.getDataFolder(), EXPANSION_FOLDER);
+        if (!expansionFolder.exists())
+            expansionFolder.mkdirs();
+
+        List<Class<? extends ActionExpansion>> classes = new ArrayList<>();
+        File[] expansionJars = expansionFolder.listFiles();
+        if (expansionJars == null) return;
+        for (File expansionJar : expansionJars) {
+            if (expansionJar.getName().endsWith(".jar")) {
+                try {
+                    Class<? extends ActionExpansion> expansionClass = ClassUtils.findClass(expansionJar, ActionExpansion.class);
+                    classes.add(expansionClass);
+                } catch (IOException | ClassNotFoundException e) {
+                    LogUtils.warn("Failed to load expansion: " + expansionJar.getName(), e);
+                }
+            }
+        }
+        try {
+            for (Class<? extends ActionExpansion> expansionClass : classes) {
+                ActionExpansion expansion = expansionClass.getDeclaredConstructor().newInstance();
+                unregisterAction(expansion.getActionType());
+                registerAction(expansion.getActionType(), expansion.getActionFactory());
+                LogUtils.info("Loaded action expansion: " + expansion.getActionType() + "[" + expansion.getVersion() + "]" + " by " + expansion.getAuthor() );
+            }
+        } catch (InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException e) {
+            LogUtils.warn("Error occurred when creating expansion instance.", e);
+        }
     }
 }

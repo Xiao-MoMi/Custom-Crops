@@ -17,9 +17,12 @@
 
 package net.momirealms.customcrops.mechanic.item.custom;
 
+import net.momirealms.customcrops.api.CustomCropsPlugin;
 import net.momirealms.customcrops.api.manager.ConfigManager;
+import net.momirealms.customcrops.api.manager.WorldManager;
 import net.momirealms.customcrops.api.mechanic.item.Pot;
 import net.momirealms.customcrops.api.mechanic.item.Sprinkler;
+import net.momirealms.customcrops.api.mechanic.world.SimpleLocation;
 import net.momirealms.customcrops.mechanic.item.ItemManagerImpl;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -30,10 +33,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.block.MoistureChangeEvent;
+import org.bukkit.event.block.*;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.ItemSpawnEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -131,7 +131,9 @@ public abstract class AbstractCustomListener implements Listener {
         if (block.getType() == Material.FARMLAND && event.getTo() == Material.DIRT) {
             if (ConfigManager.preventTrampling()) {
                 event.setCancelled(true);
+                return;
             }
+            itemManager.handleEntityBreakBlock(event.getEntity(), block, event);
         }
     }
 
@@ -139,6 +141,28 @@ public abstract class AbstractCustomListener implements Listener {
     public void onMoistureChange(MoistureChangeEvent event) {
         if (ConfigManager.disableMoisture())
             event.setCancelled(true);
+    }
+
+    @EventHandler (ignoreCancelled = true)
+    public void onPistonExtend(BlockPistonExtendEvent event) {
+        WorldManager manager = CustomCropsPlugin.get().getWorldManager();
+        for (Block block : event.getBlocks()) {
+            if (manager.getBlockAt(SimpleLocation.of(block.getLocation())).isPresent()) {
+                event.setCancelled(true);
+                return;
+            }
+        }
+    }
+
+    @EventHandler (ignoreCancelled = true)
+    public void onPistonRetract(BlockPistonRetractEvent event) {
+        WorldManager manager = CustomCropsPlugin.get().getWorldManager();
+        for (Block block : event.getBlocks()) {
+            if (manager.getBlockAt(SimpleLocation.of(block.getLocation())).isPresent()) {
+                event.setCancelled(true);
+                return;
+            }
+        }
     }
 
     public void onPlaceBlock(Player player, Block block, String blockID, Cancellable event) {

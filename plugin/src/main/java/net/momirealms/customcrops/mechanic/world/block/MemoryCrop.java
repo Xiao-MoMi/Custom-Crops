@@ -35,6 +35,8 @@ import net.momirealms.customcrops.api.mechanic.world.level.WorldCrop;
 import net.momirealms.customcrops.api.mechanic.world.level.WorldPot;
 import net.momirealms.customcrops.api.util.LogUtils;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -161,7 +163,7 @@ public class MemoryCrop extends AbstractCustomCropsBlock implements WorldCrop {
             for (int i = previous + 1; i <= x; i++) {
                 Crop.Stage stage = crop.getStageByPoint(i);
                 if (stage != null) {
-                    stage.trigger(ActionTrigger.GROW, new State(null, null, bukkitLocation));
+                    stage.trigger(ActionTrigger.GROW, new State(null, new ItemStack(Material.AIR), bukkitLocation));
                 }
             }
             if (pre.equals(after)) return;

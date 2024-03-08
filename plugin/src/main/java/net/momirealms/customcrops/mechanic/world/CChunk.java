@@ -33,6 +33,8 @@ import net.momirealms.customcrops.mechanic.world.block.MemoryPot;
 import net.momirealms.customcrops.mechanic.world.block.MemorySprinkler;
 import net.momirealms.customcrops.scheduler.task.TickTask;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -250,8 +252,19 @@ public class CChunk implements CustomCropsChunk {
         if (optionalSprinkler.isEmpty()) {
             addBlockAt(new MemorySprinkler(location, sprinkler.getKey(), amount), location);
             CustomCropsPlugin.get().debug("When adding water to sprinkler at " + location + ", the sprinkler data doesn't exist.");
+            if (sprinkler.get3DItemWithWater() != null) {
+                CustomCropsPlugin.get().getItemManager().removeAnythingAt(location.getBukkitLocation());
+                CustomCropsPlugin.get().getItemManager().placeItem(location.getBukkitLocation(), sprinkler.getItemCarrier(), sprinkler.get3DItemWithWater());
+            }
         } else {
-            optionalSprinkler.get().setWater(optionalSprinkler.get().getWater() + amount);
+            int current = optionalSprinkler.get().getWater();
+            if (current == 0) {
+                if (sprinkler.get3DItemWithWater() != null) {
+                    CustomCropsPlugin.get().getItemManager().removeAnythingAt(location.getBukkitLocation());
+                    CustomCropsPlugin.get().getItemManager().placeItem(location.getBukkitLocation(), sprinkler.getItemCarrier(), sprinkler.get3DItemWithWater());
+                }
+            }
+            optionalSprinkler.get().setWater(current + amount);
         }
     }
 
@@ -331,10 +344,11 @@ public class CChunk implements CustomCropsChunk {
         int x = Math.min(previousPoint + points, crop.getMaxPoints());
         worldCrop.setPoint(x);
         Location bkLoc = location.getBukkitLocation();
+        if (bkLoc == null) return;
         for (int i = previousPoint + 1; i <= x; i++) {
             Crop.Stage stage = crop.getStageByPoint(i);
             if (stage != null) {
-                stage.trigger(ActionTrigger.GROW, new State(null, null, bkLoc));
+                stage.trigger(ActionTrigger.GROW, new State(null, new ItemStack(Material.AIR), bkLoc));
             }
         }
         String pre = crop.getStageItemByPoint(previousPoint);

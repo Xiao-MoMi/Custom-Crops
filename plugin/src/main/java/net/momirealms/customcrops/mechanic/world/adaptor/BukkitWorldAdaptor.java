@@ -222,7 +222,7 @@ public class BukkitWorldAdaptor extends AbstractWorldAdaptor {
         long lastLoadedTime = chunkData.readLong();
         // read task queue
         int tasksSize = chunkData.readInt();
-        PriorityQueue<TickTask> queue = new PriorityQueue<>(tasksSize);
+        PriorityQueue<TickTask> queue = new PriorityQueue<>(Math.max(11, tasksSize));
         for (int i = 0; i < tasksSize; i++) {
             int time = chunkData.readInt();
             ChunkPos pos = new ChunkPos(chunkData.readInt());
@@ -230,7 +230,7 @@ public class BukkitWorldAdaptor extends AbstractWorldAdaptor {
         }
         // read ticked blocks
         int tickedSize = chunkData.readInt();
-        HashSet<ChunkPos> tickedSet = new HashSet<>(tickedSize);
+        HashSet<ChunkPos> tickedSet = new HashSet<>(Math.max(11, tickedSize));
         for (int i = 0; i < tickedSize; i++) {
             tickedSet.add(new ChunkPos(chunkData.readInt()));
         }

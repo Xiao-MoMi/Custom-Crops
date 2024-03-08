@@ -25,11 +25,14 @@ import net.momirealms.customcrops.api.integration.SeasonInterface;
 import net.momirealms.customcrops.api.manager.ConfigManager;
 import net.momirealms.customcrops.api.manager.RequirementManager;
 import net.momirealms.customcrops.api.mechanic.action.Action;
+import net.momirealms.customcrops.api.mechanic.item.Fertilizer;
 import net.momirealms.customcrops.api.mechanic.requirement.Requirement;
 import net.momirealms.customcrops.api.mechanic.requirement.RequirementExpansion;
 import net.momirealms.customcrops.api.mechanic.requirement.RequirementFactory;
 import net.momirealms.customcrops.api.mechanic.requirement.State;
+import net.momirealms.customcrops.api.mechanic.world.CustomCropsBlock;
 import net.momirealms.customcrops.api.mechanic.world.SimpleLocation;
+import net.momirealms.customcrops.api.mechanic.world.level.WorldPot;
 import net.momirealms.customcrops.api.mechanic.world.season.Season;
 import net.momirealms.customcrops.api.util.LogUtils;
 import net.momirealms.customcrops.compatibility.VaultHook;
@@ -120,6 +123,7 @@ public class RequirementManagerImpl implements RequirementManager {
         this.registerItemInHandRequirement();
         this.registerSneakRequirement();
         this.registerTemperatureRequirement();
+        this.registerFertilizerRequirement();
     }
 
     @NotNull
@@ -558,6 +562,50 @@ public class RequirementManagerImpl implements RequirementManager {
                 };
             } else {
                 LogUtils.warn("Wrong value format found at !startsWith requirement.");
+                return EmptyRequirement.instance;
+            }
+        });
+    }
+
+    private void registerFertilizerRequirement() {
+        registerRequirement("fertilizer", (args, actions, advanced) -> {
+            if (args instanceof ConfigurationSection section) {
+                boolean has = section.getBoolean("has");
+                HashSet<String> keys = new HashSet<>(ConfigUtils.stringListArgs(section.get("key")));
+                int y = section.getInt("y", 0);
+                return condition -> {
+                    Location location = condition.getLocation().clone().add(0,y,0);
+                    SimpleLocation simpleLocation = SimpleLocation.of(location);
+                    Optional<CustomCropsBlock> optionalCustomCropsBlock = plugin.getWorldManager().getBlockAt(simpleLocation);
+                    if (optionalCustomCropsBlock.isPresent()) {
+                        if (optionalCustomCropsBlock.get() instanceof WorldPot pot) {
+                            Fertilizer fertilizer = pot.getFertilizer();
+                            if (fertilizer == null) {
+                                if (!has && keys.size() == 0) {
+                                    return true;
+                                }
+                            } else {
+                                String key = fertilizer.getKey();
+                                if (has) {
+                                    if (keys.size() == 0) {
+                                        return true;
+                                    }
+                                    if (keys.contains(key)) {
+                                        return true;
+                                    }
+                                } else {
+                                    if (!keys.contains(key)) {
+                                        return true;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    if (advanced) triggerActions(actions, condition);
+                    return false;
+                };
+            } else {
+                LogUtils.warn("Wrong value format found at fertilizer requirement.");
                 return EmptyRequirement.instance;
             }
         });

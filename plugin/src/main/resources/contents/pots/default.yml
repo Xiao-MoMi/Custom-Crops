@@ -90,7 +90,7 @@ default:
         type: conditional
         value:
           conditions:
-            item_check:
+            requirement_1:
               type: item-in-hand
               value:
                 hand: main
@@ -102,22 +102,27 @@ default:
               type: conditional
               value:
                 conditions:
-                  has-fertilizer: true
+                  requirement_1:
+                    type: fertilizer
+                    value:
+                      has: true
                 actions:
                   fertilizer_hologram:
                     type: hologram
                     value:
                       duration: 20
-                      text: '<font:customcrops:default>{icon}</font> {left_times}/{max_times}'
-                      position: other
-                      range: 0
-                      y: 0.8
+                      text: '<font:customcrops:default>{icon}</font> {left_times}/{max_times} '
+                      apply-correction: true
+                      x: 0.5
+                      y: 0.83
+                      z: 0.5
             # Display the amount of water in pot
             water_hologram:
               type: hologram
               value:
                 duration: 20
                 text: '<font:customcrops:default>{water_bar}</font>'
-                position: other
-                range: 0
-                y: 0.5
+                apply-correction: true
+                x: 0.5
+                y: 0.6
+                z: 0.5

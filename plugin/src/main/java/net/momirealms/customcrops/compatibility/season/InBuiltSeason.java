@@ -35,10 +35,6 @@ public class InBuiltSeason implements SeasonInterface {
 
     @Override
     public @Nullable Season getSeason(World world) {
-        if (ConfigManager.syncSeasons())
-            world = ConfigManager.referenceWorld();
-        if (world == null)
-            return null;
         return worldManager
                 .getCustomCropsWorld(world)
                 .map(CustomCropsWorld::getSeason)

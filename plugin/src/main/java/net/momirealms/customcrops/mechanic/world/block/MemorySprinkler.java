@@ -21,15 +21,20 @@ import com.flowpowered.nbt.CompoundMap;
 import com.flowpowered.nbt.IntTag;
 import com.flowpowered.nbt.StringTag;
 import net.momirealms.customcrops.api.CustomCropsPlugin;
+import net.momirealms.customcrops.api.mechanic.action.ActionTrigger;
 import net.momirealms.customcrops.api.mechanic.item.ItemType;
 import net.momirealms.customcrops.api.mechanic.item.Pot;
 import net.momirealms.customcrops.api.mechanic.item.Sprinkler;
+import net.momirealms.customcrops.api.mechanic.requirement.State;
 import net.momirealms.customcrops.api.mechanic.world.SimpleLocation;
 import net.momirealms.customcrops.api.mechanic.world.level.AbstractCustomCropsBlock;
 import net.momirealms.customcrops.api.mechanic.world.level.CustomCropsWorld;
 import net.momirealms.customcrops.api.mechanic.world.level.WorldPot;
 import net.momirealms.customcrops.api.mechanic.world.level.WorldSprinkler;
 import net.momirealms.customcrops.api.util.LogUtils;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -101,16 +106,30 @@ public class MemorySprinkler extends AbstractCustomCropsBlock implements WorldSp
             return;
         }
 
+        SimpleLocation location = getLocation();
+        boolean updateState;
         if (!sprinkler.isInfinite()) {
             int water = getWater();
             if (water <= 0) {
                 return;
             }
-            setWater(water - 1);
+            setWater(--water);
+            updateState = water == 0;
+        } else {
+            updateState = false;
         }
 
+        Location bukkitLocation = location.getBukkitLocation();
+        if (bukkitLocation == null) return;
+        CustomCropsPlugin.get().getScheduler().runTaskSync(() -> {
+            sprinkler.trigger(ActionTrigger.WORK, new State(null, new ItemStack(Material.AIR), bukkitLocation));
+            if (updateState && sprinkler.get3DItemWithWater() != null) {
+                CustomCropsPlugin.get().getItemManager().removeAnythingAt(bukkitLocation);
+                CustomCropsPlugin.get().getItemManager().placeItem(bukkitLocation, sprinkler.getItemCarrier(), sprinkler.get3DItemID());
+            }
+        }, bukkitLocation);
+
         int range = sprinkler.getRange();
-        SimpleLocation location = getLocation();
         CustomCropsWorld world = CustomCropsPlugin.get().getWorldManager().getCustomCropsWorld(location.getWorldName()).get();
         for (int i = -range; i <= range; i++) {
             for (int j = -range; j <= range; j++) {

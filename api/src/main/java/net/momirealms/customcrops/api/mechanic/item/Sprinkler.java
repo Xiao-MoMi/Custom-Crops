@@ -32,6 +32,8 @@ public interface Sprinkler extends KeyItem {
 
     String get3DItemID();
 
+    String get3DItemWithWater();
+
     int getStorage();
 
     int getRange();
