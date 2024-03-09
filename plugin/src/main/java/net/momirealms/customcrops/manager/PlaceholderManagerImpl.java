@@ -4,7 +4,10 @@ import net.momirealms.customcrops.api.CustomCropsPlugin;
 import net.momirealms.customcrops.api.manager.PlaceholderManager;
 import net.momirealms.customcrops.compatibility.papi.CCPapi;
 import net.momirealms.customcrops.compatibility.papi.ParseUtils;
+import net.momirealms.customcrops.utils.ConfigUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
@@ -36,12 +39,24 @@ public class PlaceholderManagerImpl extends PlaceholderManager {
         if (ccPapi != null) {
             ccPapi.register();
         }
+        this.loadCustomPlaceholders();
     }
 
     @Override
     public void unload() {
         if (ccPapi != null) {
             ccPapi.unregister();
+        }
+        this.customPlaceholderMap.clear();
+    }
+
+    public void loadCustomPlaceholders() {
+        YamlConfiguration config = ConfigUtils.getConfig("config.yml");
+        ConfigurationSection section = config.getConfigurationSection("other-settings.placeholder-register");
+        if (section != null) {
+            for (Map.Entry<String, Object> entry : section.getValues(false).entrySet()) {
+                this.customPlaceholderMap.put(entry.getKey(), (String) entry.getValue());
+            }
         }
     }
 

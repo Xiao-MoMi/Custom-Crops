@@ -311,6 +311,12 @@ public class ItemManagerImpl implements ItemManager {
             LogUtils.warn("Item " + sprinkler.get3DItemID() + " has more than one sprinkler config.");
             return false;
         }
+        if (sprinkler.get3DItemWithWater() != null) {
+            if (this.threeDItem2SprinklerMap.put(sprinkler.get3DItemWithWater(), sprinkler) != null) {
+                LogUtils.warn("Item " + sprinkler.get3DItemWithWater() + " has more than one sprinkler config.");
+                return false;
+            }
+        }
         return true;
     }
 

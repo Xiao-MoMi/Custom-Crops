@@ -31,7 +31,7 @@ sprinkler_1:
       # The amount of water to add
       amount: 3
     method_2:
-      item: WATER
+      item: POTION
       return: GLASS_BOTTLE
       amount: 1
   # Water bar image settings
@@ -119,7 +119,7 @@ sprinkler_2:
       return: BUCKET
       amount: 3
     method_2:
-      item: WATER
+      item: POTION
       return: GLASS_BOTTLE
       amount: 1
   water-bar:
@@ -207,7 +207,7 @@ sprinkler_3:
       return: BUCKET
       amount: 3
     method_2:
-      item: WATER
+      item: POTION
       return: GLASS_BOTTLE
       amount: 1
   water-bar:

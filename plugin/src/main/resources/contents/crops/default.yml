@@ -158,6 +158,7 @@ tomato:
     # But you can set some special crops' loots here
     99:
       model: {0}tomato_stage_golden
+      # You can set interact/break requirements for each stage
       requirements:
         break:
           requirement_1:

@@ -130,6 +130,10 @@ other-settings:
   # Disable this would improve performance
   legacy-color-code-support: true
 
+  # Requires PlaceholderAPI to work
+  placeholder-register:
+    '{skill-level}': '%levelplugin_farming%'
+
   # Thread pool settings
   thread-pool-settings:
     corePoolSize: 10
