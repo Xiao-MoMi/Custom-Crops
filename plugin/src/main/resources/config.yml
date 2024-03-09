@@ -13,9 +13,7 @@ update-checker: true
 # Language
 lang: english
 
-# NOTE: This section requires a restart to apply
-# NOTE: This section requires a restart to apply
-# NOTE: This section requires a restart to apply
+# World settings
 worlds:
   # This is designed for servers that using an independent folder for worlds
   # Especially for realm systems
@@ -74,16 +72,6 @@ worlds:
         tick-interval: 2
         # Limit the max amount of sprinklers in one chunk
         max-per-chunk: 20
-      # Offline growth is a special mode for crops
-      # Take server performance into account, enabling this option will not load the unloaded chunks
-      # On the contrary, CustomCrops get how long crops have grown by comparing the unload and load timestamps
-      offline-growth:
-        enable: false
-        # Maximum offline time recorded in seconds
-        # Please do not set this option to a value that is too large,
-        # as it may cause chunks that have been unloaded for a long time
-        # to consume too much server performance during loading
-        max-offline-seconds: 1200
     # You can override the default settings for worlds here
     _WORLDS_:
       world_nether:

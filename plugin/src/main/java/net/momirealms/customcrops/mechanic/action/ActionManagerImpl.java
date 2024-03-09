@@ -450,8 +450,10 @@ public class ActionManagerImpl implements ActionManager {
     private void registerVariationAction() {
         registerAction("variation", (args, chance) -> {
             if (args instanceof ConfigurationSection section) {
+                boolean ignore = section.getBoolean("ignore-fertilizer", false);
                 ArrayList<VariationCrop> variationCrops = new ArrayList<>();
                 for (String inner_key : section.getKeys(false)) {
+                    if (inner_key.equals("ignore-fertilizer")) continue;
                     VariationCrop variationCrop = new VariationCrop(
                             section.getString(inner_key + ".item"),
                             ItemCarrier.valueOf(section.getString(inner_key + ".type", "TripWire").toUpperCase(Locale.ENGLISH)),
@@ -463,11 +465,13 @@ public class ActionManagerImpl implements ActionManager {
                 return state -> {
                     if (Math.random() > chance) return;
                     double bonus = 0;
-                    Optional<WorldPot> pot = plugin.getWorldManager().getPotAt(SimpleLocation.of(state.getLocation().clone().subtract(0,1,0)));
-                    if (pot.isPresent()) {
-                        Fertilizer fertilizer = pot.get().getFertilizer();
-                        if (fertilizer instanceof Variation variation) {
-                            bonus += variation.getChanceBonus();
+                    if (!ignore) {
+                        Optional<WorldPot> pot = plugin.getWorldManager().getPotAt(SimpleLocation.of(state.getLocation().clone().subtract(0,1,0)));
+                        if (pot.isPresent()) {
+                            Fertilizer fertilizer = pot.get().getFertilizer();
+                            if (fertilizer instanceof Variation variation) {
+                                bonus += variation.getChanceBonus();
+                            }
                         }
                     }
                     for (VariationCrop variationCrop : variations) {
@@ -638,20 +642,24 @@ public class ActionManagerImpl implements ActionManager {
                             crop.trigger(ActionTrigger.REACH_LIMIT, state);
                             return;
                         }
-                        // fire event
-                        CropPlantEvent plantEvent = new CropPlantEvent(state.getPlayer(), state.getItemInHand(), location, crop, 0);
-                        if (EventUtils.fireAndCheckCancel(plantEvent)) {
-                            return;
-                        }
-                        // place the crop
-                        switch (crop.getItemCarrier()) {
-                            case ITEM_FRAME, ITEM_DISPLAY, TRIPWIRE -> plugin.getItemManager().placeItem(location, crop.getItemCarrier(), crop.getStageItemByPoint(point));
-                            default -> {
-                                LogUtils.warn("Unsupported type for crop: " + crop.getItemCarrier().name());
-                                return;
+                        plugin.getScheduler().runTaskSync(() -> {
+                            // fire event
+                            if (state.getPlayer() != null) {
+                                CropPlantEvent plantEvent = new CropPlantEvent(state.getPlayer(), state.getItemInHand(), location, crop, 0);
+                                if (EventUtils.fireAndCheckCancel(plantEvent)) {
+                                    return;
+                                }
                             }
-                        }
-                        plugin.getWorldManager().addCropAt(new MemoryCrop(SimpleLocation.of(location), crop.getKey(), point), SimpleLocation.of(location));
+                            // place the crop
+                            switch (crop.getItemCarrier()) {
+                                case ITEM_FRAME, ITEM_DISPLAY, TRIPWIRE -> plugin.getItemManager().placeItem(location, crop.getItemCarrier(), crop.getStageItemByPoint(point));
+                                default -> {
+                                    LogUtils.warn("Unsupported type for crop: " + crop.getItemCarrier().name());
+                                    return;
+                                }
+                            }
+                            plugin.getWorldManager().addCropAt(new MemoryCrop(SimpleLocation.of(location), crop.getKey(), point), SimpleLocation.of(location));
+                        }, state.getLocation());
                     };
                 } else {
                     LogUtils.warn("Illegal value format found at action: " + name);
@@ -666,44 +674,46 @@ public class ActionManagerImpl implements ActionManager {
             boolean arg = (boolean) (args == null ? true : args);
             return state -> {
                 if (Math.random() > chance) return;
-                Optional<CustomCropsBlock> removed = plugin.getWorldManager().getBlockAt(SimpleLocation.of(state.getLocation()));
-                if (removed.isPresent()) {
-                    switch (removed.get().getType()) {
-                        case SPRINKLER -> {
-                            WorldSprinkler sprinkler = (WorldSprinkler) removed.get();
-                            SprinklerBreakEvent event = new SprinklerBreakEvent(state.getPlayer(), state.getLocation(), sprinkler);
-                            if (EventUtils.fireAndCheckCancel(event))
-                                return;
-                            if (arg) sprinkler.getConfig().trigger(ActionTrigger.BREAK, state);
-                            plugin.getItemManager().removeAnythingAt(state.getLocation());
-                            plugin.getWorldManager().removeAnythingAt(SimpleLocation.of(state.getLocation()));
-                        }
-                        case CROP -> {
-                            WorldCrop crop = (WorldCrop) removed.get();
-                            CropBreakEvent event = new CropBreakEvent(state.getPlayer(), state.getLocation(), crop);
-                            if (EventUtils.fireAndCheckCancel(event))
-                                return;
-                            Crop cropConfig = crop.getConfig();
-                            if (arg) {
-                                cropConfig.trigger(ActionTrigger.BREAK, state);
-                                cropConfig.getStageByItemID(cropConfig.getStageItemByPoint(crop.getPoint())).trigger(ActionTrigger.BREAK, state);
+                plugin.getScheduler().runTaskSync(() -> {
+                    Optional<CustomCropsBlock> removed = plugin.getWorldManager().getBlockAt(SimpleLocation.of(state.getLocation()));
+                    if (removed.isPresent()) {
+                        switch (removed.get().getType()) {
+                            case SPRINKLER -> {
+                                WorldSprinkler sprinkler = (WorldSprinkler) removed.get();
+                                SprinklerBreakEvent event = new SprinklerBreakEvent(state.getPlayer(), state.getLocation(), sprinkler);
+                                if (EventUtils.fireAndCheckCancel(event))
+                                    return;
+                                if (arg) sprinkler.getConfig().trigger(ActionTrigger.BREAK, state);
+                                plugin.getItemManager().removeAnythingAt(state.getLocation());
+                                plugin.getWorldManager().removeAnythingAt(SimpleLocation.of(state.getLocation()));
                             }
-                            plugin.getItemManager().removeAnythingAt(state.getLocation());
-                            plugin.getWorldManager().removeAnythingAt(SimpleLocation.of(state.getLocation()));
+                            case CROP -> {
+                                WorldCrop crop = (WorldCrop) removed.get();
+                                CropBreakEvent event = new CropBreakEvent(state.getPlayer(), state.getLocation(), crop);
+                                if (EventUtils.fireAndCheckCancel(event))
+                                    return;
+                                Crop cropConfig = crop.getConfig();
+                                if (arg) {
+                                    cropConfig.trigger(ActionTrigger.BREAK, state);
+                                    cropConfig.getStageByItemID(cropConfig.getStageItemByPoint(crop.getPoint())).trigger(ActionTrigger.BREAK, state);
+                                }
+                                plugin.getItemManager().removeAnythingAt(state.getLocation());
+                                plugin.getWorldManager().removeAnythingAt(SimpleLocation.of(state.getLocation()));
+                            }
+                            case POT -> {
+                                WorldPot pot = (WorldPot) removed.get();
+                                PotBreakEvent event = new PotBreakEvent(state.getPlayer(), state.getLocation(), pot);
+                                if (EventUtils.fireAndCheckCancel(event))
+                                    return;
+                                if (arg) pot.getConfig().trigger(ActionTrigger.BREAK, state);
+                                plugin.getItemManager().removeAnythingAt(state.getLocation());
+                                plugin.getWorldManager().removeAnythingAt(SimpleLocation.of(state.getLocation()));
+                            }
                         }
-                        case POT -> {
-                            WorldPot pot = (WorldPot) removed.get();
-                            PotBreakEvent event = new PotBreakEvent(state.getPlayer(), state.getLocation(), pot);
-                            if (EventUtils.fireAndCheckCancel(event))
-                                return;
-                            if (arg) pot.getConfig().trigger(ActionTrigger.BREAK, state);
-                            plugin.getItemManager().removeAnythingAt(state.getLocation());
-                            plugin.getWorldManager().removeAnythingAt(SimpleLocation.of(state.getLocation()));
-                        }
+                    } else {
+                        plugin.getItemManager().removeAnythingAt(state.getLocation());
                     }
-                } else {
-                    plugin.getItemManager().removeAnythingAt(state.getLocation());
-                }
+                }, state.getLocation());
             };
         });
     }

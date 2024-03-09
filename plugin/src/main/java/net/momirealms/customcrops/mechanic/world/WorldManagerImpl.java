@@ -41,10 +41,7 @@ import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class WorldManagerImpl implements WorldManager, Listener {
@@ -89,6 +86,7 @@ public class WorldManagerImpl implements WorldManager, Listener {
     @Override
     public void unload() {
         this.unregisterListener();
+        this.worldSettingMap.clear();
     }
 
     @Override
@@ -130,13 +128,21 @@ public class WorldManagerImpl implements WorldManager, Listener {
             return;
         }
 
-        ConfigurationSection defaultSchedulerSection = settingSection.getConfigurationSection("_DEFAULT_");
-        if (defaultSchedulerSection == null) {
+        ConfigurationSection defaultSection = settingSection.getConfigurationSection("_DEFAULT_");
+        if (defaultSection == null) {
             LogUtils.severe("worlds.settings._DEFAULT_ section should not be null");
             return;
         }
 
-        this.defaultWorldSetting = ConfigUtils.getWorldSettingFromSection(defaultSchedulerSection);
+        this.defaultWorldSetting = ConfigUtils.getWorldSettingFromSection(defaultSection);
+        ConfigurationSection worldSection = settingSection.getConfigurationSection("_WORLDS_");
+        if (worldSection != null) {
+            for (Map.Entry<String, Object> entry : worldSection.getValues(false).entrySet()) {
+                if (entry.getValue() instanceof ConfigurationSection inner) {
+                    this.worldSettingMap.put(entry.getKey(), ConfigUtils.getWorldSettingFromSection(inner));
+                }
+            }
+        }
     }
 
     private void registerListener() {

@@ -49,7 +49,7 @@ public class ConfigManagerImpl extends ConfigManager {
     private boolean metrics;
     private boolean legacyColorSupport;
     private boolean protectLore;
-    private String[] itemDetectionOrder;
+    private String[] itemDetectionOrder = new String[0];
     private boolean checkUpdate;
     private boolean disableMoisture;
     private boolean preventTrampling;
