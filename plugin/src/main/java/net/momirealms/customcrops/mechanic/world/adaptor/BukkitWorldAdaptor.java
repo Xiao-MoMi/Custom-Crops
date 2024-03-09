@@ -26,23 +26,30 @@ import com.flowpowered.nbt.stream.NBTOutputStream;
 import com.github.luben.zstd.Zstd;
 import com.google.gson.Gson;
 import net.momirealms.customcrops.api.CustomCropsPlugin;
+import net.momirealms.customcrops.api.manager.ConfigManager;
 import net.momirealms.customcrops.api.manager.WorldManager;
-import net.momirealms.customcrops.api.mechanic.world.ChunkCoordinate;
-import net.momirealms.customcrops.api.mechanic.world.ChunkPos;
-import net.momirealms.customcrops.api.mechanic.world.CustomCropsBlock;
+import net.momirealms.customcrops.api.mechanic.world.*;
 import net.momirealms.customcrops.api.mechanic.world.level.CustomCropsChunk;
 import net.momirealms.customcrops.api.mechanic.world.level.CustomCropsWorld;
 import net.momirealms.customcrops.api.mechanic.world.level.WorldInfoData;
+import net.momirealms.customcrops.api.mechanic.world.season.Season;
+import net.momirealms.customcrops.api.object.crop.GrowingCrop;
+import net.momirealms.customcrops.api.object.fertilizer.Fertilizer;
+import net.momirealms.customcrops.api.object.pot.Pot;
+import net.momirealms.customcrops.api.object.sprinkler.Sprinkler;
+import net.momirealms.customcrops.api.object.world.CCChunk;
 import net.momirealms.customcrops.api.util.LogUtils;
 import net.momirealms.customcrops.mechanic.world.*;
 import net.momirealms.customcrops.mechanic.world.block.*;
 import net.momirealms.customcrops.scheduler.task.TickTask;
 import org.bukkit.NamespacedKey;
 import org.bukkit.World;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.event.world.WorldUnloadEvent;
 import org.bukkit.persistence.PersistentDataType;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.*;
 import java.nio.ByteOrder;
@@ -58,6 +65,7 @@ public class BukkitWorldAdaptor extends AbstractWorldAdaptor {
     public BukkitWorldAdaptor(WorldManager worldManager) {
         super(worldManager);
         this.gson = new Gson();
+        this.worldFolder = "";
     }
 
     @Override
@@ -89,12 +97,19 @@ public class BukkitWorldAdaptor extends AbstractWorldAdaptor {
             return;
         }
 
+        // create directory
+        new File(world.getWorldFolder(), "customcrops").mkdir();
+
+        // try converting legacy worlds
+        if (ConfigManager.convertWorldOnLoad()) {
+            convertWorld(cWorld, world);
+            return;
+        }
+
         // init world basic info
         String json = world.getPersistentDataContainer().get(key, PersistentDataType.STRING);
         WorldInfoData data = (json == null || json.equals("null")) ? WorldInfoData.empty() : gson.fromJson(json, WorldInfoData.class);
         cWorld.setInfoData(data);
-
-        new File(world.getWorldFolder(), "customcrops").mkdir();
     }
 
     @Override
@@ -434,5 +449,76 @@ public class BukkitWorldAdaptor extends AbstractWorldAdaptor {
         );
         outStream.writeTag(tag);
         return outByteStream.toByteArray();
+    }
+
+    public void convertWorld(@Nullable CWorld cWorld, World world) {
+        // handle legacy files
+        File leagcyFile = new File(world.getWorldFolder(), "customcrops" + File.separator + "data.yml");
+        if (leagcyFile.exists()) {
+            // read date and season
+            YamlConfiguration data = YamlConfiguration.loadConfiguration(leagcyFile);
+            try {
+                Season season = Season.valueOf(data.getString("season"));
+                if (cWorld != null)
+                    cWorld.setInfoData(new WorldInfoData(season, data.getInt("date", 1)));
+                world.getPersistentDataContainer().set(key, PersistentDataType.STRING,
+                        gson.toJson(new WorldInfoData(season, data.getInt("date", 1))));
+            } catch (IllegalArgumentException e) {
+                if (cWorld != null)
+                    cWorld.setInfoData(WorldInfoData.empty());
+            }
+            // delete the file
+            leagcyFile.delete();
+            new File(world.getWorldFolder(), "customcrops" + File.separator + "corrupted.yml").delete();
+
+            // read chunks
+            File folder = new File(world.getWorldFolder(), "customcrops" + File.separator + "chunks");
+            if (!folder.exists()) return;
+            LogUtils.warn("Converting chunks for world " + world.getName() + " from 3.3 to 3.4... This might take some time.");
+            File[] data_files = folder.listFiles();
+            if (data_files == null) return;
+            for (File file : data_files) {
+                ChunkCoordinate chunkCoordinate = ChunkCoordinate.getByString(file.getName().substring(0, file.getName().length() - 7));
+                try (FileInputStream fis = new FileInputStream(file); ObjectInputStream ois = new ObjectInputStream(fis)) {
+                    CCChunk chunk = (CCChunk) ois.readObject();
+                    CChunk cChunk = new CChunk(cWorld, chunkCoordinate);
+                    for (net.momirealms.customcrops.api.object.world.SimpleLocation legacyLocation : chunk.getGreenhouseSet()) {
+                        SimpleLocation simpleLocation = new SimpleLocation(legacyLocation.getWorldName(), legacyLocation.getX(), legacyLocation.getY(), legacyLocation.getZ());
+                        cChunk.addGlassAt(new MemoryGlass(simpleLocation), simpleLocation);
+                    }
+                    for (net.momirealms.customcrops.api.object.world.SimpleLocation legacyLocation : chunk.getScarecrowSet()) {
+                        SimpleLocation simpleLocation = new SimpleLocation(legacyLocation.getWorldName(), legacyLocation.getX(), legacyLocation.getY(), legacyLocation.getZ());
+                        cChunk.addScarecrowAt(new MemoryScarecrow(simpleLocation), simpleLocation);
+                    }
+                    for (Map.Entry<net.momirealms.customcrops.api.object.world.SimpleLocation, GrowingCrop> entry : chunk.getGrowingCropMap().entrySet()) {
+                        net.momirealms.customcrops.api.object.world.SimpleLocation legacyLocation = entry.getKey();
+                        SimpleLocation simpleLocation = new SimpleLocation(legacyLocation.getWorldName(), legacyLocation.getX(), legacyLocation.getY(), legacyLocation.getZ());
+                        cChunk.addCropAt(new MemoryCrop(simpleLocation, entry.getValue().getKey(), entry.getValue().getPoints()), simpleLocation);
+                    }
+                    for (Map.Entry<net.momirealms.customcrops.api.object.world.SimpleLocation, Sprinkler> entry : chunk.getSprinklerMap().entrySet()) {
+                        net.momirealms.customcrops.api.object.world.SimpleLocation legacyLocation = entry.getKey();
+                        SimpleLocation simpleLocation = new SimpleLocation(legacyLocation.getWorldName(), legacyLocation.getX(), legacyLocation.getY(), legacyLocation.getZ());
+                        cChunk.addSprinklerAt(new MemorySprinkler(simpleLocation, entry.getValue().getKey(), entry.getValue().getWater()), simpleLocation);
+                    }
+                    for (Map.Entry<net.momirealms.customcrops.api.object.world.SimpleLocation, Pot> entry : chunk.getPotMap().entrySet()) {
+                        net.momirealms.customcrops.api.object.world.SimpleLocation legacyLocation = entry.getKey();
+                        SimpleLocation simpleLocation = new SimpleLocation(legacyLocation.getWorldName(), legacyLocation.getX(), legacyLocation.getY(), legacyLocation.getZ());
+                        Fertilizer fertilizer = entry.getValue().getFertilizer();
+                        cChunk.addPotAt(new MemoryPot(simpleLocation, entry.getValue().getKey(), entry.getValue().getWater(), fertilizer == null ? "" : fertilizer.getKey(), fertilizer == null ? 0 : fertilizer.getTimes()), simpleLocation);
+                    }
+                    try (BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(getChunkDataFilePath(world, cChunk.getChunkCoordinate())))) {
+                        bos.write(serialize(cChunk));
+                    } catch (IOException e) {
+                        LogUtils.severe("Failed to save CustomCrops data.");
+                        e.printStackTrace();
+                    }
+                } catch (IOException | ClassNotFoundException e) {
+                    e.printStackTrace();
+                    LogUtils.info("Error at " + file.getAbsolutePath());
+                }
+            }
+
+            LogUtils.info("Successfully converted chunks for world: " + world);
+        }
     }
 }

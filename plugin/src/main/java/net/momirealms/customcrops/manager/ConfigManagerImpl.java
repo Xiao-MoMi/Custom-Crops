@@ -17,6 +17,12 @@
 
 package net.momirealms.customcrops.manager;
 
+import dev.dejvokep.boostedyaml.YamlDocument;
+import dev.dejvokep.boostedyaml.dvs.versioning.BasicVersioning;
+import dev.dejvokep.boostedyaml.settings.dumper.DumperSettings;
+import dev.dejvokep.boostedyaml.settings.general.GeneralSettings;
+import dev.dejvokep.boostedyaml.settings.loader.LoaderSettings;
+import dev.dejvokep.boostedyaml.settings.updater.UpdaterSettings;
 import net.momirealms.customcrops.api.CustomCropsPlugin;
 import net.momirealms.customcrops.api.manager.ConfigManager;
 import net.momirealms.customcrops.api.util.LogUtils;
@@ -26,12 +32,14 @@ import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
+import java.io.File;
+import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.Objects;
 
 public class ConfigManagerImpl extends ConfigManager {
 
-    private static final String configVersion = "35";
+    public static final String configVersion = "35";
     private CustomCropsPlugin plugin;
     private String lang;
     private int maximumPoolSize;
@@ -54,6 +62,7 @@ public class ConfigManagerImpl extends ConfigManager {
     private int scarecrowRange;
     private boolean syncSeasons;
     private WeakReference<World> referenceWorld;
+    private boolean convertWorldOnLoad;
 
     public ConfigManagerImpl(CustomCropsPlugin plugin) {
         this.plugin = plugin;
@@ -61,6 +70,29 @@ public class ConfigManagerImpl extends ConfigManager {
 
     @Override
     public void load() {
+        if (!new File(plugin.getDataFolder(), "config.yml").exists())
+            ConfigUtils.getConfig("config.yml");
+        // update config version
+        try {
+            YamlDocument.create(
+                    new File(CustomCropsPlugin.getInstance().getDataFolder(), "config.yml"),
+                    Objects.requireNonNull(CustomCropsPlugin.getInstance().getResource("config.yml")),
+                    GeneralSettings.DEFAULT,
+                    LoaderSettings
+                            .builder()
+                            .setAutoUpdate(true)
+                            .build(),
+                    DumperSettings.DEFAULT,
+                    UpdaterSettings
+                            .builder()
+                            .setVersioning(new BasicVersioning("config-version"))
+                            .addIgnoredRoute(configVersion, "other-settings.placeholder-register", '.')
+                            .build()
+            );
+        } catch (IOException e) {
+            LogUtils.warn(e.getMessage());
+        }
+
         YamlConfiguration config = ConfigUtils.getConfig("config.yml");
 
         debug = config.getBoolean("debug");
@@ -80,6 +112,7 @@ public class ConfigManagerImpl extends ConfigManager {
         itemDetectionOrder = otherSettings.getStringList("item-detection-order").toArray(new String[0]);
         protectLore = otherSettings.getBoolean("protect-original-lore", false);
         legacyColorSupport = otherSettings.getBoolean("legacy-color-code-support", true);
+        convertWorldOnLoad = otherSettings.getBoolean("convert-on-world-load", false);
 
         ConfigurationSection mechanics = config.getConfigurationSection("mechanics");
         if (mechanics == null) {
@@ -127,6 +160,11 @@ public class ConfigManagerImpl extends ConfigManager {
     @Override
     public int getKeepAliveTime() {
         return keepAliveTime;
+    }
+
+    @Override
+    protected boolean isConvertWorldOnLoad() {
+        return convertWorldOnLoad;
     }
 
     @Override

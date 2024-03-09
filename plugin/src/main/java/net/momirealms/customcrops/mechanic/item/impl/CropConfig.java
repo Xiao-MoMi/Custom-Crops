@@ -134,7 +134,7 @@ public class CropConfig extends AbstractEventItem implements Crop {
     }
 
     @Override
-    public boolean isRotation() {
+    public boolean hasRotation() {
         return rotation;
     }
 

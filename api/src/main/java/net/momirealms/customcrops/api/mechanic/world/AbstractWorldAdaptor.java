@@ -15,10 +15,9 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.momirealms.customcrops.mechanic.world.adaptor;
+package net.momirealms.customcrops.api.mechanic.world;
 
 import net.momirealms.customcrops.api.manager.WorldManager;
-import net.momirealms.customcrops.api.mechanic.world.ChunkCoordinate;
 import net.momirealms.customcrops.api.mechanic.world.level.CustomCropsChunk;
 import net.momirealms.customcrops.api.mechanic.world.level.CustomCropsWorld;
 import org.bukkit.event.Listener;

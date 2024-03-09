@@ -42,6 +42,8 @@ public interface ItemManager extends Reloadable {
 
     void placeItem(Location location, ItemCarrier carrier, String id);
 
+    void placeItem(Location location, ItemCarrier carrier, String id, boolean rotate);
+
     void removeAnythingAt(Location location);
 
     @Nullable

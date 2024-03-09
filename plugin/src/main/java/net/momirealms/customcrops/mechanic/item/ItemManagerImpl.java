@@ -56,15 +56,17 @@ import net.momirealms.customcrops.mechanic.world.block.*;
 import net.momirealms.customcrops.utils.ConfigUtils;
 import net.momirealms.customcrops.utils.EventUtils;
 import net.momirealms.customcrops.utils.ItemUtils;
+import net.momirealms.customcrops.utils.RotationUtils;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Waterlogged;
 import org.bukkit.block.data.type.Farmland;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.ItemDisplay;
+import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
@@ -327,6 +329,25 @@ public class ItemManagerImpl implements ItemManager {
         switch (carrier) {
             case ITEM_DISPLAY, ITEM_FRAME -> {
                 customProvider.placeFurniture(location, id);
+            }
+            case TRIPWIRE, NOTE_BLOCK, CHORUS, MUSHROOM -> {
+                customProvider.placeBlock(location, id);
+            }
+        }
+    }
+
+    @Override
+    public void placeItem(Location location, ItemCarrier carrier, String id, boolean rotate) {
+        switch (carrier) {
+            case ITEM_DISPLAY, ITEM_FRAME -> {
+                Entity entity = customProvider.placeFurniture(location, id);
+                if (rotate) {
+                    if (entity instanceof ItemFrame frame) {
+                        frame.setRotation(RotationUtils.getRandomRotation());
+                    } else if (entity instanceof ItemDisplay display) {
+                        display.setRotation(RotationUtils.getRandomFloatRotation(), display.getLocation().getPitch());
+                    }
+                }
             }
             case TRIPWIRE, NOTE_BLOCK, CHORUS, MUSHROOM -> {
                 customProvider.placeBlock(location, id);

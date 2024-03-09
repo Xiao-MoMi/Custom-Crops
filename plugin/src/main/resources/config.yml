@@ -102,13 +102,13 @@ mechanics:
   # Scarecrow prevents crops from being attacked by crows
   scarecrow:
     enable: true
-    id: {0}scarecrow
+    id: '{0}scarecrow'
     range: 7
 
   # Greenhouse glass prevents crops from withering from season changing
   greenhouse:
     enable: true
-    id: {0}greenhouse_glass
+    id: '{0}greenhouse_glass'
     range: 5
 
   # Sync seasons
@@ -146,3 +146,6 @@ other-settings:
   # This uses the scoreboard component to identify the plugin's lore,
   # which may conflict with some plugins that still use SpigotAPI#ItemMeta.
   protect-original-lore: false
+
+  # Should the plugin try to convert worlds from 3.3 to 3.4 when WorldLoadEvent is triggered
+  convert-on-world-load: false

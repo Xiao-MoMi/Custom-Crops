@@ -93,7 +93,6 @@ default:
             requirement_1:
               type: item-in-hand
               value:
-                hand: main
                 amount: 1
                 item: {0}soil_surveyor
           actions:
@@ -116,6 +115,7 @@ default:
                       x: 0.5
                       y: 0.83
                       z: 0.5
+                      visible-to-all: false
             # Display the amount of water in pot
             water_hologram:
               type: hologram
@@ -126,3 +126,4 @@ default:
                 x: 0.5
                 y: 0.6
                 z: 0.5
+                visible-to-all: false

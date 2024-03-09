@@ -116,6 +116,12 @@ public abstract class ConfigManager implements Reloadable {
         return instance.getScarecrowID();
     }
 
+    public static boolean convertWorldOnLoad() {
+        return instance.isConvertWorldOnLoad();
+    }
+
+    protected abstract boolean isConvertWorldOnLoad();
+
     protected abstract double[] getDefaultQualityRatio();
 
     protected abstract String getLang();

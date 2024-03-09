@@ -163,6 +163,10 @@ public class RequirementManagerImpl implements RequirementManager {
                     }
                 }
             }
+            if (section.contains("message")) {
+                List<String> messages = ConfigUtils.stringListArgs(section.get("message"));
+                actionList.add(plugin.getActionManager().getActionFactory("message").build(messages, 1));
+            }
             if (actionList.size() == 0)
                 actionList = null;
         }

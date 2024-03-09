@@ -20,6 +20,7 @@ package net.momirealms.customcrops.mechanic.world.adaptor;
 import com.infernalsuite.aswm.api.SlimePlugin;
 import com.infernalsuite.aswm.api.events.LoadSlimeWorldEvent;
 import net.momirealms.customcrops.api.manager.WorldManager;
+import net.momirealms.customcrops.api.mechanic.world.AbstractWorldAdaptor;
 import net.momirealms.customcrops.api.mechanic.world.ChunkCoordinate;
 import net.momirealms.customcrops.api.mechanic.world.level.CustomCropsChunk;
 import net.momirealms.customcrops.api.mechanic.world.level.CustomCropsWorld;

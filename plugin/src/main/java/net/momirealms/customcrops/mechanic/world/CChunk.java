@@ -355,7 +355,7 @@ public class CChunk implements CustomCropsChunk {
         String after = crop.getStageItemByPoint(x);
         if (pre.equals(after)) return;
         CustomCropsPlugin.get().getItemManager().removeAnythingAt(bkLoc);
-        CustomCropsPlugin.get().getItemManager().placeItem(bkLoc, crop.getItemCarrier(), after);
+        CustomCropsPlugin.get().getItemManager().placeItem(bkLoc, crop.getItemCarrier(), after, crop.hasRotation());
     }
 
     @Override

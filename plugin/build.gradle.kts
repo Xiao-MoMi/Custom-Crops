@@ -47,6 +47,7 @@ dependencies {
     compileOnly(files("libs/RealisticSeasons-api.jar"))
 
     implementation(project(":api"))
+    implementation(project(":legacy-api"))
     implementation("net.kyori:adventure-api:4.15.0")
     implementation("net.kyori:adventure-platform-bukkit:4.3.2")
     compileOnly("com.github.Xiao-MoMi:AntiGriefLib:0.7")
@@ -55,7 +56,6 @@ dependencies {
     compileOnly("net.kyori:adventure-text-serializer-legacy:4.15.0")
     compileOnly("de.tr7zw:item-nbt-api:2.12.2")
     compileOnly("org.bstats:bstats-bukkit:3.0.2")
-    implementation("org.lz4:lz4-java:1.8.0")
     implementation("com.flowpowered:flow-nbt:2.0.2")
     implementation("com.github.luben:zstd-jni:1.5.5-11")
 }
@@ -67,6 +67,7 @@ tasks {
 		relocate ("net.kyori", "net.momirealms.customcrops.libraries")
 		relocate ("org.objenesis", "net.momirealms.customcrops.libraries.objenesis")
 		relocate ("org.bstats", "net.momirealms.customcrops.libraries.bstats")
+        relocate ("dev.dejvokep.boostedyaml", "net.momirealms.customcrops.libraries.boostedyaml")
 		relocate ("net.momirealms.biomeapi", "net.momirealms.customcrops.libraries.biomeapi")
 		relocate ("net.momirealms.antigrieflib", "net.momirealms.customcrops.libraries.antigrieflib")
     }

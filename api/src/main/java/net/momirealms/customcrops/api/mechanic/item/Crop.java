@@ -46,7 +46,7 @@ public interface Crop extends KeyItem {
 
     BoneMeal[] getBoneMeals();
 
-    boolean isRotation();
+    boolean hasRotation();
 
     void trigger(ActionTrigger trigger, State state);
 

@@ -46,8 +46,12 @@ public class ItemsAdderProvider implements CustomProvider {
     }
 
     @Override
-    public void placeFurniture(Location location, String id) {
-        CustomFurniture.spawnPreciseNonSolid(id, location);
+    public Entity placeFurniture(Location location, String id) {
+        Location center = location.toCenterLocation();
+        center.setY(center.getBlockY());
+        CustomFurniture furniture = CustomFurniture.spawnPreciseNonSolid(id, location);
+        if (furniture == null) return null;
+        return furniture.getEntity();
     }
 
     @Override

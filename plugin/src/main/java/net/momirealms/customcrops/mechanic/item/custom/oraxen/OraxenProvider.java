@@ -52,8 +52,10 @@ public class OraxenProvider implements CustomProvider {
     }
 
     @Override
-    public void placeFurniture(Location location, String id) {
-         OraxenFurniture.place(id, location, Rotation.NONE, BlockFace.UP);
+    public Entity placeFurniture(Location location, String id) {
+        Location center = location.toCenterLocation();
+        center.setY(center.getBlockY());
+        return OraxenFurniture.place(id, location, Rotation.NONE, BlockFace.UP);
     }
 
     @Override

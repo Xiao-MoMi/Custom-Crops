@@ -60,7 +60,7 @@ tomato:
         break:
           # 30% chance of dropping crop seeds
           action_1:
-            type: drop-items
+            type: drop-item
             value:
               ignore-fertilizer: true
               item: {0}tomato_seeds
@@ -73,7 +73,7 @@ tomato:
       events:
         break:
           action_1:
-            type: drop-items
+            type: drop-item
             value:
               ignore-fertilizer: true
               item: {0}tomato_seeds
@@ -86,7 +86,7 @@ tomato:
       events:
         break:
           action_1:
-            type: drop-items
+            type: drop-item
             value:
               ignore-fertilizer: true
               item: {0}tomato_seeds
@@ -128,7 +128,7 @@ tomato:
                 chance: 0.01
         break:
           action_1:
-            type: drop-items
+            type: drop-item
             value:
               ignore-fertilizer: true
               item: {0}tomato_seeds
@@ -173,7 +173,7 @@ tomato:
       events:
         break:
           action_1:
-            type: drop-items
+            type: drop-item
             value:
               ignore-fertilizer: true
               item: {0}tomato_seeds
@@ -181,7 +181,7 @@ tomato:
               max: 2
             chance: 1
           action_2:
-            type: drop-items
+            type: drop-item
             value:
               ignore-fertilizer: false
               item: {0}golden_tomato
@@ -259,6 +259,9 @@ tomato:
   custom-bone-meal:
     bone_meal_1:
       item: BONE_MEAL
+      chance:
+        2: 0.2
+        1: 0.6
       actions:
         swing_action:
           type: swing-hand
@@ -281,6 +284,3 @@ tomato:
             key: minecraft:item.bone_meal.use
             volume: 1
             pitch: 1
-      chance:
-        2: 0.2
-        1: 0.6

@@ -118,6 +118,7 @@ public class ActionManagerImpl implements ActionManager {
         this.registerVariationAction();
         this.registerForceTickAction();
         this.registerHologramAction();
+        this.registerLegacyDropItemsAction();
     }
 
     @Override
@@ -536,7 +537,7 @@ public class ActionManagerImpl implements ActionManager {
     }
 
     private void registerDropItemsAction() {
-        registerAction("drop-items", (args, chance) -> {
+        registerAction("drop-item", (args, chance) -> {
             if (args instanceof ConfigurationSection section) {
                 boolean ignoreFertilizer = section.getBoolean("ignore-fertilizer", true);
                 String item = section.getString("item");
@@ -574,64 +575,95 @@ public class ActionManagerImpl implements ActionManager {
         });
     }
 
-    private void registerPlantAction() {
-        registerAction("plant", (args, chance) -> {
+    private void registerLegacyDropItemsAction() {
+        registerAction("drop-items", (args, chance) -> {
             if (args instanceof ConfigurationSection section) {
-                int point = section.getInt("point", 0);
-                String key = section.getString("crop");
-                return state -> {
-                    if (Math.random() > chance) return;
-                    if (key == null) return;
-                    Crop crop = plugin.getItemManager().getCropByID(key);
-                    if (crop == null) {
-                        LogUtils.warn("Crop: " + key + " doesn't exist.");
-                        return;
-                    }
-                    Location location = state.getLocation();
-                    Pot pot = plugin.getItemManager().getPotByBlock(location.getBlock().getRelative(BlockFace.DOWN));
-                    if (pot == null) {
-                        plugin.debug("Crop should be planted on a pot at " + location);
-                        return;
-                    }
-                    // check whitelist
-                    if (!crop.getPotWhitelist().contains(pot.getKey())) {
-                        crop.trigger(ActionTrigger.WRONG_POT, state);
-                        return;
-                    }
-                    // check plant requirements
-                    if (!RequirementManager.isRequirementMet(state, crop.getPlantRequirements())) {
-                        return;
-                    }
-                    // check limitation
-                    if (plugin.getWorldManager().isReachLimit(SimpleLocation.of(location), ItemType.CROP)) {
-                        crop.trigger(ActionTrigger.REACH_LIMIT, state);
-                        return;
-                    }
-                    // fire event
-                    CropPlantEvent plantEvent = new CropPlantEvent(state.getPlayer(), state.getItemInHand(), location, crop, 0);
-                    if (EventUtils.fireAndCheckCancel(plantEvent)) {
-                        return;
-                    }
-                    // place the crop
-                    switch (crop.getItemCarrier()) {
-                        case ITEM_FRAME, ITEM_DISPLAY, TRIPWIRE -> plugin.getItemManager().placeItem(location, crop.getItemCarrier(), crop.getStageItemByPoint(point));
-                        default -> {
-                            LogUtils.warn("Unsupported type for crop: " + crop.getItemCarrier().name());
-                            return;
+                List<Action> actions = new ArrayList<>();
+                ConfigurationSection otherItemSection = section.getConfigurationSection("other-items");
+                if (otherItemSection != null) {
+                    for (Map.Entry<String, Object> entry : otherItemSection.getValues(false).entrySet()) {
+                        if (entry.getValue() instanceof ConfigurationSection inner) {
+                            actions.add(getActionFactory("drop-item").build(inner, inner.getDouble("chance", 1)));
                         }
                     }
-                    plugin.getWorldManager().addCropAt(new MemoryCrop(SimpleLocation.of(location), crop.getKey(), point), SimpleLocation.of(location));
+                }
+                ConfigurationSection qualitySection = section.getConfigurationSection("quality-crops");
+                if (qualitySection != null) {
+                    actions.add(getActionFactory("quality-crops").build(qualitySection, 1));
+                }
+                return state -> {
+                    if (Math.random() > chance) return;
+                    for (Action action : actions) {
+                        action.trigger(state);
+                    }
                 };
             } else {
-                LogUtils.warn("Illegal value format found at action: plant");
+                LogUtils.warn("Illegal value format found at action: drop-items");
                 return EmptyAction.instance;
             }
         });
     }
 
+    private void registerPlantAction() {
+        for (String name : List.of("plant", "replant")) {
+            registerAction(name, (args, chance) -> {
+                if (args instanceof ConfigurationSection section) {
+                    int point = section.getInt("point", 0);
+                    String key = section.getString("crop");
+                    return state -> {
+                        if (Math.random() > chance) return;
+                        if (key == null) return;
+                        Crop crop = plugin.getItemManager().getCropByID(key);
+                        if (crop == null) {
+                            LogUtils.warn("Crop: " + key + " doesn't exist.");
+                            return;
+                        }
+                        Location location = state.getLocation();
+                        Pot pot = plugin.getItemManager().getPotByBlock(location.getBlock().getRelative(BlockFace.DOWN));
+                        if (pot == null) {
+                            plugin.debug("Crop should be planted on a pot at " + location);
+                            return;
+                        }
+                        // check whitelist
+                        if (!crop.getPotWhitelist().contains(pot.getKey())) {
+                            crop.trigger(ActionTrigger.WRONG_POT, state);
+                            return;
+                        }
+                        // check plant requirements
+                        if (!RequirementManager.isRequirementMet(state, crop.getPlantRequirements())) {
+                            return;
+                        }
+                        // check limitation
+                        if (plugin.getWorldManager().isReachLimit(SimpleLocation.of(location), ItemType.CROP)) {
+                            crop.trigger(ActionTrigger.REACH_LIMIT, state);
+                            return;
+                        }
+                        // fire event
+                        CropPlantEvent plantEvent = new CropPlantEvent(state.getPlayer(), state.getItemInHand(), location, crop, 0);
+                        if (EventUtils.fireAndCheckCancel(plantEvent)) {
+                            return;
+                        }
+                        // place the crop
+                        switch (crop.getItemCarrier()) {
+                            case ITEM_FRAME, ITEM_DISPLAY, TRIPWIRE -> plugin.getItemManager().placeItem(location, crop.getItemCarrier(), crop.getStageItemByPoint(point));
+                            default -> {
+                                LogUtils.warn("Unsupported type for crop: " + crop.getItemCarrier().name());
+                                return;
+                            }
+                        }
+                        plugin.getWorldManager().addCropAt(new MemoryCrop(SimpleLocation.of(location), crop.getKey(), point), SimpleLocation.of(location));
+                    };
+                } else {
+                    LogUtils.warn("Illegal value format found at action: " + name);
+                    return EmptyAction.instance;
+                }
+            });
+        }
+    }
+
     private void registerBreakAction() {
         registerAction("break", (args, chance) -> {
-            boolean arg = (boolean) args;
+            boolean arg = (boolean) (args == null ? true : args);
             return state -> {
                 if (Math.random() > chance) return;
                 Optional<CustomCropsBlock> removed = plugin.getWorldManager().getBlockAt(SimpleLocation.of(state.getLocation()));
@@ -746,19 +778,13 @@ public class ActionManagerImpl implements ActionManager {
 
     private void registerItemAmountAction() {
         registerAction("item-amount", (args, chance) -> {
-            if (args instanceof ConfigurationSection section) {
-                boolean mainOrOff = section.getString("hand", "main").equalsIgnoreCase("main");
-                int amount = section.getInt("amount", 1);
-                return state -> {
-                    if (Math.random() > chance) return;
-                    Player player = state.getPlayer();
-                    ItemStack itemStack = mainOrOff ? player.getInventory().getItemInMainHand() : player.getInventory().getItemInOffHand();
-                    itemStack.setAmount(Math.max(0, itemStack.getAmount() + amount));
-                };
-            } else {
-                LogUtils.warn("Illegal value format found at action: item-amount");
-                return EmptyAction.instance;
-            }
+            int amount = (int) args;
+            return state -> {
+                if (Math.random() > chance) return;
+                Player player = state.getPlayer();
+                ItemStack itemStack = player.getInventory().getItemInMainHand();
+                itemStack.setAmount(Math.max(0, itemStack.getAmount() + amount));
+            };
         });
     }
 

@@ -20,12 +20,12 @@ package net.momirealms.customcrops.mechanic.world;
 import net.momirealms.customcrops.api.CustomCropsPlugin;
 import net.momirealms.customcrops.api.manager.WorldManager;
 import net.momirealms.customcrops.api.mechanic.item.*;
+import net.momirealms.customcrops.api.mechanic.world.AbstractWorldAdaptor;
 import net.momirealms.customcrops.api.mechanic.world.ChunkCoordinate;
 import net.momirealms.customcrops.api.mechanic.world.CustomCropsBlock;
 import net.momirealms.customcrops.api.mechanic.world.SimpleLocation;
 import net.momirealms.customcrops.api.mechanic.world.level.*;
 import net.momirealms.customcrops.api.util.LogUtils;
-import net.momirealms.customcrops.mechanic.world.adaptor.AbstractWorldAdaptor;
 import net.momirealms.customcrops.mechanic.world.adaptor.BukkitWorldAdaptor;
 import net.momirealms.customcrops.mechanic.world.adaptor.SlimeWorldAdaptor;
 import net.momirealms.customcrops.utils.ConfigUtils;
@@ -501,5 +501,10 @@ public class WorldManagerImpl implements WorldManager, Listener {
     @Override
     public void saveChunkToFile(CustomCropsChunk chunk) {
         this.worldAdaptor.saveDynamicData(chunk.getCustomCropsWorld(), chunk);
+    }
+
+    @Override
+    public AbstractWorldAdaptor getWorldAdaptor() {
+        return worldAdaptor;
     }
 }

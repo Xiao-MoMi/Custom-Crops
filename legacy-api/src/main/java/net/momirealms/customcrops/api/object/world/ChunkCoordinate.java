@@ -15,30 +15,35 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.momirealms.customcrops.api.mechanic.world;
+package net.momirealms.customcrops.api.object.world;
 
-import org.bukkit.Chunk;
-import org.jetbrains.annotations.NotNull;
+import java.io.Serial;
+import java.io.Serializable;
 
-public record ChunkCoordinate(int x, int z) {
+@Deprecated
+public class ChunkCoordinate implements Serializable {
 
-    private static final ChunkCoordinate empty = new ChunkCoordinate(0, 0);
+    @Serial
+    private static final long serialVersionUID = 8143293419668383618L;
 
-    public static ChunkCoordinate of(int x, int z) {
-        return new ChunkCoordinate(x, z);
+    private final int x;
+    private final int z;
+
+    public ChunkCoordinate(int x, int z) {
+        this.x = x;
+        this.z = z;
     }
 
-    public static ChunkCoordinate getByString(String coordinate) {
-        String[] split = coordinate.split(",", 2);
-        try {
-            int x = Integer.parseInt(split[0]);
-            int z = Integer.parseInt(split[1]);
-            return new ChunkCoordinate(x, z);
-        }
-        catch (NumberFormatException e) {
-            e.printStackTrace();
-            return null;
-        }
+    public int getX() {
+        return x;
+    }
+
+    public int getZ() {
+        return z;
+    }
+
+    public String getFileName() {
+        return x + "," + z;
     }
 
     @Override
@@ -63,18 +68,5 @@ public record ChunkCoordinate(int x, int z) {
             return false;
         }
         return true;
-    }
-
-    @NotNull
-    public static ChunkCoordinate getByBukkitChunk(@NotNull Chunk chunk) {
-        return new ChunkCoordinate(chunk.getX(), chunk.getZ());
-    }
-
-    @Override
-    public String toString() {
-        return "ChunkCoordinate{" +
-                "x=" + x +
-                ", z=" + z +
-                '}';
     }
 }

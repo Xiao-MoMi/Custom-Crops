@@ -43,7 +43,7 @@ public interface CustomProvider {
         }
     }
 
-    void placeFurniture(Location location, String id);
+    Entity placeFurniture(Location location, String id);
 
     void removeFurniture(Entity entity);
 

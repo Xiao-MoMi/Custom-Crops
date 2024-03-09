@@ -111,6 +111,7 @@ public class MemoryCrop extends AbstractCustomCropsBlock implements WorldCrop {
 
         SimpleLocation location = getLocation();
         Location bukkitLocation = location.getBukkitLocation();
+        if (bukkitLocation == null) return;
 
         int previous = getPoint();
 
@@ -168,7 +169,7 @@ public class MemoryCrop extends AbstractCustomCropsBlock implements WorldCrop {
             }
             if (pre.equals(after)) return;
             CustomCropsPlugin.get().getItemManager().removeAnythingAt(bukkitLocation);
-            CustomCropsPlugin.get().getItemManager().placeItem(bukkitLocation, crop.getItemCarrier(), after);
+            CustomCropsPlugin.get().getItemManager().placeItem(bukkitLocation, crop.getItemCarrier(), after, crop.hasRotation());
         }, bukkitLocation);
     }
 }

@@ -81,7 +81,7 @@ public class CWorld implements CustomCropsWorld {
         for (Map.Entry<ChunkCoordinate, CChunk> lazyEntry : lazyChunks.entrySet()) {
             CChunk chunk = lazyEntry.getValue();
             int sec = chunk.getUnloadedSeconds() + 1;
-            if (sec >= 10) {
+            if (sec >= 30) {
                 chunksToSave.add(Pair.of(lazyEntry.getKey(), chunk));
             } else {
                 chunk.setUnloadedSeconds(sec);
