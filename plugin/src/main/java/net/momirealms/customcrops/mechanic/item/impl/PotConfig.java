@@ -26,6 +26,7 @@ import net.momirealms.customcrops.api.mechanic.item.water.PassiveFillMethod;
 import net.momirealms.customcrops.api.mechanic.misc.image.WaterBar;
 import net.momirealms.customcrops.api.mechanic.requirement.Requirement;
 import net.momirealms.customcrops.mechanic.item.AbstractEventItem;
+import net.momirealms.customcrops.utils.ConfigUtils;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -45,6 +46,7 @@ public class PotConfig extends AbstractEventItem implements Pot {
     private final Requirement[] useRequirements;
     private final boolean acceptRainDrop;
     private final boolean acceptNearbyWater;
+    private boolean isVanillaBlock;
 
     public PotConfig(
             String key,
@@ -76,6 +78,7 @@ public class PotConfig extends AbstractEventItem implements Pot {
         this.placeRequirements = placeRequirements;
         this.breakRequirements = breakRequirements;
         this.useRequirements = useRequirements;
+        this.isVanillaBlock = ConfigUtils.isVanillaItem(dryModel) && ConfigUtils.isVanillaItem(wetModel);
     }
 
     @Override
@@ -152,5 +155,10 @@ public class PotConfig extends AbstractEventItem implements Pot {
         } else {
             return water ? wetModel : dryModel;
         }
+    }
+
+    @Override
+    public boolean isVanillaBlock() {
+        return isVanillaBlock;
     }
 }

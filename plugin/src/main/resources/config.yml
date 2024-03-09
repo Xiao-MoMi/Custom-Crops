@@ -25,8 +25,6 @@ worlds:
   mode: blacklist
   list:
     - blacklist_world
-    - world_nether
-    - world_the_end
   settings:
     _DEFAULT_:
       # Whether to enable the plugin's pre-made system
@@ -86,6 +84,7 @@ worlds:
         # as it may cause chunks that have been unloaded for a long time
         # to consume too much server performance during loading
         max-offline-seconds: 1200
+    # You can override the default settings for worlds here
     _WORLDS_:
       world_nether:
         enable: false

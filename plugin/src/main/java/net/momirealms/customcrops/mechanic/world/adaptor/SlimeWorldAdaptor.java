@@ -39,11 +39,14 @@ public class SlimeWorldAdaptor extends AbstractWorldAdaptor {
 
     @EventHandler (ignoreCancelled = true)
     public void onSlimeWorldLoad(LoadSlimeWorldEvent event) {
+
     }
 
     @EventHandler(ignoreCancelled = true)
     public void onWorldLoad(WorldLoadEvent event) {
-
+        if (worldManager.isMechanicEnabled(event.getWorld())) {
+            worldManager.loadWorld(event.getWorld());
+        }
     }
 
     @EventHandler (ignoreCancelled = true)

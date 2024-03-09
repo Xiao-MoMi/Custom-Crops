@@ -1,0 +1,8 @@
+messages:
+  prefix: '<gradient:#ff206c:#fdee55>[CustomCrops]</gradient> '
+  reload: '<white>Перезагружено! Заняло <green>{time}мс.'
+  spring: 'Весна'
+  summer: 'Лето'
+  autumn: 'Осень'
+  winter: 'Зима'
+  no-season: 'СЕЗОНЫ ОТКЛЮЧЕНЫ В ЭТОМ МИРЕ'

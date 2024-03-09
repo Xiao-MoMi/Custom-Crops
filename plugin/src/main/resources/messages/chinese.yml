@@ -1,0 +1,8 @@
+messages:
+  prefix: '<gradient:#ff206c:#fdee55>[CustomCrops]</gradient> '
+  reload: '<white>重载完成! 耗时 <green>{time}ms.</green></white>'
+  spring: '春季'
+  summer: '夏季'
+  autumn: '秋季'
+  winter: '冬季'
+  no-season: '未启用季节'

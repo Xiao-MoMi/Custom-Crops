@@ -54,4 +54,6 @@ public interface Pot extends KeyItem {
     boolean isNearbyWaterAccepted();
 
     String getBlockState(boolean water, FertilizerType type);
+
+    boolean isVanillaBlock();
 }

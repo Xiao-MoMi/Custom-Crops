@@ -59,7 +59,9 @@ import net.momirealms.customcrops.utils.ItemUtils;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Waterlogged;
+import org.bukkit.block.data.type.Farmland;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Entity;
@@ -2268,6 +2270,14 @@ public class ItemManagerImpl implements ItemManager {
 
     @Override
     public void updatePotState(Location location, Pot pot, boolean hasWater, Fertilizer fertilizer) {
+        if (pot.isVanillaBlock()) {
+            Block block = location.getBlock();
+            if (block.getBlockData() instanceof Farmland farmland) {
+                farmland.setMoisture(hasWater ? 7 : 0);
+                block.setBlockData(farmland);
+                return;
+            }
+        }
         this.customProvider.placeBlock(
                 location,
                 pot.getBlockState(
