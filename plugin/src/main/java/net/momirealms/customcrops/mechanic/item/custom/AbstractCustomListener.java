@@ -127,6 +127,17 @@ public abstract class AbstractCustomListener implements Listener {
     }
 
     @EventHandler (ignoreCancelled = true)
+    public void onBlockChange(BlockFadeEvent event) {
+        Block block = event.getBlock();
+        if (block.getType() == Material.FARMLAND) {
+            SimpleLocation above = SimpleLocation.of(block.getLocation()).add(0,1,0);
+            if (CustomCropsPlugin.get().getWorldManager().getBlockAt(above).isPresent()) {
+                event.setCancelled(true);
+            }
+        }
+    }
+
+    @EventHandler (ignoreCancelled = true)
     public void onTrampling(EntityChangeBlockEvent event) {
         Block block = event.getBlock();
         if (block.getType() == Material.FARMLAND && event.getTo() == Material.DIRT) {

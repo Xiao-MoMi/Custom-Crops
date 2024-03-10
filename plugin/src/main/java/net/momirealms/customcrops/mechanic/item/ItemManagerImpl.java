@@ -1206,14 +1206,17 @@ public class ItemManagerImpl implements ItemManager {
                     Optional<WorldSprinkler> optionalSprinkler = plugin.getWorldManager().getSprinklerAt(simpleLocation);
                     if (optionalSprinkler.isEmpty()) {
                         plugin.debug("Found a sprinkler without data interacted by " + player.getName() + " at " + location);
-                        plugin.getWorldManager().addSprinklerAt(new MemorySprinkler(simpleLocation, sprinkler.getKey(), 0), simpleLocation);
-                        return FunctionResult.RETURN;
+                        WorldSprinkler newSprinkler = new MemorySprinkler(simpleLocation, sprinkler.getKey(), 0);
+                        plugin.getWorldManager().addSprinklerAt(newSprinkler, simpleLocation);
+                        optionalSprinkler = Optional.of(newSprinkler);
+                    } else {
+                        if (!optionalSprinkler.get().getKey().equals(sprinkler.getKey())) {
+                            LogUtils.warn("Found a sprinkler having inconsistent data interacted by " + player.getName() + " at " + location + ".");
+                            plugin.getWorldManager().addSprinklerAt(new MemorySprinkler(simpleLocation, sprinkler.getKey(), 0), simpleLocation);
+                            return FunctionResult.RETURN;
+                        }
                     }
-                    if (!optionalSprinkler.get().getKey().equals(sprinkler.getKey())) {
-                        LogUtils.warn("Found a sprinkler having inconsistent data interacted by " + player.getName() + " at " + location + ".");
-                        plugin.getWorldManager().addSprinklerAt(new MemorySprinkler(simpleLocation, sprinkler.getKey(), 0), simpleLocation);
-                        return FunctionResult.RETURN;
-                    }
+
                     // fire the event
                     SprinklerInteractEvent interactEvent = new SprinklerInteractEvent(player, itemInHand, location, optionalSprinkler.get());
                     if (EventUtils.fireAndCheckCancel(interactEvent)) {
@@ -1703,7 +1706,9 @@ public class ItemManagerImpl implements ItemManager {
                             Optional<WorldCrop> optionalCrop = plugin.getWorldManager().getCropAt(simpleLocation);
                             if (optionalCrop.isEmpty()) {
                                 plugin.debug("Found a crop without data interacted by " + player.getName() + " at " + cropLocation);
-                                plugin.getWorldManager().addCropAt(new MemoryCrop(simpleLocation, crop.getKey(), stage.getPoint()), simpleLocation);
+                                WorldCrop newCrop = new MemoryCrop(simpleLocation, crop.getKey(), stage.getPoint());
+                                plugin.getWorldManager().addCropAt(newCrop, simpleLocation);
+                                optionalCrop = Optional.of(newCrop);
                             } else {
                                 if (!optionalCrop.get().getKey().equals(crop.getKey())) {
                                     LogUtils.warn("Found a crop having inconsistent data interacted by " + player.getName() + " at " + cropLocation + ".");
@@ -1878,14 +1883,17 @@ public class ItemManagerImpl implements ItemManager {
                         Optional<WorldPot> optionalPot = plugin.getWorldManager().getPotAt(simpleLocation);
                         if (optionalPot.isEmpty()) {
                             plugin.debug("Found a pot without data interacted by " + player.getName() + " at " + location);
-                            plugin.getWorldManager().addPotAt(new MemoryPot(simpleLocation, pot.getKey()), simpleLocation);
-                            return FunctionResult.RETURN;
+                            WorldPot newPot = new MemoryPot(simpleLocation, pot.getKey());
+                            plugin.getWorldManager().addPotAt(newPot, simpleLocation);
+                            optionalPot = Optional.of(newPot);
+                        } else {
+                            if (!optionalPot.get().getKey().equals(pot.getKey())) {
+                                LogUtils.warn("Found a pot having inconsistent data interacted by " + player.getName() + " at " + location + ".");
+                                plugin.getWorldManager().addPotAt(new MemoryPot(simpleLocation, pot.getKey()), simpleLocation);
+                                return FunctionResult.RETURN;
+                            }
                         }
-                        if (!optionalPot.get().getKey().equals(pot.getKey())) {
-                            LogUtils.warn("Found a pot having inconsistent data interacted by " + player.getName() + " at " + location + ".");
-                            plugin.getWorldManager().addPotAt(new MemoryPot(simpleLocation, pot.getKey()), simpleLocation);
-                            return FunctionResult.RETURN;
-                        }
+
                         // fire the event
                         PotInteractEvent interactEvent = new PotInteractEvent(player, itemInHand, location, optionalPot.get());
                         if (EventUtils.fireAndCheckCancel(interactEvent)) {
