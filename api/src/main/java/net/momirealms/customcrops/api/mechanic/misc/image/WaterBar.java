@@ -25,7 +25,7 @@ public record WaterBar(String left, String empty, String full, String right) {
 
     public String getWaterBar(int current, int max) {
         return left +
-                String.valueOf(full).repeat(current) +
+                String.valueOf(full).repeat(Math.min(current, max)) +
                 String.valueOf(empty).repeat(Math.max(max - current, 0)) +
                 right;
     }

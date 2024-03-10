@@ -66,7 +66,7 @@ public class OraxenListener extends AbstractCustomListener {
     public void onBreakFurniture(OraxenFurnitureBreakEvent event) {
         super.onBreakFurniture(
                 event.getPlayer(),
-                event.getBlock().getLocation(),
+                event.getBaseEntity().getLocation().toBlockLocation(),
                 event.getMechanic().getItemID(),
                 event
         );
@@ -76,7 +76,7 @@ public class OraxenListener extends AbstractCustomListener {
     public void onInteractFurniture(OraxenFurnitureInteractEvent event) {
         super.onInteractFurniture(
                 event.getPlayer(),
-                event.getBlock().getLocation(),
+                event.getBaseEntity().getLocation().toBlockLocation(),
                 event.getMechanic().getItemID(),
                 event.getBaseEntity(),
                 event

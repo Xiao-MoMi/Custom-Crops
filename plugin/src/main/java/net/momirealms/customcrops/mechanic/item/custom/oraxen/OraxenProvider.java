@@ -21,8 +21,10 @@ import io.th0rgal.oraxen.api.OraxenBlocks;
 import io.th0rgal.oraxen.api.OraxenFurniture;
 import io.th0rgal.oraxen.api.OraxenItems;
 import io.th0rgal.oraxen.items.ItemBuilder;
+import io.th0rgal.oraxen.mechanics.Mechanic;
 import io.th0rgal.oraxen.mechanics.provided.gameplay.furniture.FurnitureMechanic;
 import io.th0rgal.oraxen.mechanics.provided.gameplay.noteblock.NoteBlockMechanic;
+import io.th0rgal.oraxen.mechanics.provided.gameplay.stringblock.StringBlockMechanic;
 import net.momirealms.customcrops.mechanic.item.CustomProvider;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -65,7 +67,7 @@ public class OraxenProvider implements CustomProvider {
 
     @Override
     public String getBlockID(Block block) {
-        NoteBlockMechanic mechanic = OraxenBlocks.getNoteBlockMechanic(block);
+        Mechanic mechanic = OraxenBlocks.getOraxenBlock(block.getLocation());
         if (mechanic == null) {
             return block.getType().name();
         }

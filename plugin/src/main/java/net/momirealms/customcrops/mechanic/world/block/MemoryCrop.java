@@ -68,6 +68,11 @@ public class MemoryCrop extends AbstractCustomCropsBlock implements WorldCrop {
 
     @Override
     public void setPoint(int point) {
+        if (point < 0) return;
+        int max = getConfig().getMaxPoints();
+        if (point > max) {
+            point = max;
+        }
         setData("point", new IntTag("point", point));
     }
 

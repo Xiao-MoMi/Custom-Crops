@@ -43,6 +43,7 @@ public class State {
         setArg("{x}", String.valueOf(location.getBlockX()));
         setArg("{y}", String.valueOf(location.getBlockY()));
         setArg("{z}", String.valueOf(location.getBlockZ()));
+        setArg("{world}", location.getWorld().getName());
     }
 
     public Player getPlayer() {

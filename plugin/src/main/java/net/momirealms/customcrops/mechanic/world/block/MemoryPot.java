@@ -74,6 +74,11 @@ public class MemoryPot extends AbstractCustomCropsBlock implements WorldPot {
 
     @Override
     public void setWater(int water) {
+        if (water < 0) return;
+        int max = getConfig().getStorage();
+        if (water > max) {
+            water = max;
+        }
         setData("water", new IntTag("water", water));
     }
 

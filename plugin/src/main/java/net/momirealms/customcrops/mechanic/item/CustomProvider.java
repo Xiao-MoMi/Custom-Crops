@@ -69,7 +69,7 @@ public interface CustomProvider {
 
     default void removeAnythingAt(Location location) {
         if (!removeBlock(location)) {
-            Collection<Entity> entities = location.getWorld().getNearbyEntities(location.toCenterLocation(), 0.5,0.5,0.5);
+            Collection<Entity> entities = location.getWorld().getNearbyEntities(location.toCenterLocation(), 0.5,0.51,0.5);
             entities.removeIf(entity -> {
                 EntityType type = entity.getType();
                 return type != EntityType.ITEM_FRAME

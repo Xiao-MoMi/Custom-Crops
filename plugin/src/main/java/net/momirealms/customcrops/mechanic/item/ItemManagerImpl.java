@@ -2009,11 +2009,11 @@ public class ItemManagerImpl implements ItemManager {
                         SimpleLocation simpleLocation = SimpleLocation.of(location);
                         Optional<WorldPot> optionalPot = plugin.getWorldManager().getPotAt(simpleLocation);
                         if (optionalPot.isEmpty()) {
-                            LogUtils.warn("Found a pot without data broken by " + state.getPlayer().getName() + " at " + simpleLocation);
+                            plugin.debug("Found a pot without data broken by " + state.getPlayer().getName() + " at " + simpleLocation);
                             return FunctionResult.RETURN;
                         }
                         if (!optionalPot.get().getKey().equals(pot.getKey())) {
-                            LogUtils.warn("Found a pot having inconsistent data broken by " + state.getPlayer().getName() + " at " + simpleLocation + ".");
+                            plugin.debug("Found a pot having inconsistent data broken by " + state.getPlayer().getName() + " at " + simpleLocation + ".");
                             plugin.getWorldManager().removePotAt(simpleLocation);
                             return FunctionResult.RETURN;
                         }

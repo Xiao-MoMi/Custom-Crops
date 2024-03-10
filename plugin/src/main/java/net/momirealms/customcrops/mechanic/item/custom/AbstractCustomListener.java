@@ -32,6 +32,7 @@ import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.*;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
@@ -79,7 +80,7 @@ public abstract class AbstractCustomListener implements Listener {
         );
     }
 
-    @EventHandler (ignoreCancelled = true)
+    @EventHandler (ignoreCancelled = true, priority = EventPriority.LOW)
     public void onBreakBlock(BlockBreakEvent event) {
         Player player = event.getPlayer();
         this.itemManager.handlePlayerBreakBlock(
