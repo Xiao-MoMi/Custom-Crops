@@ -59,7 +59,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class BukkitWorldAdaptor extends AbstractWorldAdaptor {
 
     private static final NamespacedKey key = new NamespacedKey(CustomCropsPlugin.get(), "data");
-    private final Gson gson;
+    protected final Gson gson;
     private String worldFolder;
 
     public BukkitWorldAdaptor(WorldManager worldManager) {

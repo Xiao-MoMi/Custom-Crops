@@ -146,12 +146,12 @@ public class HologramManager implements Listener, Reloadable {
                 this.tuples = tupleList.toArray(new Tuple[0]);
                 if (VersionManager.isHigherThan1_20_R2()) {
                     PacketManager.getInstance().send(player,
-                            FakeEntityUtils.getSpawnPacket(random, location.clone().add(0,1.1,0), EntityType.TEXT_DISPLAY),
+                            FakeEntityUtils.getSpawnPacket(random, location.clone().add(0,1.25,0), EntityType.TEXT_DISPLAY),
                             FakeEntityUtils.get1_20_2TextDisplayMetaPacket(random, component)
                     );
                 } else if (VersionManager.isHigherThan1_19_R3()) {
                     PacketManager.getInstance().send(player,
-                            FakeEntityUtils.getSpawnPacket(random, location.clone().add(0,1.1,0), EntityType.TEXT_DISPLAY),
+                            FakeEntityUtils.getSpawnPacket(random, location.clone().add(0,1.25,0), EntityType.TEXT_DISPLAY),
                             FakeEntityUtils.get1_19_4TextDisplayMetaPacket(random, component)
                     );
                 } else {
@@ -168,7 +168,6 @@ public class HologramManager implements Listener, Reloadable {
                 } else {
                     PacketManager.getInstance().send(player, FakeEntityUtils.getVanishArmorStandMetaPacket(entity_id, component));
                 }
-
             }
         }
 

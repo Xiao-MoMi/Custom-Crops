@@ -461,11 +461,14 @@ public class WorldManagerImpl implements WorldManager, Listener {
         Optional<CustomCropsWorld> optional = getCustomCropsWorld(bukkitChunk.getWorld());
         if (optional.isEmpty())
             return;
+
         CustomCropsWorld customCropsWorld = optional.get();
         ChunkCoordinate chunkCoordinate = ChunkCoordinate.getByBukkitChunk(bukkitChunk);
+
         if (customCropsWorld.isChunkLoaded(chunkCoordinate)) {
             return;
         }
+
         // load chunks
         this.worldAdaptor.loadDynamicData(customCropsWorld, chunkCoordinate);
 
@@ -491,6 +494,7 @@ public class WorldManagerImpl implements WorldManager, Listener {
 
         CustomCropsWorld customCropsWorld = optional.get();
         ChunkCoordinate chunkCoordinate = ChunkCoordinate.getByBukkitChunk(bukkitChunk);
+
         this.worldAdaptor.unloadDynamicData(customCropsWorld, chunkCoordinate);
     }
 

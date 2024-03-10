@@ -4,6 +4,7 @@ main: net.momirealms.customcrops.CustomCropsPluginImpl
 api-version: 1.17
 load: POSTWORLD
 authors: [ XiaoMoMi ]
+folia-supported: true
 depend:
   - ProtocolLib
 softdepend:
@@ -23,3 +24,4 @@ softdepend:
   - Jobs
   - RealisticSeasons
   - AdvancedSeasons
+  - SlimeWorldManager
