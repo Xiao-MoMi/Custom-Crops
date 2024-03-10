@@ -21,6 +21,7 @@ import net.kyori.adventure.text.Component;
 import net.momirealms.customcrops.api.CustomCropsPlugin;
 import net.momirealms.customcrops.api.common.Reloadable;
 import net.momirealms.customcrops.api.common.Tuple;
+import net.momirealms.customcrops.api.manager.VersionManager;
 import net.momirealms.customcrops.api.scheduler.CancellableTask;
 import net.momirealms.customcrops.utils.FakeEntityUtils;
 import org.bukkit.Bukkit;
@@ -143,9 +144,31 @@ public class HologramManager implements Listener, Reloadable {
                 int random = ThreadLocalRandom.current().nextInt(Integer.MAX_VALUE);
                 tupleList.add(Tuple.of(location, random, System.currentTimeMillis() + millis));
                 this.tuples = tupleList.toArray(new Tuple[0]);
-                PacketManager.getInstance().send(player, FakeEntityUtils.getSpawnPacket(random, location, EntityType.ARMOR_STAND), FakeEntityUtils.getVanishArmorStandMetaPacket(random, component));
+                if (VersionManager.isHigherThan1_20_R2()) {
+                    PacketManager.getInstance().send(player,
+                            FakeEntityUtils.getSpawnPacket(random, location.clone().add(0,1.1,0), EntityType.TEXT_DISPLAY),
+                            FakeEntityUtils.get1_20_2TextDisplayMetaPacket(random, component)
+                    );
+                } else if (VersionManager.isHigherThan1_19_R3()) {
+                    PacketManager.getInstance().send(player,
+                            FakeEntityUtils.getSpawnPacket(random, location.clone().add(0,1.1,0), EntityType.TEXT_DISPLAY),
+                            FakeEntityUtils.get1_19_4TextDisplayMetaPacket(random, component)
+                    );
+                } else {
+                    PacketManager.getInstance().send(player,
+                            FakeEntityUtils.getSpawnPacket(random, location, EntityType.ARMOR_STAND),
+                            FakeEntityUtils.getVanishArmorStandMetaPacket(random, component)
+                    );
+                }
             } else {
-                PacketManager.getInstance().send(player, FakeEntityUtils.getVanishArmorStandMetaPacket(entity_id, component));
+                if (VersionManager.isHigherThan1_20_R2()) {
+                    PacketManager.getInstance().send(player, FakeEntityUtils.get1_20_2TextDisplayMetaPacket(entity_id, component));
+                } else if (VersionManager.isHigherThan1_19_R3()) {
+                    PacketManager.getInstance().send(player, FakeEntityUtils.get1_19_4TextDisplayMetaPacket(entity_id, component));
+                } else {
+                    PacketManager.getInstance().send(player, FakeEntityUtils.getVanishArmorStandMetaPacket(entity_id, component));
+                }
+
             }
         }
 

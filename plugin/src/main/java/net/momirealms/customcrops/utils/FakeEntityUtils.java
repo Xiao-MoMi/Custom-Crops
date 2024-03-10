@@ -23,6 +23,7 @@ import com.comphenix.protocol.wrappers.*;
 import com.google.common.collect.Lists;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
+import net.momirealms.customcrops.api.manager.AdventureManager;
 import net.momirealms.customcrops.api.manager.VersionManager;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
@@ -107,15 +108,6 @@ public class FakeEntityUtils {
         return metaPacket;
     }
 
-    public static PacketContainer getItemDisplayMetaPacket(int id, ItemStack itemStack) {
-        PacketContainer metaPacket = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
-        metaPacket.getModifier().write(0, id);
-        WrappedDataWatcher wrappedDataWatcher = new WrappedDataWatcher();
-        wrappedDataWatcher.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(22, WrappedDataWatcher.Registry.getItemStackSerializer(false)), itemStack);
-        setWrappedDataValue(metaPacket, wrappedDataWatcher);
-        return metaPacket;
-    }
-
     private static void setWrappedDataValue(PacketContainer metaPacket, WrappedDataWatcher wrappedDataWatcher) {
         List<WrappedDataValue> wrappedDataValueList = Lists.newArrayList();
         wrappedDataWatcher.getWatchableObjects().stream().filter(Objects::nonNull).forEach(entry -> {
@@ -123,5 +115,33 @@ public class FakeEntityUtils {
             wrappedDataValueList.add(new WrappedDataValue(dataWatcherObject.getIndex(), dataWatcherObject.getSerializer(), entry.getRawValue()));
         });
         metaPacket.getDataValueCollectionModifier().write(0, wrappedDataValueList);
+    }
+
+    public static PacketContainer get1_19_4TextDisplayMetaPacket(int id, Component component) {
+        PacketContainer metaPacket = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
+        metaPacket.getModifier().write(0, id);
+        WrappedDataWatcher wrappedDataWatcher = new WrappedDataWatcher();
+        wrappedDataWatcher.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(22, WrappedDataWatcher.Registry.getChatComponentSerializer(false)), WrappedChatComponent.fromJson(GsonComponentSerializer.gson().serialize(component)));
+        wrappedDataWatcher.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(24, WrappedDataWatcher.Registry.get(Integer.class)), AdventureManager.getInstance().rgbaToDecimal("0,0,0,0"));
+        wrappedDataWatcher.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(14, WrappedDataWatcher.Registry.get(Byte.class)), (byte) 3);
+        wrappedDataWatcher.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(25, WrappedDataWatcher.Registry.get(Byte.class)), (byte) -1);
+        int mask = 0;
+        wrappedDataWatcher.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(26, WrappedDataWatcher.Registry.get(Byte.class)), (byte) mask);
+        setWrappedDataValue(metaPacket, wrappedDataWatcher);
+        return metaPacket;
+    }
+
+    public static PacketContainer get1_20_2TextDisplayMetaPacket(int id, Component component) {
+        PacketContainer metaPacket = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
+        metaPacket.getModifier().write(0, id);
+        WrappedDataWatcher wrappedDataWatcher = new WrappedDataWatcher();
+        wrappedDataWatcher.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(23, WrappedDataWatcher.Registry.getChatComponentSerializer(false)), WrappedChatComponent.fromJson(GsonComponentSerializer.gson().serialize(component)));
+        wrappedDataWatcher.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(25, WrappedDataWatcher.Registry.get(Integer.class)), AdventureManager.getInstance().rgbaToDecimal("0,0,0,0"));
+        wrappedDataWatcher.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(15, WrappedDataWatcher.Registry.get(Byte.class)), (byte) 3);
+        wrappedDataWatcher.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(26, WrappedDataWatcher.Registry.get(Byte.class)), (byte) -1);
+        int mask = 0;
+        wrappedDataWatcher.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(27, WrappedDataWatcher.Registry.get(Byte.class)), (byte) mask);
+        setWrappedDataValue(metaPacket, wrappedDataWatcher);
+        return metaPacket;
     }
 }

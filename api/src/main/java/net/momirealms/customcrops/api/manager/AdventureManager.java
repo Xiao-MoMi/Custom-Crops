@@ -58,4 +58,6 @@ public abstract class AdventureManager implements Initable {
     public abstract boolean isColorCode(char c);
 
     public abstract void sendTitle(Player player, String title, String subTitle, int fadeIn, int stay, int fadeOut);
+
+    public abstract int rgbaToDecimal(String rgba);
 }
