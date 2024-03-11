@@ -35,6 +35,7 @@ import net.momirealms.customcrops.api.mechanic.item.*;
 import net.momirealms.customcrops.api.mechanic.item.fertilizer.QualityCrop;
 import net.momirealms.customcrops.api.mechanic.item.fertilizer.Variation;
 import net.momirealms.customcrops.api.mechanic.item.fertilizer.YieldIncrease;
+import net.momirealms.customcrops.api.mechanic.misc.CRotation;
 import net.momirealms.customcrops.api.mechanic.misc.Value;
 import net.momirealms.customcrops.api.mechanic.requirement.Requirement;
 import net.momirealms.customcrops.api.mechanic.world.ChunkCoordinate;
@@ -281,6 +282,7 @@ public class ActionManagerImpl implements ActionManager {
             ArrayList<String> msg = ConfigUtils.stringListArgs(args);
             return state -> {
                 if (Math.random() > chance) return;
+                if (state.getPlayer() == null) return;
                 List<String> replaced = PlaceholderManager.getInstance().parse(
                         state.getPlayer(),
                         msg,
@@ -343,6 +345,7 @@ public class ActionManagerImpl implements ActionManager {
     private void registerCloseInvAction() {
         registerAction("close-inv", (args, chance) -> state -> {
             if (Math.random() > chance) return;
+            if (state.getPlayer() == null) return;
             state.getPlayer().closeInventory();
         });
     }
@@ -352,6 +355,7 @@ public class ActionManagerImpl implements ActionManager {
             String text = (String) args;
             return state -> {
                 if (Math.random() > chance) return;
+                if (state.getPlayer() == null) return;
                 String parsed = PlaceholderManager.getInstance().parse(state.getPlayer(), text, state.getArgs());
                 AdventureManagerImpl.getInstance().sendActionbar(state.getPlayer(), parsed);
             };
@@ -360,6 +364,7 @@ public class ActionManagerImpl implements ActionManager {
             ArrayList<String> texts = ConfigUtils.stringListArgs(args);
             return state -> {
                 if (Math.random() > chance) return;
+                if (state.getPlayer() == null) return;
                 String random = texts.get(ThreadLocalRandom.current().nextInt(texts.size()));
                 random = PlaceholderManager.getInstance().parse(state.getPlayer(), random, state.getArgs());
                 AdventureManagerImpl.getInstance().sendActionbar(state.getPlayer(), random);
@@ -372,6 +377,7 @@ public class ActionManagerImpl implements ActionManager {
             var value = ConfigUtils.getValue(args);
             return state -> {
                 if (Math.random() > chance) return;
+                if (state.getPlayer() == null) return;
                 if (CustomCropsPlugin.get().getVersionManager().isSpigot()) {
                     state.getPlayer().getLocation().getWorld().spawn(state.getPlayer().getLocation(), ExperienceOrb.class, e -> e.setExperience((int) value.get(state.getPlayer())));
                 } else {
@@ -387,6 +393,7 @@ public class ActionManagerImpl implements ActionManager {
             var value = ConfigUtils.getValue(args);
             return state -> {
                 if (Math.random() > chance) return;
+                if (state.getPlayer() == null) return;
                 Player player = state.getPlayer();
                 player.setFoodLevel((int) (player.getFoodLevel() + value.get(player)));
             };
@@ -395,6 +402,7 @@ public class ActionManagerImpl implements ActionManager {
             var value = ConfigUtils.getValue(args);
             return state -> {
                 if (Math.random() > chance) return;
+                if (state.getPlayer() == null) return;
                 Player player = state.getPlayer();
                 player.setSaturation((float) (player.getSaturation() + value.get(player)));
             };
@@ -406,6 +414,7 @@ public class ActionManagerImpl implements ActionManager {
             var value = ConfigUtils.getValue(args);
             return state -> {
                 if (Math.random() > chance) return;
+                if (state.getPlayer() == null) return;
                 state.getPlayer().giveExp((int) value.get(state.getPlayer()));
                 AdventureManagerImpl.getInstance().sendSound(state.getPlayer(), Sound.Source.PLAYER, Key.key("minecraft:entity.experience_orb.pickup"), 1, 1);
             };
@@ -417,6 +426,7 @@ public class ActionManagerImpl implements ActionManager {
             boolean arg = (boolean) args;
             return state -> {
                 if (Math.random() > chance) return;
+                if (state.getPlayer() == null) return;
                 state.getPlayer().swingHand(arg ? EquipmentSlot.HAND : EquipmentSlot.OFF_HAND);
             };
         });
@@ -523,7 +533,7 @@ public class ActionManagerImpl implements ActionManager {
                             if (r1 < ratio[j]) {
                                 ItemStack drop = plugin.getItemManager().getItemStack(state.getPlayer(), qualityLoots[j]);
                                 if (drop == null || drop.getType() == Material.AIR) return;
-                                if (toInv) {
+                                if (toInv && state.getPlayer() != null) {
                                     ItemUtils.giveItem(state.getPlayer(), drop, 1);
                                 } else {
                                     state.getLocation().getWorld().dropItemNaturally(state.getLocation(), drop);
@@ -563,7 +573,7 @@ public class ActionManagerImpl implements ActionManager {
                             }
                         }
                         itemStack.setAmount(random);
-                        if (toInv) {
+                        if (toInv && state.getPlayer() != null) {
                             ItemUtils.giveItem(state.getPlayer(), itemStack, random);
                         } else {
                             state.getLocation().getWorld().dropItemNaturally(state.getLocation(), itemStack);
@@ -645,20 +655,17 @@ public class ActionManagerImpl implements ActionManager {
                         plugin.getScheduler().runTaskSync(() -> {
                             // fire event
                             if (state.getPlayer() != null) {
-                                CropPlantEvent plantEvent = new CropPlantEvent(state.getPlayer(), state.getItemInHand(), location, crop, 0);
+                                CropPlantEvent plantEvent = new CropPlantEvent(state.getPlayer(), state.getItemInHand(), location, crop, point);
                                 if (EventUtils.fireAndCheckCancel(plantEvent)) {
                                     return;
                                 }
+
+                                plugin.getItemManager().placeItem(location, crop.getItemCarrier(), crop.getStageItemByPoint(plantEvent.getPoint()), crop.hasRotation() ? CRotation.RANDOM : CRotation.NONE);
+                                plugin.getWorldManager().addCropAt(new MemoryCrop(SimpleLocation.of(location), crop.getKey(), plantEvent.getPoint()), SimpleLocation.of(location));
+                            } else {
+                                plugin.getItemManager().placeItem(location, crop.getItemCarrier(), crop.getStageItemByPoint(point), crop.hasRotation() ? CRotation.RANDOM : CRotation.NONE);
+                                plugin.getWorldManager().addCropAt(new MemoryCrop(SimpleLocation.of(location), crop.getKey(), point), SimpleLocation.of(location));
                             }
-                            // place the crop
-                            switch (crop.getItemCarrier()) {
-                                case ITEM_FRAME, ITEM_DISPLAY, TRIPWIRE -> plugin.getItemManager().placeItem(location, crop.getItemCarrier(), crop.getStageItemByPoint(point));
-                                default -> {
-                                    LogUtils.warn("Unsupported type for crop: " + crop.getItemCarrier().name());
-                                    return;
-                                }
-                            }
-                            plugin.getWorldManager().addCropAt(new MemoryCrop(SimpleLocation.of(location), crop.getKey(), point), SimpleLocation.of(location));
                         }, state.getLocation());
                     };
                 } else {
@@ -674,6 +681,10 @@ public class ActionManagerImpl implements ActionManager {
             boolean arg = (boolean) (args == null ? true : args);
             return state -> {
                 if (Math.random() > chance) return;
+                if (state.getPlayer() == null) {
+                    LogUtils.warn("Break action can only be triggered by players");
+                    return;
+                }
                 plugin.getScheduler().runTaskSync(() -> {
                     Optional<CustomCropsBlock> removed = plugin.getWorldManager().getBlockAt(SimpleLocation.of(state.getLocation()));
                     if (removed.isPresent()) {
@@ -792,6 +803,7 @@ public class ActionManagerImpl implements ActionManager {
             return state -> {
                 if (Math.random() > chance) return;
                 Player player = state.getPlayer();
+                if (player == null) return;
                 ItemStack itemStack = player.getInventory().getItemInMainHand();
                 itemStack.setAmount(Math.max(0, itemStack.getAmount() + amount));
             };
@@ -822,6 +834,7 @@ public class ActionManagerImpl implements ActionManager {
                 return state -> {
                     if (Math.random() > chance) return;
                     Player player = state.getPlayer();
+                    if (player == null) return;
                     ItemUtils.giveItem(player, Objects.requireNonNull(CustomCropsPlugin.get().getItemManager().getItemStack(player, id)), amount);
                 };
             } else {
@@ -855,6 +868,7 @@ public class ActionManagerImpl implements ActionManager {
             var value = ConfigUtils.getValue(args);
             return state -> {
                 if (Math.random() > chance) return;
+                if (state.getPlayer() == null) return;
                 VaultHook.getEconomy().depositPlayer(state.getPlayer(), value.get(state.getPlayer()));
             };
         });
@@ -862,6 +876,7 @@ public class ActionManagerImpl implements ActionManager {
             var value = ConfigUtils.getValue(args);
             return state -> {
                 if (Math.random() > chance) return;
+                if (state.getPlayer() == null) return;
                 VaultHook.getEconomy().withdrawPlayer(state.getPlayer(), value.get(state.getPlayer()));
             };
         });
@@ -963,6 +978,7 @@ public class ActionManagerImpl implements ActionManager {
                 int fadeOut = section.getInt("fade-out", 10);
                 return state -> {
                     if (Math.random() > chance) return;
+                    if (state.getPlayer() == null) return;
                     AdventureManagerImpl.getInstance().sendTitle(
                             state.getPlayer(),
                             PlaceholderManager.getInstance().parse(state.getPlayer(), title, state.getArgs()),
@@ -988,6 +1004,7 @@ public class ActionManagerImpl implements ActionManager {
                 int fadeOut = section.getInt("fade-out", 10);
                 return state -> {
                     if (Math.random() > chance) return;
+                    if (state.getPlayer() == null) return;
                     AdventureManagerImpl.getInstance().sendTitle(
                             state.getPlayer(),
                             PlaceholderManager.getInstance().parse(state.getPlayer(), titles.get(ThreadLocalRandom.current().nextInt(titles.size())), state.getArgs()),
@@ -1014,6 +1031,7 @@ public class ActionManagerImpl implements ActionManager {
                 );
                 return state -> {
                     if (Math.random() > chance) return;
+                    if (state.getPlayer() == null) return;
                     state.getPlayer().addPotionEffect(potionEffect);
                 };
             } else {
@@ -1029,6 +1047,7 @@ public class ActionManagerImpl implements ActionManager {
             return state -> {
                 if (Math.random() > chance) return;
                 Player player = state.getPlayer();
+                if (player == null) return;
                 player.setLevel((int) Math.max(0, player.getLevel() + value.get(state.getPlayer())));
             };
         });
@@ -1046,6 +1065,7 @@ public class ActionManagerImpl implements ActionManager {
                 );
                 return state -> {
                     if (Math.random() > chance) return;
+                    if (state.getPlayer() == null) return;
                     AdventureManagerImpl.getInstance().sendSound(state.getPlayer(), sound);
                 };
             } else {
@@ -1122,6 +1142,7 @@ public class ActionManagerImpl implements ActionManager {
                 String target = section.getString("target");
                 return state -> {
                     if (Math.random() > chance) return;
+                    if (state.getPlayer() == null) return;
                     Optional.ofNullable(plugin.getIntegrationManager().getLevelPlugin(pluginName)).ifPresentOrElse(it -> {
                         it.addXp(state.getPlayer(), target, value.get(state.getPlayer()));
                     }, () -> LogUtils.warn("Plugin (" + pluginName + "'s) level is not compatible. Please double check if it's a problem caused by pronunciation."));

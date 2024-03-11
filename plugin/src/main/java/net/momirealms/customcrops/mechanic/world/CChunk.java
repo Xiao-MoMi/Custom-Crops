@@ -23,6 +23,7 @@ import net.momirealms.customcrops.api.mechanic.item.Crop;
 import net.momirealms.customcrops.api.mechanic.item.Fertilizer;
 import net.momirealms.customcrops.api.mechanic.item.Pot;
 import net.momirealms.customcrops.api.mechanic.item.Sprinkler;
+import net.momirealms.customcrops.api.mechanic.misc.CRotation;
 import net.momirealms.customcrops.api.mechanic.requirement.State;
 import net.momirealms.customcrops.api.mechanic.world.ChunkCoordinate;
 import net.momirealms.customcrops.api.mechanic.world.ChunkPos;
@@ -354,8 +355,8 @@ public class CChunk implements CustomCropsChunk {
         String pre = crop.getStageItemByPoint(previousPoint);
         String after = crop.getStageItemByPoint(x);
         if (pre.equals(after)) return;
-        CustomCropsPlugin.get().getItemManager().removeAnythingAt(bkLoc);
-        CustomCropsPlugin.get().getItemManager().placeItem(bkLoc, crop.getItemCarrier(), after, crop.hasRotation());
+        CRotation CRotation = CustomCropsPlugin.get().getItemManager().removeAnythingAt(bkLoc);
+        CustomCropsPlugin.get().getItemManager().placeItem(bkLoc, crop.getItemCarrier(), after, CRotation);
     }
 
     @Override

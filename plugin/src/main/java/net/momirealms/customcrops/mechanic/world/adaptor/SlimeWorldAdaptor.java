@@ -23,7 +23,6 @@ import com.infernalsuite.aswm.api.events.LoadSlimeWorldEvent;
 import com.infernalsuite.aswm.api.world.SlimeWorld;
 import net.momirealms.customcrops.api.CustomCropsPlugin;
 import net.momirealms.customcrops.api.manager.WorldManager;
-import net.momirealms.customcrops.api.mechanic.world.AbstractWorldAdaptor;
 import net.momirealms.customcrops.api.mechanic.world.ChunkCoordinate;
 import net.momirealms.customcrops.api.mechanic.world.ChunkPos;
 import net.momirealms.customcrops.api.mechanic.world.CustomCropsBlock;
@@ -37,12 +36,11 @@ import net.momirealms.customcrops.scheduler.task.TickTask;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.world.WorldLoadEvent;
-import org.bukkit.event.world.WorldUnloadEvent;
-import org.bukkit.persistence.PersistentDataType;
 
-import java.io.*;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Optional;
+import java.util.PriorityQueue;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class SlimeWorldAdaptor extends BukkitWorldAdaptor {

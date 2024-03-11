@@ -20,6 +20,7 @@ package net.momirealms.customcrops.api.manager;
 import net.momirealms.customcrops.api.common.Reloadable;
 import net.momirealms.customcrops.api.integration.ItemLibrary;
 import net.momirealms.customcrops.api.mechanic.item.*;
+import net.momirealms.customcrops.api.mechanic.misc.CRotation;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
@@ -42,9 +43,9 @@ public interface ItemManager extends Reloadable {
 
     void placeItem(Location location, ItemCarrier carrier, String id);
 
-    void placeItem(Location location, ItemCarrier carrier, String id, boolean rotate);
+    void placeItem(Location location, ItemCarrier carrier, String id, CRotation rotate);
 
-    void removeAnythingAt(Location location);
+    CRotation removeAnythingAt(Location location);
 
     @Nullable
     WateringCan getWateringCanByID(@NotNull String id);

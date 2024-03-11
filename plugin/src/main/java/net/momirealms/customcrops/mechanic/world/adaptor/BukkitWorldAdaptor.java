@@ -458,12 +458,12 @@ public class BukkitWorldAdaptor extends AbstractWorldAdaptor {
             // read date and season
             YamlConfiguration data = YamlConfiguration.loadConfiguration(leagcyFile);
             try {
-                Season season = Season.valueOf(data.getString("season"));
+                Season season = Season.valueOf(data.getString("season", "SPRING"));
                 if (cWorld != null)
                     cWorld.setInfoData(new WorldInfoData(season, data.getInt("date", 1)));
                 world.getPersistentDataContainer().set(key, PersistentDataType.STRING,
                         gson.toJson(new WorldInfoData(season, data.getInt("date", 1))));
-            } catch (IllegalArgumentException e) {
+            } catch (Exception e) {
                 if (cWorld != null)
                     cWorld.setInfoData(WorldInfoData.empty());
             }

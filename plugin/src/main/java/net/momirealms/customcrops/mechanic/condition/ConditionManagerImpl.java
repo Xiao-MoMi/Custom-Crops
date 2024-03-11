@@ -36,6 +36,8 @@ import net.momirealms.customcrops.mechanic.misc.CrowAttackAnimation;
 import net.momirealms.customcrops.utils.ClassUtils;
 import net.momirealms.customcrops.utils.ConfigUtils;
 import org.bukkit.World;
+import org.bukkit.block.Block;
+import org.bukkit.block.data.type.Farmland;
 import org.bukkit.configuration.ConfigurationSection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -632,6 +634,26 @@ public class ConditionManagerImpl implements ConditionManager {
             return block -> {
                 Optional<WorldPot> worldPot = plugin.getWorldManager().getPotAt(block.getLocation().copy().add(0,-1,0));
                 return worldPot.filter(pot -> pot.getWater() < value).isPresent();
+            };
+        });
+        registerCondition("moisture_more_than", (args) -> {
+            int value = (int) args;
+            return block -> {
+                Block underBlock = block.getLocation().copy().add(0,-1,0).getBukkitLocation().getBlock();
+                if (underBlock.getBlockData() instanceof Farmland farmland) {
+                    return farmland.getMoisture() > value;
+                }
+                return false;
+            };
+        });
+        registerCondition("moisture_less_than", (args) -> {
+            int value = (int) args;
+            return block -> {
+                Block underBlock = block.getLocation().copy().add(0,-1,0).getBukkitLocation().getBlock();
+                if (underBlock.getBlockData() instanceof Farmland farmland) {
+                    return farmland.getMoisture() < value;
+                }
+                return false;
             };
         });
     }

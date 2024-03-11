@@ -31,6 +31,7 @@ import net.momirealms.customcrops.api.mechanic.condition.DeathConditions;
 import net.momirealms.customcrops.api.mechanic.item.*;
 import net.momirealms.customcrops.api.mechanic.item.water.PassiveFillMethod;
 import net.momirealms.customcrops.api.mechanic.item.water.PositiveFillMethod;
+import net.momirealms.customcrops.api.mechanic.misc.CRotation;
 import net.momirealms.customcrops.api.mechanic.misc.image.WaterBar;
 import net.momirealms.customcrops.api.mechanic.requirement.State;
 import net.momirealms.customcrops.api.mechanic.world.SimpleLocation;
@@ -337,27 +338,24 @@ public class ItemManagerImpl implements ItemManager {
     }
 
     @Override
-    public void placeItem(Location location, ItemCarrier carrier, String id, boolean rotate) {
+    public void placeItem(Location location, ItemCarrier carrier, String id, CRotation rotate) {
         switch (carrier) {
             case ITEM_DISPLAY, ITEM_FRAME -> {
                 Entity entity = customProvider.placeFurniture(location, id);
-                if (rotate) {
-                    if (entity instanceof ItemFrame frame) {
-                        frame.setRotation(RotationUtils.getRandomRotation());
-                    } else if (entity instanceof ItemDisplay display) {
-                        display.setRotation(RotationUtils.getRandomFloatRotation(), display.getLocation().getPitch());
-                    }
+                if (rotate == null || rotate == CRotation.NONE) return;
+                if (entity instanceof ItemFrame frame) {
+                    frame.setRotation(RotationUtils.getBukkitRotation(rotate));
+                } else if (entity instanceof ItemDisplay display) {
+                    display.setRotation(RotationUtils.getFloatRotation(rotate), display.getLocation().getPitch());
                 }
             }
-            case TRIPWIRE, NOTE_BLOCK, CHORUS, MUSHROOM -> {
-                customProvider.placeBlock(location, id);
-            }
+            case TRIPWIRE, NOTE_BLOCK, CHORUS, MUSHROOM -> customProvider.placeBlock(location, id);
         }
     }
 
     @Override
-    public void removeAnythingAt(Location location) {
-        customProvider.removeAnythingAt(location);
+    public CRotation removeAnythingAt(Location location) {
+        return customProvider.removeAnythingAt(location);
     }
 
     @Override
@@ -529,6 +527,11 @@ public class ItemManagerImpl implements ItemManager {
                             return FunctionResult.PASS;
                         }
                         Player player = furnitureWrapper.getPlayer();
+                        // prevent players from rotating the crops
+                        if (player.isSneaking()) {
+                            return FunctionResult.CANCEL_EVENT_AND_RETURN;
+                        }
+
                         Location cropLocation = furnitureWrapper.getLocation();
                         ItemStack itemInHand = furnitureWrapper.getItemInHand();
                         String itemID = getItemID(itemInHand);
@@ -1661,14 +1664,8 @@ public class ItemManagerImpl implements ItemManager {
                         return FunctionResult.RETURN;
                     }
                     // place the crop
-                    switch (crop.getItemCarrier()) {
-                        case ITEM_FRAME, ITEM_DISPLAY -> customProvider.placeFurniture(seedLocation, crop.getStageItemByPoint(plantEvent.getPoint()));
-                        case TRIPWIRE -> customProvider.placeBlock(seedLocation, crop.getStageItemByPoint(plantEvent.getPoint()));
-                        default -> {
-                            LogUtils.warn("Unsupported type for crop: " + crop.getItemCarrier().name());
-                            return FunctionResult.RETURN;
-                        }
-                    }
+                    this.placeItem(seedLocation, crop.getItemCarrier(), crop.getStageItemByPoint(plantEvent.getPoint()), crop.hasRotation() ? CRotation.RANDOM : CRotation.NONE);
+
                     // reduce item
                     if (player.getGameMode() != GameMode.CREATIVE)
                         itemInHand.setAmount(itemInHand.getAmount() - 1);
@@ -1690,8 +1687,14 @@ public class ItemManagerImpl implements ItemManager {
                             if (!(conditionWrapper instanceof InteractWrapper interactWrapper)) {
                                 return FunctionResult.PASS;
                             }
-                            Location cropLocation = interactWrapper.getLocation().toBlockLocation();
+
                             Player player = interactWrapper.getPlayer();
+                            // prevent players from rotating the crops
+                            if (player.isSneaking() && interactWrapper instanceof InteractFurnitureWrapper) {
+                                return FunctionResult.CANCEL_EVENT_AND_RETURN;
+                            }
+
+                            Location cropLocation = interactWrapper.getLocation().toBlockLocation();
                             ItemStack itemInHand = interactWrapper.getItemInHand();
                             State cropState = new State(player, itemInHand, cropLocation);
 

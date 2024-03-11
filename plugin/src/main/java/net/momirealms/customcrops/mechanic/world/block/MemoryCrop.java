@@ -28,6 +28,7 @@ import net.momirealms.customcrops.api.mechanic.item.Crop;
 import net.momirealms.customcrops.api.mechanic.item.Fertilizer;
 import net.momirealms.customcrops.api.mechanic.item.ItemType;
 import net.momirealms.customcrops.api.mechanic.item.fertilizer.SpeedGrow;
+import net.momirealms.customcrops.api.mechanic.misc.CRotation;
 import net.momirealms.customcrops.api.mechanic.requirement.State;
 import net.momirealms.customcrops.api.mechanic.world.SimpleLocation;
 import net.momirealms.customcrops.api.mechanic.world.level.AbstractCustomCropsBlock;
@@ -173,8 +174,8 @@ public class MemoryCrop extends AbstractCustomCropsBlock implements WorldCrop {
                 }
             }
             if (pre.equals(after)) return;
-            CustomCropsPlugin.get().getItemManager().removeAnythingAt(bukkitLocation);
-            CustomCropsPlugin.get().getItemManager().placeItem(bukkitLocation, crop.getItemCarrier(), after, crop.hasRotation());
+            CRotation CRotation = CustomCropsPlugin.get().getItemManager().removeAnythingAt(bukkitLocation);
+            CustomCropsPlugin.get().getItemManager().placeItem(bukkitLocation, crop.getItemCarrier(), after, CRotation);
         }, bukkitLocation);
     }
 }
