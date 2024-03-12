@@ -23,6 +23,7 @@ import io.th0rgal.oraxen.api.OraxenItems;
 import io.th0rgal.oraxen.items.ItemBuilder;
 import io.th0rgal.oraxen.mechanics.Mechanic;
 import io.th0rgal.oraxen.mechanics.provided.gameplay.furniture.FurnitureMechanic;
+import net.momirealms.customcrops.api.util.LogUtils;
 import net.momirealms.customcrops.mechanic.item.CustomProvider;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -55,7 +56,11 @@ public class OraxenProvider implements CustomProvider {
     public Entity placeFurniture(Location location, String id) {
         Location center = location.toCenterLocation();
         center.setY(center.getBlockY());
-        return OraxenFurniture.place(id, location, Rotation.NONE, BlockFace.UP);
+        Entity entity = OraxenFurniture.place(id, location, Rotation.NONE, BlockFace.UP);
+        if (entity == null) {
+            LogUtils.warn("Furniture(" + id +") doesn't exist in Oraxen configs. Please double check if that furniture exists.");
+        }
+        return entity;
     }
 
     @Override

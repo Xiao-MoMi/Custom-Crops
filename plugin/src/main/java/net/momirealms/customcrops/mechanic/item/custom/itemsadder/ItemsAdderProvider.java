@@ -20,6 +20,7 @@ package net.momirealms.customcrops.mechanic.item.custom.itemsadder;
 import dev.lone.itemsadder.api.CustomBlock;
 import dev.lone.itemsadder.api.CustomFurniture;
 import dev.lone.itemsadder.api.CustomStack;
+import net.momirealms.customcrops.api.util.LogUtils;
 import net.momirealms.customcrops.mechanic.item.CustomProvider;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -42,16 +43,25 @@ public class ItemsAdderProvider implements CustomProvider {
 
     @Override
     public void placeCustomBlock(Location location, String id) {
-        CustomBlock.place(id, location);
+        CustomBlock block = CustomBlock.place(id, location);
+        if (block == null) {
+            LogUtils.warn("Detected that custom block(" + id + ") doesn't exist in ItemsAdder configs. Please double check if that block exists.");
+        }
     }
 
     @Override
     public Entity placeFurniture(Location location, String id) {
-        Location center = location.toCenterLocation();
-        center.setY(center.getBlockY());
-        CustomFurniture furniture = CustomFurniture.spawnPreciseNonSolid(id, location);
-        if (furniture == null) return null;
-        return furniture.getEntity();
+        try {
+            Location center = location.toCenterLocation();
+            center.setY(center.getBlockY());
+            CustomFurniture furniture = CustomFurniture.spawnPreciseNonSolid(id, location);
+            if (furniture == null) return null;
+            return furniture.getEntity();
+        } catch (RuntimeException e) {
+            LogUtils.warn("Failed to place ItemsAdder furniture. If this is not a problem caused by furniture not existing, consider increasing max-furniture-vehicles-per-chunk in ItemsAdder config.yml.");
+            e.printStackTrace();
+            return null;
+        }
     }
 
     @Override

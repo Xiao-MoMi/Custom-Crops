@@ -1842,7 +1842,7 @@ public class ItemManagerImpl implements ItemManager {
         boolean enableFertilizedAppearance = section.getBoolean("fertilized-pots.enable", false);
 
         PotConfig pot = new PotConfig(
-                key, storage, section.getBoolean("absorb-rainwater", true), section.getBoolean("absorb-nearby-water", false),
+                key, storage, section.getBoolean("absorb-rainwater", false), section.getBoolean("absorb-nearby-water", false),
                 dryModel, wetModel,
                 enableFertilizedAppearance,
                 enableFertilizedAppearance ? ConfigUtils.getFertilizedPotMap(section.getConfigurationSection("fertilized-pots")) : new HashMap<>(),
