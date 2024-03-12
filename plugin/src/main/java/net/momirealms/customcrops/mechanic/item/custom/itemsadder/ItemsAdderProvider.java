@@ -89,6 +89,7 @@ public class ItemsAdderProvider implements CustomProvider {
 
     @Override
     public ItemStack getItemStack(String id) {
+        if (id == null) return new ItemStack(Material.AIR);
         CustomStack customStack = CustomStack.getInstance(id);
         if (customStack == null) {
             return null;

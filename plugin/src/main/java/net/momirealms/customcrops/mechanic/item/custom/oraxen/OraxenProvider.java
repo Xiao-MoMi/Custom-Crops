@@ -41,7 +41,7 @@ public class OraxenProvider implements CustomProvider {
         if (block.getType() == Material.AIR) {
             return false;
         }
-        if (OraxenBlocks.remove(location, null, false)) {
+        if (!OraxenBlocks.remove(location, null, false)) {
             block.setType(Material.AIR);
         }
         return true;
@@ -88,6 +88,7 @@ public class OraxenProvider implements CustomProvider {
 
     @Override
     public ItemStack getItemStack(String id) {
+        if (id == null) return new ItemStack(Material.AIR);
         ItemBuilder builder = OraxenItems.getItemById(id);
         if (builder == null) {
             return null;

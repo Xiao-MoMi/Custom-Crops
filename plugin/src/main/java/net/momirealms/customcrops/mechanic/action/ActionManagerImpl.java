@@ -17,6 +17,8 @@
 
 package net.momirealms.customcrops.mechanic.action;
 
+import com.comphenix.protocol.PacketType;
+import com.comphenix.protocol.events.PacketContainer;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
@@ -49,6 +51,7 @@ import net.momirealms.customcrops.api.util.LogUtils;
 import net.momirealms.customcrops.compatibility.VaultHook;
 import net.momirealms.customcrops.manager.AdventureManagerImpl;
 import net.momirealms.customcrops.manager.HologramManager;
+import net.momirealms.customcrops.manager.PacketManager;
 import net.momirealms.customcrops.mechanic.item.impl.VariationCrop;
 import net.momirealms.customcrops.mechanic.misc.TempFakeItem;
 import net.momirealms.customcrops.mechanic.world.block.MemoryCrop;
@@ -427,7 +430,10 @@ public class ActionManagerImpl implements ActionManager {
             return state -> {
                 if (Math.random() > chance) return;
                 if (state.getPlayer() == null) return;
-                state.getPlayer().swingHand(arg ? EquipmentSlot.HAND : EquipmentSlot.OFF_HAND);
+                PacketContainer animationPacket = new PacketContainer(PacketType.Play.Server.ANIMATION);
+                animationPacket.getIntegers().write(0, state.getPlayer().getEntityId());
+                animationPacket.getIntegers().write(1, arg ? 0 : 3);
+                PacketManager.getInstance().send(state.getPlayer(), animationPacket);
             };
         });
     }
