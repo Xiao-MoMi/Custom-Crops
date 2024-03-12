@@ -527,11 +527,6 @@ public class ItemManagerImpl implements ItemManager {
                             return FunctionResult.PASS;
                         }
                         Player player = furnitureWrapper.getPlayer();
-                        // prevent players from rotating the crops
-                        if (player.isSneaking()) {
-                            return FunctionResult.CANCEL_EVENT_AND_RETURN;
-                        }
-
                         Location cropLocation = furnitureWrapper.getLocation();
                         ItemStack itemInHand = furnitureWrapper.getItemInHand();
                         String itemID = getItemID(itemInHand);
@@ -1689,11 +1684,6 @@ public class ItemManagerImpl implements ItemManager {
                             }
 
                             Player player = interactWrapper.getPlayer();
-                            // prevent players from rotating the crops
-                            if (player.isSneaking() && interactWrapper instanceof InteractFurnitureWrapper) {
-                                return FunctionResult.CANCEL_EVENT_AND_RETURN;
-                            }
-
                             Location cropLocation = interactWrapper.getLocation().toBlockLocation();
                             ItemStack itemInHand = interactWrapper.getItemInHand();
                             State cropState = new State(player, itemInHand, cropLocation);
