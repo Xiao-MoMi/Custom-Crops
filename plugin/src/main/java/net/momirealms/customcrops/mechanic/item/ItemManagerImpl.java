@@ -1151,7 +1151,7 @@ public class ItemManagerImpl implements ItemManager {
             );
         }
 
-        this.registerItemFunction(sprinkler.get3DItemID(), FunctionTrigger.PLACE,
+        this.registerItemFunction(new String[]{sprinkler.get3DItemID(), sprinkler.get3DItemWithWater()}, FunctionTrigger.PLACE,
                 /*
                  * This will only trigger if the sprinkler has only 3D items
                  */
@@ -1184,7 +1184,7 @@ public class ItemManagerImpl implements ItemManager {
                 }, CFunction.FunctionPriority.NORMAL)
         );
 
-        this.registerItemFunction(sprinkler.get3DItemID(), FunctionTrigger.BE_INTERACTED,
+        this.registerItemFunction(new String[]{sprinkler.get3DItemID(), sprinkler.get3DItemWithWater()}, FunctionTrigger.BE_INTERACTED,
                 /*
                  * Interact the sprinkler
                  */
@@ -1261,7 +1261,7 @@ public class ItemManagerImpl implements ItemManager {
                 }, CFunction.FunctionPriority.NORMAL)
         );
 
-        this.registerItemFunction(sprinkler.get3DItemID(), FunctionTrigger.BE_INTERACTED,
+        this.registerItemFunction(new String[]{sprinkler.get3DItemID(), sprinkler.get3DItemWithWater()}, FunctionTrigger.BE_INTERACTED,
                 new CFunction(conditionWrapper -> {
                     if (!(conditionWrapper instanceof InteractFurnitureWrapper interactFurnitureWrapper)) {
                         return FunctionResult.PASS;
@@ -1287,7 +1287,7 @@ public class ItemManagerImpl implements ItemManager {
                 }, CFunction.FunctionPriority.LOWEST)
         );
 
-        this.registerItemFunction(sprinkler.get3DItemID(), FunctionTrigger.BREAK,
+        this.registerItemFunction(new String[]{sprinkler.get3DItemID(), sprinkler.get3DItemWithWater()}, FunctionTrigger.BREAK,
                 /*
                  * Handle breaking sprinklers
                  */
@@ -2064,7 +2064,16 @@ public class ItemManagerImpl implements ItemManager {
         }
     }
 
+    private void registerItemFunction(String[] items, FunctionTrigger trigger, CFunction... function) {
+        for (String item : items) {
+            if (item != null) {
+                registerItemFunction(item, trigger, function);
+            }
+        }
+    }
+
     private void registerItemFunction(String item, FunctionTrigger trigger, CFunction... function) {
+        if (item == null) return;
         if (itemID2FunctionMap.containsKey(item)) {
             var previous = itemID2FunctionMap.get(item);
             TreeSet<CFunction> previousFunctions = previous.get(trigger);

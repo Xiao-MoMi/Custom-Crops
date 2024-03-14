@@ -124,6 +124,7 @@ public class RequirementManagerImpl implements RequirementManager {
         this.registerSneakRequirement();
         this.registerTemperatureRequirement();
         this.registerFertilizerRequirement();
+        this.registerLightRequirement();
     }
 
     @NotNull
@@ -233,6 +234,33 @@ public class RequirementManagerImpl implements RequirementManager {
             return state -> {
                 Location location = state.getLocation();
                 double temp = location.getWorld().getTemperature(location.getBlockX(), location.getBlockY(), location.getBlockZ());
+                for (Pair<Integer, Integer> pair : tempPairs)
+                    if (temp >= pair.left() && temp <= pair.right())
+                        return true;
+                if (advanced) triggerActions(actions, state);
+                return false;
+            };
+        });
+    }
+
+    private void registerLightRequirement() {
+        registerRequirement("light", (args, actions, advanced) -> {
+            List<Pair<Integer, Integer>> tempPairs = ConfigUtils.stringListArgs(args).stream().map(it -> ConfigUtils.splitStringIntegerArgs(it, "~")).toList();
+            return state -> {
+                Location location = state.getLocation();
+                int temp = location.getBlock().getLightLevel();
+                for (Pair<Integer, Integer> pair : tempPairs)
+                    if (temp >= pair.left() && temp <= pair.right())
+                        return true;
+                if (advanced) triggerActions(actions, state);
+                return false;
+            };
+        });
+        registerRequirement("natural_light", (args, actions, advanced) -> {
+            List<Pair<Integer, Integer>> tempPairs = ConfigUtils.stringListArgs(args).stream().map(it -> ConfigUtils.splitStringIntegerArgs(it, "~")).toList();
+            return state -> {
+                Location location = state.getLocation();
+                int temp = location.getBlock().getLightFromSky();
                 for (Pair<Integer, Integer> pair : tempPairs)
                     if (temp >= pair.left() && temp <= pair.right())
                         return true;

@@ -68,9 +68,7 @@ public class CustomCropsPluginImpl extends CustomCropsPlugin {
                         Dependency.ADVENTURE_TEXT_MINIMESSAGE,
                         Dependency.ADVENTURE_LEGACY_SERIALIZER,
                         Dependency.BSTATS_BASE,
-                        Dependency.BSTATS_BUKKIT,
-                        Dependency.BIOME_API,
-                        Dependency.ANTI_GRIEF
+                        Dependency.BSTATS_BUKKIT
                 )
         ));
 

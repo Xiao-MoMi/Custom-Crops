@@ -35,6 +35,7 @@ import net.momirealms.customcrops.compatibility.papi.ParseUtils;
 import net.momirealms.customcrops.mechanic.misc.CrowAttackAnimation;
 import net.momirealms.customcrops.utils.ClassUtils;
 import net.momirealms.customcrops.utils.ConfigUtils;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.type.Farmland;
@@ -94,6 +95,7 @@ public class ConditionManagerImpl implements ConditionManager {
         this.registerFertilizerCondition();
         this.registerCrowAttackCondition();
         this.registerPotCondition();
+        this.registerLightCondition();
     }
 
     @Override
@@ -617,6 +619,37 @@ public class ConditionManagerImpl implements ConditionManager {
                     return true;
                 }
                 return false;
+            };
+        });
+    }
+
+    private void registerLightCondition() {
+        registerCondition("skylight_more_than", (args) -> {
+            int value = (int) args;
+            return block -> {
+                int light = block.getLocation().getBukkitLocation().getBlock().getLightFromSky();
+                return value > light;
+            };
+        });
+        registerCondition("skylight_less_than", (args) -> {
+            int value = (int) args;
+            return block -> {
+                int light = block.getLocation().getBukkitLocation().getBlock().getLightFromSky();
+                return value < light;
+            };
+        });
+        registerCondition("light_more_than", (args) -> {
+            int value = (int) args;
+            return block -> {
+                int light = block.getLocation().getBukkitLocation().getBlock().getLightLevel();
+                return value > light;
+            };
+        });
+        registerCondition("light_less_than", (args) -> {
+            int value = (int) args;
+            return block -> {
+                int light = block.getLocation().getBukkitLocation().getBlock().getLightLevel();
+                return value < light;
             };
         });
     }

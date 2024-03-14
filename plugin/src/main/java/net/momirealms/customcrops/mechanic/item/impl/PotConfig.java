@@ -46,7 +46,7 @@ public class PotConfig extends AbstractEventItem implements Pot {
     private final Requirement[] useRequirements;
     private final boolean acceptRainDrop;
     private final boolean acceptNearbyWater;
-    private boolean isVanillaBlock;
+    private final boolean isVanillaBlock;
 
     public PotConfig(
             String key,

@@ -41,7 +41,7 @@ public class Migration {
         // do migration
         if (config.contains("mechanics.season.sync-season")) {
             config.set("mechanics.sync-season.enable", config.getBoolean("mechanics.season.sync-season.enable"));
-            config.set("mechanics.sync-season.reference", config.getBoolean("mechanics.season.sync-season.reference"));
+            config.set("mechanics.sync-season.reference", config.getString("mechanics.season.sync-season.reference"));
         }
         if (config.contains("mechanics.season.greenhouse")) {
             config.set("mechanics.greenhouse.enable", config.getBoolean("mechanics.season.greenhouse.enable"));
