@@ -256,7 +256,7 @@ public class RequirementManagerImpl implements RequirementManager {
                 return false;
             };
         });
-        registerRequirement("natural_light", (args, actions, advanced) -> {
+        registerRequirement("natural-light", (args, actions, advanced) -> {
             List<Pair<Integer, Integer>> tempPairs = ConfigUtils.stringListArgs(args).stream().map(it -> ConfigUtils.splitStringIntegerArgs(it, "~")).toList();
             return state -> {
                 Location location = state.getLocation();
