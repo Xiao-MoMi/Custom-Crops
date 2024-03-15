@@ -20,6 +20,7 @@ package net.momirealms.customcrops.mechanic.item.custom;
 import net.momirealms.customcrops.api.CustomCropsPlugin;
 import net.momirealms.customcrops.api.manager.ConfigManager;
 import net.momirealms.customcrops.api.manager.WorldManager;
+import net.momirealms.customcrops.api.mechanic.item.Crop;
 import net.momirealms.customcrops.api.mechanic.item.Pot;
 import net.momirealms.customcrops.api.mechanic.item.Sprinkler;
 import net.momirealms.customcrops.api.mechanic.item.WateringCan;
@@ -107,6 +108,12 @@ public abstract class AbstractCustomListener implements Listener {
         Item item = event.getEntity();
         ItemStack itemStack = item.getItemStack();
         String itemID = this.itemManager.getItemID(itemStack);
+        Crop.Stage stage = this.itemManager.getCropStageByStageID(itemID);
+        if (stage != null) {
+            event.setCancelled(true);
+            return;
+        }
+
         Sprinkler sprinkler = this.itemManager.getSprinklerBy3DItemID(itemID);
         if (sprinkler != null) {
             ItemStack newItem = this.itemManager.getItemStack(null, sprinkler.get2DItemID());
