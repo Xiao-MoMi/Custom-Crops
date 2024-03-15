@@ -35,14 +35,30 @@ public abstract class AbstractFillMethod {
         this.requirements = requirements;
     }
 
+    /**
+     * Get the amount of water to add
+     *
+     * @return amount
+     */
     public int getAmount() {
         return amount;
     }
 
+    /**
+     * Trigger actions related to this fill methods
+     *
+     * @param state state
+     */
     public void trigger(State state) {
         ActionManager.triggerActions(state, actions);
     }
 
+    /**
+     * If player meet the requirements for this fill method
+     *
+     * @param state state
+     * @return meet or not
+     */
     public boolean canFill(State state) {
         return RequirementManager.isRequirementMet(state, requirements);
     }

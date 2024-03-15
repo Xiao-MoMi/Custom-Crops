@@ -17,35 +17,40 @@
 
 package net.momirealms.customcrops.api.event;
 
-import net.momirealms.customcrops.api.mechanic.world.level.WorldCrop;
+import net.momirealms.customcrops.api.mechanic.item.water.PassiveFillMethod;
+import net.momirealms.customcrops.api.mechanic.world.level.WorldPot;
 import org.bukkit.Location;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
-import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+import org.bukkit.event.player.PlayerEvent;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
- * An event that triggered when breaking a crop
+ * An event that triggered when a pot is watered by the fill-methods set in each pot's config
  */
-public class CropBreakEvent extends Event implements Cancellable {
+public class PotFillEvent extends PlayerEvent implements Cancellable {
 
     private static final HandlerList handlers = new HandlerList();
     private boolean cancelled;
     private final Location location;
-    private final WorldCrop worldCrop;
-    private final Entity entity;
+    private final WorldPot pot;
+    private final ItemStack itemInHand;
+    private final PassiveFillMethod fillMethod;
 
-    public CropBreakEvent(
-            @Nullable Entity entity,
+    public PotFillEvent(
+            @NotNull Player player,
+            @NotNull ItemStack itemInHand,
             @NotNull Location location,
-            @Nullable WorldCrop worldCrop
+            @NotNull PassiveFillMethod fillMethod,
+            @NotNull WorldPot pot
     ) {
-        this.entity = entity;
+        super(player);
         this.location = location;
-        this.worldCrop = worldCrop;
+        this.itemInHand = itemInHand;
+        this.pot = pot;
+        this.fillMethod = fillMethod;
     }
 
     @Override
@@ -55,7 +60,7 @@ public class CropBreakEvent extends Event implements Cancellable {
 
     @Override
     public void setCancelled(boolean cancel) {
-        this.cancelled = cancel;
+        cancelled = cancel;
     }
 
     @NotNull
@@ -70,16 +75,7 @@ public class CropBreakEvent extends Event implements Cancellable {
     }
 
     /**
-     * Get the crop's data, it might be null if it's spawned by other plugins in the wild
-     * @return crop data
-     */
-    @Nullable
-    public WorldCrop getWorldCrop() {
-        return worldCrop;
-    }
-
-    /**
-     * Get the crop location
+     * Get the pot location
      * @return location
      */
     @NotNull
@@ -87,16 +83,23 @@ public class CropBreakEvent extends Event implements Cancellable {
         return location;
     }
 
-    @Nullable
-    public Entity getEntity() {
-        return entity;
+
+    /**
+     * Get the pot's data
+     * @return pot
+     */
+    @NotNull
+    public WorldPot getPot() {
+        return pot;
     }
 
-    @Nullable
-    public Player getPlayer() {
-        if (entity instanceof Player player) {
-            return player;
-        }
-        return null;
+    @NotNull
+    public ItemStack getItemInHand() {
+        return itemInHand;
+    }
+
+    @NotNull
+    public PassiveFillMethod getFillMethod() {
+        return fillMethod;
     }
 }

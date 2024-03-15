@@ -134,6 +134,7 @@ public class WateringCanConfig extends AbstractEventItem implements WateringCan 
 
     @Override
     public void updateItem(Player player, ItemStack itemStack, int water, Map<String, String> args) {
+        int maxDurability = itemStack.getType().getMaxDurability();
         NBTItem nbtItem = new NBTItem(itemStack);
         if (isInfinite()) water = storage;
         if (hasDynamicLore()) {
@@ -159,6 +160,9 @@ public class WateringCanConfig extends AbstractEventItem implements WateringCan 
         }
 
         nbtItem.setInteger("WaterAmount", water);
+        if (maxDurability != 0) {
+            nbtItem.setInteger("Damage", (int) (maxDurability * (((double) storage - water) / storage)));
+        }
         itemStack.setItemMeta(nbtItem.getItem().getItemMeta());
     }
 

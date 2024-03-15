@@ -17,35 +17,40 @@
 
 package net.momirealms.customcrops.api.event;
 
-import net.momirealms.customcrops.api.mechanic.world.level.WorldCrop;
+import net.momirealms.customcrops.api.mechanic.item.water.PassiveFillMethod;
+import net.momirealms.customcrops.api.mechanic.world.level.WorldSprinkler;
 import org.bukkit.Location;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
-import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+import org.bukkit.event.player.PlayerEvent;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
- * An event that triggered when breaking a crop
+ * An event that triggered when a sprinkler is watered by the fill-methods set in each sprinkler's config
  */
-public class CropBreakEvent extends Event implements Cancellable {
+public class SprinklerFillEvent extends PlayerEvent implements Cancellable {
 
     private static final HandlerList handlers = new HandlerList();
     private boolean cancelled;
+    private final ItemStack itemInHand;
     private final Location location;
-    private final WorldCrop worldCrop;
-    private final Entity entity;
+    private final PassiveFillMethod fillMethod;
+    private final WorldSprinkler sprinkler;
 
-    public CropBreakEvent(
-            @Nullable Entity entity,
+    public SprinklerFillEvent(
+            @NotNull Player player,
+            @NotNull ItemStack itemInHand,
             @NotNull Location location,
-            @Nullable WorldCrop worldCrop
+            @NotNull PassiveFillMethod fillMethod,
+            @NotNull WorldSprinkler sprinkler
     ) {
-        this.entity = entity;
+        super(player);
+        this.itemInHand = itemInHand;
         this.location = location;
-        this.worldCrop = worldCrop;
+        this.fillMethod = fillMethod;
+        this.sprinkler = sprinkler;
     }
 
     @Override
@@ -70,16 +75,16 @@ public class CropBreakEvent extends Event implements Cancellable {
     }
 
     /**
-     * Get the crop's data, it might be null if it's spawned by other plugins in the wild
-     * @return crop data
+     * Get the item in player's hand
+     * @return item in hand
      */
-    @Nullable
-    public WorldCrop getWorldCrop() {
-        return worldCrop;
+    @NotNull
+    public ItemStack getItemInHand() {
+        return itemInHand;
     }
 
     /**
-     * Get the crop location
+     * Get the sprinkler location
      * @return location
      */
     @NotNull
@@ -87,16 +92,13 @@ public class CropBreakEvent extends Event implements Cancellable {
         return location;
     }
 
-    @Nullable
-    public Entity getEntity() {
-        return entity;
+    @NotNull
+    public PassiveFillMethod getFillMethod() {
+        return fillMethod;
     }
 
-    @Nullable
-    public Player getPlayer() {
-        if (entity instanceof Player player) {
-            return player;
-        }
-        return null;
+    @NotNull
+    public WorldSprinkler getSprinkler() {
+        return sprinkler;
     }
 }
