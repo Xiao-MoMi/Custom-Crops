@@ -78,10 +78,10 @@ public class OraxenProvider implements CustomProvider {
     }
 
     @Override
-    public String getItemID(ItemStack itemInHand) {
-        String id = OraxenItems.getIdByItem(itemInHand);
+    public String getItemID(ItemStack itemStack) {
+        String id = OraxenItems.getIdByItem(itemStack);
         if (id == null) {
-            return itemInHand.getType().name();
+            return itemStack.getType().name();
         }
         return id;
     }

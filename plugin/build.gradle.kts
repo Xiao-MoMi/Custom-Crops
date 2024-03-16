@@ -35,6 +35,7 @@ dependencies {
     compileOnly("net.Indyuce:MMOItems-API:6.9.2-SNAPSHOT")
     compileOnly("io.lumine:MythicLib-dist:1.6-SNAPSHOT")
     compileOnly("io.lumine:Mythic-Dist:5.3.5")
+    compileOnly("io.lumine:MythicCrucible-Dist:2.1.0-SNAPSHOT")
 
     // Quests
     compileOnly("org.betonquest:betonquest:2.0.0")
