@@ -28,7 +28,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * An event that triggered when a player interacts a crop with a bone meal
+ * An event that triggered when the bone meal is dispensed
  */
 public class BoneMealDispenseEvent extends Event implements Cancellable {
 
