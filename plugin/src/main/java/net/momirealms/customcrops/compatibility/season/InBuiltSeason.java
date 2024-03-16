@@ -21,6 +21,7 @@ import net.momirealms.customcrops.api.integration.SeasonInterface;
 import net.momirealms.customcrops.api.manager.ConfigManager;
 import net.momirealms.customcrops.api.manager.WorldManager;
 import net.momirealms.customcrops.api.mechanic.world.level.CustomCropsWorld;
+import net.momirealms.customcrops.api.mechanic.world.level.WorldInfoData;
 import net.momirealms.customcrops.api.mechanic.world.season.Season;
 import org.bukkit.World;
 import org.jetbrains.annotations.Nullable;
@@ -51,5 +52,23 @@ public class InBuiltSeason implements SeasonInterface {
                 .getCustomCropsWorld(world)
                 .map(cropsWorld -> cropsWorld.getInfoData().getDate())
                 .orElse(0);
+    }
+
+    @Override
+    public void setSeason(World world, Season season) {
+        worldManager.getCustomCropsWorld(world)
+                .ifPresent(customWorld -> {
+                    WorldInfoData infoData = customWorld.getInfoData();
+                    infoData.setSeason(season);
+                });
+    }
+
+    @Override
+    public void setDate(World world, int date) {
+        worldManager.getCustomCropsWorld(world)
+                .ifPresent(customWorld -> {
+                    WorldInfoData infoData = customWorld.getInfoData();
+                    infoData.setDate(date);
+                });
     }
 }

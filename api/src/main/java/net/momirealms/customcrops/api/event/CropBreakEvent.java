@@ -17,6 +17,7 @@
 
 package net.momirealms.customcrops.api.event;
 
+import net.momirealms.customcrops.api.mechanic.misc.Reason;
 import net.momirealms.customcrops.api.mechanic.world.level.WorldCrop;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -37,15 +38,18 @@ public class CropBreakEvent extends Event implements Cancellable {
     private final Location location;
     private final WorldCrop worldCrop;
     private final Entity entity;
+    private final Reason reason;
 
     public CropBreakEvent(
             @Nullable Entity entity,
             @NotNull Location location,
-            @Nullable WorldCrop worldCrop
+            @NotNull WorldCrop worldCrop,
+            @NotNull Reason reason
     ) {
         this.entity = entity;
         this.location = location;
         this.worldCrop = worldCrop;
+        this.reason = reason;
     }
 
     @Override
@@ -98,5 +102,10 @@ public class CropBreakEvent extends Event implements Cancellable {
             return player;
         }
         return null;
+    }
+
+    @NotNull
+    public Reason getReason() {
+        return reason;
     }
 }

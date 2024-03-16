@@ -125,6 +125,7 @@ public class RequirementManagerImpl implements RequirementManager {
         this.registerTemperatureRequirement();
         this.registerFertilizerRequirement();
         this.registerLightRequirement();
+        this.registerGameModeRequirement();
     }
 
     @NotNull
@@ -228,6 +229,21 @@ public class RequirementManagerImpl implements RequirementManager {
         });
     }
 
+    private void registerGameModeRequirement() {
+        registerRequirement("gamemode", (args, actions, advanced) -> {
+            List<String> modes = ConfigUtils.stringListArgs(args);
+            return condition -> {
+                if (condition.getPlayer() == null) return true;
+                var name = condition.getPlayer().getGameMode().name().toLowerCase(Locale.ENGLISH);
+                if (modes.contains(name)) {
+                    return true;
+                }
+                if (advanced) triggerActions(actions, condition);
+                return false;
+            };
+        });
+    }
+
     private void registerTemperatureRequirement() {
         registerRequirement("temperature", (args, actions, advanced) -> {
             List<Pair<Integer, Integer>> tempPairs = ConfigUtils.stringListArgs(args).stream().map(it -> ConfigUtils.splitStringIntegerArgs(it, "~")).toList();
@@ -317,6 +333,7 @@ public class RequirementManagerImpl implements RequirementManager {
         registerRequirement("level", (args, actions, advanced) -> {
             int level = (int) args;
             return state -> {
+                if (state.getPlayer() == null) return true;
                 int current = state.getPlayer().getLevel();
                 if (current >= level)
                     return true;
@@ -330,6 +347,7 @@ public class RequirementManagerImpl implements RequirementManager {
         registerRequirement("money", (args, actions, advanced) -> {
             double money = ConfigUtils.getDoubleValue(args);
             return state -> {
+                if (state.getPlayer() == null) return true;
                 double current = VaultHook.getEconomy().getBalance(state.getPlayer());
                 if (current >= money)
                     return true;
@@ -420,6 +438,7 @@ public class RequirementManagerImpl implements RequirementManager {
                 String key = section.getString("key");
                 int time = section.getInt("time");
                 return state -> {
+                    if (state.getPlayer() == null) return true;
                     if (!plugin.getCoolDownManager().isCoolDown(state.getPlayer().getUniqueId(), key, time)) {
                         return true;
                     }
@@ -451,6 +470,7 @@ public class RequirementManagerImpl implements RequirementManager {
         registerRequirement("sneak", (args, actions, advanced) -> {
             boolean sneak = (boolean) args;
             return state -> {
+                if (state.getPlayer() == null) return true;
                 if (sneak) {
                     if (state.getPlayer().isSneaking())
                         return true;
@@ -468,6 +488,7 @@ public class RequirementManagerImpl implements RequirementManager {
         registerRequirement("permission", (args, actions, advanced) -> {
             List<String> perms = ConfigUtils.stringListArgs(args);
             return state -> {
+                if (state.getPlayer() == null) return true;
                 for (String perm : perms)
                     if (state.getPlayer().hasPermission(perm))
                         return true;
@@ -478,6 +499,7 @@ public class RequirementManagerImpl implements RequirementManager {
         registerRequirement("!permission", (args, actions, advanced) -> {
             List<String> perms = ConfigUtils.stringListArgs(args);
             return state -> {
+                if (state.getPlayer() == null) return true;
                 for (String perm : perms)
                     if (state.getPlayer().hasPermission(perm)) {
                         if (advanced) triggerActions(actions, state);
@@ -934,6 +956,7 @@ public class RequirementManagerImpl implements RequirementManager {
             int required = Integer.parseInt(split[1]);
             String operator = potions.substring(split[0].length(), potions.length() - split[1].length());
             return state -> {
+                if (state.getPlayer() == null) return true;
                 int level = -1;
                 PotionEffect potionEffect = state.getPlayer().getPotionEffect(type);
                 if (potionEffect != null) {

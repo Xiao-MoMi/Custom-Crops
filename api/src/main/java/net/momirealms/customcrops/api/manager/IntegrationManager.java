@@ -22,7 +22,6 @@ import net.momirealms.customcrops.api.integration.LevelInterface;
 import net.momirealms.customcrops.api.integration.SeasonInterface;
 import net.momirealms.customcrops.api.mechanic.world.season.Season;
 import org.bukkit.World;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 public interface IntegrationManager extends Initable {
@@ -57,6 +56,4 @@ public interface IntegrationManager extends Initable {
     Season getSeason(World world);
 
     int getDate(World world);
-
-    ItemStack build(String itemID);
 }

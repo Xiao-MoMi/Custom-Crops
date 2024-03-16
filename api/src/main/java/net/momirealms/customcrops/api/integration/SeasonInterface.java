@@ -38,4 +38,20 @@ public interface SeasonInterface {
      * @return date
      */
     int getDate(World world);
+
+    /**
+     * Set a world's season
+     *
+     * @param world world
+     * @param season season
+     */
+    void setSeason(World world, Season season);
+
+    /**
+     * Set a world's date
+     *
+     * @param world world
+     * @param date date
+     */
+    void setDate(World world, int date);
 }

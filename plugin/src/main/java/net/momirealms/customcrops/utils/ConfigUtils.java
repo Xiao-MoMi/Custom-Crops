@@ -328,6 +328,7 @@ public class ConfigUtils {
                             innerSection.getInt("item-amount",1),
                             innerSection.getString("return"),
                             innerSection.getInt("return-amount",1),
+                            innerSection.getBoolean("dispenser",true),
                             getIntChancePair(innerSection.getConfigurationSection("chance")),
                             getActions(innerSection.getConfigurationSection("actions"))
                     );

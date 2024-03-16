@@ -17,39 +17,41 @@
 
 package net.momirealms.customcrops.api.event;
 
-import net.momirealms.customcrops.api.mechanic.misc.Reason;
-import net.momirealms.customcrops.api.mechanic.world.level.WorldGlass;
+import net.momirealms.customcrops.api.mechanic.item.BoneMeal;
+import net.momirealms.customcrops.api.mechanic.world.level.WorldCrop;
 import org.bukkit.Location;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
- * An event that triggered when breaking greenhouse glass
+ * An event that triggered when a player interacts a crop with a bone meal
  */
-public class GreenhouseGlassBreakEvent extends Event implements Cancellable {
+public class BoneMealUseEvent extends Event implements Cancellable {
 
     private static final HandlerList handlers = new HandlerList();
     private boolean cancelled;
     private final Location location;
-    private final Entity entity;
-    private final Reason reason;
-    private final WorldGlass glass;
+    private final BoneMeal boneMeal;
+    private final WorldCrop crop;
+    private final ItemStack itemInHand;
+    private final Player player;
 
-    public GreenhouseGlassBreakEvent(
-            @Nullable Entity entity,
+    public BoneMealUseEvent(
+            @NotNull Player player,
+            @NotNull ItemStack itemInHand,
             @NotNull Location location,
-            @NotNull WorldGlass glass,
-            @NotNull Reason reason
+            @NotNull BoneMeal boneMeal,
+            @NotNull WorldCrop crop
     ) {
-        this.entity = entity;
         this.location = location;
-        this.reason = reason;
-        this.glass = glass;
+        this.crop = crop;
+        this.boneMeal = boneMeal;
+        this.itemInHand = itemInHand;
+        this.player = player;
     }
 
     @Override
@@ -74,7 +76,7 @@ public class GreenhouseGlassBreakEvent extends Event implements Cancellable {
     }
 
     /**
-     * Get the glass location
+     * Get the crop location
      * @return location
      */
     @NotNull
@@ -82,26 +84,28 @@ public class GreenhouseGlassBreakEvent extends Event implements Cancellable {
         return location;
     }
 
-    @Nullable
-    public Entity getEntity() {
-        return entity;
+    /**
+     * Get the item in player's hand
+     * If there's nothing in hand, it would return AIR
+     * @return item in hand
+     */
+    @NotNull
+    public ItemStack getItemInHand() {
+        return itemInHand;
     }
 
-    @Nullable
+    @NotNull
+    public WorldCrop getCrop() {
+        return crop;
+    }
+
+    @NotNull
+    public BoneMeal getBoneMeal() {
+        return boneMeal;
+    }
+
+    @NotNull
     public Player getPlayer() {
-        if (entity instanceof Player player) {
-            return player;
-        }
-        return null;
-    }
-
-    @NotNull
-    public Reason getReason() {
-        return reason;
-    }
-
-    @NotNull
-    public WorldGlass getGlass() {
-        return glass;
+        return player;
     }
 }

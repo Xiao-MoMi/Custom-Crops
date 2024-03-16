@@ -38,6 +38,7 @@ import net.momirealms.customcrops.api.mechanic.item.fertilizer.QualityCrop;
 import net.momirealms.customcrops.api.mechanic.item.fertilizer.Variation;
 import net.momirealms.customcrops.api.mechanic.item.fertilizer.YieldIncrease;
 import net.momirealms.customcrops.api.mechanic.misc.CRotation;
+import net.momirealms.customcrops.api.mechanic.misc.Reason;
 import net.momirealms.customcrops.api.mechanic.misc.Value;
 import net.momirealms.customcrops.api.mechanic.requirement.Requirement;
 import net.momirealms.customcrops.api.mechanic.world.ChunkCoordinate;
@@ -696,7 +697,7 @@ public class ActionManagerImpl implements ActionManager {
                         switch (removed.get().getType()) {
                             case SPRINKLER -> {
                                 WorldSprinkler sprinkler = (WorldSprinkler) removed.get();
-                                SprinklerBreakEvent event = new SprinklerBreakEvent(state.getPlayer(), state.getLocation(), sprinkler);
+                                SprinklerBreakEvent event = new SprinklerBreakEvent(state.getPlayer(), state.getLocation(), sprinkler, Reason.ACTION);
                                 if (EventUtils.fireAndCheckCancel(event))
                                     return;
                                 if (arg) sprinkler.getConfig().trigger(ActionTrigger.BREAK, state);
@@ -705,7 +706,7 @@ public class ActionManagerImpl implements ActionManager {
                             }
                             case CROP -> {
                                 WorldCrop crop = (WorldCrop) removed.get();
-                                CropBreakEvent event = new CropBreakEvent(state.getPlayer(), state.getLocation(), crop);
+                                CropBreakEvent event = new CropBreakEvent(state.getPlayer(), state.getLocation(), crop, Reason.ACTION);
                                 if (EventUtils.fireAndCheckCancel(event))
                                     return;
                                 Crop cropConfig = crop.getConfig();
@@ -718,7 +719,7 @@ public class ActionManagerImpl implements ActionManager {
                             }
                             case POT -> {
                                 WorldPot pot = (WorldPot) removed.get();
-                                PotBreakEvent event = new PotBreakEvent(state.getPlayer(), state.getLocation(), pot);
+                                PotBreakEvent event = new PotBreakEvent(state.getPlayer(), state.getLocation(), pot, Reason.ACTION);
                                 if (EventUtils.fireAndCheckCancel(event))
                                     return;
                                 if (arg) pot.getConfig().trigger(ActionTrigger.BREAK, state);

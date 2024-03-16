@@ -17,28 +17,39 @@
 
 package net.momirealms.customcrops.api.event;
 
+import net.momirealms.customcrops.api.mechanic.misc.Reason;
+import net.momirealms.customcrops.api.mechanic.world.level.WorldScarecrow;
 import org.bukkit.Location;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
+import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
-import org.bukkit.event.player.PlayerEvent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * An event that triggered when breaking a scarecrow
  */
-public class ScarecrowBreakEvent extends PlayerEvent implements Cancellable {
+public class ScarecrowBreakEvent extends Event implements Cancellable {
 
     private static final HandlerList handlers = new HandlerList();
     private boolean cancelled;
     private final Location location;
+    private final Entity entity;
+    private final Reason reason;
+    private final WorldScarecrow scarecrow;
 
     public ScarecrowBreakEvent(
-            @NotNull Player who,
-            @NotNull Location location
+            @Nullable Entity entity,
+            @NotNull Location location,
+            @NotNull WorldScarecrow scarecrow,
+            @NotNull Reason reason
     ) {
-        super(who);
         this.location = location;
+        this.reason = reason;
+        this.entity = entity;
+        this.scarecrow = scarecrow;
     }
 
     @Override
@@ -69,5 +80,28 @@ public class ScarecrowBreakEvent extends PlayerEvent implements Cancellable {
     @NotNull
     public Location getLocation() {
         return location;
+    }
+
+    @Nullable
+    public Entity getEntity() {
+        return entity;
+    }
+
+    @Nullable
+    public Player getPlayer() {
+        if (entity instanceof Player player) {
+            return player;
+        }
+        return null;
+    }
+
+    @NotNull
+    public Reason getReason() {
+        return reason;
+    }
+
+    @NotNull
+    public WorldScarecrow getScarecrow() {
+        return scarecrow;
     }
 }

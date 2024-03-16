@@ -18,17 +18,19 @@
 package net.momirealms.customcrops.mechanic.item.custom;
 
 import net.momirealms.customcrops.api.CustomCropsPlugin;
+import net.momirealms.customcrops.api.event.BoneMealDispenseEvent;
 import net.momirealms.customcrops.api.manager.ConfigManager;
 import net.momirealms.customcrops.api.manager.WorldManager;
-import net.momirealms.customcrops.api.mechanic.item.Crop;
-import net.momirealms.customcrops.api.mechanic.item.Pot;
-import net.momirealms.customcrops.api.mechanic.item.Sprinkler;
-import net.momirealms.customcrops.api.mechanic.item.WateringCan;
+import net.momirealms.customcrops.api.mechanic.item.*;
+import net.momirealms.customcrops.api.mechanic.requirement.State;
 import net.momirealms.customcrops.api.mechanic.world.SimpleLocation;
+import net.momirealms.customcrops.api.mechanic.world.level.WorldCrop;
 import net.momirealms.customcrops.mechanic.item.ItemManagerImpl;
+import net.momirealms.customcrops.utils.EventUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.Dispenser;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
@@ -38,12 +40,16 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.*;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
+import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.ItemSpawnEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemDamageEvent;
 import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Optional;
 
 public abstract class AbstractCustomListener implements Listener {
 
@@ -195,19 +201,76 @@ public abstract class AbstractCustomListener implements Listener {
         }
     }
 
+    @EventHandler (ignoreCancelled = true)
+    public void onExplosion(EntityExplodeEvent event) {
+        this.itemManager.handleExplosion(event.getEntity(), event.blockList(), event);
+    }
+
+    @EventHandler (ignoreCancelled = true)
+    public void onExplosion(BlockExplodeEvent event) {
+        this.itemManager.handleExplosion(null, event.blockList(), event);
+    }
+
+    @EventHandler (ignoreCancelled = true)
+    public void onDispenser(BlockDispenseEvent event) {
+        Block block = event.getBlock();
+        if (block.getBlockData() instanceof org.bukkit.block.data.type.Dispenser directional) {
+            Block relative = block.getRelative(directional.getFacing());
+            Location location = relative.getLocation();
+            SimpleLocation simpleLocation = SimpleLocation.of(location);
+            Optional<WorldCrop> worldCropOptional = CustomCropsPlugin.get().getWorldManager().getCropAt(simpleLocation);
+            if (worldCropOptional.isPresent()) {
+                WorldCrop crop = worldCropOptional.get();
+                Crop config = crop.getConfig();
+                ItemStack itemStack = event.getItem();
+                String itemID = itemManager.getItemID(itemStack);
+                if (crop.getPoint() < config.getMaxPoints()) {
+                    for (BoneMeal boneMeal : config.getBoneMeals()) {
+                        if (boneMeal.getItem().equals(itemID)) {
+                            // fire the event
+                            if (EventUtils.fireAndCheckCancel(new BoneMealDispenseEvent(block, itemStack, location, boneMeal, crop))) {
+                                event.setCancelled(true);
+                                return;
+                            }
+
+                            if (block.getState() instanceof Dispenser dispenser) {
+                                event.setCancelled(true);
+                                Inventory inventory = dispenser.getInventory();
+                                for (ItemStack storage : inventory.getStorageContents()) {
+                                    if (storage == null) continue;
+                                    String id = itemManager.getItemID(storage);
+                                    if (id.equals(itemID)) {
+                                        storage.setAmount(storage.getAmount() - 1);
+                                        boneMeal.trigger(new State(null, itemStack, location));
+                                        CustomCropsPlugin.get().getWorldManager().addPointToCrop(config, simpleLocation, boneMeal.getPoint());
+                                    }
+                                }
+                            }
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     public void onPlaceBlock(Player player, Block block, String blockID, Cancellable event) {
+        if (player == null) return;
         this.itemManager.handlePlayerPlaceBlock(player, block, blockID, event);
     }
 
     public void onBreakFurniture(Player player, Location location, String id, Cancellable event) {
+        if (player == null) return;
         this.itemManager.handlePlayerBreakFurniture(player, location, id, event);
     }
 
     public void onPlaceFurniture(Player player, Location location, String id, Cancellable event) {
+        if (player == null) return;
         this.itemManager.handlePlayerPlaceFurniture(player, location, id, event);
     }
 
     public void onInteractFurniture(Player player, Location location, String id, @Nullable Entity baseEntity, Cancellable event) {
+        if (player == null) return;
         this.itemManager.handlePlayerInteractFurniture(player, location, id, baseEntity, event);
     }
 }

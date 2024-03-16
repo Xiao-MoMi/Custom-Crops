@@ -17,9 +17,11 @@
 
 package net.momirealms.customcrops.api.event;
 
+import net.momirealms.customcrops.api.mechanic.misc.Reason;
 import net.momirealms.customcrops.api.mechanic.world.level.WorldPot;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
@@ -36,15 +38,18 @@ public class PotBreakEvent extends Event implements Cancellable {
     private final Location location;
     private final WorldPot pot;
     private final Entity entity;
+    private final Reason reason;
 
     public PotBreakEvent(
             @Nullable Entity entity,
             @NotNull Location location,
-            @NotNull WorldPot pot
+            @NotNull WorldPot pot,
+            @NotNull Reason reason
     ) {
         this.entity = entity;
         this.location = location;
         this.pot = pot;
+        this.reason = reason;
     }
 
     @Override
@@ -87,12 +92,21 @@ public class PotBreakEvent extends Event implements Cancellable {
         return pot;
     }
 
-    /**
-     * It would be null if the event is not triggered by an entity
-     * @return entity
-     */
     @Nullable
     public Entity getEntity() {
         return entity;
+    }
+
+    @Nullable
+    public Player getPlayer() {
+        if (entity instanceof Player player) {
+            return player;
+        }
+        return null;
+    }
+
+    @NotNull
+    public Reason getReason() {
+        return reason;
     }
 }

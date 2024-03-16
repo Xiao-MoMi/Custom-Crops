@@ -88,9 +88,7 @@ public class CChunk implements CustomCropsChunk {
 
     @Override
     public void notifyOfflineUpdates() {
-        long delta = this.lastLoadedTime - System.currentTimeMillis();
-        int seconds = (int) (delta / 1000);
-
+        this.lastLoadedTime = System.currentTimeMillis();
     }
 
     public void setWorld(CWorld cWorld) {

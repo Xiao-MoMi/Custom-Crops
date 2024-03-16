@@ -17,31 +17,38 @@
 
 package net.momirealms.customcrops.api.event;
 
+import net.momirealms.customcrops.api.mechanic.misc.Reason;
 import net.momirealms.customcrops.api.mechanic.world.level.WorldSprinkler;
 import org.bukkit.Location;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
+import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
-import org.bukkit.event.player.PlayerEvent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * An event that triggered when breaking a sprinkler
  */
-public class SprinklerBreakEvent extends PlayerEvent implements Cancellable {
+public class SprinklerBreakEvent extends Event implements Cancellable {
 
     private static final HandlerList handlers = new HandlerList();
     private boolean cancelled;
     private final Location location;
     private final WorldSprinkler sprinkler;
+    private final Entity entity;
+    private final Reason reason;
 
     public SprinklerBreakEvent(
-            @NotNull Player who,
+            @Nullable Entity entity,
             @NotNull Location location,
-            @NotNull WorldSprinkler sprinkler
+            @NotNull WorldSprinkler sprinkler,
+            @NotNull Reason reason
     ) {
-        super(who);
+        this.entity = entity;
         this.location = location;
+        this.reason = reason;
         this.sprinkler = sprinkler;
     }
 
@@ -82,5 +89,23 @@ public class SprinklerBreakEvent extends PlayerEvent implements Cancellable {
     @NotNull
     public WorldSprinkler getSprinkler() {
         return sprinkler;
+    }
+
+    @Nullable
+    public Entity getEntity() {
+        return entity;
+    }
+
+    @Nullable
+    public Player getPlayer() {
+        if (entity instanceof Player player) {
+            return player;
+        }
+        return null;
+    }
+
+    @NotNull
+    public Reason getReason() {
+        return reason;
     }
 }

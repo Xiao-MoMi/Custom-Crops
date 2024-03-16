@@ -42,8 +42,8 @@ public class WateringCanFillEvent extends PlayerEvent implements Cancellable {
     public WateringCanFillEvent(
             @NotNull Player player,
             @NotNull ItemStack itemInHand,
-            @NotNull WateringCan wateringCan,
             @NotNull Location location,
+            @NotNull WateringCan wateringCan,
             @NotNull PositiveFillMethod fillMethod
     ) {
         super(player);

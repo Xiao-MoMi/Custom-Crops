@@ -32,7 +32,6 @@ import net.momirealms.customcrops.compatibility.season.AdvancedSeasonsImpl;
 import net.momirealms.customcrops.compatibility.season.InBuiltSeason;
 import net.momirealms.customcrops.compatibility.season.RealisticSeasonsImpl;
 import org.bukkit.World;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
@@ -160,10 +159,5 @@ public class IntegrationManagerImpl implements IntegrationManager {
     @Override
     public int getDate(World world) {
         return seasonInterface.getDate(world);
-    }
-
-    @Override
-    public ItemStack build(String itemID) {
-        return null;
     }
 }

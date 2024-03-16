@@ -45,4 +45,20 @@ public class AdvancedSeasonsImpl implements SeasonInterface {
     public int getDate(World world) {
         return 0;
     }
+
+    @Override
+    public void setSeason(World world, Season season) {
+        String seasonName = switch (season) {
+            case AUTUMN -> "FALL";
+            case WINTER -> "WINTER";
+            case SUMMER -> "SUMMER";
+            case SPRING -> "SPRING";
+        };
+        api.setSeason(seasonName, world);
+    }
+
+    @Override
+    public void setDate(World world, int date) {
+
+    }
 }

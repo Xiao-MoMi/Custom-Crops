@@ -17,8 +17,8 @@
 
 package net.momirealms.customcrops.api.event;
 
-import net.momirealms.customcrops.api.common.item.KeyItem;
 import net.momirealms.customcrops.api.mechanic.item.WateringCan;
+import net.momirealms.customcrops.api.mechanic.world.CustomCropsBlock;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
@@ -26,6 +26,8 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Set;
 
 /**
  * An event that triggered when player tries to use watering-can to add water to pots/sprinklers
@@ -36,15 +38,15 @@ public class WateringCanWaterEvent extends PlayerEvent implements Cancellable {
     private boolean cancelled;
     private final ItemStack itemInHand;
     private final WateringCan wateringCan;
-    private final KeyItem potOrSprinkler;
-    private final Location location;
+    private final CustomCropsBlock potOrSprinkler;
+    private final Set<Location> location;
 
     public WateringCanWaterEvent(
             @NotNull Player player,
             @NotNull ItemStack itemInHand,
+            @NotNull Set<Location> location,
             @NotNull WateringCan wateringCan,
-            @NotNull Location location,
-            @NotNull KeyItem potOrSprinkler
+            @NotNull CustomCropsBlock potOrSprinkler
     ) {
         super(player);
         this.cancelled = false;
@@ -85,12 +87,12 @@ public class WateringCanWaterEvent extends PlayerEvent implements Cancellable {
     }
 
     @NotNull
-    public Location getLocation() {
+    public Set<Location> getLocation() {
         return location;
     }
 
     @NotNull
-    public KeyItem getPotOrSprinkler() {
+    public CustomCropsBlock getPotOrSprinkler() {
         return potOrSprinkler;
     }
 }

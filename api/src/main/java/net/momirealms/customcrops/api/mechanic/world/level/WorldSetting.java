@@ -112,7 +112,7 @@ public class WorldSetting implements Cloneable {
         );
     }
 
-    public boolean isEnableScheduler() {
+    public boolean isSchedulerEnabled() {
         return enableScheduler;
     }
 

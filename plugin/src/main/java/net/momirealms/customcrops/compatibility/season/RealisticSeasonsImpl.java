@@ -18,6 +18,7 @@
 package net.momirealms.customcrops.compatibility.season;
 
 import me.casperge.realisticseasons.api.SeasonsAPI;
+import me.casperge.realisticseasons.calendar.Date;
 import net.momirealms.customcrops.api.integration.SeasonInterface;
 import net.momirealms.customcrops.api.mechanic.world.season.Season;
 import org.bukkit.World;
@@ -25,9 +26,15 @@ import org.jetbrains.annotations.Nullable;
 
 public class RealisticSeasonsImpl implements SeasonInterface {
 
+    private final SeasonsAPI api;
+
+    public RealisticSeasonsImpl() {
+        this.api = SeasonsAPI.getInstance();
+    }
+
     @Override
     public @Nullable Season getSeason(World world) {
-        return switch (SeasonsAPI.getInstance().getSeason(world)) {
+        return switch (api.getSeason(world)) {
             case WINTER -> Season.WINTER;
             case SPRING -> Season.SPRING;
             case SUMMER -> Season.SUMMER;
@@ -38,6 +45,23 @@ public class RealisticSeasonsImpl implements SeasonInterface {
 
     @Override
     public int getDate(World world) {
-        return SeasonsAPI.getInstance().getDate(world).getDay();
+        return api.getDate(world).getDay();
+    }
+
+    @Override
+    public void setSeason(World world, Season season) {
+        me.casperge.realisticseasons.season.Season rsSeason = switch (season) {
+            case AUTUMN -> me.casperge.realisticseasons.season.Season.FALL;
+            case SUMMER -> me.casperge.realisticseasons.season.Season.SUMMER;
+            case WINTER -> me.casperge.realisticseasons.season.Season.WINTER;
+            case SPRING -> me.casperge.realisticseasons.season.Season.SPRING;
+        };
+        api.setSeason(world, rsSeason);
+    }
+
+    @Override
+    public void setDate(World world, int date) {
+        Date rsDate = api.getDate(world);
+        api.setDate(world, new Date(date, rsDate.getMonth(), rsDate.getYear()));
     }
 }

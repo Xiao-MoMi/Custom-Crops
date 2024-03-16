@@ -32,14 +32,24 @@ public class BoneMeal {
     private final int returnedAmount;
     private final List<Pair<Double, Integer>> pointGainList;
     private final Action[] actions;
+    private final boolean dispenserAllowed;
 
-    public BoneMeal(String item, int usedAmount, String returned, int returnedAmount, List<Pair<Double, Integer>> pointGainList, Action[] actions) {
+    public BoneMeal(
+            String item,
+            int usedAmount,
+            String returned,
+            int returnedAmount,
+            boolean dispenserAllowed,
+            List<Pair<Double, Integer>> pointGainList,
+            Action[] actions
+    ) {
         this.item = item;
         this.returned = returned;
         this.pointGainList = pointGainList;
         this.actions = actions;
         this.usedAmount = usedAmount;
         this.returnedAmount = returnedAmount;
+        this.dispenserAllowed = dispenserAllowed;
     }
 
     public String getItem() {
@@ -69,5 +79,9 @@ public class BoneMeal {
 
     public int getReturnedAmount() {
         return returnedAmount;
+    }
+
+    public boolean isDispenserAllowed() {
+        return dispenserAllowed;
     }
 }

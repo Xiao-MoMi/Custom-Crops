@@ -133,7 +133,7 @@ public class ConfigManagerImpl extends ConfigManager {
 
         syncSeasons = mechanics.getBoolean("sync-season.enable", true);
         if (syncSeasons) {
-            referenceWorld = new WeakReference<>(Bukkit.getWorld(Objects.requireNonNull(mechanics.getString("sync-season.reference"))));
+            referenceWorld = new WeakReference<>(Bukkit.getWorld(mechanics.getString("sync-season.reference", "world")));
         }
     }
 

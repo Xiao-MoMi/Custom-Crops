@@ -94,8 +94,10 @@ public class CWorld implements CustomCropsWorld {
         if (setting.isAutoSeasonChange()) {
             this.updateSeasonAndDate();
         }
-        for (CChunk chunk : loadedChunks.values()) {
-            chunk.secondTimer();
+        if (setting.isSchedulerEnabled()) {
+            for (CChunk chunk : loadedChunks.values()) {
+                chunk.secondTimer();
+            }
         }
     }
 

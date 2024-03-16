@@ -17,39 +17,41 @@
 
 package net.momirealms.customcrops.api.event;
 
-import net.momirealms.customcrops.api.mechanic.misc.Reason;
-import net.momirealms.customcrops.api.mechanic.world.level.WorldGlass;
+import net.momirealms.customcrops.api.mechanic.item.Fertilizer;
+import net.momirealms.customcrops.api.mechanic.world.level.WorldPot;
 import org.bukkit.Location;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
-import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+import org.bukkit.event.player.PlayerEvent;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
- * An event that triggered when breaking greenhouse glass
+ * An event that triggered when player tries adding fertilizer to pot
  */
-public class GreenhouseGlassBreakEvent extends Event implements Cancellable {
+public class FertilizerUseEvent extends PlayerEvent implements Cancellable {
 
     private static final HandlerList handlers = new HandlerList();
     private boolean cancelled;
+    private final ItemStack itemInHand;
     private final Location location;
-    private final Entity entity;
-    private final Reason reason;
-    private final WorldGlass glass;
+    private final WorldPot pot;
+    private final Fertilizer fertilizer;
 
-    public GreenhouseGlassBreakEvent(
-            @Nullable Entity entity,
+    public FertilizerUseEvent(
+            @NotNull Player player,
+            @NotNull ItemStack itemInHand,
+            @NotNull Fertilizer fertilizer,
             @NotNull Location location,
-            @NotNull WorldGlass glass,
-            @NotNull Reason reason
+            @NotNull WorldPot pot
     ) {
-        this.entity = entity;
+        super(player);
+        this.cancelled = false;
+        this.itemInHand = itemInHand;
+        this.fertilizer = fertilizer;
         this.location = location;
-        this.reason = reason;
-        this.glass = glass;
+        this.pot = pot;
     }
 
     @Override
@@ -59,7 +61,12 @@ public class GreenhouseGlassBreakEvent extends Event implements Cancellable {
 
     @Override
     public void setCancelled(boolean cancel) {
-        this.cancelled = cancel;
+        cancelled = cancel;
+    }
+
+    @Override
+    public @NotNull HandlerList getHandlers() {
+        return handlers;
     }
 
     @NotNull
@@ -68,40 +75,22 @@ public class GreenhouseGlassBreakEvent extends Event implements Cancellable {
     }
 
     @NotNull
-    @Override
-    public HandlerList getHandlers() {
-        return getHandlerList();
+    public ItemStack getItemInHand() {
+        return itemInHand;
     }
 
-    /**
-     * Get the glass location
-     * @return location
-     */
     @NotNull
     public Location getLocation() {
         return location;
     }
 
-    @Nullable
-    public Entity getEntity() {
-        return entity;
-    }
-
-    @Nullable
-    public Player getPlayer() {
-        if (entity instanceof Player player) {
-            return player;
-        }
-        return null;
+    @NotNull
+    public WorldPot getPot() {
+        return pot;
     }
 
     @NotNull
-    public Reason getReason() {
-        return reason;
-    }
-
-    @NotNull
-    public WorldGlass getGlass() {
-        return glass;
+    public Fertilizer getFertilizer() {
+        return fertilizer;
     }
 }

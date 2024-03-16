@@ -259,6 +259,8 @@ tomato:
   custom-bone-meal:
     bone_meal_1:
       item: BONE_MEAL
+      # Allow to be used with dispenser
+      dispenser: true
       chance:
         2: 0.2
         1: 0.6

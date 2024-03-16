@@ -37,7 +37,12 @@ public class SprinklerPlaceEvent extends PlayerEvent implements Cancellable {
     private final Location location;
     private final Sprinkler sprinkler;
 
-    public SprinklerPlaceEvent(@NotNull Player who, ItemStack itemInHand, Location location, Sprinkler sprinkler) {
+    public SprinklerPlaceEvent(
+            @NotNull Player who,
+            @NotNull ItemStack itemInHand,
+            @NotNull Location location,
+            @NotNull Sprinkler sprinkler
+    ) {
         super(who);
         this.itemInHand = itemInHand;
         this.location = location;

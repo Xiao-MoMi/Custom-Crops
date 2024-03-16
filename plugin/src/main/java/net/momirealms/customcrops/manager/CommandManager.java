@@ -26,6 +26,10 @@ import net.momirealms.customcrops.api.CustomCropsPlugin;
 import net.momirealms.customcrops.api.common.Initable;
 import net.momirealms.customcrops.api.integration.SeasonInterface;
 import net.momirealms.customcrops.api.manager.MessageManager;
+import net.momirealms.customcrops.api.mechanic.item.ItemType;
+import net.momirealms.customcrops.api.mechanic.world.CustomCropsBlock;
+import net.momirealms.customcrops.api.mechanic.world.level.CustomCropsChunk;
+import net.momirealms.customcrops.api.mechanic.world.level.CustomCropsSection;
 import net.momirealms.customcrops.api.mechanic.world.level.CustomCropsWorld;
 import net.momirealms.customcrops.api.mechanic.world.season.Season;
 import net.momirealms.customcrops.compatibility.season.InBuiltSeason;
@@ -54,8 +58,8 @@ public class CommandManager implements Initable {
                         getReloadCommand(),
                         getAboutCommand(),
                         getSeasonCommand(),
-                        getDateCommand()
-                        //getStressTest()
+                        getDateCommand(),
+                        getForceTickCommand()
                 )
                 .register();
     }
@@ -83,6 +87,32 @@ public class CommandManager implements Initable {
             plugin.getAdventure().sendMessage(sender, "<#FF7F50>\uD83D\uDD25 Contributors: <#FFA07A>Cha_Shao<white>, <#FFA07A>TopOrigin<white>, <#FFA07A>AmazingCat");
             plugin.getAdventure().sendMessage(sender, "<#FFD700>⭐ <click:open_url:https://mo-mi.gitbook.io/xiaomomi-plugins/plugin-wiki/customcrops>Document</click> <#A9A9A9>| <#FAFAD2>⛏ <click:open_url:https://github.com/Xiao-MoMi/Custom-Crops>Github</click> <#A9A9A9>| <#48D1CC>\uD83D\uDD14 <click:open_url:https://polymart.org/resource/customcrops.2625>Polymart</click>");
         });
+    }
+
+    private CommandAPICommand getForceTickCommand() {
+        return new CommandAPICommand("force-tick")
+                .withArguments(new WorldArgument("world"))
+                .withArguments(new StringArgument("type").replaceSuggestions(ArgumentSuggestions.strings("sprinkler", "crop", "pot", "scarecrow", "greenhouse")))
+                .executes((sender, args) -> {
+                    World world = (World) args.get("world");
+                    ItemType itemType = ItemType.valueOf(((String) args.get("type")).toUpperCase(Locale.ENGLISH));
+                    Optional<CustomCropsWorld> customCropsWorld = plugin.getWorldManager().getCustomCropsWorld(world);
+                    if (customCropsWorld.isEmpty()) {
+                        plugin.getAdventure().sendMessageWithPrefix(sender, "CustomCrops is not enabled in that world");
+                        return;
+                    }
+                    plugin.getScheduler().runTaskAsync(() -> {
+                        for (CustomCropsChunk chunk : customCropsWorld.get().getChunkStorage()) {
+                            for (CustomCropsSection section : chunk.getSections()) {
+                                for (CustomCropsBlock block : section.getBlocks()) {
+                                    if (block.getType() == itemType) {
+                                        block.tick(1);
+                                    }
+                                }
+                            }
+                        }
+                    });
+                });
     }
 
     private CommandAPICommand getDateCommand() {
@@ -176,45 +206,4 @@ public class CommandManager implements Initable {
                                 })
                 );
     }
-
-//    private CommandAPICommand getStressTest() {
-//        return new CommandAPICommand("test").executes((sender, args) -> {
-//            for (int i = 0; i < 16; i++) {
-//                for (int j = 0; j < 16; j++) {
-//                    for (int k = -64; k < 0; k++) {
-//                        SimpleLocation location = new SimpleLocation("world", 1024 + i, k, 1024 + j);
-//                        plugin.getWorldManager().addCropAt(new MemoryCrop(location, "tomato", 0), location);
-//                    }
-//                    for (int k = 1; k < 64; k++) {
-//                        SimpleLocation location = new SimpleLocation("world", 1024 + i, k, 1024 + j);
-//                        plugin.getWorldManager().addCropAt(new MemoryCrop(location, "tomato", 1), location);
-//                    }
-//                    for (int k = 65; k < 128; k++) {
-//                        SimpleLocation location = new SimpleLocation("world", 1024 + i, k, 1024 + j);
-//                        plugin.getWorldManager().addCropAt(new MemoryCrop(location, "tomato", 2), location);
-//                    }
-//                    for (int k = 129; k < 165; k++) {
-//                        SimpleLocation location = new SimpleLocation("world", 1024 + i, k, 1024 + j);
-//                        plugin.getWorldManager().addPotAt(new MemoryPot(location, "default"), location);
-//                    }
-//                    for (int k = 166; k < 190; k++) {
-//                        SimpleLocation location = new SimpleLocation("world", 1024 + i, k, 1024 + j);
-//                        plugin.getWorldManager().addPotAt(new MemoryPot(location, "sprinkler"), location);
-//                    }
-//                    for (int k = 191; k < 250; k++) {
-//                        SimpleLocation location = new SimpleLocation("world", 1024 + i, k, 1024 + j);
-//                        plugin.getWorldManager().addCropAt(new MemoryCrop(location, "tomato", 3), location);
-//                    }
-//                    for (int k = 251; k < 300; k++) {
-//                        SimpleLocation location = new SimpleLocation("world", 1024 + i, k, 1024 + j);
-//                        plugin.getWorldManager().addCropAt(new MemoryCrop(location, "sbsbssbsb", 3), location);
-//                    }
-//                    for (int k = 301; k < 320; k++) {
-//                        SimpleLocation location = new SimpleLocation("world", 1024 + i, k, 1024 + j);
-//                        plugin.getWorldManager().addCropAt(new MemoryCrop(location, "sbsbssbsb", 2), location);
-//                    }
-//                }
-//            }
-//        });
-//    }
 }
