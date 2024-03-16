@@ -227,12 +227,14 @@ public abstract class AbstractCustomListener implements Listener {
                 if (crop.getPoint() < config.getMaxPoints()) {
                     for (BoneMeal boneMeal : config.getBoneMeals()) {
                         if (boneMeal.getItem().equals(itemID)) {
+                            if (!boneMeal.isDispenserAllowed()) {
+                                return;
+                            }
                             // fire the event
                             if (EventUtils.fireAndCheckCancel(new BoneMealDispenseEvent(block, itemStack, location, boneMeal, crop))) {
                                 event.setCancelled(true);
                                 return;
                             }
-
                             if (block.getState() instanceof Dispenser dispenser) {
                                 event.setCancelled(true);
                                 Inventory inventory = dispenser.getInventory();
