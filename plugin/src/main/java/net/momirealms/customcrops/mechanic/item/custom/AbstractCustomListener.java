@@ -20,6 +20,7 @@ package net.momirealms.customcrops.mechanic.item.custom;
 import net.momirealms.customcrops.api.CustomCropsPlugin;
 import net.momirealms.customcrops.api.event.BoneMealDispenseEvent;
 import net.momirealms.customcrops.api.manager.ConfigManager;
+import net.momirealms.customcrops.api.manager.VersionManager;
 import net.momirealms.customcrops.api.manager.WorldManager;
 import net.momirealms.customcrops.api.mechanic.item.*;
 import net.momirealms.customcrops.api.mechanic.requirement.State;
@@ -49,14 +50,51 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 
 public abstract class AbstractCustomListener implements Listener {
 
     protected ItemManagerImpl itemManager;
+    private final HashSet<Material> CUSTOM_MATERIAL = new HashSet<>();
 
     public AbstractCustomListener(ItemManagerImpl itemManager) {
         this.itemManager = itemManager;
+        this.CUSTOM_MATERIAL.addAll(
+                List.of(
+                        Material.NOTE_BLOCK,
+                        Material.MUSHROOM_STEM,
+                        Material.BROWN_MUSHROOM_BLOCK,
+                        Material.RED_MUSHROOM_BLOCK,
+                        Material.TRIPWIRE,
+                        Material.CHORUS_PLANT,
+                        Material.CHORUS_FLOWER,
+                        Material.ACACIA_LEAVES,
+                        Material.BIRCH_LEAVES,
+                        Material.JUNGLE_LEAVES,
+                        Material.DARK_OAK_LEAVES,
+                        Material.AZALEA_LEAVES,
+                        Material.FLOWERING_AZALEA_LEAVES,
+                        Material.OAK_LEAVES,
+                        Material.SPRUCE_LEAVES,
+                        Material.CAVE_VINES,
+                        Material.TWISTING_VINES,
+                        Material.WEEPING_VINES,
+                        Material.KELP,
+                        Material.CACTUS
+                )
+        );
+        if (VersionManager.isHigherThan1_19()) {
+            this.CUSTOM_MATERIAL.add(
+                Material.MANGROVE_LEAVES
+            );
+        }
+        if (VersionManager.isHigherThan1_20()) {
+            this.CUSTOM_MATERIAL.add(
+                Material.CHERRY_LEAVES
+            );
+        }
     }
 
     @EventHandler (ignoreCancelled = true)
@@ -92,9 +130,15 @@ public abstract class AbstractCustomListener implements Listener {
     @EventHandler (ignoreCancelled = true, priority = EventPriority.LOW)
     public void onBreakBlock(BlockBreakEvent event) {
         Player player = event.getPlayer();
+        Block block = event.getBlock();
+        Material type = block.getType();
+        // custom block should be handled by other plugins' events
+        if (CUSTOM_MATERIAL.contains(type))
+            return;
         this.itemManager.handlePlayerBreakBlock(
                 player,
-                event.getBlock(),
+                block,
+                type.name(),
                 event
         );
     }
@@ -160,7 +204,7 @@ public abstract class AbstractCustomListener implements Listener {
                 event.setCancelled(true);
                 return;
             }
-            itemManager.handleEntityBreakBlock(event.getEntity(), block, event);
+            itemManager.handleEntityTramplingBlock(event.getEntity(), block, event);
         }
     }
 

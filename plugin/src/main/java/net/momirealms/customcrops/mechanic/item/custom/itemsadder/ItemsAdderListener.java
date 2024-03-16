@@ -18,10 +18,7 @@
 package net.momirealms.customcrops.mechanic.item.custom.itemsadder;
 
 import dev.lone.itemsadder.api.CustomFurniture;
-import dev.lone.itemsadder.api.Events.CustomBlockPlaceEvent;
-import dev.lone.itemsadder.api.Events.FurnitureBreakEvent;
-import dev.lone.itemsadder.api.Events.FurnitureInteractEvent;
-import dev.lone.itemsadder.api.Events.FurniturePlaceSuccessEvent;
+import dev.lone.itemsadder.api.Events.*;
 import net.momirealms.customcrops.mechanic.item.ItemManagerImpl;
 import net.momirealms.customcrops.mechanic.item.custom.AbstractCustomListener;
 import org.bukkit.entity.Entity;
@@ -31,6 +28,16 @@ public class ItemsAdderListener extends AbstractCustomListener {
 
     public ItemsAdderListener(ItemManagerImpl itemManager) {
         super(itemManager);
+    }
+
+    @EventHandler (ignoreCancelled = true)
+    public void onBreakCustomBlock(CustomBlockBreakEvent event) {
+        this.itemManager.handlePlayerBreakBlock(
+                event.getPlayer(),
+                event.getBlock(),
+                event.getNamespacedID(),
+                event
+        );
     }
 
     @EventHandler (ignoreCancelled = true)

@@ -2287,17 +2287,16 @@ public class ItemManagerImpl implements ItemManager {
     public void handlePlayerBreakBlock(
             Player player,
             Block brokenBlock,
+            String blockID,
             Cancellable event
     ) {
         if (!plugin.getWorldManager().isMechanicEnabled(player.getWorld()))
             return;
 
-        /*
-          No need to check anti-grief here as the event should be cancelled by the anti-grief plugin
-         */
+        // check anti-grief
+        if (!antiGrief.canBreak(player, brokenBlock.getLocation()))
+            return;
 
-        // check blocks, no need to check item in hand
-        String blockID = customProvider.getBlockID(brokenBlock);
         Optional.ofNullable(itemID2FunctionMap.get(blockID))
                 .map(map -> map.get(FunctionTrigger.BREAK))
                 .ifPresent(cFunctions -> handleFunctions(cFunctions, new BreakBlockWrapper(player, brokenBlock), event));
@@ -2340,9 +2339,9 @@ public class ItemManagerImpl implements ItemManager {
         if (!plugin.getWorldManager().isMechanicEnabled(player.getWorld()))
             return;
 
-         /*
-          No need to check anti-grief here as the event should be cancelled by the anti-grief plugin
-         */
+        // check anti-grief
+        if (!antiGrief.canPlace(player, location))
+            return;
 
         // check furniture, no need to check item in hand
         Optional.ofNullable(itemID2FunctionMap.get(id))
@@ -2359,9 +2358,9 @@ public class ItemManagerImpl implements ItemManager {
         if (!plugin.getWorldManager().isMechanicEnabled(player.getWorld()))
             return;
 
-         /*
-          No need to check anti-grief here as the event should be handled by ItemsAdder/Oraxen
-         */
+        // check anti-grief
+        if (!antiGrief.canBreak(player, location))
+            return;
 
         // check furniture, no need to check item in hand
         Optional.ofNullable(itemID2FunctionMap.get(id))
@@ -2373,9 +2372,9 @@ public class ItemManagerImpl implements ItemManager {
         if (!plugin.getWorldManager().isMechanicEnabled(player.getWorld()))
             return;
 
-         /*
-          No need to check anti-grief here as the event should be cancelled by the anti-grief plugin
-         */
+        // check anti-grief
+        if (!antiGrief.canPlace(player, block.getLocation()))
+            return;
 
         // check furniture, no need to check item in hand
         Optional.ofNullable(itemID2FunctionMap.get(blockID))
@@ -2383,9 +2382,9 @@ public class ItemManagerImpl implements ItemManager {
                 .ifPresent(cFunctions -> handleFunctions(cFunctions, new PlaceBlockWrapper(player, block, blockID), event));
     }
 
-    public void handleEntityBreakBlock(Entity entity, Block block, Cancellable event) {
+    public void handleEntityTramplingBlock(Entity entity, Block block, Cancellable event) {
         if (entity instanceof Player player) {
-            handlePlayerBreakBlock(player, block, event);
+            handlePlayerBreakBlock(player, block, "FARMLAND", event);
         } else {
             // if the block is a pot
             Pot pot = getPotByBlock(block);

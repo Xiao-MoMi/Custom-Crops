@@ -67,7 +67,7 @@ tasks {
 		relocate ("net.kyori", "net.momirealms.customcrops.libraries")
 		relocate ("org.objenesis", "net.momirealms.customcrops.libraries.objenesis")
 		relocate ("org.bstats", "net.momirealms.customcrops.libraries.bstats")
-        relocate ("dev.dejvokep.boostedyaml", "net.momirealms.customcrops.libraries.boostedyaml")
+		relocate ("dev.dejvokep.boostedyaml", "net.momirealms.customcrops.libraries.boostedyaml")
 		relocate ("net.momirealms.biomeapi", "net.momirealms.customcrops.libraries.biomeapi")
 		relocate ("net.momirealms.antigrieflib", "net.momirealms.customcrops.libraries.antigrieflib")
     }

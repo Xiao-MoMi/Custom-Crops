@@ -39,6 +39,14 @@ public abstract class VersionManager {
         return instance.isVersionNewerThan1_19_R2();
     }
 
+    public static boolean isHigherThan1_19() {
+        return instance.isVersionNewerThan1_19();
+    }
+
+    public static boolean isHigherThan1_20() {
+        return instance.isVersionNewerThan1_20();
+    }
+
     public static boolean isHigherThan1_20_R2() {
         return instance.isVersionNewerThan1_20_R2();
     }
