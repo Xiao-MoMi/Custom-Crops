@@ -26,7 +26,7 @@ import net.momirealms.customcrops.api.mechanic.item.Sprinkler;
 import net.momirealms.customcrops.api.mechanic.misc.CRotation;
 import net.momirealms.customcrops.api.mechanic.requirement.State;
 import net.momirealms.customcrops.api.mechanic.world.ChunkCoordinate;
-import net.momirealms.customcrops.api.mechanic.world.ChunkPos;
+import net.momirealms.customcrops.api.mechanic.world.BlockPos;
 import net.momirealms.customcrops.api.mechanic.world.CustomCropsBlock;
 import net.momirealms.customcrops.api.mechanic.world.SimpleLocation;
 import net.momirealms.customcrops.api.mechanic.world.level.*;
@@ -47,7 +47,7 @@ public class CChunk implements CustomCropsChunk {
     private final ChunkCoordinate chunkCoordinate;
     private final ConcurrentHashMap<Integer, CSection> loadedSections;
     private final PriorityQueue<TickTask> queue;
-    private final Set<ChunkPos> tickedBlocks;
+    private final Set<BlockPos> tickedBlocks;
     private long lastLoadedTime;
     private int loadedSeconds;
     private int unloadedSeconds;
@@ -69,7 +69,7 @@ public class CChunk implements CustomCropsChunk {
             long lastLoadedTime,
             ConcurrentHashMap<Integer, CSection> loadedSections,
             PriorityQueue<TickTask> queue,
-            HashSet<ChunkPos> tickedBlocks
+            HashSet<BlockPos> tickedBlocks
     ) {
         this.cWorld = cWorld;
         this.chunkCoordinate = chunkCoordinate;
@@ -124,7 +124,7 @@ public class CChunk implements CustomCropsChunk {
         while (!queue.isEmpty() && queue.peek().getTime() <= loadedSeconds) {
             TickTask task = queue.poll();
             if (task != null) {
-                ChunkPos pos = task.getChunkPos();
+                BlockPos pos = task.getChunkPos();
                 CSection section = loadedSections.get(pos.getSectionID());
                 if (section != null) {
                     CustomCropsBlock block = section.getBlockAt(pos);
@@ -161,7 +161,7 @@ public class CChunk implements CustomCropsChunk {
                 int x = random.nextInt(16);
                 int y = random.nextInt(16) + baseY;
                 int z = random.nextInt(16);
-                CustomCropsBlock block = section.getBlockAt(new ChunkPos(x,y,z));
+                CustomCropsBlock block = section.getBlockAt(new BlockPos(x,y,z));
                 if (block != null) {
                     switch (block.getType()) {
                         case CROP -> {
@@ -199,7 +199,7 @@ public class CChunk implements CustomCropsChunk {
     public void arrangeTasks(int unit) {
         ThreadLocalRandom random = ThreadLocalRandom.current();
         for (CustomCropsSection section : getSections()) {
-            for (Map.Entry<ChunkPos, CustomCropsBlock> entry : section.getBlockMap().entrySet()) {
+            for (Map.Entry<BlockPos, CustomCropsBlock> entry : section.getBlockMap().entrySet()) {
                 this.queue.add(new TickTask(
                         random.nextInt(0, unit),
                         entry.getKey()
@@ -209,7 +209,7 @@ public class CChunk implements CustomCropsChunk {
         }
     }
 
-    public void tryCreatingTaskForNewBlock(ChunkPos pos) {
+    public void tryCreatingTaskForNewBlock(BlockPos pos) {
         WorldSetting setting = cWorld.getWorldSetting();
         if (setting.isScheduledTick() && !tickedBlocks.contains(pos)) {
             tickedBlocks.add(pos);
@@ -433,7 +433,7 @@ public class CChunk implements CustomCropsChunk {
 
     @Override
     public CustomCropsBlock removeBlockAt(SimpleLocation location) {
-        ChunkPos pos = ChunkPos.getByLocation(location);
+        BlockPos pos = BlockPos.getByLocation(location);
         CSection section = loadedSections.get(pos.getSectionID());
         if (section == null) return null;
         return section.removeBlockAt(pos);
@@ -441,7 +441,7 @@ public class CChunk implements CustomCropsChunk {
 
     @Override
     public CustomCropsBlock addBlockAt(CustomCropsBlock block, SimpleLocation location) {
-        ChunkPos pos = ChunkPos.getByLocation(location);
+        BlockPos pos = BlockPos.getByLocation(location);
         CSection section = loadedSections.get(pos.getSectionID());
         if (section == null) {
             section = new CSection(pos.getSectionID());
@@ -453,7 +453,7 @@ public class CChunk implements CustomCropsChunk {
 
     @Override
     public Optional<CustomCropsBlock> getBlockAt(SimpleLocation location) {
-        ChunkPos pos = ChunkPos.getByLocation(location);
+        BlockPos pos = BlockPos.getByLocation(location);
         CSection section = loadedSections.get(pos.getSectionID());
         if (section == null) {
             return Optional.empty();
@@ -539,7 +539,7 @@ public class CChunk implements CustomCropsChunk {
         return queue;
     }
 
-    public Set<ChunkPos> getTickedBlocks() {
+    public Set<BlockPos> getTickedBlocks() {
         return tickedBlocks;
     }
 }

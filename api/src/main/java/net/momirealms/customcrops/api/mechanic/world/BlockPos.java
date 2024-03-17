@@ -19,20 +19,20 @@ package net.momirealms.customcrops.api.mechanic.world;
 
 import java.util.Objects;
 
-public class ChunkPos {
+public class BlockPos {
 
     private final int position;
 
-    public ChunkPos(int position) {
+    public BlockPos(int position) {
         this.position = position;
     }
 
-    public ChunkPos(int x, int y, int z) {
+    public BlockPos(int x, int y, int z) {
         this.position = ((x & 0xF) << 28) | ((z & 0xF) << 24) | (y & 0xFFFFFF);
     }
 
-    public static ChunkPos getByLocation(SimpleLocation location) {
-        return new ChunkPos(location.getX() % 16, location.getY(), location.getZ() % 16);
+    public static BlockPos getByLocation(SimpleLocation location) {
+        return new BlockPos(location.getX() % 16, location.getY(), location.getZ() % 16);
     }
 
     public SimpleLocation getLocation(String world, ChunkCoordinate coordinate) {
@@ -67,8 +67,8 @@ public class ChunkPos {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        ChunkPos chunkPos = (ChunkPos) o;
-        return position == chunkPos.position;
+        BlockPos blockPos = (BlockPos) o;
+        return position == blockPos.position;
     }
 
     @Override

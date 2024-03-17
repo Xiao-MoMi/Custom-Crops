@@ -17,24 +17,24 @@
 
 package net.momirealms.customcrops.scheduler.task;
 
-import net.momirealms.customcrops.api.mechanic.world.ChunkPos;
+import net.momirealms.customcrops.api.mechanic.world.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
 public class TickTask implements Comparable<TickTask> {
 
     private static int taskID;
     private final int time;
-    private final ChunkPos chunkPos;
+    private final BlockPos blockPos;
     private final int id;
 
-    public TickTask(int time, ChunkPos chunkPos) {
+    public TickTask(int time, BlockPos blockPos) {
         this.time = time;
-        this.chunkPos = chunkPos;
+        this.blockPos = blockPos;
         this.id = taskID++;
     }
 
-    public ChunkPos getChunkPos() {
-        return chunkPos;
+    public BlockPos getChunkPos() {
+        return blockPos;
     }
 
     public int getTime() {

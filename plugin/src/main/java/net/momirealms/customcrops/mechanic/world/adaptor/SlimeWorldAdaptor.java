@@ -24,7 +24,7 @@ import com.infernalsuite.aswm.api.world.SlimeWorld;
 import net.momirealms.customcrops.api.CustomCropsPlugin;
 import net.momirealms.customcrops.api.manager.WorldManager;
 import net.momirealms.customcrops.api.mechanic.world.ChunkCoordinate;
-import net.momirealms.customcrops.api.mechanic.world.ChunkPos;
+import net.momirealms.customcrops.api.mechanic.world.BlockPos;
 import net.momirealms.customcrops.api.mechanic.world.CustomCropsBlock;
 import net.momirealms.customcrops.api.mechanic.world.level.CustomCropsChunk;
 import net.momirealms.customcrops.api.mechanic.world.level.CustomCropsWorld;
@@ -194,13 +194,13 @@ public class SlimeWorldAdaptor extends BukkitWorldAdaptor {
 
         PriorityQueue<TickTask> queue = new PriorityQueue<>(Math.max(11, queued.length / 2));
         for (int i = 0, size = queued.length / 2; i < size; i++) {
-            ChunkPos pos = new ChunkPos(queued[2*i+1]);
+            BlockPos pos = new BlockPos(queued[2*i+1]);
             queue.add(new TickTask(queued[2*i], pos));
         }
 
-        HashSet<ChunkPos> tickedSet = new HashSet<>(Math.max(11, ticked.length));
+        HashSet<BlockPos> tickedSet = new HashSet<>(Math.max(11, ticked.length));
         for (int tick : ticked) {
-            tickedSet.add(new ChunkPos(tick));
+            tickedSet.add(new BlockPos(tick));
         }
 
         ConcurrentHashMap<Integer, CSection> sectionMap = new ConcurrentHashMap<>();
@@ -208,7 +208,7 @@ public class SlimeWorldAdaptor extends BukkitWorldAdaptor {
         for (Map.Entry<String, Tag<?>> entry : sectionCompoundMap.entrySet()) {
             if (entry.getValue() instanceof ListTag<?> listTag) {
                 int id = Integer.parseInt(entry.getKey());
-                ConcurrentHashMap<ChunkPos, CustomCropsBlock> blockMap = new ConcurrentHashMap<>();
+                ConcurrentHashMap<BlockPos, CustomCropsBlock> blockMap = new ConcurrentHashMap<>();
                 ListTag<CompoundTag> blocks = (ListTag<CompoundTag>) listTag;
                 for (CompoundTag blockTag : blocks.getValue()) {
                     CompoundMap block = blockTag.getValue();
@@ -217,32 +217,32 @@ public class SlimeWorldAdaptor extends BukkitWorldAdaptor {
                     switch (type) {
                         case "CROP" -> {
                             for (int pos : (int[]) block.get("pos").getValue()) {
-                                ChunkPos chunkPos = new ChunkPos(pos);
-                                blockMap.put(chunkPos, new MemoryCrop(chunkPos.getLocation(world, coordinate), new CompoundMap(data)));
+                                BlockPos blockPos = new BlockPos(pos);
+                                blockMap.put(blockPos, new MemoryCrop(blockPos.getLocation(world, coordinate), new CompoundMap(data)));
                             }
                         }
                         case "POT" -> {
                             for (int pos : (int[]) block.get("pos").getValue()) {
-                                ChunkPos chunkPos = new ChunkPos(pos);
-                                blockMap.put(chunkPos, new MemoryPot(chunkPos.getLocation(world, coordinate), new CompoundMap(data)));
+                                BlockPos blockPos = new BlockPos(pos);
+                                blockMap.put(blockPos, new MemoryPot(blockPos.getLocation(world, coordinate), new CompoundMap(data)));
                             }
                         }
                         case "SPRINKLER" -> {
                             for (int pos : (int[]) block.get("pos").getValue()) {
-                                ChunkPos chunkPos = new ChunkPos(pos);
-                                blockMap.put(chunkPos, new MemorySprinkler(chunkPos.getLocation(world, coordinate), new CompoundMap(data)));
+                                BlockPos blockPos = new BlockPos(pos);
+                                blockMap.put(blockPos, new MemorySprinkler(blockPos.getLocation(world, coordinate), new CompoundMap(data)));
                             }
                         }
                         case "SCARECROW" -> {
                             for (int pos : (int[]) block.get("pos").getValue()) {
-                                ChunkPos chunkPos = new ChunkPos(pos);
-                                blockMap.put(chunkPos, new MemoryScarecrow(chunkPos.getLocation(world, coordinate), new CompoundMap(data)));
+                                BlockPos blockPos = new BlockPos(pos);
+                                blockMap.put(blockPos, new MemoryScarecrow(blockPos.getLocation(world, coordinate), new CompoundMap(data)));
                             }
                         }
                         case "GLASS" -> {
                             for (int pos : (int[]) block.get("pos").getValue()) {
-                                ChunkPos chunkPos = new ChunkPos(pos);
-                                blockMap.put(chunkPos, new MemoryGlass(chunkPos.getLocation(world, coordinate), new CompoundMap(data)));
+                                BlockPos blockPos = new BlockPos(pos);
+                                blockMap.put(blockPos, new MemoryGlass(blockPos.getLocation(world, coordinate), new CompoundMap(data)));
                             }
                         }
                     }

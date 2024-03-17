@@ -17,7 +17,7 @@
 
 package net.momirealms.customcrops.mechanic.world;
 
-import net.momirealms.customcrops.api.mechanic.world.ChunkPos;
+import net.momirealms.customcrops.api.mechanic.world.BlockPos;
 import net.momirealms.customcrops.api.mechanic.world.CustomCropsBlock;
 import net.momirealms.customcrops.api.mechanic.world.level.CustomCropsSection;
 
@@ -27,14 +27,14 @@ import java.util.concurrent.ConcurrentHashMap;
 public class CSection implements CustomCropsSection {
 
     private final int sectionID;
-    private final ConcurrentHashMap<ChunkPos, CustomCropsBlock> blocks;
+    private final ConcurrentHashMap<BlockPos, CustomCropsBlock> blocks;
 
     public CSection(int sectionID) {
         this.sectionID = sectionID;
         this.blocks = new ConcurrentHashMap<>();
     }
 
-    public CSection(int sectionID, ConcurrentHashMap<ChunkPos, CustomCropsBlock> blocks) {
+    public CSection(int sectionID, ConcurrentHashMap<BlockPos, CustomCropsBlock> blocks) {
         this.blocks = blocks;
         this.sectionID = sectionID;
     }
@@ -45,17 +45,17 @@ public class CSection implements CustomCropsSection {
     }
 
     @Override
-    public CustomCropsBlock getBlockAt(ChunkPos pos) {
+    public CustomCropsBlock getBlockAt(BlockPos pos) {
         return blocks.get(pos);
     }
 
     @Override
-    public CustomCropsBlock removeBlockAt(ChunkPos pos) {
+    public CustomCropsBlock removeBlockAt(BlockPos pos) {
         return blocks.remove(pos);
     }
 
     @Override
-    public CustomCropsBlock addBlockAt(ChunkPos pos, CustomCropsBlock block) {
+    public CustomCropsBlock addBlockAt(BlockPos pos, CustomCropsBlock block) {
         return blocks.put(pos, block);
     }
 
@@ -70,7 +70,7 @@ public class CSection implements CustomCropsSection {
     }
 
     @Override
-    public Map<ChunkPos, CustomCropsBlock> getBlockMap() {
+    public Map<BlockPos, CustomCropsBlock> getBlockMap() {
         return blocks;
     }
 }

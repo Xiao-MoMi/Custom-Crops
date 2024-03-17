@@ -17,7 +17,7 @@
 
 package net.momirealms.customcrops.api.mechanic.world.level;
 
-import net.momirealms.customcrops.api.mechanic.world.ChunkPos;
+import net.momirealms.customcrops.api.mechanic.world.BlockPos;
 import net.momirealms.customcrops.api.mechanic.world.CustomCropsBlock;
 
 import java.util.Map;
@@ -26,15 +26,15 @@ public interface CustomCropsSection {
 
     int getSectionID();
 
-    CustomCropsBlock getBlockAt(ChunkPos pos);
+    CustomCropsBlock getBlockAt(BlockPos pos);
 
-    CustomCropsBlock removeBlockAt(ChunkPos pos);
+    CustomCropsBlock removeBlockAt(BlockPos pos);
 
-    CustomCropsBlock addBlockAt(ChunkPos pos, CustomCropsBlock block);
+    CustomCropsBlock addBlockAt(BlockPos pos, CustomCropsBlock block);
 
     boolean canPrune();
 
     CustomCropsBlock[] getBlocks();
 
-    Map<ChunkPos, CustomCropsBlock> getBlockMap();
+    Map<BlockPos, CustomCropsBlock> getBlockMap();
 }

@@ -28,7 +28,6 @@ import com.google.gson.Gson;
 import net.momirealms.customcrops.api.CustomCropsPlugin;
 import net.momirealms.customcrops.api.manager.ConfigManager;
 import net.momirealms.customcrops.api.manager.WorldManager;
-import net.momirealms.customcrops.api.mechanic.item.ItemType;
 import net.momirealms.customcrops.api.mechanic.world.*;
 import net.momirealms.customcrops.api.mechanic.world.level.CustomCropsChunk;
 import net.momirealms.customcrops.api.mechanic.world.level.CustomCropsWorld;
@@ -241,21 +240,21 @@ public class BukkitWorldAdaptor extends AbstractWorldAdaptor {
         PriorityQueue<TickTask> queue = new PriorityQueue<>(Math.max(11, tasksSize));
         for (int i = 0; i < tasksSize; i++) {
             int time = chunkData.readInt();
-            ChunkPos pos = new ChunkPos(chunkData.readInt());
+            BlockPos pos = new BlockPos(chunkData.readInt());
             queue.add(new TickTask(time, pos));
         }
         // read ticked blocks
         int tickedSize = chunkData.readInt();
-        HashSet<ChunkPos> tickedSet = new HashSet<>(Math.max(11, tickedSize));
+        HashSet<BlockPos> tickedSet = new HashSet<>(Math.max(11, tickedSize));
         for (int i = 0; i < tickedSize; i++) {
-            tickedSet.add(new ChunkPos(chunkData.readInt()));
+            tickedSet.add(new BlockPos(chunkData.readInt()));
         }
         // read block data
         ConcurrentHashMap<Integer, CSection> sectionMap = new ConcurrentHashMap<>();
         int sections = chunkData.readInt();
         // read sections
         for (int i = 0; i < sections; i++) {
-            ConcurrentHashMap<ChunkPos, CustomCropsBlock> blockMap = new ConcurrentHashMap<>();
+            ConcurrentHashMap<BlockPos, CustomCropsBlock> blockMap = new ConcurrentHashMap<>();
             int sectionID = chunkData.readInt();
             byte[] sectionBytes = new byte[chunkData.readInt()];
             chunkData.read(sectionBytes);
@@ -271,32 +270,32 @@ public class BukkitWorldAdaptor extends AbstractWorldAdaptor {
                 switch (type) {
                     case "CROP" -> {
                         for (int pos : (int[]) block.get("pos").getValue()) {
-                            ChunkPos chunkPos = new ChunkPos(pos);
-                            blockMap.put(chunkPos, new MemoryCrop(chunkPos.getLocation(world, coordinate), new CompoundMap(data)));
+                            BlockPos blockPos = new BlockPos(pos);
+                            blockMap.put(blockPos, new MemoryCrop(blockPos.getLocation(world, coordinate), new CompoundMap(data)));
                         }
                     }
                     case "POT" -> {
                         for (int pos : (int[]) block.get("pos").getValue()) {
-                            ChunkPos chunkPos = new ChunkPos(pos);
-                            blockMap.put(chunkPos, new MemoryPot(chunkPos.getLocation(world, coordinate), new CompoundMap(data)));
+                            BlockPos blockPos = new BlockPos(pos);
+                            blockMap.put(blockPos, new MemoryPot(blockPos.getLocation(world, coordinate), new CompoundMap(data)));
                         }
                     }
                     case "SPRINKLER" -> {
                         for (int pos : (int[]) block.get("pos").getValue()) {
-                            ChunkPos chunkPos = new ChunkPos(pos);
-                            blockMap.put(chunkPos, new MemorySprinkler(chunkPos.getLocation(world, coordinate), new CompoundMap(data)));
+                            BlockPos blockPos = new BlockPos(pos);
+                            blockMap.put(blockPos, new MemorySprinkler(blockPos.getLocation(world, coordinate), new CompoundMap(data)));
                         }
                     }
                     case "SCARECROW" -> {
                         for (int pos : (int[]) block.get("pos").getValue()) {
-                            ChunkPos chunkPos = new ChunkPos(pos);
-                            blockMap.put(chunkPos, new MemoryScarecrow(chunkPos.getLocation(world, coordinate), new CompoundMap(data)));
+                            BlockPos blockPos = new BlockPos(pos);
+                            blockMap.put(blockPos, new MemoryScarecrow(blockPos.getLocation(world, coordinate), new CompoundMap(data)));
                         }
                     }
                     case "GREENHOUSE" -> {
                         for (int pos : (int[]) block.get("pos").getValue()) {
-                            ChunkPos chunkPos = new ChunkPos(pos);
-                            blockMap.put(chunkPos, new MemoryGlass(chunkPos.getLocation(world, coordinate), new CompoundMap(data)));
+                            BlockPos blockPos = new BlockPos(pos);
+                            blockMap.put(blockPos, new MemoryGlass(blockPos.getLocation(world, coordinate), new CompoundMap(data)));
                         }
                     }
                 }
@@ -375,10 +374,10 @@ public class BukkitWorldAdaptor extends AbstractWorldAdaptor {
         );
     }
 
-    private int[] tickedBlocksToArray(Set<ChunkPos> set) {
+    private int[] tickedBlocksToArray(Set<BlockPos> set) {
         int[] ticked = new int[set.size()];
         int i = 0;
-        for (ChunkPos pos : set) {
+        for (BlockPos pos : set) {
             ticked[i] = pos.getPosition();
             i++;
         }
@@ -401,11 +400,11 @@ public class BukkitWorldAdaptor extends AbstractWorldAdaptor {
         return new SerializableSection(section.getSectionID(), toCompoundTags(section.getBlockMap()));
     }
 
-    private List<CompoundTag> toCompoundTags(Map<ChunkPos, CustomCropsBlock> blocks) {
+    private List<CompoundTag> toCompoundTags(Map<BlockPos, CustomCropsBlock> blocks) {
         ArrayList<CompoundTag> tags = new ArrayList<>(blocks.size());
         Map<CustomCropsBlock, List<Integer>> blockToPosMap = new HashMap<>();
-        for (Map.Entry<ChunkPos, CustomCropsBlock> entry : blocks.entrySet()) {
-            ChunkPos coordinate = entry.getKey();
+        for (Map.Entry<BlockPos, CustomCropsBlock> entry : blocks.entrySet()) {
+            BlockPos coordinate = entry.getKey();
             CustomCropsBlock block = entry.getValue();
             List<Integer> coordinates = blockToPosMap.computeIfAbsent(block, k -> new ArrayList<>());
             coordinates.add(coordinate.getPosition());
