@@ -41,7 +41,7 @@ import net.momirealms.customcrops.api.mechanic.misc.CRotation;
 import net.momirealms.customcrops.api.mechanic.misc.Reason;
 import net.momirealms.customcrops.api.mechanic.misc.Value;
 import net.momirealms.customcrops.api.mechanic.requirement.Requirement;
-import net.momirealms.customcrops.api.mechanic.world.ChunkCoordinate;
+import net.momirealms.customcrops.api.mechanic.world.ChunkPos;
 import net.momirealms.customcrops.api.mechanic.world.CustomCropsBlock;
 import net.momirealms.customcrops.api.mechanic.world.SimpleLocation;
 import net.momirealms.customcrops.api.mechanic.world.level.WorldCrop;
@@ -443,7 +443,7 @@ public class ActionManagerImpl implements ActionManager {
             if (Math.random() > chance) return;
             Location location = state.getLocation();
             plugin.getWorldManager().getCustomCropsWorld(location.getWorld())
-                    .flatMap(world -> world.getChunkAt(ChunkCoordinate.getByBukkitChunk(location.getChunk())))
+                    .flatMap(world -> world.getLoadedChunkAt(ChunkPos.getByBukkitChunk(location.getChunk())))
                     .flatMap(chunk -> chunk.getBlockAt(SimpleLocation.of(location)))
                     .ifPresent(block -> {
                         block.tick(1);

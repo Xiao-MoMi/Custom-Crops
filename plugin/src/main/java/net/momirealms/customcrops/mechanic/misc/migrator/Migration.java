@@ -34,10 +34,26 @@ public class Migration {
         if (version == null) return;
 
         int versionNumber = Integer.parseInt(version);
-        if (!(versionNumber >= 25 && versionNumber <= 34)) {
+        if (versionNumber >= 25 && versionNumber <= 34) {
+            doV33Migration(config);
             return;
         }
+        if (versionNumber == 35) {
+            doV343Migration();
+        }
+    }
 
+    private static void doV343Migration() {
+        if (CustomCropsPlugin.get().getWorldManager().getWorldAdaptor() instanceof BukkitWorldAdaptor adaptor) {
+            for (World world : Bukkit.getWorlds()) {
+                CWorld temp = new CWorld(CustomCropsPlugin.getInstance().getWorldManager(), world);
+                temp.setWorldSetting(WorldSetting.of(false,300,true, 1,true,2,true,2,false,false,false,28,-1,-1,-1, 0));
+                adaptor.convertWorldFromV342toV343(temp, world);
+            }
+        }
+    }
+
+    private static void doV33Migration(YamlConfiguration config) {
         // do migration
         if (config.contains("mechanics.season.sync-season")) {
             config.set("mechanics.sync-season.enable", config.getBoolean("mechanics.season.sync-season.enable"));
@@ -53,7 +69,7 @@ public class Migration {
         }
 
         try {
-            config.save(configFile);
+            config.save(new File(CustomCropsPlugin.getInstance().getDataFolder(), "config.yml"));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -87,7 +103,7 @@ public class Migration {
             for (World world : Bukkit.getWorlds()) {
                 CWorld temp = new CWorld(CustomCropsPlugin.getInstance().getWorldManager(), world);
                 temp.setWorldSetting(WorldSetting.of(false,300,true, 1,true,2,true,2,false,false,false,28,-1,-1,-1, 0));
-                adaptor.convertWorld(temp, world);
+                adaptor.convertWorldFromV33toV34(temp, world);
             }
         }
     }

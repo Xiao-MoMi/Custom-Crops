@@ -66,4 +66,8 @@ public class SerializableChunk {
     public int[] getTicked() {
         return ticked;
     }
+
+    public boolean canPrune() {
+        return sections.size() == 0;
+    }
 }

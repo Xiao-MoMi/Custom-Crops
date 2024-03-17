@@ -57,8 +57,8 @@ public class SimpleLocation {
         return worldName;
     }
 
-    public ChunkCoordinate getChunkCoordinate() {
-        return new ChunkCoordinate(x >> 4, z >> 4);
+    public ChunkPos getChunkCoordinate() {
+        return new ChunkPos(x >> 4, z >> 4);
     }
 
     public SimpleLocation add(int x, int y, int z) {

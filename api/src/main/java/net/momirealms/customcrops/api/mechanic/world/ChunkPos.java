@@ -20,20 +20,18 @@ package net.momirealms.customcrops.api.mechanic.world;
 import org.bukkit.Chunk;
 import org.jetbrains.annotations.NotNull;
 
-public record ChunkCoordinate(int x, int z) {
+public record ChunkPos(int x, int z) {
 
-    private static final ChunkCoordinate empty = new ChunkCoordinate(0, 0);
-
-    public static ChunkCoordinate of(int x, int z) {
-        return new ChunkCoordinate(x, z);
+    public static ChunkPos of(int x, int z) {
+        return new ChunkPos(x, z);
     }
 
-    public static ChunkCoordinate getByString(String coordinate) {
+    public static ChunkPos getByString(String coordinate) {
         String[] split = coordinate.split(",", 2);
         try {
             int x = Integer.parseInt(split[0]);
             int z = Integer.parseInt(split[1]);
-            return new ChunkCoordinate(x, z);
+            return new ChunkPos(x, z);
         }
         catch (NumberFormatException e) {
             e.printStackTrace();
@@ -55,7 +53,7 @@ public record ChunkCoordinate(int x, int z) {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final ChunkCoordinate other = (ChunkCoordinate) obj;
+        final ChunkPos other = (ChunkPos) obj;
         if (this.x != other.x) {
             return false;
         }
@@ -66,13 +64,22 @@ public record ChunkCoordinate(int x, int z) {
     }
 
     @NotNull
-    public static ChunkCoordinate getByBukkitChunk(@NotNull Chunk chunk) {
-        return new ChunkCoordinate(chunk.getX(), chunk.getZ());
+    public RegionPos getRegionPos() {
+        return RegionPos.getByChunkPos(this);
+    }
+
+    @NotNull
+    public static ChunkPos getByBukkitChunk(@NotNull Chunk chunk) {
+        return new ChunkPos(chunk.getX(), chunk.getZ());
+    }
+
+    public String getAsString() {
+        return x + "," + z;
     }
 
     @Override
     public String toString() {
-        return "ChunkCoordinate{" +
+        return "ChunkPos{" +
                 "x=" + x +
                 ", z=" + z +
                 '}';

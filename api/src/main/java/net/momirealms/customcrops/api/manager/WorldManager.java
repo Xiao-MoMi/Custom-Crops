@@ -133,7 +133,9 @@ public interface WorldManager extends Reloadable {
 
     void handleChunkUnload(Chunk bukkitChunk);
 
-    void saveChunkToFile(CustomCropsChunk chunk);
+    void saveChunkToCachedRegion(CustomCropsChunk chunk);
+
+    void saveRegionToFile(CustomCropsRegion region);
 
     void removeGlassAt(@NotNull SimpleLocation location);
 
@@ -142,4 +144,6 @@ public interface WorldManager extends Reloadable {
     CustomCropsBlock removeAnythingAt(SimpleLocation location);
 
     AbstractWorldAdaptor getWorldAdaptor();
+
+    void saveInfoData(CustomCropsWorld customCropsWorld);
 }

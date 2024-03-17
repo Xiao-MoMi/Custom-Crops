@@ -23,10 +23,11 @@ import com.infernalsuite.aswm.api.events.LoadSlimeWorldEvent;
 import com.infernalsuite.aswm.api.world.SlimeWorld;
 import net.momirealms.customcrops.api.CustomCropsPlugin;
 import net.momirealms.customcrops.api.manager.WorldManager;
-import net.momirealms.customcrops.api.mechanic.world.ChunkCoordinate;
 import net.momirealms.customcrops.api.mechanic.world.BlockPos;
+import net.momirealms.customcrops.api.mechanic.world.ChunkPos;
 import net.momirealms.customcrops.api.mechanic.world.CustomCropsBlock;
 import net.momirealms.customcrops.api.mechanic.world.level.CustomCropsChunk;
+import net.momirealms.customcrops.api.mechanic.world.level.CustomCropsRegion;
 import net.momirealms.customcrops.api.mechanic.world.level.CustomCropsWorld;
 import net.momirealms.customcrops.api.mechanic.world.level.WorldInfoData;
 import net.momirealms.customcrops.api.util.LogUtils;
@@ -65,13 +66,13 @@ public class SlimeWorldAdaptor extends BukkitWorldAdaptor {
     }
 
     @Override
-    public void unload(CustomCropsWorld customCropsWorld) {
+    public void saveInfoData(CustomCropsWorld customCropsWorld) {
         SlimeWorld slimeWorld = slimePlugin.getWorld(customCropsWorld.getWorldName());
         if (slimeWorld == null) {
-            super.unload(customCropsWorld);
+            super.saveInfoData(customCropsWorld);
             return;
         }
-        CWorld cWorld = (CWorld) customCropsWorld;
+
         Optional<CompoundTag> optionalCompoundTag = slimeWorld.getExtraData().getAsCompoundTag("customcrops");
         if (optionalCompoundTag.isEmpty()) {
             LogUtils.warn("Failed to unload data for world " + customCropsWorld.getWorldName() + " because slime world format is incorrect.");
@@ -80,9 +81,16 @@ public class SlimeWorldAdaptor extends BukkitWorldAdaptor {
 
         CompoundMap ccDataMap = optionalCompoundTag.get().getValue();
         ccDataMap.put(new StringTag("world-info", gson.toJson(customCropsWorld.getInfoData())));
-        for (CChunk chunk : cWorld.getAllChunksToSave()) {
-            ccDataMap.put(chunkToTag(chunk));
+    }
+
+    @Override
+    public void unload(CustomCropsWorld customCropsWorld) {
+        SlimeWorld slimeWorld = slimePlugin.getWorld(customCropsWorld.getWorldName());
+        if (slimeWorld == null) {
+            super.unload(customCropsWorld);
+            return;
         }
+        customCropsWorld.save();
     }
 
     @Override
@@ -108,64 +116,97 @@ public class SlimeWorldAdaptor extends BukkitWorldAdaptor {
     }
 
     @Override
-    public void loadDynamicData(CustomCropsWorld customCropsWorld, ChunkCoordinate chunkCoordinate) {
+    public void loadChunkData(CustomCropsWorld customCropsWorld, ChunkPos chunkPos) {
         SlimeWorld slimeWorld = slimePlugin.getWorld(customCropsWorld.getWorldName());
         if (slimeWorld == null) {
-            super.loadDynamicData(customCropsWorld, chunkCoordinate);
+            super.loadChunkData(customCropsWorld, chunkPos);
             return;
         }
 
+        long time1 = System.currentTimeMillis();
         CWorld cWorld = (CWorld) customCropsWorld;
         // load lazy chunks firstly
-        CustomCropsChunk lazyChunk = customCropsWorld.removeLazyChunkAt(chunkCoordinate);
+        CustomCropsChunk lazyChunk = customCropsWorld.removeLazyChunkAt(chunkPos);
         if (lazyChunk != null) {
             CChunk cChunk = (CChunk) lazyChunk;
             cChunk.setUnloadedSeconds(0);
             cWorld.loadChunk(cChunk);
+            long time2 = System.currentTimeMillis();
+            CustomCropsPlugin.get().debug("Took " + (time2-time1) + "ms to load chunk " + chunkPos + " from lazy chunks");
             return;
         }
 
         Optional<CompoundTag> optionalCompoundTag = slimeWorld.getExtraData().getAsCompoundTag("customcrops");
         if (optionalCompoundTag.isEmpty()) {
-            LogUtils.warn("Failed to load data for " + chunkCoordinate + " in world " + customCropsWorld.getWorldName() + " because slime world format is incorrect.");
+            LogUtils.warn("Failed to load data for " + chunkPos + " in world " + customCropsWorld.getWorldName() + " because slime world format is incorrect.");
             return;
         }
 
-        Tag<?> chunkTag = optionalCompoundTag.get().getValue().get(chunkCoordinate.toString());
-        if (chunkTag == null) return;
+        Tag<?> chunkTag = optionalCompoundTag.get().getValue().get(chunkPos.getAsString());
+        if (chunkTag == null) {
+            return;
+        }
         Optional<CompoundTag> chunkCompoundTag = chunkTag.getAsCompoundTag();
-        if (chunkCompoundTag.isEmpty()) return;
+        if (chunkCompoundTag.isEmpty()) {
+            return;
+        }
 
-        // load chunk from local files
-        long time1 = System.currentTimeMillis();
+        // load chunk from slime world
         cWorld.loadChunk(tagToChunk(cWorld, chunkCompoundTag.get()));
         long time2 = System.currentTimeMillis();
-        CustomCropsPlugin.get().debug("Took " + (time2-time1) + "ms to load chunk " + chunkCoordinate);
+        CustomCropsPlugin.get().debug("Took " + (time2-time1) + "ms to load chunk " + chunkPos);
     }
 
     @Override
-    public void saveDynamicData(CustomCropsWorld customCropsWorld, CustomCropsChunk chunk) {
-        SlimeWorld slimeWorld = getSlimeWorld(customCropsWorld.getWorldName());
+    public void saveChunkToCachedRegion(CustomCropsChunk customCropsChunk) {
+        CustomCropsWorld customCropsWorld = customCropsChunk.getCustomCropsWorld();
+        SlimeWorld slimeWorld = getSlimeWorld(customCropsChunk.getCustomCropsWorld().getWorldName());
         if (slimeWorld == null) {
-            super.saveDynamicData(customCropsWorld, chunk);
+            super.saveChunkToCachedRegion(customCropsChunk);
             return;
         }
 
         Optional<CompoundTag> optionalCompoundTag = slimeWorld.getExtraData().getAsCompoundTag("customcrops");
         if (optionalCompoundTag.isEmpty()) {
-            LogUtils.warn("Failed to save data for " + chunk + " in world " + customCropsWorld.getWorldName() + " because slime world format is incorrect.");
+            LogUtils.warn("Failed to save data for " + customCropsChunk.getChunkPos() + " in world " + customCropsWorld.getWorldName() + " because slime world format is incorrect.");
             return;
         }
 
-        CustomCropsPlugin.get().getScheduler().runTaskSync(() -> optionalCompoundTag.get().getValue().put(chunkToTag((CChunk) chunk)), null);
+        SerializableChunk serializableChunk = toSerializableChunk((CChunk) customCropsChunk);
+        if (Bukkit.isPrimaryThread()) {
+            if (serializableChunk.canPrune()) {
+                optionalCompoundTag.get().getValue().remove(customCropsChunk.getChunkPos().getAsString());
+            } else {
+                optionalCompoundTag.get().getValue().put(chunkToTag(serializableChunk));
+            }
+        } else {
+            CustomCropsPlugin.get().getScheduler().runTaskSync(() -> {
+                if (serializableChunk.canPrune()) {
+                    optionalCompoundTag.get().getValue().remove(customCropsChunk.getChunkPos().getAsString());
+                } else {
+                    optionalCompoundTag.get().getValue().put(chunkToTag(serializableChunk));
+                }
+            }, null);
+        }
+    }
+
+    @Override
+    public void saveRegion(CustomCropsRegion customCropsRegion) {
+        CustomCropsWorld customCropsWorld = customCropsRegion.getCustomCropsWorld();
+        SlimeWorld slimeWorld = getSlimeWorld(customCropsWorld.getWorldName());
+        if (slimeWorld == null) {
+            super.saveRegion(customCropsRegion);
+            return;
+        }
+
+        // don't need to save region to slime world
     }
 
     private SlimeWorld getSlimeWorld(String name) {
         return slimePlugin.getWorld(name);
     }
 
-    private CompoundTag chunkToTag(CChunk chunk) {
-        SerializableChunk serializableChunk = toSerializableChunk(chunk);
+    private CompoundTag chunkToTag(SerializableChunk serializableChunk) {
         CompoundMap map = new CompoundMap();
         map.put(new IntTag("x", serializableChunk.getX()));
         map.put(new IntTag("z", serializableChunk.getZ()));
@@ -178,7 +219,7 @@ public class SlimeWorldAdaptor extends BukkitWorldAdaptor {
             sectionMap.put(new ListTag<>(String.valueOf(section.getSectionID()), TagType.TAG_COMPOUND, section.getBlocks()));
         }
         map.put(new CompoundTag("sections", sectionMap));
-        return new CompoundTag(chunk.getChunkCoordinate().toString(), map);
+        return new CompoundTag(serializableChunk.getX() + "," + serializableChunk.getZ(), map);
     }
 
     private CChunk tagToChunk(CWorld cWorld, CompoundTag tag) {
@@ -186,7 +227,7 @@ public class SlimeWorldAdaptor extends BukkitWorldAdaptor {
         CompoundMap map = tag.getValue();
         int x = map.get("x").getAsIntTag().get().getValue();
         int z = map.get("z").getAsIntTag().get().getValue();
-        ChunkCoordinate coordinate = new ChunkCoordinate(x, z);
+        ChunkPos coordinate = new ChunkPos(x, z);
         int loadedSeconds = map.get("loadedSeconds").getAsIntTag().get().getValue();
         long lastLoadedTime = map.get("lastLoadedTime").getAsLongTag().get().getValue();
         int[] queued = map.get("queued").getAsIntArrayTag().get().getValue();

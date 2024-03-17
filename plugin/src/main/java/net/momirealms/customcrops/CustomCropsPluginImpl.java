@@ -103,7 +103,6 @@ public class CustomCropsPluginImpl extends CustomCropsPlugin {
         this.disableNBTAPILogs();
         Migration.tryUpdating();
         this.reload();
-        this.worldManager.init();
         if (ConfigManager.metrics()) new Metrics(this, 16593);
         if (ConfigManager.checkUpdate()) {
             this.versionManager.checkUpdate().thenAccept(result -> {

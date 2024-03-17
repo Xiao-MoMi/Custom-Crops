@@ -25,8 +25,8 @@ import net.momirealms.customcrops.api.mechanic.item.Pot;
 import net.momirealms.customcrops.api.mechanic.item.Sprinkler;
 import net.momirealms.customcrops.api.mechanic.misc.CRotation;
 import net.momirealms.customcrops.api.mechanic.requirement.State;
-import net.momirealms.customcrops.api.mechanic.world.ChunkCoordinate;
 import net.momirealms.customcrops.api.mechanic.world.BlockPos;
+import net.momirealms.customcrops.api.mechanic.world.ChunkPos;
 import net.momirealms.customcrops.api.mechanic.world.CustomCropsBlock;
 import net.momirealms.customcrops.api.mechanic.world.SimpleLocation;
 import net.momirealms.customcrops.api.mechanic.world.level.*;
@@ -44,7 +44,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class CChunk implements CustomCropsChunk {
 
     private transient CWorld cWorld;
-    private final ChunkCoordinate chunkCoordinate;
+    private final ChunkPos chunkPos;
     private final ConcurrentHashMap<Integer, CSection> loadedSections;
     private final PriorityQueue<TickTask> queue;
     private final Set<BlockPos> tickedBlocks;
@@ -52,9 +52,9 @@ public class CChunk implements CustomCropsChunk {
     private int loadedSeconds;
     private int unloadedSeconds;
 
-    public CChunk(CWorld cWorld, ChunkCoordinate chunkCoordinate) {
+    public CChunk(CWorld cWorld, ChunkPos chunkPos) {
         this.cWorld = cWorld;
-        this.chunkCoordinate = chunkCoordinate;
+        this.chunkPos = chunkPos;
         this.loadedSections = new ConcurrentHashMap<>(64);
         this.queue = new PriorityQueue<>();
         this.unloadedSeconds = 0;
@@ -64,7 +64,7 @@ public class CChunk implements CustomCropsChunk {
 
     public CChunk(
             CWorld cWorld,
-            ChunkCoordinate chunkCoordinate,
+            ChunkPos chunkPos,
             int loadedSeconds,
             long lastLoadedTime,
             ConcurrentHashMap<Integer, CSection> loadedSections,
@@ -72,7 +72,7 @@ public class CChunk implements CustomCropsChunk {
             HashSet<BlockPos> tickedBlocks
     ) {
         this.cWorld = cWorld;
-        this.chunkCoordinate = chunkCoordinate;
+        this.chunkPos = chunkPos;
         this.loadedSections = loadedSections;
         this.lastLoadedTime = lastLoadedTime;
         this.loadedSeconds = loadedSeconds;
@@ -101,8 +101,13 @@ public class CChunk implements CustomCropsChunk {
     }
 
     @Override
-    public ChunkCoordinate getChunkCoordinate() {
-        return chunkCoordinate;
+    public CustomCropsRegion getCustomCropsRegion() {
+        return cWorld.getLoadedRegionAt(chunkPos.getRegionPos()).orElse(null);
+    }
+
+    @Override
+    public ChunkPos getChunkPos() {
+        return chunkPos;
     }
 
     @Override

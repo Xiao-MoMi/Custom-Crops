@@ -19,12 +19,14 @@ package net.momirealms.customcrops.api.mechanic.world;
 
 import net.momirealms.customcrops.api.manager.WorldManager;
 import net.momirealms.customcrops.api.mechanic.world.level.CustomCropsChunk;
+import net.momirealms.customcrops.api.mechanic.world.level.CustomCropsRegion;
 import net.momirealms.customcrops.api.mechanic.world.level.CustomCropsWorld;
 import org.bukkit.event.Listener;
 
 public abstract class AbstractWorldAdaptor implements Listener {
 
-    public static final int version = 1;
+    public static final int chunkVersion = 1;
+    public static final int regionVersion = 1;
     protected WorldManager worldManager;
 
     public AbstractWorldAdaptor(WorldManager worldManager) {
@@ -35,9 +37,13 @@ public abstract class AbstractWorldAdaptor implements Listener {
 
     public abstract void init(CustomCropsWorld customCropsWorld);
 
-    public abstract void loadDynamicData(CustomCropsWorld customCropsWorld, ChunkCoordinate chunkCoordinate);
+    public abstract void loadChunkData(CustomCropsWorld customCropsWorld, ChunkPos chunkPos);
 
-    public abstract void unloadDynamicData(CustomCropsWorld customCropsWorld, ChunkCoordinate chunkCoordinate);
+    public abstract void unloadChunkData(CustomCropsWorld customCropsWorld, ChunkPos chunkPos);
 
-    public abstract void saveDynamicData(CustomCropsWorld ccWorld, CustomCropsChunk chunk);
+    public abstract void saveChunkToCachedRegion(CustomCropsChunk customCropsChunk);
+
+    public abstract void saveRegion(CustomCropsRegion customCropsRegion);
+
+    public abstract void saveInfoData(CustomCropsWorld customCropsWorld);
 }

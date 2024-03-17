@@ -35,7 +35,7 @@ public class BlockPos {
         return new BlockPos(location.getX() % 16, location.getY(), location.getZ() % 16);
     }
 
-    public SimpleLocation getLocation(String world, ChunkCoordinate coordinate) {
+    public SimpleLocation getLocation(String world, ChunkPos coordinate) {
         return new SimpleLocation(world, coordinate.x() * 16 + getX(), getY(), coordinate.z() * 16 + getZ());
     }
 

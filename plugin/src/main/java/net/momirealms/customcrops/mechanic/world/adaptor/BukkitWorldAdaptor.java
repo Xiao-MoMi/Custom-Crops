@@ -30,6 +30,7 @@ import net.momirealms.customcrops.api.manager.ConfigManager;
 import net.momirealms.customcrops.api.manager.WorldManager;
 import net.momirealms.customcrops.api.mechanic.world.*;
 import net.momirealms.customcrops.api.mechanic.world.level.CustomCropsChunk;
+import net.momirealms.customcrops.api.mechanic.world.level.CustomCropsRegion;
 import net.momirealms.customcrops.api.mechanic.world.level.CustomCropsWorld;
 import net.momirealms.customcrops.api.mechanic.world.level.WorldInfoData;
 import net.momirealms.customcrops.api.mechanic.world.season.Season;
@@ -47,6 +48,7 @@ import org.bukkit.World;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.world.WorldLoadEvent;
+import org.bukkit.event.world.WorldSaveEvent;
 import org.bukkit.event.world.WorldUnloadEvent;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.Nullable;
@@ -70,6 +72,15 @@ public class BukkitWorldAdaptor extends AbstractWorldAdaptor {
 
     @Override
     public void unload(CustomCropsWorld customCropsWorld) {
+        World world = customCropsWorld.getWorld();
+        if (world != null) {
+            new File(world.getWorldFolder(), "customcrops").mkdir();
+            customCropsWorld.save();
+        }
+    }
+
+    @Override
+    public void saveInfoData(CustomCropsWorld customCropsWorld) {
         CWorld cWorld = (CWorld) customCropsWorld;
         World world = cWorld.getWorld();
         if (world == null) {
@@ -77,15 +88,8 @@ public class BukkitWorldAdaptor extends AbstractWorldAdaptor {
             return;
         }
 
-        // save world data into psd
         world.getPersistentDataContainer().set(key, PersistentDataType.STRING,
                 gson.toJson(cWorld.getInfoData()));
-
-        new File(world.getWorldFolder(), "customcrops").mkdir();
-
-        for (CChunk chunk : cWorld.getAllChunksToSave()) {
-            saveDynamicData(cWorld, chunk);
-        }
     }
 
     @Override
@@ -102,7 +106,7 @@ public class BukkitWorldAdaptor extends AbstractWorldAdaptor {
 
         // try converting legacy worlds
         if (ConfigManager.convertWorldOnLoad()) {
-            convertWorld(cWorld, world);
+            convertWorldFromV33toV34(cWorld, world);
             return;
         }
 
@@ -113,7 +117,7 @@ public class BukkitWorldAdaptor extends AbstractWorldAdaptor {
     }
 
     @Override
-    public void loadDynamicData(CustomCropsWorld customCropsWorld, ChunkCoordinate chunkCoordinate) {
+    public void loadChunkData(CustomCropsWorld customCropsWorld, ChunkPos chunkPos) {
         CWorld cWorld = (CWorld) customCropsWorld;
         World world = cWorld.getWorld();
         if (world == null) {
@@ -121,35 +125,81 @@ public class BukkitWorldAdaptor extends AbstractWorldAdaptor {
             return;
         }
 
+        long time1 = System.currentTimeMillis();
         // load lazy chunks firstly
-        CustomCropsChunk lazyChunk = customCropsWorld.removeLazyChunkAt(chunkCoordinate);
+        CustomCropsChunk lazyChunk = cWorld.removeLazyChunkAt(chunkPos);
         if (lazyChunk != null) {
             CChunk cChunk = (CChunk) lazyChunk;
             cChunk.setUnloadedSeconds(0);
             cWorld.loadChunk(cChunk);
+            long time2 = System.currentTimeMillis();
+            CustomCropsPlugin.get().debug("Took " + (time2-time1) + "ms to load chunk " + chunkPos + " from lazy chunks");
             return;
         }
-        // create or get chunk files
-        File data = getChunkDataFilePath(world, chunkCoordinate);
-        if (!data.exists())
+
+        // check if region is loaded, load if not loaded
+        RegionPos regionPos = RegionPos.getByChunkPos(chunkPos);
+        Optional<CustomCropsRegion> optionalRegion = cWorld.getLoadedRegionAt(regionPos);
+        if (optionalRegion.isPresent()) {
+            CustomCropsRegion region = optionalRegion.get();
+            byte[] bytes = region.getChunkBytes(chunkPos);
+            if (bytes != null) {
+                try {
+                    DataInputStream dataStream = new DataInputStream(new ByteArrayInputStream(bytes));
+                    CChunk chunk = deserializeChunk(cWorld, dataStream);
+                    dataStream.close();
+                    cWorld.loadChunk(chunk);
+                    long time2 = System.currentTimeMillis();
+                    CustomCropsPlugin.get().debug("Took " + (time2-time1) + "ms to load chunk " + chunkPos + " from cached region");
+                } catch (IOException e) {
+                    LogUtils.severe("Failed to load CustomCrops data at " + chunkPos);
+                    e.printStackTrace();
+                    region.removeChunk(chunkPos);
+                }
+            }
             return;
-        // load chunk from local files
-        long time1 = System.currentTimeMillis();
-        try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(getChunkDataFilePath(world, chunkCoordinate)))) {
+        }
+
+        // if region file not exist, create one
+        File data = getRegionDataFilePath(world, regionPos);
+        if (!data.exists()) {
+            cWorld.loadRegion(new CRegion(cWorld, regionPos));
+            return;
+        }
+
+        // load region from local files
+        try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(data))) {
             DataInputStream dataStream = new DataInputStream(bis);
-            CChunk chunk = deserialize(cWorld, dataStream);
+            CRegion region = deserializeRegion(cWorld, dataStream);
             dataStream.close();
-            cWorld.loadChunk(chunk);
-            long time2 = System.currentTimeMillis();
-            CustomCropsPlugin.get().debug("Took " + (time2-time1) + "ms to load chunk " + chunkCoordinate);
+            cWorld.loadRegion(region);
+            byte[] bytes = region.getChunkBytes(chunkPos);
+            if (bytes != null) {
+                try {
+                    DataInputStream chunkStream = new DataInputStream(new ByteArrayInputStream(bytes));
+                    CChunk chunk = deserializeChunk(cWorld, chunkStream);
+                    chunkStream.close();
+                    cWorld.loadChunk(chunk);
+                    long time2 = System.currentTimeMillis();
+                    CustomCropsPlugin.get().debug("Took " + (time2-time1) + "ms to load chunk " + chunkPos);
+                } catch (IOException e) {
+                    LogUtils.severe("Failed to load CustomCrops data at " + chunkPos + ". Deleting corrupted chunk.");
+                    e.printStackTrace();
+                    region.removeChunk(chunkPos);
+                }
+            } else {
+                long time2 = System.currentTimeMillis();
+                CustomCropsPlugin.get().debug("Took " + (time2-time1) + "ms to load region " + regionPos);
+            }
         } catch (IOException e) {
-            LogUtils.severe("Failed to load CustomCrops data at " + chunkCoordinate);
+            LogUtils.severe("Failed to load CustomCrops region data at " + chunkPos + ". Deleting corrupted region.");
             e.printStackTrace();
+            data.delete();
         }
     }
 
     @Override
-    public void unloadDynamicData(CustomCropsWorld ccWorld, ChunkCoordinate chunkCoordinate) {
+    public void unloadChunkData(CustomCropsWorld ccWorld, ChunkPos chunkPos) {
         CWorld cWorld = (CWorld) ccWorld;
         World world = cWorld.getWorld();
         if (world == null) {
@@ -157,18 +207,35 @@ public class BukkitWorldAdaptor extends AbstractWorldAdaptor {
             return;
         }
 
-        cWorld.unloadChunk(chunkCoordinate);
+        cWorld.unloadChunk(chunkPos);
     }
 
     @Override
-    public void saveDynamicData(CustomCropsWorld ccWorld, CustomCropsChunk chunk) {
+    public void saveChunkToCachedRegion(CustomCropsChunk customCropsChunk) {
+        CustomCropsRegion customCropsRegion = customCropsChunk.getCustomCropsRegion();
+        SerializableChunk serializableChunk = toSerializableChunk((CChunk) customCropsChunk);
+        if (serializableChunk.canPrune()) {
+            customCropsRegion.removeChunk(customCropsChunk.getChunkPos());
+        } else {
+            customCropsRegion.saveChunk(customCropsChunk.getChunkPos(), serialize(serializableChunk));
+        }
+    }
+
+    @Override
+    public void saveRegion(CustomCropsRegion customCropsRegion) {
+        File file = getRegionDataFilePath(customCropsRegion.getCustomCropsWorld().getWorld(), customCropsRegion.getRegionPos());
+        if (customCropsRegion.canPrune()) {
+            file.delete();
+            return;
+        }
+
         long time1 = System.currentTimeMillis();
-        try (BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(getChunkDataFilePath(ccWorld.getWorld(), chunk.getChunkCoordinate())))) {
-            bos.write(serialize((CChunk) chunk));
+        try (BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(file))) {
+            bos.write(serialize(customCropsRegion));
             long time2 = System.currentTimeMillis();
-            CustomCropsPlugin.get().debug("Took " + (time2-time1) + "ms to save chunk " + chunk.getChunkCoordinate());
+            CustomCropsPlugin.get().debug("Took " + (time2-time1) + "ms to save region " + customCropsRegion.getRegionPos());
         } catch (IOException e) {
-            LogUtils.severe("Failed to save CustomCrops data.");
+            LogUtils.severe("Failed to save CustomCrops region data." + customCropsRegion.getRegionPos());
             e.printStackTrace();
         }
     }
@@ -186,15 +253,35 @@ public class BukkitWorldAdaptor extends AbstractWorldAdaptor {
             worldManager.unloadWorld(event.getWorld());
     }
 
-    private String getChunkDataFile(ChunkCoordinate chunkCoordinate) {
-        return chunkCoordinate.x() + "," + chunkCoordinate.z() + ".ccd";
+    @EventHandler (ignoreCancelled = true)
+    public void onWorldSave(WorldSaveEvent event) {
+        World world = event.getWorld();
+        worldManager.getCustomCropsWorld(world).ifPresent(CustomCropsWorld::save);
     }
 
-    private File getChunkDataFilePath(World world, ChunkCoordinate chunkCoordinate) {
+    @Deprecated
+    private String getChunkDataFile(ChunkPos chunkPos) {
+        return chunkPos.x() + "," + chunkPos.z() + ".ccd";
+    }
+
+    private String getRegionDataFile(RegionPos regionPos) {
+        return "r." + regionPos.x() + "." + regionPos.z() + ".mcc";
+    }
+
+    @Deprecated
+    private File getChunkDataFilePath(World world, ChunkPos chunkPos) {
         if (worldFolder.isEmpty()) {
-            return new File(world.getWorldFolder(), "customcrops" + File.separator + getChunkDataFile(chunkCoordinate));
+            return new File(world.getWorldFolder(), "customcrops" + File.separator + getChunkDataFile(chunkPos));
         } else {
-            return new File(worldFolder, world.getName() + File.separator + "customcrops" + File.separator + getChunkDataFile(chunkCoordinate));
+            return new File(worldFolder, world.getName() + File.separator + "customcrops" + File.separator + getChunkDataFile(chunkPos));
+        }
+    }
+
+    private File getRegionDataFilePath(World world, RegionPos regionPos) {
+        if (worldFolder.isEmpty()) {
+            return new File(world.getWorldFolder(), "customcrops" + File.separator + getRegionDataFile(regionPos));
+        } else {
+            return new File(worldFolder, world.getName() + File.separator + "customcrops" + File.separator + getRegionDataFile(regionPos));
         }
     }
 
@@ -202,12 +289,51 @@ public class BukkitWorldAdaptor extends AbstractWorldAdaptor {
         this.worldFolder = folder;
     }
 
-    public byte[] serialize(CChunk chunk) {
+    public byte[] serialize(CustomCropsRegion region) {
         ByteArrayOutputStream outByteStream = new ByteArrayOutputStream();
         DataOutputStream outStream = new DataOutputStream(outByteStream);
-        SerializableChunk serializableChunk = toSerializableChunk(chunk);
         try {
-            outStream.writeByte(version);
+            outStream.writeByte(regionVersion);
+            outStream.writeInt(region.getRegionPos().x());
+            outStream.writeInt(region.getRegionPos().z());
+            Map<ChunkPos, byte[]> map = region.getRegionDataToSave();
+            outStream.writeInt(map.size());
+            for (Map.Entry<ChunkPos, byte[]> entry : map.entrySet()) {
+                outStream.writeInt(entry.getKey().x());
+                outStream.writeInt(entry.getKey().z());
+                byte[] dataArray = entry.getValue();
+                outStream.writeInt(dataArray.length);
+                outStream.write(dataArray);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return outByteStream.toByteArray();
+    }
+
+    public CRegion deserializeRegion(CWorld world, DataInputStream dataStream) throws IOException {
+        int regionVersion = dataStream.readByte();
+        int regionX = dataStream.readInt();
+        int regionZ = dataStream.readInt();
+        RegionPos regionPos = RegionPos.of(regionX, regionZ);
+        ConcurrentHashMap<ChunkPos, byte[]> map = new ConcurrentHashMap<>();
+        int chunkAmount = dataStream.readInt();
+        for (int i = 0; i < chunkAmount; i++) {
+            int chunkX = dataStream.readInt();
+            int chunkZ = dataStream.readInt();
+            ChunkPos chunkPos = ChunkPos.of(chunkX, chunkZ);
+            byte[] chunkData = new byte[dataStream.readInt()];
+            dataStream.read(chunkData);
+            map.put(chunkPos, chunkData);
+        }
+        return new CRegion(world, regionPos, map);
+    }
+
+    public byte[] serialize(SerializableChunk serializableChunk) {
+        ByteArrayOutputStream outByteStream = new ByteArrayOutputStream();
+        DataOutputStream outStream = new DataOutputStream(outByteStream);
+        try {
+            outStream.writeByte(chunkVersion);
             byte[] serializedSections = serializeChunk(serializableChunk);
             byte[] compressed = Zstd.compress(serializedSections);
             outStream.writeInt(compressed.length);
@@ -219,8 +345,8 @@ public class BukkitWorldAdaptor extends AbstractWorldAdaptor {
         return outByteStream.toByteArray();
     }
 
-    public CChunk deserialize(CWorld world, DataInputStream dataStream) throws IOException {
-        int worldVersion = dataStream.readByte();
+    public CChunk deserializeChunk(CWorld world, DataInputStream dataStream) throws IOException {
+        int chunkVersion = dataStream.readByte();
         byte[] blockData = readCompressedBytes(dataStream);
         return deserializeChunk(world, blockData);
     }
@@ -231,7 +357,7 @@ public class BukkitWorldAdaptor extends AbstractWorldAdaptor {
         // read coordinate
         int x = chunkData.readInt();
         int z = chunkData.readInt();
-        ChunkCoordinate coordinate = new ChunkCoordinate(x, z);
+        ChunkPos coordinate = new ChunkPos(x, z);
         // read loading info
         int loadedSeconds = chunkData.readInt();
         long lastLoadedTime = chunkData.readLong();
@@ -362,10 +488,10 @@ public class BukkitWorldAdaptor extends AbstractWorldAdaptor {
     }
 
     public SerializableChunk toSerializableChunk(CChunk chunk) {
-        ChunkCoordinate chunkCoordinate = chunk.getChunkCoordinate();
+        ChunkPos chunkPos = chunk.getChunkPos();
         return new SerializableChunk(
-                chunkCoordinate.x(),
-                chunkCoordinate.z(),
+                chunkPos.x(),
+                chunkPos.z(),
                 chunk.getLoadedSeconds(),
                 chunk.getLastLoadedTime(),
                 Arrays.stream(chunk.getSectionsForSerialization()).map(this::toSerializableSection).toList(),
@@ -451,7 +577,7 @@ public class BukkitWorldAdaptor extends AbstractWorldAdaptor {
         return outByteStream.toByteArray();
     }
 
-    public void convertWorld(@Nullable CWorld cWorld, World world) {
+    public void convertWorldFromV33toV34(@Nullable CWorld cWorld, World world) {
         // handle legacy files
         File leagcyFile = new File(world.getWorldFolder(), "customcrops" + File.separator + "data.yml");
         if (leagcyFile.exists()) {
@@ -477,11 +603,14 @@ public class BukkitWorldAdaptor extends AbstractWorldAdaptor {
             LogUtils.warn("Converting chunks for world " + world.getName() + " from 3.3 to 3.4... This might take some time.");
             File[] data_files = folder.listFiles();
             if (data_files == null) return;
+
+            HashMap<RegionPos, CustomCropsRegion> regionHashMap = new HashMap<>();
+
             for (File file : data_files) {
-                ChunkCoordinate chunkCoordinate = ChunkCoordinate.getByString(file.getName().substring(0, file.getName().length() - 7));
+                ChunkPos chunkPos = ChunkPos.getByString(file.getName().substring(0, file.getName().length() - 7));
                 try (FileInputStream fis = new FileInputStream(file); ObjectInputStream ois = new ObjectInputStream(fis)) {
                     CCChunk chunk = (CCChunk) ois.readObject();
-                    CChunk cChunk = new CChunk(cWorld, chunkCoordinate);
+                    CChunk cChunk = new CChunk(cWorld, chunkPos);
                     for (net.momirealms.customcrops.api.object.world.SimpleLocation legacyLocation : chunk.getGreenhouseSet()) {
                         SimpleLocation simpleLocation = new SimpleLocation(legacyLocation.getWorldName(), legacyLocation.getX(), legacyLocation.getY(), legacyLocation.getZ());
                         cChunk.addGlassAt(new MemoryGlass(simpleLocation), simpleLocation);
@@ -506,19 +635,56 @@ public class BukkitWorldAdaptor extends AbstractWorldAdaptor {
                         Fertilizer fertilizer = entry.getValue().getFertilizer();
                         cChunk.addPotAt(new MemoryPot(simpleLocation, entry.getValue().getKey(), entry.getValue().getWater(), fertilizer == null ? "" : fertilizer.getKey(), fertilizer == null ? 0 : fertilizer.getTimes()), simpleLocation);
                     }
-                    try (BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(getChunkDataFilePath(world, cChunk.getChunkCoordinate())))) {
-                        bos.write(serialize(cChunk));
-                    } catch (IOException e) {
-                        LogUtils.severe("Failed to save CustomCrops data.");
-                        e.printStackTrace();
+                    CustomCropsRegion region = regionHashMap.get(chunkPos.getRegionPos());
+                    if (region == null) {
+                        region = new CRegion(cWorld, chunkPos.getRegionPos());
+                        regionHashMap.put(chunkPos.getRegionPos(), region);
                     }
+                    region.saveChunk(chunkPos, serialize(toSerializableChunk(cChunk)));
                 } catch (IOException | ClassNotFoundException e) {
                     e.printStackTrace();
                     LogUtils.info("Error at " + file.getAbsolutePath());
                 }
             }
 
-            LogUtils.info("Successfully converted chunks for world: " + world);
+            for (CustomCropsRegion region : regionHashMap.values()) {
+                saveRegion(region);
+            }
+            LogUtils.info("Successfully converted chunks for world: " + world.getName());
         }
+    }
+
+    public void convertWorldFromV342toV343(@Nullable CWorld cWorld, World world) {
+        File folder = new File(world.getWorldFolder(), "customcrops");
+        if (!folder.exists()) return;
+        LogUtils.warn("Converting chunks for world " + world.getName() + " from 3.4.2 to 3.4.3... This might take some time.");
+        File[] data_files = folder.listFiles();
+        if (data_files == null) return;
+        HashMap<RegionPos, CustomCropsRegion> regionHashMap = new HashMap<>();
+        for (File file : data_files) {
+            String fileName = file.getName();
+            if (fileName.endsWith(".ccd")) {
+                String chunkStr = file.getName().substring(0, fileName.length()-4);
+                ChunkPos chunkPos = ChunkPos.getByString(chunkStr);
+                try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file))) {
+                    DataInputStream dataStream = new DataInputStream(bis);
+                    byte[] chunkData = dataStream.readAllBytes();
+                    dataStream.close();
+                    CustomCropsRegion region = regionHashMap.get(chunkPos.getRegionPos());
+                    if (region == null) {
+                        region = new CRegion(cWorld, chunkPos.getRegionPos());
+                        regionHashMap.put(chunkPos.getRegionPos(), region);
+                    }
+                    region.saveChunk(chunkPos, chunkData);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                file.delete();
+            }
+        }
+        for (CustomCropsRegion region : regionHashMap.values()) {
+            saveRegion(region);
+        }
+        LogUtils.info("Successfully converted chunks for world: " + world.getName());
     }
 }

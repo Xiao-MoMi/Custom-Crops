@@ -26,20 +26,23 @@ import net.momirealms.customcrops.api.mechanic.item.Crop;
 import net.momirealms.customcrops.api.mechanic.item.Fertilizer;
 import net.momirealms.customcrops.api.mechanic.item.Pot;
 import net.momirealms.customcrops.api.mechanic.item.Sprinkler;
-import net.momirealms.customcrops.api.mechanic.world.ChunkCoordinate;
+import net.momirealms.customcrops.api.mechanic.world.ChunkPos;
 import net.momirealms.customcrops.api.mechanic.world.CustomCropsBlock;
+import net.momirealms.customcrops.api.mechanic.world.RegionPos;
 import net.momirealms.customcrops.api.mechanic.world.SimpleLocation;
 import net.momirealms.customcrops.api.mechanic.world.level.*;
 import net.momirealms.customcrops.api.mechanic.world.season.Season;
 import net.momirealms.customcrops.api.scheduler.CancellableTask;
 import net.momirealms.customcrops.api.util.LogUtils;
 import net.momirealms.customcrops.utils.EventUtils;
-import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.ref.WeakReference;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
@@ -47,21 +50,42 @@ public class CWorld implements CustomCropsWorld {
 
     private final WorldManager worldManager;
     private final WeakReference<World> world;
-    private final ConcurrentHashMap<ChunkCoordinate, CChunk> loadedChunks;
-    private final ConcurrentHashMap<ChunkCoordinate, CChunk> lazyChunks;
+    private final ConcurrentHashMap<ChunkPos, CChunk> loadedChunks;
+    private final ConcurrentHashMap<ChunkPos, CChunk> lazyChunks;
+    private final ConcurrentHashMap<RegionPos, CRegion> loadedRegions;
     private WorldSetting setting;
     private WorldInfoData infoData;
     private final String worldName;
     private CancellableTask worldTask;
     private int currentMinecraftDay;
+    private int regionTimer;
 
     public CWorld(WorldManager worldManager, World world) {
         this.world = new WeakReference<>(world);
         this.worldManager = worldManager;
         this.loadedChunks = new ConcurrentHashMap<>();
         this.lazyChunks = new ConcurrentHashMap<>();
+        this.loadedRegions = new ConcurrentHashMap<>();
         this.worldName = world.getName();
         this.currentMinecraftDay = (int) (world.getFullTime() / 24000);
+        this.regionTimer = 0;
+    }
+
+    @Override
+    public void save() {
+        long time1 = System.currentTimeMillis();
+        worldManager.saveInfoData(this);
+        for (CChunk chunk : loadedChunks.values()) {
+            worldManager.saveChunkToCachedRegion(chunk);
+        }
+        for (CChunk chunk : lazyChunks.values()) {
+            worldManager.saveChunkToCachedRegion(chunk);
+        }
+        for (CRegion region : loadedRegions.values()) {
+            worldManager.saveRegionToFile(region);
+        }
+        long time2 = System.currentTimeMillis();
+        CustomCropsPlugin.get().debug("Took " + (time2-time1) + "ms to save world " + worldName + ". Saved " + (lazyChunks.size() + loadedChunks.size()) + " chunks.");
     }
 
     @Override
@@ -77,8 +101,8 @@ public class CWorld implements CustomCropsWorld {
     }
 
     private void timer() {
-        ArrayList<Pair<ChunkCoordinate, CChunk>> chunksToSave = new ArrayList<>();
-        for (Map.Entry<ChunkCoordinate, CChunk> lazyEntry : lazyChunks.entrySet()) {
+        ArrayList<Pair<ChunkPos, CChunk>> chunksToSave = new ArrayList<>();
+        for (Map.Entry<ChunkPos, CChunk> lazyEntry : lazyChunks.entrySet()) {
             CChunk chunk = lazyEntry.getValue();
             int sec = chunk.getUnloadedSeconds() + 1;
             if (sec >= 30) {
@@ -87,9 +111,9 @@ public class CWorld implements CustomCropsWorld {
                 chunk.setUnloadedSeconds(sec);
             }
         }
-        for (Pair<ChunkCoordinate, CChunk> pair : chunksToSave) {
+        for (Pair<ChunkPos, CChunk> pair : chunksToSave) {
             lazyChunks.remove(pair.left());
-            worldManager.saveChunkToFile(pair.right());
+            worldManager.saveChunkToCachedRegion(pair.right());
         }
         if (setting.isAutoSeasonChange()) {
             this.updateSeasonAndDate();
@@ -97,6 +121,22 @@ public class CWorld implements CustomCropsWorld {
         if (setting.isSchedulerEnabled()) {
             for (CChunk chunk : loadedChunks.values()) {
                 chunk.secondTimer();
+            }
+        }
+
+        // timer check to unload regions
+        this.regionTimer++;
+        if (this.regionTimer >= 600) {
+            this.regionTimer = 0;
+            ArrayList<RegionPos> removed = new ArrayList<>();
+            for (Map.Entry<RegionPos, CRegion> entry : loadedRegions.entrySet()) {
+                if (isRegionNoLongerLoaded(entry.getKey())) {
+                    worldManager.saveRegionToFile(entry.getValue());
+                    removed.add(entry.getKey());
+                }
+            }
+            for (RegionPos pos : removed) {
+                loadedRegions.remove(pos);
             }
         }
     }
@@ -130,8 +170,8 @@ public class CWorld implements CustomCropsWorld {
     }
 
     @Override
-    public CustomCropsChunk removeLazyChunkAt(ChunkCoordinate chunkCoordinate) {
-        return lazyChunks.remove(chunkCoordinate);
+    public CustomCropsChunk removeLazyChunkAt(ChunkPos chunkPos) {
+        return lazyChunks.remove(chunkPos);
     }
 
     @Override
@@ -161,31 +201,51 @@ public class CWorld implements CustomCropsWorld {
     }
 
     @Override
-    public boolean isChunkLoaded(ChunkCoordinate chunkCoordinate) {
-        return loadedChunks.containsKey(chunkCoordinate);
+    public boolean isChunkLoaded(ChunkPos chunkPos) {
+        return loadedChunks.containsKey(chunkPos);
     }
 
     @Override
-    public Optional<CustomCropsChunk> getChunkAt(ChunkCoordinate chunkCoordinate) {
-        return Optional.ofNullable(createOrGetChunk(chunkCoordinate));
+    public boolean isRegionLoaded(RegionPos regionPos) {
+        return loadedRegions.containsKey(regionPos);
+    }
+
+    @Override
+    public Optional<CustomCropsChunk> getLoadedChunkAt(ChunkPos chunkPos) {
+        return Optional.ofNullable(createOrGetChunk(chunkPos));
+    }
+
+    @Override
+    public Optional<CustomCropsRegion> getLoadedRegionAt(RegionPos regionPos) {
+        return Optional.ofNullable(loadedRegions.get(regionPos));
+    }
+
+    @Override
+    public void loadRegion(CustomCropsRegion region) {
+        RegionPos regionPos = region.getRegionPos();
+        if (loadedRegions.containsKey(regionPos)) {
+            LogUtils.warn("Invalid operation: Loaded region is loaded again." + regionPos);
+            return;
+        }
+        loadedRegions.put(regionPos, (CRegion) region);
     }
 
     @Override
     public void loadChunk(CustomCropsChunk chunk) {
-        ChunkCoordinate chunkCoordinate = chunk.getChunkCoordinate();
-        if (loadedChunks.containsKey(chunkCoordinate)) {
-            LogUtils.warn("Invalid operation: Loaded chunk is loaded again." + chunkCoordinate);
+        ChunkPos chunkPos = chunk.getChunkPos();
+        if (loadedChunks.containsKey(chunkPos)) {
+            LogUtils.warn("Invalid operation: Loaded chunk is loaded again." + chunkPos);
             return;
         }
-        loadedChunks.put(chunkCoordinate, (CChunk) chunk);
+        loadedChunks.put(chunkPos, (CChunk) chunk);
     }
 
     @Override
-    public void unloadChunk(ChunkCoordinate chunkCoordinate) {
-        CChunk chunk = loadedChunks.remove(chunkCoordinate);
+    public void unloadChunk(ChunkPos chunkPos) {
+        CChunk chunk = loadedChunks.remove(chunkPos);
         if (chunk != null) {
             chunk.updateLastLoadedTime();
-            lazyChunks.put(chunkCoordinate, chunk);
+            lazyChunks.put(chunkPos, chunk);
         }
     }
 
@@ -256,7 +316,7 @@ public class CWorld implements CustomCropsWorld {
 
     @Override
     public void addWaterToSprinkler(Sprinkler sprinkler, SimpleLocation location, int amount) {
-        Optional<CustomCropsChunk> chunk = getChunkAt(location.getChunkCoordinate());
+        Optional<CustomCropsChunk> chunk = getLoadedChunkAt(location.getChunkCoordinate());
         if (chunk.isPresent()) {
             chunk.get().addWaterToSprinkler(sprinkler, location, amount);
         } else {
@@ -266,7 +326,7 @@ public class CWorld implements CustomCropsWorld {
 
     @Override
     public void addFertilizerToPot(Pot pot, Fertilizer fertilizer, SimpleLocation location) {
-        Optional<CustomCropsChunk> chunk = getChunkAt(location.getChunkCoordinate());
+        Optional<CustomCropsChunk> chunk = getLoadedChunkAt(location.getChunkCoordinate());
         if (chunk.isPresent()) {
             chunk.get().addFertilizerToPot(pot, fertilizer, location);
         } else {
@@ -276,7 +336,7 @@ public class CWorld implements CustomCropsWorld {
 
     @Override
     public void addWaterToPot(Pot pot, SimpleLocation location, int amount) {
-        Optional<CustomCropsChunk> chunk = getChunkAt(location.getChunkCoordinate());
+        Optional<CustomCropsChunk> chunk = getLoadedChunkAt(location.getChunkCoordinate());
         if (chunk.isPresent()) {
             chunk.get().addWaterToPot(pot, location, amount);
         } else {
@@ -286,7 +346,7 @@ public class CWorld implements CustomCropsWorld {
 
     @Override
     public void addPotAt(WorldPot pot, SimpleLocation location) {
-        Optional<CustomCropsChunk> chunk = getChunkAt(location.getChunkCoordinate());
+        Optional<CustomCropsChunk> chunk = getLoadedChunkAt(location.getChunkCoordinate());
         if (chunk.isPresent()) {
             chunk.get().addPotAt(pot, location);
         } else {
@@ -296,7 +356,7 @@ public class CWorld implements CustomCropsWorld {
 
     @Override
     public void addSprinklerAt(WorldSprinkler sprinkler, SimpleLocation location) {
-        Optional<CustomCropsChunk> chunk = getChunkAt(location.getChunkCoordinate());
+        Optional<CustomCropsChunk> chunk = getLoadedChunkAt(location.getChunkCoordinate());
         if (chunk.isPresent()) {
             chunk.get().addSprinklerAt(sprinkler, location);
         } else {
@@ -306,7 +366,7 @@ public class CWorld implements CustomCropsWorld {
 
     @Override
     public void addCropAt(WorldCrop crop, SimpleLocation location) {
-        Optional<CustomCropsChunk> chunk = getChunkAt(location.getChunkCoordinate());
+        Optional<CustomCropsChunk> chunk = getLoadedChunkAt(location.getChunkCoordinate());
         if (chunk.isPresent()) {
             chunk.get().addCropAt(crop, location);
         } else {
@@ -316,7 +376,7 @@ public class CWorld implements CustomCropsWorld {
 
     @Override
     public void addPointToCrop(Crop crop, SimpleLocation location, int points) {
-        Optional<CustomCropsChunk> chunk = getChunkAt(location.getChunkCoordinate());
+        Optional<CustomCropsChunk> chunk = getLoadedChunkAt(location.getChunkCoordinate());
         if (chunk.isPresent()) {
             chunk.get().addPointToCrop(crop, location, points);
         } else {
@@ -326,7 +386,7 @@ public class CWorld implements CustomCropsWorld {
 
     @Override
     public void addGlassAt(WorldGlass glass, SimpleLocation location) {
-        Optional<CustomCropsChunk> chunk = getChunkAt(location.getChunkCoordinate());
+        Optional<CustomCropsChunk> chunk = getLoadedChunkAt(location.getChunkCoordinate());
         if (chunk.isPresent()) {
             chunk.get().addGlassAt(glass, location);
         } else {
@@ -336,7 +396,7 @@ public class CWorld implements CustomCropsWorld {
 
     @Override
     public void addScarecrowAt(WorldScarecrow scarecrow, SimpleLocation location) {
-        Optional<CustomCropsChunk> chunk = getChunkAt(location.getChunkCoordinate());
+        Optional<CustomCropsChunk> chunk = getLoadedChunkAt(location.getChunkCoordinate());
         if (chunk.isPresent()) {
             chunk.get().addScarecrowAt(scarecrow, location);
         } else {
@@ -346,7 +406,7 @@ public class CWorld implements CustomCropsWorld {
 
     @Override
     public void removeSprinklerAt(SimpleLocation location) {
-        Optional<CustomCropsChunk> chunk = getChunkAt(location.getChunkCoordinate());
+        Optional<CustomCropsChunk> chunk = getLoadedChunkAt(location.getChunkCoordinate());
         if (chunk.isPresent()) {
             chunk.get().removeSprinklerAt(location);
         } else {
@@ -356,7 +416,7 @@ public class CWorld implements CustomCropsWorld {
 
     @Override
     public void removePotAt(SimpleLocation location) {
-        Optional<CustomCropsChunk> chunk = getChunkAt(location.getChunkCoordinate());
+        Optional<CustomCropsChunk> chunk = getLoadedChunkAt(location.getChunkCoordinate());
         if (chunk.isPresent()) {
             chunk.get().removePotAt(location);
         } else {
@@ -366,7 +426,7 @@ public class CWorld implements CustomCropsWorld {
 
     @Override
     public void removeCropAt(SimpleLocation location) {
-        Optional<CustomCropsChunk> chunk = getChunkAt(location.getChunkCoordinate());
+        Optional<CustomCropsChunk> chunk = getLoadedChunkAt(location.getChunkCoordinate());
         if (chunk.isPresent()) {
             chunk.get().removeCropAt(location);
         } else {
@@ -376,7 +436,7 @@ public class CWorld implements CustomCropsWorld {
 
     @Override
     public void removeGlassAt(SimpleLocation location) {
-        Optional<CustomCropsChunk> chunk = getChunkAt(location.getChunkCoordinate());
+        Optional<CustomCropsChunk> chunk = getLoadedChunkAt(location.getChunkCoordinate());
         if (chunk.isPresent()) {
             chunk.get().removeGlassAt(location);
         } else {
@@ -386,7 +446,7 @@ public class CWorld implements CustomCropsWorld {
 
     @Override
     public void removeScarecrowAt(SimpleLocation location) {
-        Optional<CustomCropsChunk> chunk = getChunkAt(location.getChunkCoordinate());
+        Optional<CustomCropsChunk> chunk = getLoadedChunkAt(location.getChunkCoordinate());
         if (chunk.isPresent()) {
             chunk.get().removeScarecrowAt(location);
         } else {
@@ -396,7 +456,7 @@ public class CWorld implements CustomCropsWorld {
 
     @Override
     public CustomCropsBlock removeAnythingAt(SimpleLocation location) {
-        Optional<CustomCropsChunk> chunk = getChunkAt(location.getChunkCoordinate());
+        Optional<CustomCropsChunk> chunk = getLoadedChunkAt(location.getChunkCoordinate());
         if (chunk.isPresent()) {
             return chunk.get().removeBlockAt(location);
         } else {
@@ -406,33 +466,35 @@ public class CWorld implements CustomCropsWorld {
     }
 
     @Nullable
-    private CustomCropsChunk createOrGetChunk(ChunkCoordinate chunkCoordinate) {
+    private CustomCropsChunk createOrGetChunk(ChunkPos chunkPos) {
         World bukkitWorld = world.get();
         if (bukkitWorld == null)
             return null;
-        CChunk chunk = loadedChunks.get(chunkCoordinate);
+        CChunk chunk = loadedChunks.get(chunkPos);
         if (chunk != null) {
             return chunk;
         }
-        if (bukkitWorld.isChunkLoaded(chunkCoordinate.x(), chunkCoordinate.z())) {
-            chunk = new CChunk(this, chunkCoordinate);
+        // is a loaded chunk, but it doesn't have customcrops data
+        if (bukkitWorld.isChunkLoaded(chunkPos.x(), chunkPos.z())) {
+            chunk = new CChunk(this, chunkPos);
             loadChunk(chunk);
             return chunk;
         } else {
-            if (bukkitWorld.isChunkGenerated(chunkCoordinate.x(), chunkCoordinate.z())) {
-                Chunk bukkitChunk = bukkitWorld.getChunkAt(chunkCoordinate.x(), chunkCoordinate.z());
-                worldManager.handleChunkLoad(bukkitChunk);
-                chunk = loadedChunks.get(chunkCoordinate);
-                return Objects.requireNonNullElseGet(chunk, () -> new CChunk(this, chunkCoordinate));
-            } else {
-                return null;
-            }
+            // is an unloaded chunk, but has been generated
+//            if (bukkitWorld.isChunkGenerated(chunkPos.x(), chunkPos.z())) {
+//                Chunk bukkitChunk = bukkitWorld.getChunkAt(chunkPos.x(), chunkPos.z());
+//                worldManager.handleChunkLoad(bukkitChunk);
+//                chunk = loadedChunks.get(chunkPos);
+//                return Objects.requireNonNullElseGet(chunk, () -> new CChunk(this, chunkPos));
+//            } else {
+            return null;
+//            }
         }
     }
 
     @Override
     public boolean isPotReachLimit(SimpleLocation location) {
-        Optional<CustomCropsChunk> chunk = getChunkAt(location.getChunkCoordinate());
+        Optional<CustomCropsChunk> chunk = getLoadedChunkAt(location.getChunkCoordinate());
         if (chunk.isEmpty()) {
             LogUtils.warn("Invalid operation: Querying pot amount from a not generated chunk");
             return true;
@@ -443,7 +505,7 @@ public class CWorld implements CustomCropsWorld {
 
     @Override
     public boolean isCropReachLimit(SimpleLocation location) {
-        Optional<CustomCropsChunk> chunk = getChunkAt(location.getChunkCoordinate());
+        Optional<CustomCropsChunk> chunk = getLoadedChunkAt(location.getChunkCoordinate());
         if (chunk.isEmpty()) {
             LogUtils.warn("Invalid operation: Querying crop amount from a not generated chunk");
             return true;
@@ -454,7 +516,7 @@ public class CWorld implements CustomCropsWorld {
 
     @Override
     public boolean isSprinklerReachLimit(SimpleLocation location) {
-        Optional<CustomCropsChunk> chunk = getChunkAt(location.getChunkCoordinate());
+        Optional<CustomCropsChunk> chunk = getLoadedChunkAt(location.getChunkCoordinate());
         if (chunk.isEmpty()) {
             LogUtils.warn("Invalid operation: Querying sprinkler amount from a not generated chunk");
             return true;
@@ -463,10 +525,18 @@ public class CWorld implements CustomCropsWorld {
         return chunk.get().getSprinklerAmount() >= setting.getSprinklerPerChunk();
     }
 
-    public Collection<CChunk> getAllChunksToSave() {
-        ArrayList<CChunk> chunks = new ArrayList<>();
-        chunks.addAll(lazyChunks.values());
-        chunks.addAll(loadedChunks.values());
-        return chunks;
+    private boolean isRegionNoLongerLoaded(RegionPos region) {
+        World w = world.get();
+        if (w != null) {
+            for (int chunkX = region.x() * 32; chunkX < region.x() * 32 + 32; chunkX++) {
+                for (int chunkZ = region.z() * 32; chunkZ < region.z() * 32 + 32; chunkZ++) {
+                    // if a chunk is unloaded, then it should not be in the loaded chunks map
+                    if (w.isChunkLoaded(chunkX, chunkZ) || lazyChunks.containsKey(ChunkPos.of(chunkX, chunkZ))) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
     }
 }

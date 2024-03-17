@@ -2020,6 +2020,9 @@ public class ItemManagerImpl implements ItemManager {
                         if (optionalPot.isEmpty()) {
                             plugin.debug("Found a pot without data interacted by " + player.getName() + " at " + location);
                             WorldPot newPot = new MemoryPot(simpleLocation, pot.getKey());
+                            if (pot.isWetPot(potItemID)) {
+                                newPot.setWater(1);
+                            }
                             plugin.getWorldManager().addPotAt(newPot, simpleLocation);
                             optionalPot = Optional.of(newPot);
                         } else {

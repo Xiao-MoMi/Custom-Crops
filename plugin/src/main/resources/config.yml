@@ -1,5 +1,5 @@
 # Don't change
-config-version: '35'
+config-version: '36'
 
 # Debug
 debug: false

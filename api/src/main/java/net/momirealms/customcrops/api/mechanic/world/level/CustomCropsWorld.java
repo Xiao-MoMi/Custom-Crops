@@ -21,8 +21,9 @@ import net.momirealms.customcrops.api.mechanic.item.Crop;
 import net.momirealms.customcrops.api.mechanic.item.Fertilizer;
 import net.momirealms.customcrops.api.mechanic.item.Pot;
 import net.momirealms.customcrops.api.mechanic.item.Sprinkler;
-import net.momirealms.customcrops.api.mechanic.world.ChunkCoordinate;
+import net.momirealms.customcrops.api.mechanic.world.ChunkPos;
 import net.momirealms.customcrops.api.mechanic.world.CustomCropsBlock;
+import net.momirealms.customcrops.api.mechanic.world.RegionPos;
 import net.momirealms.customcrops.api.mechanic.world.SimpleLocation;
 import net.momirealms.customcrops.api.mechanic.world.season.Season;
 import org.bukkit.World;
@@ -33,11 +34,15 @@ import java.util.Optional;
 
 public interface CustomCropsWorld {
 
+    void save();
+
     void startTick();
 
     void cancelTick();
 
-    CustomCropsChunk removeLazyChunkAt(ChunkCoordinate chunkCoordinate);
+    boolean isRegionLoaded(RegionPos regionPos);
+
+    CustomCropsChunk removeLazyChunkAt(ChunkPos chunkPos);
 
     WorldSetting getWorldSetting();
 
@@ -49,13 +54,17 @@ public interface CustomCropsWorld {
 
     String getWorldName();
 
-    boolean isChunkLoaded(ChunkCoordinate chunkCoordinate);
+    boolean isChunkLoaded(ChunkPos chunkPos);
 
-    Optional<CustomCropsChunk> getChunkAt(ChunkCoordinate chunkCoordinate);
+    Optional<CustomCropsChunk> getLoadedChunkAt(ChunkPos chunkPos);
+
+    Optional<CustomCropsRegion> getLoadedRegionAt(RegionPos regionPos);
+
+    void loadRegion(CustomCropsRegion region);
 
     void loadChunk(CustomCropsChunk chunk);
 
-    void unloadChunk(ChunkCoordinate chunkCoordinate);
+    void unloadChunk(ChunkPos chunkPos);
 
     void setInfoData(WorldInfoData infoData);
 

@@ -21,7 +21,7 @@ import net.momirealms.customcrops.api.mechanic.item.Crop;
 import net.momirealms.customcrops.api.mechanic.item.Fertilizer;
 import net.momirealms.customcrops.api.mechanic.item.Pot;
 import net.momirealms.customcrops.api.mechanic.item.Sprinkler;
-import net.momirealms.customcrops.api.mechanic.world.ChunkCoordinate;
+import net.momirealms.customcrops.api.mechanic.world.ChunkPos;
 import net.momirealms.customcrops.api.mechanic.world.CustomCropsBlock;
 import net.momirealms.customcrops.api.mechanic.world.SimpleLocation;
 
@@ -33,7 +33,9 @@ public interface CustomCropsChunk {
 
     CustomCropsWorld getCustomCropsWorld();
 
-    ChunkCoordinate getChunkCoordinate();
+    CustomCropsRegion getCustomCropsRegion();
+
+    ChunkPos getChunkPos();
 
     void secondTimer();
 
