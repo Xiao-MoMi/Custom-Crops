@@ -28,6 +28,7 @@ import com.google.gson.Gson;
 import net.momirealms.customcrops.api.CustomCropsPlugin;
 import net.momirealms.customcrops.api.manager.ConfigManager;
 import net.momirealms.customcrops.api.manager.WorldManager;
+import net.momirealms.customcrops.api.mechanic.item.ItemType;
 import net.momirealms.customcrops.api.mechanic.world.*;
 import net.momirealms.customcrops.api.mechanic.world.level.CustomCropsChunk;
 import net.momirealms.customcrops.api.mechanic.world.level.CustomCropsWorld;
@@ -292,8 +293,9 @@ public class BukkitWorldAdaptor extends AbstractWorldAdaptor {
                             blockMap.put(chunkPos, new MemoryScarecrow(chunkPos.getLocation(world, coordinate), new CompoundMap(data)));
                         }
                     }
-                    case "GLASS" -> {
+                    case "GREENHOUSE" -> {
                         for (int pos : (int[]) block.get("pos").getValue()) {
+                            System.out.println("you");
                             ChunkPos chunkPos = new ChunkPos(pos);
                             blockMap.put(chunkPos, new MemoryGlass(chunkPos.getLocation(world, coordinate), new CompoundMap(data)));
                         }

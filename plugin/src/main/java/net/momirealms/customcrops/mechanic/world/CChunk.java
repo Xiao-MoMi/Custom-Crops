@@ -374,7 +374,7 @@ public class CChunk implements CustomCropsChunk {
         CustomCropsBlock previous = addBlockAt(scarecrow, location);
         if (previous != null) {
             if (previous instanceof WorldScarecrow) {
-                CustomCropsPlugin.get().debug("Found duplicated glass data when adding scarecrow at " + location);
+                CustomCropsPlugin.get().debug("Found duplicated scarecrow data when adding scarecrow at " + location);
             } else {
                 CustomCropsPlugin.get().debug("Found unremoved data when adding scarecrow at " + location + ". Previous type is " + previous.getType().name());
             }
