@@ -295,7 +295,6 @@ public class BukkitWorldAdaptor extends AbstractWorldAdaptor {
                     }
                     case "GREENHOUSE" -> {
                         for (int pos : (int[]) block.get("pos").getValue()) {
-                            System.out.println("you");
                             ChunkPos chunkPos = new ChunkPos(pos);
                             blockMap.put(chunkPos, new MemoryGlass(chunkPos.getLocation(world, coordinate), new CompoundMap(data)));
                         }
