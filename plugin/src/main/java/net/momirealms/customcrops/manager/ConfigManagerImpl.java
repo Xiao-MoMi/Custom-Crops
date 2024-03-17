@@ -39,7 +39,7 @@ import java.util.Objects;
 
 public class ConfigManagerImpl extends ConfigManager {
 
-    public static final String configVersion = "35";
+    public static final String configVersion = "36";
     private CustomCropsPlugin plugin;
     private String lang;
     private int maximumPoolSize;
