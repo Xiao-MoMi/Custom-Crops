@@ -51,8 +51,9 @@ dependencies {
     implementation(project(":legacy-api"))
     implementation("net.kyori:adventure-api:4.15.0")
     implementation("net.kyori:adventure-platform-bukkit:4.3.2")
-    implementation("com.github.Xiao-MoMi:AntiGriefLib:0.8")
+    implementation("com.github.Xiao-MoMi:AntiGriefLib:0.9")
     implementation("com.github.Xiao-MoMi:BiomeAPI:0.3")
+
     compileOnly("net.kyori:adventure-text-minimessage:4.15.0")
     compileOnly("net.kyori:adventure-text-serializer-legacy:4.15.0")
     compileOnly("de.tr7zw:item-nbt-api:2.12.2")

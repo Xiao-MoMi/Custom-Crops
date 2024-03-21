@@ -480,15 +480,7 @@ public class CWorld implements CustomCropsWorld {
             loadChunk(chunk);
             return chunk;
         } else {
-            // is an unloaded chunk, but has been generated
-//            if (bukkitWorld.isChunkGenerated(chunkPos.x(), chunkPos.z())) {
-//                Chunk bukkitChunk = bukkitWorld.getChunkAt(chunkPos.x(), chunkPos.z());
-//                worldManager.handleChunkLoad(bukkitChunk);
-//                chunk = loadedChunks.get(chunkPos);
-//                return Objects.requireNonNullElseGet(chunk, () -> new CChunk(this, chunkPos));
-//            } else {
             return null;
-//            }
         }
     }
 

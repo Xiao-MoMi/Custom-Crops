@@ -20,6 +20,7 @@ package net.momirealms.customcrops.mechanic.world;
 import net.momirealms.customcrops.api.CustomCropsPlugin;
 import net.momirealms.customcrops.api.manager.WorldManager;
 import net.momirealms.customcrops.api.mechanic.item.*;
+import net.momirealms.customcrops.api.mechanic.misc.MatchRule;
 import net.momirealms.customcrops.api.mechanic.world.AbstractWorldAdaptor;
 import net.momirealms.customcrops.api.mechanic.world.ChunkPos;
 import net.momirealms.customcrops.api.mechanic.world.CustomCropsBlock;
@@ -50,7 +51,7 @@ public class WorldManagerImpl implements WorldManager, Listener {
     private final ConcurrentHashMap<String, CWorld> loadedWorlds;
     private final HashMap<String, WorldSetting> worldSettingMap;
     private WorldSetting defaultWorldSetting;
-    private boolean whiteListOrBlackList;
+    private MatchRule matchRule;
     private HashSet<String> worldList;
     private AbstractWorldAdaptor worldAdaptor;
     private String absoluteWorldFolder;
@@ -118,7 +119,7 @@ public class WorldManagerImpl implements WorldManager, Listener {
         }
 
         this.absoluteWorldFolder = section.getString("absolute-world-folder-path","");
-        this.whiteListOrBlackList = section.getString("mode", "blacklist").equalsIgnoreCase("whitelist");
+        this.matchRule = MatchRule.valueOf(section.getString("mode", "blacklist").toUpperCase(Locale.ENGLISH));
         this.worldList = new HashSet<>(section.getStringList("list"));
 
         // limitation
@@ -196,10 +197,17 @@ public class WorldManagerImpl implements WorldManager, Listener {
 
     @Override
     public boolean isMechanicEnabled(@NotNull World world) {
-        if (whiteListOrBlackList) {
+        if (matchRule == MatchRule.WHITELIST) {
             return worldList.contains(world.getName());
-        } else {
+        } else if (matchRule == MatchRule.BLACKLIST) {
             return !worldList.contains(world.getName());
+        } else {
+            for (String regex : worldList) {
+                if (world.getName().matches(regex)) {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 

@@ -19,7 +19,7 @@ worlds:
   # Especially for realm systems
   absolute-world-folder-path: ''
   # A list of worlds that would decide where the plugin mechanisms take effect
-  # Mode: whitelist/blacklist
+  # Mode: whitelist/blacklist/regex
   mode: blacklist
   list:
     - blacklist_world
