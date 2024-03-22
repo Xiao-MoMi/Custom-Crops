@@ -260,6 +260,18 @@ public class CWorld implements CustomCropsWorld {
     }
 
     @Override
+    public int getDate() {
+        if (setting.isEnableSeason()) {
+            if (ConfigManager.syncSeasons() && ConfigManager.referenceWorld() != world) {
+                return worldManager.getCustomCropsWorld(ConfigManager.referenceWorld()).map(customCropsWorld -> customCropsWorld.getInfoData().getDate()).orElse(0);
+            }
+            return infoData.getDate();
+        } else {
+            return 0;
+        }
+    }
+
+    @Override
     @Nullable
     public Season getSeason() {
         if (setting.isEnableSeason()) {

@@ -126,7 +126,11 @@ public class CommandManager implements Initable {
         return new CommandAPICommand("date")
                 .withSubcommands(
                         new CommandAPICommand("get")
-                                .withArguments(new StringArgument("world").replaceSuggestions(ArgumentSuggestions.strings(commandSenderSuggestionInfo -> Bukkit.getWorlds().stream().map(WorldInfo::getName).toList().toArray(new String[0]))))
+                                .withArguments(new StringArgument("world").replaceSuggestions(ArgumentSuggestions.strings(commandSenderSuggestionInfo -> plugin.getWorldManager().getCustomCropsWorlds().stream()
+                                        .filter(customCropsWorld -> customCropsWorld.getWorldSetting().isEnableSeason())
+                                        .map(CustomCropsWorld::getWorldName)
+                                        .toList()
+                                        .toArray(new String[0]))))
                                 .executes((sender, args) -> {
                                     String worldName = (String) args.get("world");
                                     World world = Bukkit.getWorld(worldName);
@@ -137,7 +141,11 @@ public class CommandManager implements Initable {
                                     plugin.getAdventure().sendMessageWithPrefix(sender, String.valueOf(plugin.getIntegrationManager().getDate(world)));
                                 }),
                         new CommandAPICommand("set")
-                                .withArguments(new StringArgument("world").replaceSuggestions(ArgumentSuggestions.strings(commandSenderSuggestionInfo -> Bukkit.getWorlds().stream().map(WorldInfo::getName).toList().toArray(new String[0]))))
+                                .withArguments(new StringArgument("world").replaceSuggestions(ArgumentSuggestions.strings(commandSenderSuggestionInfo -> plugin.getWorldManager().getCustomCropsWorlds().stream()
+                                        .filter(customCropsWorld -> customCropsWorld.getWorldSetting().isEnableSeason())
+                                        .map(CustomCropsWorld::getWorldName)
+                                        .toList()
+                                        .toArray(new String[0]))))
                                 .withArguments(new IntegerArgument("date",1))
                                 .executes((sender, args) -> {
                                     String worldName = (String) args.get("world");
@@ -176,7 +184,11 @@ public class CommandManager implements Initable {
         return new CommandAPICommand("season")
                 .withSubcommands(
                         new CommandAPICommand("get")
-                                .withArguments(new StringArgument("world").replaceSuggestions(ArgumentSuggestions.strings(commandSenderSuggestionInfo -> Bukkit.getWorlds().stream().map(WorldInfo::getName).toList().toArray(new String[0]))))
+                                .withArguments(new StringArgument("world").replaceSuggestions(ArgumentSuggestions.strings(commandSenderSuggestionInfo -> plugin.getWorldManager().getCustomCropsWorlds().stream()
+                                        .filter(customCropsWorld -> customCropsWorld.getWorldSetting().isEnableSeason())
+                                        .map(CustomCropsWorld::getWorldName)
+                                        .toList()
+                                        .toArray(new String[0]))))
                                 .executes((sender, args) -> {
                                     String worldName = (String) args.get("world");
                                     World world = Bukkit.getWorld(worldName);
@@ -191,7 +203,11 @@ public class CommandManager implements Initable {
                                             if (ConfigManager.syncSeasons()) {
                                                 return new String[]{ConfigManager.referenceWorld().getName()};
                                             }
-                                            return Bukkit.getWorlds().stream().map(WorldInfo::getName).toList().toArray(new String[0]);
+                                            return plugin.getWorldManager().getCustomCropsWorlds().stream()
+                                                    .filter(customCropsWorld -> customCropsWorld.getWorldSetting().isEnableSeason())
+                                                    .map(CustomCropsWorld::getWorldName)
+                                                    .toList()
+                                                    .toArray(new String[0]);
                                         })))
                                 .withArguments(new StringArgument("season")
                                         .replaceSuggestions(ArgumentSuggestions.stringsWithTooltips(info ->

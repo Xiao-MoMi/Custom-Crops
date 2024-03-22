@@ -50,7 +50,7 @@ public class InBuiltSeason implements SeasonInterface {
             return 0;
         return worldManager
                 .getCustomCropsWorld(world)
-                .map(cropsWorld -> cropsWorld.getInfoData().getDate())
+                .map(CustomCropsWorld::getDate)
                 .orElse(0);
     }
 

@@ -70,6 +70,8 @@ public interface CustomCropsWorld {
 
     WorldInfoData getInfoData();
 
+    int getDate();
+
     @Nullable
     Season getSeason();
 
