@@ -55,6 +55,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.*;
 import java.nio.ByteOrder;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -74,7 +75,7 @@ public class BukkitWorldAdaptor extends AbstractWorldAdaptor {
     public void unload(CustomCropsWorld customCropsWorld) {
         World world = customCropsWorld.getWorld();
         if (world != null) {
-            new File(world.getWorldFolder(), "customcrops").mkdir();
+            getWorldFolder(world).mkdir();
             customCropsWorld.save();
         }
     }
@@ -88,8 +89,17 @@ public class BukkitWorldAdaptor extends AbstractWorldAdaptor {
             return;
         }
 
-        world.getPersistentDataContainer().set(key, PersistentDataType.STRING,
-                gson.toJson(cWorld.getInfoData()));
+        try {
+            world.getPersistentDataContainer().set(key, PersistentDataType.STRING,
+                    gson.toJson(cWorld.getInfoData()));
+        } catch (Exception e) {
+            // handle exceptions for those servers without pdc
+            try (FileWriter file = new FileWriter(new File(getWorldFolder(world), "cworld.dat"))) {
+                gson.toJson(cWorld.getInfoData(), file);
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
+            }
+        }
     }
 
     @Override
@@ -110,10 +120,26 @@ public class BukkitWorldAdaptor extends AbstractWorldAdaptor {
             return;
         }
 
-        // init world basic info
-        String json = world.getPersistentDataContainer().get(key, PersistentDataType.STRING);
-        WorldInfoData data = (json == null || json.equals("null")) ? WorldInfoData.empty() : gson.fromJson(json, WorldInfoData.class);
-        cWorld.setInfoData(data);
+        try {
+            // init world basic info
+            String json = world.getPersistentDataContainer().get(key, PersistentDataType.STRING);
+            WorldInfoData data = (json == null || json.equals("null")) ? WorldInfoData.empty() : gson.fromJson(json, WorldInfoData.class);
+            cWorld.setInfoData(data);
+        } catch (Exception e) {
+            File cWorldFile = new File(getWorldFolder(world), "cworld.dat");
+            if (cWorldFile.exists()) {
+                byte[] fileBytes = new byte[(int) cWorldFile.length()];
+                try (FileInputStream fis = new FileInputStream(cWorldFile)) {
+                    fis.read(fileBytes);
+                } catch (IOException ioException) {
+                    ioException.printStackTrace();
+                }
+                String jsonContent = new String(fileBytes, StandardCharsets.UTF_8);
+                cWorld.setInfoData(gson.fromJson(jsonContent, WorldInfoData.class));
+            } else {
+                cWorld.setInfoData(WorldInfoData.empty());
+            }
+        }
     }
 
     @Override
@@ -282,6 +308,14 @@ public class BukkitWorldAdaptor extends AbstractWorldAdaptor {
             return new File(world.getWorldFolder(), "customcrops" + File.separator + getRegionDataFile(regionPos));
         } else {
             return new File(worldFolder, world.getName() + File.separator + "customcrops" + File.separator + getRegionDataFile(regionPos));
+        }
+    }
+
+    private File getWorldFolder(World world) {
+        if (worldFolder.isEmpty()) {
+            return new File(world.getWorldFolder(), "customcrops");
+        } else {
+            return new File(worldFolder, world.getName() + File.separator + "customcrops");
         }
     }
 

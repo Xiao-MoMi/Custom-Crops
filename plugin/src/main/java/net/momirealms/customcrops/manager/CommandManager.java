@@ -24,6 +24,7 @@ import dev.jorel.commandapi.arguments.StringArgument;
 import net.momirealms.customcrops.api.CustomCropsPlugin;
 import net.momirealms.customcrops.api.common.Initable;
 import net.momirealms.customcrops.api.integration.SeasonInterface;
+import net.momirealms.customcrops.api.manager.ConfigManager;
 import net.momirealms.customcrops.api.manager.MessageManager;
 import net.momirealms.customcrops.api.mechanic.item.ItemType;
 import net.momirealms.customcrops.api.mechanic.world.CustomCropsBlock;
@@ -186,7 +187,12 @@ public class CommandManager implements Initable {
                                     plugin.getAdventure().sendMessageWithPrefix(sender, MessageManager.seasonTranslation(plugin.getIntegrationManager().getSeason(world)));
                                 }),
                         new CommandAPICommand("set")
-                                .withArguments(new StringArgument("world").replaceSuggestions(ArgumentSuggestions.strings(commandSenderSuggestionInfo -> Bukkit.getWorlds().stream().map(WorldInfo::getName).toList().toArray(new String[0]))))
+                                .withArguments(new StringArgument("world").replaceSuggestions(ArgumentSuggestions.strings(commandSenderSuggestionInfo -> {
+                                            if (ConfigManager.syncSeasons()) {
+                                                return new String[]{ConfigManager.referenceWorld().getName()};
+                                            }
+                                            return Bukkit.getWorlds().stream().map(WorldInfo::getName).toList().toArray(new String[0]);
+                                        })))
                                 .withArguments(new StringArgument("season")
                                         .replaceSuggestions(ArgumentSuggestions.stringsWithTooltips(info ->
                                                 new IStringTooltip[] {
