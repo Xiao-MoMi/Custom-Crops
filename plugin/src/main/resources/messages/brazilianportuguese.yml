@@ -1,0 +1,8 @@
+messages:
+  prefix: '<gradient:#ff206c:#fdee55>[CustomCrops]</gradient> '
+  reload: '<white>Recarregado! Levou <green>{time}ms.</green></white>'
+  spring: 'Primavera'
+  summer: 'Verão'
+  autumn: 'Outono'
+  winter: 'Inverno'
+  no-season: 'Estação Desativada'
