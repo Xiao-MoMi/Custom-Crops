@@ -21,6 +21,7 @@ import net.momirealms.customcrops.api.CustomCropsPlugin;
 import net.momirealms.customcrops.api.scheduler.CancellableTask;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.scheduler.BukkitTask;
 
 public class BukkitSchedulerImpl implements SyncScheduler {
@@ -37,6 +38,11 @@ public class BukkitSchedulerImpl implements SyncScheduler {
             runnable.run();
         else
             Bukkit.getScheduler().runTask(plugin, runnable);
+    }
+
+    @Override
+    public void runSyncTask(Runnable runnable, World world, int x, int z) {
+        runSyncTask(runnable, null);
     }
 
     @Override

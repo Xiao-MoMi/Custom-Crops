@@ -21,6 +21,7 @@ import net.momirealms.customcrops.api.CustomCropsPlugin;
 import net.momirealms.customcrops.api.common.Pair;
 import net.momirealms.customcrops.api.event.SeasonChangeEvent;
 import net.momirealms.customcrops.api.manager.ConfigManager;
+import net.momirealms.customcrops.api.manager.VersionManager;
 import net.momirealms.customcrops.api.manager.WorldManager;
 import net.momirealms.customcrops.api.mechanic.item.Crop;
 import net.momirealms.customcrops.api.mechanic.item.Fertilizer;
@@ -33,6 +34,7 @@ import net.momirealms.customcrops.api.mechanic.world.SimpleLocation;
 import net.momirealms.customcrops.api.mechanic.world.level.*;
 import net.momirealms.customcrops.api.mechanic.world.season.Season;
 import net.momirealms.customcrops.api.scheduler.CancellableTask;
+import net.momirealms.customcrops.api.scheduler.Scheduler;
 import net.momirealms.customcrops.api.util.LogUtils;
 import net.momirealms.customcrops.utils.EventUtils;
 import org.bukkit.World;
@@ -119,8 +121,15 @@ public class CWorld implements CustomCropsWorld {
             this.updateSeasonAndDate();
         }
         if (setting.isSchedulerEnabled()) {
-            for (CChunk chunk : loadedChunks.values()) {
-                chunk.secondTimer();
+            if (VersionManager.folia()) {
+                Scheduler scheduler = CustomCropsPlugin.get().getScheduler();
+                for (CChunk chunk : loadedChunks.values()) {
+                    scheduler.runTaskSync(chunk::secondTimer,world.get(), chunk.getChunkPos().x(), chunk.getChunkPos().z());
+                }
+            } else {
+                for (CChunk chunk : loadedChunks.values()) {
+                    chunk.secondTimer();
+                }
             }
         }
 

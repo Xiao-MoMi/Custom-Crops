@@ -33,7 +33,7 @@ public class VersionManagerImpl extends VersionManager {
     private final CustomCropsPlugin plugin;
     private final String pluginVersion;
     private final String serverVersion;
-    private boolean hasRegionScheduler;
+    private boolean foliaScheduler;
     private final boolean isSpigot;
     private final boolean isNewerThan1_19_R2;
     private final boolean isNewerThan1_19_R3;
@@ -83,10 +83,10 @@ public class VersionManagerImpl extends VersionManager {
         }
 
         try {
-            Class.forName("io.papermc.paper.threadedregions.scheduler.AsyncScheduler");
-            this.hasRegionScheduler = true;
+            Class.forName("io.papermc.paper.threadedregions.RegionizedServer");
+            this.foliaScheduler = true;
         } catch (ClassNotFoundException ignored) {
-            this.hasRegionScheduler = false;
+            this.foliaScheduler = false;
         }
 
         // Check if the server is Mojmap
@@ -105,7 +105,7 @@ public class VersionManagerImpl extends VersionManager {
 
     @Override
     public boolean hasRegionScheduler() {
-        return hasRegionScheduler;
+        return foliaScheduler;
     }
 
     @Override

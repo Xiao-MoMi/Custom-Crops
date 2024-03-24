@@ -18,6 +18,7 @@
 package net.momirealms.customcrops.api.scheduler;
 
 import org.bukkit.Location;
+import org.bukkit.World;
 
 import java.util.concurrent.TimeUnit;
 
@@ -30,6 +31,16 @@ public interface Scheduler {
      * @param location The location associated with the task.
      */
     void runTaskSync(Runnable runnable, Location location);
+
+    /**
+     * Runs a task synchronously on the main server thread or region thread.
+     *
+     * @param runnable The task to run.
+     * @param world world
+     * @param x chunk X
+     * @param z chunk Z
+     */
+    void runTaskSync(Runnable runnable, World world, int x, int z);
 
     /**
      * Runs a task synchronously with a specified delay and period.

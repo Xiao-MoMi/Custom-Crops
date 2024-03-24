@@ -23,6 +23,7 @@ import net.momirealms.customcrops.api.scheduler.CancellableTask;
 import net.momirealms.customcrops.api.scheduler.Scheduler;
 import net.momirealms.customcrops.api.util.LogUtils;
 import org.bukkit.Location;
+import org.bukkit.World;
 
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
@@ -66,6 +67,11 @@ public class SchedulerImpl implements Scheduler {
     @Override
     public void runTaskSync(Runnable runnable, Location location) {
         this.syncScheduler.runSyncTask(runnable, location);
+    }
+
+    @Override
+    public void runTaskSync(Runnable runnable, World world, int x, int z) {
+        this.syncScheduler.runSyncTask(runnable, world, x, z);
     }
 
     @Override
