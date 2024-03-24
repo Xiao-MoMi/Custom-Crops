@@ -7,7 +7,13 @@ import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * This event is called, when
+ * This class represents an event triggered when a crop is about to wither,
+ * occurring prior to its actual withering process.
+ *
+ * <p>
+ * It provides functionality to handle the event related to a crop's withering,
+ * allowing actions to be taken preemptively before the crop actually withers.
+ * </p>
  *
  * @author GommeHD.net Development Team
  */
