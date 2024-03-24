@@ -27,6 +27,7 @@ import com.github.luben.zstd.Zstd;
 import com.google.gson.Gson;
 import net.momirealms.customcrops.api.CustomCropsPlugin;
 import net.momirealms.customcrops.api.manager.ConfigManager;
+import net.momirealms.customcrops.api.manager.VersionManager;
 import net.momirealms.customcrops.api.manager.WorldManager;
 import net.momirealms.customcrops.api.mechanic.world.*;
 import net.momirealms.customcrops.api.mechanic.world.level.CustomCropsChunk;
@@ -89,11 +90,10 @@ public class BukkitWorldAdaptor extends AbstractWorldAdaptor {
             return;
         }
 
-        try {
+        if (VersionManager.isHigherThan1_18()) {
             world.getPersistentDataContainer().set(key, PersistentDataType.STRING,
                     gson.toJson(cWorld.getInfoData()));
-        } catch (Exception e) {
-            // handle exceptions for those servers without pdc
+        } else {
             try (FileWriter file = new FileWriter(new File(getWorldFolder(world), "cworld.dat"))) {
                 gson.toJson(cWorld.getInfoData(), file);
             } catch (IOException ioException) {
@@ -120,12 +120,12 @@ public class BukkitWorldAdaptor extends AbstractWorldAdaptor {
             return;
         }
 
-        try {
+        if (VersionManager.isHigherThan1_18()) {
             // init world basic info
             String json = world.getPersistentDataContainer().get(key, PersistentDataType.STRING);
             WorldInfoData data = (json == null || json.equals("null")) ? WorldInfoData.empty() : gson.fromJson(json, WorldInfoData.class);
             cWorld.setInfoData(data);
-        } catch (Exception e) {
+        } else {
             File cWorldFile = new File(getWorldFolder(world), "cworld.dat");
             if (cWorldFile.exists()) {
                 byte[] fileBytes = new byte[(int) cWorldFile.length()];
