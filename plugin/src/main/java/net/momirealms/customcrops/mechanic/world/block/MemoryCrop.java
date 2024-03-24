@@ -21,6 +21,7 @@ import com.flowpowered.nbt.CompoundMap;
 import com.flowpowered.nbt.IntTag;
 import com.flowpowered.nbt.StringTag;
 import net.momirealms.customcrops.api.CustomCropsPlugin;
+import net.momirealms.customcrops.api.event.CropWitherEvent;
 import net.momirealms.customcrops.api.mechanic.action.ActionTrigger;
 import net.momirealms.customcrops.api.mechanic.condition.Condition;
 import net.momirealms.customcrops.api.mechanic.condition.DeathConditions;
@@ -126,6 +127,11 @@ public class MemoryCrop extends AbstractCustomCropsBlock implements WorldCrop {
             for (Condition condition : deathConditions.getConditions()) {
                 if (condition.isConditionMet(this)) {
                     CustomCropsPlugin.get().getScheduler().runTaskSyncLater(() -> {
+                        final CropWitherEvent event = new CropWitherEvent(location.getBukkitLocation());
+                        if (!event.callEvent()) {
+                            return;
+                        }
+
                         CustomCropsPlugin.get().getWorldManager().removeCropAt(location);
                         CustomCropsPlugin.get().getItemManager().removeAnythingAt(bukkitLocation);
                         if (deathConditions.getDeathItem() != null) {
