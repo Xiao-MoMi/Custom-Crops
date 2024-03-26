@@ -56,7 +56,7 @@ dependencies {
 
     compileOnly("net.kyori:adventure-text-minimessage:4.15.0")
     compileOnly("net.kyori:adventure-text-serializer-legacy:4.15.0")
-    compileOnly("de.tr7zw:item-nbt-api:2.12.2")
+    compileOnly("de.tr7zw:item-nbt-api:2.12.3")
     compileOnly("org.bstats:bstats-bukkit:3.0.2")
     implementation("com.flowpowered:flow-nbt:2.0.2")
     implementation("com.github.luben:zstd-jni:1.5.5-11")

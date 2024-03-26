@@ -195,7 +195,7 @@ public enum Dependency {
     NBT_API(
             "de{}tr7zw",
             "item-nbt-api",
-            "2.12.2",
+            "2.12.3",
             "codemc",
             "item-nbt-api",
             Relocation.of("changeme", "de{}tr7zw{}changeme")
