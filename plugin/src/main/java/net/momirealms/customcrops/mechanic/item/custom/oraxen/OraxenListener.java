@@ -24,6 +24,7 @@ import io.th0rgal.oraxen.api.events.noteblock.OraxenNoteBlockBreakEvent;
 import io.th0rgal.oraxen.api.events.noteblock.OraxenNoteBlockPlaceEvent;
 import io.th0rgal.oraxen.api.events.stringblock.OraxenStringBlockBreakEvent;
 import io.th0rgal.oraxen.api.events.stringblock.OraxenStringBlockPlaceEvent;
+import net.momirealms.customcrops.api.util.LocationUtils;
 import net.momirealms.customcrops.mechanic.item.ItemManagerImpl;
 import net.momirealms.customcrops.mechanic.item.custom.AbstractCustomListener;
 import org.bukkit.event.EventHandler;
@@ -88,7 +89,7 @@ public class OraxenListener extends AbstractCustomListener {
     public void onBreakFurniture(OraxenFurnitureBreakEvent event) {
         super.onBreakFurniture(
                 event.getPlayer(),
-                event.getBaseEntity().getLocation().toBlockLocation(),
+                LocationUtils.toBlockLocation(event.getBaseEntity().getLocation()),
                 event.getMechanic().getItemID(),
                 event
         );
@@ -98,7 +99,7 @@ public class OraxenListener extends AbstractCustomListener {
     public void onInteractFurniture(OraxenFurnitureInteractEvent event) {
         super.onInteractFurniture(
                 event.getPlayer(),
-                event.getBaseEntity().getLocation().toBlockLocation(),
+                LocationUtils.toBlockLocation(event.getBaseEntity().getLocation()),
                 event.getMechanic().getItemID(),
                 event.getBaseEntity(),
                 event

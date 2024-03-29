@@ -54,8 +54,6 @@ public class OraxenProvider implements CustomProvider {
 
     @Override
     public Entity placeFurniture(Location location, String id) {
-        Location center = location.toCenterLocation();
-        center.setY(center.getBlockY());
         Entity entity = OraxenFurniture.place(id, location, Rotation.NONE, BlockFace.UP);
         if (entity == null) {
             LogUtils.warn("Furniture(" + id +") doesn't exist in Oraxen configs. Please double check if that furniture exists.");
@@ -79,11 +77,7 @@ public class OraxenProvider implements CustomProvider {
 
     @Override
     public String getItemID(ItemStack itemStack) {
-        String id = OraxenItems.getIdByItem(itemStack);
-        if (id == null) {
-            return itemStack.getType().name();
-        }
-        return id;
+        return OraxenItems.getIdByItem(itemStack);
     }
 
     @Override

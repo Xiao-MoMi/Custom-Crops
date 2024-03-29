@@ -46,6 +46,6 @@ public class MMOItemsItemImpl implements ItemLibrary {
     public String getItemID(ItemStack itemStack) {
         NBTItem nbtItem = new NBTItem(itemStack);
         if (!nbtItem.hasTag("MMOITEMS_ITEM_ID")) return null;
-        return nbtItem.getString("MMOITEMS_ITEM_ID");
+        return nbtItem.getString("MMOITEMS_ITEM_TYPE") + ":" + nbtItem.getString("MMOITEMS_ITEM_ID");
     }
 }

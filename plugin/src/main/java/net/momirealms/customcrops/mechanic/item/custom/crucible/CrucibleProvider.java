@@ -76,8 +76,6 @@ public class CrucibleProvider implements CustomProvider {
 
     @Override
     public Entity placeFurniture(Location location, String id) {
-        Location center = location.toCenterLocation();
-        center.setY(center.getBlockY());
         Optional<CrucibleItem> optionalCI = itemManager.getItem(id);
         if (optionalCI.isPresent()) {
             return optionalCI.get().getFurnitureData().placeFrame(location.getBlock(), BlockFace.UP, 0f, null);
@@ -101,9 +99,7 @@ public class CrucibleProvider implements CustomProvider {
 
     @Override
     public String getItemID(ItemStack itemStack) {
-        Optional<CrucibleItem> optionalCI = itemManager.getItem(itemStack);
-        if (optionalCI.isEmpty()) return itemStack.getType().name();
-        else return optionalCI.get().getInternalName();
+        return itemManager.getItem(itemStack).map(CrucibleItem::getInternalName).orElse(null);
     }
 
     @Override

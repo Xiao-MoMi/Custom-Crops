@@ -17,6 +17,7 @@
 
 package net.momirealms.customcrops.api.mechanic.requirement;
 
+import net.momirealms.customcrops.api.util.LocationUtils;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -35,7 +36,7 @@ public class State {
     public State(Player player, ItemStack itemInHand, @NotNull Location location) {
         this.player = player;
         this.itemInHand = itemInHand;
-        this.location = location.toBlockLocation();
+        this.location = LocationUtils.toBlockLocation(location);
         this.args = new HashMap<>();
         if (player != null) {
             setArg("{player}", player.getName());

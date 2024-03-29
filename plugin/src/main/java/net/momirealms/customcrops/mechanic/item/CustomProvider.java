@@ -19,6 +19,7 @@ package net.momirealms.customcrops.mechanic.item;
 
 import net.momirealms.customcrops.api.manager.VersionManager;
 import net.momirealms.customcrops.api.mechanic.misc.CRotation;
+import net.momirealms.customcrops.api.util.LocationUtils;
 import net.momirealms.customcrops.utils.ConfigUtils;
 import net.momirealms.customcrops.utils.DisplayEntityUtils;
 import net.momirealms.customcrops.utils.RotationUtils;
@@ -65,7 +66,7 @@ public interface CustomProvider {
         Block block = location.getBlock();
         if (block.getType() != Material.AIR)
             return false;
-        Location center = location.toCenterLocation();
+        Location center = LocationUtils.toCenterLocation(location);
         Collection<Entity> entities = center.getWorld().getNearbyEntities(center, 0.5,0.51,0.5);
         entities.removeIf(entity -> entity instanceof Player);
         return entities.size() == 0;
@@ -73,7 +74,7 @@ public interface CustomProvider {
 
     default CRotation removeAnythingAt(Location location) {
         if (!removeBlock(location)) {
-            Collection<Entity> entities = location.getWorld().getNearbyEntities(location.toCenterLocation(), 0.5,0.51,0.5);
+            Collection<Entity> entities = location.getWorld().getNearbyEntities(LocationUtils.toCenterLocation(location), 0.5,0.51,0.5);
             entities.removeIf(entity -> {
                 EntityType type = entity.getType();
                 return type != EntityType.ITEM_FRAME
@@ -102,7 +103,7 @@ public interface CustomProvider {
         if (block.getType() != Material.AIR) {
             return getBlockID(block);
         } else {
-            Collection<Entity> entities = location.getWorld().getNearbyEntities(location.toCenterLocation(), 0.5,0.5,0.5);
+            Collection<Entity> entities = location.getWorld().getNearbyEntities(location.toCenterLocation(), 0.5,0.51,0.5);
             for (Entity entity : entities) {
                 if (isFurniture(entity)) {
                     return getEntityID(entity);

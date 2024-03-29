@@ -38,6 +38,7 @@ import net.momirealms.customcrops.api.mechanic.requirement.State;
 import net.momirealms.customcrops.api.mechanic.world.CustomCropsBlock;
 import net.momirealms.customcrops.api.mechanic.world.SimpleLocation;
 import net.momirealms.customcrops.api.mechanic.world.level.*;
+import net.momirealms.customcrops.api.util.LocationUtils;
 import net.momirealms.customcrops.api.util.LogUtils;
 import net.momirealms.customcrops.mechanic.item.custom.AbstractCustomListener;
 import net.momirealms.customcrops.mechanic.item.custom.crucible.CrucibleListener;
@@ -124,13 +125,13 @@ public class ItemManagerImpl implements ItemManager {
         this.item2FertilizerMap = new HashMap<>();
         this.stage2CropStageMap = new HashMap<>();
         this.deadCrops = new HashSet<>();
-        if (Bukkit.getPluginManager().isPluginEnabled("Oraxen")) {
+        if (Bukkit.getPluginManager().getPlugin("Oraxen") != null) {
             listener = new OraxenListener(this);
             customProvider = new OraxenProvider();
-        } else if (Bukkit.getPluginManager().isPluginEnabled("ItemsAdder")) {
+        } else if (Bukkit.getPluginManager().getPlugin("ItemsAdder") != null) {
             listener = new ItemsAdderListener(this);
             customProvider = new ItemsAdderProvider();
-        } else if (Bukkit.getPluginManager().isPluginEnabled("MythicCrucible")) {
+        } else if (Bukkit.getPluginManager().getPlugin("MythicCrucible") != null) {
             listener = new CrucibleListener(this);
             customProvider = new CrucibleProvider();
         } else {
@@ -221,7 +222,7 @@ public class ItemManagerImpl implements ItemManager {
             for (ItemLibrary library : itemDetectionArray) {
                 id = library.getItemID(itemStack);
                 if (id != null)
-                    return id;
+                    return library.identification() + ":" + id;
             }
         }
         return itemStack.getType().name();
@@ -1821,7 +1822,7 @@ public class ItemManagerImpl implements ItemManager {
                             }
 
                             Player player = interactWrapper.getPlayer();
-                            Location cropLocation = interactWrapper.getLocation().toBlockLocation();
+                            Location cropLocation = LocationUtils.toBlockLocation(interactWrapper.getLocation());
                             ItemStack itemInHand = interactWrapper.getItemInHand();
                             State cropState = new State(player, itemInHand, cropLocation);
 
@@ -1928,7 +1929,7 @@ public class ItemManagerImpl implements ItemManager {
                                 return FunctionResult.PASS;
                             }
                             Player player = breakWrapper.getPlayer();
-                            Location cropLocation = breakWrapper.getLocation().toBlockLocation();
+                            Location cropLocation = LocationUtils.toBlockLocation(breakWrapper.getLocation());
                             State state = new State(player, breakWrapper.getItemInHand(), cropLocation);
                             // check crop break requirements
                             if (!RequirementManager.isRequirementMet(state, crop.getBreakRequirements())) {

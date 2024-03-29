@@ -19,6 +19,7 @@ package net.momirealms.customcrops.api.util;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.jetbrains.annotations.NotNull;
 
 public class LocationUtils {
 
@@ -40,5 +41,23 @@ public class LocationUtils {
 
     public static Location getAnyLocationInstance() {
         return new Location(Bukkit.getWorlds().get(0), 0, 64, 0);
+    }
+
+    @NotNull
+    public static Location toBlockLocation(Location location) {
+        Location blockLoc = location.clone();
+        blockLoc.setX(location.getBlockX());
+        blockLoc.setY(location.getBlockY());
+        blockLoc.setZ(location.getBlockZ());
+        return blockLoc;
+    }
+
+    @NotNull
+    public static Location toCenterLocation(Location location) {
+        Location centerLoc = location.clone();
+        centerLoc.setX(location.getBlockX() + 0.5);
+        centerLoc.setY(location.getBlockY() + 0.5);
+        centerLoc.setZ(location.getBlockZ() + 0.5);
+        return centerLoc;
     }
 }
