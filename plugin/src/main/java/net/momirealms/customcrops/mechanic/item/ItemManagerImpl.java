@@ -2268,7 +2268,7 @@ public class ItemManagerImpl implements ItemManager {
             return;
         }
         // Then check item in hand
-        String itemID = customProvider.getItemID(condition.getItemInHand());
+        String itemID = getItemID(condition.getItemInHand());
         Optional.ofNullable(itemID2FunctionMap.get(itemID))
                 .map(map -> map.get(FunctionTrigger.INTERACT_AT))
                 .ifPresent(itemFunctions -> handleFunctions(itemFunctions, condition, event));
@@ -2287,7 +2287,7 @@ public class ItemManagerImpl implements ItemManager {
 
         var condition = new InteractWrapper(player, null);
         // check item in hand
-        String itemID = customProvider.getItemID(condition.getItemInHand());
+        String itemID = getItemID(condition.getItemInHand());
         Optional.ofNullable(itemID2FunctionMap.get(itemID))
                 .map(map -> map.get(FunctionTrigger.INTERACT_AIR))
                 .ifPresent(cFunctions -> handleFunctions(cFunctions, condition, event));
@@ -2333,7 +2333,7 @@ public class ItemManagerImpl implements ItemManager {
             return;
         }
         // Then check item in hand
-        String itemID = customProvider.getItemID(condition.getItemInHand());
+        String itemID = getItemID(condition.getItemInHand());
         Optional.ofNullable(itemID2FunctionMap.get(itemID))
                 .map(map -> map.get(FunctionTrigger.INTERACT_AT))
                 .ifPresent(cFunctions -> handleFunctions(cFunctions, condition, event));
