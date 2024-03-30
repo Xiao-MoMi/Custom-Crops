@@ -101,7 +101,7 @@ mechanics:
 
   # Sync seasons
   sync-season:
-    enable: true
+    enable: false
     reference: world
 
   # Vanilla farmland settings
