@@ -24,7 +24,7 @@ public class WorldSetting implements Cloneable {
     private final int tickCropInterval;
     private final int tickPotInterval;
     private final int tickSprinklerInterval;
-    private final boolean offlineGrow;
+    private final boolean offlineTick;
     private final boolean enableSeason;
     private final boolean autoSeasonChange;
     private final int seasonDuration;
@@ -47,7 +47,7 @@ public class WorldSetting implements Cloneable {
             int tickPotInterval,
             boolean tickSprinklerRandomly,
             int tickSprinklerInterval,
-            boolean offlineGrow,
+            boolean offlineTick,
             int maxOfflineTime,
             boolean enableSeason,
             boolean autoSeasonChange,
@@ -62,7 +62,7 @@ public class WorldSetting implements Cloneable {
         this.tickCropInterval = tickCropInterval;
         this.tickPotInterval = tickPotInterval;
         this.tickSprinklerInterval = tickSprinklerInterval;
-        this.offlineGrow = offlineGrow;
+        this.offlineTick = offlineTick;
         this.maxOfflineTime = maxOfflineTime;
         this.enableSeason = enableSeason;
         this.autoSeasonChange = autoSeasonChange;
@@ -137,8 +137,8 @@ public class WorldSetting implements Cloneable {
         return tickSprinklerInterval;
     }
 
-    public boolean isOfflineGrow() {
-        return offlineGrow;
+    public boolean isOfflineTick() {
+        return offlineTick;
     }
 
     public boolean isEnableSeason() {

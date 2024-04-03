@@ -94,7 +94,6 @@ public class CChunk implements CustomCropsChunk {
         this.lastLoadedTime = current;
         var setting = cWorld.getWorldSetting();
         int minTickUnit = setting.getMinTickUnit();
-
         for (int i = 0; i < offlineTimeInSeconds; i++) {
             this.loadedSeconds++;
             if (this.loadedSeconds >= minTickUnit) {

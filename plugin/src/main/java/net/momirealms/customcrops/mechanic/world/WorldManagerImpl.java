@@ -481,7 +481,7 @@ public class WorldManagerImpl implements WorldManager, Listener {
         this.worldAdaptor.loadChunkData(customCropsWorld, chunkPos);
 
         // offline grow part
-        if (!customCropsWorld.getWorldSetting().isOfflineGrow()) return;
+        if (!customCropsWorld.getWorldSetting().isOfflineTick()) return;
 
         // If chunk data not exists, return
         Optional<CustomCropsChunk> optionalChunk = customCropsWorld.getLoadedChunkAt(chunkPos);
