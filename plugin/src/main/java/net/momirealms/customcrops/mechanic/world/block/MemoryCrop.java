@@ -101,13 +101,13 @@ public class MemoryCrop extends AbstractCustomCropsBlock implements WorldCrop {
     }
 
     @Override
-    public void tick(int interval) {
+    public void tick(int interval, boolean offline) {
         if (canTick(interval)) {
-            tick();
+            tick(offline);
         }
     }
 
-    private void tick() {
+    private void tick(boolean offline) {
         Crop crop = getConfig();
         if (crop == null) {
             LogUtils.warn("Found a crop without config at " + getLocation() + ". Try removing the data.");
@@ -124,14 +124,14 @@ public class MemoryCrop extends AbstractCustomCropsBlock implements WorldCrop {
         // check death conditions
         for (DeathConditions deathConditions : crop.getDeathConditions()) {
             for (Condition condition : deathConditions.getConditions()) {
-                if (condition.isConditionMet(this)) {
+                if (condition.isConditionMet(this, offline)) {
                     CustomCropsPlugin.get().getScheduler().runTaskSyncLater(() -> {
                         CustomCropsPlugin.get().getWorldManager().removeCropAt(location);
                         CustomCropsPlugin.get().getItemManager().removeAnythingAt(bukkitLocation);
                         if (deathConditions.getDeathItem() != null) {
                             CustomCropsPlugin.get().getItemManager().placeItem(bukkitLocation, deathConditions.getItemCarrier(), deathConditions.getDeathItem());
                         }
-                    }, bukkitLocation, deathConditions.getDeathDelay());
+                    }, bukkitLocation, offline ? 0 : deathConditions.getDeathDelay());
                     return;
                 }
             }
@@ -144,7 +144,7 @@ public class MemoryCrop extends AbstractCustomCropsBlock implements WorldCrop {
 
         // check grow conditions
         for (Condition condition : crop.getGrowConditions().getConditions()) {
-            if (!condition.isConditionMet(this)) {
+            if (!condition.isConditionMet(this, offline)) {
                 return;
             }
         }

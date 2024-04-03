@@ -22,7 +22,7 @@ import net.momirealms.customcrops.api.CustomCropsPlugin;
 import net.momirealms.customcrops.api.mechanic.world.SimpleLocation;
 import net.momirealms.customcrops.api.scheduler.CancellableTask;
 import net.momirealms.customcrops.manager.PacketManager;
-import net.momirealms.customcrops.utils.FakeEntityUtils;
+import net.momirealms.customcrops.util.FakeEntityUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;

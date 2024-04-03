@@ -29,7 +29,7 @@ import net.momirealms.customcrops.api.mechanic.world.level.*;
 import net.momirealms.customcrops.api.util.LogUtils;
 import net.momirealms.customcrops.mechanic.world.adaptor.BukkitWorldAdaptor;
 import net.momirealms.customcrops.mechanic.world.adaptor.SlimeWorldAdaptor;
-import net.momirealms.customcrops.utils.ConfigUtils;
+import net.momirealms.customcrops.util.ConfigUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.World;
@@ -490,6 +490,7 @@ public class WorldManagerImpl implements WorldManager, Listener {
         }
 
         CustomCropsChunk chunk = optionalChunk.get();
+        // load the entities if not loaded
         bukkitChunk.getEntities();
         chunk.notifyOfflineUpdates();
     }

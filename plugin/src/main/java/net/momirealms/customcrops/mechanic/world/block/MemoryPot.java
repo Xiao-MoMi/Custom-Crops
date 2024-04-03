@@ -189,12 +189,13 @@ public class MemoryPot extends AbstractCustomCropsBlock implements WorldPot {
     }
 
     @Override
-    public void tick(int interval) {
+    public void tick(int interval, boolean offline) {
         if (canTick(interval)) {
             tick();
         }
     }
 
+    // if the tick is triggered by offline growth
     private void tick() {
         Pot pot = getConfig();
         if (pot == null) {

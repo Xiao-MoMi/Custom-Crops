@@ -18,7 +18,7 @@
 package net.momirealms.customcrops.mechanic.misc.value;
 
 import net.momirealms.customcrops.api.mechanic.misc.Value;
-import net.momirealms.customcrops.utils.ConfigUtils;
+import net.momirealms.customcrops.util.ConfigUtils;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;

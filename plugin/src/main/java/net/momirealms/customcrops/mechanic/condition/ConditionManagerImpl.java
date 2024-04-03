@@ -33,8 +33,9 @@ import net.momirealms.customcrops.api.mechanic.world.season.Season;
 import net.momirealms.customcrops.api.util.LogUtils;
 import net.momirealms.customcrops.compatibility.papi.ParseUtils;
 import net.momirealms.customcrops.mechanic.misc.CrowAttackAnimation;
-import net.momirealms.customcrops.utils.ClassUtils;
-import net.momirealms.customcrops.utils.ConfigUtils;
+import net.momirealms.customcrops.mechanic.world.block.MemoryCrop;
+import net.momirealms.customcrops.util.ClassUtils;
+import net.momirealms.customcrops.util.ConfigUtils;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.type.Farmland;
@@ -95,6 +96,7 @@ public class ConditionManagerImpl implements ConditionManager {
         this.registerCrowAttackCondition();
         this.registerPotCondition();
         this.registerLightCondition();
+        this.registerPointCondition();
     }
 
     @Override
@@ -167,7 +169,7 @@ public class ConditionManagerImpl implements ConditionManager {
                 String flyModel = section.getString("fly-model");
                 String standModel = section.getString("stand-model");
                 double chance = section.getDouble("chance");
-                return block -> {
+                return (block, offline) -> {
                     if (Math.random() > chance) return false;
                     SimpleLocation location = block.getLocation();
                     if (ConfigManager.enableScarecrow()) {
@@ -185,7 +187,8 @@ public class ConditionManagerImpl implements ConditionManager {
                             }
                         }
                     }
-                    new CrowAttackAnimation(location, flyModel, standModel).start();
+                    if (!offline)
+                        new CrowAttackAnimation(location, flyModel, standModel).start();
                     return true;
                 };
             } else {
@@ -198,14 +201,14 @@ public class ConditionManagerImpl implements ConditionManager {
     private void registerBiomeRequirement() {
         registerCondition("biome", (args) -> {
             HashSet<String> biomes = new HashSet<>(ConfigUtils.stringListArgs(args));
-            return block -> {
+            return (block, offline) -> {
                 String currentBiome = BiomeAPI.getBiomeAt(block.getLocation().getBukkitLocation());
                 return biomes.contains(currentBiome);
             };
         });
         registerCondition("!biome", (args) -> {
             HashSet<String> biomes = new HashSet<>(ConfigUtils.stringListArgs(args));
-            return block -> {
+            return (block, offline) -> {
                 String currentBiome = BiomeAPI.getBiomeAt(block.getLocation().getBukkitLocation());
                 return !biomes.contains(currentBiome);
             };
@@ -215,21 +218,21 @@ public class ConditionManagerImpl implements ConditionManager {
     private void registerRandomCondition() {
         registerCondition("random", (args -> {
             double value = ConfigUtils.getDoubleValue(args);
-            return block -> Math.random() < value;
+            return (block, offline) -> Math.random() < value;
         }));
     }
 
     private void registerPotCondition() {
         registerCondition("pot", (args -> {
             HashSet<String> pots = new HashSet<>(ConfigUtils.stringListArgs(args));
-            return block -> {
+            return (block, offline) -> {
                 Optional<WorldPot> worldPot = plugin.getWorldManager().getPotAt(block.getLocation().copy().add(0,-1,0));
                 return worldPot.filter(pot -> pots.contains(pot.getKey())).isPresent();
             };
         }));
         registerCondition("!pot", (args -> {
             HashSet<String> pots = new HashSet<>(ConfigUtils.stringListArgs(args));
-            return block -> {
+            return (block, offline) -> {
                 Optional<WorldPot> worldPot = plugin.getWorldManager().getPotAt(block.getLocation().copy().add(0,-1,0));
                 return worldPot.filter(pot -> !pots.contains(pot.getKey())).isPresent();
             };
@@ -239,7 +242,7 @@ public class ConditionManagerImpl implements ConditionManager {
     private void registerFertilizerCondition() {
         registerCondition("fertilizer", (args -> {
             HashSet<String> fertilizer = new HashSet<>(ConfigUtils.stringListArgs(args));
-            return block -> {
+            return (block, offline) -> {
                 Optional<WorldPot> worldPot = plugin.getWorldManager().getPotAt(block.getLocation().copy().add(0,-1,0));
                 return worldPot.filter(pot -> {
                     Fertilizer fertilizerInstance = pot.getFertilizer();
@@ -250,7 +253,7 @@ public class ConditionManagerImpl implements ConditionManager {
         }));
         registerCondition("fertilizer_type", (args -> {
             HashSet<String> fertilizer = new HashSet<>(ConfigUtils.stringListArgs(args).stream().map(str -> str.toUpperCase(Locale.ENGLISH)).toList());
-            return block -> {
+            return (block, offline) -> {
                 Optional<WorldPot> worldPot = plugin.getWorldManager().getPotAt(block.getLocation().copy().add(0,-1,0));
                 return worldPot.filter(pot -> {
                     Fertilizer fertilizerInstance = pot.getFertilizer();
@@ -265,7 +268,7 @@ public class ConditionManagerImpl implements ConditionManager {
         registerCondition("&&", (args -> {
             if (args instanceof ConfigurationSection section) {
                 Condition[] conditions = getConditions(section);
-                return block -> ConditionManager.isConditionMet(block, conditions);
+                return (block, offline) -> ConditionManager.isConditionMet(block, offline, conditions);
             } else {
                 LogUtils.warn("Wrong value format found at && condition.");
                 return EmptyCondition.instance;
@@ -277,9 +280,9 @@ public class ConditionManagerImpl implements ConditionManager {
         registerCondition("||", (args -> {
             if (args instanceof ConfigurationSection section) {
                 Condition[] conditions = getConditions(section);
-                return block -> {
+                return (block, offline) -> {
                     for (Condition condition : conditions) {
-                        if (condition.isConditionMet(block)) {
+                        if (condition.isConditionMet(block, offline)) {
                             return true;
                         }
                     }
@@ -295,7 +298,7 @@ public class ConditionManagerImpl implements ConditionManager {
     private void registerTemperatureCondition() {
         registerCondition("temperature", (args) -> {
             List<Pair<Integer, Integer>> tempPairs = ConfigUtils.stringListArgs(args).stream().map(it -> ConfigUtils.splitStringIntegerArgs(it, "~")).toList();
-            return block -> {
+            return (block, offline) -> {
                 SimpleLocation location = block.getLocation();
                 World world = location.getBukkitWorld();
                 if (world == null) return false;
@@ -316,7 +319,7 @@ public class ConditionManagerImpl implements ConditionManager {
             if (args instanceof ConfigurationSection section) {
                 String v1 = section.getString("value1", "");
                 String v2 = section.getString("value2", "");
-                return block -> {
+                return (block, offline) -> {
                     String p1 = v1.startsWith("%") ? ParseUtils.setPlaceholders(null, v1) : v1;
                     String p2 = v2.startsWith("%") ? ParseUtils.setPlaceholders(null, v2) : v2;
                     return Double.parseDouble(p1) >= Double.parseDouble(p2);
@@ -330,7 +333,7 @@ public class ConditionManagerImpl implements ConditionManager {
             if (args instanceof ConfigurationSection section) {
                 String v1 = section.getString("value1", "");
                 String v2 = section.getString("value2", "");
-                return block -> {
+                return (block, offline) -> {
                     String p1 = v1.startsWith("%") ? ParseUtils.setPlaceholders(null, v1) : v1;
                     String p2 = v2.startsWith("%") ? ParseUtils.setPlaceholders(null, v2) : v2;
                     return Double.parseDouble(p1) > Double.parseDouble(p2);
@@ -347,7 +350,7 @@ public class ConditionManagerImpl implements ConditionManager {
             if (args instanceof ConfigurationSection section) {
                 String v1 = section.getString("papi", "");
                 String v2 = section.getString("regex", "");
-                return block -> ParseUtils.setPlaceholders(null, v1).matches(v2);
+                return (block, offline) -> ParseUtils.setPlaceholders(null, v1).matches(v2);
             } else {
                 LogUtils.warn("Wrong value format found at regex requirement.");
                 return EmptyCondition.instance;
@@ -360,7 +363,7 @@ public class ConditionManagerImpl implements ConditionManager {
             if (args instanceof ConfigurationSection section) {
                 String v1 = section.getString("value1", "");
                 String v2 = section.getString("value2", "");
-                return block -> {
+                return (block, offline) -> {
                     String p1 = v1.startsWith("%") ? ParseUtils.setPlaceholders(null, v1) : v1;
                     String p2 = v2.startsWith("%") ? ParseUtils.setPlaceholders(null, v2) : v2;
                     return Double.parseDouble(p1) == Double.parseDouble(p2);
@@ -374,7 +377,7 @@ public class ConditionManagerImpl implements ConditionManager {
             if (args instanceof ConfigurationSection section) {
                 String v1 = section.getString("value1", "");
                 String v2 = section.getString("value2", "");
-                return block -> {
+                return (block, offline) -> {
                     String p1 = v1.startsWith("%") ? ParseUtils.setPlaceholders(null, v1) : v1;
                     String p2 = v2.startsWith("%") ? ParseUtils.setPlaceholders(null, v2) : v2;
                     return Double.parseDouble(p1) != Double.parseDouble(p2);
@@ -392,7 +395,7 @@ public class ConditionManagerImpl implements ConditionManager {
             if (args instanceof ConfigurationSection section) {
                 String v1 = section.getString("value1", "");
                 String v2 = section.getString("value2", "");
-                return block -> {
+                return (block, offline) -> {
                     String p1 = v1.startsWith("%") ? ParseUtils.setPlaceholders(null, v1) : v1;
                     String p2 = v2.startsWith("%") ? ParseUtils.setPlaceholders(null, v2) : v2;
                     return Double.parseDouble(p1) < Double.parseDouble(p2);
@@ -406,7 +409,7 @@ public class ConditionManagerImpl implements ConditionManager {
             if (args instanceof ConfigurationSection section) {
                 String v1 = section.getString("value1", "");
                 String v2 = section.getString("value2", "");
-                return block -> {
+                return (block, offline) -> {
                     String p1 = v1.startsWith("%") ? ParseUtils.setPlaceholders(null, v1) : v1;
                     String p2 = v2.startsWith("%") ? ParseUtils.setPlaceholders(null, v2) : v2;
                     return Double.parseDouble(p1) <= Double.parseDouble(p2);
@@ -423,7 +426,7 @@ public class ConditionManagerImpl implements ConditionManager {
             if (args instanceof ConfigurationSection section) {
                 String v1 = section.getString("value1", "");
                 String v2 = section.getString("value2", "");
-                return block -> {
+                return (block, offline) -> {
                     String p1 = v1.startsWith("%") ? ParseUtils.setPlaceholders(null, v1) : v1;
                     String p2 = v2.startsWith("%") ? ParseUtils.setPlaceholders(null, v2) : v2;
                     return p1.startsWith(p2);
@@ -437,7 +440,7 @@ public class ConditionManagerImpl implements ConditionManager {
             if (args instanceof ConfigurationSection section) {
                 String v1 = section.getString("value1", "");
                 String v2 = section.getString("value2", "");
-                return block -> {
+                return (block, offline) -> {
                     String p1 = v1.startsWith("%") ? ParseUtils.setPlaceholders(null, v1) : v1;
                     String p2 = v2.startsWith("%") ? ParseUtils.setPlaceholders(null, v2) : v2;
                     return !p1.startsWith(p2);
@@ -454,7 +457,7 @@ public class ConditionManagerImpl implements ConditionManager {
             if (args instanceof ConfigurationSection section) {
                 String v1 = section.getString("value1", "");
                 String v2 = section.getString("value2", "");
-                return block -> {
+                return (block, offline) -> {
                     String p1 = v1.startsWith("%") ? ParseUtils.setPlaceholders(null, v1) : v1;
                     String p2 = v2.startsWith("%") ? ParseUtils.setPlaceholders(null, v2) : v2;
                     return p1.endsWith(p2);
@@ -468,7 +471,7 @@ public class ConditionManagerImpl implements ConditionManager {
             if (args instanceof ConfigurationSection section) {
                 String v1 = section.getString("value1", "");
                 String v2 = section.getString("value2", "");
-                return block -> {
+                return (block, offline) -> {
                     String p1 = v1.startsWith("%") ? ParseUtils.setPlaceholders(null, v1) : v1;
                     String p2 = v2.startsWith("%") ? ParseUtils.setPlaceholders(null, v2) : v2;
                     return !p1.endsWith(p2);
@@ -485,7 +488,7 @@ public class ConditionManagerImpl implements ConditionManager {
             if (args instanceof ConfigurationSection section) {
                 String v1 = section.getString("value1", "");
                 String v2 = section.getString("value2", "");
-                return block -> {
+                return (block, offline) -> {
                     String p1 = v1.startsWith("%") ? ParseUtils.setPlaceholders(null, v1) : v1;
                     String p2 = v2.startsWith("%") ? ParseUtils.setPlaceholders(null, v2) : v2;
                     return p1.contains(p2);
@@ -499,7 +502,7 @@ public class ConditionManagerImpl implements ConditionManager {
             if (args instanceof ConfigurationSection section) {
                 String v1 = section.getString("value1", "");
                 String v2 = section.getString("value2", "");
-                return block -> {
+                return (block, offline) -> {
                     String p1 = v1.startsWith("%") ? ParseUtils.setPlaceholders(null, v1) : v1;
                     String p2 = v2.startsWith("%") ? ParseUtils.setPlaceholders(null, v2) : v2;
                     return !p1.contains(p2);
@@ -516,7 +519,7 @@ public class ConditionManagerImpl implements ConditionManager {
             if (args instanceof ConfigurationSection section) {
                 String papi = section.getString("papi", "");
                 HashSet<String> values = new HashSet<>(ConfigUtils.stringListArgs(section.get("values")));
-                return block -> {
+                return (block, offline) -> {
                     String p1 = papi.startsWith("%") ? ParseUtils.setPlaceholders(null, papi) : papi;
                     return values.contains(p1);
                 };
@@ -529,7 +532,7 @@ public class ConditionManagerImpl implements ConditionManager {
             if (args instanceof ConfigurationSection section) {
                 String papi = section.getString("papi", "");
                 HashSet<String> values = new HashSet<>(ConfigUtils.stringListArgs(section.get("values")));
-                return block -> {
+                return (block, offline) -> {
                     String p1 = papi.startsWith("%") ? ParseUtils.setPlaceholders(null, papi) : papi;
                     return !values.contains(p1);
                 };
@@ -545,7 +548,7 @@ public class ConditionManagerImpl implements ConditionManager {
             if (args instanceof ConfigurationSection section) {
                 String v1 = section.getString("value1", "");
                 String v2 = section.getString("value2", "");
-                return block -> {
+                return (block, offline) -> {
                     String p1 = v1.startsWith("%") ? ParseUtils.setPlaceholders(null, v1) : v1;
                     String p2 = v2.startsWith("%") ? ParseUtils.setPlaceholders(null, v2) : v2;
                     return p1.equals(p2);
@@ -559,7 +562,7 @@ public class ConditionManagerImpl implements ConditionManager {
             if (args instanceof ConfigurationSection section) {
                 String v1 = section.getString("value1", "");
                 String v2 = section.getString("value2", "");
-                return block -> {
+                return (block, offline) -> {
                     String p1 = v1.startsWith("%") ? ParseUtils.setPlaceholders(null, v1) : v1;
                     String p2 = v2.startsWith("%") ? ParseUtils.setPlaceholders(null, v2) : v2;
                     return !p1.equals(p2);
@@ -574,7 +577,7 @@ public class ConditionManagerImpl implements ConditionManager {
     private void registerSeasonCondition() {
         registerCondition("suitable_season", (args) -> {
             HashSet<String> seasons = new HashSet<>(ConfigUtils.stringListArgs(args).stream().map(it -> it.toUpperCase(Locale.ENGLISH)).toList());
-            return block -> {
+            return (block, offline) -> {
                 Season season = plugin.getIntegrationManager().getSeason(block.getLocation().getBukkitWorld());
                 if (season == null) {
                     return true;
@@ -598,7 +601,7 @@ public class ConditionManagerImpl implements ConditionManager {
         });
         registerCondition("unsuitable_season", (args) -> {
             HashSet<String> seasons = new HashSet<>(ConfigUtils.stringListArgs(args).stream().map(it -> it.toUpperCase(Locale.ENGLISH)).toList());
-            return block -> {
+            return (block, offline) -> {
                 Season season = plugin.getIntegrationManager().getSeason(block.getLocation().getBukkitWorld());
                 if (season == null) {
                     return false;
@@ -625,30 +628,51 @@ public class ConditionManagerImpl implements ConditionManager {
     private void registerLightCondition() {
         registerCondition("skylight_more_than", (args) -> {
             int value = (int) args;
-            return block -> {
+            return (block, offline) -> {
                 int light = block.getLocation().getBukkitLocation().getBlock().getLightFromSky();
                 return value > light;
             };
         });
         registerCondition("skylight_less_than", (args) -> {
             int value = (int) args;
-            return block -> {
+            return (block, offline) -> {
                 int light = block.getLocation().getBukkitLocation().getBlock().getLightFromSky();
                 return value < light;
             };
         });
         registerCondition("light_more_than", (args) -> {
             int value = (int) args;
-            return block -> {
+            return (block, offline) -> {
                 int light = block.getLocation().getBukkitLocation().getBlock().getLightLevel();
                 return value > light;
             };
         });
         registerCondition("light_less_than", (args) -> {
             int value = (int) args;
-            return block -> {
+            return (block, offline) -> {
                 int light = block.getLocation().getBukkitLocation().getBlock().getLightLevel();
                 return value < light;
+            };
+        });
+    }
+
+    private void registerPointCondition() {
+        registerCondition("point_more_than", (args) -> {
+            int value = (int) args;
+            return (block, offline) -> {
+                if (block instanceof MemoryCrop crop) {
+                    return crop.getPoint() > value;
+                }
+                return false;
+            };
+        });
+        registerCondition("point_less_than", (args) -> {
+            int value = (int) args;
+            return (block, offline) -> {
+                if (block instanceof MemoryCrop crop) {
+                    return crop.getPoint() < value;
+                }
+                return false;
             };
         });
     }
@@ -656,21 +680,21 @@ public class ConditionManagerImpl implements ConditionManager {
     private void registerWaterCondition() {
         registerCondition("water_more_than", (args) -> {
             int value = (int) args;
-            return block -> {
+            return (block, offline) -> {
                 Optional<WorldPot> worldPot = plugin.getWorldManager().getPotAt(block.getLocation().copy().add(0,-1,0));
                 return worldPot.filter(pot -> pot.getWater() > value).isPresent();
             };
         });
         registerCondition("water_less_than", (args) -> {
             int value = (int) args;
-            return block -> {
+            return (block, offline) -> {
                 Optional<WorldPot> worldPot = plugin.getWorldManager().getPotAt(block.getLocation().copy().add(0,-1,0));
                 return worldPot.filter(pot -> pot.getWater() < value).isPresent();
             };
         });
         registerCondition("moisture_more_than", (args) -> {
             int value = (int) args;
-            return block -> {
+            return (block, offline) -> {
                 Block underBlock = block.getLocation().copy().add(0,-1,0).getBukkitLocation().getBlock();
                 if (underBlock.getBlockData() instanceof Farmland farmland) {
                     return farmland.getMoisture() > value;
@@ -680,7 +704,7 @@ public class ConditionManagerImpl implements ConditionManager {
         });
         registerCondition("moisture_less_than", (args) -> {
             int value = (int) args;
-            return block -> {
+            return (block, offline) -> {
                 Block underBlock = block.getLocation().copy().add(0,-1,0).getBukkitLocation().getBlock();
                 if (underBlock.getBlockData() instanceof Farmland farmland) {
                     return farmland.getMoisture() < value;

@@ -113,7 +113,7 @@ public class CommandManager implements Initable {
                             for (CustomCropsSection section : chunk.getSections()) {
                                 for (CustomCropsBlock block : section.getBlocks()) {
                                     if (block.getType() == itemType) {
-                                        block.tick(1);
+                                        block.tick(1, false);
                                     }
                                 }
                             }

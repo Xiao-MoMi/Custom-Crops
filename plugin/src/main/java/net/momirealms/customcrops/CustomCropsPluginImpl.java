@@ -38,7 +38,7 @@ import net.momirealms.customcrops.mechanic.misc.migrator.Migration;
 import net.momirealms.customcrops.mechanic.requirement.RequirementManagerImpl;
 import net.momirealms.customcrops.mechanic.world.WorldManagerImpl;
 import net.momirealms.customcrops.scheduler.SchedulerImpl;
-import net.momirealms.customcrops.utils.EventUtils;
+import net.momirealms.customcrops.util.EventUtils;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 

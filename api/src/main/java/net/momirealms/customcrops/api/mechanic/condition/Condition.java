@@ -21,5 +21,5 @@ import net.momirealms.customcrops.api.mechanic.world.CustomCropsBlock;
 
 public interface Condition {
 
-    boolean isConditionMet(CustomCropsBlock block);
+    boolean isConditionMet(CustomCropsBlock block, boolean offline);
 }

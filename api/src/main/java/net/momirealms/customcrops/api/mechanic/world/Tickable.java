@@ -2,5 +2,5 @@ package net.momirealms.customcrops.api.mechanic.world;
 
 public interface Tickable {
 
-    void tick(int interval);
+    void tick(int interval, boolean offline);
 }

@@ -26,7 +26,7 @@ import dev.dejvokep.boostedyaml.settings.updater.UpdaterSettings;
 import net.momirealms.customcrops.api.CustomCropsPlugin;
 import net.momirealms.customcrops.api.manager.ConfigManager;
 import net.momirealms.customcrops.api.util.LogUtils;
-import net.momirealms.customcrops.utils.ConfigUtils;
+import net.momirealms.customcrops.util.ConfigUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;

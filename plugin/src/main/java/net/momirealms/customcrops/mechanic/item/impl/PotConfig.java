@@ -26,7 +26,7 @@ import net.momirealms.customcrops.api.mechanic.item.water.PassiveFillMethod;
 import net.momirealms.customcrops.api.mechanic.misc.image.WaterBar;
 import net.momirealms.customcrops.api.mechanic.requirement.Requirement;
 import net.momirealms.customcrops.mechanic.item.AbstractEventItem;
-import net.momirealms.customcrops.utils.ConfigUtils;
+import net.momirealms.customcrops.util.ConfigUtils;
 
 import java.util.HashMap;
 import java.util.HashSet;

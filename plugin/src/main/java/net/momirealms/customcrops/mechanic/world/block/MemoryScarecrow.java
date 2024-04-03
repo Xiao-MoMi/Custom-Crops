@@ -54,7 +54,7 @@ public class MemoryScarecrow extends AbstractCustomCropsBlock implements WorldSc
     }
 
     @Override
-    public void tick(int interval) {
+    public void tick(int interval, boolean offline) {
 
     }
 }

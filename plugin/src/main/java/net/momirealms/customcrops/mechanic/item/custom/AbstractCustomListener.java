@@ -27,7 +27,7 @@ import net.momirealms.customcrops.api.mechanic.requirement.State;
 import net.momirealms.customcrops.api.mechanic.world.SimpleLocation;
 import net.momirealms.customcrops.api.mechanic.world.level.WorldCrop;
 import net.momirealms.customcrops.mechanic.item.ItemManagerImpl;
-import net.momirealms.customcrops.utils.EventUtils;
+import net.momirealms.customcrops.util.EventUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;

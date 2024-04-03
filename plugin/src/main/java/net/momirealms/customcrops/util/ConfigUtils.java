@@ -15,7 +15,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.momirealms.customcrops.utils;
+package net.momirealms.customcrops.util;
 
 import com.google.common.base.Preconditions;
 import net.momirealms.customcrops.api.CustomCropsPlugin;
@@ -70,7 +70,8 @@ public class ConfigUtils {
                 section.getInt("pot.tick-interval", 2),
                 getRandomTickModeByString(section.getString("sprinkler.mode")),
                 section.getInt("sprinkler.tick-interval", 2),
-                section.getBoolean("offline-grow", false),
+                section.getBoolean("offline-growth.enable", false),
+                section.getInt("offline-growth.max-offline-seconds", 1200),
                 section.getBoolean("season.enable", false),
                 section.getBoolean("season.auto-alternation", false),
                 section.getInt("season.duration", 28),

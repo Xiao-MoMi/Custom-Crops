@@ -23,7 +23,7 @@ import net.momirealms.customcrops.api.common.Reloadable;
 import net.momirealms.customcrops.api.common.Tuple;
 import net.momirealms.customcrops.api.manager.VersionManager;
 import net.momirealms.customcrops.api.scheduler.CancellableTask;
-import net.momirealms.customcrops.utils.FakeEntityUtils;
+import net.momirealms.customcrops.util.FakeEntityUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;

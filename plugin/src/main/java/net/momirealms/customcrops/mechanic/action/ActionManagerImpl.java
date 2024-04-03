@@ -56,10 +56,10 @@ import net.momirealms.customcrops.manager.PacketManager;
 import net.momirealms.customcrops.mechanic.item.impl.VariationCrop;
 import net.momirealms.customcrops.mechanic.misc.TempFakeItem;
 import net.momirealms.customcrops.mechanic.world.block.MemoryCrop;
-import net.momirealms.customcrops.utils.ClassUtils;
-import net.momirealms.customcrops.utils.ConfigUtils;
-import net.momirealms.customcrops.utils.EventUtils;
-import net.momirealms.customcrops.utils.ItemUtils;
+import net.momirealms.customcrops.util.ClassUtils;
+import net.momirealms.customcrops.util.ConfigUtils;
+import net.momirealms.customcrops.util.EventUtils;
+import net.momirealms.customcrops.util.ItemUtils;
 import org.bukkit.*;
 import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.ConfigurationSection;
@@ -220,6 +220,7 @@ public class ActionManagerImpl implements ActionManager {
                 boolean onlyShowToOne = !section.getBoolean("visible-to-all", false);
                 return condition -> {
                     if (Math.random() > chance) return;
+                    if (condition.getArg("{offline}") != null) return;
                     Location location = condition.getLocation().clone().add(x,y,z);
                     SimpleLocation simpleLocation = SimpleLocation.of(location);
                     if (applyCorrection) {
@@ -269,6 +270,7 @@ public class ActionManagerImpl implements ActionManager {
                 boolean onlyShowToOne = !section.getBoolean("visible-to-all", true);
                 return condition -> {
                     if (Math.random() > chance) return;
+                    if (condition.getArg("{offline}") != null) return;
                     if (item.equals("")) return;
                     Location location = condition.getLocation().clone().add(x,y,z);
                     new TempFakeItem(location, item, duration, onlyShowToOne ? condition.getPlayer() : null).start();
@@ -446,7 +448,7 @@ public class ActionManagerImpl implements ActionManager {
                     .flatMap(world -> world.getLoadedChunkAt(ChunkPos.getByBukkitChunk(location.getChunk())))
                     .flatMap(chunk -> chunk.getBlockAt(SimpleLocation.of(location)))
                     .ifPresent(block -> {
-                        block.tick(1);
+                        block.tick(1, false);
                         if (block instanceof WorldSprinkler sprinkler) {
                             Sprinkler config = sprinkler.getConfig();
                             state.setArg("{current}", String.valueOf(sprinkler.getWater()));

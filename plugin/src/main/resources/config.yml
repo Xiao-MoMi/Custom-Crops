@@ -46,6 +46,16 @@ worlds:
       # For crops, under the same conditions, the growth rate of crops is basically the same
       # For sprinklers and pots, they would work periodically.
       min-tick-unit: 300
+      # Offline growth settings
+      # This option allows crops to grow even if the world is unloaded or the server is closed
+      # This may lead to some issues caused by timeliness conditions for instance seasons
+      offline-growth:
+        enable: false
+        # Maximum offline time recorded in seconds
+        # Please do not set this option to a value that is too large,
+        # as it may cause chunks that have been unloaded for a long time
+        # taking long to load
+        max-offline-seconds: 1200
       # Settings for crops
       crop:
         # [RANDOM_TICK]

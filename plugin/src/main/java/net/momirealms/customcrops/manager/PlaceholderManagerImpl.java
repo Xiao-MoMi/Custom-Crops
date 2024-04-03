@@ -21,7 +21,7 @@ import net.momirealms.customcrops.api.CustomCropsPlugin;
 import net.momirealms.customcrops.api.manager.PlaceholderManager;
 import net.momirealms.customcrops.compatibility.papi.CCPapi;
 import net.momirealms.customcrops.compatibility.papi.ParseUtils;
-import net.momirealms.customcrops.utils.ConfigUtils;
+import net.momirealms.customcrops.util.ConfigUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;

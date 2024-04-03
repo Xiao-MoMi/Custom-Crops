@@ -41,9 +41,7 @@ public class OraxenProvider implements CustomProvider {
         if (block.getType() == Material.AIR) {
             return false;
         }
-        if (!OraxenBlocks.remove(location, null, false)) {
-            block.setType(Material.AIR);
-        }
+        block.setType(Material.AIR);
         return true;
     }
 

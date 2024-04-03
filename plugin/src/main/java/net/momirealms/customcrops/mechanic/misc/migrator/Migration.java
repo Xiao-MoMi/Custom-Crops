@@ -11,7 +11,7 @@ import net.momirealms.customcrops.api.mechanic.world.level.WorldSetting;
 import net.momirealms.customcrops.api.util.LogUtils;
 import net.momirealms.customcrops.mechanic.world.CWorld;
 import net.momirealms.customcrops.mechanic.world.adaptor.BukkitWorldAdaptor;
-import net.momirealms.customcrops.utils.ConfigUtils;
+import net.momirealms.customcrops.util.ConfigUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
@@ -47,7 +47,7 @@ public class Migration {
         if (CustomCropsPlugin.get().getWorldManager().getWorldAdaptor() instanceof BukkitWorldAdaptor adaptor) {
             for (World world : Bukkit.getWorlds()) {
                 CWorld temp = new CWorld(CustomCropsPlugin.getInstance().getWorldManager(), world);
-                temp.setWorldSetting(WorldSetting.of(false,300,true, 1,true,2,true,2,false,false,false,28,-1,-1,-1, 0));
+                temp.setWorldSetting(WorldSetting.of(false,300,true, 1,true,2,true,2,false,1200, false,false,28,-1,-1,-1, 0));
                 adaptor.convertWorldFromV342toV343(temp, world);
             }
         }
@@ -102,7 +102,7 @@ public class Migration {
         if (CustomCropsPlugin.get().getWorldManager().getWorldAdaptor() instanceof BukkitWorldAdaptor adaptor) {
             for (World world : Bukkit.getWorlds()) {
                 CWorld temp = new CWorld(CustomCropsPlugin.getInstance().getWorldManager(), world);
-                temp.setWorldSetting(WorldSetting.of(false,300,true, 1,true,2,true,2,false,false,false,28,-1,-1,-1, 0));
+                temp.setWorldSetting(WorldSetting.of(false,300,true, 1,true,2,true,2,false, 1200, false,false,28,-1,-1,-1, 0));
                 adaptor.convertWorldFromV33toV34(temp, world);
             }
         }

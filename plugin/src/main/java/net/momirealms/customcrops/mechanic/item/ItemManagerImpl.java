@@ -57,10 +57,10 @@ import net.momirealms.customcrops.mechanic.item.impl.SprinklerConfig;
 import net.momirealms.customcrops.mechanic.item.impl.WateringCanConfig;
 import net.momirealms.customcrops.mechanic.item.impl.fertilizer.*;
 import net.momirealms.customcrops.mechanic.world.block.*;
-import net.momirealms.customcrops.utils.ConfigUtils;
-import net.momirealms.customcrops.utils.EventUtils;
-import net.momirealms.customcrops.utils.ItemUtils;
-import net.momirealms.customcrops.utils.RotationUtils;
+import net.momirealms.customcrops.util.ConfigUtils;
+import net.momirealms.customcrops.util.EventUtils;
+import net.momirealms.customcrops.util.ItemUtils;
+import net.momirealms.customcrops.util.RotationUtils;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -213,7 +213,7 @@ public class ItemManagerImpl implements ItemManager {
 
     @Override
     public String getItemID(ItemStack itemStack) {
-        if (itemStack == null)
+        if (itemStack == null || itemStack.getType() == Material.AIR || itemStack.getAmount() == 0)
             return "AIR";
         String id;
         id = customProvider.getItemID(itemStack);

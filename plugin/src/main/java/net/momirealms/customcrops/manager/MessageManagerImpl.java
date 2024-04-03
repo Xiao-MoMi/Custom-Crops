@@ -22,7 +22,7 @@ import net.momirealms.customcrops.api.common.Reloadable;
 import net.momirealms.customcrops.api.manager.ConfigManager;
 import net.momirealms.customcrops.api.manager.MessageManager;
 import net.momirealms.customcrops.api.mechanic.world.season.Season;
-import net.momirealms.customcrops.utils.ConfigUtils;
+import net.momirealms.customcrops.util.ConfigUtils;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 

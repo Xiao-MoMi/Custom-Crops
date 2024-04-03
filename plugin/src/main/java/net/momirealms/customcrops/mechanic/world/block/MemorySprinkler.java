@@ -26,6 +26,7 @@ import net.momirealms.customcrops.api.mechanic.item.ItemType;
 import net.momirealms.customcrops.api.mechanic.item.Pot;
 import net.momirealms.customcrops.api.mechanic.item.Sprinkler;
 import net.momirealms.customcrops.api.mechanic.requirement.State;
+import net.momirealms.customcrops.api.mechanic.world.ChunkPos;
 import net.momirealms.customcrops.api.mechanic.world.SimpleLocation;
 import net.momirealms.customcrops.api.mechanic.world.level.AbstractCustomCropsBlock;
 import net.momirealms.customcrops.api.mechanic.world.level.CustomCropsWorld;
@@ -34,10 +35,10 @@ import net.momirealms.customcrops.api.mechanic.world.level.WorldSprinkler;
 import net.momirealms.customcrops.api.util.LogUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 public class MemorySprinkler extends AbstractCustomCropsBlock implements WorldSprinkler {
 
@@ -97,13 +98,14 @@ public class MemorySprinkler extends AbstractCustomCropsBlock implements WorldSp
     }
 
     @Override
-    public void tick(int interval) {
+    public void tick(int interval, boolean offline) {
         if (canTick(interval)) {
-            tick();
+            tick(offline);
         }
     }
 
-    private void tick() {
+    // if the tick is triggered by offline growth
+    private void tick(boolean offline) {
         Sprinkler sprinkler = getConfig();
         if (sprinkler == null) {
             LogUtils.warn("Found a sprinkler without config at " + getLocation() + ". Try removing the data.");
@@ -127,7 +129,9 @@ public class MemorySprinkler extends AbstractCustomCropsBlock implements WorldSp
         Location bukkitLocation = location.getBukkitLocation();
         if (bukkitLocation == null) return;
         CustomCropsPlugin.get().getScheduler().runTaskSync(() -> {
-            sprinkler.trigger(ActionTrigger.WORK, new State(null, new ItemStack(Material.AIR), bukkitLocation));
+            State state = new State(null, new ItemStack(Material.AIR), bukkitLocation);
+            if (offline) state.setArg("{offline}", "true");
+            sprinkler.trigger(ActionTrigger.WORK, state);
             if (updateState && sprinkler.get3DItemWithWater() != null) {
                 CustomCropsPlugin.get().getItemManager().removeAnythingAt(bukkitLocation);
                 CustomCropsPlugin.get().getItemManager().placeItem(bukkitLocation, sprinkler.getItemCarrier(), sprinkler.get3DItemID());
@@ -135,11 +139,26 @@ public class MemorySprinkler extends AbstractCustomCropsBlock implements WorldSp
         }, bukkitLocation);
 
         int range = sprinkler.getRange();
-        CustomCropsWorld world = CustomCropsPlugin.get().getWorldManager().getCustomCropsWorld(location.getWorldName()).get();
+        HashMap<ChunkPos, ArrayList<SimpleLocation>> map = new HashMap<>();
         for (int i = -range; i <= range; i++) {
             for (int j = -range; j <= range; j++) {
                 for (int k : new int[]{-1,0}) {
                     SimpleLocation potLocation = location.copy().add(i,k,j);
+                    var cPos = potLocation.getChunkPos();
+                    var list = map.computeIfAbsent(cPos, key -> new ArrayList<>());
+                    list.add(potLocation);
+                }
+            }
+        }
+
+        CustomCropsWorld world = CustomCropsPlugin.get().getWorldManager().getCustomCropsWorld(location.getWorldName()).get();
+        World bkWorld = world.getWorld();
+        for (Map.Entry<ChunkPos, ArrayList<SimpleLocation>> entry : map.entrySet()) {
+            var chunkPos = entry.getKey();
+            CustomCropsPlugin.get().getScheduler().runTaskSync(() -> {
+                // load the chunk firstly to load CustomCrops data
+                bkWorld.getChunkAt(chunkPos.x(), chunkPos.z());
+                for (SimpleLocation potLocation : entry.getValue()) {
                     Optional<WorldPot> pot = world.getPotAt(potLocation);
                     if (pot.isPresent()) {
                         WorldPot worldPot = pot.get();
@@ -152,13 +171,13 @@ public class MemorySprinkler extends AbstractCustomCropsBlock implements WorldSp
                                 }
                                 worldPot.setWater(current + sprinkler.getWater());
                                 if (current == 0) {
-                                    CustomCropsPlugin.get().getScheduler().runTaskSync(() -> CustomCropsPlugin.get().getItemManager().updatePotState(potLocation.getBukkitLocation(), potConfig, true, worldPot.getFertilizer()), potLocation.getBukkitLocation());
+                                    CustomCropsPlugin.get().getItemManager().updatePotState(potLocation.getBukkitLocation(), potConfig, true, worldPot.getFertilizer());
                                 }
                             }
                         }
                     }
                 }
-            }
+            }, bkWorld, chunkPos.x(), chunkPos.z());
         }
     }
 }

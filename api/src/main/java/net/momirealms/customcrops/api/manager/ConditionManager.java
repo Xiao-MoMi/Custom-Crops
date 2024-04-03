@@ -42,10 +42,10 @@ public interface ConditionManager extends Reloadable {
 
     @Nullable ConditionFactory getConditionFactory(String type);
 
-    static boolean isConditionMet(CustomCropsBlock block, Condition... conditions) {
+    static boolean isConditionMet(CustomCropsBlock block, boolean offline, Condition... conditions) {
         if (conditions == null) return true;
         for (Condition condition : conditions) {
-            if (!condition.isConditionMet(block)) {
+            if (!condition.isConditionMet(block, offline)) {
                 return false;
             }
         }

@@ -32,6 +32,7 @@ public class WorldSetting implements Cloneable {
     private final int potPerChunk;
     private final int sprinklerPerChunk;
     private final int randomTickSpeed;
+    private final int maxOfflineTime;
     private final boolean tickCropRandomly;
     private final boolean tickPotRandomly;
     private final boolean tickSprinklerRandomly;
@@ -47,6 +48,7 @@ public class WorldSetting implements Cloneable {
             boolean tickSprinklerRandomly,
             int tickSprinklerInterval,
             boolean offlineGrow,
+            int maxOfflineTime,
             boolean enableSeason,
             boolean autoSeasonChange,
             int seasonDuration,
@@ -61,6 +63,7 @@ public class WorldSetting implements Cloneable {
         this.tickPotInterval = tickPotInterval;
         this.tickSprinklerInterval = tickSprinklerInterval;
         this.offlineGrow = offlineGrow;
+        this.maxOfflineTime = maxOfflineTime;
         this.enableSeason = enableSeason;
         this.autoSeasonChange = autoSeasonChange;
         this.seasonDuration = seasonDuration;
@@ -84,6 +87,7 @@ public class WorldSetting implements Cloneable {
             boolean tickSprinklerRandomly,
             int tickSprinklerInterval,
             boolean offlineGrow,
+            int maxOfflineTime,
             boolean enableSeason,
             boolean autoSeasonChange,
             int seasonDuration,
@@ -102,6 +106,7 @@ public class WorldSetting implements Cloneable {
                 tickSprinklerRandomly,
                 tickSprinklerInterval,
                 offlineGrow,
+                maxOfflineTime,
                 enableSeason,
                 autoSeasonChange,
                 seasonDuration,
@@ -168,15 +173,6 @@ public class WorldSetting implements Cloneable {
         return scheduledTick;
     }
 
-    @Override
-    public WorldSetting clone() {
-        try {
-            return (WorldSetting) super.clone();
-        } catch (CloneNotSupportedException e) {
-            throw new AssertionError();
-        }
-    }
-
     public boolean randomTickCrop() {
         return tickCropRandomly;
     }
@@ -187,5 +183,18 @@ public class WorldSetting implements Cloneable {
 
     public boolean randomTickPot() {
         return tickPotRandomly;
+    }
+
+    public int getMaxOfflineTime() {
+        return maxOfflineTime;
+    }
+
+    @Override
+    public WorldSetting clone() {
+        try {
+            return (WorldSetting) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
     }
 }

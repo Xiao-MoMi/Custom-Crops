@@ -25,7 +25,7 @@ public class EmptyCondition implements Condition {
     public static EmptyCondition instance = new EmptyCondition();
 
     @Override
-    public boolean isConditionMet(CustomCropsBlock block) {
+    public boolean isConditionMet(CustomCropsBlock block, boolean offline) {
         return true;
     }
 }

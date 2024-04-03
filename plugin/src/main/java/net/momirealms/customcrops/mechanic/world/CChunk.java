@@ -88,7 +88,26 @@ public class CChunk implements CustomCropsChunk {
 
     @Override
     public void notifyOfflineUpdates() {
-        this.lastLoadedTime = System.currentTimeMillis();
+        long current = System.currentTimeMillis();
+        int offlineTimeInSeconds = (int) (this.lastLoadedTime - current) / 1000;
+        offlineTimeInSeconds = Math.min(offlineTimeInSeconds, cWorld.getWorldSetting().getMaxOfflineTime());
+        this.lastLoadedTime = current;
+        var setting = cWorld.getWorldSetting();
+        int minTickUnit = setting.getMinTickUnit();
+
+        for (int i = 0; i < offlineTimeInSeconds; i++) {
+            this.loadedSeconds++;
+            if (this.loadedSeconds >= minTickUnit) {
+                this.loadedSeconds = 0;
+                this.tickedBlocks.clear();
+                this.queue.clear();
+                if (setting.isScheduledTick()) {
+                    this.arrangeTasks(minTickUnit);
+                }
+            }
+            scheduledTick(setting, true);
+            randomTick(setting, true);
+        }
     }
 
     public void setWorld(CWorld cWorld) {
@@ -121,10 +140,15 @@ public class CChunk implements CustomCropsChunk {
             this.tickedBlocks.clear();
             this.queue.clear();
             if (setting.isScheduledTick()) {
-                this.arrangeTasks(setting.getMinTickUnit());
+                this.arrangeTasks(interval);
             }
         }
 
+        scheduledTick(setting, false);
+        randomTick(setting, false);
+    }
+
+    private void scheduledTick(WorldSetting setting, boolean offline) {
         // scheduled tick
         while (!queue.isEmpty() && queue.peek().getTime() <= loadedSeconds) {
             TickTask task = queue.poll();
@@ -138,24 +162,26 @@ public class CChunk implements CustomCropsChunk {
                         case SCARECROW, GREENHOUSE -> {}
                         case POT -> {
                             if (!setting.randomTickPot()) {
-                                block.tick(setting.getTickPotInterval());
+                                block.tick(setting.getTickPotInterval(), offline);
                             }
                         }
                         case CROP -> {
                             if (!setting.randomTickCrop()) {
-                                block.tick(setting.getTickCropInterval());
+                                block.tick(setting.getTickCropInterval(), offline);
                             }
                         }
                         case SPRINKLER -> {
                             if (!setting.randomTickSprinkler()) {
-                                block.tick(setting.getTickSprinklerInterval());
+                                block.tick(setting.getTickSprinklerInterval(), offline);
                             }
                         }
                     }
                 }
             }
         }
+    }
 
+    private void randomTick(WorldSetting setting, boolean offline) {
         // random tick
         ThreadLocalRandom random = ThreadLocalRandom.current();
         int randomTicks = setting.getRandomTickSpeed();
@@ -171,18 +197,18 @@ public class CChunk implements CustomCropsChunk {
                     switch (block.getType()) {
                         case CROP -> {
                             if (setting.randomTickCrop()) {
-                                block.tick(setting.getTickCropInterval());
+                                block.tick(setting.getTickCropInterval(), offline);
                             }
                         }
                         case SPRINKLER -> {
                             if (setting.randomTickSprinkler()) {
-                                block.tick(setting.getTickSprinklerInterval());
+                                block.tick(setting.getTickSprinklerInterval(), offline);
                             }
                         }
                         case POT -> {
                             ((WorldPot) block).tickWater(this);
                             if (setting.randomTickPot()) {
-                                block.tick(setting.getTickPotInterval());
+                                block.tick(setting.getTickPotInterval(), offline);
                             }
                         }
                     }
