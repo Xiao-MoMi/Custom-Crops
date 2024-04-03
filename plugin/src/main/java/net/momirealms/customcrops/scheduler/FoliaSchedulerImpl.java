@@ -57,10 +57,8 @@ public class FoliaSchedulerImpl implements SyncScheduler {
     @Override
     public CancellableTask runTaskSyncLater(Runnable runnable, Location location, long delay) {
         if (delay == 0) {
-            if (location == null) {
-                return new FoliaCancellableTask(Bukkit.getGlobalRegionScheduler().run(plugin, (scheduledTask -> runnable.run())));
-            }
-            return new FoliaCancellableTask(Bukkit.getRegionScheduler().run(plugin, location, (scheduledTask -> runnable.run())));
+            runSyncTask(runnable, location);
+            return new FoliaCancellableTask(null);
         }
         if (location == null) {
             return new FoliaCancellableTask(Bukkit.getGlobalRegionScheduler().runDelayed(plugin, (scheduledTask -> runnable.run()), delay));

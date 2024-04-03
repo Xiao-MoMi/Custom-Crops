@@ -56,6 +56,8 @@ public interface CustomCropsWorld {
 
     boolean isChunkLoaded(ChunkPos chunkPos);
 
+    Optional<CustomCropsChunk> getOrCreateLoadedChunkAt(ChunkPos chunkPos);
+
     Optional<CustomCropsChunk> getLoadedChunkAt(ChunkPos chunkPos);
 
     Optional<CustomCropsRegion> getLoadedRegionAt(RegionPos regionPos);

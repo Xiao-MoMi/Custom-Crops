@@ -89,7 +89,8 @@ public class CChunk implements CustomCropsChunk {
     @Override
     public void notifyOfflineUpdates() {
         long current = System.currentTimeMillis();
-        int offlineTimeInSeconds = (int) (this.lastLoadedTime - current) / 1000;
+        int offlineTimeInSeconds = (int) (current - this.lastLoadedTime) / 1000;
+        CustomCropsPlugin.get().debug("offlineSeconds: " + offlineTimeInSeconds + "s. " + chunkPos.toString());
         offlineTimeInSeconds = Math.min(offlineTimeInSeconds, cWorld.getWorldSetting().getMaxOfflineTime());
         this.lastLoadedTime = current;
         var setting = cWorld.getWorldSetting();
