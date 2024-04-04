@@ -526,10 +526,7 @@ public class CWorld implements CustomCropsWorld {
     @Override
     public boolean isPotReachLimit(SimpleLocation location) {
         Optional<CustomCropsChunk> chunk = getLoadedChunkAt(location.getChunkPos());
-        if (chunk.isEmpty()) {
-            LogUtils.warn("Invalid operation: Querying pot amount from an unloaded chunk");
-            return true;
-        }
+        if (chunk.isEmpty()) return false;
         if (setting.getPotPerChunk() < 0) return false;
         return chunk.get().getPotAmount() >= setting.getPotPerChunk();
     }
@@ -537,10 +534,7 @@ public class CWorld implements CustomCropsWorld {
     @Override
     public boolean isCropReachLimit(SimpleLocation location) {
         Optional<CustomCropsChunk> chunk = getLoadedChunkAt(location.getChunkPos());
-        if (chunk.isEmpty()) {
-            LogUtils.warn("Invalid operation: Querying crop amount from an unloaded chunk");
-            return true;
-        }
+        if (chunk.isEmpty()) return false;
         if (setting.getCropPerChunk() < 0) return false;
         return chunk.get().getCropAmount() >= setting.getCropPerChunk();
     }
@@ -548,10 +542,7 @@ public class CWorld implements CustomCropsWorld {
     @Override
     public boolean isSprinklerReachLimit(SimpleLocation location) {
         Optional<CustomCropsChunk> chunk = getLoadedChunkAt(location.getChunkPos());
-        if (chunk.isEmpty()) {
-            LogUtils.warn("Invalid operation: Querying sprinkler amount from an unloaded chunk");
-            return true;
-        }
+        if (chunk.isEmpty()) return false;
         if (setting.getSprinklerPerChunk() < 0) return false;
         return chunk.get().getSprinklerAmount() >= setting.getSprinklerPerChunk();
     }

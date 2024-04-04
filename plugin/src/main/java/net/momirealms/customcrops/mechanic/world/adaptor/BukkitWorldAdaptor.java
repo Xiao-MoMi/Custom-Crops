@@ -191,7 +191,9 @@ public class BukkitWorldAdaptor extends AbstractWorldAdaptor {
         // if region file not exist, create one
         File data = getRegionDataFilePath(world, regionPos);
         if (!data.exists()) {
-            cWorld.loadRegion(new CRegion(cWorld, regionPos));
+            var region = new CRegion(cWorld, regionPos);
+            saveRegion(region);
+            cWorld.loadRegion(region);
             return;
         }
 
@@ -219,7 +221,7 @@ public class BukkitWorldAdaptor extends AbstractWorldAdaptor {
                 long time2 = System.currentTimeMillis();
                 CustomCropsPlugin.get().debug("Took " + (time2-time1) + "ms to load region " + regionPos);
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             LogUtils.severe("Failed to load CustomCrops region data at " + chunkPos + ". Deleting corrupted region.");
             e.printStackTrace();
             data.delete();
@@ -252,11 +254,6 @@ public class BukkitWorldAdaptor extends AbstractWorldAdaptor {
     @Override
     public void saveRegion(CustomCropsRegion customCropsRegion) {
         File file = getRegionDataFilePath(customCropsRegion.getCustomCropsWorld().getWorld(), customCropsRegion.getRegionPos());
-        if (customCropsRegion.canPrune()) {
-            file.delete();
-            return;
-        }
-
         long time1 = System.currentTimeMillis();
         try (BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(file))) {
             bos.write(serialize(customCropsRegion));
