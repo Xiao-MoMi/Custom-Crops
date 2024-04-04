@@ -192,7 +192,6 @@ public class BukkitWorldAdaptor extends AbstractWorldAdaptor {
         File data = getRegionDataFilePath(world, regionPos);
         if (!data.exists()) {
             var region = new CRegion(cWorld, regionPos);
-            saveRegion(region);
             cWorld.loadRegion(region);
             return;
         }
