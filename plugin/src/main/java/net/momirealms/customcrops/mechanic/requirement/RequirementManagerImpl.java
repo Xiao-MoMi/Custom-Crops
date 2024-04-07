@@ -419,9 +419,8 @@ public class RequirementManagerImpl implements RequirementManager {
             return state -> {
                 String currentWeather;
                 World world = state.getLocation().getWorld();
-                if (world.hasStorm()) currentWeather = "rainstorm";
+                if (world.isClearWeather()) currentWeather = "clear";
                 else if (world.isThundering()) currentWeather = "thunder";
-                else if (world.isClearWeather()) currentWeather = "clear";
                 else currentWeather = "rain";
                 for (String weather : weathers)
                     if (weather.equalsIgnoreCase(currentWeather))
