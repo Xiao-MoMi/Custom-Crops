@@ -43,6 +43,7 @@ allprojects {
         maven("https://repo.infernalsuite.com/repository/maven-releases/")
         maven("https://repo.rapture.pw/repository/maven-releases/")
         maven("https://s01.oss.sonatype.org/content/repositories/snapshots/")
+        maven("https://repo.xenondevs.xyz/releases/")
     }
 }
 
