@@ -11,7 +11,8 @@ metrics: true
 update-checker: true
 
 # Language
-lang: english
+# https://github.com/Xiao-MoMi/Custom-Crops/tree/main/plugin/src/main/resources/messages
+lang: en
 
 # World settings
 worlds:
