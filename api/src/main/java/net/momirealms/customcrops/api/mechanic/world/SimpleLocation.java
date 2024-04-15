@@ -29,10 +29,7 @@ public class SimpleLocation {
     private int x;
     private int y;
     private int z;
-    private String worldName;
-
-    private SimpleLocation() {
-    }
+    private final String worldName;
 
     public SimpleLocation(String worldName, int x, int y, int z){
         this.worldName = worldName;

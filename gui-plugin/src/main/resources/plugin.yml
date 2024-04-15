@@ -1,4 +1,4 @@
-name: CustomCrops
+name: CustomCropsGUI
 version: '${version}'
 main: net.momirealms.customcrops.gui.CustomCropsGUI
 api-version: 1.17
