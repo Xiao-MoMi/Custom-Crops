@@ -26,10 +26,7 @@ import net.momirealms.customcrops.util.RotationUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.ItemFrame;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Collection;
@@ -68,7 +65,7 @@ public interface CustomProvider {
             return false;
         Location center = LocationUtils.toCenterLocation(location);
         Collection<Entity> entities = center.getWorld().getNearbyEntities(center, 0.5,0.51,0.5);
-        entities.removeIf(entity -> entity instanceof Player);
+        entities.removeIf(entity -> (entity instanceof Player || entity instanceof Item));
         return entities.size() == 0;
     }
 

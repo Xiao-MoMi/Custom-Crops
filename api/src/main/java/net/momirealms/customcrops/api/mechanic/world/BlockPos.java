@@ -52,7 +52,7 @@ public class BlockPos {
     }
 
     public int getSectionID() {
-        return getY() / 16;
+        return (int) Math.floor((double) getY() / 16);
     }
 
     public int getY() {
@@ -78,7 +78,7 @@ public class BlockPos {
 
     @Override
     public String toString() {
-        return "ChunkPos{" +
+        return "BlockPos{" +
                 "x=" + getX() +
                 "y=" + getY() +
                 "z=" + getZ() +
