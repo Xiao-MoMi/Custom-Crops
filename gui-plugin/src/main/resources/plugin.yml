@@ -1,9 +1,0 @@
-name: CustomCropsGUI
-version: '${version}'
-main: net.momirealms.customcrops.gui.CustomCropsGUI
-api-version: 1.17
-load: POSTWORLD
-authors: [ XiaoMoMi ]
-folia-supported: true
-depend:
-  - CustomCrops
