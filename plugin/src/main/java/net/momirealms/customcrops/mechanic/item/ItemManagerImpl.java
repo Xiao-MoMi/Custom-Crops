@@ -236,7 +236,14 @@ public class ItemManagerImpl implements ItemManager {
             return itemStack;
         if (id.contains(":")) {
             String[] split = id.split(":", 2);
-            return itemLibraryMap.get(split[0]).buildItem(player, split[1]);
+            ItemLibrary library = itemLibraryMap.get(split[0]);
+            if (library == null) {
+                LogUtils.warn("Error occurred when building item: " + id + ". Possible causes:");
+                LogUtils.warn("① Item library: " + split[0] + " doesn't exist.");
+                LogUtils.warn("② If you are using ItemsAdder, " + id + " doesn't exist in your ItemsAdder config");
+                return new ItemStack(Material.AIR);
+            }
+            return library.buildItem(player, split[1]);
         } else {
             try {
                 return new ItemStack(Material.valueOf(id.toUpperCase(Locale.ENGLISH)));

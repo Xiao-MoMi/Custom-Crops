@@ -120,4 +120,6 @@ public abstract class CustomCropsPlugin extends JavaPlugin {
     public abstract void debug(String debug);
 
     public abstract void reload();
+
+    public abstract boolean doesHookedPluginExist(String plugin);
 }

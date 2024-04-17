@@ -17,6 +17,7 @@
 
 package net.momirealms.customcrops.compatibility;
 
+import com.gamingmesh.jobs.Jobs;
 import net.momirealms.customcrops.api.CustomCropsPlugin;
 import net.momirealms.customcrops.api.integration.LevelInterface;
 import net.momirealms.customcrops.api.integration.SeasonInterface;
@@ -49,43 +50,47 @@ public class IntegrationManagerImpl implements IntegrationManager {
 
     @Override
     public void init() {
-        if (plugin.isHookedPluginEnabled("MMOItems")) {
+        if (plugin.doesHookedPluginExist("MMOItems")) {
             plugin.getItemManager().registerItemLibrary(new MMOItemsItemImpl());
             hookMessage("MMOItems");
         }
-        if (plugin.isHookedPluginEnabled("Zaphkiel")) {
+        if (plugin.doesHookedPluginExist("Zaphkiel")) {
             plugin.getItemManager().registerItemLibrary(new ZaphkielItemImpl());
             hookMessage("Zaphkiel");
         }
-        if (plugin.isHookedPluginEnabled("NeigeItems")) {
+        if (plugin.doesHookedPluginExist("NeigeItems")) {
             plugin.getItemManager().registerItemLibrary(new NeigeItemsItemImpl());
             hookMessage("NeigeItems");
         }
-        if (plugin.isHookedPluginEnabled("MythicMobs")) {
+        if (plugin.doesHookedPluginExist("MythicMobs")) {
             plugin.getItemManager().registerItemLibrary(new MythicMobsItemImpl());
             hookMessage("MythicMobs");
         }
-        if (plugin.isHookedPluginEnabled("EcoJobs")) {
+        if (plugin.doesHookedPluginExist("EcoJobs")) {
             registerLevelPlugin("EcoJobs", new EcoJobsImpl());
             hookMessage("EcoJobs");
         }
-        if (plugin.isHookedPluginEnabled("AureliumSkills")) {
+        if (plugin.doesHookedPluginExist("Jobs")) {
+            registerLevelPlugin("JobsReborn", new JobsRebornImpl());
+            hookMessage("JobsReborn");
+        }
+        if (plugin.doesHookedPluginExist("AureliumSkills")) {
             registerLevelPlugin("AureliumSkills", new AureliumSkillsImpl());
             hookMessage("AureliumSkills");
         }
-        if (plugin.isHookedPluginEnabled("EcoSkills")) {
+        if (plugin.doesHookedPluginExist("EcoSkills")) {
             registerLevelPlugin("EcoSkills", new EcoSkillsImpl());
             hookMessage("EcoSkills");
         }
-        if (plugin.isHookedPluginEnabled("mcMMO")) {
+        if (plugin.doesHookedPluginExist("mcMMO")) {
             registerLevelPlugin("mcMMO", new McMMOImpl());
             hookMessage("mcMMO");
         }
-        if (plugin.isHookedPluginEnabled("MMOCore")) {
+        if (plugin.doesHookedPluginExist("MMOCore")) {
             registerLevelPlugin("MMOCore", new MMOCoreImpl());
             hookMessage("MMOCore");
         }
-        if (plugin.isHookedPluginEnabled("AuraSkills")) {
+        if (plugin.doesHookedPluginExist("AuraSkills")) {
             registerLevelPlugin("AuraSkills", new AuraSkillsImpl());
             hookMessage("AuraSkills");
         }

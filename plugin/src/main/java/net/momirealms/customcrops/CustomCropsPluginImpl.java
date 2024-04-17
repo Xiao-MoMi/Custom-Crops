@@ -202,4 +202,9 @@ public class CustomCropsPluginImpl extends CustomCropsPlugin {
     public boolean isHookedPluginEnabled(String plugin) {
         return Bukkit.getPluginManager().isPluginEnabled(plugin);
     }
+
+    @Override
+    public boolean doesHookedPluginExist(String plugin) {
+        return Bukkit.getPluginManager().getPlugin(plugin) != null;
+    }
 }

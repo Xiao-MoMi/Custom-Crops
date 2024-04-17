@@ -24,15 +24,9 @@ import org.bukkit.entity.Player;
 
 public class AureliumSkillsImpl implements LevelInterface {
 
-    private final Leveler leveler;
-
-    public AureliumSkillsImpl() {
-        leveler = AureliumAPI.getPlugin().getLeveler();
-    }
-
     @Override
     public void addXp(Player player, String target, double amount) {
-        leveler.addXp(player, AureliumAPI.getPlugin().getSkillRegistry().getSkill(target), amount);
+        AureliumAPI.getPlugin().getLeveler().addXp(player, AureliumAPI.getPlugin().getSkillRegistry().getSkill(target), amount);
     }
 
     @Override
