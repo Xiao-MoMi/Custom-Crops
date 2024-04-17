@@ -1,8 +1,8 @@
 messages:
   prefix: '<gradient:#ff206c:#fdee55>[CustomCrops]</gradient> '
-  reload: '<white>¡Recargado! Tomó <green>{time}ms.'
+  reload: '<white>¡Recargado! Tardó <green>{time}ms.'
   spring: 'Primavera'
   summer: 'Verano'
   autumn: 'Otoño'
   winter: 'Invierno'
-  no-season: 'LAS TEMPORADAS ESTAN DESACTIVADAS EN ESTE MUNDO'
+  no-season: 'LAS ESTACIONES ESTÁN DESACTIVADAS EN ESTE MUNDO'
