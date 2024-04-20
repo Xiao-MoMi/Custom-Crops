@@ -76,6 +76,7 @@ public class PotFillEvent extends PlayerEvent implements Cancellable {
 
     /**
      * Get the pot location
+     *
      * @return location
      */
     @NotNull
@@ -86,6 +87,7 @@ public class PotFillEvent extends PlayerEvent implements Cancellable {
 
     /**
      * Get the pot's data
+     *
      * @return pot
      */
     @NotNull
@@ -93,11 +95,21 @@ public class PotFillEvent extends PlayerEvent implements Cancellable {
         return pot;
     }
 
+    /**
+     * Get the item in hand
+     *
+     * @return item in hand
+     */
     @NotNull
     public ItemStack getItemInHand() {
         return itemInHand;
     }
 
+    /**
+     * Get the passive fill method
+     *
+     * @return passive fill method
+     */
     @NotNull
     public PassiveFillMethod getFillMethod() {
         return fillMethod;

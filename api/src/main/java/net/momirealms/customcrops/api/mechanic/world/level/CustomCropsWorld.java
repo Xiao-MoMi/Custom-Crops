@@ -68,6 +68,8 @@ public interface CustomCropsWorld {
 
     void unloadChunk(ChunkPos chunkPos);
 
+    void deleteChunk(ChunkPos chunkPos);
+
     void setInfoData(WorldInfoData infoData);
 
     WorldInfoData getInfoData();

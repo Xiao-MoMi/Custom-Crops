@@ -146,11 +146,6 @@ public class RequirementManagerImpl implements RequirementManager {
         return requirements.toArray(new Requirement[0]);
     }
 
-    @Override
-    public boolean hasRequirement(String type) {
-        return requirementBuilderMap.containsKey(type);
-    }
-
     @NotNull
     @Override
     public Requirement getRequirement(ConfigurationSection section, boolean advanced) {

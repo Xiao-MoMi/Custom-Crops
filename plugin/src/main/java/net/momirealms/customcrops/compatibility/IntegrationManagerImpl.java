@@ -17,12 +17,10 @@
 
 package net.momirealms.customcrops.compatibility;
 
-import com.gamingmesh.jobs.Jobs;
 import net.momirealms.customcrops.api.CustomCropsPlugin;
 import net.momirealms.customcrops.api.integration.LevelInterface;
 import net.momirealms.customcrops.api.integration.SeasonInterface;
 import net.momirealms.customcrops.api.manager.IntegrationManager;
-import net.momirealms.customcrops.api.mechanic.world.season.Season;
 import net.momirealms.customcrops.api.util.LogUtils;
 import net.momirealms.customcrops.compatibility.item.MMOItemsItemImpl;
 import net.momirealms.customcrops.compatibility.item.MythicMobsItemImpl;
@@ -32,7 +30,6 @@ import net.momirealms.customcrops.compatibility.level.*;
 import net.momirealms.customcrops.compatibility.season.AdvancedSeasonsImpl;
 import net.momirealms.customcrops.compatibility.season.InBuiltSeason;
 import net.momirealms.customcrops.compatibility.season.RealisticSeasonsImpl;
-import org.bukkit.World;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
@@ -110,13 +107,6 @@ public class IntegrationManagerImpl implements IntegrationManager {
 
     }
 
-    /**
-     * Registers a level plugin with the specified name.
-     *
-     * @param plugin The name of the level plugin.
-     * @param level The implementation of the LevelInterface.
-     * @return true if the registration was successful, false if the plugin name is already registered.
-     */
     @Override
     public boolean registerLevelPlugin(String plugin, LevelInterface level) {
         if (levelPluginMap.containsKey(plugin)) return false;
@@ -124,12 +114,6 @@ public class IntegrationManagerImpl implements IntegrationManager {
         return true;
     }
 
-    /**
-     * Unregisters a level plugin with the specified name.
-     *
-     * @param plugin The name of the level plugin to unregister.
-     * @return true if the unregistration was successful, false if the plugin name is not found.
-     */
     @Override
     public boolean unregisterLevelPlugin(String plugin) {
         return levelPluginMap.remove(plugin) != null;
@@ -139,12 +123,6 @@ public class IntegrationManagerImpl implements IntegrationManager {
         LogUtils.info( plugin + " hooked!");
     }
 
-    /**
-     * Get the LevelInterface provided by a plugin.
-     *
-     * @param plugin The name of the plugin providing the LevelInterface.
-     * @return The LevelInterface provided by the specified plugin, or null if the plugin is not registered.
-     */
     @Override
     @Nullable
     public LevelInterface getLevelPlugin(String plugin) {
@@ -154,15 +132,5 @@ public class IntegrationManagerImpl implements IntegrationManager {
     @Override
     public SeasonInterface getSeasonInterface() {
         return seasonInterface;
-    }
-
-    @Override
-    public Season getSeason(World world) {
-        return seasonInterface.getSeason(world);
-    }
-
-    @Override
-    public int getDate(World world) {
-        return seasonInterface.getDate(world);
     }
 }

@@ -75,6 +75,7 @@ public class ScarecrowBreakEvent extends Event implements Cancellable {
 
     /**
      * Get the scarecrow location
+     *
      * @return location
      */
     @NotNull

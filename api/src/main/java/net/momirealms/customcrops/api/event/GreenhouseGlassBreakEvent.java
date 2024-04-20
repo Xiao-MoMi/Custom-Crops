@@ -75,6 +75,7 @@ public class GreenhouseGlassBreakEvent extends Event implements Cancellable {
 
     /**
      * Get the glass location
+     *
      * @return location
      */
     @NotNull
@@ -100,6 +101,11 @@ public class GreenhouseGlassBreakEvent extends Event implements Cancellable {
         return reason;
     }
 
+    /**
+     * Get the glass data
+     *
+     * @return glass data
+     */
     @NotNull
     public WorldGlass getGlass() {
         return glass;

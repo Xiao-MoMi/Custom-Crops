@@ -28,18 +28,71 @@ import java.util.HashMap;
 
 public interface ActionManager extends Reloadable {
 
+    /**
+     * Register a custom action type
+     *
+     * @param type type
+     * @param actionFactory action factory
+     * @return success or not
+     */
     boolean registerAction(String type, ActionFactory actionFactory);
 
+    /**
+     * Unregister an action type by id
+     *
+     * @param type type
+     * @return success or not
+     */
     boolean unregisterAction(String type);
 
+    /**
+     * Build an action instance with Bukkit configs
+     *
+     * @param section bukkit config
+     * @return action
+     */
     Action getAction(ConfigurationSection section);
 
+    /**
+     * If an action type exists
+     *
+     * @param type type
+     * @return exist or not
+     */
+    default boolean hasAction(String type) {
+        return getActionFactory(type) != null;
+    }
+
+    /**
+     * Build an action map with Bukkit configs
+     *
+     * @param section bukkit config
+     * @return action map
+     */
     HashMap<ActionTrigger, Action[]> getActionMap(ConfigurationSection section);
 
+    /**
+     * Build actions with Bukkit configs
+     *
+     * @param section bukkit config
+     * @return actions
+     */
     Action[] getActions(ConfigurationSection section);
 
+    /**
+     * Get an action factory by type
+     *
+     * @param type type
+     * @return action factory
+     */
     ActionFactory getActionFactory(String type);
 
+    /**
+     * Trigger actions
+     *
+     * @param state state
+     * @param actions actions
+     */
     static void triggerActions(State state, Action... actions) {
         if (actions != null)
             for (Action action : actions)

@@ -75,6 +75,7 @@ public class CropBreakEvent extends Event implements Cancellable {
 
     /**
      * Get the crop's data, it might be null if it's spawned by other plugins in the wild
+     *
      * @return crop data
      */
     @Nullable
@@ -84,6 +85,7 @@ public class CropBreakEvent extends Event implements Cancellable {
 
     /**
      * Get the crop location
+     *
      * @return location
      */
     @NotNull
@@ -91,6 +93,14 @@ public class CropBreakEvent extends Event implements Cancellable {
         return location;
     }
 
+    /**
+     * Get the entity that triggered the event
+     * This would be null if the crop is broken by respawn anchor
+     * The breaker can be a TNT, creeper.
+     * If the pot is a vanilla farmland, it can be trampled by entities
+     *
+     * @return entity
+     */
     @Nullable
     public Entity getEntity() {
         return entity;
@@ -104,6 +114,11 @@ public class CropBreakEvent extends Event implements Cancellable {
         return null;
     }
 
+    /**
+     * Get the reason
+     *
+     * @return reason
+     */
     @NotNull
     public Reason getReason() {
         return reason;

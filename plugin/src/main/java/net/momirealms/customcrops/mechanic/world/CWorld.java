@@ -277,6 +277,11 @@ public class CWorld implements CustomCropsWorld {
     }
 
     @Override
+    public void deleteChunk(ChunkPos chunkPos) {
+        CChunk chunk = loadedChunks.remove(chunkPos);
+    }
+
+    @Override
     public void setInfoData(WorldInfoData infoData) {
         this.infoData = infoData;
     }

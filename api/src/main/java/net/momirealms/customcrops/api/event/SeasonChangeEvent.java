@@ -54,6 +54,7 @@ public class SeasonChangeEvent extends Event {
 
     /**
      * Get the new season
+     *
      * @return season
      */
     @NotNull
@@ -63,6 +64,7 @@ public class SeasonChangeEvent extends Event {
 
     /**
      * Get the world
+     *
      * @return world
      */
     public World getWorld() {

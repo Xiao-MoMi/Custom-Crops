@@ -27,28 +27,81 @@ import org.jetbrains.annotations.Nullable;
 
 public interface RequirementManager extends Reloadable {
 
+    /**
+     * Register a custom requirement type
+     *
+     * @param type type
+     * @param requirementFactory requirement factory
+     * @return success or not
+     */
     boolean registerRequirement(String type, RequirementFactory requirementFactory);
 
+    /**
+     * Unregister a custom requirement by type
+     *
+     * @param type type
+     * @return success or not
+     */
     boolean unregisterRequirement(String type);
 
+    /**
+     * Build requirements with Bukkit configs
+     *
+     * @param section bukkit config
+     * @param advanced check "not-met-actions" or not
+     * @return requirements
+     */
     @Nullable
     Requirement[] getRequirements(ConfigurationSection section, boolean advanced);
 
-    boolean hasRequirement(String type);
+    /**
+     * If a requirement type exists
+     *
+     * @param type type
+     * @return exist or not
+     */
+    default boolean hasRequirement(String type) {
+        return getRequirementFactory(type) != null;
+    }
 
+    /**
+     * Build a requirement instance with Bukkit configs
+     *
+     * @param section bukkit config
+     * @param advanced check "not-met-actions" or not
+     * @return requirement
+     */
     @NotNull
     Requirement getRequirement(ConfigurationSection section, boolean advanced);
 
+    /**
+     * Build a requirement instance with Bukkit configs
+     *
+     * @return requirement
+     */
     @NotNull
     Requirement getRequirement(String type, Object value);
 
+    /**
+     * Get a requirement factory by type
+     *
+     * @param type type
+     * @return requirement factory
+     */
     @Nullable
     RequirementFactory getRequirementFactory(String type);
 
-    static boolean isRequirementMet(State condition, Requirement... requirements) {
+    /**
+     * Are requirements met for a player
+     *
+     * @param state state
+     * @param requirements requirements
+     * @return meet or not
+     */
+    static boolean isRequirementMet(State state, Requirement... requirements) {
         if (requirements == null) return true;
         for (Requirement requirement : requirements) {
-            if (!requirement.isStateMet(condition)) {
+            if (!requirement.isStateMet(state)) {
                 return false;
             }
         }

@@ -19,5 +19,10 @@ package net.momirealms.customcrops.api.common.item;
 
 public interface KeyItem {
 
+    /**
+     * Get item's key
+     *
+     * @return key
+     */
     String getKey();
 }

@@ -74,21 +74,41 @@ public class WateringCanFillEvent extends PlayerEvent implements Cancellable {
         return handlers;
     }
 
+    /**
+     * Get the watering can item
+     *
+     * @return the watering can item
+     */
     @NotNull
     public ItemStack getItemInHand() {
         return itemInHand;
     }
 
+    /**
+     * Get watering can config
+     *
+     * @return watering can config
+     */
     @NotNull
     public WateringCan getWateringCan() {
         return wateringCan;
     }
 
+    /**
+     * Get the positive fill method
+     *
+     * @return positive fill method
+     */
     @NotNull
     public PositiveFillMethod getFillMethod() {
         return fillMethod;
     }
 
+    /**
+     * Get the location
+     *
+     * @return location
+     */
     @NotNull
     public Location getLocation() {
         return location;

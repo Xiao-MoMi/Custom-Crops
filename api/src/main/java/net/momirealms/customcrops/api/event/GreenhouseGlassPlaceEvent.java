@@ -64,6 +64,7 @@ public class GreenhouseGlassPlaceEvent extends PlayerEvent implements Cancellabl
 
     /**
      * Get the glass location
+     *
      * @return location
      */
     @NotNull

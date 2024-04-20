@@ -24,9 +24,11 @@ import dev.jorel.commandapi.arguments.StringArgument;
 import net.momirealms.customcrops.api.CustomCropsPlugin;
 import net.momirealms.customcrops.api.common.Initable;
 import net.momirealms.customcrops.api.integration.SeasonInterface;
+import net.momirealms.customcrops.api.manager.AdventureManager;
 import net.momirealms.customcrops.api.manager.ConfigManager;
 import net.momirealms.customcrops.api.manager.MessageManager;
 import net.momirealms.customcrops.api.mechanic.item.ItemType;
+import net.momirealms.customcrops.api.mechanic.world.ChunkPos;
 import net.momirealms.customcrops.api.mechanic.world.CustomCropsBlock;
 import net.momirealms.customcrops.api.mechanic.world.level.CustomCropsChunk;
 import net.momirealms.customcrops.api.mechanic.world.level.CustomCropsSection;
@@ -61,7 +63,8 @@ public class CommandManager implements Initable {
                         getAboutCommand(),
                         getSeasonCommand(),
                         getDateCommand(),
-                        getForceTickCommand()
+                        getForceTickCommand(),
+                        getUnsafeCommand()
                 )
                 .register();
     }
@@ -79,6 +82,23 @@ public class CommandManager implements Initable {
                     long time2 = System.currentTimeMillis();
                     plugin.getAdventure().sendMessageWithPrefix(sender, MessageManager.reloadMessage().replace("{time}", String.valueOf(time2 - time1)));
                 });
+    }
+
+    private CommandAPICommand getUnsafeCommand() {
+        return new CommandAPICommand("unsafe")
+                .withSubcommands(
+                        new CommandAPICommand("delete-chunk-data").executesPlayer((player, args) -> {
+                            CustomCropsPlugin.get().getWorldManager().getCustomCropsWorld(player.getWorld()).ifPresent(customCropsWorld -> {
+                                var optionalChunk = customCropsWorld.getLoadedChunkAt(ChunkPos.getByBukkitChunk(player.getChunk()));
+                                if (optionalChunk.isEmpty()) {
+                                    AdventureManager.getInstance().sendMessageWithPrefix(player, "<white>This chunk doesn't have any data.");
+                                    return;
+                                }
+                                customCropsWorld.deleteChunk(ChunkPos.getByBukkitChunk(player.getChunk()));
+                                AdventureManager.getInstance().sendMessageWithPrefix(player, "<white>Done.");
+                            });
+                        })
+                );
     }
 
     private CommandAPICommand getAboutCommand() {
@@ -138,7 +158,7 @@ public class CommandManager implements Initable {
                                         plugin.getAdventure().sendMessageWithPrefix(sender, "CustomCrops is not enabled in that world");
                                         return;
                                     }
-                                    plugin.getAdventure().sendMessageWithPrefix(sender, String.valueOf(plugin.getIntegrationManager().getDate(world)));
+                                    plugin.getAdventure().sendMessageWithPrefix(sender, String.valueOf(plugin.getIntegrationManager().getSeasonInterface().getDate(world)));
                                 }),
                         new CommandAPICommand("set")
                                 .withArguments(new StringArgument("world").replaceSuggestions(ArgumentSuggestions.strings(commandSenderSuggestionInfo -> plugin.getWorldManager().getCustomCropsWorlds().stream()
@@ -196,7 +216,7 @@ public class CommandManager implements Initable {
                                         plugin.getAdventure().sendMessageWithPrefix(sender, "CustomCrops is not enabled in that world");
                                         return;
                                     }
-                                    plugin.getAdventure().sendMessageWithPrefix(sender, MessageManager.seasonTranslation(plugin.getIntegrationManager().getSeason(world)));
+                                    plugin.getAdventure().sendMessageWithPrefix(sender, MessageManager.seasonTranslation(plugin.getIntegrationManager().getSeasonInterface().getSeason(world)));
                                 }),
                         new CommandAPICommand("set")
                                 .withArguments(new StringArgument("world").replaceSuggestions(ArgumentSuggestions.strings(commandSenderSuggestionInfo -> {

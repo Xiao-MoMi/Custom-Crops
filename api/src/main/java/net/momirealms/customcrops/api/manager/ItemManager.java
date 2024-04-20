@@ -33,8 +33,20 @@ import java.util.Collection;
 
 public interface ItemManager extends Reloadable {
 
+    /**
+     * Register an item library
+     *
+     * @param itemLibrary item library
+     * @return success or not
+     */
     boolean registerItemLibrary(@NotNull ItemLibrary itemLibrary);
 
+    /**
+     * Unregister an item library by identification
+     *
+     * @param identification identification
+     * @return success or not
+     */
     boolean unregisterItemLibrary(String identification);
 
     String getItemID(ItemStack itemStack);

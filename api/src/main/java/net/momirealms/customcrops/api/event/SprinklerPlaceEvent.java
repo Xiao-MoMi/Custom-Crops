@@ -72,6 +72,7 @@ public class SprinklerPlaceEvent extends PlayerEvent implements Cancellable {
 
     /**
      * Get the item in player's hand
+     *
      * @return item in hand
      */
     @NotNull
@@ -81,6 +82,7 @@ public class SprinklerPlaceEvent extends PlayerEvent implements Cancellable {
 
     /**
      * Get the sprinkler location
+     *
      * @return location
      */
     @NotNull
@@ -90,6 +92,7 @@ public class SprinklerPlaceEvent extends PlayerEvent implements Cancellable {
 
     /**
      * Get the sprinkler's config
+     *
      * @return sprinkler
      */
     @NotNull

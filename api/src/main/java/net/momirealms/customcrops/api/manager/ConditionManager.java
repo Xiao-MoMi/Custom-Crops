@@ -27,21 +27,73 @@ import org.jetbrains.annotations.Nullable;
 
 public interface ConditionManager extends Reloadable {
 
+    /**
+     * Register a custom condition type
+     *
+     * @param type type
+     * @param conditionFactory condition factory
+     * @return success or not
+     */
     boolean registerCondition(String type, ConditionFactory conditionFactory);
 
+    /**
+     * Unregister a condition type by id
+     *
+     * @param type type
+     * @return success or not
+     */
     boolean unregisterCondition(String type);
 
-    boolean hasCondition(String type);
+    /**
+     * If a condition type exists
+     *
+     * @param type type
+     * @return exist or not
+     */
+    default boolean hasCondition(String type) {
+        return getConditionFactory(type) != null;
+    }
 
+    /**
+     * Build conditions with Bukkit configs
+     *
+     * @param section bukkit config
+     * @return conditions
+     */
     @NotNull
     Condition[] getConditions(ConfigurationSection section);
 
+    /**
+     * Build a condition instance with Bukkit configs
+     *
+     * @param section bukkit config
+     * @return condition
+     */
     Condition getCondition(ConfigurationSection section);
 
+    /**
+     * Build a condition instance with Bukkit configs
+     *
+     * @return condition
+     */
     Condition getCondition(String key, Object args);
 
+    /**
+     * Get a condition factory by type
+     *
+     * @param type type
+     * @return condition factory
+     */
     @Nullable ConditionFactory getConditionFactory(String type);
 
+    /**
+     * Are conditions met for a custom crops block
+     *
+     * @param block block
+     * @param offline is the check for offline ticks
+     * @param conditions conditions
+     * @return meet or not
+     */
     static boolean isConditionMet(CustomCropsBlock block, boolean offline, Condition... conditions) {
         if (conditions == null) return true;
         for (Condition condition : conditions) {

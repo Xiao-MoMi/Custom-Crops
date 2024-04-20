@@ -75,6 +75,7 @@ public class SprinklerBreakEvent extends Event implements Cancellable {
 
     /**
      * Get the sprinkler location
+     *
      * @return location
      */
     @NotNull
@@ -84,6 +85,7 @@ public class SprinklerBreakEvent extends Event implements Cancellable {
 
     /**
      * Get the sprinkler's data
+     *
      * @return sprinkler
      */
     @NotNull

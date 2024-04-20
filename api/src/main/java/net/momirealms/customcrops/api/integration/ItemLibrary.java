@@ -22,9 +22,28 @@ import org.bukkit.inventory.ItemStack;
 
 public interface ItemLibrary {
 
+    /**
+     * Get the identification
+     * for instance "CustomItems"
+     *
+     * @return identification
+     */
     String identification();
 
+    /**
+     * Build an item instance for a player
+     *
+     * @param player player
+     * @param id id
+     * @return item
+     */
     ItemStack buildItem(Player player, String id);
 
+    /**
+     * Get an item's id
+     *
+     * @param itemStack item
+     * @return ID
+     */
     String getItemID(ItemStack itemStack);
 }

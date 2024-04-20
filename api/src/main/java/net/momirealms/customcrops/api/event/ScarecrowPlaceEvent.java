@@ -64,6 +64,7 @@ public class ScarecrowPlaceEvent extends PlayerEvent implements Cancellable {
 
     /**
      * Get the scarecrow location
+     *
      * @return location
      */
     @NotNull

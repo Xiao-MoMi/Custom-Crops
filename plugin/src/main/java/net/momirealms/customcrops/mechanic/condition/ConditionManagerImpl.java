@@ -112,11 +112,6 @@ public class ConditionManagerImpl implements ConditionManager {
     }
 
     @Override
-    public boolean hasCondition(String type) {
-        return conditionBuilderMap.containsKey(type);
-    }
-
-    @Override
     public @NotNull Condition[] getConditions(ConfigurationSection section) {
         ArrayList<Condition> conditions = new ArrayList<>();
         if (section != null) {
@@ -578,7 +573,7 @@ public class ConditionManagerImpl implements ConditionManager {
         registerCondition("suitable_season", (args) -> {
             HashSet<String> seasons = new HashSet<>(ConfigUtils.stringListArgs(args).stream().map(it -> it.toUpperCase(Locale.ENGLISH)).toList());
             return (block, offline) -> {
-                Season season = plugin.getIntegrationManager().getSeason(block.getLocation().getBukkitWorld());
+                Season season = plugin.getIntegrationManager().getSeasonInterface().getSeason(block.getLocation().getBukkitWorld());
                 if (season == null) {
                     return true;
                 }
@@ -602,7 +597,7 @@ public class ConditionManagerImpl implements ConditionManager {
         registerCondition("unsuitable_season", (args) -> {
             HashSet<String> seasons = new HashSet<>(ConfigUtils.stringListArgs(args).stream().map(it -> it.toUpperCase(Locale.ENGLISH)).toList());
             return (block, offline) -> {
-                Season season = plugin.getIntegrationManager().getSeason(block.getLocation().getBukkitWorld());
+                Season season = plugin.getIntegrationManager().getSeasonInterface().getSeason(block.getLocation().getBukkitWorld());
                 if (season == null) {
                     return false;
                 }

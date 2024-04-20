@@ -76,6 +76,7 @@ public class SprinklerFillEvent extends PlayerEvent implements Cancellable {
 
     /**
      * Get the item in player's hand
+     *
      * @return item in hand
      */
     @NotNull
@@ -85,6 +86,7 @@ public class SprinklerFillEvent extends PlayerEvent implements Cancellable {
 
     /**
      * Get the sprinkler location
+     *
      * @return location
      */
     @NotNull
@@ -92,6 +94,11 @@ public class SprinklerFillEvent extends PlayerEvent implements Cancellable {
         return location;
     }
 
+    /**
+     * Get the passive fill method
+     *
+     * @return passive fill method
+     */
     @NotNull
     public PassiveFillMethod getFillMethod() {
         return fillMethod;

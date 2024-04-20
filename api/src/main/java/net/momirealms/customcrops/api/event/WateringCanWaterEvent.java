@@ -76,21 +76,41 @@ public class WateringCanWaterEvent extends PlayerEvent implements Cancellable {
         return handlers;
     }
 
+    /**
+     * Get the watering can item
+     *
+     * @return watering can item
+     */
     @NotNull
     public ItemStack getItemInHand() {
         return itemInHand;
     }
 
+    /**
+     * Get the watering can's config
+     *
+     * @return watering can config
+     */
     @NotNull
     public WateringCan getWateringCan() {
         return wateringCan;
     }
 
+    /**
+     * Get the locations that involved in this event
+     *
+     * @return locations
+     */
     @NotNull
     public Set<Location> getLocation() {
         return location;
     }
 
+    /**
+     * Get the pot/sprinkler's data
+     *
+     * @return data
+     */
     @NotNull
     public CustomCropsBlock getPotOrSprinkler() {
         return potOrSprinkler;

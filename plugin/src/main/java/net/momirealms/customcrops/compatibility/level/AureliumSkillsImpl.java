@@ -18,7 +18,6 @@
 package net.momirealms.customcrops.compatibility.level;
 
 import com.archyx.aureliumskills.api.AureliumAPI;
-import com.archyx.aureliumskills.leveler.Leveler;
 import net.momirealms.customcrops.api.integration.LevelInterface;
 import org.bukkit.entity.Player;
 

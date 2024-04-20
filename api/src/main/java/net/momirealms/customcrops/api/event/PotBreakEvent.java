@@ -75,6 +75,7 @@ public class PotBreakEvent extends Event implements Cancellable {
 
     /**
      * Get the pot location
+     *
      * @return location
      */
     @NotNull
@@ -85,6 +86,7 @@ public class PotBreakEvent extends Event implements Cancellable {
 
     /**
      * Get the pot's data
+     *
      * @return pot
      */
     @NotNull

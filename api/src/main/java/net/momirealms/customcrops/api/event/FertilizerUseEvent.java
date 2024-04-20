@@ -74,21 +74,41 @@ public class FertilizerUseEvent extends PlayerEvent implements Cancellable {
         return handlers;
     }
 
+    /**
+     * Get the fertilizer item in hand
+     *
+     * @return item in hand
+     */
     @NotNull
     public ItemStack getItemInHand() {
         return itemInHand;
     }
 
+    /**
+     * Get the pot's location
+     *
+     * @return location
+     */
     @NotNull
     public Location getLocation() {
         return location;
     }
 
+    /**
+     * Get the pot's data
+     *
+     * @return pot data
+     */
     @NotNull
     public WorldPot getPot() {
         return pot;
     }
 
+    /**
+     * Get the fertilizer's config
+     *
+     * @return fertilizer config
+     */
     @NotNull
     public Fertilizer getFertilizer() {
         return fertilizer;

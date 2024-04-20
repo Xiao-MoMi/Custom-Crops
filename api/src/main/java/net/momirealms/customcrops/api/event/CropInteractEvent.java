@@ -73,6 +73,7 @@ public class CropInteractEvent extends PlayerEvent implements Cancellable {
 
     /**
      * Get the crop location
+     *
      * @return location
      */
     @NotNull
@@ -83,6 +84,7 @@ public class CropInteractEvent extends PlayerEvent implements Cancellable {
     /**
      * Get the item in player's hand
      * If there's nothing in hand, it would return AIR
+     *
      * @return item in hand
      */
     @NotNull
@@ -92,6 +94,7 @@ public class CropInteractEvent extends PlayerEvent implements Cancellable {
 
     /**
      * Get the crop's data, it might be null if it's spawned by other plugins in the wild
+     *
      * @return crop data
      */
     @Nullable

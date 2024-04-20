@@ -19,7 +19,13 @@ package net.momirealms.customcrops.api.common;
 
 public interface Initable {
 
+    /**
+     * init
+     */
     void init();
 
+    /**
+     * disable
+     */
     void disable();
 }

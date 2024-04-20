@@ -94,16 +94,31 @@ public class BoneMealDispenseEvent extends Event implements Cancellable {
         return boneMealItem;
     }
 
+    /**
+     * Get the crop's data
+     *
+     * @return crop data
+     */
     @NotNull
     public WorldCrop getCrop() {
         return crop;
     }
 
+    /**
+     * Get the bone meal's config
+     *
+     * @return bone meal config
+     */
     @NotNull
     public BoneMeal getBoneMeal() {
         return boneMeal;
     }
 
+    /**
+     * Get the dispenser block
+     *
+     * @return dispenser block
+     */
     @NotNull
     public Block getDispenser() {
         return dispenser;

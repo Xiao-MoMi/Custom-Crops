@@ -77,6 +77,7 @@ public class BoneMealUseEvent extends Event implements Cancellable {
 
     /**
      * Get the crop location
+     *
      * @return location
      */
     @NotNull
@@ -87,6 +88,7 @@ public class BoneMealUseEvent extends Event implements Cancellable {
     /**
      * Get the item in player's hand
      * If there's nothing in hand, it would return AIR
+     *
      * @return item in hand
      */
     @NotNull
@@ -94,11 +96,21 @@ public class BoneMealUseEvent extends Event implements Cancellable {
         return itemInHand;
     }
 
+    /**
+     * Get the crop's data
+     *
+     * @return crop data
+     */
     @NotNull
     public WorldCrop getCrop() {
         return crop;
     }
 
+    /**
+     * Get the bone meal config
+     *
+     * @return bone meal config
+     */
     @NotNull
     public BoneMeal getBoneMeal() {
         return boneMeal;

@@ -74,10 +74,10 @@ public class CCPapi extends PlaceholderExpansion {
         switch (split[0]) {
             case "season" -> {
                 if (split.length == 1) {
-                    return MessageManager.seasonTranslation(plugin.getIntegrationManager().getSeason(player.getWorld()));
+                    return MessageManager.seasonTranslation(plugin.getIntegrationManager().getSeasonInterface().getSeason(player.getWorld()));
                 } else {
                     try {
-                        return MessageManager.seasonTranslation(plugin.getIntegrationManager().getSeason(Bukkit.getWorld(split[1])));
+                        return MessageManager.seasonTranslation(plugin.getIntegrationManager().getSeasonInterface().getSeason(Bukkit.getWorld(split[1])));
                     } catch (NullPointerException e) {
                         LogUtils.severe("World " + split[1] + " does not exist");
                         e.printStackTrace();
@@ -86,10 +86,10 @@ public class CCPapi extends PlaceholderExpansion {
             }
             case "date" -> {
                 if (split.length == 1) {
-                    return String.valueOf(plugin.getIntegrationManager().getDate(player.getWorld()));
+                    return String.valueOf(plugin.getIntegrationManager().getSeasonInterface().getDate(player.getWorld()));
                 } else {
                     try {
-                        return String.valueOf(plugin.getIntegrationManager().getDate(Bukkit.getWorld(split[1])));
+                        return String.valueOf(plugin.getIntegrationManager().getSeasonInterface().getDate(Bukkit.getWorld(split[1])));
                     } catch (NullPointerException e) {
                         LogUtils.severe("World " + split[1] + " does not exist");
                         e.printStackTrace();

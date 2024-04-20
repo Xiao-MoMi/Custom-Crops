@@ -68,6 +68,7 @@ public class PotPlaceEvent extends PlayerEvent implements Cancellable {
 
     /**
      * Get the pot location
+     *
      * @return location
      */
     @NotNull
@@ -77,6 +78,7 @@ public class PotPlaceEvent extends PlayerEvent implements Cancellable {
 
     /**
      * Get the placed pot's config
+     *
      * @return pot
      */
     @NotNull

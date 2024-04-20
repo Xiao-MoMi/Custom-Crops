@@ -743,6 +743,79 @@ public class ItemManagerImpl implements ItemManager {
 
         this.registerItemFunction(itemID, FunctionTrigger.INTERACT_AT,
                 /*
+                 * Handle clicking sprinkler with a watering can
+                 */
+                new CFunction(conditionWrapper -> {
+                    if (!(conditionWrapper instanceof InteractBlockWrapper blockWrapper)) {
+                        return FunctionResult.PASS;
+                    }
+                    // is a pot
+                    Block block = blockWrapper.getClickedBlock();
+                    Sprinkler sprinkler = getSprinklerBy3DItemID(customProvider.getBlockID(block));
+                    if (sprinkler == null) {
+                        return FunctionResult.PASS;
+                    }
+                    final Player player = blockWrapper.getPlayer();
+                    final ItemStack itemInHand = blockWrapper.getItemInHand();
+                    final Location clicked = block.getLocation();
+                    State state = new State(player, itemInHand, clicked);
+                    // check watering-can requirements
+                    if (!RequirementManager.isRequirementMet(state, wateringCan.getRequirements())) {
+                        return FunctionResult.RETURN;
+                    }
+                    // check whitelist
+                    if (!wateringCan.getSprinklerWhitelist().contains(sprinkler.getKey())) {
+                        wateringCan.trigger(ActionTrigger.WRONG_SPRINKLER, state);
+                        return FunctionResult.RETURN;
+                    }
+                    // get water in can
+                    int waterInCan = wateringCan.getCurrentWater(itemInHand);
+
+                    // check sprinkler requirements
+                    if (!RequirementManager.isRequirementMet(state, sprinkler.getUseRequirements())) {
+                        return FunctionResult.RETURN;
+                    }
+                    // check whitelist
+                    if (!wateringCan.getSprinklerWhitelist().contains(sprinkler.getKey())) {
+                        wateringCan.trigger(ActionTrigger.WRONG_SPRINKLER, state);
+                        return FunctionResult.RETURN;
+                    }
+                    // check amount of water
+                    if (waterInCan > 0 || wateringCan.isInfinite()) {
+                        // get sprinkler data
+                        SimpleLocation simpleLocation = SimpleLocation.of(clicked);
+                        Optional<WorldSprinkler> worldSprinkler = plugin.getWorldManager().getSprinklerAt(simpleLocation);
+                        if (worldSprinkler.isEmpty()) {
+                            plugin.debug("Player " + player.getName() + " tried to interact a sprinkler which not exists in memory. Fixing the data...");
+                            WorldSprinkler sp = new MemorySprinkler(simpleLocation, sprinkler.getKey(), 0);
+                            plugin.getWorldManager().addSprinklerAt(sp, simpleLocation);
+                            worldSprinkler = Optional.of(sp);
+                        } else {
+                            if (sprinkler.getStorage() <= worldSprinkler.get().getWater()) {
+                                return FunctionResult.RETURN;
+                            }
+                        }
+
+                        // fire the event
+                        WateringCanWaterEvent waterEvent = new WateringCanWaterEvent(player, itemInHand, new HashSet<>(Set.of(clicked)), wateringCan, worldSprinkler.get());
+                        if (EventUtils.fireAndCheckCancel(waterEvent))
+                            return FunctionResult.CANCEL_EVENT_AND_RETURN;
+
+                        state.setArg("{storage}", String.valueOf(wateringCan.getStorage()));
+                        state.setArg("{current}", String.valueOf(waterInCan - 1));
+                        state.setArg("{water_bar}", wateringCan.getWaterBar() == null ? "" : wateringCan.getWaterBar().getWaterBar(waterInCan - 1, wateringCan.getStorage()));
+                        wateringCan.updateItem(player, itemInHand, waterInCan - 1, state.getArgs());
+                        wateringCan.trigger(ActionTrigger.CONSUME_WATER, state);
+                        plugin.getWorldManager().addWaterToSprinkler(sprinkler, simpleLocation, 1);
+                    } else {
+                        state.setArg("{storage}", String.valueOf(wateringCan.getStorage()));
+                        state.setArg("{current}", "0");
+                        state.setArg("{water_bar}", wateringCan.getWaterBar() == null ? "" : wateringCan.getWaterBar().getWaterBar(0, wateringCan.getStorage()));
+                        wateringCan.trigger(ActionTrigger.NO_WATER, state);
+                    }
+                    return FunctionResult.RETURN;
+                }, CFunction.FunctionPriority.HIGH),
+                /*
                  * Handle clicking pot with a watering can
                  */
                 new CFunction(conditionWrapper -> {
@@ -893,6 +966,9 @@ public class ItemManagerImpl implements ItemManager {
                     }
                     return FunctionResult.RETURN;
                 }, CFunction.FunctionPriority.NORMAL),
+                /*
+                 * Handle clicking crop with a watering can
+                 */
                 new CFunction(conditionWrapper -> {
                     if (!(conditionWrapper instanceof InteractFurnitureWrapper furnitureWrapper)) {
                         return FunctionResult.PASS;
@@ -1316,12 +1392,12 @@ public class ItemManagerImpl implements ItemManager {
                  * Interact the sprinkler
                  */
                 new CFunction(conditionWrapper -> {
-                    if (!(conditionWrapper instanceof InteractFurnitureWrapper interactFurnitureWrapper)) {
+                    if (!(conditionWrapper instanceof InteractWrapper interactWrapper)) {
                         return FunctionResult.PASS;
                     }
-                    ItemStack itemInHand = interactFurnitureWrapper.getItemInHand();
-                    Player player = interactFurnitureWrapper.getPlayer();
-                    Location location = interactFurnitureWrapper.getLocation();
+                    ItemStack itemInHand = interactWrapper.getItemInHand();
+                    Player player = interactWrapper.getPlayer();
+                    Location location = interactWrapper.getLocation();
                     // check use requirements
                     State state = new State(player, itemInHand, location);
                     if (!RequirementManager.isRequirementMet(state, sprinkler.getUseRequirements())) {
@@ -1381,6 +1457,7 @@ public class ItemManagerImpl implements ItemManager {
                                         state.setArg("{current}", String.valueOf(sprinkler.getStorage()));
                                         state.setArg("{water_bar}", sprinkler.getWaterBar() == null ? "" : sprinkler.getWaterBar().getWaterBar(sprinkler.getStorage(), sprinkler.getStorage()));
                                         sprinkler.trigger(ActionTrigger.FULL, state);
+                                        return FunctionResult.CANCEL_EVENT_AND_RETURN;
                                     }
                                 }
                                 return FunctionResult.RETURN;
@@ -1394,14 +1471,14 @@ public class ItemManagerImpl implements ItemManager {
 
         this.registerItemFunction(new String[]{sprinkler.get3DItemID(), sprinkler.get3DItemWithWater()}, FunctionTrigger.BE_INTERACTED,
                 new CFunction(conditionWrapper -> {
-                    if (!(conditionWrapper instanceof InteractFurnitureWrapper interactFurnitureWrapper)) {
+                    if (!(conditionWrapper instanceof InteractWrapper interactWrapper)) {
                         return FunctionResult.PASS;
                     }
 
-                    Location location = interactFurnitureWrapper.getLocation();
+                    Location location = interactWrapper.getLocation();
                     // trigger interact actions
                     plugin.getScheduler().runTaskSyncLater(() -> {
-                        State state = new State(interactFurnitureWrapper.getPlayer(), interactFurnitureWrapper.getItemInHand(), location);
+                        State state = new State(interactWrapper.getPlayer(), interactWrapper.getItemInHand(), location);
                         Optional<WorldSprinkler> optionalSprinkler = plugin.getWorldManager().getSprinklerAt(SimpleLocation.of(location));
                         if (optionalSprinkler.isEmpty()) {
                             return;
@@ -2071,6 +2148,7 @@ public class ItemManagerImpl implements ItemManager {
                                         plugin.getWorldManager().addWaterToPot(pot, simpleLocation, method.getAmount());
                                     } else {
                                         pot.trigger(ActionTrigger.FULL, state);
+                                        return FunctionResult.CANCEL_EVENT_AND_RETURN;
                                     }
                                 }
                                 return FunctionResult.RETURN;

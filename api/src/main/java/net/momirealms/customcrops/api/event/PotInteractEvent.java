@@ -54,10 +54,6 @@ public class PotInteractEvent extends PlayerEvent implements Cancellable {
         return cancelled;
     }
 
-    /**
-     * Cancelling this event would cancel PotInfoEvent too
-     * @param cancel true if you wish to cancel this event
-     */
     @Override
     public void setCancelled(boolean cancel) {
         this.cancelled = cancel;
@@ -77,6 +73,7 @@ public class PotInteractEvent extends PlayerEvent implements Cancellable {
     /**
      * Get the item in player's hand
      * If there's nothing in hand, it would return AIR
+     *
      * @return item in hand
      */
     @NotNull
@@ -86,6 +83,7 @@ public class PotInteractEvent extends PlayerEvent implements Cancellable {
 
     /**
      * Get the pot location
+     *
      * @return pot location
      */
     @NotNull
@@ -95,6 +93,7 @@ public class PotInteractEvent extends PlayerEvent implements Cancellable {
 
     /**
      * Get the pot's data
+     *
      * @return pot key
      */
     @NotNull

@@ -52,7 +52,6 @@ public class CustomCropsPluginImpl extends CustomCropsPlugin {
     private PacketManager packetManager;
     private CommandManager commandManager;
     private HologramManager hologramManager;
-    private AntiGriefLib antiGriefLib;
 
     @Override
     public void onLoad() {
@@ -71,11 +70,6 @@ public class CustomCropsPluginImpl extends CustomCropsPlugin {
                         Dependency.BSTATS_BUKKIT
                 )
         ));
-
-        this.antiGriefLib = AntiGriefLib.builder(this)
-                .silentLogs(true)
-                .ignoreOP(true)
-                .build();
     }
 
     @Override
@@ -91,14 +85,18 @@ public class CustomCropsPluginImpl extends CustomCropsPlugin {
         this.requirementManager = new RequirementManagerImpl(this);
         this.coolDownManager = new CoolDownManager(this);
         this.worldManager = new WorldManagerImpl(this);
-        this.itemManager = new ItemManagerImpl(this, antiGriefLib);
+        this.itemManager = new ItemManagerImpl(this,
+                AntiGriefLib.builder(this)
+                .silentLogs(true)
+                .ignoreOP(true)
+                .build()
+        );
         this.messageManager = new MessageManagerImpl(this);
         this.packetManager = new PacketManager(this);
         this.commandManager = new CommandManager(this);
         this.placeholderManager = new PlaceholderManagerImpl(this);
         this.hologramManager = new HologramManager(this);
         this.commandManager.init();
-        this.antiGriefLib.init();
         this.integrationManager.init();
         this.disableNBTAPILogs();
         Migration.tryUpdating();

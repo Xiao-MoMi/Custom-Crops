@@ -20,8 +20,6 @@ package net.momirealms.customcrops.api.manager;
 import net.momirealms.customcrops.api.common.Initable;
 import net.momirealms.customcrops.api.integration.LevelInterface;
 import net.momirealms.customcrops.api.integration.SeasonInterface;
-import net.momirealms.customcrops.api.mechanic.world.season.Season;
-import org.bukkit.World;
 import org.jetbrains.annotations.Nullable;
 
 public interface IntegrationManager extends Initable {
@@ -51,9 +49,10 @@ public interface IntegrationManager extends Initable {
      */
     @Nullable LevelInterface getLevelPlugin(String plugin);
 
+    /**
+     * Get the SeasonInterface provided by a plugin.
+     *
+     * @return the season interface
+     */
     SeasonInterface getSeasonInterface();
-
-    Season getSeason(World world);
-
-    int getDate(World world);
 }
