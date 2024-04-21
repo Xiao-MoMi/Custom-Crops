@@ -49,80 +49,294 @@ public interface ItemManager extends Reloadable {
      */
     boolean unregisterItemLibrary(String identification);
 
+    /**
+     * Get item's id by ItemStack
+     * ItemsAdder: namespace:id
+     * Oraxen: id
+     * Vanilla: CAPITAL_ID
+     * Other item libraries: LibraryID:ItemID
+     *
+     * @param itemStack item
+     * @return ID
+     */
     String getItemID(ItemStack itemStack);
 
+    /**
+     * Get item by ID
+     * ItemsAdder: namespace:id
+     * Oraxen: id
+     * Vanilla: CAPITAL_ID
+     * Other item libraries: LibraryID:ItemID
+     *
+     * @param player player
+     * @param id id
+     * @return item
+     */
     ItemStack getItemStack(Player player, String id);
 
+    /**
+     * Place an item at a certain location
+     *
+     * @param location location
+     * @param carrier carrier
+     * @param id id
+     */
     void placeItem(Location location, ItemCarrier carrier, String id);
 
-    void placeItem(Location location, ItemCarrier carrier, String id, CRotation rotate);
+    /**
+     * Place an item at a certain location
+     *
+     * @param location location
+     * @param carrier carrier
+     * @param id id
+     * @param rotation rotation
+     */
+    void placeItem(Location location, ItemCarrier carrier, String id, CRotation rotation);
 
+    /**
+     * Remove any block/entity from a certain location
+     *
+     * @param location location
+     * @return the rotation of the removed entity
+     */
     CRotation removeAnythingAt(Location location);
 
+    /**
+     * Get watering can config by ID
+     *
+     * @param id id
+     * @return watering can config
+     */
     @Nullable
     WateringCan getWateringCanByID(@NotNull String id);
 
+    /**
+     * Get watering can config by item ID
+     *
+     * @param id item ID
+     * @return watering can config
+     */
     @Nullable
     WateringCan getWateringCanByItemID(@NotNull String id);
 
+    /**
+     * Get watering can config by itemStack
+     *
+     * @param itemStack itemStack
+     * @return watering can config
+     */
     @Nullable
     WateringCan getWateringCanByItemStack(@NotNull ItemStack itemStack);
 
+    /**
+     * Get sprinkler config by ID
+     *
+     * @param id id
+     * @return sprinkler config
+     */
     @Nullable
     Sprinkler getSprinklerByID(@NotNull String id);
 
+    /**
+     * Get sprinkler config by 3D item ID
+     *
+     * @param id 3D item ID
+     * @return sprinkler config
+     */
     @Nullable
     Sprinkler getSprinklerBy3DItemID(@NotNull String id);
 
+    /**
+     * Get sprinkler config by 2D item ID
+     *
+     * @param id 2D item ID
+     * @return sprinkler config
+     */
     @Nullable
     Sprinkler getSprinklerBy2DItemID(@NotNull String id);
 
+    /**
+     * Get sprinkler config by entity
+     *
+     * @param entity entity
+     * @return sprinkler config
+     */
     @Nullable
     Sprinkler getSprinklerByEntity(@NotNull Entity entity);
 
+    /**
+     * Get sprinkler config by block
+     *
+     * @param block block
+     * @return sprinkler config
+     */
+    @Nullable
+    Sprinkler getSprinklerByBlock(@NotNull Block block);
+
+    /**
+     * Get sprinkler config by 2D itemStack
+     *
+     * @param itemStack 2D itemStack
+     * @return sprinkler config
+     */
     @Nullable
     Sprinkler getSprinklerBy2DItemStack(@NotNull ItemStack itemStack);
 
+    /**
+     * Get sprinkler config by 3D itemStack
+     *
+     * @param itemStack 3D itemStack
+     * @return sprinkler config
+     */
     @Nullable
     Sprinkler getSprinklerBy3DItemStack(@NotNull ItemStack itemStack);
 
-    @Nullable
-    Sprinkler getSprinklerByItemStack(@NotNull ItemStack itemStack);
-
+    /**
+     * Get pot config by ID
+     *
+     * @param id id
+     * @return pot config
+     */
     @Nullable
     Pot getPotByID(@NotNull String id);
 
+    /**
+     * Get pot config by block ID
+     *
+     * @param id block ID
+     * @return pot config
+     */
     @Nullable
     Pot getPotByBlockID(@NotNull String id);
 
+    /**
+     * Get pot config by block
+     *
+     * @param block block
+     * @return pot config
+     */
     @Nullable
     Pot getPotByBlock(@NotNull Block block);
 
+    /**
+     * Get pot config by block itemStack
+     *
+     * @param itemStack itemStack
+     * @return pot config
+     */
     @Nullable
     Pot getPotByItemStack(@NotNull ItemStack itemStack);
 
+    /**
+     * Get fertilizer config by ID
+     *
+     * @param id id
+     * @return fertilizer config
+     */
+    @Nullable
     Fertilizer getFertilizerByID(String id);
 
+    /**
+     * Get fertilizer config by item ID
+     *
+     * @param id item id
+     * @return fertilizer config
+     */
+    @Nullable
     Fertilizer getFertilizerByItemID(String id);
 
+    /**
+     * Get fertilizer config by itemStack
+     *
+     * @param itemStack itemStack
+     * @return fertilizer config
+     */
+    @Nullable
     Fertilizer getFertilizerByItemStack(@NotNull ItemStack itemStack);
 
+    /**
+     * Get crop config by ID
+     *
+     * @param id id
+     * @return crop config
+     */
+    @Nullable
     Crop getCropByID(String id);
 
+    /**
+     * Get crop config by seed ID
+     *
+     * @param id seed ID
+     * @return crop config
+     */
+    @Nullable
     Crop getCropBySeedID(String id);
 
+    /**
+     * Get crop config by seed itemStack
+     *
+     * @param itemStack seed itemStack
+     * @return crop config
+     */
+    @Nullable
     Crop getCropBySeedItemStack(ItemStack itemStack);
 
+    /**
+     * Get crop config by stage item ID
+     *
+     * @param id stage item ID
+     * @return crop config
+     */
+    @Nullable
     Crop getCropByStageID(String id);
 
+    /**
+     * Get crop config by entity
+     *
+     * @param entity entity
+     * @return crop config
+     */
+    @Nullable
     Crop getCropByEntity(Entity entity);
 
+    /**
+     * Get crop config by block
+     *
+     * @param block block
+     * @return crop config
+     */
+    @Nullable
     Crop getCropByBlock(Block block);
 
+    /**
+     * Get crop stage config by stage ID
+     *
+     * @param id stage ID
+     * @return crop stage config
+     */
+    @Nullable
     Crop.Stage getCropStageByStageID(String id);
 
+    /**
+     * Update a pot's block state
+     *
+     * @param location location
+     * @param pot pot config
+     * @param hasWater has water or not
+     * @param fertilizer fertilizer
+     */
     void updatePotState(Location location, Pot pot, boolean hasWater, Fertilizer fertilizer);
 
+    /**
+     * Get the pots that can be watered with a watering can
+     *
+     * @param baseLocation the clicked pot's location
+     * @param width width of the working range
+     * @param length length of the working range
+     * @param yaw player's yaw
+     * @param potID pot's ID
+     * @return the pots that can be watered
+     */
     @NotNull
     Collection<Location> getPotInRange(Location baseLocation, int width, int length, float yaw, String potID);
 }

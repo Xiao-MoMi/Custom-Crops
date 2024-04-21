@@ -306,8 +306,10 @@ public class CChunk implements CustomCropsChunk {
             memoryPot.setFertilizer(fertilizer);
             addBlockAt(memoryPot, location);
             CustomCropsPlugin.get().debug("When adding fertilizer to pot at " + location + ", the pot data doesn't exist.");
+            CustomCropsPlugin.get().getItemManager().updatePotState(location.getBukkitLocation(), pot, false, fertilizer);
         } else {
             optionalWorldPot.get().setFertilizer(fertilizer);
+            CustomCropsPlugin.get().getItemManager().updatePotState(location.getBukkitLocation(), pot, optionalWorldPot.get().getWater() > 0, fertilizer);
         }
     }
 

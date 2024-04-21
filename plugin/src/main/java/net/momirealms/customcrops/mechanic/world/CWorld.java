@@ -424,7 +424,7 @@ public class CWorld implements CustomCropsWorld {
         if (chunk.isPresent()) {
             chunk.get().addPointToCrop(crop, location, points);
         } else {
-            LogUtils.warn("Invalid operation: Adding points to crop in a not generated chunk");
+            LogUtils.warn("Invalid operation: Adding point to crop in a not generated chunk");
         }
     }
 

@@ -410,6 +410,11 @@ public class ItemManagerImpl implements ItemManager {
     }
 
     @Override
+    public Sprinkler getSprinklerByBlock(@NotNull Block block) {
+        return Optional.ofNullable(customProvider.getBlockID(block)).map(threeDItem2SprinklerMap::get).orElse(null);
+    }
+
+    @Override
     public Sprinkler getSprinklerBy2DItemStack(@NotNull ItemStack itemStack) {
         return getSprinklerBy2DItemID(getItemID(itemStack));
     }
@@ -437,13 +442,6 @@ public class ItemManagerImpl implements ItemManager {
     @Override
     public Pot getPotByItemStack(@NotNull ItemStack itemStack) {
         return getPotByBlockID(getItemID(itemStack));
-    }
-
-    @Override
-    public Sprinkler getSprinklerByItemStack(@NotNull ItemStack itemStack) {
-        if (itemStack.getType() == Material.AIR)
-            return null;
-        return getSprinklerBy2DItemID(getItemID(itemStack));
     }
 
     @Override
@@ -566,7 +564,7 @@ public class ItemManagerImpl implements ItemManager {
                                             }
                                             method.trigger(potState);
                                             pot.trigger(ActionTrigger.ADD_WATER, potState);
-                                            plugin.getWorldManager().addWaterToPot(pot, SimpleLocation.of(potLocation), method.getAmount());
+                                            plugin.getWorldManager().addWaterToPot(pot, method.getAmount(), SimpleLocation.of(potLocation));
                                         } else {
                                             pot.trigger(ActionTrigger.FULL, potState);
                                         }
@@ -607,7 +605,7 @@ public class ItemManagerImpl implements ItemManager {
                                             }
                                             method.trigger(potState);
                                             pot.trigger(ActionTrigger.ADD_WATER, potState);
-                                            plugin.getWorldManager().addWaterToPot(pot, SimpleLocation.of(potLocation), method.getAmount());
+                                            plugin.getWorldManager().addWaterToPot(pot, method.getAmount(), SimpleLocation.of(potLocation));
                                         } else {
                                             pot.trigger(ActionTrigger.FULL, potState);
                                         }
@@ -873,7 +871,7 @@ public class ItemManagerImpl implements ItemManager {
                         wateringCan.trigger(ActionTrigger.CONSUME_WATER, state);
 
                         for (Location location : waterEvent.getLocation()) {
-                            plugin.getWorldManager().addWaterToPot(pot, SimpleLocation.of(location), wateringCan.getWater());
+                            plugin.getWorldManager().addWaterToPot(pot, wateringCan.getWater(), SimpleLocation.of(location));
                             pot.trigger(ActionTrigger.ADD_WATER, new State(player, itemStack, location));
                         }
                     } else {
@@ -955,7 +953,7 @@ public class ItemManagerImpl implements ItemManager {
                         wateringCan.trigger(ActionTrigger.CONSUME_WATER, state);
 
                         for (Location location : waterEvent.getLocation()) {
-                            plugin.getWorldManager().addWaterToPot(pot, SimpleLocation.of(location), wateringCan.getWater());
+                            plugin.getWorldManager().addWaterToPot(pot, wateringCan.getWater(), SimpleLocation.of(location));
                             pot.trigger(ActionTrigger.ADD_WATER, new State(player, itemStack, location));
                         }
                     } else {
@@ -1037,7 +1035,7 @@ public class ItemManagerImpl implements ItemManager {
                         wateringCan.trigger(ActionTrigger.CONSUME_WATER, state);
 
                         for (Location location : waterEvent.getLocation()) {
-                            plugin.getWorldManager().addWaterToPot(pot, SimpleLocation.of(location), wateringCan.getWater());
+                            plugin.getWorldManager().addWaterToPot(pot, wateringCan.getWater(), SimpleLocation.of(location));
                             pot.trigger(ActionTrigger.ADD_WATER, new State(player, itemStack, location));
                         }
                     } else {
@@ -1655,7 +1653,6 @@ public class ItemManagerImpl implements ItemManager {
 
                     // add data
                     plugin.getWorldManager().addFertilizerToPot(pot, fertilizer, simpleLocation);
-                    updatePotState(location, pot, hasWater, fertilizer);
                     if (interactBlockWrapper.getPlayer().getGameMode() != GameMode.CREATIVE) {
                         itemInHand.setAmount(itemInHand.getAmount() - 1);
                     }
@@ -1723,7 +1720,6 @@ public class ItemManagerImpl implements ItemManager {
 
                     // add data
                     plugin.getWorldManager().addFertilizerToPot(pot, fertilizer, simpleLocation);
-                    updatePotState(potLocation, pot, hasWater, fertilizer);
                     if (interactBlockWrapper.getPlayer().getGameMode() != GameMode.CREATIVE) {
                         itemInHand.setAmount(itemInHand.getAmount() - 1);
                     }
@@ -1783,7 +1779,6 @@ public class ItemManagerImpl implements ItemManager {
 
                     // add data
                     plugin.getWorldManager().addFertilizerToPot(pot, fertilizer, simpleLocation);
-                    updatePotState(potLocation, pot, hasWater, fertilizer);
                     if (furnitureWrapper.getPlayer().getGameMode() != GameMode.CREATIVE) {
                         itemInHand.setAmount(itemInHand.getAmount() - 1);
                     }
@@ -1962,7 +1957,7 @@ public class ItemManagerImpl implements ItemManager {
                                                 }
                                                 method.trigger(potState);
                                                 pot.trigger(ActionTrigger.ADD_WATER, potState);
-                                                plugin.getWorldManager().addWaterToPot(pot, SimpleLocation.of(potLocation), method.getAmount());
+                                                plugin.getWorldManager().addWaterToPot(pot, method.getAmount(), SimpleLocation.of(potLocation));
                                             } else {
                                                 pot.trigger(ActionTrigger.FULL, potState);
                                             }
@@ -1989,7 +1984,7 @@ public class ItemManagerImpl implements ItemManager {
                                             }
                                         }
                                         boneMeal.trigger(cropState);
-                                        plugin.getWorldManager().addPointToCrop(crop, SimpleLocation.of(cropLocation), boneMeal.getPoint());
+                                        plugin.getWorldManager().addPointToCrop(crop, boneMeal.getPoint(), SimpleLocation.of(cropLocation));
                                         return FunctionResult.RETURN;
                                     }
                                 }
@@ -2145,7 +2140,7 @@ public class ItemManagerImpl implements ItemManager {
                                         }
                                         method.trigger(state);
                                         pot.trigger(ActionTrigger.ADD_WATER, state);
-                                        plugin.getWorldManager().addWaterToPot(pot, simpleLocation, method.getAmount());
+                                        plugin.getWorldManager().addWaterToPot(pot, method.getAmount(), simpleLocation);
                                     } else {
                                         pot.trigger(ActionTrigger.FULL, state);
                                         return FunctionResult.CANCEL_EVENT_AND_RETURN;

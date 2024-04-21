@@ -335,7 +335,8 @@ public class WorldManagerImpl implements WorldManager, Listener {
     }
 
     @Override
-    public void addWaterToPot(@NotNull Pot pot, @NotNull SimpleLocation location, int amount) {
+    public void addWaterToPot(@NotNull Pot pot, int amount, @NotNull SimpleLocation location) {
+        if (amount <= 0) return;
         CWorld cWorld = loadedWorlds.get(location.getWorldName());
         if (cWorld == null) {
             LogUtils.warn("Unsupported operation: Adding water to pot in unloaded world " + location);
@@ -375,7 +376,7 @@ public class WorldManagerImpl implements WorldManager, Listener {
     }
 
     @Override
-    public void addPointToCrop(@NotNull Crop crop, @NotNull SimpleLocation location, int points) {
+    public void addPointToCrop(@NotNull Crop crop, int points, @NotNull SimpleLocation location) {
         CWorld cWorld = loadedWorlds.get(location.getWorldName());
         if (cWorld == null) {
             LogUtils.warn("Unsupported operation: Adding point to crop in unloaded world " + location);

@@ -294,7 +294,7 @@ public abstract class AbstractCustomListener implements Listener {
                                     if (id.equals(itemID)) {
                                         storage.setAmount(storage.getAmount() - 1);
                                         boneMeal.trigger(new State(null, itemStack, location));
-                                        CustomCropsPlugin.get().getWorldManager().addPointToCrop(config, simpleLocation, boneMeal.getPoint());
+                                        CustomCropsPlugin.get().getWorldManager().addPointToCrop(config, boneMeal.getPoint(), simpleLocation);
                                     }
                                 }
                             }
