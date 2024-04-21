@@ -8,7 +8,7 @@ public class DisplayEntityUtils {
 
     public static CRotation getRotation(Entity entity) {
         if (entity instanceof ItemDisplay itemDisplay) {
-            return RotationUtils.getCRotation(itemDisplay.getLocation().getYaw());
+            return CRotation.getByYaw(itemDisplay.getLocation().getYaw());
         }
         return CRotation.NONE;
     }

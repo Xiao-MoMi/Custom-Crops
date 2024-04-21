@@ -36,18 +36,38 @@ public class PassiveFillMethod extends AbstractFillMethod {
         this.returnedAmount = returnedAmount;
     }
 
+    /**
+     * Get the consumed item ID
+     *
+     * @return consumed item ID
+     */
     public String getUsed() {
         return used;
     }
 
+    /**
+     * Get the returned item ID
+     *
+     * @return returned item ID
+     */
     public String getReturned() {
         return returned;
     }
 
+    /**
+     * Get the amount to consume
+     *
+     * @return amount to consume
+     */
     public int getUsedAmount() {
         return usedAmount;
     }
 
+    /**
+     * Get the amount of the returned items
+     *
+     * @return amount of the returned items
+     */
     public int getReturnedAmount() {
         return returnedAmount;
     }

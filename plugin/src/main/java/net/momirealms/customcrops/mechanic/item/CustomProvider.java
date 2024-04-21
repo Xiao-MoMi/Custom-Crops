@@ -81,7 +81,7 @@ public interface CustomProvider {
             CRotation previousCRotation;
             Entity first = entities.stream().findFirst().get();
             if (first instanceof ItemFrame itemFrame) {
-                previousCRotation = RotationUtils.getCRotation(itemFrame.getRotation());
+                previousCRotation = CRotation.getByRotation(itemFrame.getRotation());
             } else if (VersionManager.isHigherThan1_19_R3()) {
                 previousCRotation = DisplayEntityUtils.getRotation(first);
             } else {
@@ -108,5 +108,28 @@ public interface CustomProvider {
             }
         }
         return "AIR";
+    }
+
+    default CRotation getRotation(Location location) {
+        if (location.getBlock().getType() == Material.AIR) {
+            Collection<Entity> entities = location.getWorld().getNearbyEntities(LocationUtils.toCenterLocation(location), 0.5,0.51,0.5);
+            entities.removeIf(entity -> {
+                EntityType type = entity.getType();
+                return type != EntityType.ITEM_FRAME
+                        && (!VersionManager.isHigherThan1_19_R3() || type != EntityType.ITEM_DISPLAY);
+            });
+            if (entities.size() == 0) return CRotation.NONE;
+            CRotation rotation;
+            Entity first = entities.stream().findFirst().get();
+            if (first instanceof ItemFrame itemFrame) {
+                rotation = CRotation.getByRotation(itemFrame.getRotation());
+            } else if (VersionManager.isHigherThan1_19_R3()) {
+                rotation = DisplayEntityUtils.getRotation(first);
+            } else {
+                rotation = CRotation.NONE;
+            }
+            return rotation;
+        }
+        return CRotation.NONE;
     }
 }

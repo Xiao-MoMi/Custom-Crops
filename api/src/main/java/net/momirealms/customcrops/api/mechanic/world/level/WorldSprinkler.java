@@ -22,11 +22,31 @@ import net.momirealms.customcrops.api.mechanic.world.CustomCropsBlock;
 
 public interface WorldSprinkler extends CustomCropsBlock {
 
+    /**
+     * Get the amount of water
+     *
+     * @return amount of water
+     */
     int getWater();
 
+    /**
+     * Set the amount of water
+     *
+     * @param water amount of water
+     */
     void setWater(int water);
 
+    /**
+     * Get the key of the sprinkler
+     *
+     * @return key
+     */
     String getKey();
 
+    /**
+     * Get the sprinkler config
+     *
+     * @return sprinkler config
+     */
     Sprinkler getConfig();
 }

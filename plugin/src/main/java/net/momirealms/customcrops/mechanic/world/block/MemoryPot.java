@@ -35,6 +35,7 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.Waterlogged;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
@@ -95,7 +96,7 @@ public class MemoryPot extends AbstractCustomCropsBlock implements WorldPot {
     }
 
     @Override
-    public void setFertilizer(Fertilizer fertilizer) {
+    public void setFertilizer(@NotNull Fertilizer fertilizer) {
         setData("fertilizer", new StringTag("fertilizer", fertilizer.getKey()));
         setData("fertilizer-times", new IntTag("fertilizer-times", fertilizer.getTimes()));
     }
@@ -122,7 +123,7 @@ public class MemoryPot extends AbstractCustomCropsBlock implements WorldPot {
     }
 
     @Override
-    public void tickWater(CustomCropsChunk chunk) {
+    public void tickWater() {
         Pot pot = getConfig();
         if (pot == null) {
             LogUtils.warn("Found a pot without config at " + getLocation() + ". Try removing the data.");

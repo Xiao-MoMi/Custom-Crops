@@ -323,35 +323,40 @@ public interface WorldManager extends Reloadable {
      *
      * @param location location
      */
-    void removeSprinklerAt(@NotNull SimpleLocation location);
+    @Nullable
+    WorldSprinkler removeSprinklerAt(@NotNull SimpleLocation location);
 
     /**
      * Remove pot data from a certain location
      *
      * @param location location
      */
-    void removePotAt(@NotNull SimpleLocation location);
+    @Nullable
+    WorldPot removePotAt(@NotNull SimpleLocation location);
 
     /**
      * Remove crop data from a certain location
      *
      * @param location location
      */
-    void removeCropAt(@NotNull SimpleLocation location);
+    @Nullable
+    WorldCrop removeCropAt(@NotNull SimpleLocation location);
 
     /**
      * Remove greenhouse glass data from a certain location
      *
      * @param location location
      */
-    void removeGlassAt(@NotNull SimpleLocation location);
+    @Nullable
+    WorldGlass removeGlassAt(@NotNull SimpleLocation location);
 
     /**
      * Remove scarecrow data from a certain location
      *
      * @param location location
      */
-    void removeScarecrowAt(@NotNull SimpleLocation location);
+    @Nullable
+    WorldScarecrow removeScarecrowAt(@NotNull SimpleLocation location);
 
     /**
      * If a certain type of item reached the limitation
@@ -391,6 +396,12 @@ public interface WorldManager extends Reloadable {
      */
     void saveRegionToFile(CustomCropsRegion region);
 
+    /**
+     * Remove any block data from a certain location
+     *
+     * @param location location
+     * @return block data
+     */
     CustomCropsBlock removeAnythingAt(SimpleLocation location);
 
     /**

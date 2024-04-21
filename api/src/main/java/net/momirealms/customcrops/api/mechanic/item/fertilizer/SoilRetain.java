@@ -21,5 +21,10 @@ import net.momirealms.customcrops.api.mechanic.item.Fertilizer;
 
 public interface SoilRetain extends Fertilizer {
 
+    /**
+     * Get the chance of taking effect
+     *
+     * @return chance
+     */
     double getChance();
 }

@@ -28,33 +28,107 @@ import java.util.HashSet;
 
 public interface Sprinkler extends KeyItem {
 
+    /**
+     * Get the 2D item ID
+     *
+     * @return 2D item ID
+     */
     String get2DItemID();
 
+    /**
+     * Get the 3D item ID
+     *
+     * @return 3D item ID
+     */
     String get3DItemID();
 
+    /**
+     * Get the 3D item ID (With water inside)
+     *
+     * @return 3D item ID (With water inside)
+     */
     String get3DItemWithWater();
 
+    /**
+     * Get the max storage of water
+     *
+     * @return max storage of water
+     */
     int getStorage();
 
+    /**
+     * Get the working range
+     *
+     * @return working range
+     */
     int getRange();
 
+    /**
+     * Is water infinite
+     */
     boolean isInfinite();
 
+    /**
+     * Get the amount of water to add to the pot during sprinkling
+     *
+     * @return amount of water to add to the pot during sprinkling
+     */
     int getWater();
 
+    /**
+     * Get the pots that receive the water
+     *
+     * @return whitelisted pots
+     */
     HashSet<String> getPotWhitelist();
 
+    /**
+     * Get the carrier of the pot
+     *
+     * @return carrier of the pot
+     */
     ItemCarrier getItemCarrier();
 
+    /**
+     * Get methods to fill the sprinkler
+     *
+     * @return methods to fill the sprinkler
+     */
     PassiveFillMethod[] getPassiveFillMethods();
 
+    /**
+     * Get the requirements for placement
+     *
+     * @return requirements for placement
+     */
     Requirement[] getPlaceRequirements();
 
+    /**
+     * Get the requirements for breaking
+     *
+     * @return requirements for breaking
+     */
     Requirement[] getBreakRequirements();
 
+    /**
+     * Get the requirements for using
+     *
+     * @return requirements for using
+     */
     Requirement[] getUseRequirements();
 
+    /**
+     * Trigger actions
+     *
+     * @param trigger action trigger
+     * @param state player state
+     */
     void trigger(ActionTrigger trigger, State state);
 
+    /**
+     * Get the water bar images
+     *
+     * @return water bar images
+     */
     WaterBar getWaterBar();
 }

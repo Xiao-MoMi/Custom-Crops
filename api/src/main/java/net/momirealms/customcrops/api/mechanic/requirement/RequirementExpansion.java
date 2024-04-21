@@ -19,11 +19,31 @@ package net.momirealms.customcrops.api.mechanic.requirement;
 
 public abstract class RequirementExpansion {
 
+    /**
+     * Get the version number
+     *
+     * @return version
+     */
     public abstract String getVersion();
 
+    /**
+     * Get the author
+     *
+     * @return author
+     */
     public abstract String getAuthor();
 
+    /**
+     * Get the type of the requirement
+     *
+     * @return the type of the requirement
+     */
     public abstract String getRequirementType();
 
+    /**
+     * Get the requirement factory
+     *
+     * @return the requirement factory
+     */
     public abstract RequirementFactory getRequirementFactory();
 }

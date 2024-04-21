@@ -21,5 +21,10 @@ import net.momirealms.customcrops.api.mechanic.item.Fertilizer;
 
 public interface Variation extends Fertilizer {
 
+    /**
+     * Get the bonus of variation chance
+     *
+     * @return chance bonus
+     */
     double getChanceBonus();
 }

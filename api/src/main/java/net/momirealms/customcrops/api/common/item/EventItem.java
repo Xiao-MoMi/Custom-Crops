@@ -29,5 +29,4 @@ public interface EventItem {
      * @param state state
      */
     void trigger(ActionTrigger actionTrigger, State state);
-
 }

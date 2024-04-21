@@ -21,5 +21,11 @@ import org.bukkit.entity.Player;
 
 public interface Value {
 
+    /**
+     * Get double value
+     *
+     * @param player player
+     * @return the value
+     */
     double get(Player player);
 }

@@ -26,6 +26,7 @@ import net.momirealms.customcrops.api.mechanic.item.Crop;
 import net.momirealms.customcrops.api.mechanic.item.ItemCarrier;
 import net.momirealms.customcrops.api.mechanic.requirement.Requirement;
 import net.momirealms.customcrops.mechanic.item.AbstractEventItem;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -143,6 +144,7 @@ public class CropConfig extends AbstractEventItem implements Crop {
         return point2StageConfigMap.get(point);
     }
 
+    @NotNull
     @Override
     public String getStageItemByPoint(int point) {
         if (point >= 0) {

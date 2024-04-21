@@ -21,5 +21,10 @@ import net.momirealms.customcrops.api.mechanic.item.Fertilizer;
 
 public interface SpeedGrow extends Fertilizer {
 
+    /**
+     * Get the extra points to gain
+     *
+     * @return points
+     */
     int getPointBonus();
 }

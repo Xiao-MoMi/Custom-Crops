@@ -33,26 +33,55 @@ public class AbstractCustomCropsBlock implements DataBlock {
         this.location = location;
     }
 
+    /**
+     * Set data by key
+     *
+     * @param key key
+     * @param tag data tag
+     */
     @Override
     public void setData(String key, Tag<?> tag) {
         compoundMap.put(key, tag);
     }
 
+    /**
+     * Get data tag by key
+     *
+     * @param key key
+     * @return data tag
+     */
     @Override
-    public Tag<?> getData(String name) {
-        return compoundMap.get(name);
+    public Tag<?> getData(String key) {
+        return compoundMap.get(key);
     }
 
+    /**
+     * Get the data map
+     *
+     * @return data map
+     */
     @Override
     public SynchronizedCompoundMap getCompoundMap() {
         return compoundMap;
     }
 
+    /**
+     * Get the location of the block
+     *
+     * @return location
+     */
     @Override
     public SimpleLocation getLocation() {
         return location;
     }
 
+    /**
+     * interval is customized
+     * You can perform tick logics if the block is ticked for some times
+     *
+     * @param interval interval
+     * @return can be ticked or not
+     */
     public boolean canTick(int interval) {
         if (interval == 1) {
             return true;

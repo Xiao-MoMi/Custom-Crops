@@ -23,11 +23,33 @@ import net.momirealms.customcrops.api.mechanic.world.SynchronizedCompoundMap;
 
 public interface DataBlock {
 
+    /**
+     * Set data by key
+     *
+     * @param key key
+     * @param tag data tag
+     */
     void setData(String key, Tag<?> tag);
 
+    /**
+     * Get data tag by key
+     *
+     * @param key key
+     * @return data tag
+     */
     Tag<?> getData(String key);
 
+    /**
+     * Get the data map
+     *
+     * @return data map
+     */
     SynchronizedCompoundMap getCompoundMap();
 
+    /**
+     * Get the location of the block
+     *
+     * @return location
+     */
     SimpleLocation getLocation();
 }

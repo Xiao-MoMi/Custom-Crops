@@ -19,5 +19,11 @@ package net.momirealms.customcrops.api.mechanic.condition;
 
 public interface ConditionFactory {
 
+    /**
+     * Build a condition with the args
+     *
+     * @param args args
+     * @return condition
+     */
     Condition build(Object args);
 }

@@ -1,6 +1,7 @@
 package net.momirealms.customcrops.api.mechanic.condition;
 
 import net.momirealms.customcrops.api.mechanic.item.ItemCarrier;
+import org.jetbrains.annotations.Nullable;
 
 public class DeathConditions extends Conditions {
 
@@ -15,14 +16,30 @@ public class DeathConditions extends Conditions {
         this.deathDelay = deathDelay;
     }
 
+    /**
+     * Get the item to replace, null if the crop would be removed
+     *
+     * @return the item to replace
+     */
+    @Nullable
     public String getDeathItem() {
         return deathItem;
     }
 
+    /**
+     * Get the item carrier of the item to replace
+     *
+     * @return item carrier
+     */
     public ItemCarrier getItemCarrier() {
         return itemCarrier;
     }
 
+    /**
+     * Get the delay in ticks
+     *
+     * @return delay
+     */
     public int getDeathDelay() {
         return deathDelay;
     }

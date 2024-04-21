@@ -206,7 +206,7 @@ public class CChunk implements CustomCropsChunk {
                             }
                         }
                         case POT -> {
-                            ((WorldPot) block).tickWater(this);
+                            ((WorldPot) block).tickWater();
                             if (setting.randomTickPot()) {
                                 block.tick(setting.getTickPotInterval(), offline);
                             }
@@ -277,7 +277,7 @@ public class CChunk implements CustomCropsChunk {
     }
 
     @Override
-    public void addWaterToSprinkler(Sprinkler sprinkler, SimpleLocation location, int amount) {
+    public void addWaterToSprinkler(Sprinkler sprinkler, int amount, SimpleLocation location) {
         Optional<WorldSprinkler> optionalSprinkler = getSprinklerAt(location);
         if (optionalSprinkler.isEmpty()) {
             addBlockAt(new MemorySprinkler(location, sprinkler.getKey(), amount), location);
@@ -314,7 +314,7 @@ public class CChunk implements CustomCropsChunk {
     }
 
     @Override
-    public void addWaterToPot(Pot pot, SimpleLocation location, int amount) {
+    public void addWaterToPot(Pot pot, int amount, SimpleLocation location) {
         Optional<WorldPot> optionalWorldPot = getPotAt(location);
         if (optionalWorldPot.isEmpty()) {
             MemoryPot memoryPot = new MemoryPot(location, pot.getKey());
@@ -365,7 +365,7 @@ public class CChunk implements CustomCropsChunk {
     }
 
     @Override
-    public void addPointToCrop(Crop crop, SimpleLocation location, int points) {
+    public void addPointToCrop(Crop crop, int points, SimpleLocation location) {
         if (points <= 0) return;
         Optional<WorldCrop> cropData = getCropAt(location);
         if (cropData.isEmpty()) {
@@ -415,52 +415,72 @@ public class CChunk implements CustomCropsChunk {
     }
 
     @Override
-    public void removeSprinklerAt(SimpleLocation location) {
+    public WorldSprinkler removeSprinklerAt(SimpleLocation location) {
         CustomCropsBlock removed = removeBlockAt(location);
         if (removed == null) {
             CustomCropsPlugin.get().debug("Failed to remove sprinkler from " + location + " because sprinkler doesn't exist.");
-        } else if (!(removed instanceof WorldSprinkler)) {
+            return null;
+        } else if (!(removed instanceof WorldSprinkler worldSprinkler)) {
             CustomCropsPlugin.get().debug("Removed sprinkler from " + location + " but the previous block type is " + removed.getType().name());
+            return null;
+        } else {
+            return worldSprinkler;
         }
     }
 
     @Override
-    public void removePotAt(SimpleLocation location) {
+    public WorldPot removePotAt(SimpleLocation location) {
         CustomCropsBlock removed = removeBlockAt(location);
         if (removed == null) {
             CustomCropsPlugin.get().debug("Failed to remove pot from " + location + " because pot doesn't exist.");
-        } else if (!(removed instanceof WorldPot)) {
+            return null;
+        } else if (!(removed instanceof WorldPot worldPot)) {
             CustomCropsPlugin.get().debug("Removed pot from " + location + " but the previous block type is " + removed.getType().name());
+            return null;
+        } else {
+            return worldPot;
         }
     }
 
     @Override
-    public void removeCropAt(SimpleLocation location) {
+    public WorldCrop removeCropAt(SimpleLocation location) {
         CustomCropsBlock removed = removeBlockAt(location);
         if (removed == null) {
             CustomCropsPlugin.get().debug("Failed to remove crop from " + location + " because crop doesn't exist.");
-        } else if (!(removed instanceof WorldCrop)) {
+            return null;
+        } else if (!(removed instanceof WorldCrop worldCrop)) {
             CustomCropsPlugin.get().debug("Removed crop from " + location + " but the previous block type is " + removed.getType().name());
+            return null;
+        } else {
+            return worldCrop;
         }
     }
 
     @Override
-    public void removeGlassAt(SimpleLocation location) {
+    public WorldGlass removeGlassAt(SimpleLocation location) {
         CustomCropsBlock removed = removeBlockAt(location);
         if (removed == null) {
             CustomCropsPlugin.get().debug("Failed to remove glass from " + location + " because glass doesn't exist.");
-        } else if (!(removed instanceof WorldGlass)) {
+            return null;
+        } else if (!(removed instanceof WorldGlass worldGlass)) {
             CustomCropsPlugin.get().debug("Removed glass from " + location + " but the previous block type is " + removed.getType().name());
+            return null;
+        } else {
+            return worldGlass;
         }
     }
 
     @Override
-    public void removeScarecrowAt(SimpleLocation location) {
+    public WorldScarecrow removeScarecrowAt(SimpleLocation location) {
         CustomCropsBlock removed = removeBlockAt(location);
         if (removed == null) {
             CustomCropsPlugin.get().debug("Failed to remove scarecrow from " + location + " because scarecrow doesn't exist.");
-        } else if (!(removed instanceof WorldScarecrow)) {
+            return null;
+        } else if (!(removed instanceof WorldScarecrow worldScarecrow)) {
             CustomCropsPlugin.get().debug("Removed scarecrow from " + location + " but the previous block type is " + removed.getType().name());
+            return null;
+        } else {
+            return worldScarecrow;
         }
     }
 

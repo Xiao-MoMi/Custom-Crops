@@ -373,6 +373,11 @@ public class ItemManagerImpl implements ItemManager {
     }
 
     @Override
+    public CRotation getRotation(Location location) {
+        return customProvider.getRotation(location);
+    }
+
+    @Override
     public WateringCan getWateringCanByID(@NotNull String id) {
         return id2WateringCanMap.get(id);
     }
@@ -1117,7 +1122,7 @@ public class ItemManagerImpl implements ItemManager {
                     if (!wateringCan.isInfinite()) {
                         PositiveFillMethod[] methods = wateringCan.getPositiveFillMethods();
                         for (PositiveFillMethod method : methods) {
-                            if (method.getId().equals(clickedFurnitureID)) {
+                            if (method.getID().equals(clickedFurnitureID)) {
                                 if (method.canFill(state)) {
                                     // fire the event
                                     WateringCanFillEvent fillEvent = new WateringCanFillEvent(player, itemInHand, location, wateringCan, method);
@@ -1176,7 +1181,7 @@ public class ItemManagerImpl implements ItemManager {
                     int water = wateringCan.getCurrentWater(itemInHand);
                     PositiveFillMethod[] methods = wateringCan.getPositiveFillMethods();
                     for (PositiveFillMethod method : methods) {
-                        if (method.getId().equals(blockID)) {
+                        if (method.getID().equals(blockID)) {
                             if (method.canFill(state)) {
                                 if (water < wateringCan.getStorage()) {
                                     // fire the event
@@ -1230,7 +1235,7 @@ public class ItemManagerImpl implements ItemManager {
                     int water = wateringCan.getCurrentWater(itemInHand);
                     PositiveFillMethod[] methods = wateringCan.getPositiveFillMethods();
                     for (PositiveFillMethod method : methods) {
-                        if (method.getId().equals(blockID)) {
+                        if (method.getID().equals(blockID)) {
                             if (method.canFill(state)) {
                                 if (water < wateringCan.getStorage()) {
                                     // fire the event

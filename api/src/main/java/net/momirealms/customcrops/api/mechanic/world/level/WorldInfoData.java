@@ -18,6 +18,7 @@
 package net.momirealms.customcrops.api.mechanic.world.level;
 
 import com.google.gson.annotations.SerializedName;
+import net.momirealms.customcrops.api.manager.ConfigManager;
 import net.momirealms.customcrops.api.mechanic.world.season.Season;
 
 public class WorldInfoData {
@@ -36,19 +37,39 @@ public class WorldInfoData {
         return new WorldInfoData(Season.SPRING, 1);
     }
 
+    /**
+     * Get season
+     *
+     * @return season
+     */
     public Season getSeason() {
         if (season == null) season = Season.SPRING;
         return season;
     }
 
+    /**
+     * Set season
+     *
+     * @param season the new season
+     */
     public void setSeason(Season season) {
         this.season = season;
     }
 
+    /**
+     * Get date
+     *
+     * @return date
+     */
     public int getDate() {
         return date;
     }
 
+    /**
+     * Set date
+     *
+     * @param date the new date
+     */
     public void setDate(int date) {
         this.date = date;
     }

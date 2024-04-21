@@ -61,39 +61,4 @@ public class RotationUtils {
             }
         }
     }
-
-    public static CRotation getCRotation(Rotation rotation) {
-        switch (rotation) {
-            default -> {
-                return CRotation.NONE;
-            }
-            case CLOCKWISE -> {
-                return CRotation.WEST;
-            }
-            case COUNTER_CLOCKWISE -> {
-                return CRotation.EAST;
-            }
-            case FLIPPED -> {
-                return CRotation.NORTH;
-            }
-        }
-    }
-
-    public static CRotation getCRotation(float yaw) {
-        yaw = Math.abs(yaw);
-        switch ((int) (yaw/90)) {
-            case 1 -> {
-                return CRotation.WEST;
-            }
-            case 2 -> {
-                return CRotation.NORTH;
-            }
-            case 3 -> {
-                return CRotation.EAST;
-            }
-            default -> {
-                return CRotation.SOUTH;
-            }
-        }
-    }
 }

@@ -102,6 +102,14 @@ public interface ItemManager extends Reloadable {
     CRotation removeAnythingAt(Location location);
 
     /**
+     * Get the rotation of the removed entity
+     *
+     * @param location location
+     * @return rotation
+     */
+    CRotation getRotation(Location location);
+
+    /**
      * Get watering can config by ID
      *
      * @param id id

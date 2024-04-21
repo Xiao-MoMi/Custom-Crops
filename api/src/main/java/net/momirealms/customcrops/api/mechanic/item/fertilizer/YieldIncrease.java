@@ -21,5 +21,10 @@ import net.momirealms.customcrops.api.mechanic.item.Fertilizer;
 
 public interface YieldIncrease extends Fertilizer {
 
+    /**
+     * Get the extra amount to drop
+     *
+     * @return amount bonus
+     */
     int getAmountBonus();
 }

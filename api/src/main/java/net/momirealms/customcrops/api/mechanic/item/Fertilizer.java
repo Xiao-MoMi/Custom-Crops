@@ -23,19 +23,58 @@ import net.momirealms.customcrops.api.mechanic.requirement.Requirement;
 import java.util.HashSet;
 
 public interface Fertilizer extends EventItem {
+
+    /**
+     * Get the key
+     *
+     * @return key
+     */
     String getKey();
 
+    /**
+     * Get the item ID
+     *
+     * @return item ID
+     */
     String getItemID();
 
+    /**
+     * Get the max times of usage
+     *
+     * @return the max times of usage
+     */
     int getTimes();
 
+    /**
+     * Get the type of the fertilizer
+     *
+     * @return the type of the fertilizer
+     */
     FertilizerType getFertilizerType();
 
+    /**
+     * Get the pot whitelist
+     *
+     * @return pot whitelist
+     */
     HashSet<String> getPotWhitelist();
 
+    /**
+     * If the fertilizer can only be used before planting
+     */
     boolean isBeforePlant();
 
+    /**
+     * Get the image of the fertilizer
+     *
+     * @return icon
+     */
     String getIcon();
 
+    /**
+     * Get the requirements for this fertilizer
+     *
+     * @return requirements
+     */
     Requirement[] getRequirements();
 }

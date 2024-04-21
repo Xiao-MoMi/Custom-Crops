@@ -23,8 +23,22 @@ import java.util.List;
 
 public interface RequirementFactory {
 
+    /**
+     * Build a requirement
+     *
+     * @param args args
+     * @param notMetActions actions to perform if the requirement is not met
+     * @param advanced whether to trigger the notMetActions or not
+     * @return requirement
+     */
     Requirement build(Object args, List<Action> notMetActions, boolean advanced);
 
+    /**
+     * Build a requirement
+     *
+     * @param args args
+     * @return requirement
+     */
     default Requirement build(Object args) {
         return build(args, null, false);
     }

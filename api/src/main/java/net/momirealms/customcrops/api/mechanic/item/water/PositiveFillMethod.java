@@ -29,7 +29,12 @@ public class PositiveFillMethod extends AbstractFillMethod {
         this.id = id;
     }
 
-    public String getId() {
+    /**
+     * Get the block/furniture ID
+     *
+     * @return id
+     */
+    public String getID() {
         return id;
     }
 }

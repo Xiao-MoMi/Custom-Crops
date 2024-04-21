@@ -19,11 +19,31 @@ package net.momirealms.customcrops.api.mechanic.condition;
 
 public abstract class ConditionExpansion {
 
+    /**
+     * Get the version number
+     *
+     * @return version
+     */
     public abstract String getVersion();
 
+    /**
+     * Get the author
+     *
+     * @return author
+     */
     public abstract String getAuthor();
 
+    /**
+     * Get the type of the condition
+     *
+     * @return the type of the condition
+     */
     public abstract String getConditionType();
 
+    /**
+     * Get the condition factory
+     *
+     * @return the condition factory
+     */
     public abstract ConditionFactory getConditionFactory();
 }

@@ -19,22 +19,63 @@ package net.momirealms.customcrops.api.mechanic.world.level;
 
 import net.momirealms.customcrops.api.mechanic.world.BlockPos;
 import net.momirealms.customcrops.api.mechanic.world.CustomCropsBlock;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 
 public interface CustomCropsSection {
 
+    /**
+     * Get the section ID
+     *
+     * @return section ID
+     */
     int getSectionID();
 
+    /**
+     * Get block at a certain position
+     *
+     * @param pos block position
+     * @return the block
+     */
+    @Nullable
     CustomCropsBlock getBlockAt(BlockPos pos);
 
+    /**
+     * Remove a block by a certain position
+     *
+     * @param pos block position
+     * @return the removed block
+     */
+    @Nullable
     CustomCropsBlock removeBlockAt(BlockPos pos);
 
+    /**
+     * Add block at a certain position
+     *
+     * @param pos block position
+     * @param block the new block
+     * @return the previous block
+     */
+    @Nullable
     CustomCropsBlock addBlockAt(BlockPos pos, CustomCropsBlock block);
 
+    /**
+     * If the section can be pruned or not
+     */
     boolean canPrune();
 
+    /**
+     * Get the blocks in this section
+     *
+     * @return blocks
+     */
     CustomCropsBlock[] getBlocks();
 
+    /**
+     * Get the block map
+     *
+     * @return block map
+     */
     Map<BlockPos, CustomCropsBlock> getBlockMap();
 }

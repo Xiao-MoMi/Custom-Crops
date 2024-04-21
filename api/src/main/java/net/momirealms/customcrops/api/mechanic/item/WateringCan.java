@@ -32,33 +32,107 @@ import java.util.Map;
 
 public interface WateringCan extends KeyItem {
 
+    /**
+     * Get the ID of the item
+     *
+     * @return item ID
+     */
     String getItemID();
 
+    /**
+     * Get the width of the effective range
+     *
+     * @return width
+     */
     int getWidth();
 
+    /**
+     * Get the length of the effective range
+     *
+     * @return length
+     */
     int getLength();
 
+    /**
+     * Get the storage of water
+     *
+     * @return storage of water
+     */
     int getStorage();
 
+    /**
+     * Get the amount of water to add in one try
+     */
     int getWater();
 
+    /**
+     * If the watering can has dynamic lore
+     */
     boolean hasDynamicLore();
 
+    /**
+     * Update a watering can's data
+     *
+     * @param player player
+     * @param itemStack watering can item
+     * @param water the amount of water
+     * @param args the placeholders
+     */
     void updateItem(Player player, ItemStack itemStack, int water, Map<String, String> args);
 
+    /**
+     * Get the current water
+     *
+     * @param itemStack watering can item
+     * @return current water
+     */
     int getCurrentWater(ItemStack itemStack);
 
+    /**
+     * Get the pots that receive water from this watering can
+     *
+     * @return whitelisted pots
+     */
     HashSet<String> getPotWhitelist();
 
+    /**
+     * Get the sprinklers that receive water from this watering can
+     *
+     * @return whitelisted sprinklers
+     */
     HashSet<String> getSprinklerWhitelist();
 
+    /**
+     * Get the dynamic lores
+     *
+     * @return dynamic lores
+     */
     List<String> getLore();
 
+    /**
+     * Get the water bar images
+     *
+     * @return water bar images
+     */
     @Nullable WaterBar getWaterBar();
 
+    /**
+     * Get the requirements for using this watering can
+     *
+     * @return requirements
+     */
     Requirement[] getRequirements();
 
+    /**
+     * If the water is infinite
+     */
     boolean isInfinite();
 
+    /**
+     * Trigger actions
+     *
+     * @param trigger action trigger
+     * @param state player state
+     */
     void trigger(ActionTrigger trigger, State state);
 }

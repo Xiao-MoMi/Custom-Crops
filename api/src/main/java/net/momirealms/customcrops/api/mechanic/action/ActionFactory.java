@@ -19,5 +19,12 @@ package net.momirealms.customcrops.api.mechanic.action;
 
 public interface ActionFactory {
 
+    /**
+     * Build an action by args and chance
+     *
+     * @param args args
+     * @param chance chance (0-1)
+     * @return action
+     */
     Action build(Object args, double chance);
 }

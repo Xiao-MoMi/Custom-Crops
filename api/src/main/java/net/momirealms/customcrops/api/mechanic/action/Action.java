@@ -21,5 +21,10 @@ import net.momirealms.customcrops.api.mechanic.requirement.State;
 
 public interface Action {
 
-    void trigger(State condition);
+    /**
+     * Trigger the action
+     *
+     * @param state the state of the player
+     */
+    void trigger(State state);
 }

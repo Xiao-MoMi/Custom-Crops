@@ -8,6 +8,11 @@ public class Conditions {
         this.conditions = conditions;
     }
 
+    /**
+     * Get a list of conditions
+     *
+     * @return conditions
+     */
     public Condition[] getConditions() {
         return conditions;
     }

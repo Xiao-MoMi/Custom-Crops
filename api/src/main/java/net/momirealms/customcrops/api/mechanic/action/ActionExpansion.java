@@ -19,11 +19,31 @@ package net.momirealms.customcrops.api.mechanic.action;
 
 public abstract class ActionExpansion {
 
+    /**
+     * Get the version number
+     *
+     * @return version
+     */
     public abstract String getVersion();
 
+    /**
+     * Get the author
+     *
+     * @return author
+     */
     public abstract String getAuthor();
 
+    /**
+     * Get the type of the action
+     *
+     * @return the type of the action
+     */
     public abstract String getActionType();
 
+    /**
+     * Get the action factory
+     *
+     * @return the action factory
+     */
     public abstract ActionFactory getActionFactory();
 }

@@ -52,14 +52,29 @@ public class BoneMeal {
         this.dispenserAllowed = dispenserAllowed;
     }
 
+    /**
+     * Get the ID of the bone meal item
+     *
+     * @return bonemeal item id
+     */
     public String getItem() {
         return item;
     }
 
+    /**
+     * Get the returned item's ID
+     *
+     * @return returned item ID
+     */
     public String getReturned() {
         return returned;
     }
 
+    /**
+     * Get the points to gain in one try
+     *
+     * @return points
+     */
     public int getPoint() {
         for (Pair<Double, Integer> pair : pointGainList) {
             if (Math.random() < pair.left()) {
@@ -69,18 +84,38 @@ public class BoneMeal {
         return 0;
     }
 
+    /**
+     * Trigger the actions of using the bone meal
+     *
+     * @param state player state
+     */
     public void trigger(State state) {
         ActionManager.triggerActions(state, actions);
     }
 
+    /**
+     * Get the amount to consume
+     *
+     * @return amount to consume
+     */
     public int getUsedAmount() {
         return usedAmount;
     }
 
+    /**
+     * Get the amount of the returned items
+     *
+     * @return amount of the returned items
+     */
     public int getReturnedAmount() {
         return returnedAmount;
     }
 
+    /**
+     * If the bone meal can be used with a dispenser
+     *
+     * @return can be used or not
+     */
     public boolean isDispenserAllowed() {
         return dispenserAllowed;
     }

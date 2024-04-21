@@ -22,11 +22,31 @@ import net.momirealms.customcrops.api.mechanic.world.CustomCropsBlock;
 
 public interface WorldCrop extends CustomCropsBlock {
 
+    /**
+     * Get the key of the crop
+     *
+     * @return key
+     */
     String getKey();
 
+    /**
+     * Get the point
+     *
+     * @return point
+     */
     int getPoint();
 
+    /**
+     * Set the point
+     *
+     * @param point point
+     */
     void setPoint(int point);
 
+    /**
+     * Get the config
+     *
+     * @return crop config
+     */
     Crop getConfig();
 }

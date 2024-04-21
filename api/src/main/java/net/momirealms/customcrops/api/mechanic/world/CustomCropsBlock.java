@@ -22,5 +22,10 @@ import net.momirealms.customcrops.api.mechanic.world.level.DataBlock;
 
 public interface CustomCropsBlock extends DataBlock, Tickable {
 
+    /**
+     * Get the type of the item
+     *
+     * @return type of the item
+     */
     ItemType getType();
 }
