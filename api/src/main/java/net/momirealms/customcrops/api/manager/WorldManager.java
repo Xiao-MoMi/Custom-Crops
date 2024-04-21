@@ -26,6 +26,7 @@ import net.momirealms.customcrops.api.mechanic.world.level.*;
 import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -102,6 +103,28 @@ public interface WorldManager extends Reloadable {
     @NotNull Optional<WorldScarecrow> getScarecrowAt(@NotNull SimpleLocation location);
 
     Optional<CustomCropsBlock> getBlockAt(SimpleLocation location);
+
+    WorldCrop createCropData(SimpleLocation location, Crop crop, int point);
+
+    default WorldCrop createCropData(SimpleLocation location, Crop crop) {
+        return createCropData(location, crop, 0);
+    }
+
+    WorldSprinkler createSprinklerData(SimpleLocation location, Sprinkler sprinkler, int water);
+
+    default WorldSprinkler createSprinklerData(SimpleLocation location, Sprinkler sprinkler) {
+        return createSprinklerData(location, sprinkler, 0);
+    }
+
+    WorldPot createPotData(SimpleLocation location, Pot pot, int water, @Nullable Fertilizer fertilizer, int fertilizerTimes);
+
+    default WorldPot createPotData(SimpleLocation location, Pot pot) {
+        return createPotData(location, pot, 0, null, 0);
+    }
+
+    WorldGlass createGreenhouseGlassData(SimpleLocation location);
+
+    WorldScarecrow createScarecrowData(SimpleLocation location);
 
     void addWaterToSprinkler(@NotNull Sprinkler sprinkler, @NotNull SimpleLocation location, int amount);
 

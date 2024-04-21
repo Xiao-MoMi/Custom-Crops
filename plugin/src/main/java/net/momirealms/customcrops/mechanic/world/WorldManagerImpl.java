@@ -29,6 +29,7 @@ import net.momirealms.customcrops.api.mechanic.world.level.*;
 import net.momirealms.customcrops.api.util.LogUtils;
 import net.momirealms.customcrops.mechanic.world.adaptor.BukkitWorldAdaptor;
 import net.momirealms.customcrops.mechanic.world.adaptor.SlimeWorldAdaptor;
+import net.momirealms.customcrops.mechanic.world.block.*;
 import net.momirealms.customcrops.util.ConfigUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -286,6 +287,31 @@ public class WorldManagerImpl implements WorldManager, Listener {
         CWorld cWorld = loadedWorlds.get(location.getWorldName());
         if (cWorld == null) return Optional.empty();
         return cWorld.getBlockAt(location);
+    }
+
+    @Override
+    public WorldCrop createCropData(SimpleLocation location, Crop crop, int point) {
+        return new MemoryCrop(location, crop.getKey(), point);
+    }
+
+    @Override
+    public WorldSprinkler createSprinklerData(SimpleLocation location, Sprinkler sprinkler, int water) {
+        return new MemorySprinkler(location, sprinkler.getKey(), water);
+    }
+
+    @Override
+    public WorldPot createPotData(SimpleLocation location, Pot pot, int water, Fertilizer fertilizer, int fertilizerTimes) {
+        return new MemoryPot(location, pot.getKey(), water, fertilizer == null ? "" : fertilizer.getKey(), fertilizerTimes);
+    }
+
+    @Override
+    public WorldGlass createGreenhouseGlassData(SimpleLocation location) {
+        return new MemoryGlass(location);
+    }
+
+    @Override
+    public WorldScarecrow createScarecrowData(SimpleLocation location) {
+        return new MemoryScarecrow(location);
     }
 
     @Override
