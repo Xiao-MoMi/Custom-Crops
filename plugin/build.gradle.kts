@@ -49,13 +49,13 @@ dependencies {
 
     implementation(project(":api"))
     implementation(project(":legacy-api"))
-    implementation("net.kyori:adventure-api:4.15.0")
+    implementation("net.kyori:adventure-api:4.16.0")
     implementation("net.kyori:adventure-platform-bukkit:4.3.2")
     implementation("com.github.Xiao-MoMi:AntiGriefLib:0.11")
     implementation("com.github.Xiao-MoMi:BiomeAPI:0.3")
 
-    compileOnly("net.kyori:adventure-text-minimessage:4.15.0")
-    compileOnly("net.kyori:adventure-text-serializer-legacy:4.15.0")
+    compileOnly("net.kyori:adventure-text-minimessage:4.16.0")
+    compileOnly("net.kyori:adventure-text-serializer-legacy:4.16.0")
     compileOnly("de.tr7zw:item-nbt-api:2.12.3")
     compileOnly("org.bstats:bstats-bukkit:3.0.2")
     implementation("com.flowpowered:flow-nbt:2.0.2")
