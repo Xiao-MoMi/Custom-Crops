@@ -35,7 +35,7 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * The dependencies used by LuckPerms.
+ * The dependencies used by CustomCrops.
  */
 public enum Dependency {
 

@@ -59,7 +59,7 @@ dependencies {
     compileOnly("de.tr7zw:item-nbt-api:2.12.3")
     compileOnly("org.bstats:bstats-bukkit:3.0.2")
     implementation("com.flowpowered:flow-nbt:2.0.2")
-    implementation("com.github.luben:zstd-jni:1.5.5-11")
+    implementation("com.github.luben:zstd-jni:1.5.6-2")
 }
 
 tasks {

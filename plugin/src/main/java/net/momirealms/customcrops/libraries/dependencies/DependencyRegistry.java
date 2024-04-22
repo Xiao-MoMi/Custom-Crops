@@ -28,7 +28,7 @@ package net.momirealms.customcrops.libraries.dependencies;
 import com.google.gson.JsonElement;
 
 /**
- * Applies LuckPerms specific behaviour for {@link Dependency}s.
+ * Applies CustomCrops specific behaviour for {@link Dependency}s.
  */
 public class DependencyRegistry {
 
