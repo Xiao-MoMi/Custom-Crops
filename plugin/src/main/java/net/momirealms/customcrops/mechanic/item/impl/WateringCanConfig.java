@@ -163,6 +163,9 @@ public class WateringCanConfig extends AbstractEventItem implements WateringCan 
         if (maxDurability != 0) {
             nbtItem.setInteger("Damage", (int) (maxDurability * (((double) storage - water) / storage)));
         }
+        if (appearanceMap.containsKey(water)) {
+            nbtItem.setInteger("CustomModelData", appearanceMap.get(water));
+        }
         itemStack.setItemMeta(nbtItem.getItem().getItemMeta());
     }
 
