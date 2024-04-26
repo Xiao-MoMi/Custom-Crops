@@ -22,6 +22,7 @@ import net.momirealms.customcrops.api.common.Reloadable;
 import net.momirealms.customcrops.api.manager.ConfigManager;
 import net.momirealms.customcrops.api.manager.MessageManager;
 import net.momirealms.customcrops.api.mechanic.world.season.Season;
+import net.momirealms.customcrops.api.util.LogUtils;
 import net.momirealms.customcrops.util.ConfigUtils;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -45,7 +46,13 @@ public class MessageManagerImpl extends MessageManager implements Reloadable {
 
     @Override
     public void load() {
-        YamlConfiguration config = ConfigUtils.getConfig("messages" + File.separator + ConfigManager.lang() + ".yml");
+        YamlConfiguration config;
+        try {
+            config = ConfigUtils.getConfig("messages" + File.separator + ConfigManager.lang() + ".yml");
+        } catch (Exception e) {
+            LogUtils.warn(ConfigManager.lang() + ".yml doesn't exist. Using the default language file now.");
+            config = ConfigUtils.getConfig("messages" + File.separator + "en" + ".yml");
+        }
         ConfigurationSection section = config.getConfigurationSection("messages");
         if (section != null) {
             prefix = section.getString("prefix", "<gradient:#ff206c:#fdee55>[CustomCrops]</gradient> ");
