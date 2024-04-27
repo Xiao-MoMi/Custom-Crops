@@ -494,9 +494,12 @@ public class ActionManagerImpl implements ActionManager {
                     }
                     for (VariationCrop variationCrop : variations) {
                         if (Math.random() < variationCrop.getChance() + bonus) {
+                            SimpleLocation location = SimpleLocation.of(state.getLocation());
                             plugin.getItemManager().removeAnythingAt(state.getLocation());
-                            plugin.getWorldManager().removeAnythingAt(SimpleLocation.of(state.getLocation()));
+                            plugin.getWorldManager().removeAnythingAt(location);
                             plugin.getItemManager().placeItem(state.getLocation(), variationCrop.getItemCarrier(), variationCrop.getItemID());
+                            Optional.ofNullable(plugin.getItemManager().getCropStageByStageID(variationCrop.getItemID()))
+                                    .ifPresent(stage -> plugin.getWorldManager().addCropAt(new MemoryCrop(location, stage.getCrop().getKey(), stage.getPoint()), location));
                             break;
                         }
                     }

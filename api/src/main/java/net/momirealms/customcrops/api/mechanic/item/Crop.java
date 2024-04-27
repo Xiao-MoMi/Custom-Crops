@@ -152,6 +152,13 @@ public interface Crop extends KeyItem {
     interface Stage {
 
         /**
+         * Get the crop config
+         *
+         * @return crop config
+         */
+        Crop getCrop();
+
+        /**
          * Get the offset of the hologram
          *
          * @return offset

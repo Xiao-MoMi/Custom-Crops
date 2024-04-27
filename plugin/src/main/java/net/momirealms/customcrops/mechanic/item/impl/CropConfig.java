@@ -17,6 +17,7 @@
 
 package net.momirealms.customcrops.mechanic.item.impl;
 
+import net.momirealms.customcrops.api.CustomCropsPlugin;
 import net.momirealms.customcrops.api.mechanic.action.Action;
 import net.momirealms.customcrops.api.mechanic.action.ActionTrigger;
 import net.momirealms.customcrops.api.mechanic.condition.Conditions;
@@ -204,6 +205,11 @@ public class CropConfig extends AbstractEventItem implements Crop {
             this.hologramOffset = hologramOffset;
             this.interactRequirements = interactRequirements;
             this.breakRequirements = breakRequirements;
+        }
+
+        @Override
+        public Crop getCrop() {
+            return CustomCropsPlugin.get().getItemManager().getCropByStageID(stageID);
         }
 
         @Override
