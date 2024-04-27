@@ -77,7 +77,7 @@ sprinkler_1:
       fake_item_action:
         type: fake-item
         value:
-          item: customcrops:water_effect
+          item: {0}water_effect
           duration: 100
           x: 0.5
           y: 0.4
@@ -163,7 +163,7 @@ sprinkler_2:
       fake_item_action:
         type: fake-item
         value:
-          item: customcrops:water_effect
+          item: {0}water_effect
           duration: 100
           x: 0.5
           y: 0.4
@@ -251,7 +251,7 @@ sprinkler_3:
       fake_item_action:
         type: fake-item
         value:
-          item: customcrops:water_effect
+          item: {0}water_effect
           duration: 100
           x: 0.5
           y: 0.4
