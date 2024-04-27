@@ -27,6 +27,9 @@ import net.momirealms.customcrops.compatibility.item.MythicMobsItemImpl;
 import net.momirealms.customcrops.compatibility.item.NeigeItemsItemImpl;
 import net.momirealms.customcrops.compatibility.item.ZaphkielItemImpl;
 import net.momirealms.customcrops.compatibility.level.*;
+import net.momirealms.customcrops.compatibility.quest.BattlePassHook;
+import net.momirealms.customcrops.compatibility.quest.BetonQuestHook;
+import net.momirealms.customcrops.compatibility.quest.ClueScrollsHook;
 import net.momirealms.customcrops.compatibility.season.AdvancedSeasonsImpl;
 import net.momirealms.customcrops.compatibility.season.InBuiltSeason;
 import net.momirealms.customcrops.compatibility.season.RealisticSeasonsImpl;
@@ -90,6 +93,20 @@ public class IntegrationManagerImpl implements IntegrationManager {
         if (plugin.doesHookedPluginExist("AuraSkills")) {
             registerLevelPlugin("AuraSkills", new AuraSkillsImpl());
             hookMessage("AuraSkills");
+        }
+        if (plugin.isHookedPluginEnabled("BattlePass")){
+            BattlePassHook battlePassHook = new BattlePassHook();
+            battlePassHook.register();
+            hookMessage("BattlePass");
+        }
+        if (plugin.isHookedPluginEnabled("ClueScrolls")) {
+            ClueScrollsHook clueScrollsHook = new ClueScrollsHook();
+            clueScrollsHook.register();
+            hookMessage("ClueScrolls");
+        }
+        if (plugin.isHookedPluginEnabled("BetonQuest")) {
+            BetonQuestHook.register();
+            hookMessage("BetonQuest");
         }
         if (plugin.isHookedPluginEnabled("RealisticSeasons")) {
             this.seasonInterface = new RealisticSeasonsImpl();
