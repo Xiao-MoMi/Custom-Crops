@@ -140,7 +140,6 @@ public class ItemManagerImpl implements ItemManager {
             LogUtils.severe(" ItemsAdder: https://www.spigotmc.org/resources/73355/");
             LogUtils.severe(" Oraxen: https://www.spigotmc.org/resources/72448/");
             LogUtils.severe("======================================================");
-            Bukkit.getPluginManager().disablePlugin(plugin);
         }
     }
 

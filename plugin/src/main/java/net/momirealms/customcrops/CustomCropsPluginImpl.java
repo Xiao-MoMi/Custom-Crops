@@ -61,11 +61,12 @@ public class CustomCropsPluginImpl extends CustomCropsPlugin {
                         Dependency.GSON,
                         Dependency.SLF4J_API,
                         Dependency.SLF4J_SIMPLE,
+                        Dependency.ADVENTURE_API,
                         Dependency.COMMAND_API,
                         Dependency.NBT_API,
                         Dependency.BOOSTED_YAML,
-                        Dependency.ADVENTURE_TEXT_MINIMESSAGE,
-                        Dependency.ADVENTURE_LEGACY_SERIALIZER,
+                        Dependency.BIOME_API,
+                        Dependency.ANTI_GRIEF,
                         Dependency.BSTATS_BASE,
                         Dependency.BSTATS_BUKKIT
                 )
@@ -112,16 +113,16 @@ public class CustomCropsPluginImpl extends CustomCropsPlugin {
 
     @Override
     public void onDisable() {
-        this.commandManager.disable();
-        this.adventure.disable();
-        this.requirementManager.disable();
-        this.actionManager.disable();
-        this.worldManager.disable();
-        this.itemManager.disable();
-        this.conditionManager.disable();
-        this.coolDownManager.disable();
-        this.placeholderManager.disable();
-        ((SchedulerImpl) scheduler).shutdown();
+        if (this.commandManager != null) this.commandManager.disable();
+        if (this.adventure != null) this.adventure.disable();
+        if (this.requirementManager != null) this.requirementManager.disable();
+        if (this.actionManager != null) this.actionManager.disable();
+        if (this.worldManager != null) this.worldManager.disable();
+        if (this.itemManager != null) this.itemManager.disable();
+        if (this.conditionManager != null) this.conditionManager.disable();
+        if (this.coolDownManager != null) this.coolDownManager.disable();
+        if (this.placeholderManager != null) this.placeholderManager.disable();
+        if (this.scheduler != null) ((SchedulerImpl) scheduler).shutdown();
         instance = null;
     }
 

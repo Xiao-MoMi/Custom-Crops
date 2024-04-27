@@ -60,94 +60,7 @@ public enum Dependency {
             null,
             "jar-relocator"
     ),
-    ADVENTURE_API(
-            "net{}kyori",
-            "adventure-api",
-            "4.16.0",
-            null,
-            "adventure-api",
-            Relocation.of("adventure", "net{}kyori{}adventure")
-    ),
-    ADVENTURE_KEY(
-            "net{}kyori",
-            "adventure-key",
-            "4.16.0",
-            null,
-            "adventure-key",
-            Relocation.of("adventure", "net{}kyori{}adventure")
-    ),
-    ADVENTURE_NBT(
-            "net{}kyori",
-            "adventure-nbt",
-            "4.16.0",
-            null,
-            "adventure-nbt",
-            Relocation.of("adventure", "net{}kyori{}adventure")
-    ),
-    ADVENTURE_LEGACY_SERIALIZER(
-            "net{}kyori",
-            "adventure-text-serializer-legacy",
-            "4.16.0",
-            null,
-            "adventure-text-serializer-legacy",
-            Relocation.of("adventure", "net{}kyori{}adventure")
-    ),
-    ADVENTURE_TEXT_LOGGER(
-            "net{}kyori",
-            "adventure-text-logger-slf4j",
-            "4.16.0",
-            null,
-            "adventure-text-logger-slf4j",
-            Relocation.of("adventure", "net{}kyori{}adventure")
-    ),
-    ADVENTURE_GSON(
-            "net{}kyori",
-            "adventure-text-serializer-gson",
-            "4.16.0",
-            null,
-            "adventure-text-serializer-gson",
-            Relocation.of("adventure", "net{}kyori{}adventure")
-    ),
-    ADVENTURE_GSON_LEGACY(
-            "net{}kyori",
-            "adventure-text-serializer-gson-legacy-impl",
-            "4.16.0",
-            null,
-            "adventure-text-serializer-gson-legacy-impl",
-            Relocation.of("adventure", "net{}kyori{}adventure")
-    ),
-    ADVENTURE_PLATFORM(
-            "net{}kyori",
-            "adventure-platform-api",
-            "4.3.2",
-            null,
-            "adventure-platform-api",
-            Relocation.of("adventure", "net{}kyori{}adventure")
-    ),
-    ADVENTURE_PLATFORM_BUKKIT(
-            "net{}kyori",
-            "adventure-platform-bukkit",
-            "4.3.2",
-            null,
-            "adventure-platform-bukkit",
-            Relocation.of("adventure", "net{}kyori{}adventure")
-    ),
-    ADVENTURE_PLATFORM_FACET(
-            "net{}kyori",
-            "adventure-platform-facet",
-            "4.3.2",
-            null,
-            "adventure-platform-facet",
-            Relocation.of("adventure", "net{}kyori{}adventure")
-    ),
-    ADVENTURE_TEXT_MINIMESSAGE(
-            "net{}kyori",
-            "adventure-text-minimessage",
-            "4.16.0",
-            null,
-            "adventure-text-minimessage",
-            Relocation.of("adventure", "net{}kyori{}adventure")
-    ),
+
     COMMAND_API(
             "dev{}jorel",
             "commandapi-bukkit-shade",
@@ -163,6 +76,16 @@ public enum Dependency {
             null,
             "boosted-yaml",
             Relocation.of("boostedyaml", "dev{}dejvokep{}boostedyaml")
+    ),
+    ADVENTURE_API(
+            "com.github.Xiao-MoMi",
+            "Adventure-Bundle",
+            "4.16.0",
+            "jitpack",
+            "adventure-bundle",
+            Relocation.of("adventure", "net{}kyori{}adventure"),
+            Relocation.of("option", "net{}kyori{}option"),
+            Relocation.of("examination", "net{}kyori{}examination")
     ),
     H2_DRIVER(
             "com.h2database",
@@ -203,7 +126,7 @@ public enum Dependency {
     ANTI_GRIEF(
             "com{}github{}Xiao-MoMi",
             "AntiGriefLib",
-            "0.7",
+            "0.11",
             "jitpack",
             "antigrief-lib",
             Relocation.of("antigrieflib", "net{}momirealms{}antigrieflib")
@@ -211,7 +134,7 @@ public enum Dependency {
     BIOME_API(
             "com{}github{}Xiao-MoMi",
             "BiomeAPI",
-            "0.2",
+            "0.3",
             "jitpack",
             "biome-api",
             Relocation.of("biomeapi", "net{}momirealms{}biomeapi")
