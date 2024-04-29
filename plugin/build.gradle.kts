@@ -30,7 +30,7 @@ dependencies {
 
     // Items
     compileOnly("com.github.LoneDev6:api-itemsadder:3.6.2-beta-r3-b")
-    compileOnly("com.github.oraxen:oraxen:1.172.0")
+    compileOnly("io.th0rgal:oraxen:2.0-SNAPSHOT")
     compileOnly("pers.neige.neigeitems:NeigeItems:1.16.24")
     compileOnly("net.Indyuce:MMOItems-API:6.9.2-SNAPSHOT")
     compileOnly("io.lumine:MythicLib-dist:1.6-SNAPSHOT")
@@ -48,6 +48,7 @@ dependencies {
     compileOnly(files("libs/RealisticSeasons-api.jar"))
 
     implementation(project(":api"))
+    implementation(project(":oraxen-legacy"))
     implementation(project(":legacy-api"))
     compileOnly("net.kyori:adventure-api:4.16.0")
     compileOnly("net.kyori:adventure-platform-bukkit:4.3.2")

@@ -15,7 +15,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.momirealms.customcrops.util;
+package net.momirealms.customcrops.api.util;
 
 import org.bukkit.Bukkit;
 import org.bukkit.event.Cancellable;

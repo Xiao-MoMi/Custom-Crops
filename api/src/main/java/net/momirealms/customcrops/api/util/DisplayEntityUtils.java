@@ -1,4 +1,4 @@
-package net.momirealms.customcrops.util;
+package net.momirealms.customcrops.api.util;
 
 import net.momirealms.customcrops.api.mechanic.misc.CRotation;
 import org.bukkit.entity.Entity;

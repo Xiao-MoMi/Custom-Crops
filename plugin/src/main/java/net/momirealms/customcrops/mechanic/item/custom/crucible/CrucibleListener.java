@@ -19,7 +19,7 @@ package net.momirealms.customcrops.mechanic.item.custom.crucible;
 
 import io.lumine.mythiccrucible.events.MythicFurniturePlaceEvent;
 import net.momirealms.customcrops.mechanic.item.ItemManagerImpl;
-import net.momirealms.customcrops.mechanic.item.custom.AbstractCustomListener;
+import net.momirealms.customcrops.api.mechanic.item.AbstractCustomListener;
 import org.bukkit.event.EventHandler;
 
 public class CrucibleListener extends AbstractCustomListener {

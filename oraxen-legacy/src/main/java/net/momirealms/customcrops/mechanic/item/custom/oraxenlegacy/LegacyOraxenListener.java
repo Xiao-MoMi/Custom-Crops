@@ -15,23 +15,23 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.momirealms.customcrops.mechanic.item.custom.oraxen;
+package net.momirealms.customcrops.mechanic.item.custom.oraxenlegacy;
 
-import io.th0rgal.oraxen.api.events.custom_block.noteblock.OraxenNoteBlockBreakEvent;
-import io.th0rgal.oraxen.api.events.custom_block.noteblock.OraxenNoteBlockPlaceEvent;
-import io.th0rgal.oraxen.api.events.custom_block.stringblock.OraxenStringBlockBreakEvent;
-import io.th0rgal.oraxen.api.events.custom_block.stringblock.OraxenStringBlockPlaceEvent;
 import io.th0rgal.oraxen.api.events.furniture.OraxenFurnitureBreakEvent;
 import io.th0rgal.oraxen.api.events.furniture.OraxenFurnitureInteractEvent;
 import io.th0rgal.oraxen.api.events.furniture.OraxenFurniturePlaceEvent;
-import net.momirealms.customcrops.api.util.LocationUtils;
-import net.momirealms.customcrops.mechanic.item.ItemManagerImpl;
+import io.th0rgal.oraxen.api.events.noteblock.OraxenNoteBlockBreakEvent;
+import io.th0rgal.oraxen.api.events.noteblock.OraxenNoteBlockPlaceEvent;
+import io.th0rgal.oraxen.api.events.stringblock.OraxenStringBlockBreakEvent;
+import io.th0rgal.oraxen.api.events.stringblock.OraxenStringBlockPlaceEvent;
+import net.momirealms.customcrops.api.manager.ItemManager;
 import net.momirealms.customcrops.api.mechanic.item.AbstractCustomListener;
+import net.momirealms.customcrops.api.util.LocationUtils;
 import org.bukkit.event.EventHandler;
 
-public class OraxenListener extends AbstractCustomListener {
+public class LegacyOraxenListener extends AbstractCustomListener {
 
-    public OraxenListener(ItemManagerImpl itemManager) {
+    public LegacyOraxenListener(ItemManager itemManager) {
         super(itemManager);
     }
 
@@ -98,10 +98,10 @@ public class OraxenListener extends AbstractCustomListener {
     @EventHandler (ignoreCancelled = true)
     public void onInteractFurniture(OraxenFurnitureInteractEvent event) {
         super.onInteractFurniture(
-                event.player(),
-                LocationUtils.toBlockLocation(event.baseEntity().getLocation()),
-                event.mechanic().getItemID(),
-                event.baseEntity(),
+                event.getPlayer(),
+                LocationUtils.toBlockLocation(event.getBaseEntity().getLocation()),
+                event.getMechanic().getItemID(),
+                event.getBaseEntity(),
                 event
         );
     }

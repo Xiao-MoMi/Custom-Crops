@@ -27,7 +27,7 @@ import io.lumine.mythiccrucible.items.blocks.CustomBlockManager;
 import io.lumine.mythiccrucible.items.furniture.Furniture;
 import io.lumine.mythiccrucible.items.furniture.FurnitureManager;
 import net.momirealms.customcrops.api.util.LogUtils;
-import net.momirealms.customcrops.mechanic.item.CustomProvider;
+import net.momirealms.customcrops.api.mechanic.item.CustomProvider;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;

@@ -15,19 +15,18 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.momirealms.customcrops.mechanic.item.custom;
+package net.momirealms.customcrops.api.mechanic.item;
 
 import net.momirealms.customcrops.api.CustomCropsPlugin;
 import net.momirealms.customcrops.api.event.BoneMealDispenseEvent;
 import net.momirealms.customcrops.api.manager.ConfigManager;
+import net.momirealms.customcrops.api.manager.ItemManager;
 import net.momirealms.customcrops.api.manager.VersionManager;
 import net.momirealms.customcrops.api.manager.WorldManager;
-import net.momirealms.customcrops.api.mechanic.item.*;
 import net.momirealms.customcrops.api.mechanic.requirement.State;
 import net.momirealms.customcrops.api.mechanic.world.SimpleLocation;
 import net.momirealms.customcrops.api.mechanic.world.level.WorldCrop;
-import net.momirealms.customcrops.mechanic.item.ItemManagerImpl;
-import net.momirealms.customcrops.util.EventUtils;
+import net.momirealms.customcrops.api.util.EventUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -56,10 +55,10 @@ import java.util.Optional;
 
 public abstract class AbstractCustomListener implements Listener {
 
-    protected ItemManagerImpl itemManager;
+    protected ItemManager itemManager;
     private final HashSet<Material> CUSTOM_MATERIAL = new HashSet<>();
 
-    public AbstractCustomListener(ItemManagerImpl itemManager) {
+    public AbstractCustomListener(ItemManager itemManager) {
         this.itemManager = itemManager;
         this.CUSTOM_MATERIAL.addAll(
                 List.of(

@@ -15,14 +15,13 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.momirealms.customcrops.mechanic.item;
+package net.momirealms.customcrops.api.mechanic.item;
 
 import net.momirealms.customcrops.api.manager.VersionManager;
 import net.momirealms.customcrops.api.mechanic.misc.CRotation;
+import net.momirealms.customcrops.api.util.DisplayEntityUtils;
 import net.momirealms.customcrops.api.util.LocationUtils;
-import net.momirealms.customcrops.util.ConfigUtils;
-import net.momirealms.customcrops.util.DisplayEntityUtils;
-import net.momirealms.customcrops.util.RotationUtils;
+import net.momirealms.customcrops.api.util.StringUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -38,7 +37,7 @@ public interface CustomProvider {
     void placeCustomBlock(Location location, String id);
 
     default void placeBlock(Location location, String id) {
-        if (ConfigUtils.isVanillaItem(id)) {
+        if (StringUtils.isCapitalLetter(id)) {
             location.getBlock().setType(Material.valueOf(id));
         } else {
             placeCustomBlock(location, id);

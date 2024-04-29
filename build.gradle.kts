@@ -8,7 +8,7 @@ plugins {
 allprojects {
 
     project.group = "net.momirealms"
-    project.version = "3.4.6"
+    project.version = "3.4.7-BETA"
 
     apply<JavaPlugin>()
     apply(plugin = "java")
@@ -44,6 +44,7 @@ allprojects {
         maven("https://repo.rapture.pw/repository/maven-releases/")
         maven("https://s01.oss.sonatype.org/content/repositories/snapshots/")
         maven("https://repo.xenondevs.xyz/releases/")
+        maven("https://repo.oraxen.com/snapshots/")
     }
 }
 

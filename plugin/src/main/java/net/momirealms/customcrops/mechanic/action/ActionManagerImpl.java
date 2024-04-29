@@ -58,7 +58,7 @@ import net.momirealms.customcrops.mechanic.misc.TempFakeItem;
 import net.momirealms.customcrops.mechanic.world.block.MemoryCrop;
 import net.momirealms.customcrops.util.ClassUtils;
 import net.momirealms.customcrops.util.ConfigUtils;
-import net.momirealms.customcrops.util.EventUtils;
+import net.momirealms.customcrops.api.util.EventUtils;
 import net.momirealms.customcrops.util.ItemUtils;
 import org.bukkit.*;
 import org.bukkit.block.BlockFace;

@@ -15,7 +15,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.momirealms.customcrops.mechanic.item.custom.oraxen;
+package net.momirealms.customcrops.mechanic.item.custom.oraxenlegacy;
 
 import io.th0rgal.oraxen.api.OraxenBlocks;
 import io.th0rgal.oraxen.api.OraxenFurniture;
@@ -23,8 +23,8 @@ import io.th0rgal.oraxen.api.OraxenItems;
 import io.th0rgal.oraxen.items.ItemBuilder;
 import io.th0rgal.oraxen.mechanics.Mechanic;
 import io.th0rgal.oraxen.mechanics.provided.gameplay.furniture.FurnitureMechanic;
-import net.momirealms.customcrops.api.util.LogUtils;
 import net.momirealms.customcrops.api.mechanic.item.CustomProvider;
+import net.momirealms.customcrops.api.util.LogUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Rotation;
@@ -33,7 +33,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 import org.bukkit.inventory.ItemStack;
 
-public class OraxenProvider implements CustomProvider {
+public class LegacyOraxenProvider implements CustomProvider {
 
     @Override
     public boolean removeBlock(Location location) {
@@ -66,7 +66,7 @@ public class OraxenProvider implements CustomProvider {
 
     @Override
     public String getBlockID(Block block) {
-        Mechanic mechanic = OraxenBlocks.getCustomBlockMechanic(block.getLocation());
+        Mechanic mechanic = OraxenBlocks.getOraxenBlock(block.getLocation());
         if (mechanic == null) {
             return block.getType().name();
         }

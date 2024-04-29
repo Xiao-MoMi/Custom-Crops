@@ -23,13 +23,16 @@ import net.momirealms.customcrops.api.mechanic.item.*;
 import net.momirealms.customcrops.api.mechanic.misc.CRotation;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Cancellable;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
+import java.util.List;
 
 public interface ItemManager extends Reloadable {
 
@@ -324,6 +327,53 @@ public interface ItemManager extends Reloadable {
      */
     @Nullable
     Crop.Stage getCropStageByStageID(String id);
+
+    void handlePlayerInteractBlock(
+            Player player,
+            Block clickedBlock,
+            BlockFace clickedFace,
+            Cancellable event
+    );
+
+    void handlePlayerInteractAir(
+            Player player,
+            Cancellable event
+    );
+
+    void handlePlayerBreakBlock(
+            Player player,
+            Block brokenBlock,
+            String blockID,
+            Cancellable event
+    );
+
+    void handlePlayerInteractFurniture(
+            Player player,
+            Location location,
+            String id,
+            Entity baseEntity,
+            Cancellable event
+    );
+
+    void handlePlayerPlaceFurniture(
+            Player player,
+            Location location,
+            String id,
+            Cancellable event
+    );
+
+    void handlePlayerBreakFurniture(
+            Player player,
+            Location location,
+            String id,
+            Cancellable event
+    );
+
+    void handlePlayerPlaceBlock(Player player, Block block, String blockID, Cancellable event);
+
+    void handleEntityTramplingBlock(Entity entity, Block block, Cancellable event);
+
+    void handleExplosion(Entity entity, List<Block> blocks, Cancellable event);
 
     /**
      * Update a pot's block state

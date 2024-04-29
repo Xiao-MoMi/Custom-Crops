@@ -36,7 +36,7 @@ import net.momirealms.customcrops.api.mechanic.world.season.Season;
 import net.momirealms.customcrops.api.scheduler.CancellableTask;
 import net.momirealms.customcrops.api.scheduler.Scheduler;
 import net.momirealms.customcrops.api.util.LogUtils;
-import net.momirealms.customcrops.util.EventUtils;
+import net.momirealms.customcrops.api.util.EventUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
