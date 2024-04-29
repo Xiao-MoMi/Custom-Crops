@@ -328,6 +328,29 @@ public interface ItemManager extends Reloadable {
     @Nullable
     Crop.Stage getCropStageByStageID(String id);
 
+    /**
+     * Update a pot's block state
+     *
+     * @param location location
+     * @param pot pot config
+     * @param hasWater has water or not
+     * @param fertilizer fertilizer
+     */
+    void updatePotState(Location location, Pot pot, boolean hasWater, Fertilizer fertilizer);
+
+    /**
+     * Get the pots that can be watered with a watering can
+     *
+     * @param baseLocation the clicked pot's location
+     * @param width width of the working range
+     * @param length length of the working range
+     * @param yaw player's yaw
+     * @param potID pot's ID
+     * @return the pots that can be watered
+     */
+    @NotNull
+    Collection<Location> getPotInRange(Location baseLocation, int width, int length, float yaw, String potID);
+
     void handlePlayerInteractBlock(
             Player player,
             Block clickedBlock,
@@ -369,32 +392,22 @@ public interface ItemManager extends Reloadable {
             Cancellable event
     );
 
-    void handlePlayerPlaceBlock(Player player, Block block, String blockID, Cancellable event);
+    void handlePlayerPlaceBlock(
+            Player player,
+            Block block,
+            String blockID,
+            Cancellable event
+    );
 
-    void handleEntityTramplingBlock(Entity entity, Block block, Cancellable event);
+    void handleEntityTramplingBlock(
+            Entity entity,
+            Block block,
+            Cancellable event
+    );
 
-    void handleExplosion(Entity entity, List<Block> blocks, Cancellable event);
-
-    /**
-     * Update a pot's block state
-     *
-     * @param location location
-     * @param pot pot config
-     * @param hasWater has water or not
-     * @param fertilizer fertilizer
-     */
-    void updatePotState(Location location, Pot pot, boolean hasWater, Fertilizer fertilizer);
-
-    /**
-     * Get the pots that can be watered with a watering can
-     *
-     * @param baseLocation the clicked pot's location
-     * @param width width of the working range
-     * @param length length of the working range
-     * @param yaw player's yaw
-     * @param potID pot's ID
-     * @return the pots that can be watered
-     */
-    @NotNull
-    Collection<Location> getPotInRange(Location baseLocation, int width, int length, float yaw, String potID);
+    void handleExplosion(
+            Entity entity,
+            List<Block> blocks,
+            Cancellable event
+    );
 }

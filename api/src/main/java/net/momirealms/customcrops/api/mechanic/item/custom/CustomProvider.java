@@ -15,7 +15,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.momirealms.customcrops.api.mechanic.item;
+package net.momirealms.customcrops.api.mechanic.item.custom;
 
 import net.momirealms.customcrops.api.manager.VersionManager;
 import net.momirealms.customcrops.api.mechanic.misc.CRotation;

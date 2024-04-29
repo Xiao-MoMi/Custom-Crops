@@ -24,7 +24,7 @@ import io.th0rgal.oraxen.items.ItemBuilder;
 import io.th0rgal.oraxen.mechanics.Mechanic;
 import io.th0rgal.oraxen.mechanics.provided.gameplay.furniture.FurnitureMechanic;
 import net.momirealms.customcrops.api.util.LogUtils;
-import net.momirealms.customcrops.api.mechanic.item.CustomProvider;
+import net.momirealms.customcrops.api.mechanic.item.custom.CustomProvider;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Rotation;

@@ -25,7 +25,7 @@ import io.th0rgal.oraxen.api.events.noteblock.OraxenNoteBlockPlaceEvent;
 import io.th0rgal.oraxen.api.events.stringblock.OraxenStringBlockBreakEvent;
 import io.th0rgal.oraxen.api.events.stringblock.OraxenStringBlockPlaceEvent;
 import net.momirealms.customcrops.api.manager.ItemManager;
-import net.momirealms.customcrops.api.mechanic.item.AbstractCustomListener;
+import net.momirealms.customcrops.api.mechanic.item.custom.AbstractCustomListener;
 import net.momirealms.customcrops.api.util.LocationUtils;
 import org.bukkit.event.EventHandler;
 

@@ -21,7 +21,7 @@ import dev.lone.itemsadder.api.CustomBlock;
 import dev.lone.itemsadder.api.CustomFurniture;
 import dev.lone.itemsadder.api.CustomStack;
 import net.momirealms.customcrops.api.util.LogUtils;
-import net.momirealms.customcrops.api.mechanic.item.CustomProvider;
+import net.momirealms.customcrops.api.mechanic.item.custom.CustomProvider;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;

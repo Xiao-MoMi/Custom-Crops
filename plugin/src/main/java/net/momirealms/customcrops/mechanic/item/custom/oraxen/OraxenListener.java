@@ -26,7 +26,7 @@ import io.th0rgal.oraxen.api.events.furniture.OraxenFurnitureInteractEvent;
 import io.th0rgal.oraxen.api.events.furniture.OraxenFurniturePlaceEvent;
 import net.momirealms.customcrops.api.util.LocationUtils;
 import net.momirealms.customcrops.mechanic.item.ItemManagerImpl;
-import net.momirealms.customcrops.api.mechanic.item.AbstractCustomListener;
+import net.momirealms.customcrops.api.mechanic.item.custom.AbstractCustomListener;
 import org.bukkit.event.EventHandler;
 
 public class OraxenListener extends AbstractCustomListener {
