@@ -18,7 +18,6 @@
 package net.momirealms.customcrops.api.mechanic.world.level;
 
 import com.google.gson.annotations.SerializedName;
-import net.momirealms.customcrops.api.manager.ConfigManager;
 import net.momirealms.customcrops.api.mechanic.world.season.Season;
 
 public class WorldInfoData {

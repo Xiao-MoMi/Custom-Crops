@@ -168,17 +168,23 @@ public class ConditionManagerImpl implements ConditionManager {
                     if (Math.random() > chance) return false;
                     SimpleLocation location = block.getLocation();
                     if (ConfigManager.enableScarecrow()) {
-                        int range = ConfigManager.scarecrowRange();
                         Optional<CustomCropsWorld> world = plugin.getWorldManager().getCustomCropsWorld(location.getWorldName());
                         if (world.isEmpty()) return false;
                         CustomCropsWorld customCropsWorld = world.get();
-                        for (int i = -range; i <= range; i++) {
-                            for (int j = -range; j <= range; j++) {
-                                for (int k : new int[]{0,-1,1}) {
-                                    if (customCropsWorld.getScarecrowAt(location.copy().add(i, k, j)).isPresent()) {
-                                        return false;
+                        if (!ConfigManager.scarecrowProtectChunk()) {
+                            int range = ConfigManager.scarecrowRange();
+                            for (int i = -range; i <= range; i++) {
+                                for (int j = -range; j <= range; j++) {
+                                    for (int k : new int[]{0,-1,1}) {
+                                        if (customCropsWorld.getScarecrowAt(location.copy().add(i, k, j)).isPresent()) {
+                                            return false;
+                                        }
                                     }
                                 }
+                            }
+                        } else {
+                            if (customCropsWorld.doesChunkHaveScarecrow(location)) {
+                                return false;
                             }
                         }
                     }

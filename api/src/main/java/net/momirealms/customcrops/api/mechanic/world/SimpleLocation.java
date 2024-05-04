@@ -98,7 +98,6 @@ public class SimpleLocation {
         return hash;
     }
 
-    @Nullable
     public Location getBukkitLocation() {
         World world = Bukkit.getWorld(worldName);
         if (world == null) return null;

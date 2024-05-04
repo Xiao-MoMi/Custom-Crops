@@ -344,6 +344,8 @@ public interface CustomCropsWorld {
     @Nullable
     CustomCropsBlock removeAnythingAt(SimpleLocation location);
 
+    boolean doesChunkHaveScarecrow(SimpleLocation location);
+
     /**
      * If the amount of pot reaches the limitation
      *

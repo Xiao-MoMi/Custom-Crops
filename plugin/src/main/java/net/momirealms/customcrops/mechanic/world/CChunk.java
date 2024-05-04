@@ -553,6 +553,18 @@ public class CChunk implements CustomCropsChunk {
         return amount;
     }
 
+    @Override
+    public boolean hasScarecrow() {
+        for (CustomCropsSection section : getSections()) {
+            for (CustomCropsBlock block : section.getBlocks()) {
+                if (block instanceof WorldScarecrow) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     public CSection[] getSectionsForSerialization() {
         ArrayList<CSection> sections = new ArrayList<>();
         for (Map.Entry<Integer, CSection> entry : loadedSections.entrySet()) {

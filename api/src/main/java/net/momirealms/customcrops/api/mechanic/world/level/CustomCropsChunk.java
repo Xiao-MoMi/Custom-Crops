@@ -309,6 +309,13 @@ public interface CustomCropsChunk {
     void addScarecrowAt(WorldScarecrow scarecrow, SimpleLocation location);
 
     /**
+     * If this chunk has scarecrow
+     *
+     * @return has or not
+     */
+    boolean hasScarecrow();
+
+    /**
      * Get CustomCrops sections
      *
      * @return sections

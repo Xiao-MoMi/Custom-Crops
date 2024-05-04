@@ -25,6 +25,7 @@ import dev.dejvokep.boostedyaml.settings.loader.LoaderSettings;
 import dev.dejvokep.boostedyaml.settings.updater.UpdaterSettings;
 import net.momirealms.customcrops.api.CustomCropsPlugin;
 import net.momirealms.customcrops.api.manager.ConfigManager;
+import net.momirealms.customcrops.api.mechanic.item.ItemCarrier;
 import net.momirealms.customcrops.api.util.LogUtils;
 import net.momirealms.customcrops.util.ConfigUtils;
 import org.bukkit.Bukkit;
@@ -35,12 +36,13 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import java.io.File;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
+import java.util.Locale;
 import java.util.Objects;
 
 public class ConfigManagerImpl extends ConfigManager {
 
-    public static final String configVersion = "36";
-    private CustomCropsPlugin plugin;
+    public static final String configVersion = "37";
+    private final CustomCropsPlugin plugin;
     private String lang;
     private int maximumPoolSize;
     private int corePoolSize;
@@ -63,6 +65,9 @@ public class ConfigManagerImpl extends ConfigManager {
     private boolean syncSeasons;
     private WeakReference<World> referenceWorld;
     private boolean convertWorldOnLoad;
+    private boolean scarecrowProtectChunk;
+    private ItemCarrier scarecrowItemType;
+    private ItemCarrier glassItemType;
 
     public ConfigManagerImpl(CustomCropsPlugin plugin) {
         this.plugin = plugin;
@@ -126,10 +131,13 @@ public class ConfigManagerImpl extends ConfigManager {
         greenhouse = mechanics.getBoolean("greenhouse.enable", true);
         greenhouseID = mechanics.getString("greenhouse.id");
         greenhouseRange = mechanics.getInt("greenhouse.range", 5);
+        glassItemType = ItemCarrier.valueOf(mechanics.getString("greenhouse.type", "CHORUS").toUpperCase(Locale.ENGLISH));
 
         scarecrow = mechanics.getBoolean("scarecrow.enable", true);
         scarecrowID = mechanics.getString("scarecrow.id");
         scarecrowRange = mechanics.getInt("scarecrow.range", 7);
+        scarecrowProtectChunk = mechanics.getBoolean("scarecrow.protect-chunk", false);
+        scarecrowItemType = ItemCarrier.valueOf(mechanics.getString("scarecrow.type", "ITEM_FRAME").toUpperCase(Locale.ENGLISH));
 
         syncSeasons = mechanics.getBoolean("sync-season.enable", true);
         if (syncSeasons) {
@@ -163,17 +171,17 @@ public class ConfigManagerImpl extends ConfigManager {
     }
 
     @Override
-    protected boolean isConvertWorldOnLoad() {
+    public boolean isConvertWorldOnLoad() {
         return convertWorldOnLoad;
     }
 
     @Override
-    protected double[] getDefaultQualityRatio() {
+    public double[] getDefaultQualityRatio() {
         return defaultQualityRatio;
     }
 
     @Override
-    protected String getLang() {
+    public String getLang() {
         return lang;
     }
 
@@ -245,6 +253,21 @@ public class ConfigManagerImpl extends ConfigManager {
     @Override
     public boolean isSyncSeasons() {
         return syncSeasons;
+    }
+
+    @Override
+    public boolean doesScarecrowProtectChunk() {
+        return scarecrowProtectChunk;
+    }
+
+    @Override
+    public ItemCarrier getScarecrowItemCarrier() {
+        return scarecrowItemType;
+    }
+
+    @Override
+    public ItemCarrier getGlassItemCarrier() {
+        return glassItemType;
     }
 
     @Override

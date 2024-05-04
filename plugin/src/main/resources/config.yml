@@ -1,5 +1,5 @@
 # Don't change
-config-version: '36'
+config-version: '37'
 
 # Debug
 debug: false
@@ -102,12 +102,17 @@ mechanics:
   scarecrow:
     enable: true
     id: '{0}scarecrow'
+    type: ITEM_FRAME
     range: 7
+    # If this option is enabled, the range above would not longer take effect
+    # This option would make the scarecrow protect all the crops in a chunk instead of crops in certain range
+    protect-chunk: false
 
   # Greenhouse glass prevents crops from withering from season changing
   greenhouse:
     enable: true
     id: '{0}greenhouse_glass'
+    type: CHORUS
     range: 5
 
   # Sync seasons

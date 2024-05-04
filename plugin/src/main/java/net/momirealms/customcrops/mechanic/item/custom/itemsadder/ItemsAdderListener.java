@@ -19,8 +19,8 @@ package net.momirealms.customcrops.mechanic.item.custom.itemsadder;
 
 import dev.lone.itemsadder.api.CustomFurniture;
 import dev.lone.itemsadder.api.Events.*;
-import net.momirealms.customcrops.mechanic.item.ItemManagerImpl;
 import net.momirealms.customcrops.api.mechanic.item.custom.AbstractCustomListener;
+import net.momirealms.customcrops.mechanic.item.ItemManagerImpl;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.EventHandler;
 

@@ -25,8 +25,11 @@ import net.momirealms.customcrops.api.manager.VersionManager;
 import net.momirealms.customcrops.api.manager.WorldManager;
 import net.momirealms.customcrops.api.mechanic.item.*;
 import net.momirealms.customcrops.api.mechanic.requirement.State;
+import net.momirealms.customcrops.api.mechanic.world.CustomCropsBlock;
 import net.momirealms.customcrops.api.mechanic.world.SimpleLocation;
 import net.momirealms.customcrops.api.mechanic.world.level.WorldCrop;
+import net.momirealms.customcrops.api.mechanic.world.level.WorldGlass;
+import net.momirealms.customcrops.api.mechanic.world.level.WorldPot;
 import net.momirealms.customcrops.api.util.EventUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -113,7 +116,7 @@ public abstract class AbstractCustomListener implements Listener {
         );
     }
 
-    @EventHandler (ignoreCancelled = false)
+    @EventHandler
     public void onInteractAir(PlayerInteractEvent event) {
         if (event.getHand() != EquipmentSlot.HAND)
             return;
@@ -146,10 +149,15 @@ public abstract class AbstractCustomListener implements Listener {
     @EventHandler (ignoreCancelled = true)
     public void onPlaceBlock(BlockPlaceEvent event) {
         final Block block = event.getBlock();
-        // prevent players from placing blocks on entities (crops/sprinklers)
-        if (CustomCropsPlugin.get().getWorldManager().getBlockAt(SimpleLocation.of(block.getLocation())).isPresent()) {
-            event.setCancelled(true);
-            return;
+        final Location location = block.getLocation();
+        Optional<CustomCropsBlock> customCropsBlock = CustomCropsPlugin.get().getWorldManager().getBlockAt(SimpleLocation.of(location));
+        if (customCropsBlock.isPresent()) {
+            if (customCropsBlock.get() instanceof WorldPot || customCropsBlock.get() instanceof WorldGlass) {
+                CustomCropsPlugin.get().getWorldManager().removeAnythingAt(SimpleLocation.of(location));
+            } else {
+                event.setCancelled(true);
+                return;
+            }
         }
         this.onPlaceBlock(
                 event.getPlayer(),

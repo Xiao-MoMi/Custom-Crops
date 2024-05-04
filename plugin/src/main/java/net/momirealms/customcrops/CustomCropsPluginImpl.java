@@ -24,6 +24,7 @@ import net.momirealms.customcrops.api.CustomCropsPlugin;
 import net.momirealms.customcrops.api.event.CustomCropsReloadEvent;
 import net.momirealms.customcrops.api.manager.ConfigManager;
 import net.momirealms.customcrops.api.manager.CoolDownManager;
+import net.momirealms.customcrops.api.util.EventUtils;
 import net.momirealms.customcrops.api.util.LogUtils;
 import net.momirealms.customcrops.compatibility.IntegrationManagerImpl;
 import net.momirealms.customcrops.libraries.classpath.ReflectionClassPathAppender;
@@ -38,7 +39,6 @@ import net.momirealms.customcrops.mechanic.misc.migrator.Migration;
 import net.momirealms.customcrops.mechanic.requirement.RequirementManagerImpl;
 import net.momirealms.customcrops.mechanic.world.WorldManagerImpl;
 import net.momirealms.customcrops.scheduler.SchedulerImpl;
-import net.momirealms.customcrops.api.util.EventUtils;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 

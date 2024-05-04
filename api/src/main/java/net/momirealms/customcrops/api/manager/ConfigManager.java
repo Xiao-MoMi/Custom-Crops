@@ -18,6 +18,7 @@
 package net.momirealms.customcrops.api.manager;
 
 import net.momirealms.customcrops.api.common.Reloadable;
+import net.momirealms.customcrops.api.mechanic.item.ItemCarrier;
 import org.bukkit.World;
 
 public abstract class ConfigManager implements Reloadable {
@@ -120,21 +121,33 @@ public abstract class ConfigManager implements Reloadable {
         return instance.isConvertWorldOnLoad();
     }
 
-    protected abstract boolean isConvertWorldOnLoad();
+    public static boolean scarecrowProtectChunk() {
+        return instance.doesScarecrowProtectChunk();
+    }
 
-    protected abstract double[] getDefaultQualityRatio();
+    public static ItemCarrier scarecrowItemCarrier() {
+        return instance.getScarecrowItemCarrier();
+    }
 
-    protected abstract String getLang();
+    public static ItemCarrier glassItemCarrier() {
+        return instance.getGlassItemCarrier();
+    }
 
-    protected abstract boolean getDebugMode();
+    public abstract boolean isConvertWorldOnLoad();
 
-    protected abstract boolean hasLegacyColorSupport();
+    public abstract double[] getDefaultQualityRatio();
 
-    protected abstract int getMaximumPoolSize();
+    public abstract String getLang();
 
-    protected abstract int getKeepAliveTime();
+    public abstract boolean getDebugMode();
 
-    protected abstract int getCorePoolSize();
+    public abstract boolean hasLegacyColorSupport();
+
+    public abstract int getMaximumPoolSize();
+
+    public abstract int getKeepAliveTime();
+
+    public abstract int getCorePoolSize();
 
     public abstract boolean isProtectLore();
 
@@ -161,6 +174,12 @@ public abstract class ConfigManager implements Reloadable {
     public abstract int getScarecrowRange();
 
     public abstract boolean isSyncSeasons();
+
+    public abstract boolean doesScarecrowProtectChunk();
+
+    public abstract ItemCarrier getScarecrowItemCarrier();
+
+    public abstract ItemCarrier getGlassItemCarrier();
 
     public abstract World getReferenceWorld();
 }

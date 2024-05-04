@@ -35,8 +35,8 @@ import net.momirealms.customcrops.api.mechanic.world.level.*;
 import net.momirealms.customcrops.api.mechanic.world.season.Season;
 import net.momirealms.customcrops.api.scheduler.CancellableTask;
 import net.momirealms.customcrops.api.scheduler.Scheduler;
-import net.momirealms.customcrops.api.util.LogUtils;
 import net.momirealms.customcrops.api.util.EventUtils;
+import net.momirealms.customcrops.api.util.LogUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
@@ -525,7 +525,7 @@ public class CWorld implements CustomCropsWorld {
         if (chunk != null) {
             return chunk;
         }
-        // is a loaded chunk, but it doesn't have customcrops data
+        // is a loaded chunk, but it doesn't have CustomCrops data
         if (bukkitWorld.isChunkLoaded(chunkPos.x(), chunkPos.z())) {
             chunk = new CChunk(this, chunkPos);
             loadChunk(chunk);
@@ -533,6 +533,12 @@ public class CWorld implements CustomCropsWorld {
         } else {
             return null;
         }
+    }
+
+    @Override
+    public boolean doesChunkHaveScarecrow(SimpleLocation location) {
+        Optional<CustomCropsChunk> chunk = getLoadedChunkAt(location.getChunkPos());
+        return chunk.map(CustomCropsChunk::hasScarecrow).orElse(false);
     }
 
     @Override
