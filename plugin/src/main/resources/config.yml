@@ -67,22 +67,22 @@ worlds:
         # which allows crops to grow at almost the same speed
         mode: RANDOM_TICK
         tick-interval: 1
-        # Limit the max amount of crops in one chunk
-        max-per-chunk: 256
+        # Limit the max amount of crops in one chunk (-1 = no limit)
+        max-per-chunk: -1
       # Settings for pots
       pot:
         # RANDOM_TICK / SCHEDULED_TICK
         mode: SCHEDULED_TICK
         tick-interval: 3
-        # Limit the max amount of pots in one chunk
+        # Limit the max amount of pots in one chunk (-1 = no limit)
         max-per-chunk: -1
       # Settings for sprinklers
       sprinkler:
         # RANDOM_TICK / SCHEDULED_TICK
         mode: SCHEDULED_TICK
         tick-interval: 2
-        # Limit the max amount of sprinklers in one chunk
-        max-per-chunk: 64
+        # Limit the max amount of sprinklers in one chunk (-1 = no limit)
+        max-per-chunk: -1
     # You can override the default settings for worlds here
     _WORLDS_:
       world_nether:
