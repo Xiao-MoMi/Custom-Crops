@@ -1,7 +1,7 @@
 dependencies {
     compileOnly(project(":api"))
     compileOnly("io.papermc.paper:paper-api:1.20.4-R0.1-SNAPSHOT")
-    compileOnly("com.github.oraxen:oraxen:1.172.0")
+    compileOnly("io.th0rgal:oraxen:2.0-SNAPSHOT")
 }
 
 tasks.withType<JavaCompile> {
@@ -10,9 +10,9 @@ tasks.withType<JavaCompile> {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
     toolchain {
-        languageVersion = JavaLanguageVersion.of(17)
+        languageVersion = JavaLanguageVersion.of(21)
     }
 }

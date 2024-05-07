@@ -42,14 +42,14 @@ public enum Dependency {
     ASM(
             "org.ow2.asm",
             "asm",
-            "9.1",
+            "9.7",
             null,
             "asm"
     ),
     ASM_COMMONS(
             "org.ow2.asm",
             "asm-commons",
-            "9.1",
+            "9.7",
             null,
             "asm-commons"
     ),
@@ -118,7 +118,7 @@ public enum Dependency {
     NBT_API(
             "de{}tr7zw",
             "item-nbt-api",
-            "2.12.3",
+            "2.12.4",
             "codemc",
             "item-nbt-api",
             Relocation.of("changeme", "de{}tr7zw{}changeme")
@@ -134,7 +134,7 @@ public enum Dependency {
     BIOME_API(
             "com{}github{}Xiao-MoMi",
             "BiomeAPI",
-            "0.3",
+            "0.6",
             "jitpack",
             "biome-api",
             Relocation.of("biomeapi", "net{}momirealms{}biomeapi")

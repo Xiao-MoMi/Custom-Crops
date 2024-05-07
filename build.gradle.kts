@@ -8,7 +8,7 @@ plugins {
 allprojects {
 
     project.group = "net.momirealms"
-    project.version = "3.4.7"
+    project.version = "3.4.8"
 
     apply<JavaPlugin>()
     apply(plugin = "java")
@@ -58,13 +58,10 @@ subprojects {
         }
     }
 
-    tasks.withType<JavaCompile> {
-        options.encoding = "UTF-8"
-        options.release.set(17)
-    }
-
     tasks.shadowJar {
-        destinationDirectory.set(file("$rootDir/target"))
+        if (arrayListOf("plugin", "api").contains(project.name)) {
+            destinationDirectory.set(file("$rootDir/target"))
+        }
         archiveClassifier.set("")
         archiveFileName.set("CustomCrops-" + project.name + "-" + project.version + ".jar")
     }
@@ -82,4 +79,3 @@ subprojects {
         }
     }
 }
-

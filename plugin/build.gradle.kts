@@ -30,7 +30,6 @@ dependencies {
 
     // Items
     compileOnly("com.github.LoneDev6:api-itemsadder:3.6.2-beta-r3-b")
-    compileOnly("io.th0rgal:oraxen:2.0-SNAPSHOT")
     compileOnly("pers.neige.neigeitems:NeigeItems:1.16.24")
     compileOnly("net.Indyuce:MMOItems-API:6.9.2-SNAPSHOT")
     compileOnly("io.lumine:MythicLib-dist:1.6-SNAPSHOT")
@@ -49,15 +48,16 @@ dependencies {
 
     implementation(project(":api"))
     implementation(project(":oraxen-legacy"))
+    implementation(project(":oraxen-j21"))
     implementation(project(":legacy-api"))
     compileOnly("net.kyori:adventure-api:4.16.0")
     compileOnly("net.kyori:adventure-platform-bukkit:4.3.2")
     compileOnly("com.github.Xiao-MoMi:AntiGriefLib:0.11")
-    compileOnly("com.github.Xiao-MoMi:BiomeAPI:0.3")
+    compileOnly("com.github.Xiao-MoMi:BiomeAPI:0.6")
 
     compileOnly("net.kyori:adventure-text-minimessage:4.16.0")
     compileOnly("net.kyori:adventure-text-serializer-legacy:4.16.0")
-    compileOnly("de.tr7zw:item-nbt-api:2.12.3")
+    compileOnly("de.tr7zw:item-nbt-api:2.12.4")
     compileOnly("org.bstats:bstats-bukkit:3.0.2")
     implementation("com.flowpowered:flow-nbt:2.0.2")
     implementation("com.github.luben:zstd-jni:1.5.6-2")
@@ -73,5 +73,18 @@ tasks {
 		relocate ("dev.dejvokep.boostedyaml", "net.momirealms.customcrops.libraries.boostedyaml")
 		relocate ("net.momirealms.biomeapi", "net.momirealms.customcrops.libraries.biomeapi")
 		relocate ("net.momirealms.antigrieflib", "net.momirealms.customcrops.libraries.antigrieflib")
+    }
+}
+
+tasks.withType<JavaCompile> {
+    options.encoding = "UTF-8"
+    options.release.set(17)
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
     }
 }

@@ -45,8 +45,6 @@ import net.momirealms.customcrops.api.util.LocationUtils;
 import net.momirealms.customcrops.api.util.LogUtils;
 import net.momirealms.customcrops.mechanic.item.custom.itemsadder.ItemsAdderListener;
 import net.momirealms.customcrops.mechanic.item.custom.itemsadder.ItemsAdderProvider;
-import net.momirealms.customcrops.mechanic.item.custom.oraxen.OraxenListener;
-import net.momirealms.customcrops.mechanic.item.custom.oraxen.OraxenProvider;
 import net.momirealms.customcrops.mechanic.item.custom.oraxenlegacy.LegacyOraxenListener;
 import net.momirealms.customcrops.mechanic.item.custom.oraxenlegacy.LegacyOraxenProvider;
 import net.momirealms.customcrops.mechanic.item.function.CFunction;
@@ -81,6 +79,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.lang.reflect.Constructor;
 import java.util.*;
 
 public class ItemManagerImpl implements ItemManager {
@@ -128,8 +127,18 @@ public class ItemManagerImpl implements ItemManager {
         this.deadCrops = new HashSet<>();
         if (Bukkit.getPluginManager().getPlugin("Oraxen") != null) {
             if (Bukkit.getPluginManager().getPlugin("Oraxen").getDescription().getVersion().startsWith("2")) {
-                listener = new OraxenListener(this);
-                customProvider = new OraxenProvider();
+                try {
+                    Class<?> oraxenListenerClass = Class.forName("net.momirealms.customcrops.mechanic.item.custom.oraxen.OraxenListener");
+                    Constructor<?> oraxenListenerConstructor = oraxenListenerClass.getDeclaredConstructor(ItemManager.class);
+                    oraxenListenerConstructor.setAccessible(true);
+                    this.listener = (AbstractCustomListener) oraxenListenerConstructor.newInstance(this);
+                    Class<?> oraxenProviderClass = Class.forName("net.momirealms.customcrops.mechanic.item.custom.oraxen.OraxenProvider");
+                    Constructor<?> oraxenProviderConstructor = oraxenProviderClass.getDeclaredConstructor(ItemManager.class);
+                    oraxenProviderConstructor.setAccessible(true);
+                    this.customProvider = (CustomProvider) oraxenProviderConstructor.newInstance();
+                } catch (ReflectiveOperationException e) {
+                    e.printStackTrace();
+                }
             } else {
                 listener = new LegacyOraxenListener(this);
                 customProvider = new LegacyOraxenProvider();

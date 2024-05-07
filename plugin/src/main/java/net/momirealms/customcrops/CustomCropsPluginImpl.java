@@ -17,8 +17,6 @@
 
 package net.momirealms.customcrops;
 
-import de.tr7zw.changeme.nbtapi.utils.MinecraftVersion;
-import de.tr7zw.changeme.nbtapi.utils.VersionChecker;
 import net.momirealms.antigrieflib.AntiGriefLib;
 import net.momirealms.customcrops.api.CustomCropsPlugin;
 import net.momirealms.customcrops.api.event.CustomCropsReloadEvent;
@@ -39,10 +37,10 @@ import net.momirealms.customcrops.mechanic.misc.migrator.Migration;
 import net.momirealms.customcrops.mechanic.requirement.RequirementManagerImpl;
 import net.momirealms.customcrops.mechanic.world.WorldManagerImpl;
 import net.momirealms.customcrops.scheduler.SchedulerImpl;
+import net.momirealms.customcrops.util.NBTUtils;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -99,7 +97,7 @@ public class CustomCropsPluginImpl extends CustomCropsPlugin {
         this.hologramManager = new HologramManager(this);
         this.commandManager.init();
         this.integrationManager.init();
-        this.disableNBTAPILogs();
+        NBTUtils.disableNBTAPILogs();
         Migration.tryUpdating();
         this.reload();
         if (ConfigManager.metrics()) new Metrics(this, 16593);
@@ -140,42 +138,6 @@ public class CustomCropsPluginImpl extends CustomCropsPlugin {
         this.hologramManager.reload();
         ((SchedulerImpl) scheduler).reload();
         EventUtils.fireAndForget(new CustomCropsReloadEvent(this));
-    }
-
-    /**
-     * Disable NBT API logs
-     */
-    private void disableNBTAPILogs() {
-        MinecraftVersion.disableBStats();
-        MinecraftVersion.disableUpdateCheck();
-        VersionChecker.hideOk = true;
-        try {
-            Field field = MinecraftVersion.class.getDeclaredField("version");
-            field.setAccessible(true);
-            MinecraftVersion minecraftVersion;
-            try {
-                minecraftVersion = MinecraftVersion.valueOf(getVersionManager().getServerVersion().replace("v", "MC"));
-            } catch (IllegalArgumentException ex) {
-                minecraftVersion = MinecraftVersion.UNKNOWN;
-            }
-            field.set(MinecraftVersion.class, minecraftVersion);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
-        boolean hasGsonSupport;
-        try {
-            Class.forName("com.google.gson.Gson");
-            hasGsonSupport = true;
-        } catch (Exception ex) {
-            hasGsonSupport = false;
-        }
-        try {
-            Field field= MinecraftVersion.class.getDeclaredField("hasGsonSupport");
-            field.setAccessible(true);
-            field.set(Boolean.class, hasGsonSupport);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     @Override
