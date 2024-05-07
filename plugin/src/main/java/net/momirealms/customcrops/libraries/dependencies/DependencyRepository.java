@@ -73,6 +73,10 @@ public enum DependencyRepository {
         this.id = id;
     }
 
+    public String getUrl() {
+        return url;
+    }
+
     public static DependencyRepository getByID(String id) {
         for (DependencyRepository repository : values()) {
             if (id.equals(repository.id)) {

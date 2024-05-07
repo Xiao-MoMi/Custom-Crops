@@ -198,7 +198,6 @@ public enum Dependency {
         String extra = classifier == null || classifier.isEmpty()
                 ? ""
                 : "-" + classifier;
-
         return name + "-" + this.version + extra + ".jar";
     }
 
