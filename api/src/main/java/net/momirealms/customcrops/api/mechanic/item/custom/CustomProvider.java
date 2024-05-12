@@ -65,7 +65,7 @@ public interface CustomProvider {
         Location center = LocationUtils.toCenterLocation(location);
         Collection<Entity> entities = center.getWorld().getNearbyEntities(center, 0.5,0.51,0.5);
         entities.removeIf(entity -> (entity instanceof Player || entity instanceof Item));
-        return entities.size() == 0;
+        return entities.isEmpty();
     }
 
     default CRotation removeAnythingAt(Location location) {
@@ -115,7 +115,7 @@ public interface CustomProvider {
                 return type != EntityType.ITEM_FRAME
                         && (!VersionManager.isHigherThan1_19_R3() || type != EntityType.ITEM_DISPLAY);
             });
-            if (entities.size() == 0) return CRotation.NONE;
+            if (entities.isEmpty()) return CRotation.NONE;
             CRotation rotation;
             Entity first = entities.stream().findFirst().get();
             if (first instanceof ItemFrame itemFrame) {

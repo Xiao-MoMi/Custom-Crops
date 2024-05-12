@@ -59,12 +59,8 @@ public class CustomCropsPluginImpl extends CustomCropsPlugin {
                         Dependency.GSON,
                         Dependency.SLF4J_API,
                         Dependency.SLF4J_SIMPLE,
-                        Dependency.ADVENTURE_API,
                         Dependency.COMMAND_API,
-                        Dependency.NBT_API,
                         Dependency.BOOSTED_YAML,
-                        Dependency.BIOME_API,
-                        Dependency.ANTI_GRIEF,
                         Dependency.BSTATS_BASE,
                         Dependency.BSTATS_BUKKIT
                 )

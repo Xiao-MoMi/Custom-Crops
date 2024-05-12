@@ -108,7 +108,8 @@ public abstract class AbstractCustomListener implements Listener {
             final Location location = block.getLocation();
             Optional<CustomCropsBlock> customCropsBlock = CustomCropsPlugin.get().getWorldManager().getBlockAt(SimpleLocation.of(location));
             if (customCropsBlock.isPresent()) {
-                fallingBlock.setCancelDrop(true);
+                event.setCancelled(true);
+                block.getWorld().dropItemNaturally(block.getLocation(), new ItemStack(fallingBlock.getBlockData().getMaterial()));
             }
         }
     }
