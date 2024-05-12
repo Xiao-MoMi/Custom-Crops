@@ -36,6 +36,7 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Dispenser;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
@@ -97,6 +98,18 @@ public abstract class AbstractCustomListener implements Listener {
             this.CUSTOM_MATERIAL.add(
                 Material.CHERRY_LEAVES
             );
+        }
+    }
+
+    @EventHandler (ignoreCancelled = true)
+    public void onBlockFalling(EntityChangeBlockEvent event) {
+        if (event.getEntity() instanceof FallingBlock fallingBlock) {
+            final Block block = event.getBlock();
+            final Location location = block.getLocation();
+            Optional<CustomCropsBlock> customCropsBlock = CustomCropsPlugin.get().getWorldManager().getBlockAt(SimpleLocation.of(location));
+            if (customCropsBlock.isPresent()) {
+                fallingBlock.setCancelDrop(true);
+            }
         }
     }
 

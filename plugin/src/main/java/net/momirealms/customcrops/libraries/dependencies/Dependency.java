@@ -72,7 +72,7 @@ public enum Dependency {
     BOOSTED_YAML(
             "dev{}dejvokep",
             "boosted-yaml",
-            "1.3.2",
+            "1.3.4",
             null,
             "boosted-yaml",
             Relocation.of("boostedyaml", "dev{}dejvokep{}boostedyaml")

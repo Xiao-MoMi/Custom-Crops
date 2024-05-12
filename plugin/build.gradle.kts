@@ -4,7 +4,7 @@ dependencies {
     compileOnly("com.infernalsuite.aswm:api:1.20.4-R0.1-SNAPSHOT")
 
     // Command
-    compileOnly("dev.jorel:commandapi-bukkit-core:9.3.0")
+    compileOnly("dev.jorel:commandapi-bukkit-core:9.4.1")
 
     // Common hooks
     compileOnly("me.clip:placeholderapi:2.11.5")
@@ -12,7 +12,7 @@ dependencies {
     compileOnly("com.github.MilkBowl:VaultAPI:1.7")
 
     // Utils
-    compileOnly("dev.dejvokep:boosted-yaml:1.3.2")
+    compileOnly("dev.dejvokep:boosted-yaml:1.3.4")
     compileOnly("commons-io:commons-io:2.15.1")
     compileOnly("com.google.code.gson:gson:2.10.1")
     compileOnly("net.objecthunter:exp4j:0.4.8")
@@ -50,13 +50,13 @@ dependencies {
     implementation(project(":oraxen-legacy"))
     implementation(project(":oraxen-j21"))
     implementation(project(":legacy-api"))
-    compileOnly("net.kyori:adventure-api:4.16.0")
+    compileOnly("net.kyori:adventure-api:4.17.0")
     compileOnly("net.kyori:adventure-platform-bukkit:4.3.2")
     compileOnly("com.github.Xiao-MoMi:AntiGriefLib:0.11")
     compileOnly("com.github.Xiao-MoMi:BiomeAPI:0.6")
 
-    compileOnly("net.kyori:adventure-text-minimessage:4.16.0")
-    compileOnly("net.kyori:adventure-text-serializer-legacy:4.16.0")
+    compileOnly("net.kyori:adventure-text-minimessage:4.17.0")
+    compileOnly("net.kyori:adventure-text-serializer-legacy:4.17.0")
     compileOnly("de.tr7zw:item-nbt-api:2.12.4")
     compileOnly("org.bstats:bstats-bukkit:3.0.2")
     implementation("com.flowpowered:flow-nbt:2.0.2")
