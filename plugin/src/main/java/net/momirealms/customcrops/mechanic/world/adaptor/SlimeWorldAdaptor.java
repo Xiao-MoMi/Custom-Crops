@@ -129,7 +129,7 @@ public class SlimeWorldAdaptor extends BukkitWorldAdaptor {
         CustomCropsChunk lazyChunk = customCropsWorld.removeLazyChunkAt(chunkPos);
         if (lazyChunk != null) {
             CChunk cChunk = (CChunk) lazyChunk;
-            cChunk.setUnloadedSeconds(0);
+            cChunk.resetUnloadedSeconds();
             cWorld.loadChunk(cChunk);
             long time2 = System.currentTimeMillis();
             CustomCropsPlugin.get().debug("Took " + (time2-time1) + "ms to load chunk " + chunkPos + " from lazy chunks");

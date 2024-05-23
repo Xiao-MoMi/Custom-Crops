@@ -51,6 +51,7 @@ public class CChunk implements CustomCropsChunk {
     private long lastLoadedTime;
     private int loadedSeconds;
     private int unloadedSeconds;
+    private boolean notified;
 
     public CChunk(CWorld cWorld, ChunkPos chunkPos) {
         this.cWorld = cWorld;
@@ -60,6 +61,7 @@ public class CChunk implements CustomCropsChunk {
         this.unloadedSeconds = 0;
         this.tickedBlocks = Collections.synchronizedSet(new HashSet<>());
         this.updateLastLoadedTime();
+        this.notified = true;
     }
 
     public CChunk(
@@ -88,6 +90,7 @@ public class CChunk implements CustomCropsChunk {
 
     @Override
     public void notifyOfflineUpdates() {
+        this.notified = true;
         long current = System.currentTimeMillis();
         int offlineTimeInSeconds = (int) (current - this.lastLoadedTime) / 1000;
         CustomCropsPlugin.get().debug(chunkPos.toString() + " Offline seconds: " + offlineTimeInSeconds + "s.");
@@ -596,8 +599,14 @@ public class CChunk implements CustomCropsChunk {
     }
 
     @Override
+    public void resetUnloadedSeconds() {
+        this.unloadedSeconds = 0;
+        this.notified = false;
+    }
+
+    @Override
     public boolean canPrune() {
-        return loadedSections.size() == 0;
+        return loadedSections.isEmpty();
     }
 
     public PriorityQueue<TickTask> getQueue() {
@@ -606,5 +615,10 @@ public class CChunk implements CustomCropsChunk {
 
     public Set<BlockPos> getTickedBlocks() {
         return tickedBlocks;
+    }
+
+    @Override
+    public boolean isOfflineTaskNotified() {
+        return notified;
     }
 }

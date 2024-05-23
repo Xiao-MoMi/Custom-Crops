@@ -39,12 +39,16 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
+import org.bukkit.event.world.ChunkEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
+import org.bukkit.event.world.EntitiesLoadEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 public class WorldManagerImpl implements WorldManager, Listener {
 
@@ -517,9 +521,12 @@ public class WorldManagerImpl implements WorldManager, Listener {
         }
 
         CustomCropsChunk chunk = optionalChunk.get();
+
         // load the entities if not loaded
         bukkitChunk.getEntities();
-        chunk.notifyOfflineUpdates();
+        if (bukkitChunk.isEntitiesLoaded()) {
+            chunk.notifyOfflineUpdates();
+        }
     }
 
     @Override
@@ -542,6 +549,30 @@ public class WorldManagerImpl implements WorldManager, Listener {
     @EventHandler
     public void onChunkUnLoad(ChunkUnloadEvent event) {
         handleChunkUnload(event.getChunk());
+    }
+
+    @EventHandler
+    public void onEntitiesLoad(EntitiesLoadEvent event) {
+
+        Chunk bukkitChunk = event.getChunk();
+        Optional<CustomCropsWorld> optional = getCustomCropsWorld(bukkitChunk.getWorld());
+        if (optional.isEmpty())
+            return;
+
+        CustomCropsWorld customCropsWorld = optional.get();
+        // offline grow part
+        if (!customCropsWorld.getWorldSetting().isOfflineTick()) return;
+
+        ChunkPos chunkPos = ChunkPos.getByBukkitChunk(bukkitChunk);
+
+        Optional<CustomCropsChunk> optionalChunk = customCropsWorld.getLoadedChunkAt(chunkPos);
+        if (optionalChunk.isEmpty()) {
+            return;
+        }
+
+        if (!optionalChunk.get().isOfflineTaskNotified()) {
+            optionalChunk.get().notifyOfflineUpdates();
+        }
     }
 
     @Override

@@ -331,10 +331,14 @@ public interface CustomCropsChunk {
     @Nullable
     CustomCropsSection getSection(int sectionID);
 
+    void resetUnloadedSeconds();
+
     /**
      * If the chunk can be pruned
      *
      * @return can be pruned or not
      */
     boolean canPrune();
+
+    boolean isOfflineTaskNotified();
 }

@@ -48,6 +48,7 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.World;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.event.world.WorldSaveEvent;
 import org.bukkit.event.world.WorldUnloadEvent;
@@ -158,7 +159,7 @@ public class BukkitWorldAdaptor extends AbstractWorldAdaptor {
         CustomCropsChunk lazyChunk = cWorld.removeLazyChunkAt(chunkPos);
         if (lazyChunk != null) {
             CChunk cChunk = (CChunk) lazyChunk;
-            cChunk.setUnloadedSeconds(0);
+            cChunk.resetUnloadedSeconds();
             cWorld.loadChunk(cChunk);
             long time2 = System.currentTimeMillis();
             CustomCropsPlugin.get().debug("Took " + (time2-time1) + "ms to load chunk " + chunkPos + " from lazy chunks");
@@ -264,14 +265,14 @@ public class BukkitWorldAdaptor extends AbstractWorldAdaptor {
         }
     }
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     public void onWorldLoad(WorldLoadEvent event) {
         if (worldManager.isMechanicEnabled(event.getWorld())) {
             worldManager.loadWorld(event.getWorld());
         }
     }
 
-    @EventHandler (ignoreCancelled = true)
+    @EventHandler (ignoreCancelled = true, priority = EventPriority.HIGH)
     public void onWorldUnload(WorldUnloadEvent event) {
         if (worldManager.isMechanicEnabled(event.getWorld()))
             worldManager.unloadWorld(event.getWorld());
