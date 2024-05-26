@@ -56,7 +56,7 @@ public class CommandManager implements Initable {
         if (!CommandAPI.isLoaded())
             CommandAPI.onLoad(new CommandAPIBukkitConfig(plugin).silentLogs(true));
         new CommandAPICommand("customcrops")
-                .withPermission(CommandPermission.OP)
+                .withPermission("customcrops.admin")
                 .withAliases("ccrops")
                 .withSubcommands(
                         getReloadCommand(),
