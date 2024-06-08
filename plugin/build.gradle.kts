@@ -73,6 +73,7 @@ tasks {
 		relocate ("dev.dejvokep.boostedyaml", "net.momirealms.customcrops.libraries.boostedyaml")
 		relocate ("net.momirealms.biomeapi", "net.momirealms.customcrops.libraries.biomeapi")
 		relocate ("net.momirealms.antigrieflib", "net.momirealms.customcrops.libraries.antigrieflib")
+		relocate ("net.objecthunter.exp4j", "net.momirealms.customcrops.libraries.exp4j")
     }
 }
 

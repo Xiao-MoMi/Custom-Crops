@@ -1810,7 +1810,7 @@ public class ItemManagerImpl implements ItemManager {
     @SuppressWarnings("DuplicatedCode")
     private void loadCrop(String key, ConfigurationSection section) {
         ItemCarrier itemCarrier = ItemCarrier.valueOf(section.getString("type").toUpperCase(Locale.ENGLISH));
-        if (itemCarrier != ItemCarrier.TRIPWIRE && itemCarrier != ItemCarrier.ITEM_DISPLAY && itemCarrier != ItemCarrier.ITEM_FRAME) {
+        if (itemCarrier != ItemCarrier.TRIPWIRE && itemCarrier != ItemCarrier.ITEM_DISPLAY && itemCarrier != ItemCarrier.ITEM_FRAME && itemCarrier != ItemCarrier.NOTE_BLOCK) {
             LogUtils.warn("Unsupported crop type: " + itemCarrier.name());
             return;
         }
