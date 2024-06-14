@@ -43,7 +43,7 @@ public class TempFakeItem {
         SimpleLocation simpleLocation = SimpleLocation.of(location);
         ArrayList<Player> viewers = new ArrayList<>();
         if (viewer == null)
-            for (Player player : Bukkit.getOnlinePlayers()) {
+            for (Player player : location.getWorld().getPlayers()) {
                 if (simpleLocation.isNear(SimpleLocation.of(player.getLocation()), 48)) {
                     viewers.add(player);
                 }
