@@ -17,7 +17,6 @@
 
 package net.momirealms.customcrops.mechanic.requirement;
 
-import net.momirealms.biomeapi.BiomeAPI;
 import net.momirealms.customcrops.api.CustomCropsPlugin;
 import net.momirealms.customcrops.api.common.Pair;
 import net.momirealms.customcrops.api.integration.LevelInterface;
@@ -39,6 +38,7 @@ import net.momirealms.customcrops.compatibility.VaultHook;
 import net.momirealms.customcrops.compatibility.papi.ParseUtils;
 import net.momirealms.customcrops.util.ClassUtils;
 import net.momirealms.customcrops.util.ConfigUtils;
+import net.momirealms.sparrow.heart.SparrowHeart;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -368,7 +368,7 @@ public class RequirementManagerImpl implements RequirementManager {
         registerRequirement("biome", (args, actions, advanced) -> {
             HashSet<String> biomes = new HashSet<>(ConfigUtils.stringListArgs(args));
             return state -> {
-                String currentBiome = BiomeAPI.getBiomeAt(state.getLocation());
+                String currentBiome = SparrowHeart.getInstance().getBiomeResourceLocation(state.getLocation());
                     if (biomes.contains(currentBiome))
                         return true;
                 if (advanced) triggerActions(actions, state);
@@ -378,7 +378,7 @@ public class RequirementManagerImpl implements RequirementManager {
         registerRequirement("!biome", (args, actions, advanced) -> {
             HashSet<String> biomes = new HashSet<>(ConfigUtils.stringListArgs(args));
             return state -> {
-                String currentBiome = BiomeAPI.getBiomeAt(state.getLocation());
+                String currentBiome = SparrowHeart.getInstance().getBiomeResourceLocation(state.getLocation());
                 if (!biomes.contains(currentBiome))
                     return true;
                 if (advanced) triggerActions(actions, state);

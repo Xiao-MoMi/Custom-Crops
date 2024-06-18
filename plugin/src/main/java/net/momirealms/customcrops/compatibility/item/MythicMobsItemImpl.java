@@ -17,7 +17,6 @@
 
 package net.momirealms.customcrops.compatibility.item;
 
-import de.tr7zw.changeme.nbtapi.NBTItem;
 import io.lumine.mythic.bukkit.MythicBukkit;
 import net.momirealms.customcrops.api.integration.ItemLibrary;
 import org.bukkit.entity.Player;
@@ -46,7 +45,6 @@ public class MythicMobsItemImpl implements ItemLibrary {
 
     @Override
     public String getItemID(ItemStack itemStack) {
-        NBTItem nbtItem = new NBTItem(itemStack);
-        return nbtItem.hasTag("MYTHIC_TYPE") ? nbtItem.getString("MYTHIC_TYPE") : null;
+        return mythicBukkit.getItemManager().getMythicTypeFromItem(itemStack);
     }
 }

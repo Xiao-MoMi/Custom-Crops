@@ -17,7 +17,6 @@
 
 package net.momirealms.customcrops.mechanic.condition;
 
-import net.momirealms.biomeapi.BiomeAPI;
 import net.momirealms.customcrops.api.CustomCropsPlugin;
 import net.momirealms.customcrops.api.common.Pair;
 import net.momirealms.customcrops.api.manager.ConditionManager;
@@ -36,6 +35,7 @@ import net.momirealms.customcrops.mechanic.misc.CrowAttackAnimation;
 import net.momirealms.customcrops.mechanic.world.block.MemoryCrop;
 import net.momirealms.customcrops.util.ClassUtils;
 import net.momirealms.customcrops.util.ConfigUtils;
+import net.momirealms.sparrow.heart.SparrowHeart;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.type.Farmland;
@@ -203,14 +203,14 @@ public class ConditionManagerImpl implements ConditionManager {
         registerCondition("biome", (args) -> {
             HashSet<String> biomes = new HashSet<>(ConfigUtils.stringListArgs(args));
             return (block, offline) -> {
-                String currentBiome = BiomeAPI.getBiomeAt(block.getLocation().getBukkitLocation());
+                String currentBiome = SparrowHeart.getInstance().getBiomeResourceLocation(block.getLocation().getBukkitLocation());
                 return biomes.contains(currentBiome);
             };
         });
         registerCondition("!biome", (args) -> {
             HashSet<String> biomes = new HashSet<>(ConfigUtils.stringListArgs(args));
             return (block, offline) -> {
-                String currentBiome = BiomeAPI.getBiomeAt(block.getLocation().getBukkitLocation());
+                String currentBiome = SparrowHeart.getInstance().getBiomeResourceLocation(block.getLocation().getBukkitLocation());
                 return !biomes.contains(currentBiome);
             };
         });

@@ -65,7 +65,9 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.ExperienceOrb;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerItemDamageEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
@@ -827,10 +829,18 @@ public class ActionManagerImpl implements ActionManager {
             return state -> {
                 if (Math.random() > chance) return;
                 ItemStack itemStack = state.getItemInHand();
+
                 if (amount > 0) {
                     ItemUtils.increaseDurability(itemStack, amount);
                 } else {
-                    if (state.getPlayer().getGameMode() == GameMode.CREATIVE) return;
+                    if (state.getPlayer().getGameMode() == GameMode.CREATIVE || itemStack.getItemMeta().isUnbreakable()) return;
+
+                    ItemMeta previousMeta = itemStack.getItemMeta().clone();
+                    PlayerItemDamageEvent itemDamageEvent = new PlayerItemDamageEvent(state.getPlayer(), itemStack, amount);
+                    Bukkit.getPluginManager().callEvent(itemDamageEvent);
+                    if (!itemStack.getItemMeta().equals(previousMeta) || itemDamageEvent.isCancelled()) {
+                        return;
+                    }
                     ItemUtils.decreaseDurability(state.getPlayer(), itemStack, -amount);
                 }
             };

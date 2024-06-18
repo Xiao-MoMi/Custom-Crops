@@ -32,55 +32,20 @@ public class VersionManagerImpl extends VersionManager {
 
     private final CustomCropsPlugin plugin;
     private final String pluginVersion;
-    private final String serverVersion;
     private boolean foliaScheduler;
     private final boolean isSpigot;
-    private final boolean isNewerThan1_19_R2;
-    private final boolean isNewerThan1_19_R3;
-    private final boolean isNewerThan1_20;
-    private final boolean isNewerThan1_20_R2;
-    private final boolean isNewerThan1_19;
-    private final boolean isNewerThan1_18;
     private boolean isMojmap;
+
+    private final float mcVersion;
 
     @SuppressWarnings("deprecation")
     public VersionManagerImpl(CustomCropsPlugin plugin) {
         this.plugin = plugin;
         this.isSpigot = plugin.getServer().getName().equals("CraftBukkit");
         this.pluginVersion = plugin.getDescription().getVersion();
-        this.serverVersion = plugin.getServer().getClass().getPackage().getName().split("\\.")[3];
-        String[] split = serverVersion.split("_");
-        int main_ver = Integer.parseInt(split[1]);
 
-        if (main_ver >= 20) {
-            isNewerThan1_20_R2 = Integer.parseInt(split[2].substring(1)) >= 2;
-            isNewerThan1_19_R2 = true;
-            isNewerThan1_19_R3 = true;
-            isNewerThan1_20 = true;
-            isNewerThan1_19 = true;
-            isNewerThan1_18 = true;
-        } else if (main_ver == 19) {
-            isNewerThan1_19_R2 = Integer.parseInt(split[2].substring(1)) >= 2;
-            isNewerThan1_19_R3 = Integer.parseInt(split[2].substring(1)) >= 3;
-            isNewerThan1_20 = false;
-            isNewerThan1_20_R2 = false;
-            isNewerThan1_19 = true;
-            isNewerThan1_18 = true;
-        } else if (main_ver == 18) {
-            isNewerThan1_19_R2 = false;
-            isNewerThan1_19_R3 = false;
-            isNewerThan1_20_R2 = false;
-            isNewerThan1_20 = false;
-            isNewerThan1_19 = false;
-            isNewerThan1_18 = true;
-        } else {
-            isNewerThan1_19_R2 = false;
-            isNewerThan1_19_R3 = false;
-            isNewerThan1_20_R2 = false;
-            isNewerThan1_20 = false;
-            isNewerThan1_19 = false;
-            isNewerThan1_18 = false;
-        }
+        String[] split = plugin.getServerVersion().split("\\.");
+        this.mcVersion = Float.parseFloat(split[1] + "." + split[2]);
 
         try {
             Class.forName("io.papermc.paper.threadedregions.RegionizedServer");
@@ -99,11 +64,6 @@ public class VersionManagerImpl extends VersionManager {
     }
 
     @Override
-    public boolean isVersionNewerThan1_20_R2() {
-        return isNewerThan1_20_R2;
-    }
-
-    @Override
     public boolean hasRegionScheduler() {
         return foliaScheduler;
     }
@@ -114,38 +74,38 @@ public class VersionManagerImpl extends VersionManager {
     }
 
     @Override
-    public String getServerVersion() {
-        return serverVersion;
-    }
-
-    @Override
     public boolean isSpigot() {
         return isSpigot;
     }
 
     @Override
     public boolean isVersionNewerThan1_19_R3() {
-        return isNewerThan1_19_R3;
+        return mcVersion >= 19.4;
+    }
+
+    @Override
+    public boolean isVersionNewerThan1_20_R2() {
+        return mcVersion >= 20.2;
     }
 
     @Override
     public boolean isVersionNewerThan1_19() {
-        return isNewerThan1_19;
+        return mcVersion >= 19;
     }
 
     @Override
     public boolean isVersionNewerThan1_19_R2() {
-        return isNewerThan1_19_R2;
+        return mcVersion >= 19.3;
     }
 
     @Override
     public boolean isVersionNewerThan1_20() {
-        return isNewerThan1_20;
+        return mcVersion >= 20;
     }
 
     @Override
     public boolean isVersionNewerThan1_18() {
-        return isNewerThan1_18;
+        return mcVersion >= 18;
     }
 
     @Override

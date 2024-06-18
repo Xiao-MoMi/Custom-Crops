@@ -53,13 +53,15 @@ dependencies {
     implementation(project(":legacy-api"))
 
     implementation("net.kyori:adventure-api:4.17.0")
-    implementation("net.kyori:adventure-platform-bukkit:4.3.2")
+    implementation("net.kyori:adventure-platform-bukkit:4.3.3")
     implementation("net.kyori:adventure-text-minimessage:4.17.0")
     implementation("net.kyori:adventure-text-serializer-legacy:4.17.0")
-    implementation("de.tr7zw:item-nbt-api:2.12.4")
     implementation("com.github.Xiao-MoMi:AntiGriefLib:0.11")
-    implementation("com.github.Xiao-MoMi:BiomeAPI:0.6")
+    implementation("com.github.Xiao-MoMi:Sparrow-Heart:0.16")
     implementation("com.flowpowered:flow-nbt:2.0.2")
+    implementation("com.saicone.rtag:rtag:1.5.4")
+    implementation("com.saicone.rtag:rtag-item:1.5.4")
+    compileOnly("de.tr7zw:item-nbt-api-plugin:2.13.0")
     implementation("com.github.luben:zstd-jni:1.5.6-2")
 }
 
@@ -71,9 +73,10 @@ tasks {
 		relocate ("org.objenesis", "net.momirealms.customcrops.libraries.objenesis")
 		relocate ("org.bstats", "net.momirealms.customcrops.libraries.bstats")
 		relocate ("dev.dejvokep.boostedyaml", "net.momirealms.customcrops.libraries.boostedyaml")
-		relocate ("net.momirealms.biomeapi", "net.momirealms.customcrops.libraries.biomeapi")
+        relocate ("net.momirealms.sparrow.heart", "net.momirealms.customcrops.libraries.sparrow")
 		relocate ("net.momirealms.antigrieflib", "net.momirealms.customcrops.libraries.antigrieflib")
 		relocate ("net.objecthunter.exp4j", "net.momirealms.customcrops.libraries.exp4j")
+        relocate ("com.saicone.rtag", "net.momirealms.customcrops.libraries.rtag")
     }
 }
 

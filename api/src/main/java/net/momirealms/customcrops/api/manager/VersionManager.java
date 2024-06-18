@@ -69,12 +69,6 @@ public abstract class VersionManager {
         return instance.getPluginVersion();
     }
 
-    public static String serverVersion() {
-        return instance.getServerVersion();
-    }
-
-    public abstract String getServerVersion();
-
     public static boolean spigot() {
         return instance.isSpigot();
     }

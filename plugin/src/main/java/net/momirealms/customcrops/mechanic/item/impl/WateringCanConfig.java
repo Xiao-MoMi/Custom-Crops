@@ -17,8 +17,7 @@
 
 package net.momirealms.customcrops.mechanic.item.impl;
 
-import de.tr7zw.changeme.nbtapi.NBTCompound;
-import de.tr7zw.changeme.nbtapi.NBTItem;
+import com.saicone.rtag.item.ItemObject;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ScoreComponent;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
@@ -32,16 +31,15 @@ import net.momirealms.customcrops.api.mechanic.item.water.PositiveFillMethod;
 import net.momirealms.customcrops.api.mechanic.misc.image.WaterBar;
 import net.momirealms.customcrops.api.mechanic.requirement.Requirement;
 import net.momirealms.customcrops.mechanic.item.AbstractEventItem;
+import net.momirealms.customcrops.mechanic.item.factory.BukkitItemFactory;
+import net.momirealms.customcrops.mechanic.item.factory.Item;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class WateringCanConfig extends AbstractEventItem implements WateringCan {
 
@@ -134,12 +132,19 @@ public class WateringCanConfig extends AbstractEventItem implements WateringCan 
 
     @Override
     public void updateItem(Player player, ItemStack itemStack, int water, Map<String, String> args) {
-        int maxDurability = itemStack.getType().getMaxDurability();
-        NBTItem nbtItem = new NBTItem(itemStack);
+        Item<ItemStack> item = BukkitItemFactory.getInstance().wrap(itemStack);
+        int maxDurability = item.maxDamage().orElse((int) itemStack.getType().getMaxDurability());
+
         if (isInfinite()) water = storage;
+        item.setTag(water, "WaterAmount");
+        if (maxDurability != 0) {
+            item.setTag((int) (maxDurability * (((double) storage - water) / storage)), "Damage");
+        }
+        if (appearanceMap.containsKey(water)) {
+            item.customModelData(appearanceMap.get(water));
+        }
         if (hasDynamicLore()) {
-            NBTCompound displayCompound = nbtItem.getOrCreateCompound("display");
-            List<String> lore = displayCompound.getStringList("Lore");
+            List<String> lore = new ArrayList<>(item.lore().orElse(List.of()));
             if (ConfigManager.protectLore()) {
                 lore.removeIf(line -> {
                     Component component = GsonComponentSerializer.gson().deserialize(line);
@@ -157,24 +162,17 @@ public class WateringCanConfig extends AbstractEventItem implements WateringCan 
                 ));
                 lore.add(GsonComponentSerializer.gson().serialize(builder.build()));
             }
+            item.lore(lore);
         }
-
-        nbtItem.setInteger("WaterAmount", water);
-        if (maxDurability != 0) {
-            nbtItem.setInteger("Damage", (int) (maxDurability * (((double) storage - water) / storage)));
-        }
-        if (appearanceMap.containsKey(water)) {
-            nbtItem.setInteger("CustomModelData", appearanceMap.get(water));
-        }
-        itemStack.setItemMeta(nbtItem.getItem().getItemMeta());
+        itemStack.setItemMeta(item.loadCopy().getItemMeta());
     }
 
     @Override
     public int getCurrentWater(ItemStack itemStack) {
         if (itemStack == null || itemStack.getType() == Material.AIR)
             return 0;
-        NBTItem nbtItem = new NBTItem(itemStack);
-        return nbtItem.getInteger("WaterAmount");
+        Item<ItemStack> item = BukkitItemFactory.getInstance().wrap(itemStack);
+        return (int) item.getTag("WaterAmount").orElse(0);
     }
 
     @Override

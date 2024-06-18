@@ -60,13 +60,20 @@ public enum Dependency {
             null,
             "jar-relocator"
     ),
-
     COMMAND_API(
             "dev{}jorel",
             "commandapi-bukkit-shade",
-            "9.3.0",
+            "9.5.0",
             null,
             "commandapi-bukkit",
+            Relocation.of("commandapi", "dev{}jorel{}commandapi")
+    ),
+    COMMAND_API_MOJMAP(
+            "dev{}jorel",
+            "commandapi-bukkit-shade-mojang-mapped",
+            "9.5.0",
+            null,
+            "commandapi-bukkit-mojang-mapped",
             Relocation.of("commandapi", "dev{}jorel{}commandapi")
     ),
     BOOSTED_YAML(

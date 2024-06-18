@@ -17,7 +17,7 @@
 
 package net.momirealms.customcrops.compatibility.item;
 
-import de.tr7zw.changeme.nbtapi.NBTItem;
+import io.lumine.mythic.lib.api.item.NBTItem;
 import net.Indyuce.mmoitems.MMOItems;
 import net.Indyuce.mmoitems.api.Type;
 import net.Indyuce.mmoitems.api.item.mmoitem.MMOItem;
@@ -44,7 +44,7 @@ public class MMOItemsItemImpl implements ItemLibrary {
 
     @Override
     public String getItemID(ItemStack itemStack) {
-        NBTItem nbtItem = new NBTItem(itemStack);
+        NBTItem nbtItem = NBTItem.get(itemStack);
         if (!nbtItem.hasTag("MMOITEMS_ITEM_ID")) return null;
         return nbtItem.getString("MMOITEMS_ITEM_TYPE") + ":" + nbtItem.getString("MMOITEMS_ITEM_ID");
     }

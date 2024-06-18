@@ -33,11 +33,11 @@ import net.momirealms.customcrops.manager.*;
 import net.momirealms.customcrops.mechanic.action.ActionManagerImpl;
 import net.momirealms.customcrops.mechanic.condition.ConditionManagerImpl;
 import net.momirealms.customcrops.mechanic.item.ItemManagerImpl;
+import net.momirealms.customcrops.mechanic.item.factory.BukkitItemFactory;
 import net.momirealms.customcrops.mechanic.misc.migrator.Migration;
 import net.momirealms.customcrops.mechanic.requirement.RequirementManagerImpl;
 import net.momirealms.customcrops.mechanic.world.WorldManagerImpl;
 import net.momirealms.customcrops.scheduler.SchedulerImpl;
-import net.momirealms.customcrops.util.NBTUtils;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 
@@ -53,13 +53,14 @@ public class CustomCropsPluginImpl extends CustomCropsPlugin {
 
     @Override
     public void onLoad() {
+        this.versionManager = new VersionManagerImpl(this);
         this.dependencyManager = new DependencyManagerImpl(this, new ReflectionClassPathAppender(this.getClassLoader()));
         this.dependencyManager.loadDependencies(new ArrayList<>(
                 List.of(
                         Dependency.GSON,
                         Dependency.SLF4J_API,
                         Dependency.SLF4J_SIMPLE,
-                        Dependency.COMMAND_API,
+                        versionManager.isMojmap() ? Dependency.COMMAND_API_MOJMAP : Dependency.COMMAND_API,
                         Dependency.BOOSTED_YAML,
                         Dependency.BSTATS_BASE,
                         Dependency.BSTATS_BUKKIT
@@ -70,7 +71,6 @@ public class CustomCropsPluginImpl extends CustomCropsPlugin {
     @Override
     public void onEnable() {
         instance = this;
-        this.versionManager = new VersionManagerImpl(this);
         this.adventure = new AdventureManagerImpl(this);
         this.scheduler = new SchedulerImpl(this);
         this.configManager = new ConfigManagerImpl(this);
@@ -93,7 +93,7 @@ public class CustomCropsPluginImpl extends CustomCropsPlugin {
         this.hologramManager = new HologramManager(this);
         this.commandManager.init();
         this.integrationManager.init();
-        NBTUtils.disableNBTAPILogs();
+        BukkitItemFactory.create(this);
         Migration.tryUpdating();
         this.reload();
         if (ConfigManager.metrics()) new Metrics(this, 16593);
@@ -163,5 +163,10 @@ public class CustomCropsPluginImpl extends CustomCropsPlugin {
     @Override
     public boolean doesHookedPluginExist(String plugin) {
         return Bukkit.getPluginManager().getPlugin(plugin) != null;
+    }
+
+    @Override
+    public String getServerVersion() {
+        return Bukkit.getServer().getBukkitVersion().split("-")[0];
     }
 }
