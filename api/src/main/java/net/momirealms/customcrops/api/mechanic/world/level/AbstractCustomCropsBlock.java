@@ -83,6 +83,9 @@ public class AbstractCustomCropsBlock implements DataBlock {
      * @return can be ticked or not
      */
     public boolean canTick(int interval) {
+        if (interval <= 0) {
+            return false;
+        }
         if (interval == 1) {
             return true;
         }

@@ -195,7 +195,7 @@ public abstract class AbstractCustomListener implements Listener {
         Sprinkler sprinkler = this.itemManager.getSprinklerBy3DItemID(itemID);
         if (sprinkler != null) {
             ItemStack newItem = this.itemManager.getItemStack(null, sprinkler.get2DItemID());
-            if (newItem != null) {
+            if (newItem != null && newItem.getType() != Material.AIR) {
                 newItem.setAmount(itemStack.getAmount());
                 item.setItemStack(newItem);
             }
@@ -205,7 +205,7 @@ public abstract class AbstractCustomListener implements Listener {
         Pot pot = this.itemManager.getPotByBlockID(itemID);
         if (pot != null) {
             ItemStack newItem = this.itemManager.getItemStack(null, pot.getDryItem());
-            if (newItem != null) {
+            if (newItem != null && newItem.getType() != Material.AIR) {
                 newItem.setAmount(itemStack.getAmount());
                 item.setItemStack(newItem);
             }

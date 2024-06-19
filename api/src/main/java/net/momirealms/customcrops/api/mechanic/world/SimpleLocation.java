@@ -55,7 +55,7 @@ public class SimpleLocation {
     }
 
     public ChunkPos getChunkPos() {
-        return new ChunkPos(x >> 4, z >> 4);
+        return new ChunkPos((int) Math.floor((double) getX() / 16), (int) Math.floor((double) getZ() / 16));
     }
 
     public SimpleLocation add(int x, int y, int z) {

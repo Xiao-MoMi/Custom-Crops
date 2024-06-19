@@ -60,6 +60,8 @@ import net.momirealms.customcrops.mechanic.world.block.MemoryCrop;
 import net.momirealms.customcrops.util.ClassUtils;
 import net.momirealms.customcrops.util.ConfigUtils;
 import net.momirealms.customcrops.util.ItemUtils;
+import net.momirealms.sparrow.heart.SparrowHeart;
+import net.momirealms.sparrow.heart.argument.HandSlot;
 import org.bukkit.*;
 import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.ConfigurationSection;
@@ -434,10 +436,7 @@ public class ActionManagerImpl implements ActionManager {
             return state -> {
                 if (Math.random() > chance) return;
                 if (state.getPlayer() == null) return;
-                PacketContainer animationPacket = new PacketContainer(PacketType.Play.Server.ANIMATION);
-                animationPacket.getIntegers().write(0, state.getPlayer().getEntityId());
-                animationPacket.getIntegers().write(1, arg ? 0 : 3);
-                PacketManager.getInstance().send(state.getPlayer(), animationPacket);
+                SparrowHeart.getInstance().swingHand(state.getPlayer(), arg ? HandSlot.MAIN : HandSlot.OFF);
             };
         });
     }

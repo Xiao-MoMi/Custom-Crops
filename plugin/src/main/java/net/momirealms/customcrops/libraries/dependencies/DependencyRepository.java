@@ -47,8 +47,8 @@ public enum DependencyRepository {
         @Override
         protected URLConnection openConnection(Dependency dependency) throws IOException {
             URLConnection connection = super.openConnection(dependency);
-            connection.setConnectTimeout((int) TimeUnit.SECONDS.toMillis(5));
-            connection.setReadTimeout((int) TimeUnit.SECONDS.toMillis(5));
+            connection.setConnectTimeout(5000);
+            connection.setReadTimeout(5000);
             return connection;
         }
     },

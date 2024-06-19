@@ -243,6 +243,10 @@ public class BukkitWorldAdaptor extends AbstractWorldAdaptor {
     @Override
     public void saveChunkToCachedRegion(CustomCropsChunk customCropsChunk) {
         CustomCropsRegion customCropsRegion = customCropsChunk.getCustomCropsRegion();
+        if (customCropsRegion == null) {
+            LogUtils.severe(customCropsChunk.getChunkPos().toString() + " unloaded before chunk saving");
+            return;
+        }
         SerializableChunk serializableChunk = toSerializableChunk((CChunk) customCropsChunk);
         if (serializableChunk.canPrune()) {
             customCropsRegion.removeChunk(customCropsChunk.getChunkPos());
