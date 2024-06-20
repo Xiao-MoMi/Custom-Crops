@@ -217,23 +217,55 @@ public class MemoryPot extends AbstractCustomCropsBlock implements WorldPot {
         }
 
         int water = getWater();
-        if (water > 0) {
-            if (--water <= 0) {
-                loseWater = true;
+
+        SimpleLocation location = getLocation();
+        Location bukkitLocation = location.getBukkitLocation();
+        if (bukkitLocation == null) return;
+        World world = bukkitLocation.getWorld();
+
+        outer: {
+            if (water > 0) {
+                if (pot.isRainDropAccepted()) {
+                    if (world.hasStorm() || (!world.isClearWeather() && !world.isThundering())) {
+                        double temperature = world.getTemperature(location.getX(), location.getY(), location.getZ());
+                        if (temperature > 0.15 && temperature < 0.85) {
+                            Block highest = world.getHighestBlockAt(location.getX(), location.getZ());
+                            if (highest.getLocation().getY() == location.getY()) {
+                                break outer;
+                            }
+                        }
+                    }
+                }
+
+                if (pot.isNearbyWaterAccepted()) {
+                    for (int i = -4; i <= 4; i++) {
+                        for (int j = -4; j <= 4; j++) {
+                            for (int k : new int[]{0, 1}) {
+                                Block block = bukkitLocation.clone().add(i,k,j).getBlock();
+                                if (block.getType() == Material.WATER || (block.getBlockData() instanceof Waterlogged waterlogged && waterlogged.isWaterlogged())) {
+                                    break outer;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if (--water <= 0) {
+                    loseWater = true;
+                }
+                setWater(water);
             }
-            setWater(water);
         }
 
         if (loseFertilizer || loseWater) {
-            Location location = getLocation().getBukkitLocation();
             CustomCropsPlugin.get().getScheduler().runTaskSync(() ->
                     CustomCropsPlugin.get().getItemManager()
                             .updatePotState(
-                                    location,
+                                    bukkitLocation,
                                     pot,
                                     getWater() > 0,
                                     getFertilizer()
-                            ), location
+                            ), bukkitLocation
             );
         }
     }

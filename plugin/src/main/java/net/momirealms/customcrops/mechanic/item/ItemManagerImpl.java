@@ -2656,8 +2656,13 @@ public class ItemManagerImpl implements ItemManager {
 
     @Override
     public void updatePotState(Location location, Pot pot, boolean hasWater, Fertilizer fertilizer) {
+        Block block = location.getBlock();
+        Pot currentPot = getPotByBlock(block);
+        if (currentPot != pot) {
+            plugin.getWorldManager().removePotAt(SimpleLocation.of(location));
+            return;
+        }
         if (pot.isVanillaBlock()) {
-            Block block = location.getBlock();
             if (block.getBlockData() instanceof Farmland farmland) {
                 farmland.setMoisture(hasWater ? 7 : 0);
                 block.setBlockData(farmland);

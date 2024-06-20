@@ -126,7 +126,7 @@ public interface Pot extends KeyItem {
     String getBlockState(boolean water, FertilizerType type);
 
     /**
-     * Is the pot a vanilla blocks
+     * Is the pot a vanilla block
      */
     boolean isVanillaBlock();
 
