@@ -200,7 +200,7 @@ public class BukkitWorldAdaptor extends AbstractWorldAdaptor {
         // load region from local files
         try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(data))) {
             DataInputStream dataStream = new DataInputStream(bis);
-            CRegion region = deserializeRegion(cWorld, dataStream);
+            CRegion region = deserializeRegion(cWorld, dataStream, regionPos);
             dataStream.close();
             cWorld.loadRegion(region);
             byte[] bytes = region.getChunkBytes(chunkPos);
@@ -348,7 +348,7 @@ public class BukkitWorldAdaptor extends AbstractWorldAdaptor {
         return outByteStream.toByteArray();
     }
 
-    public CRegion deserializeRegion(CWorld world, DataInputStream dataStream) throws IOException {
+    public CRegion deserializeRegion(CWorld world, DataInputStream dataStream, RegionPos pos) throws IOException {
         int regionVersion = dataStream.readByte();
         int regionX = dataStream.readInt();
         int regionZ = dataStream.readInt();
@@ -363,7 +363,7 @@ public class BukkitWorldAdaptor extends AbstractWorldAdaptor {
             dataStream.read(chunkData);
             map.put(chunkPos, chunkData);
         }
-        return new CRegion(world, regionPos, map);
+        return new CRegion(world, pos, map);
     }
 
     public byte[] serialize(SerializableChunk serializableChunk) {
