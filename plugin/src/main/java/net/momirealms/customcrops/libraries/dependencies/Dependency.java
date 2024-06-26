@@ -63,7 +63,7 @@ public enum Dependency {
     COMMAND_API(
             "dev{}jorel",
             "commandapi-bukkit-shade",
-            "9.5.0",
+            "9.5.1",
             null,
             "commandapi-bukkit",
             Relocation.of("commandapi", "dev{}jorel{}commandapi")
@@ -71,7 +71,7 @@ public enum Dependency {
     COMMAND_API_MOJMAP(
             "dev{}jorel",
             "commandapi-bukkit-shade-mojang-mapped",
-            "9.5.0",
+            "9.5.1",
             null,
             "commandapi-bukkit-mojang-mapped",
             Relocation.of("commandapi", "dev{}jorel{}commandapi")
@@ -134,6 +134,14 @@ public enum Dependency {
             "2.10.1",
             null,
             "gson"
+    ),
+    EXP4J(
+            "net{}objecthunter",
+            "exp4j",
+            "0.4.8",
+            null,
+            "exp4j",
+            Relocation.of("exp4j", "net{}objecthunter{}exp4j")
     );
 
     private final String mavenRepoPath;

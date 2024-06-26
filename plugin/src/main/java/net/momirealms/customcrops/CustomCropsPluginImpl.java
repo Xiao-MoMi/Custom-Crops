@@ -58,6 +58,7 @@ public class CustomCropsPluginImpl extends CustomCropsPlugin {
         this.dependencyManager.loadDependencies(new ArrayList<>(
                 List.of(
                         Dependency.GSON,
+                        Dependency.EXP4J,
                         Dependency.SLF4J_API,
                         Dependency.SLF4J_SIMPLE,
                         versionManager.isMojmap() ? Dependency.COMMAND_API_MOJMAP : Dependency.COMMAND_API,
