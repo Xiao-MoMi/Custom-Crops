@@ -25,7 +25,7 @@ dependencies {
 
     compileOnly("net.Indyuce:MMOCore-API:1.12-SNAPSHOT")
     compileOnly("com.github.Archy-X:AureliumSkills:Beta1.3.23")
-    compileOnly("com.github.Zrips:Jobs:4.17.2")
+    compileOnly("com.github.Zrips:Jobs:v4.17.2")
     compileOnly("dev.aurelium:auraskills-api-bukkit:2.0.0-SNAPSHOT")
 
     // Items
