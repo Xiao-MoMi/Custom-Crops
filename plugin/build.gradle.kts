@@ -52,7 +52,7 @@ dependencies {
     implementation(project(":oraxen-j21"))
     implementation(project(":legacy-api"))
 
-    implementation(files("libs/Sparrow-Heart-0.17.jar"))
+    implementation(files("libs/Sparrow-Heart-0.19.jar"))
     implementation("net.kyori:adventure-api:4.17.0")
     implementation("net.kyori:adventure-platform-bukkit:4.3.3")
     implementation("net.kyori:adventure-text-minimessage:4.17.0")
