@@ -133,7 +133,7 @@ public class ItemManagerImpl implements ItemManager {
                     oraxenListenerConstructor.setAccessible(true);
                     this.listener = (AbstractCustomListener) oraxenListenerConstructor.newInstance(this);
                     Class<?> oraxenProviderClass = Class.forName("net.momirealms.customcrops.mechanic.item.custom.oraxen.OraxenProvider");
-                    Constructor<?> oraxenProviderConstructor = oraxenProviderClass.getDeclaredConstructor(ItemManager.class);
+                    Constructor<?> oraxenProviderConstructor = oraxenProviderClass.getDeclaredConstructor();
                     oraxenProviderConstructor.setAccessible(true);
                     this.customProvider = (CustomProvider) oraxenProviderConstructor.newInstance();
                 } catch (ReflectiveOperationException e) {
