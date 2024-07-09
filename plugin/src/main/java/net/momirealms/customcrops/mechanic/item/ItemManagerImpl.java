@@ -2660,6 +2660,9 @@ public class ItemManagerImpl implements ItemManager {
         Pot currentPot = getPotByBlock(block);
         if (currentPot != pot) {
             plugin.getWorldManager().removePotAt(SimpleLocation.of(location));
+            if (currentPot != null) {
+                plugin.getWorldManager().addPotAt(new MemoryPot(SimpleLocation.of(location), currentPot.getKey()), SimpleLocation.of(location));
+            }
             return;
         }
         if (pot.isVanillaBlock()) {
