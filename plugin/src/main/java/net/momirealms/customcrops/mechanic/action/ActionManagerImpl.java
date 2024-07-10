@@ -827,7 +827,8 @@ public class ActionManagerImpl implements ActionManager {
             return state -> {
                 if (Math.random() > chance) return;
                 ItemStack itemStack = state.getItemInHand();
-
+                if (itemStack.getItemMeta() == null)
+                    return;
                 if (amount > 0) {
                     ItemUtils.increaseDurability(itemStack, amount);
                 } else {
