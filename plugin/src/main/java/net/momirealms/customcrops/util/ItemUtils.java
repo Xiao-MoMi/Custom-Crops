@@ -85,7 +85,7 @@ public class ItemUtils {
     public static void increaseDurability(ItemStack itemStack, int amount) {
         if (itemStack == null || itemStack.getType() == Material.AIR)
             return;
-        Item<ItemStack> item = BukkitItemFactory.getInstance().wrap(itemStack);
+        Item<ItemStack> item = BukkitItemFactory.getInstance().wrap(itemStack.clone());
         int damage = Math.max(item.damage().orElse(0) - amount, 0);
         item.damage(damage);
         itemStack.setItemMeta(item.load().getItemMeta());
@@ -104,7 +104,7 @@ public class ItemUtils {
         if (Math.random() > (double) 1 / (unBreakingLevel + 1)) {
             return;
         }
-        Item<ItemStack> item = BukkitItemFactory.getInstance().wrap(itemStack);
+        Item<ItemStack> item = BukkitItemFactory.getInstance().wrap(itemStack.clone());
         int damage = item.damage().orElse(0) + amount;
         if (damage > item.maxDamage().orElse((int) itemStack.getType().getMaxDurability())) {
             itemStack.setAmount(0);

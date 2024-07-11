@@ -106,6 +106,10 @@ public class ItemsAdderProvider implements CustomProvider {
 
     @Override
     public boolean isFurniture(Entity entity) {
-        return CustomFurniture.byAlreadySpawned(entity) != null;
+        try {
+            return CustomFurniture.byAlreadySpawned(entity) != null;
+        } catch (Exception e) {
+            return false;
+        }
     }
 }

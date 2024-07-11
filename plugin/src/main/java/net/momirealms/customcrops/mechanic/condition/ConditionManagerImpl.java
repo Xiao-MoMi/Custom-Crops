@@ -97,6 +97,7 @@ public class ConditionManagerImpl implements ConditionManager {
         this.registerPotCondition();
         this.registerLightCondition();
         this.registerPointCondition();
+        this.registerWorldRequirement();
     }
 
     @Override
@@ -197,6 +198,17 @@ public class ConditionManagerImpl implements ConditionManager {
                 return EmptyCondition.instance;
             }
         }));
+    }
+
+    private void registerWorldRequirement() {
+        registerCondition("world", (args) -> {
+            HashSet<String> worlds = new HashSet<>(ConfigUtils.stringListArgs(args));
+            return (block, offline) -> worlds.contains(block.getLocation().getWorldName());
+        });
+        registerCondition("!world", (args) -> {
+            HashSet<String> worlds = new HashSet<>(ConfigUtils.stringListArgs(args));
+            return (block, offline) -> !worlds.contains(block.getLocation().getWorldName());
+        });
     }
 
     private void registerBiomeRequirement() {

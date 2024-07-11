@@ -30,6 +30,7 @@ import net.momirealms.customcrops.api.manager.MessageManager;
 import net.momirealms.customcrops.api.mechanic.item.ItemType;
 import net.momirealms.customcrops.api.mechanic.world.ChunkPos;
 import net.momirealms.customcrops.api.mechanic.world.CustomCropsBlock;
+import net.momirealms.customcrops.api.mechanic.world.SimpleLocation;
 import net.momirealms.customcrops.api.mechanic.world.level.CustomCropsChunk;
 import net.momirealms.customcrops.api.mechanic.world.level.CustomCropsSection;
 import net.momirealms.customcrops.api.mechanic.world.level.CustomCropsWorld;
@@ -37,6 +38,7 @@ import net.momirealms.customcrops.api.mechanic.world.season.Season;
 import net.momirealms.customcrops.compatibility.season.InBuiltSeason;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.generator.WorldInfo;
 
 import java.util.Locale;
@@ -88,7 +90,7 @@ public class CommandManager implements Initable {
         return new CommandAPICommand("unsafe")
                 .withSubcommands(
                         new CommandAPICommand("delete-chunk-data").executesPlayer((player, args) -> {
-                            CustomCropsPlugin.get().getWorldManager().getCustomCropsWorld(player.getWorld()).ifPresent(customCropsWorld -> {
+                            plugin.getWorldManager().getCustomCropsWorld(player.getWorld()).ifPresent(customCropsWorld -> {
                                 var optionalChunk = customCropsWorld.getLoadedChunkAt(ChunkPos.getByBukkitChunk(player.getChunk()));
                                 if (optionalChunk.isEmpty()) {
                                     AdventureManager.getInstance().sendMessageWithPrefix(player, "<white>This chunk doesn't have any data.");
@@ -97,6 +99,17 @@ public class CommandManager implements Initable {
                                 customCropsWorld.deleteChunk(ChunkPos.getByBukkitChunk(player.getChunk()));
                                 AdventureManager.getInstance().sendMessageWithPrefix(player, "<white>Done.");
                             });
+                        }),
+                        new CommandAPICommand("check-data").executesPlayer((player, args) -> {
+                            Block block = player.getTargetBlockExact(10);
+                            if (block != null) {
+                                Optional<CustomCropsBlock> customCropsBlock = plugin.getWorldManager().getBlockAt(SimpleLocation.of(block.getLocation()));
+                                if (customCropsBlock.isPresent()) {
+                                    AdventureManager.getInstance().sendMessageWithPrefix(player, customCropsBlock.get().getType() + ":" + customCropsBlock.get().getCompoundMap());
+                                    return;
+                                }
+                            }
+                            AdventureManager.getInstance().sendMessageWithPrefix(player, "Data not found");
                         })
                 );
     }
