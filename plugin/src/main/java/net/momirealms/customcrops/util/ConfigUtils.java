@@ -279,7 +279,7 @@ public class ConfigUtils {
                     FertilizerType type = switch (entry.getKey()) {
                         case "quality" -> FertilizerType.QUALITY;
                         case "yield-increase" -> FertilizerType.YIELD_INCREASE;
-                        case "variation-increase" -> FertilizerType.VARIATION;
+                        case "variation" -> FertilizerType.VARIATION;
                         case "soil-retain" -> FertilizerType.SOIL_RETAIN;
                         case "speed-grow" -> FertilizerType.SPEED_GROW;
                         default -> null;
