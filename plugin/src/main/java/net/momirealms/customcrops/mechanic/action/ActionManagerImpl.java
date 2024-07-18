@@ -59,6 +59,7 @@ import net.momirealms.customcrops.mechanic.world.block.MemoryCrop;
 import net.momirealms.customcrops.util.ClassUtils;
 import net.momirealms.customcrops.util.ConfigUtils;
 import net.momirealms.customcrops.util.ItemUtils;
+import net.momirealms.customcrops.util.ParticleUtils;
 import net.momirealms.sparrow.heart.SparrowHeart;
 import net.momirealms.sparrow.heart.feature.inventory.HandSlot;
 import org.bukkit.*;
@@ -743,7 +744,7 @@ public class ActionManagerImpl implements ActionManager {
     private void registerParticleAction() {
         registerAction("particle", (args, chance) -> {
             if (args instanceof ConfigurationSection section) {
-                Particle particleType = Particle.valueOf(section.getString("particle", "ASH").toUpperCase(Locale.ENGLISH));
+                Particle particleType = ParticleUtils.getParticle(section.getString("particle", "ASH").toUpperCase(Locale.ENGLISH));
                 double x = section.getDouble("x",0);
                 double y = section.getDouble("y",0);
                 double z = section.getDouble("z",0);
