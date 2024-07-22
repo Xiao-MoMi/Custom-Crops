@@ -8,7 +8,7 @@ plugins {
 allprojects {
 
     project.group = "net.momirealms"
-    project.version = "3.5.7.3"
+    project.version = "3.5.7.4"
 
     apply<JavaPlugin>()
     apply(plugin = "java")
