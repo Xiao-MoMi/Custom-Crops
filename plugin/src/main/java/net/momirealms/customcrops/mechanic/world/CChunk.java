@@ -18,6 +18,7 @@
 package net.momirealms.customcrops.mechanic.world;
 
 import net.momirealms.customcrops.api.CustomCropsPlugin;
+import net.momirealms.customcrops.api.event.CropGrowEvent;
 import net.momirealms.customcrops.api.mechanic.action.ActionTrigger;
 import net.momirealms.customcrops.api.mechanic.item.Crop;
 import net.momirealms.customcrops.api.mechanic.item.Fertilizer;
@@ -30,6 +31,7 @@ import net.momirealms.customcrops.api.mechanic.world.ChunkPos;
 import net.momirealms.customcrops.api.mechanic.world.CustomCropsBlock;
 import net.momirealms.customcrops.api.mechanic.world.SimpleLocation;
 import net.momirealms.customcrops.api.mechanic.world.level.*;
+import net.momirealms.customcrops.api.util.EventUtils;
 import net.momirealms.customcrops.mechanic.world.block.MemoryPot;
 import net.momirealms.customcrops.mechanic.world.block.MemorySprinkler;
 import net.momirealms.customcrops.scheduler.task.TickTask;
@@ -380,6 +382,9 @@ public class CChunk implements CustomCropsChunk {
         worldCrop.setPoint(x);
         Location bkLoc = location.getBukkitLocation();
         if (bkLoc == null) return;
+        if (previousPoint != x) {
+            EventUtils.fireAndForget(new CropGrowEvent(crop, bkLoc, previousPoint, x));
+        }
         for (int i = previousPoint + 1; i <= x; i++) {
             Crop.Stage stage = crop.getStageByPoint(i);
             if (stage != null) {

@@ -21,6 +21,7 @@ import com.flowpowered.nbt.CompoundMap;
 import com.flowpowered.nbt.IntTag;
 import com.flowpowered.nbt.StringTag;
 import net.momirealms.customcrops.api.CustomCropsPlugin;
+import net.momirealms.customcrops.api.event.CropGrowEvent;
 import net.momirealms.customcrops.api.mechanic.action.ActionTrigger;
 import net.momirealms.customcrops.api.mechanic.condition.Condition;
 import net.momirealms.customcrops.api.mechanic.condition.DeathConditions;
@@ -34,6 +35,7 @@ import net.momirealms.customcrops.api.mechanic.world.SimpleLocation;
 import net.momirealms.customcrops.api.mechanic.world.level.AbstractCustomCropsBlock;
 import net.momirealms.customcrops.api.mechanic.world.level.WorldCrop;
 import net.momirealms.customcrops.api.mechanic.world.level.WorldPot;
+import net.momirealms.customcrops.api.util.EventUtils;
 import net.momirealms.customcrops.api.util.LogUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -163,6 +165,9 @@ public class MemoryCrop extends AbstractCustomCropsBlock implements WorldCrop {
 
         int x = Math.min(previous + point, crop.getMaxPoints());
         setPoint(x);
+        if (previous != x) {
+            EventUtils.fireAndForget(new CropGrowEvent(crop, bukkitLocation, previous, x));
+        }
         String pre = crop.getStageItemByPoint(previous);
         String after = crop.getStageItemByPoint(x);
 
