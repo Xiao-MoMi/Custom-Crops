@@ -92,7 +92,7 @@ public class ItemsAdderProvider implements CustomProvider {
         if (customStack == null) {
             return null;
         }
-        return customStack.getItemStack();
+        return customStack.getItemStack().clone();
     }
 
     @Override
