@@ -18,6 +18,7 @@ softdepend:
   - RealisticSeasons
   - AdvancedSeasons
   - SlimeWorldManager
+  - SlimeWorldPlugin
   - HuskClaims
   - HuskTowns
   - Residence

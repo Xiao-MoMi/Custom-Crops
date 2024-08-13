@@ -17,7 +17,6 @@
 
 package net.momirealms.customcrops.mechanic.item.impl;
 
-import com.saicone.rtag.item.ItemObject;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ScoreComponent;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;

@@ -62,12 +62,16 @@ public class WorldManagerImpl implements WorldManager, Listener {
         this.plugin = plugin;
         this.loadedWorlds = new ConcurrentHashMap<>();
         this.worldSettingMap = new HashMap<>();
-        if (Bukkit.getPluginManager().isPluginEnabled("SlimeWorldManager")) {
+        try {
+            // to ignore the warning from asp
+            Class.forName("com.infernalsuite.aswm.api.SlimePlugin");
             this.worldAdaptor = new SlimeWorldAdaptor(this, 1);
-        } else if (Bukkit.getPluginManager().isPluginEnabled("SlimeWorldPlugin")) {
-            this.worldAdaptor = new SlimeWorldAdaptor(this, 2);
-        } else {
-            this.worldAdaptor = new BukkitWorldAdaptor(this);
+        } catch (ClassNotFoundException e) {
+            if (Bukkit.getPluginManager().isPluginEnabled("SlimeWorldPlugin")) {
+                this.worldAdaptor = new SlimeWorldAdaptor(this, 2);
+            } else {
+                this.worldAdaptor = new BukkitWorldAdaptor(this);
+            }
         }
     }
 
