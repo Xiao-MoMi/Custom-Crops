@@ -1,18 +1,18 @@
 dependencies {
     // Platform
-    compileOnly("dev.folia:folia-api:1.20.1-R0.1-SNAPSHOT")
+    compileOnly("dev.folia:folia-api:1.20.4-R0.1-SNAPSHOT")
     compileOnly("com.infernalsuite.aswm:api:1.20.4-R0.1-SNAPSHOT")
 
     // Command
-    compileOnly("dev.jorel:commandapi-bukkit-core:9.4.1")
+    compileOnly("dev.jorel:commandapi-bukkit-core:9.5.3")
 
     // Common hooks
-    compileOnly("me.clip:placeholderapi:2.11.5")
+    compileOnly("me.clip:placeholderapi:2.11.6")
     compileOnly("com.comphenix.protocol:ProtocolLib:5.1.0")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7")
 
     // Utils
-    compileOnly("dev.dejvokep:boosted-yaml:1.3.4")
+    compileOnly("dev.dejvokep:boosted-yaml:1.3.6")
     compileOnly("commons-io:commons-io:2.15.1")
     compileOnly("com.google.code.gson:gson:2.10.1")
     compileOnly("net.objecthunter:exp4j:0.4.8")
@@ -34,11 +34,11 @@ dependencies {
     compileOnly("pers.neige.neigeitems:NeigeItems:1.16.24")
     compileOnly("net.Indyuce:MMOItems-API:6.9.2-SNAPSHOT")
     compileOnly("io.lumine:MythicLib-dist:1.6-SNAPSHOT")
-    compileOnly("io.lumine:Mythic-Dist:5.3.5")
+    compileOnly("io.lumine:Mythic-Dist:5.6.1")
     compileOnly("io.lumine:MythicCrucible-Dist:2.1.0-SNAPSHOT")
 
     // Quests
-    compileOnly("org.betonquest:betonquest:2.0.0")
+    compileOnly("org.betonquest:betonquest:2.1.3")
 
     compileOnly(files("libs/BattlePass-4.0.6-api.jar"))
     compileOnly(files("libs/ClueScrolls-api.jar"))
@@ -53,17 +53,17 @@ dependencies {
     implementation(project(":oraxen-j21"))
     implementation(project(":legacy-api"))
 
-    implementation(files("libs/Sparrow-Heart-0.19.jar"))
+
     implementation("net.kyori:adventure-api:4.17.0")
     implementation("net.kyori:adventure-platform-bukkit:4.3.3")
     implementation("net.kyori:adventure-text-minimessage:4.17.0")
     implementation("net.kyori:adventure-text-serializer-legacy:4.17.0")
     implementation("com.github.Xiao-MoMi:AntiGriefLib:0.12")
-//    implementation("com.github.Xiao-MoMi:Sparrow-Heart:0.16")
+    implementation("com.github.Xiao-MoMi:Sparrow-Heart:0.35")
     implementation("com.flowpowered:flow-nbt:2.0.2")
-    implementation("com.saicone.rtag:rtag:1.5.4")
-    implementation("com.saicone.rtag:rtag-item:1.5.4")
-    implementation("com.github.luben:zstd-jni:1.5.6-2")
+    implementation("com.saicone.rtag:rtag:1.5.5")
+    implementation("com.saicone.rtag:rtag-item:1.5.5")
+    implementation("com.github.luben:zstd-jni:1.5.6-4")
 }
 
 tasks {

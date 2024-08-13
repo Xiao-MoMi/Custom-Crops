@@ -155,9 +155,6 @@ public class DependencyManagerImpl implements DependencyManager {
         if (forceRepo == null) {
             // attempt to download the dependency from each repo in order.
             for (DependencyRepository repo : DependencyRepository.values()) {
-                if (repo.getId().equals("maven") && TimeZone.getDefault().getID().startsWith("Asia")) {
-                    continue;
-                }
                 try {
                     LogUtils.info("Downloading dependency(" + fileName + ") from " + repo.getUrl() + dependency.getMavenRepoPath());
                     repo.download(dependency, file);

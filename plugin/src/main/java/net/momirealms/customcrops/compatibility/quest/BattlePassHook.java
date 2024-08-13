@@ -26,6 +26,7 @@ import net.momirealms.customcrops.api.event.CropBreakEvent;
 import net.momirealms.customcrops.api.event.CropPlantEvent;
 import net.momirealms.customcrops.api.mechanic.item.Crop;
 import net.momirealms.customcrops.api.mechanic.world.level.WorldCrop;
+import net.momirealms.customcrops.api.util.LogUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -54,13 +55,17 @@ public class BattlePassHook implements Listener {
         }
 
         @EventHandler (ignoreCancelled = true)
-        public void onBreakCrop(CropBreakEvent event){
+        public void onBreakCrop(CropBreakEvent event) {
             Player player = event.getPlayer();
             if (player == null) return;
 
             WorldCrop worldCrop = event.getWorldCrop();
             if (worldCrop == null) return;
             String id = worldCrop.getConfig().getStageItemByPoint(worldCrop.getPoint());
+
+            if (id.contains(":")) {
+                id = id.split(":")[1];
+            }
 
             // Harvest crops
             this.executionBuilder("harvest")

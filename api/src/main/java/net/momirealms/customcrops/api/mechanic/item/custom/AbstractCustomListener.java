@@ -31,6 +31,7 @@ import net.momirealms.customcrops.api.mechanic.world.level.WorldCrop;
 import net.momirealms.customcrops.api.mechanic.world.level.WorldGlass;
 import net.momirealms.customcrops.api.mechanic.world.level.WorldPot;
 import net.momirealms.customcrops.api.util.EventUtils;
+import net.momirealms.customcrops.api.util.LogUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -166,12 +167,7 @@ public abstract class AbstractCustomListener implements Listener {
         final Location location = block.getLocation();
         Optional<CustomCropsBlock> customCropsBlock = CustomCropsPlugin.get().getWorldManager().getBlockAt(SimpleLocation.of(location));
         if (customCropsBlock.isPresent()) {
-            if (customCropsBlock.get() instanceof WorldPot || customCropsBlock.get() instanceof WorldGlass) {
-                CustomCropsPlugin.get().getWorldManager().removeAnythingAt(SimpleLocation.of(location));
-            } else {
-                event.setCancelled(true);
-                return;
-            }
+            CustomCropsPlugin.get().getWorldManager().removeAnythingAt(SimpleLocation.of(location));
         }
         this.onPlaceBlock(
                 event.getPlayer(),
@@ -273,12 +269,12 @@ public abstract class AbstractCustomListener implements Listener {
         }
     }
 
-    @EventHandler (ignoreCancelled = true)
+    @EventHandler (ignoreCancelled = true, priority = EventPriority.HIGHEST)
     public void onExplosion(EntityExplodeEvent event) {
         this.itemManager.handleExplosion(event.getEntity(), event.blockList(), event);
     }
 
-    @EventHandler (ignoreCancelled = true)
+    @EventHandler (ignoreCancelled = true, priority = EventPriority.HIGHEST)
     public void onExplosion(BlockExplodeEvent event) {
         this.itemManager.handleExplosion(null, event.blockList(), event);
     }

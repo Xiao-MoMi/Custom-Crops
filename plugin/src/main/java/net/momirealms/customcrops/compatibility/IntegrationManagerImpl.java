@@ -111,7 +111,7 @@ public class IntegrationManagerImpl implements IntegrationManager {
         if (plugin.isHookedPluginEnabled("RealisticSeasons")) {
             this.seasonInterface = new RealisticSeasonsImpl();
             hookMessage("RealisticSeasons");
-        } else if (plugin.isHookedPluginEnabled("AdvancedSeasons")) {
+        } else if (plugin.isHookedPluginEnabled("AdvancedSeasons", "1.4", "1.5")) {
             this.seasonInterface = new AdvancedSeasonsImpl();
             hookMessage("AdvancedSeasons");
         } else {

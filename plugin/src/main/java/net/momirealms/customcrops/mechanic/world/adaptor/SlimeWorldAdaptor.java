@@ -37,20 +37,51 @@ import net.momirealms.customcrops.scheduler.task.TickTask;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.event.EventHandler;
+import org.bukkit.plugin.Plugin;
 
+import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
 import java.util.PriorityQueue;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
 
 public class SlimeWorldAdaptor extends BukkitWorldAdaptor {
 
-    private final SlimePlugin slimePlugin;
+    private final Function<String, SlimeWorld> getSlimeWorldFunction;
 
-    public SlimeWorldAdaptor(WorldManager worldManager) {
+    public SlimeWorldAdaptor(WorldManager worldManager, int version) {
         super(worldManager);
-        this.slimePlugin = (SlimePlugin) Bukkit.getPluginManager().getPlugin("SlimeWorldManager");
+        try {
+            if (version == 1) {
+                Plugin plugin = Bukkit.getPluginManager().getPlugin("SlimeWorldManager");
+                Class<?> slimeClass = Class.forName("com.infernalsuite.aswm.api.SlimePlugin");
+                Method method = slimeClass.getMethod("getWorld", String.class);
+                this.getSlimeWorldFunction = (name) -> {
+                    try {
+                        return (SlimeWorld) method.invoke(plugin, name);
+                    } catch (ReflectiveOperationException e) {
+                        throw new RuntimeException(e);
+                    }
+                };
+            } else if (version == 2) {
+                Class<?> apiClass = Class.forName("com.infernalsuite.aswm.api.AdvancedSlimePaperAPI");
+                Object apiInstance = apiClass.getMethod("instance").invoke(null);
+                Method method = apiClass.getMethod("getLoadedWorld", String.class);
+                this.getSlimeWorldFunction = (name) -> {
+                    try {
+                        return (SlimeWorld) method.invoke(apiInstance, name);
+                    } catch (ReflectiveOperationException e) {
+                        throw new RuntimeException(e);
+                    }
+                };
+            } else {
+                throw new IllegalArgumentException("Unsupported version: " + version);
+            }
+        } catch (ReflectiveOperationException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @EventHandler (ignoreCancelled = true)
@@ -67,7 +98,7 @@ public class SlimeWorldAdaptor extends BukkitWorldAdaptor {
 
     @Override
     public void saveInfoData(CustomCropsWorld customCropsWorld) {
-        SlimeWorld slimeWorld = slimePlugin.getWorld(customCropsWorld.getWorldName());
+        SlimeWorld slimeWorld = getSlimeWorldFunction.apply(customCropsWorld.getWorldName());
         if (slimeWorld == null) {
             super.saveInfoData(customCropsWorld);
             return;
@@ -85,7 +116,7 @@ public class SlimeWorldAdaptor extends BukkitWorldAdaptor {
 
     @Override
     public void unload(CustomCropsWorld customCropsWorld) {
-        SlimeWorld slimeWorld = slimePlugin.getWorld(customCropsWorld.getWorldName());
+        SlimeWorld slimeWorld = getSlimeWorldFunction.apply(customCropsWorld.getWorldName());
         if (slimeWorld == null) {
             super.unload(customCropsWorld);
             return;
@@ -95,7 +126,7 @@ public class SlimeWorldAdaptor extends BukkitWorldAdaptor {
 
     @Override
     public void init(CustomCropsWorld customCropsWorld) {
-        SlimeWorld slimeWorld = slimePlugin.getWorld(customCropsWorld.getWorldName());
+        SlimeWorld slimeWorld = getSlimeWorldFunction.apply(customCropsWorld.getWorldName());
         if (slimeWorld == null) {
             super.init(customCropsWorld);
             return;
@@ -117,7 +148,7 @@ public class SlimeWorldAdaptor extends BukkitWorldAdaptor {
 
     @Override
     public void loadChunkData(CustomCropsWorld customCropsWorld, ChunkPos chunkPos) {
-        SlimeWorld slimeWorld = slimePlugin.getWorld(customCropsWorld.getWorldName());
+        SlimeWorld slimeWorld = getSlimeWorldFunction.apply(customCropsWorld.getWorldName());
         if (slimeWorld == null) {
             super.loadChunkData(customCropsWorld, chunkPos);
             return;
@@ -203,7 +234,7 @@ public class SlimeWorldAdaptor extends BukkitWorldAdaptor {
     }
 
     private SlimeWorld getSlimeWorld(String name) {
-        return slimePlugin.getWorld(name);
+        return getSlimeWorldFunction.apply(name);
     }
 
     private CompoundTag chunkToTag(SerializableChunk serializableChunk) {
@@ -212,7 +243,7 @@ public class SlimeWorldAdaptor extends BukkitWorldAdaptor {
         map.put(new IntTag("z", serializableChunk.getZ()));
         map.put(new IntTag("loadedSeconds", serializableChunk.getLoadedSeconds()));
         map.put(new LongTag("lastLoadedTime", serializableChunk.getLastLoadedTime()));
-        map.put(new IntArrayTag("queued", serializableChunk.getTicked()));
+        map.put(new IntArrayTag("queued", serializableChunk.getQueuedTasks()));
         map.put(new IntArrayTag("ticked", serializableChunk.getTicked()));
         CompoundMap sectionMap = new CompoundMap();
         for (SerializableSection section : serializableChunk.getSections()) {

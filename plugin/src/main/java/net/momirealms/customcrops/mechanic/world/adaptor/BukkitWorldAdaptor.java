@@ -276,7 +276,7 @@ public class BukkitWorldAdaptor extends AbstractWorldAdaptor {
         }
     }
 
-    @EventHandler (ignoreCancelled = true, priority = EventPriority.HIGH)
+    @EventHandler (ignoreCancelled = true, priority = EventPriority.LOW)
     public void onWorldUnload(WorldUnloadEvent event) {
         if (worldManager.isMechanicEnabled(event.getWorld()))
             worldManager.unloadWorld(event.getWorld());

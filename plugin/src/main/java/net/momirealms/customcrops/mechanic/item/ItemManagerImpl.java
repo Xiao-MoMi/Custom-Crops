@@ -2141,6 +2141,7 @@ public class ItemManagerImpl implements ItemManager {
                         int itemAmount = itemInHand.getAmount();
                         // get water in pot
                         int waterInPot = plugin.getWorldManager().getPotAt(simpleLocation).map(WorldPot::getWater).orElse(0);
+
                         for (PassiveFillMethod method : pot.getPassiveFillMethods()) {
                             if (method.getUsed().equals(itemID) && itemAmount >= method.getUsedAmount()) {
                                 if (method.canFill(state)) {
@@ -2162,7 +2163,7 @@ public class ItemManagerImpl implements ItemManager {
                                         plugin.getWorldManager().addWaterToPot(pot, method.getAmount(), simpleLocation);
                                     } else {
                                         pot.trigger(ActionTrigger.FULL, state);
-                                        return FunctionResult.CANCEL_EVENT_AND_RETURN;
+                                        return FunctionResult.RETURN;
                                     }
                                 }
                                 return FunctionResult.RETURN;

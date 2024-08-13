@@ -121,6 +121,8 @@ public abstract class CustomCropsPlugin extends JavaPlugin {
 
     public abstract void reload();
 
+    public abstract boolean isHookedPluginEnabled(String hooked, String... versionPrefix);
+
     public abstract boolean doesHookedPluginExist(String plugin);
 
     public abstract String getServerVersion();

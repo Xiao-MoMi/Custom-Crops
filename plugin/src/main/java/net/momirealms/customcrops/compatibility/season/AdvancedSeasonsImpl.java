@@ -17,27 +17,25 @@
 
 package net.momirealms.customcrops.compatibility.season;
 
-import net.advancedplugins.seasons.api.AdvancedSeasonsAPI;
+import net.advancedplugins.seasons.Core;
 import net.momirealms.customcrops.api.integration.SeasonInterface;
 import net.momirealms.customcrops.api.mechanic.world.season.Season;
 import org.bukkit.World;
+import org.jetbrains.annotations.NotNull;
 
 public class AdvancedSeasonsImpl implements SeasonInterface {
 
-    private final AdvancedSeasonsAPI api;
-
-    public AdvancedSeasonsImpl() {
-        this.api = new AdvancedSeasonsAPI();
-    }
-
     @Override
-    public Season getSeason(World world) {
-        return switch (api.getSeason(world)) {
-            case "SPRING" -> Season.SPRING;
-            case "WINTER" -> Season.WINTER;
-            case "SUMMER" -> Season.SUMMER;
-            case "FALL" -> Season.AUTUMN;
-            default -> null;
+    public Season getSeason(@NotNull World world) {
+        net.advancedplugins.seasons.enums.Season season = Core.getSeasonHandler().getSeason(world);
+        if (season == null) {
+            return null;
+        }
+        return switch (season.getType()) {
+            case SPRING -> Season.SPRING;
+            case WINTER -> Season.WINTER;
+            case SUMMER -> Season.SUMMER;
+            case FALL -> Season.AUTUMN;
         };
     }
 
@@ -54,7 +52,7 @@ public class AdvancedSeasonsImpl implements SeasonInterface {
             case SUMMER -> "SUMMER";
             case SPRING -> "SPRING";
         };
-        api.setSeason(seasonName, world);
+        Core.getSeasonHandler().setSeason(net.advancedplugins.seasons.enums.Season.valueOf(seasonName), world.getName());
     }
 
     @Override

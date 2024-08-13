@@ -40,6 +40,7 @@ import net.momirealms.customcrops.mechanic.world.WorldManagerImpl;
 import net.momirealms.customcrops.scheduler.SchedulerImpl;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
+import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -93,7 +94,11 @@ public class CustomCropsPluginImpl extends CustomCropsPlugin {
         this.placeholderManager = new PlaceholderManagerImpl(this);
         this.hologramManager = new HologramManager(this);
         this.commandManager.init();
-        this.integrationManager.init();
+        try {
+            this.integrationManager.init();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         BukkitItemFactory.create(this);
         Migration.tryUpdating();
         this.reload();
@@ -159,6 +164,20 @@ public class CustomCropsPluginImpl extends CustomCropsPlugin {
     @Override
     public boolean isHookedPluginEnabled(String plugin) {
         return Bukkit.getPluginManager().isPluginEnabled(plugin);
+    }
+
+    @Override
+    public boolean isHookedPluginEnabled(String hooked, String... versionPrefix) {
+        Plugin p = Bukkit.getPluginManager().getPlugin(hooked);
+        if (p != null) {
+            String ver = p.getDescription().getVersion();
+            for (String prefix : versionPrefix) {
+                if (ver.startsWith(prefix)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     @Override

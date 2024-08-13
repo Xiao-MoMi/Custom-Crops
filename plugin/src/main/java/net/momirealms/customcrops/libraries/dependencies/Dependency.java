@@ -63,7 +63,7 @@ public enum Dependency {
     COMMAND_API(
             "dev{}jorel",
             "commandapi-bukkit-shade",
-            "9.5.1",
+            "9.5.3",
             null,
             "commandapi-bukkit",
             Relocation.of("commandapi", "dev{}jorel{}commandapi")
@@ -71,7 +71,7 @@ public enum Dependency {
     COMMAND_API_MOJMAP(
             "dev{}jorel",
             "commandapi-bukkit-shade-mojang-mapped",
-            "9.5.1",
+            "9.5.3",
             null,
             "commandapi-bukkit-mojang-mapped",
             Relocation.of("commandapi", "dev{}jorel{}commandapi")
@@ -79,7 +79,7 @@ public enum Dependency {
     BOOSTED_YAML(
             "dev{}dejvokep",
             "boosted-yaml",
-            "1.3.4",
+            "1.3.6",
             null,
             "boosted-yaml",
             Relocation.of("boostedyaml", "dev{}dejvokep{}boostedyaml")

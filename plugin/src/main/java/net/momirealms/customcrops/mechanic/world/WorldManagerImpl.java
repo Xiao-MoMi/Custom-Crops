@@ -62,10 +62,11 @@ public class WorldManagerImpl implements WorldManager, Listener {
         this.plugin = plugin;
         this.loadedWorlds = new ConcurrentHashMap<>();
         this.worldSettingMap = new HashMap<>();
-        try {
-            Class.forName("com.infernalsuite.aswm.api.world.SlimeWorld");
-            this.worldAdaptor = new SlimeWorldAdaptor(this);
-        } catch (ClassNotFoundException ignore) {
+        if (Bukkit.getPluginManager().isPluginEnabled("SlimeWorldManager")) {
+            this.worldAdaptor = new SlimeWorldAdaptor(this, 1);
+        } else if (Bukkit.getPluginManager().isPluginEnabled("SlimeWorldPlugin")) {
+            this.worldAdaptor = new SlimeWorldAdaptor(this, 2);
+        } else {
             this.worldAdaptor = new BukkitWorldAdaptor(this);
         }
     }
@@ -98,7 +99,7 @@ public class WorldManagerImpl implements WorldManager, Listener {
         for (World world : Bukkit.getWorlds()) {
             unloadWorld(world);
         }
-        if (this.loadedWorlds.size() != 0) {
+        if (!this.loadedWorlds.isEmpty()) {
             LogUtils.severe("Detected that some worlds are not properly unloaded. " +
                     "You can safely ignore this if you are editing \"worlds.list\" and restarting to apply it");
             for (String world : this.loadedWorlds.keySet()) {
