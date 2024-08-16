@@ -1,8 +1,11 @@
+# Note: This project is undergoing a major refactoring. Please switch to the 3.6-dev branch for the new API.
+
 # Custom-Crops
 ![CodeFactor Grade](https://img.shields.io/codefactor/grade/github/Xiao-MoMi/Custom-Crops)
 ![Code Size](https://img.shields.io/github/languages/code-size/Xiao-MoMi/Custom-Crops)
 ![bStats Servers](https://img.shields.io/bstats/servers/16593)
 ![bStats Players](https://img.shields.io/bstats/players/16593)
+[![Scc Count Badge](https://sloc.xyz/github/Xiao-MoMi/Custom-Crops/?category=codes)](https://github.com/Xiao-MoMi/Custom-Crops/)
 ![GitHub](https://img.shields.io/github/license/Xiao-MoMi/Custom-Crops)
 [![](https://jitpack.io/v/Xiao-MoMi/Custom-Crops.svg)](https://jitpack.io/#Xiao-MoMi/Custom-Crops)
 <a href="https://mo-mi.gitbook.io/xiaomomi-plugins/plugin-wiki/customcrops" alt="GitBook">
