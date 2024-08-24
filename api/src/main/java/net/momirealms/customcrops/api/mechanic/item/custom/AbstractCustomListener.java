@@ -28,6 +28,8 @@ import net.momirealms.customcrops.api.mechanic.requirement.State;
 import net.momirealms.customcrops.api.mechanic.world.CustomCropsBlock;
 import net.momirealms.customcrops.api.mechanic.world.SimpleLocation;
 import net.momirealms.customcrops.api.mechanic.world.level.WorldCrop;
+import net.momirealms.customcrops.api.mechanic.world.level.WorldGlass;
+import net.momirealms.customcrops.api.mechanic.world.level.WorldPot;
 import net.momirealms.customcrops.api.util.EventUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -164,7 +166,12 @@ public abstract class AbstractCustomListener implements Listener {
         final Location location = block.getLocation();
         Optional<CustomCropsBlock> customCropsBlock = CustomCropsPlugin.get().getWorldManager().getBlockAt(SimpleLocation.of(location));
         if (customCropsBlock.isPresent()) {
-            CustomCropsPlugin.get().getWorldManager().removeAnythingAt(SimpleLocation.of(location));
+            if (customCropsBlock.get() instanceof WorldPot || customCropsBlock.get() instanceof WorldGlass) {
+                CustomCropsPlugin.get().getWorldManager().removeAnythingAt(SimpleLocation.of(location));
+            } else {
+                event.setCancelled(true);
+                return;
+            }
         }
         this.onPlaceBlock(
                 event.getPlayer(),
