@@ -86,7 +86,8 @@ public abstract class AbstractCustomListener implements Listener {
                         Material.TWISTING_VINES,
                         Material.WEEPING_VINES,
                         Material.KELP,
-                        Material.CACTUS
+                        Material.CACTUS,
+                        Material.AIR
                 )
         );
         if (VersionManager.isHigherThan1_19()) {
@@ -164,14 +165,12 @@ public abstract class AbstractCustomListener implements Listener {
     public void onPlaceBlock(BlockPlaceEvent event) {
         final Block block = event.getBlock();
         final Location location = block.getLocation();
+        if (CUSTOM_MATERIAL.contains(block.getType())) {
+            return;
+        }
         Optional<CustomCropsBlock> customCropsBlock = CustomCropsPlugin.get().getWorldManager().getBlockAt(SimpleLocation.of(location));
         if (customCropsBlock.isPresent()) {
-            if (customCropsBlock.get() instanceof WorldPot || customCropsBlock.get() instanceof WorldGlass) {
-                CustomCropsPlugin.get().getWorldManager().removeAnythingAt(SimpleLocation.of(location));
-            } else {
-                event.setCancelled(true);
-                return;
-            }
+            CustomCropsPlugin.get().getWorldManager().removeAnythingAt(SimpleLocation.of(location));
         }
         this.onPlaceBlock(
                 event.getPlayer(),
