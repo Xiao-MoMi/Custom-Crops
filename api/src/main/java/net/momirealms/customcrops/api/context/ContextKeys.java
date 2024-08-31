@@ -30,6 +30,9 @@ import java.util.Objects;
 public class ContextKeys<T> {
 
     public static final ContextKeys<Location> LOCATION = of("location", Location.class);
+    public static final ContextKeys<String> WATER_BAR = of("water_bar", String.class);
+    public static final ContextKeys<Integer> CURRENT_WATER = of("current", Integer.class);
+    public static final ContextKeys<Integer> STORAGE = of("storage", Integer.class);
     public static final ContextKeys<Integer> X = of("x", Integer.class);
     public static final ContextKeys<Integer> Y = of("y", Integer.class);
     public static final ContextKeys<Integer> Z = of("z", Integer.class);

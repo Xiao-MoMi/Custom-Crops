@@ -49,6 +49,8 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.Waterlogged;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.RayTraceResult;
+import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -71,7 +73,7 @@ public class WateringCanItem extends AbstractCustomCropsItem {
         Item<ItemStack> wrapped = BukkitCustomCropsPlugin.getInstance().getItemManager().wrap(itemStack);
         int realWater = Math.min(config.storage(), water);
         if (!config.infinite()) {
-            wrapped.setTag("CustomCrops", "water", realWater);
+            wrapped.setTag(realWater, "CustomCrops", "water");
             wrapped.maxDamage().ifPresent(max -> {
                 if (max <= 0) return;
                 int damage = (int) (max * (((double) config.storage() - realWater) / config.storage()));
@@ -104,23 +106,27 @@ public class WateringCanItem extends AbstractCustomCropsItem {
 
     @Override
     public void interactAir(WrappedInteractAirEvent event) {
-        WateringCanConfig config = Registries.WATERING_CAN.get(event.itemID());
+        WateringCanConfig config = Registries.ITEM_TO_WATERING_CAN.get(event.itemID());
         if (config == null)
             return;
 
         final Player player = event.player();;
         Context<Player> context = Context.player(player);
         // check requirements
-        if (!RequirementManager.isSatisfied(context, config.requirements())) {
+        if (!RequirementManager.isSatisfied(context, config.requirements()))
             return;
-        }
         // ignore infinite
         if (config.infinite())
             return;
-        // get target block
-        Block targetBlock = player.getTargetBlockExact(5, FluidCollisionMode.ALWAYS);
+        RayTraceResult result = player.getWorld().rayTraceBlocks(player.getEyeLocation(), player.getLocation().getDirection(), 5, FluidCollisionMode.ALWAYS);
+        if (result == null)
+            return;
+        Block targetBlock = result.getHitBlock();
         if (targetBlock == null)
             return;
+        final Vector vector = result.getHitPosition();
+        // for old config compatibility
+        context.arg(ContextKeys.LOCATION, new Location(player.getWorld(), vector.getX() - 0.5,vector.getY() - 1, vector.getZ() - 0.5));
 
         final ItemStack itemInHand = event.itemInHand();
         int water = getCurrentWater(itemInHand);
@@ -140,6 +146,10 @@ public class WateringCanItem extends AbstractCustomCropsItem {
                     WateringCanFillEvent fillEvent = new WateringCanFillEvent(player, event.hand(), itemInHand, targetBlock.getLocation(), config, method);
                     if (EventUtils.fireAndCheckCancel(fillEvent))
                         return;
+                    int current = Math.min(water + method.amountOfWater(), config.storage());
+                    context.arg(ContextKeys.WATER_BAR, Optional.ofNullable(config.waterBar()).map(bar -> bar.getWaterBar(current, config.storage())).orElse(""));
+                    context.arg(ContextKeys.STORAGE, config.storage());
+                    context.arg(ContextKeys.CURRENT_WATER, current);
                     setCurrentWater(itemInHand, config, water + method.amountOfWater(), context);
                     method.triggerActions(context);
                     ActionManager.trigger(context, config.addWaterActions());
@@ -151,16 +161,16 @@ public class WateringCanItem extends AbstractCustomCropsItem {
 
     @Override
     public InteractionResult interactAt(WrappedInteractEvent event) {
-        WateringCanConfig wateringCanConfig = Registries.WATERING_CAN.get(event.itemID());
+        WateringCanConfig wateringCanConfig = Registries.ITEM_TO_WATERING_CAN.get(event.itemID());
         if (wateringCanConfig == null)
-            return InteractionResult.FAIL;
+            return InteractionResult.COMPLETE;
 
         final Player player = event.player();
         final Context<Player> context = Context.player(player);
 
         // check watering can requirements
         if (!RequirementManager.isSatisfied(context, wateringCanConfig.requirements())) {
-            return InteractionResult.FAIL;
+            return InteractionResult.COMPLETE;
         }
 
         final CustomCropsWorld<?> world = event.world();
@@ -175,21 +185,21 @@ public class WateringCanItem extends AbstractCustomCropsItem {
         if (sprinklerConfig != null) {
             // ignore infinite sprinkler
             if (sprinklerConfig.infinite()) {
-                return InteractionResult.FAIL;
+                return InteractionResult.COMPLETE;
             }
             // check requirements
             if (!RequirementManager.isSatisfied(context, sprinklerConfig.useRequirements())) {
-                return InteractionResult.FAIL;
+                return InteractionResult.COMPLETE;
             }
             // check water
             if (waterInCan <= 0 && !wateringCanConfig.infinite()) {
                 ActionManager.trigger(context, wateringCanConfig.runOutOfWaterActions());
-                return InteractionResult.FAIL;
+                return InteractionResult.COMPLETE;
             }
             // check whitelist
             if (!wateringCanConfig.whitelistSprinklers().contains(sprinklerConfig.id())) {
                 ActionManager.trigger(context, wateringCanConfig.wrongSprinklerActions());
-                return InteractionResult.FAIL;
+                return InteractionResult.COMPLETE;
             }
 
             SprinklerBlock sprinklerBlock = (SprinklerBlock) BuiltInBlockMechanics.SPRINKLER.mechanic();
@@ -198,14 +208,19 @@ public class WateringCanItem extends AbstractCustomCropsItem {
             // check full
             if (sprinklerBlock.water(sprinklerState) >= sprinklerConfig.storage()) {
                 ActionManager.trigger(context, sprinklerConfig.fullWaterActions());
-                return InteractionResult.FAIL;
+                return InteractionResult.COMPLETE;
             }
 
             // trigger event
             WateringCanWaterSprinklerEvent waterSprinklerEvent = new WateringCanWaterSprinklerEvent(player, itemInHand, event.hand(), wateringCanConfig, sprinklerConfig, sprinklerState, targetLocation);
             if (EventUtils.fireAndCheckCancel(waterSprinklerEvent)) {
-                return InteractionResult.FAIL;
+                return InteractionResult.COMPLETE;
             }
+
+            context.arg(ContextKeys.WATER_BAR, Optional.ofNullable(wateringCanConfig.waterBar()).map(bar -> bar.getWaterBar(waterInCan - 1, wateringCanConfig.storage())).orElse(""));
+            context.arg(ContextKeys.STORAGE, wateringCanConfig.storage());
+            context.arg(ContextKeys.CURRENT_WATER, waterInCan - 1);
+
             // add water
             if (sprinklerBlock.addWater(sprinklerState, sprinklerConfig, wateringCanConfig.wateringAmount())) {
                 if (!sprinklerConfig.threeDItem().equals(sprinklerConfig.threeDItemWithWater())) {
@@ -215,26 +230,7 @@ public class WateringCanItem extends AbstractCustomCropsItem {
 
             ActionManager.trigger(context, wateringCanConfig.consumeWaterActions());
             setCurrentWater(itemInHand, wateringCanConfig, waterInCan - 1, context);
-            return InteractionResult.SUCCESS;
-        }
-
-        // try filling the watering can
-        for (FillMethod method : wateringCanConfig.fillMethods()) {
-            if (method.getID().equals(event.relatedID())) {
-                if (method.checkRequirements(context)) {
-                    if (waterInCan >= wateringCanConfig.storage()) {
-                        ActionManager.trigger(context, wateringCanConfig.fullActions());
-                        return InteractionResult.FAIL;
-                    }
-                    WateringCanFillEvent fillEvent = new WateringCanFillEvent(player, event.hand(), itemInHand, targetLocation, wateringCanConfig, method);
-                    if (EventUtils.fireAndCheckCancel(fillEvent))
-                        return InteractionResult.FAIL;
-                    setCurrentWater(itemInHand, wateringCanConfig, waterInCan + method.amountOfWater(), context);
-                    method.triggerActions(context);
-                    ActionManager.trigger(context, wateringCanConfig.addWaterActions());
-                }
-                return InteractionResult.SUCCESS;
-            }
+            return InteractionResult.COMPLETE;
         }
 
         // if the clicked block is a crop, correct the target block
@@ -254,12 +250,12 @@ public class WateringCanItem extends AbstractCustomCropsItem {
             // check whitelist
             if (!wateringCanConfig.whitelistPots().contains(potConfig.id())) {
                 ActionManager.trigger(context, wateringCanConfig.wrongPotActions());
-                return InteractionResult.FAIL;
+                return InteractionResult.COMPLETE;
             }
             // check water
             if (waterInCan <= 0 && !wateringCanConfig.infinite()) {
                 ActionManager.trigger(context, wateringCanConfig.runOutOfWaterActions());
-                return InteractionResult.FAIL;
+                return InteractionResult.COMPLETE;
             }
 
             World bukkitWorld = targetLocation.getWorld();
@@ -267,26 +263,65 @@ public class WateringCanItem extends AbstractCustomCropsItem {
 
             WateringCanWaterPotEvent waterPotEvent = new WateringCanWaterPotEvent(player, itemInHand, event.hand(), wateringCanConfig, potConfig, pots);
             if (EventUtils.fireAndCheckCancel(waterPotEvent)) {
-                return InteractionResult.FAIL;
+                return InteractionResult.COMPLETE;
             }
+
+            context.arg(ContextKeys.WATER_BAR, Optional.ofNullable(wateringCanConfig.waterBar()).map(bar -> bar.getWaterBar(waterInCan - 1, wateringCanConfig.storage())).orElse(""));
+            context.arg(ContextKeys.STORAGE, wateringCanConfig.storage());
+            context.arg(ContextKeys.CURRENT_WATER, waterInCan - 1);
 
             PotBlock potBlock = (PotBlock) BuiltInBlockMechanics.POT.mechanic();
             for (Pair<Pos3, String> pair : waterPotEvent.getPotWithIDs()) {
                 CustomCropsBlockState potState = potBlock.fixOrGetState(world,pair.left(), potConfig, pair.right());
+                Location temp = pair.left().toLocation(bukkitWorld);
                 if (potBlock.addWater(potState, potConfig, wateringCanConfig.wateringAmount())) {
-                    Location temp = pair.left().toLocation(bukkitWorld);
                     potBlock.updateBlockAppearance(temp, potConfig, true, potBlock.fertilizers(potState));
-                    context.arg(ContextKeys.LOCATION, temp);
-                    ActionManager.trigger(context, potConfig.addWaterActions());
                 }
+                context.arg(ContextKeys.LOCATION, temp);
+                ActionManager.trigger(context, potConfig.addWaterActions());
             }
 
             ActionManager.trigger(context, wateringCanConfig.consumeWaterActions());
             setCurrentWater(itemInHand, wateringCanConfig, waterInCan - 1, context);
-            return InteractionResult.SUCCESS;
+            return InteractionResult.COMPLETE;
         }
 
-        return InteractionResult.PASS;
+        RayTraceResult result = player.getWorld().rayTraceBlocks(player.getEyeLocation(), player.getLocation().getDirection(), 5, FluidCollisionMode.ALWAYS);
+        if (result == null)
+            return InteractionResult.COMPLETE;
+        Block targetBlock = result.getHitBlock();
+        if (targetBlock == null)
+            return InteractionResult.COMPLETE;
+        final Vector vector = result.getHitPosition();
+        // for old config compatibility
+        context.arg(ContextKeys.LOCATION, new Location(player.getWorld(), vector.getX() - 0.5,vector.getY() - 1, vector.getZ() - 0.5));
+        String blockID = BukkitCustomCropsPlugin.getInstance().getItemManager().blockID(targetBlock);
+        if (targetBlock.getBlockData() instanceof Waterlogged waterlogged && waterlogged.isWaterlogged()) {
+            blockID = "WATER";
+        }
+        for (FillMethod method : wateringCanConfig.fillMethods()) {
+            if (method.getID().equals(blockID)) {
+                if (method.checkRequirements(context)) {
+                    if (waterInCan >= wateringCanConfig.storage()) {
+                        ActionManager.trigger(context, wateringCanConfig.fullActions());
+                        return InteractionResult.COMPLETE;
+                    }
+                    WateringCanFillEvent fillEvent = new WateringCanFillEvent(player, event.hand(), itemInHand, targetBlock.getLocation(), wateringCanConfig, method);
+                    if (EventUtils.fireAndCheckCancel(fillEvent))
+                        return InteractionResult.COMPLETE;
+                    int current = Math.min(waterInCan + method.amountOfWater(), wateringCanConfig.storage());
+                    context.arg(ContextKeys.WATER_BAR, Optional.ofNullable(wateringCanConfig.waterBar()).map(bar -> bar.getWaterBar(current, wateringCanConfig.storage())).orElse(""));
+                    context.arg(ContextKeys.STORAGE, wateringCanConfig.storage());
+                    context.arg(ContextKeys.CURRENT_WATER, current);
+                    setCurrentWater(itemInHand, wateringCanConfig, waterInCan + method.amountOfWater(), context);
+                    method.triggerActions(context);
+                    ActionManager.trigger(context, wateringCanConfig.addWaterActions());
+                }
+                return InteractionResult.COMPLETE;
+            }
+        }
+
+        return InteractionResult.COMPLETE;
     }
 
     public ArrayList<Pair<Pos3, String>> potInRange(World world, Pos3 pos3, int width, int length, float yaw, PotConfig config) {

@@ -66,7 +66,7 @@ public class ConfigType {
                         .length(section.getInt("effective-range.length", 1))
                         .potWhitelist(new HashSet<>(section.getStringList("pot-whitelist")))
                         .sprinklerWhitelist(new HashSet<>(section.getStringList("sprinkler-whitelist")))
-                        .dynamicLore(section.getBoolean("dynamic-lore"))
+                        .dynamicLore(section.getBoolean("dynamic-lore.enable"))
                         .lore(section.getStringList("dynamic-lore.lore").stream().map(TextValue::<Player>auto).toList())
                         .fillMethods(manager.getFillMethods(section.getSection("fill-method")))
                         .requirements(BukkitCustomCropsPlugin.getInstance().getRequirementManager(Player.class).parseRequirements(section.getSection("requirements"), true))
@@ -115,6 +115,7 @@ public class ConfigType {
 
                 PotConfig config = PotConfig.builder()
                         .id(id)
+                        .storage(section.getInt("storage", 5))
                         .isRainDropAccepted(section.getBoolean("absorb-rainwater", false))
                         .isNearbyWaterAccepted(section.getBoolean("absorb-nearby-water", false))
                         .maxFertilizers(section.getInt("max-fertilizers", 1))
@@ -187,6 +188,7 @@ public class ConfigType {
                         int point = Integer.parseInt(entry.getKey());
                         CropStageConfig.Builder builder = CropStageConfig.builder()
                                 .point(point)
+                                .existenceForm(inner.contains("type") ? CustomForm.valueOf(inner.getString("type").toUpperCase(Locale.ENGLISH)).existenceForm() : form)
                                 .displayInfoOffset(inner.getDouble("hologram-offset-correction"))
                                 .stageID(inner.getString("model"))
                                 .breakRequirements(prm.parseRequirements(inner.getSection("requirements.break"), true))

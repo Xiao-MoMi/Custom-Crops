@@ -213,6 +213,7 @@ public class BukkitConfigManager extends ConfigManager {
     @Override
     public void registerWateringCanConfig(WateringCanConfig config) {
         Registries.WATERING_CAN.register(config.id(), config);
+        Registries.ITEM_TO_WATERING_CAN.register(config.itemID(), config);
         Registries.ITEMS.register(config.itemID(), BuiltInItemMechanics.WATERING_CAN.mechanic());
     }
 

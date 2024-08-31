@@ -56,7 +56,7 @@ public class SprinklerItem extends AbstractCustomCropsItem {
             return InteractionResult.PASS;
         SprinklerConfig config = Registries.SPRINKLER.get(event.itemID());
         if (config == null) {
-            return InteractionResult.FAIL;
+            return InteractionResult.COMPLETE;
         }
 
         Block clicked = event.location().getBlock();
@@ -79,7 +79,7 @@ public class SprinklerItem extends AbstractCustomCropsItem {
         Context<Player> context = Context.player(player);
         // check requirements
         if (!RequirementManager.isSatisfied(context, config.placeRequirements())) {
-            return InteractionResult.FAIL;
+            return InteractionResult.COMPLETE;
         }
 
         final CustomCropsWorld<?> world = event.world();
@@ -88,7 +88,7 @@ public class SprinklerItem extends AbstractCustomCropsItem {
         if (world.setting().sprinklerPerChunk() >= 0) {
             if (world.testChunkLimitation(pos3, SprinklerBlock.class, world.setting().sprinklerPerChunk())) {
                 ActionManager.trigger(context, config.reachLimitActions());
-                return InteractionResult.FAIL;
+                return InteractionResult.COMPLETE;
             }
         }
         // generate state
@@ -99,7 +99,7 @@ public class SprinklerItem extends AbstractCustomCropsItem {
         // trigger event
         SprinklerPlaceEvent placeEvent = new SprinklerPlaceEvent(player, itemInHand, event.hand(), targetLocation.clone(), config, state);
         if (EventUtils.fireAndCheckCancel(placeEvent))
-            return InteractionResult.FAIL;
+            return InteractionResult.COMPLETE;
         // clear replaceable block
         targetLocation.getBlock().setType(Material.AIR, false);
         if (player.getGameMode() != GameMode.CREATIVE)
@@ -114,7 +114,7 @@ public class SprinklerItem extends AbstractCustomCropsItem {
             );
         });
         ActionManager.trigger(context, config.placeActions());
-        return InteractionResult.SUCCESS;
+        return InteractionResult.COMPLETE;
     }
 
     private boolean suitableForSprinkler(Location location) {

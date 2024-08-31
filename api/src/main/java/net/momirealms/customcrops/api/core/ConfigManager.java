@@ -57,7 +57,7 @@ public abstract class ConfigManager implements ConfigLoader, Reloadable {
     protected boolean syncSeasons;
     protected String referenceWorld;
 
-    protected String[] itemDetectOrder;
+    protected String[] itemDetectOrder = new String[0];
 
     protected double[] defaultQualityRatio;
 

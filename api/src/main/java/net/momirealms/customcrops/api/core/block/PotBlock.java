@@ -21,6 +21,7 @@ import com.flowpowered.nbt.*;
 import net.momirealms.customcrops.api.BukkitCustomCropsPlugin;
 import net.momirealms.customcrops.api.action.ActionManager;
 import net.momirealms.customcrops.api.context.Context;
+import net.momirealms.customcrops.api.context.ContextKeys;
 import net.momirealms.customcrops.api.core.*;
 import net.momirealms.customcrops.api.core.item.Fertilizer;
 import net.momirealms.customcrops.api.core.item.FertilizerConfig;
@@ -34,6 +35,7 @@ import net.momirealms.customcrops.api.core.wrapper.WrappedPlaceEvent;
 import net.momirealms.customcrops.api.event.*;
 import net.momirealms.customcrops.api.requirement.RequirementManager;
 import net.momirealms.customcrops.api.util.EventUtils;
+import net.momirealms.customcrops.api.util.LocationUtils;
 import net.momirealms.customcrops.api.util.PlayerUtils;
 import net.momirealms.customcrops.api.util.StringUtils;
 import org.bukkit.GameMode;
@@ -220,6 +222,8 @@ public class PotBlock extends AbstractCustomCropsBlock {
 
         final Player player = event.player();
         Context<Player> context = Context.player(player);
+        context.arg(ContextKeys.LOCATION, LocationUtils.toBlockLocation(location));
+
         // check use requirements
         if (!RequirementManager.isSatisfied(context, potConfig.useRequirements())) {
             return;
@@ -257,6 +261,9 @@ public class PotBlock extends AbstractCustomCropsBlock {
                                     PlayerUtils.giveItem(player, returned, method.getReturnedAmount());
                                 }
                             }
+                        }
+                        if (addWater(state, method.amountOfWater())) {
+                            updateBlockAppearance(potLocation, potConfig, true, fertilizers(state));
                         }
                         method.triggerActions(context);
                         ActionManager.trigger(context, potConfig.addWaterActions());
@@ -361,7 +368,11 @@ public class PotBlock extends AbstractCustomCropsBlock {
         boolean fertilizerChanged = tickFertilizer(state);
 
         if (fertilizerChanged || waterChanged) {
-            updateBlockAppearance(location.toLocation(bukkitWorld), config, hasNaturalWater, fertilizers(state));
+            boolean finalHasNaturalWater = hasNaturalWater;
+            Location bukkitLocation = location.toLocation(bukkitWorld);
+            BukkitCustomCropsPlugin.getInstance().getScheduler().sync().run(() -> {
+                updateBlockAppearance(bukkitLocation, config, finalHasNaturalWater, fertilizers(state));
+            }, bukkitLocation);
         }
     }
 

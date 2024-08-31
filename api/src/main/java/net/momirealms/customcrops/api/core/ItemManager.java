@@ -18,6 +18,7 @@
 package net.momirealms.customcrops.api.core;
 
 import net.momirealms.customcrops.common.item.Item;
+import net.momirealms.customcrops.common.plugin.feature.Reloadable;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
@@ -26,7 +27,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public interface ItemManager {
+public interface ItemManager extends Reloadable {
 
     void place(@NotNull Location location, @NotNull ExistenceForm form, @NotNull String id, FurnitureRotation rotation);
 

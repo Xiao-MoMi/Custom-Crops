@@ -45,12 +45,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Collection;
-import java.util.Map;
 
 public class SeedItem extends AbstractCustomCropsItem {
 
     public SeedItem() {
-        super(BuiltInBlockMechanics.CROP.key());
+        super(BuiltInItemMechanics.SEED.key());
     }
 
     @Override
@@ -60,11 +59,10 @@ public class SeedItem extends AbstractCustomCropsItem {
         if (potConfig == null) return InteractionResult.PASS;
         // check if the crop exists
         CropConfig cropConfig = Registries.SEED_TO_CROP.get(event.itemID());
-        if (cropConfig == null) return InteractionResult.FAIL;
+        if (cropConfig == null) return InteractionResult.COMPLETE;
         // check the block face
         if (event.clickedBlockFace() != BlockFace.UP)
             return InteractionResult.PASS;
-
         final Player player = event.player();
         Context<Player> context = Context.player(player);
         // check pot whitelist
@@ -73,20 +71,21 @@ public class SeedItem extends AbstractCustomCropsItem {
         }
         // check plant requirements
         if (!RequirementManager.isSatisfied(context, cropConfig.plantRequirements())) {
-            return InteractionResult.FAIL;
+            return InteractionResult.COMPLETE;
         }
         // check if the block is empty
-        if (!suitableForSeed(event.location())) {
-            return InteractionResult.FAIL;
+        Location seedLocation = event.location().add(0, 1, 0);
+        if (!suitableForSeed(seedLocation)) {
+            return InteractionResult.COMPLETE;
         }
         CustomCropsWorld<?> world = event.world();
-        Location seedLocation = event.location().add(0, 1, 0);
+
         Pos3 pos3 = Pos3.from(seedLocation);
         // check limitation
         if (world.setting().cropPerChunk() >= 0) {
             if (world.testChunkLimitation(pos3, CropBlock.class, world.setting().cropPerChunk())) {
                 ActionManager.trigger(context, cropConfig.reachLimitActions());
-                return InteractionResult.FAIL;
+                return InteractionResult.COMPLETE;
             }
         }
         final ItemStack itemInHand = event.itemInHand();
@@ -97,24 +96,17 @@ public class SeedItem extends AbstractCustomCropsItem {
         // trigger event
         CropPlantEvent plantEvent = new CropPlantEvent(player, itemInHand, event.hand(), seedLocation, cropConfig, state, 0);
         if (EventUtils.fireAndCheckCancel(plantEvent)) {
-            return InteractionResult.FAIL;
+            return InteractionResult.COMPLETE;
         }
         int point = plantEvent.getPoint();
-        int temp = point;
-        ExistenceForm form = null;
-        String stageID = null;
-        while (temp >= 0) {
-            Map.Entry<Integer, CropStageConfig> entry = cropConfig.getFloorStageEntry(temp);
-            CropStageConfig stageConfig = entry.getValue();
-            if (stageConfig.stageID() != null) {
-                form = stageConfig.existenceForm();
-                stageID = stageConfig.stageID();
-                break;
-            }
-            temp = stageConfig.point() - 1;
+        CropStageConfig stageConfig = cropConfig.stageWithModelByPoint(point);
+        if (stageConfig == null) {
+            return InteractionResult.COMPLETE;
         }
+        String stageID = stageConfig.stageID();
+        ExistenceForm form = stageConfig.existenceForm();
         if (stageID == null || form == null) {
-            return InteractionResult.FAIL;
+            return InteractionResult.COMPLETE;
         }
         // reduce item
         if (player.getGameMode() != GameMode.CREATIVE)
@@ -133,7 +125,7 @@ public class SeedItem extends AbstractCustomCropsItem {
         context.arg(ContextKeys.SLOT, event.hand());
         // trigger plant actions
         ActionManager.trigger(context, cropConfig.plantActions());
-        return InteractionResult.SUCCESS;
+        return InteractionResult.COMPLETE;
     }
 
     private boolean suitableForSeed(Location location) {

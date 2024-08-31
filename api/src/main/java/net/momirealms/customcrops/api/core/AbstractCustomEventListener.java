@@ -69,7 +69,8 @@ public abstract class AbstractCustomEventListener implements Listener {
             return;
         this.itemManager.handlePlayerInteractAir(
                 event.getPlayer(),
-                event.getHand(), event.getItem()
+                event.getHand(),
+                event.getItem()
         );
     }
 

@@ -53,7 +53,7 @@ public class FertilizerItem extends AbstractCustomCropsItem {
     public InteractionResult interactAt(WrappedInteractEvent event) {
         FertilizerConfig fertilizerConfig = Registries.FERTILIZER.get(event.itemID());
         if (fertilizerConfig == null) {
-            return InteractionResult.FAIL;
+            return InteractionResult.COMPLETE;
         }
 
         final Player player = event.player();
@@ -77,14 +77,14 @@ public class FertilizerItem extends AbstractCustomCropsItem {
             // check pot whitelist
             if (!fertilizerConfig.whitelistPots().contains(potConfig.id())) {
                 ActionManager.trigger(context, fertilizerConfig.wrongPotActions());
-                return InteractionResult.FAIL;
+                return InteractionResult.COMPLETE;
             }
             // check requirements
             if (!RequirementManager.isSatisfied(context, fertilizerConfig.requirements())) {
-                return InteractionResult.FAIL;
+                return InteractionResult.COMPLETE;
             }
             if (!RequirementManager.isSatisfied(context, potConfig.useRequirements())) {
-                return InteractionResult.FAIL;
+                return InteractionResult.COMPLETE;
             }
             // check "before-plant"
             if (fertilizerConfig.beforePlant()) {
@@ -94,7 +94,7 @@ public class FertilizerItem extends AbstractCustomCropsItem {
                     CustomCropsBlockState blockState = state.get();
                     if (blockState.type() instanceof CropBlock) {
                         ActionManager.trigger(context, fertilizerConfig.beforePlantActions());
-                        return InteractionResult.FAIL;
+                        return InteractionResult.COMPLETE;
                     }
                 }
             }
@@ -108,12 +108,12 @@ public class FertilizerItem extends AbstractCustomCropsItem {
                     .build();
             CustomCropsBlockState potState = potBlock.fixOrGetState(world, Pos3.from(targetLocation), potConfig, event.relatedID());
             if (!potBlock.canApplyFertilizer(potState,fertilizer)) {
-                return InteractionResult.FAIL;
+                return InteractionResult.COMPLETE;
             }
             // trigger event
             FertilizerUseEvent useEvent = new FertilizerUseEvent(player, itemInHand, fertilizer, targetLocation, potState, event.hand(), potConfig);
             if (EventUtils.fireAndCheckCancel(useEvent))
-                return InteractionResult.FAIL;
+                return InteractionResult.COMPLETE;
             // add the fertilizer
             if (potBlock.addFertilizer(potState, fertilizer)) {
                 potBlock.updateBlockAppearance(targetLocation, potState, potBlock.fertilizers(potState));
@@ -122,7 +122,7 @@ public class FertilizerItem extends AbstractCustomCropsItem {
                 itemInHand.setAmount(itemInHand.getAmount() - 1);
             }
             ActionManager.trigger(context, fertilizerConfig.useActions());
-            return InteractionResult.SUCCESS;
+            return InteractionResult.COMPLETE;
         }
 
         return InteractionResult.PASS;

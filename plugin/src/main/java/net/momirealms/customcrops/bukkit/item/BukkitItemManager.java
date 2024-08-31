@@ -81,6 +81,11 @@ public class BukkitItemManager extends AbstractItemManager {
     }
 
     @Override
+    public void load() {
+        this.resetItemDetectionOrder();
+    }
+
+    @Override
     public void setCustomEventListener(@NotNull AbstractCustomEventListener listener) {
         Objects.requireNonNull(listener, "listener cannot be null");
         if (this.eventListener != null) {
@@ -392,7 +397,7 @@ public class BukkitItemManager extends AbstractItemManager {
         CustomCropsWorld<?> world = optionalWorld.get();
         WrappedInteractEvent wrapped = new WrappedInteractEvent(ExistenceForm.BLOCK, player, world, block.getLocation(), blockID, itemInHand, itemID, hand, blockFace, event);
 
-        handleInteractEvent(blockID, itemID, wrapped);
+        handleInteractEvent(blockID, wrapped);
     }
 
     @Override
@@ -406,11 +411,11 @@ public class BukkitItemManager extends AbstractItemManager {
         CustomCropsWorld<?> world = optionalWorld.get();
         WrappedInteractEvent wrapped = new WrappedInteractEvent(ExistenceForm.FURNITURE, player, world, location, furnitureID, itemInHand, itemID, hand, null, event);
 
-        handleInteractEvent(furnitureID, itemID, wrapped);
+        handleInteractEvent(furnitureID, wrapped);
     }
 
-    private void handleInteractEvent(String blockID, String itemID, WrappedInteractEvent wrapped) {
-        CustomCropsItem customCropsItem = Registries.ITEMS.get(itemID);
+    private void handleInteractEvent(String blockID, WrappedInteractEvent wrapped) {
+        CustomCropsItem customCropsItem = Registries.ITEMS.get(wrapped.itemID());
         if (customCropsItem != null) {
             InteractionResult result = customCropsItem.interactAt(wrapped);
             if (result != InteractionResult.PASS)
