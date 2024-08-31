@@ -1,7 +1,0 @@
-rootProject.name = 'CustomCrops'
-include(":plugin")
-include(":api")
-include(":legacy-api")
-include("oraxen-legacy")
-include(":oraxen-j21")
-
