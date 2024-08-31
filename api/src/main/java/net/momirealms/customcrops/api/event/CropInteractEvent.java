@@ -17,15 +17,16 @@
 
 package net.momirealms.customcrops.api.event;
 
-import net.momirealms.customcrops.api.mechanic.world.level.WorldCrop;
+import net.momirealms.customcrops.api.core.block.CropConfig;
+import net.momirealms.customcrops.api.core.world.CustomCropsBlockState;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * An event that triggered when a player interacts a crop
@@ -35,19 +36,28 @@ public class CropInteractEvent extends PlayerEvent implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
     private boolean cancelled;
     private final Location location;
-    private final WorldCrop crop;
+    private final CustomCropsBlockState blockState;
     private final ItemStack itemInHand;
+    private final EquipmentSlot hand;
+    private final CropConfig config;
+    private final String stageItemID;
 
     public CropInteractEvent(
             @NotNull Player who,
             @NotNull ItemStack itemInHand,
             @NotNull Location location,
-            @Nullable WorldCrop crop
+            @NotNull CustomCropsBlockState blockState,
+            @NotNull EquipmentSlot hand,
+            @NotNull CropConfig config,
+            @NotNull String stageItemID
     ) {
         super(who);
         this.location = location;
-        this.crop = crop;
+        this.blockState = blockState;
         this.itemInHand = itemInHand;
+        this.hand = hand;
+        this.config = config;
+        this.stageItemID = stageItemID;
     }
 
     @Override
@@ -92,13 +102,23 @@ public class CropInteractEvent extends PlayerEvent implements Cancellable {
         return itemInHand;
     }
 
-    /**
-     * Get the crop's data, it might be null if it's spawned by other plugins in the wild
-     *
-     * @return crop data
-     */
-    @Nullable
-    public WorldCrop getCrop() {
-        return crop;
+    @NotNull
+    public CropConfig getCropConfig() {
+        return config;
+    }
+
+    @NotNull
+    public CustomCropsBlockState getBlockState() {
+        return blockState;
+    }
+
+    @NotNull
+    public EquipmentSlot getHand() {
+        return hand;
+    }
+
+    @NotNull
+    public String getStageItemID() {
+        return stageItemID;
     }
 }

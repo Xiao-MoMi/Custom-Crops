@@ -17,11 +17,12 @@
 
 package net.momirealms.customcrops.api.event;
 
-import net.momirealms.customcrops.api.mechanic.misc.Reason;
-import net.momirealms.customcrops.api.mechanic.world.level.WorldSprinkler;
+import net.momirealms.customcrops.api.core.block.BreakReason;
+import net.momirealms.customcrops.api.core.block.SprinklerConfig;
+import net.momirealms.customcrops.api.core.world.CustomCropsBlockState;
 import org.bukkit.Location;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
@@ -36,20 +37,26 @@ public class SprinklerBreakEvent extends Event implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
     private boolean cancelled;
     private final Location location;
-    private final WorldSprinkler sprinkler;
-    private final Entity entity;
-    private final Reason reason;
+    private final CustomCropsBlockState blockState;
+    private final SprinklerConfig config;
+    private final Entity entityBreaker;
+    private final Block blockBreaker;
+    private final BreakReason reason;
 
     public SprinklerBreakEvent(
-            @Nullable Entity entity,
+            @Nullable Entity entityBreaker,
+            @Nullable Block blockBreaker,
             @NotNull Location location,
-            @NotNull WorldSprinkler sprinkler,
-            @NotNull Reason reason
+            @NotNull CustomCropsBlockState blockState,
+            @NotNull SprinklerConfig config,
+            @NotNull BreakReason reason
     ) {
-        this.entity = entity;
+        this.entityBreaker = entityBreaker;
+        this.blockBreaker = blockBreaker;
         this.location = location;
         this.reason = reason;
-        this.sprinkler = sprinkler;
+        this.config = config;
+        this.blockState = blockState;
     }
 
     @Override
@@ -83,31 +90,28 @@ public class SprinklerBreakEvent extends Event implements Cancellable {
         return location;
     }
 
-    /**
-     * Get the sprinkler's data
-     *
-     * @return sprinkler
-     */
-    @NotNull
-    public WorldSprinkler getSprinkler() {
-        return sprinkler;
-    }
-
     @Nullable
-    public Entity getEntity() {
-        return entity;
-    }
-
-    @Nullable
-    public Player getPlayer() {
-        if (entity instanceof Player player) {
-            return player;
-        }
-        return null;
+    public Entity getEntityBreaker() {
+        return entityBreaker;
     }
 
     @NotNull
-    public Reason getReason() {
+    public CustomCropsBlockState getBlockState() {
+        return blockState;
+    }
+
+    @NotNull
+    public SprinklerConfig getSprinklerConfig() {
+        return config;
+    }
+
+    @Nullable
+    public Block getBlockBreaker() {
+        return blockBreaker;
+    }
+
+    @NotNull
+    public BreakReason getReason() {
         return reason;
     }
 }

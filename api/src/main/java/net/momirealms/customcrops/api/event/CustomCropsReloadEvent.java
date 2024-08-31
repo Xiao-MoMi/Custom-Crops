@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) <2022> <XiaoMoMi>
+ *  Copyright (C) <2024> <XiaoMoMi>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 
 package net.momirealms.customcrops.api.event;
 
-import net.momirealms.customcrops.api.CustomCropsPlugin;
+import net.momirealms.customcrops.api.BukkitCustomCropsPlugin;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
@@ -25,9 +25,9 @@ import org.jetbrains.annotations.NotNull;
 public class CustomCropsReloadEvent extends Event {
 
     private static final HandlerList handlerList = new HandlerList();
-    private final CustomCropsPlugin plugin;
+    private final BukkitCustomCropsPlugin plugin;
 
-    public CustomCropsReloadEvent(CustomCropsPlugin plugin) {
+    public CustomCropsReloadEvent(BukkitCustomCropsPlugin plugin) {
         this.plugin = plugin;
     }
 
@@ -41,7 +41,7 @@ public class CustomCropsReloadEvent extends Event {
         return getHandlerList();
     }
 
-    public CustomCropsPlugin getPluginInstance() {
+    public BukkitCustomCropsPlugin getPluginInstance() {
         return plugin;
     }
 }

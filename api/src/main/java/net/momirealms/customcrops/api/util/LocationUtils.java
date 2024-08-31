@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) <2022> <XiaoMoMi>
+ *  Copyright (C) <2024> <XiaoMoMi>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -53,11 +53,20 @@ public class LocationUtils {
     }
 
     @NotNull
-    public static Location toCenterLocation(Location location) {
+    public static Location toBlockCenterLocation(Location location) {
         Location centerLoc = location.clone();
         centerLoc.setX(location.getBlockX() + 0.5);
         centerLoc.setY(location.getBlockY() + 0.5);
         centerLoc.setZ(location.getBlockZ() + 0.5);
+        return centerLoc;
+    }
+
+    @NotNull
+    public static Location toSurfaceCenterLocation(Location location) {
+        Location centerLoc = location.clone();
+        centerLoc.setX(location.getBlockX() + 0.5);
+        centerLoc.setZ(location.getBlockZ() + 0.5);
+        centerLoc.setY(location.getBlockY());
         return centerLoc;
     }
 }

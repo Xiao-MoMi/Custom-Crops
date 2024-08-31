@@ -17,12 +17,14 @@
 
 package net.momirealms.customcrops.api.event;
 
-import net.momirealms.customcrops.api.mechanic.world.level.WorldSprinkler;
+import net.momirealms.customcrops.api.core.block.SprinklerConfig;
+import net.momirealms.customcrops.api.core.world.CustomCropsBlockState;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -34,19 +36,25 @@ public class SprinklerInteractEvent extends PlayerEvent implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
     private boolean cancelled;
     private final Location location;
-    private final WorldSprinkler sprinkler;
+    private final CustomCropsBlockState blockState;
+    private final SprinklerConfig config;
     private final ItemStack itemInHand;
+    private final EquipmentSlot hand;
 
     public SprinklerInteractEvent(
             @NotNull Player who,
             @NotNull ItemStack itemInHand,
             @NotNull Location location,
-            @NotNull WorldSprinkler sprinkler
+            @NotNull SprinklerConfig config,
+            @NotNull CustomCropsBlockState blockState,
+            @NotNull EquipmentSlot hand
     ) {
         super(who);
         this.location = location;
-        this.sprinkler = sprinkler;
+        this.config = config;
         this.itemInHand = itemInHand;
+        this.hand = hand;
+        this.blockState = blockState;
     }
 
     @Override
@@ -80,14 +88,19 @@ public class SprinklerInteractEvent extends PlayerEvent implements Cancellable {
         return location;
     }
 
-    /**
-     * Get the sprinkler's data
-     *
-     * @return sprinkler
-     */
     @NotNull
-    public WorldSprinkler getSprinkler() {
-        return sprinkler;
+    public CustomCropsBlockState getBlockState() {
+        return blockState;
+    }
+
+    @NotNull
+    public SprinklerConfig getSprinklerConfig() {
+        return config;
+    }
+
+    @NotNull
+    public EquipmentSlot getHand() {
+        return hand;
     }
 
     /**

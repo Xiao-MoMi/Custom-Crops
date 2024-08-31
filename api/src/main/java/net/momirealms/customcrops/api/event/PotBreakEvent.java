@@ -17,9 +17,11 @@
 
 package net.momirealms.customcrops.api.event;
 
-import net.momirealms.customcrops.api.mechanic.misc.Reason;
-import net.momirealms.customcrops.api.mechanic.world.level.WorldPot;
+import net.momirealms.customcrops.api.core.block.BreakReason;
+import net.momirealms.customcrops.api.core.block.PotConfig;
+import net.momirealms.customcrops.api.core.world.CustomCropsBlockState;
 import org.bukkit.Location;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
@@ -36,20 +38,26 @@ public class PotBreakEvent extends Event implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
     private boolean cancelled;
     private final Location location;
-    private final WorldPot pot;
-    private final Entity entity;
-    private final Reason reason;
+    private final PotConfig config;
+    private final CustomCropsBlockState blockState;
+    private final Entity entityBreaker;
+    private final Block blockBreaker;
+    private final BreakReason reason;
 
     public PotBreakEvent(
-            @Nullable Entity entity,
+            @Nullable Entity entityBreaker,
+            @Nullable Block blockBreaker,
             @NotNull Location location,
-            @NotNull WorldPot pot,
-            @NotNull Reason reason
+            @NotNull PotConfig config,
+            @NotNull CustomCropsBlockState blockState,
+            @NotNull BreakReason reason
     ) {
-        this.entity = entity;
+        this.entityBreaker = entityBreaker;
+        this.blockBreaker = blockBreaker;
         this.location = location;
-        this.pot = pot;
+        this.blockState = blockState;
         this.reason = reason;
+        this.config = config;
     }
 
     @Override
@@ -83,32 +91,36 @@ public class PotBreakEvent extends Event implements Cancellable {
         return location;
     }
 
-
-    /**
-     * Get the pot's data
-     *
-     * @return pot
-     */
-    @NotNull
-    public WorldPot getPot() {
-        return pot;
-    }
-
     @Nullable
-    public Entity getEntity() {
-        return entity;
+    public Entity getEntityBreaker() {
+        return entityBreaker;
     }
 
     @Nullable
     public Player getPlayer() {
-        if (entity instanceof Player player) {
+        if (entityBreaker instanceof Player player) {
             return player;
         }
         return null;
     }
 
     @NotNull
-    public Reason getReason() {
+    public BreakReason getReason() {
         return reason;
+    }
+
+    @NotNull
+    public PotConfig getPotConfig() {
+        return config;
+    }
+
+    @NotNull
+    public CustomCropsBlockState getBlockState() {
+        return blockState;
+    }
+
+    @Nullable
+    public Block getBlockBreaker() {
+        return blockBreaker;
     }
 }

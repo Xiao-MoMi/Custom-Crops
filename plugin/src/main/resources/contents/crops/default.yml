@@ -215,14 +215,17 @@ tomato:
                     crop: tomato
   # Custom grow conditions
   grow-conditions:
-    season_condition:
-      type: suitable_season
-      value:
-        - Spring
-        - Autumn
-    water_condition:
-      type: water_more_than
-      value: 0
+    default:
+      point: 1
+      conditions:
+        season_condition:
+          type: suitable_season
+          value:
+            - Spring
+            - Autumn
+        water_condition:
+          type: water_more_than
+          value: 0
   # Custom death conditions
   death-conditions:
     no_water:

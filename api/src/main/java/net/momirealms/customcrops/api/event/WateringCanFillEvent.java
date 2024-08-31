@@ -17,13 +17,14 @@
 
 package net.momirealms.customcrops.api.event;
 
-import net.momirealms.customcrops.api.mechanic.item.WateringCan;
-import net.momirealms.customcrops.api.mechanic.item.water.PositiveFillMethod;
+import net.momirealms.customcrops.api.core.item.WateringCanConfig;
+import net.momirealms.customcrops.api.core.water.FillMethod;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -35,23 +36,26 @@ public class WateringCanFillEvent extends PlayerEvent implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
     private boolean cancelled;
     private final ItemStack itemInHand;
-    private final WateringCan wateringCan;
-    private final PositiveFillMethod fillMethod;
+    private final WateringCanConfig config;
+    private final FillMethod fillMethod;
     private final Location location;
+    private final EquipmentSlot hand;
 
     public WateringCanFillEvent(
             @NotNull Player player,
+            @NotNull EquipmentSlot hand,
             @NotNull ItemStack itemInHand,
             @NotNull Location location,
-            @NotNull WateringCan wateringCan,
-            @NotNull PositiveFillMethod fillMethod
+            @NotNull WateringCanConfig config,
+            @NotNull FillMethod fillMethod
     ) {
         super(player);
         this.cancelled = false;
         this.itemInHand = itemInHand;
-        this.wateringCan = wateringCan;
+        this.config = config;
         this.location = location;
         this.fillMethod = fillMethod;
+        this.hand = hand;
     }
 
     @Override
@@ -84,14 +88,9 @@ public class WateringCanFillEvent extends PlayerEvent implements Cancellable {
         return itemInHand;
     }
 
-    /**
-     * Get watering can config
-     *
-     * @return watering can config
-     */
     @NotNull
-    public WateringCan getWateringCan() {
-        return wateringCan;
+    public WateringCanConfig getConfig() {
+        return config;
     }
 
     /**
@@ -100,8 +99,13 @@ public class WateringCanFillEvent extends PlayerEvent implements Cancellable {
      * @return positive fill method
      */
     @NotNull
-    public PositiveFillMethod getFillMethod() {
+    public FillMethod getFillMethod() {
         return fillMethod;
+    }
+
+    @NotNull
+    public EquipmentSlot getHand() {
+        return hand;
     }
 
     /**

@@ -17,11 +17,11 @@
 
 package net.momirealms.customcrops.api.event;
 
-import net.momirealms.customcrops.api.mechanic.misc.Reason;
-import net.momirealms.customcrops.api.mechanic.world.level.WorldGlass;
+import net.momirealms.customcrops.api.core.block.BreakReason;
+import net.momirealms.customcrops.api.core.world.CustomCropsBlockState;
 import org.bukkit.Location;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
@@ -36,20 +36,26 @@ public class GreenhouseGlassBreakEvent extends Event implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
     private boolean cancelled;
     private final Location location;
-    private final Entity entity;
-    private final Reason reason;
-    private final WorldGlass glass;
+    private final Entity entityBreaker;
+    private final Block blockBreaker;
+    private final BreakReason reason;
+    private final CustomCropsBlockState blockState;
+    private final String glassItemID;
 
     public GreenhouseGlassBreakEvent(
-            @Nullable Entity entity,
+            @Nullable Entity entityBreaker,
+            @Nullable Block blockBreaker,
             @NotNull Location location,
-            @NotNull WorldGlass glass,
-            @NotNull Reason reason
+            @NotNull String glassItemID,
+            @NotNull CustomCropsBlockState blockState,
+            @NotNull BreakReason reason
     ) {
-        this.entity = entity;
+        this.entityBreaker = entityBreaker;
+        this.blockBreaker = blockBreaker;
         this.location = location;
         this.reason = reason;
-        this.glass = glass;
+        this.blockState = blockState;
+        this.glassItemID = glassItemID;
     }
 
     @Override
@@ -84,30 +90,26 @@ public class GreenhouseGlassBreakEvent extends Event implements Cancellable {
     }
 
     @Nullable
-    public Entity getEntity() {
-        return entity;
+    public Entity getEntityBreaker() {
+        return entityBreaker;
     }
 
     @Nullable
-    public Player getPlayer() {
-        if (entity instanceof Player player) {
-            return player;
-        }
-        return null;
+    public Block getBlockBreaker() {
+        return blockBreaker;
     }
 
     @NotNull
-    public Reason getReason() {
+    public BreakReason getReason() {
         return reason;
     }
 
-    /**
-     * Get the glass data
-     *
-     * @return glass data
-     */
     @NotNull
-    public WorldGlass getGlass() {
-        return glass;
+    public CustomCropsBlockState getBlockState() {
+        return blockState;
+    }
+
+    public String getGlassItemID() {
+        return glassItemID;
     }
 }

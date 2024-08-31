@@ -17,6 +17,7 @@
 
 package net.momirealms.customcrops.api.event;
 
+import net.momirealms.customcrops.api.core.world.CustomCropsBlockState;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
@@ -32,13 +33,19 @@ public class ScarecrowPlaceEvent extends PlayerEvent implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
     private boolean cancelled;
     private final Location location;
+    private final String scarecrowItemID;
+    private final CustomCropsBlockState blockState;
 
     public ScarecrowPlaceEvent(
             @NotNull Player who,
-            @NotNull Location location
+            @NotNull Location location,
+            @NotNull String scarecrowItemID,
+            @NotNull CustomCropsBlockState blockState
     ) {
         super(who);
         this.location = location;
+        this.blockState = blockState;
+        this.scarecrowItemID = scarecrowItemID;
     }
 
     @Override
@@ -62,6 +69,11 @@ public class ScarecrowPlaceEvent extends PlayerEvent implements Cancellable {
         return getHandlerList();
     }
 
+    @NotNull
+    public String getScarecrowItemID() {
+        return scarecrowItemID;
+    }
+
     /**
      * Get the scarecrow location
      *
@@ -70,5 +82,10 @@ public class ScarecrowPlaceEvent extends PlayerEvent implements Cancellable {
     @NotNull
     public Location getLocation() {
         return location;
+    }
+
+    @NotNull
+    public CustomCropsBlockState getBlockState() {
+        return blockState;
     }
 }

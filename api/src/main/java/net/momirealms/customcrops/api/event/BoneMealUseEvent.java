@@ -17,41 +17,48 @@
 
 package net.momirealms.customcrops.api.event;
 
-import net.momirealms.customcrops.api.mechanic.item.BoneMeal;
-import net.momirealms.customcrops.api.mechanic.world.level.WorldCrop;
+import net.momirealms.customcrops.api.core.block.BoneMeal;
+import net.momirealms.customcrops.api.core.block.CropConfig;
+import net.momirealms.customcrops.api.core.world.CustomCropsBlockState;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
-import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+import org.bukkit.event.player.PlayerEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * An event that triggered when a player interacts a crop with a bone meal
  */
-public class BoneMealUseEvent extends Event implements Cancellable {
+public class BoneMealUseEvent extends PlayerEvent implements Cancellable {
 
     private static final HandlerList handlers = new HandlerList();
     private boolean cancelled;
     private final Location location;
     private final BoneMeal boneMeal;
-    private final WorldCrop crop;
+    private final CustomCropsBlockState blockState;
     private final ItemStack itemInHand;
-    private final Player player;
+    private final EquipmentSlot equipmentSlot;
+    private final CropConfig config;
 
     public BoneMealUseEvent(
             @NotNull Player player,
             @NotNull ItemStack itemInHand,
             @NotNull Location location,
             @NotNull BoneMeal boneMeal,
-            @NotNull WorldCrop crop
+            @NotNull CustomCropsBlockState blockState,
+            @NotNull EquipmentSlot equipmentSlot,
+            @NotNull CropConfig config
     ) {
+        super(player);
         this.location = location;
-        this.crop = crop;
+        this.blockState = blockState;
         this.boneMeal = boneMeal;
         this.itemInHand = itemInHand;
-        this.player = player;
+        this.equipmentSlot = equipmentSlot;
+        this.config = config;
     }
 
     @Override
@@ -85,6 +92,11 @@ public class BoneMealUseEvent extends Event implements Cancellable {
         return location;
     }
 
+    @NotNull
+    public CropConfig getConfig() {
+        return config;
+    }
+
     /**
      * Get the item in player's hand
      * If there's nothing in hand, it would return AIR
@@ -96,14 +108,14 @@ public class BoneMealUseEvent extends Event implements Cancellable {
         return itemInHand;
     }
 
-    /**
-     * Get the crop's data
-     *
-     * @return crop data
-     */
     @NotNull
-    public WorldCrop getCrop() {
-        return crop;
+    public CustomCropsBlockState getBlockState() {
+        return blockState;
+    }
+
+    @NotNull
+    public EquipmentSlot getEquipmentSlot() {
+        return equipmentSlot;
     }
 
     /**
@@ -114,10 +126,5 @@ public class BoneMealUseEvent extends Event implements Cancellable {
     @NotNull
     public BoneMeal getBoneMeal() {
         return boneMeal;
-    }
-
-    @NotNull
-    public Player getPlayer() {
-        return player;
     }
 }

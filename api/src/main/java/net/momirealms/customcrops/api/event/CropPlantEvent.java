@@ -17,12 +17,14 @@
 
 package net.momirealms.customcrops.api.event;
 
-import net.momirealms.customcrops.api.mechanic.item.Crop;
+import net.momirealms.customcrops.api.core.block.CropConfig;
+import net.momirealms.customcrops.api.core.world.CustomCropsBlockState;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -34,22 +36,28 @@ public class CropPlantEvent extends PlayerEvent implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
     private boolean cancelled;
     private final ItemStack itemInHand;
-    private final Crop crop;
+    private final CropConfig config;
     private final Location location;
+    private final CustomCropsBlockState blockState;
+    private final EquipmentSlot hand;
     private int point;
 
     public CropPlantEvent(
             @NotNull Player who,
             @NotNull ItemStack itemInHand,
+            @NotNull EquipmentSlot hand,
             @NotNull Location location,
-            @NotNull Crop crop,
+            @NotNull CropConfig config,
+            @NotNull CustomCropsBlockState blockState,
             int point
     ) {
         super(who);
         this.itemInHand = itemInHand;
+        this.hand = hand;
         this.location = location;
-        this.crop = crop;
+        this.config = config;
         this.point = point;
+        this.blockState = blockState;
     }
 
     @Override
@@ -83,14 +91,24 @@ public class CropPlantEvent extends PlayerEvent implements Cancellable {
         return getHandlerList();
     }
 
+    @NotNull
+    public CustomCropsBlockState getBlockState() {
+        return blockState;
+    }
+
+    @NotNull
+    public EquipmentSlot getHand() {
+        return hand;
+    }
+
     /**
      * Get the crop's config
      *
      * @return crop
      */
     @NotNull
-    public Crop getCrop() {
-        return crop;
+    public CropConfig getCropConfig() {
+        return config;
     }
 
     /**

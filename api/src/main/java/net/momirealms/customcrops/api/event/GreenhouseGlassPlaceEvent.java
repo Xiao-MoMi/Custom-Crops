@@ -17,6 +17,7 @@
 
 package net.momirealms.customcrops.api.event;
 
+import net.momirealms.customcrops.api.core.world.CustomCropsBlockState;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
@@ -32,13 +33,19 @@ public class GreenhouseGlassPlaceEvent extends PlayerEvent implements Cancellabl
     private static final HandlerList handlers = new HandlerList();
     private boolean cancelled;
     private final Location location;
+    private final CustomCropsBlockState blockState;
+    private final String glassItemID;
 
     public GreenhouseGlassPlaceEvent(
             @NotNull Player who,
-            @NotNull Location location
+            @NotNull Location location,
+            @NotNull String glassItemID,
+            @NotNull CustomCropsBlockState blockState
     ) {
         super(who);
         this.location = location;
+        this.glassItemID = glassItemID;
+        this.blockState = blockState;
     }
 
     @Override
@@ -70,5 +77,15 @@ public class GreenhouseGlassPlaceEvent extends PlayerEvent implements Cancellabl
     @NotNull
     public Location getLocation() {
         return location;
+    }
+
+    @NotNull
+    public CustomCropsBlockState getBlockState() {
+        return blockState;
+    }
+
+    @NotNull
+    public String getGlassItemID() {
+        return glassItemID;
     }
 }

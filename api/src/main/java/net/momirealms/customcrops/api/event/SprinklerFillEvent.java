@@ -17,40 +17,48 @@
 
 package net.momirealms.customcrops.api.event;
 
-import net.momirealms.customcrops.api.mechanic.item.water.PassiveFillMethod;
-import net.momirealms.customcrops.api.mechanic.world.level.WorldSprinkler;
+import net.momirealms.customcrops.api.core.block.SprinklerConfig;
+import net.momirealms.customcrops.api.core.water.WateringMethod;
+import net.momirealms.customcrops.api.core.world.CustomCropsBlockState;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * An event that triggered when a sprinkler is watered by the fill-methods set in each sprinkler's config
+ * An event that triggered when a pot is watered by the fill-methods set in each sprinkler's config
  */
 public class SprinklerFillEvent extends PlayerEvent implements Cancellable {
 
     private static final HandlerList handlers = new HandlerList();
     private boolean cancelled;
-    private final ItemStack itemInHand;
     private final Location location;
-    private final PassiveFillMethod fillMethod;
-    private final WorldSprinkler sprinkler;
+    private final SprinklerConfig config;
+    private final ItemStack itemInHand;
+    private final WateringMethod wateringMethod;
+    private final CustomCropsBlockState blockState;
+    private final EquipmentSlot hand;
 
     public SprinklerFillEvent(
             @NotNull Player player,
             @NotNull ItemStack itemInHand,
+            @NotNull EquipmentSlot hand,
             @NotNull Location location,
-            @NotNull PassiveFillMethod fillMethod,
-            @NotNull WorldSprinkler sprinkler
+            @NotNull WateringMethod wateringMethod,
+            @NotNull CustomCropsBlockState blockState,
+            @NotNull SprinklerConfig config
     ) {
         super(player);
-        this.itemInHand = itemInHand;
         this.location = location;
-        this.fillMethod = fillMethod;
-        this.sprinkler = sprinkler;
+        this.itemInHand = itemInHand;
+        this.wateringMethod = wateringMethod;
+        this.blockState = blockState;
+        this.config = config;
+        this.hand = hand;
     }
 
     @Override
@@ -60,7 +68,7 @@ public class SprinklerFillEvent extends PlayerEvent implements Cancellable {
 
     @Override
     public void setCancelled(boolean cancel) {
-        this.cancelled = cancel;
+        cancelled = cancel;
     }
 
     @NotNull
@@ -75,17 +83,7 @@ public class SprinklerFillEvent extends PlayerEvent implements Cancellable {
     }
 
     /**
-     * Get the item in player's hand
-     *
-     * @return item in hand
-     */
-    @NotNull
-    public ItemStack getItemInHand() {
-        return itemInHand;
-    }
-
-    /**
-     * Get the sprinkler location
+     * Get the pot location
      *
      * @return location
      */
@@ -95,17 +93,32 @@ public class SprinklerFillEvent extends PlayerEvent implements Cancellable {
     }
 
     /**
-     * Get the passive fill method
+     * Get the item in hand
      *
-     * @return passive fill method
+     * @return item in hand
      */
     @NotNull
-    public PassiveFillMethod getFillMethod() {
-        return fillMethod;
+    public ItemStack getItemInHand() {
+        return itemInHand;
     }
 
     @NotNull
-    public WorldSprinkler getSprinkler() {
-        return sprinkler;
+    public SprinklerConfig getSprinklerConfig() {
+        return config;
+    }
+
+    @NotNull
+    public WateringMethod getWateringMethod() {
+        return wateringMethod;
+    }
+
+    @NotNull
+    public CustomCropsBlockState getBlockState() {
+        return blockState;
+    }
+
+    @NotNull
+    public EquipmentSlot getHand() {
+        return hand;
     }
 }

@@ -1,42 +1,38 @@
-# Note: This project is undergoing a major refactoring. Please switch to the 3.6-dev branch for the new API.
-
 # Custom-Crops
 ![CodeFactor Grade](https://img.shields.io/codefactor/grade/github/Xiao-MoMi/Custom-Crops)
-![Code Size](https://img.shields.io/github/languages/code-size/Xiao-MoMi/Custom-Crops)
-![bStats Servers](https://img.shields.io/bstats/servers/16593)
-![bStats Players](https://img.shields.io/bstats/players/16593)
-[![Scc Count Badge](https://sloc.xyz/github/Xiao-MoMi/Custom-Crops/?category=codes)](https://github.com/Xiao-MoMi/Custom-Crops/)
-![GitHub](https://img.shields.io/github/license/Xiao-MoMi/Custom-Crops)
 [![](https://jitpack.io/v/Xiao-MoMi/Custom-Crops.svg)](https://jitpack.io/#Xiao-MoMi/Custom-Crops)
 <a href="https://mo-mi.gitbook.io/xiaomomi-plugins/plugin-wiki/customcrops" alt="GitBook">
 <img src="https://img.shields.io/badge/docs-gitbook-brightgreen" alt="Gitbook"/>
 </a>
+[![Scc Count Badge](https://sloc.xyz/github/Xiao-MoMi/Custom-Crops/?category=codes)](https://github.com/Xiao-MoMi/Custom-Crops/)
+![Code Size](https://img.shields.io/github/languages/code-size/Xiao-MoMi/Custom-Crops)
+![bStats Servers](https://img.shields.io/bstats/servers/16593)
+![bStats Players](https://img.shields.io/bstats/players/16593)
+![GitHub](https://img.shields.io/github/license/Xiao-MoMi/Custom-Crops)
 
-Ultra-customizable planting experience for Minecraft servers
-
-### Support the developer
-
-https://afdian.net/@xiaomomi
-
-https://polymart.org/resource/customcrops.2625
+CustomCrops is a Paper plugin crafted to deliver an exceptional planting experience for Minecraft servers, with a strong emphasis on customization and performance. It employs Zstd compression for data serialization, ensuring high efficiency comparable to Minecraft's own serialization techniques. The plugin optimizes server performance by running its tick system across multiple threads, reverting to the main thread only when required. Additionally, CustomCrops offers a comprehensive API that enables developers to create custom block mechanics with specific interaction and tick behaviors, such as a fish trap block that periodically provides players with fish.
 
 ## How to build
 
-### Windows
-
 #### Command Line
-Install JDK 17 and set the JDK installation path to JAVA_HOME as an environment variable.\
-Start powershell and change directory to the project folder.\
-Execute ".\gradlew build" and get the jar at /target/CustomCrops-plugin-version.jar.
+Install JDK 17 & 21. \
+Start terminal and change directory to the project folder.\
+Execute ".\gradlew build" and get the artifact under /target folder
 
 #### IDE
-Import the project and execute gradle build action.
+Import the project and execute gradle build action. \
+Get the artifact under /target folder
 
-## Use CustomCrops API
+## Support the developer
+
+Polymart: https://polymart.org/resource/customfishing.2723 \
+Afdian: https://afdian.net/@xiaomomi
+
+## CustomCrops API
 
 ### Maven
 
-```
+```html
 <repositories>
   <repository>
     <id>jitpack</id>
@@ -44,7 +40,7 @@ Import the project and execute gradle build action.
   </repository>
 </repositories>
 ```
-```
+```html
 <dependencies>
   <dependency>
     <groupId>com.github.Xiao-MoMi</groupId>
@@ -56,24 +52,24 @@ Import the project and execute gradle build action.
 ```
 ### Gradle (Groovy)
 
-```
+```groovy
 repositories {
     maven { url 'https://jitpack.io' }
 }
 ```
-```
+```groovy
 dependencies {
     compileOnly 'com.github.Xiao-MoMi:Custom-Crops:{LATEST}'
 }
 ```
 ### Gradle (Kotlin)
 
-```
+```kotlin
 repositories {
     maven("https://jitpack.io/")
 }
 ```
-```
+```kotlin
 dependencies {
     compileOnly("com.github.Xiao-MoMi:Custom-Crops:{LATEST}")
 }

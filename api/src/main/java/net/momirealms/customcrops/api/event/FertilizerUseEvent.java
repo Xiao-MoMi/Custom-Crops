@@ -17,13 +17,15 @@
 
 package net.momirealms.customcrops.api.event;
 
-import net.momirealms.customcrops.api.mechanic.item.Fertilizer;
-import net.momirealms.customcrops.api.mechanic.world.level.WorldPot;
+import net.momirealms.customcrops.api.core.block.PotConfig;
+import net.momirealms.customcrops.api.core.item.Fertilizer;
+import net.momirealms.customcrops.api.core.world.CustomCropsBlockState;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -36,22 +38,28 @@ public class FertilizerUseEvent extends PlayerEvent implements Cancellable {
     private boolean cancelled;
     private final ItemStack itemInHand;
     private final Location location;
-    private final WorldPot pot;
+    private final CustomCropsBlockState blockState;
     private final Fertilizer fertilizer;
+    private final EquipmentSlot hand;
+    private final PotConfig config;
 
     public FertilizerUseEvent(
             @NotNull Player player,
             @NotNull ItemStack itemInHand,
             @NotNull Fertilizer fertilizer,
             @NotNull Location location,
-            @NotNull WorldPot pot
+            @NotNull CustomCropsBlockState blockState,
+            @NotNull EquipmentSlot hand,
+            @NotNull PotConfig config
     ) {
         super(player);
         this.cancelled = false;
         this.itemInHand = itemInHand;
         this.fertilizer = fertilizer;
         this.location = location;
-        this.pot = pot;
+        this.blockState = blockState;
+        this.hand = hand;
+        this.config = config;
     }
 
     @Override
@@ -94,14 +102,19 @@ public class FertilizerUseEvent extends PlayerEvent implements Cancellable {
         return location;
     }
 
-    /**
-     * Get the pot's data
-     *
-     * @return pot data
-     */
     @NotNull
-    public WorldPot getPot() {
-        return pot;
+    public CustomCropsBlockState getBlockState() {
+        return blockState;
+    }
+
+    @NotNull
+    public EquipmentSlot getHand() {
+        return hand;
+    }
+
+    @NotNull
+    public PotConfig getPotConfig() {
+        return config;
     }
 
     /**

@@ -13,20 +13,19 @@ default:
   absorb-nearby-water: false
   # Set unique looks for pots with different fertilizer statuses
   fertilized-pots:
-    enable: false
     quality:
       dry: {0}dry_pot
       wet: {0}wet_pot
-    yield-increase:
+    yield_increase:
       dry: {0}dry_pot
       wet: {0}wet_pot
     variation:
       dry: {0}dry_pot
       wet: {0}wet_pot
-    soil-retain:
+    soil_retain:
       dry: {0}dry_pot
       wet: {0}wet_pot
-    speed-grow:
+    speed_grow:
       dry: {0}dry_pot
       wet: {0}wet_pot
   # Methods to fill the watering can

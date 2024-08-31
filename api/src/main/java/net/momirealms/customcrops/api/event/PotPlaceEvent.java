@@ -17,12 +17,15 @@
 
 package net.momirealms.customcrops.api.event;
 
-import net.momirealms.customcrops.api.mechanic.item.Pot;
+import net.momirealms.customcrops.api.core.block.PotConfig;
+import net.momirealms.customcrops.api.core.world.CustomCropsBlockState;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerEvent;
+import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -33,16 +36,25 @@ public class PotPlaceEvent extends PlayerEvent implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
     private boolean cancelled;
     private final Location location;
-    private final Pot pot;
+    private final PotConfig config;
+    private final CustomCropsBlockState state;
+    private final ItemStack itemInHand;
+    private final EquipmentSlot hand;
 
     public PotPlaceEvent(
             @NotNull Player who,
             @NotNull Location location,
-            @NotNull Pot pot
+            @NotNull PotConfig config,
+            @NotNull CustomCropsBlockState state,
+            @NotNull ItemStack itemInHand,
+            @NotNull EquipmentSlot hand
     ) {
         super(who);
         this.location = location;
-        this.pot = pot;
+        this.state = state;
+        this.itemInHand = itemInHand;
+        this.hand = hand;
+        this.config = config;
     }
 
     @Override
@@ -76,13 +88,23 @@ public class PotPlaceEvent extends PlayerEvent implements Cancellable {
         return location;
     }
 
-    /**
-     * Get the placed pot's config
-     *
-     * @return pot
-     */
     @NotNull
-    public Pot getPot() {
-        return pot;
+    public CustomCropsBlockState getState() {
+        return state;
+    }
+
+    @NotNull
+    public ItemStack getItemInHand() {
+        return itemInHand;
+    }
+
+    @NotNull
+    public EquipmentSlot getHand() {
+        return hand;
+    }
+
+    @NotNull
+    public PotConfig getPotConfig() {
+        return config;
     }
 }

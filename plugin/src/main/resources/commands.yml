@@ -1,0 +1,38 @@
+#
+# Don't change this
+#
+config-version: "${config_version}"
+
+#
+# For safety reasons, editing this file requires a restart to apply
+#
+
+# A command to reload the plugin
+# Usage: [COMMAND]
+reload:
+  enable: true
+  permission: customcrops.command.reload
+  usage:
+    - /customcrops reload
+    - /ccrops reload
+
+get_season:
+  enable: true
+  permission: customcrops.command.get_season
+  usage:
+    - /customcrops season get
+    - /ccrops season get
+
+set_season:
+  enable: true
+  permission: customcrops.command.set_season
+  usage:
+    - /customcrops season set
+    - /ccrops season set
+
+debug_data:
+  enable: true
+  permission: customcrops.command.debug
+  usage:
+    - /customcrops debug data
+    - /ccrops debug data

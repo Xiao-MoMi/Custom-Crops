@@ -17,12 +17,14 @@
 
 package net.momirealms.customcrops.api.event;
 
-import net.momirealms.customcrops.api.mechanic.world.level.WorldPot;
+import net.momirealms.customcrops.api.core.block.PotConfig;
+import net.momirealms.customcrops.api.core.world.CustomCropsBlockState;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -35,18 +37,24 @@ public class PotInteractEvent extends PlayerEvent implements Cancellable {
     private boolean cancelled;
     private final ItemStack itemInHand;
     private final Location location;
-    private final WorldPot pot;
+    private final CustomCropsBlockState blockState;
+    private final PotConfig config;
+    private final EquipmentSlot hand;
 
     public PotInteractEvent(
             @NotNull Player who,
+            @NotNull EquipmentSlot hand,
             @NotNull ItemStack itemInHand,
+            @NotNull PotConfig config,
             @NotNull Location location,
-            @NotNull WorldPot pot
+            @NotNull CustomCropsBlockState blockState
     ) {
         super(who);
         this.itemInHand = itemInHand;
         this.location = location;
-        this.pot = pot;
+        this.blockState = blockState;
+        this.config = config;
+        this.hand = hand;
     }
 
     @Override
@@ -81,6 +89,11 @@ public class PotInteractEvent extends PlayerEvent implements Cancellable {
         return itemInHand;
     }
 
+    @NotNull
+    public EquipmentSlot getHand() {
+        return hand;
+    }
+
     /**
      * Get the pot location
      *
@@ -97,7 +110,12 @@ public class PotInteractEvent extends PlayerEvent implements Cancellable {
      * @return pot key
      */
     @NotNull
-    public WorldPot getPot() {
-        return pot;
+    public CustomCropsBlockState getBlockState() {
+        return blockState;
+    }
+
+    @NotNull
+    public PotConfig getPotConfig() {
+        return config;
     }
 }

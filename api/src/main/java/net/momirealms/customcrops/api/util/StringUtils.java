@@ -12,4 +12,14 @@ public class StringUtils {
         return true;
     }
 
+    public static String toLowerCase(String input) {
+        char[] chars = input.toCharArray();
+        for (int i = 0; i < chars.length; i++) {
+            char c = chars[i];
+            if (c >= 'A' && c <= 'Z') {
+                chars[i] = (char) (c + 32);
+            }
+        }
+        return new String(chars);
+    }
 }

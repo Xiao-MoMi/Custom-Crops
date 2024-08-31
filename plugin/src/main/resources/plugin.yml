@@ -1,12 +1,10 @@
 name: CustomCrops
-version: '${version}'
-main: net.momirealms.customcrops.CustomCropsPluginImpl
+version: '${project_version}'
+main: net.momirealms.customcrops.bukkit.BukkitBootstrap
 api-version: 1.17
 load: POSTWORLD
 authors: [ XiaoMoMi ]
 folia-supported: true
-depend:
-  - ProtocolLib
 softdepend:
   - Vault
   - ItemsAdder
@@ -18,7 +16,7 @@ softdepend:
   - RealisticSeasons
   - AdvancedSeasons
   - SlimeWorldManager
-  - SlimeWorldPlugin
+  - MythicMobs
   - HuskClaims
   - HuskTowns
   - Residence
@@ -29,7 +27,6 @@ softdepend:
   - GriefPrevention
   - BentoBox
   - IridiumSkyblock
-  - MythicMobs
   - KingdomsX
   - Landlord
   - Lands
