@@ -15,7 +15,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.momirealms.customcrops.api.core.water;
+package net.momirealms.customcrops.api.misc.water;
 
 import net.momirealms.customcrops.api.action.Action;
 import net.momirealms.customcrops.api.action.ActionManager;

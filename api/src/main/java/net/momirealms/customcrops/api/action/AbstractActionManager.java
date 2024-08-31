@@ -1,3 +1,20 @@
+/*
+ *  Copyright (C) <2024> <XiaoMoMi>
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package net.momirealms.customcrops.api.action;
 
 import dev.dejvokep.boostedyaml.block.implementation.Section;
@@ -871,15 +888,15 @@ public abstract class AbstractActionManager<T> implements ActionManager<T> {
                     if (context.holder() instanceof Player p) {
                         player = p;
                     }
-                    FakeCancellable fakeCancellable = new FakeCancellable();
+                    DummyCancellable dummyCancellable = new DummyCancellable();
                     if (player != null) {
                         EquipmentSlot slot = requireNonNull(context.arg(ContextKeys.SLOT));
                         ItemStack itemStack = player.getInventory().getItem(slot);
-                        state.type().onBreak(new WrappedBreakEvent(player, null, world, location, stageConfig.stageID(), itemStack, plugin.getItemManager().id(itemStack), BreakReason.ACTION, fakeCancellable));
+                        state.type().onBreak(new WrappedBreakEvent(player, null, world, location, stageConfig.stageID(), itemStack, plugin.getItemManager().id(itemStack), BreakReason.ACTION, dummyCancellable));
                     } else {
-                        state.type().onBreak(new WrappedBreakEvent(null, null, world, location, stageConfig.stageID(), null, null, BreakReason.ACTION, fakeCancellable));
+                        state.type().onBreak(new WrappedBreakEvent(null, null, world, location, stageConfig.stageID(), null, null, BreakReason.ACTION, dummyCancellable));
                     }
-                    if (fakeCancellable.isCancelled()) {
+                    if (dummyCancellable.isCancelled()) {
                         return;
                     }
                 }

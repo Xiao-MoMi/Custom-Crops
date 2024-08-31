@@ -33,7 +33,7 @@ import net.momirealms.customcrops.api.core.item.FertilizerConfig;
 import net.momirealms.customcrops.api.core.item.FertilizerType;
 import net.momirealms.customcrops.api.core.item.WateringCanConfig;
 import net.momirealms.customcrops.api.core.world.CustomCropsBlockState;
-import net.momirealms.customcrops.api.misc.WaterBar;
+import net.momirealms.customcrops.api.misc.water.WaterBar;
 import net.momirealms.customcrops.api.misc.value.TextValue;
 import net.momirealms.customcrops.api.requirement.RequirementManager;
 import net.momirealms.customcrops.common.util.Pair;

@@ -15,7 +15,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.momirealms.customcrops.api.misc;
+package net.momirealms.customcrops.api.misc.water;
 
 public record WaterBar(String left, String empty, String full, String right) {
 

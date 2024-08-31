@@ -18,7 +18,7 @@
 package net.momirealms.customcrops.api.event;
 
 import net.momirealms.customcrops.api.core.item.WateringCanConfig;
-import net.momirealms.customcrops.api.core.water.FillMethod;
+import net.momirealms.customcrops.api.misc.water.FillMethod;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;

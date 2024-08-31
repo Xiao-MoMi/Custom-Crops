@@ -15,11 +15,21 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.momirealms.customcrops.api.core;
+package net.momirealms.customcrops.api.util;
 
-public enum ExistenceForm {
+import org.bukkit.event.Cancellable;
 
-    BLOCK,
-    FURNITURE,
-    ANY
+public class DummyCancellable implements Cancellable {
+
+    private boolean cancelled;
+
+    @Override
+    public boolean isCancelled() {
+        return cancelled;
+    }
+
+    @Override
+    public void setCancelled(boolean cancel) {
+        this.cancelled = cancel;
+    }
 }
