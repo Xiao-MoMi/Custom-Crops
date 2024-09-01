@@ -24,7 +24,9 @@ import net.momirealms.customcrops.api.core.*;
 import net.momirealms.customcrops.api.core.block.BreakReason;
 import net.momirealms.customcrops.api.core.block.CustomCropsBlock;
 import net.momirealms.customcrops.api.core.item.CustomCropsItem;
+import net.momirealms.customcrops.api.core.world.CustomCropsBlockState;
 import net.momirealms.customcrops.api.core.world.CustomCropsWorld;
+import net.momirealms.customcrops.api.core.world.Pos3;
 import net.momirealms.customcrops.api.core.wrapper.WrappedBreakEvent;
 import net.momirealms.customcrops.api.core.wrapper.WrappedInteractAirEvent;
 import net.momirealms.customcrops.api.core.wrapper.WrappedInteractEvent;
@@ -454,8 +456,23 @@ public class BukkitItemManager extends AbstractItemManager {
             return;
         }
 
-        String itemID = id(itemInHand);
         CustomCropsWorld<?> world = optionalWorld.get();
+        Pos3 pos3 = Pos3.from(location);
+        Optional<CustomCropsBlockState> optionalState = world.getBlockState(pos3);
+        if (optionalState.isPresent()) {
+            CustomCropsBlockState customCropsBlockState = optionalState.get();
+            String anyID = anyID(location);
+            System.out.println(anyID);
+            if (!customCropsBlockState.type().isBlockInstance(anyID)) {
+                world.removeBlockState(pos3);
+                plugin.debug("[" + location.getWorld().getName() + "] Removed inconsistent block data at " + pos3 + " which used to be " + customCropsBlockState);
+            } else {
+                event.setCancelled(true);
+                return;
+            }
+        }
+
+        String itemID = id(itemInHand);
         WrappedPlaceEvent wrapped = new WrappedPlaceEvent(player, world, location, placedID, hand, itemInHand, itemID, event);
         CustomCropsBlock customCropsBlock = Registries.BLOCKS.get(placedID);
         if (customCropsBlock != null) {

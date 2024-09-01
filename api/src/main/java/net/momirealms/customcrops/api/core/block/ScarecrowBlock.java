@@ -90,10 +90,15 @@ public class ScarecrowBlock extends AbstractCustomCropsBlock {
         CustomCropsWorld<?> world = event.world();
         world.addBlockState(pos3, state).ifPresent(previous -> {
             BukkitCustomCropsPlugin.getInstance().debug(
-                    "Overwrite old data with " + state.compoundMap().toString() +
-                            " at location[" + world.worldName() + "," + pos3 + "] which used to be " + previous.compoundMap().toString()
+                    "Overwrite old data with " + state +
+                            " at location[" + world.worldName() + "," + pos3 + "] which used to be " + previous
             );
         });
+    }
+
+    @Override
+    public boolean isBlockInstance(String id) {
+        return ConfigManager.scarecrow().contains(id);
     }
 
     public CustomCropsBlockState getOrFixState(CustomCropsWorld<?> world, Pos3 pos3) {
@@ -104,8 +109,8 @@ public class ScarecrowBlock extends AbstractCustomCropsBlock {
         CustomCropsBlockState state = createBlockState();
         world.addBlockState(pos3, state).ifPresent(previous -> {
             BukkitCustomCropsPlugin.getInstance().debug(
-                    "Overwrite old data with " + state.compoundMap().toString() +
-                            " at pos3[" + world.worldName() + "," + pos3 + "] which used to be " + previous.compoundMap().toString()
+                    "Overwrite old data with " + state +
+                            " at pos3[" + world.worldName() + "," + pos3 + "] which used to be " + previous
             );
         });
         return state;

@@ -43,4 +43,6 @@ public interface CustomCropsBlock {
     void onBreak(WrappedBreakEvent event);
 
     void onPlace(WrappedPlaceEvent event);
+
+    boolean isBlockInstance(String id);
 }

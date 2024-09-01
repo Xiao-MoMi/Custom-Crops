@@ -80,6 +80,8 @@ public interface CustomCropsWorld<W> {
 
     int getChunkBlockAmount(Pos3 pos3, Class<? extends CustomCropsBlock> clazz);
 
+    CustomCropsChunk[] loadedChunks();
+
     /**
      * Get the state of the block at a certain location
      *

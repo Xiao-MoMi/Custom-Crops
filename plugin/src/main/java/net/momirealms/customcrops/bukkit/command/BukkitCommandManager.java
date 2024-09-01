@@ -40,7 +40,8 @@ public class BukkitCommandManager extends AbstractCommandManager<CommandSender> 
             new GetSeasonCommand(this),
             new SetSeasonCommand(this),
             new GetDateCommand(this),
-            new SetDateCommand(this)
+            new SetDateCommand(this),
+            new ForceTickCommand(this)
     );
 
     private final Index<String, CommandFeature<CommandSender>> INDEX = Index.create(CommandFeature::getFeatureID, FEATURES);

@@ -138,6 +138,11 @@ public class SprinklerBlock extends AbstractCustomCropsBlock {
     }
 
     @Override
+    public boolean isBlockInstance(String id) {
+        return Registries.ITEM_TO_SPRINKLER.containsKey(id);
+    }
+
+    @Override
     public void onInteract(WrappedInteractEvent event) {
         SprinklerConfig config = Registries.ITEM_TO_SPRINKLER.get(event.relatedID());
         if (config == null) {
@@ -225,8 +230,8 @@ public class SprinklerBlock extends AbstractCustomCropsBlock {
         water(state, blockID.equals(sprinklerConfig.threeDItemWithWater()) ? 1 : 0);
         world.addBlockState(pos3, state).ifPresent(previous -> {
             BukkitCustomCropsPlugin.getInstance().debug(
-                    "Overwrite old data with " + state.compoundMap().toString() +
-                            " at location[" + world.worldName() + "," + pos3 + "] which used to be " + previous.compoundMap().toString()
+                    "Overwrite old data with " + state +
+                            " at location[" + world.worldName() + "," + pos3 + "] which used to be " + previous
             );
         });
         return state;

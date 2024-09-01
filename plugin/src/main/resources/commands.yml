@@ -50,3 +50,10 @@ debug_data:
   usage:
     - /customcrops debug data
     - /ccrops debug data
+
+force_tick:
+  enable: true
+  permission: customcrops.command.force_tick
+  usage:
+    - /customcrops force-tick
+    - /ccrops force-tick

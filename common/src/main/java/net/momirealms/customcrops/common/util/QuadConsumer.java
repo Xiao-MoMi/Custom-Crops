@@ -15,23 +15,8 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.momirealms.customcrops.api.core;
+package net.momirealms.customcrops.common.util;
 
-import net.momirealms.customcrops.common.util.Key;
-
-import javax.annotation.Nullable;
-
-public interface Registry<K, T> extends IdMap<T> {
-
-    Key key();
-
-    @Override
-    int getId(@Nullable T value);
-
-    @Nullable
-    T get(@Nullable K key);
-
-    boolean containsKey(@Nullable K key);
-
-    boolean containsValue(@Nullable T value);
+public interface QuadConsumer<K, V, S, O> {
+    void accept(K k, V v, S s, O o);
 }

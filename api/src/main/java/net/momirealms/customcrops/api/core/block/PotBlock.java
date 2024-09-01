@@ -199,11 +199,16 @@ public class PotBlock extends AbstractCustomCropsBlock {
 
         world.addBlockState(pos3, state).ifPresent(previous -> {
             BukkitCustomCropsPlugin.getInstance().debug(
-                    "Overwrite old data with " + state.compoundMap().toString() +
-                            " at location[" + world.worldName() + "," + pos3 + "] which used to be " + previous.compoundMap().toString()
+                    "Overwrite old data with " + state +
+                            " at location[" + world.worldName() + "," + pos3 + "] which used to be " + previous
             );
         });
         ActionManager.trigger(context, config.placeActions());
+    }
+
+    @Override
+    public boolean isBlockInstance(String id) {
+        return Registries.ITEM_TO_POT.containsKey(id);
     }
 
     @Override
@@ -291,8 +296,8 @@ public class PotBlock extends AbstractCustomCropsBlock {
         water(state, potConfig.isWet(blockID) ? 1 : 0);
         world.addBlockState(pos3, state).ifPresent(previous -> {
             BukkitCustomCropsPlugin.getInstance().debug(
-                    "Overwrite old data with " + state.compoundMap().toString() +
-                            " at location[" + world.worldName() + "," + pos3 + "] which used to be " + previous.compoundMap().toString()
+                    "Overwrite old data with " + state +
+                            " at location[" + world.worldName() + "," + pos3 + "] which used to be " + previous
             );
         });
         return state;

@@ -38,6 +38,7 @@ public class MappedRegistry<K, T> implements WriteableRegistry<K, T> {
     public void register(K key, T value) {
         byKey.put(key, value);
         byValue.put(value, key);
+        byID.add(value);
     }
 
     @Override
@@ -65,6 +66,16 @@ public class MappedRegistry<K, T> implements WriteableRegistry<K, T> {
     @Override
     public T get(@Nullable K key) {
         return byKey.get(key);
+    }
+
+    @Override
+    public boolean containsKey(@Nullable K key) {
+        return byKey.containsKey(key);
+    }
+
+    @Override
+    public boolean containsValue(@Nullable T value) {
+        return byValue.containsKey(value);
     }
 
     @NotNull

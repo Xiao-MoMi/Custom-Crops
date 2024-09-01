@@ -154,6 +154,11 @@ public class CropBlock extends AbstractCustomCropsBlock {
     }
 
     @Override
+    public boolean isBlockInstance(String id) {
+        return Registries.STAGE_TO_CROP_UNSAFE.containsKey(id);
+    }
+
+    @Override
     public void onInteract(WrappedInteractEvent event) {
         final Player player = event.player();
         Context<Player> context = Context.player(player);
@@ -287,8 +292,8 @@ public class CropBlock extends AbstractCustomCropsBlock {
         id(state, cropConfig.id());
         world.addBlockState(pos3, state).ifPresent(previous -> {
             BukkitCustomCropsPlugin.getInstance().debug(
-                    "Overwrite old data with " + state.compoundMap().toString() +
-                            " at location[" + world.worldName() + "," + pos3 + "] which used to be " + previous.compoundMap().toString()
+                    "Overwrite old data with " + state +
+                            " at location[" + world.worldName() + "," + pos3 + "] which used to be " + previous
             );
         });
         return state;

@@ -257,8 +257,8 @@ public class CustomCropsChunkImpl implements CustomCropsChunk {
     }
 
     @Override
-    public Collection<CustomCropsSection> sections() {
-        return loadedSections.values();
+    public CustomCropsSection[] sections() {
+        return loadedSections.values().toArray(new CustomCropsSection[0]);
     }
 
     @Override

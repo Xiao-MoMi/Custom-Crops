@@ -179,7 +179,7 @@ public interface CustomCropsChunk {
 
     CustomCropsSection getSection(int sectionID);
 
-    Collection<CustomCropsSection> sections();
+    CustomCropsSection[] sections();
 
     Optional<CustomCropsSection> removeSection(int sectionID);
 

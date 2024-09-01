@@ -43,4 +43,7 @@ public interface MessageConstants {
     TranslatableComponent.Builder COMMAND_SET_DATE_FAILURE_REFERENCE = Component.translatable().key("command.date.set.failure.reference");
     TranslatableComponent.Builder COMMAND_SET_DATE_FAILURE_OTHER = Component.translatable().key("command.date.set.failure.other");
     TranslatableComponent.Builder COMMAND_SET_DATE_FAILURE_INVALID = Component.translatable().key("command.date.set.failure.invalid");
+    TranslatableComponent.Builder COMMAND_FORCE_TICK_SUCCESS = Component.translatable().key("command.force_tick.success");
+    TranslatableComponent.Builder COMMAND_FORCE_TICK_FAILURE_TYPE = Component.translatable().key("command.force_tick.failure.type");
+    TranslatableComponent.Builder COMMAND_FORCE_TICK_FAILURE_DISABLE = Component.translatable().key("command.force_tick.failure.disable");
 }

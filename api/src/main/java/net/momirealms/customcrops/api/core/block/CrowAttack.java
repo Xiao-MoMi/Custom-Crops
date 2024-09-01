@@ -52,7 +52,7 @@ public class CrowAttack {
             }
         }
         this.viewers = viewers.toArray(new Player[0]);
-        this.cropLocation = location.clone().add(RandomUtils.generateRandomDouble(-0.25, 0.25), 0, RandomUtils.generateRandomDouble(-0.25, 0.25));
+        this.cropLocation = LocationUtils.toBlockCenterLocation(location).add(RandomUtils.generateRandomDouble(-0.25, 0.25), 0, RandomUtils.generateRandomDouble(-0.25, 0.25));
         float yaw = RandomUtils.generateRandomInt(-180, 180);
         this.cropLocation.setYaw(yaw);
         this.flyModel = flyModel;
@@ -66,47 +66,39 @@ public class CrowAttack {
 
     public void start() {
         if (this.viewers.length == 0) return;
-        FakeArmorStand fake1 = SparrowHeart.getInstance().createFakeArmorStand(dynamicLocation);
-        fake1.invisible(true);
-        fake1.small(true);
-        fake1.equipment(EquipmentSlot.HEAD, flyModel);
-        FakeArmorStand fake2 = SparrowHeart.getInstance().createFakeArmorStand(cropLocation);
-        fake1.invisible(true);
-        fake1.small(true);
-        fake1.equipment(EquipmentSlot.HEAD, standModel);
+        FakeArmorStand fake = SparrowHeart.getInstance().createFakeArmorStand(dynamicLocation);
+        fake.invisible(true);
+        fake.small(true);
+        fake.equipment(EquipmentSlot.HEAD, flyModel);
         for (Player player : this.viewers) {
-            fake1.spawn(player);
+            fake.spawn(player);
         }
         this.task = BukkitCustomCropsPlugin.getInstance().getScheduler().asyncRepeating(() -> {
             timer++;
             if (timer < 100) {
                 dynamicLocation.add(vectorDown);
                 for (Player player : this.viewers) {
-                    SparrowHeart.getInstance().sendClientSideTeleportEntity(player, dynamicLocation, false, fake1.entityID());
+                    SparrowHeart.getInstance().sendClientSideTeleportEntity(player, dynamicLocation, false, fake.entityID());
                 }
-            } else if (timer == 100){
+            } else if (timer == 100) {
+                fake.equipment(EquipmentSlot.HEAD, standModel);
                 for (Player player : this.viewers) {
-                    fake1.destroy(player);
-                }
-                for (Player player : this.viewers) {
-                    fake2.spawn(player);
+                    fake.updateEquipment(player);
                 }
             } else if (timer == 150) {
+                fake.equipment(EquipmentSlot.HEAD, flyModel);
                 for (Player player : this.viewers) {
-                    fake2.destroy(player);
-                }
-                for (Player player : this.viewers) {
-                    fake1.spawn(player);
+                    fake.updateEquipment(player);
                 }
             } else if (timer > 150) {
                 dynamicLocation.add(vectorUp);
                 for (Player player : this.viewers) {
-                    SparrowHeart.getInstance().sendClientSideTeleportEntity(player, dynamicLocation, false, fake1.entityID());
+                    SparrowHeart.getInstance().sendClientSideTeleportEntity(player, dynamicLocation, false, fake.entityID());
                 }
             }
-            if (timer > 300) {
+            if (timer > 250) {
                 for (Player player : this.viewers) {
-                    fake1.destroy(player);
+                    fake.destroy(player);
                 }
                 task.cancel();
             }

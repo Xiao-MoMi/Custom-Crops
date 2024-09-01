@@ -111,8 +111,8 @@ public class SprinklerItem extends AbstractCustomCropsItem {
         BukkitCustomCropsPlugin.getInstance().getItemManager().place(LocationUtils.toSurfaceCenterLocation(targetLocation), config.existenceForm(), config.threeDItem(), FurnitureRotation.NONE);
         world.addBlockState(pos3, state).ifPresent(previous -> {
             BukkitCustomCropsPlugin.getInstance().debug(
-                    "Overwrite old data with " + state.compoundMap().toString() +
-                            " at location[" + world.worldName() + "," + pos3 + "] which used to be " + previous.compoundMap().toString()
+                    "Overwrite old data with " + state +
+                            " at location[" + world.worldName() + "," + pos3 + "] which used to be " + previous
             );
         });
         ActionManager.trigger(context, config.placeActions());
