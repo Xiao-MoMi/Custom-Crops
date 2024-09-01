@@ -28,5 +28,19 @@ public interface MessageConstants {
     TranslatableComponent.Builder SEASON_AUTUMN = Component.translatable().key("season.autumn");
     TranslatableComponent.Builder SEASON_WINTER = Component.translatable().key("season.winter");
     TranslatableComponent.Builder SEASON_DISABLE = Component.translatable().key("season.disable");
-
+    TranslatableComponent.Builder COMMAND_GET_SEASON_SUCCESS = Component.translatable().key("command.season.get.success");
+    TranslatableComponent.Builder COMMAND_GET_SEASON_FAILURE = Component.translatable().key("command.season.get.failure");
+    TranslatableComponent.Builder COMMAND_SET_SEASON_SUCCESS = Component.translatable().key("command.season.set.success");
+    TranslatableComponent.Builder COMMAND_SET_SEASON_FAILURE_DISABLE = Component.translatable().key("command.season.set.failure.disable");
+    TranslatableComponent.Builder COMMAND_SET_SEASON_FAILURE_REFERENCE = Component.translatable().key("command.season.set.failure.reference");
+    TranslatableComponent.Builder COMMAND_SET_SEASON_FAILURE_OTHER = Component.translatable().key("command.season.set.failure.other");
+    TranslatableComponent.Builder COMMAND_SET_SEASON_FAILURE_INVALID = Component.translatable().key("command.season.set.failure.invalid");
+    TranslatableComponent.Builder COMMAND_GET_DATE_SUCCESS = Component.translatable().key("command.date.get.success");
+    TranslatableComponent.Builder COMMAND_GET_DATE_FAILURE_DISABLE = Component.translatable().key("command.date.get.failure.disable");
+    TranslatableComponent.Builder COMMAND_GET_DATE_FAILURE_OTHER = Component.translatable().key("command.date.get.failure.other");
+    TranslatableComponent.Builder COMMAND_SET_DATE_SUCCESS = Component.translatable().key("command.date.set.success");
+    TranslatableComponent.Builder COMMAND_SET_DATE_FAILURE_DISABLE = Component.translatable().key("command.date.set.failure.disable");
+    TranslatableComponent.Builder COMMAND_SET_DATE_FAILURE_REFERENCE = Component.translatable().key("command.date.set.failure.reference");
+    TranslatableComponent.Builder COMMAND_SET_DATE_FAILURE_OTHER = Component.translatable().key("command.date.set.failure.other");
+    TranslatableComponent.Builder COMMAND_SET_DATE_FAILURE_INVALID = Component.translatable().key("command.date.set.failure.invalid");
 }

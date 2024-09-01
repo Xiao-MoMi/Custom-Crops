@@ -30,6 +30,20 @@ set_season:
     - /customcrops season set
     - /ccrops season set
 
+get_date:
+  enable: true
+  permission: customcrops.command.get_date
+  usage:
+    - /customcrops date get
+    - /ccrops date get
+
+set_date:
+  enable: true
+  permission: customcrops.command.set_date
+  usage:
+    - /customcrops date set
+    - /ccrops date set
+
 debug_data:
   enable: true
   permission: customcrops.command.debug

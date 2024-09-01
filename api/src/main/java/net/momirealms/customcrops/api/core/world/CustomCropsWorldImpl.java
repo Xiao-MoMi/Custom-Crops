@@ -203,7 +203,9 @@ public class CustomCropsWorldImpl<W> implements CustomCropsWorld<W> {
         saveLazyChunks();
         saveLazyRegions();
         if (isANewDay()) {
-            updateSeasonAndDate();
+            if (setting().autoSeasonChange()) {
+                updateSeasonAndDate();
+            }
         }
         if (setting().enableScheduler()) {
             tickChunks();

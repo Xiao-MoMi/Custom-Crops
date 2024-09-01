@@ -66,7 +66,12 @@ public class BukkitWorldManager implements WorldManager, Listener {
             @NotNull
             @Override
             public Season getSeason(@NotNull World world) {
-                return BukkitWorldManager.this.getWorld(world).map(w -> w.extraData().getSeason()).orElse(Season.DISABLE);
+                return BukkitWorldManager.this.getWorld(world).map(w -> {
+                    if (!w.setting().enableSeason()) {
+                        return Season.DISABLE;
+                    }
+                    return w.extraData().getSeason();
+                }).orElse(Season.DISABLE);
             }
             @Override
             public String identifier() {
@@ -77,6 +82,11 @@ public class BukkitWorldManager implements WorldManager, Listener {
 
     public void seasonProvider(SeasonProvider seasonProvider) {
         this.seasonProvider = seasonProvider;
+    }
+
+    @Override
+    public SeasonProvider seasonProvider() {
+        return seasonProvider;
     }
 
     @Override

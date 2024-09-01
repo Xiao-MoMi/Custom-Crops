@@ -18,6 +18,7 @@
 package net.momirealms.customcrops.api.core.world;
 
 import net.momirealms.customcrops.api.core.world.adaptor.WorldAdaptor;
+import net.momirealms.customcrops.api.integration.SeasonProvider;
 import net.momirealms.customcrops.common.plugin.feature.Reloadable;
 import org.bukkit.World;
 
@@ -25,6 +26,8 @@ import java.util.Optional;
 import java.util.Set;
 
 public interface WorldManager extends Reloadable {
+
+    SeasonProvider seasonProvider();
 
     Season getSeason(World world);
 

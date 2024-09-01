@@ -101,7 +101,7 @@ public class SynchronizedCompoundMap {
                             listJoiner.add(tag2.getValue().toString());
                         }
                     }
-                    tagValue = tag.getName() + "[" + listJoiner + "]";
+                    tagValue = "[" + listJoiner + "]";
                 }
                 case TAG_COMPOUND -> tagValue = compoundMapToString(tag.getName(), (CompoundMap) tag.getValue());
                 default -> {

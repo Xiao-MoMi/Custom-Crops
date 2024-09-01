@@ -19,8 +19,7 @@ package net.momirealms.customcrops.bukkit.command;
 
 import net.kyori.adventure.util.Index;
 import net.momirealms.customcrops.api.BukkitCustomCropsPlugin;
-import net.momirealms.customcrops.bukkit.command.feature.DebugDataCommand;
-import net.momirealms.customcrops.bukkit.command.feature.ReloadCommand;
+import net.momirealms.customcrops.bukkit.command.feature.*;
 import net.momirealms.customcrops.common.command.AbstractCommandManager;
 import net.momirealms.customcrops.common.command.CommandFeature;
 import net.momirealms.customcrops.common.sender.Sender;
@@ -37,7 +36,11 @@ public class BukkitCommandManager extends AbstractCommandManager<CommandSender> 
 
     private final List<CommandFeature<CommandSender>> FEATURES = List.of(
             new ReloadCommand(this),
-            new DebugDataCommand(this)
+            new DebugDataCommand(this),
+            new GetSeasonCommand(this),
+            new SetSeasonCommand(this),
+            new GetDateCommand(this),
+            new SetDateCommand(this)
     );
 
     private final Index<String, CommandFeature<CommandSender>> INDEX = Index.create(CommandFeature::getFeatureID, FEATURES);
