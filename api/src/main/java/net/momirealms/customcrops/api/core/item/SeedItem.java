@@ -64,7 +64,10 @@ public class SeedItem extends AbstractCustomCropsItem {
         if (event.clickedBlockFace() != BlockFace.UP)
             return InteractionResult.PASS;
         final Player player = event.player();
+        Location seedLocation = LocationUtils.toBlockLocation(event.location().add(0, 1, 0));
         Context<Player> context = Context.player(player);
+        context.arg(ContextKeys.SLOT, event.hand());
+        context.arg(ContextKeys.LOCATION, seedLocation);
         // check pot whitelist
         if (!cropConfig.potWhitelist().contains(potConfig.id())) {
             ActionManager.trigger(context, cropConfig.wrongPotActions());
@@ -74,7 +77,6 @@ public class SeedItem extends AbstractCustomCropsItem {
             return InteractionResult.COMPLETE;
         }
         // check if the block is empty
-        Location seedLocation = event.location().add(0, 1, 0);
         if (!suitableForSeed(seedLocation)) {
             return InteractionResult.COMPLETE;
         }
@@ -112,7 +114,7 @@ public class SeedItem extends AbstractCustomCropsItem {
         if (player.getGameMode() != GameMode.CREATIVE)
             itemInHand.setAmount(itemInHand.getAmount() - 1);
         // place model
-        BukkitCustomCropsPlugin.getInstance().getItemManager().place(seedLocation, form, stageID, cropConfig.rotation() ? FurnitureRotation.random() : FurnitureRotation.NONE);
+        BukkitCustomCropsPlugin.getInstance().getItemManager().place(LocationUtils.toSurfaceCenterLocation(seedLocation), form, stageID, cropConfig.rotation() ? FurnitureRotation.random() : FurnitureRotation.NONE);
         cropBlock.point(state, point);
         world.addBlockState(pos3, state).ifPresent(previous -> {
             BukkitCustomCropsPlugin.getInstance().debug(

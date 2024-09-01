@@ -26,19 +26,16 @@ import net.momirealms.customcrops.api.BukkitCustomCropsPlugin;
 import net.momirealms.customcrops.api.action.AbstractActionManager;
 import net.momirealms.customcrops.api.action.Action;
 import net.momirealms.customcrops.api.context.ContextKeys;
-import net.momirealms.customcrops.api.core.block.CropBlock;
-import net.momirealms.customcrops.api.core.block.CropConfig;
-import net.momirealms.customcrops.api.core.block.CropStageConfig;
-import net.momirealms.customcrops.api.core.world.CustomCropsBlockState;
+import net.momirealms.customcrops.api.core.block.CustomCropsBlock;
+import net.momirealms.customcrops.api.core.block.SprinklerBlock;
+import net.momirealms.customcrops.api.core.block.SprinklerConfig;
 import net.momirealms.customcrops.api.core.world.CustomCropsWorld;
 import net.momirealms.customcrops.api.core.world.Pos3;
 import net.momirealms.customcrops.api.misc.placeholder.BukkitPlaceholderManager;
 import net.momirealms.customcrops.api.misc.value.MathValue;
 import net.momirealms.customcrops.api.misc.value.TextValue;
-import net.momirealms.customcrops.api.util.LocationUtils;
 import net.momirealms.customcrops.api.util.PlayerUtils;
 import net.momirealms.customcrops.bukkit.integration.VaultHook;
-import net.momirealms.customcrops.bukkit.misc.HologramManager;
 import net.momirealms.customcrops.common.helper.AdventureHelper;
 import net.momirealms.customcrops.common.util.ListUtils;
 import net.momirealms.customcrops.common.util.RandomUtils;
@@ -53,7 +50,10 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import java.util.*;
+import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
+import java.util.Optional;
 
 import static java.util.Objects.requireNonNull;
 
@@ -85,7 +85,6 @@ public class PlayerActionManager extends AbstractActionManager<Player> {
         this.registerTitleAction();
         this.registerSwingHandAction();
         this.registerForceTickAction();
-        this.registerHologramAction();
         this.registerMessageAction();
     }
 
@@ -447,80 +446,19 @@ public class PlayerActionManager extends AbstractActionManager<Player> {
         }, "random-title");
     }
 
-    private void registerHologramAction() {
-        registerAction(((args, chance) -> {
-            if (args instanceof Section section) {
-                TextValue<Player> text = TextValue.auto(section.getString("text", ""));
-                MathValue<Player> duration = MathValue.auto(section.get("duration", 20));
-                boolean position = section.getString("position", "other").equals("other");
-                MathValue<Player> x = MathValue.auto(section.get("x", 0));
-                MathValue<Player> y = MathValue.auto(section.get("y", 0));
-                MathValue<Player> z = MathValue.auto(section.get("z", 0));
-                boolean applyCorrection = section.getBoolean("apply-correction", false);
-                boolean onlyShowToOne = !section.getBoolean("visible-to-all", false);
-                int range = section.getInt("range", 32);
-                return context -> {
-                    if (context.holder() == null) return;
-                    if (Math.random() > chance) return;
-                    Player owner = context.holder();
-                    Location location = position ? requireNonNull(context.arg(ContextKeys.LOCATION)).clone() : owner.getLocation().clone();
-                    location.add(x.evaluate(context), y.evaluate(context), z.evaluate(context));
-                    Optional<CustomCropsWorld<?>> optionalWorld = plugin.getWorldManager().getWorld(location.getWorld());
-                    if (optionalWorld.isEmpty()) {
-                        return;
-                    }
-                    Pos3 pos3 = Pos3.from(location);
-                    if (applyCorrection) {
-                        Optional<CustomCropsBlockState> optionalState = optionalWorld.get().getBlockState(pos3);
-                        if (optionalState.isPresent()) {
-                            if (optionalState.get().type() instanceof CropBlock cropBlock) {
-                                CropConfig config = cropBlock.config(optionalState.get());
-                                int point = cropBlock.point(optionalState.get());
-                                if (config != null) {
-                                    int tempPoints = point;
-                                    while (tempPoints >= 0) {
-                                        Map.Entry<Integer, CropStageConfig> entry = config.getFloorStageEntry(tempPoints);
-                                        CropStageConfig stage = entry.getValue();
-                                        if (stage.stageID() != null) {
-                                            location.add(0, stage.displayInfoOffset(), 0);
-                                            break;
-                                        }
-                                        tempPoints = stage.point() - 1;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    ArrayList<Player> viewers = new ArrayList<>();
-                    if (onlyShowToOne) {
-                        if (owner == null) return;
-                        viewers.add(owner);
-                    } else {
-                        for (Player player : owner.getWorld().getPlayers()) {
-                            if (LocationUtils.getDistance(player.getLocation(), location) <= range) {
-                                viewers.add(player);
-                            }
-                        }
-                    }
-                    Component component = AdventureHelper.miniMessage(text.render(context));
-                    for (Player viewer : viewers) {
-                        HologramManager.getInstance().showHologram(viewer, location, component, (int) (duration.evaluate(context) * 50));
-                    }
-                };
-            } else {
-                plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at hologram action which is expected to be `Section`");
-                return Action.empty();
-            }
-        }), "hologram");
-    }
-
     private void registerSwingHandAction() {
         registerAction((args, chance) -> {
             boolean arg = (boolean) args;
             return context -> {
                 if (context.holder() == null) return;
                 if (Math.random() > chance) return;
-                SparrowHeart.getInstance().swingHand(context.holder(), arg ? HandSlot.MAIN : HandSlot.OFF);
+                EquipmentSlot slot = context.arg(ContextKeys.SLOT);
+                if (slot == null) {
+                    SparrowHeart.getInstance().swingHand(context.holder(), arg ? HandSlot.MAIN : HandSlot.OFF);
+                } else {
+                    if (slot == EquipmentSlot.HAND)  SparrowHeart.getInstance().swingHand(context.holder(), HandSlot.MAIN);
+                    if (slot == EquipmentSlot.OFF_HAND)  SparrowHeart.getInstance().swingHand(context.holder(), HandSlot.OFF);
+                }
             };
         }, "swing-hand");
     }
@@ -533,9 +471,28 @@ public class PlayerActionManager extends AbstractActionManager<Player> {
             Pos3 pos3 = Pos3.from(location);
             Optional<CustomCropsWorld<?>> optionalWorld = plugin.getWorldManager().getWorld(location.getWorld());
             optionalWorld.ifPresent(world -> world.getChunk(pos3.toChunkPos()).flatMap(chunk -> chunk.getBlockState(pos3)).ifPresent(state -> {
-                state.type().randomTick(state, world, pos3);
-                state.type().scheduledTick(state, world, pos3);
+                CustomCropsBlock customCropsBlock = state.type();
+                customCropsBlock.randomTick(state, world, pos3);
+                customCropsBlock.scheduledTick(state, world, pos3);
+                if (customCropsBlock instanceof SprinklerBlock sprinklerBlock) {
+                    int water = sprinklerBlock.water(state);
+                    SprinklerConfig config = sprinklerBlock.config(state);
+                    context.arg(ContextKeys.CURRENT_WATER, water);
+                    context.arg(ContextKeys.WATER_BAR, Optional.ofNullable(config.waterBar()).map(it -> it.getWaterBar(water, config.storage())).orElse(""));
+                }
             }));
         }, "force-tick");
+        registerAction((args, chance) -> context -> {
+            if (context.holder() == null) return;
+            if (Math.random() > chance) return;
+            Location location = requireNonNull(context.arg(ContextKeys.LOCATION));
+            Pos3 pos3 = Pos3.from(location);
+            Optional<CustomCropsWorld<?>> optionalWorld = plugin.getWorldManager().getWorld(location.getWorld());
+            optionalWorld.ifPresent(world -> world.getChunk(pos3.toChunkPos()).flatMap(chunk -> chunk.getBlockState(pos3)).ifPresent(state -> {
+                CustomCropsBlock customCropsBlock = state.type();
+                customCropsBlock.randomTick(state, world, pos3);
+                customCropsBlock.scheduledTick(state, world, pos3);
+            }));
+        }, "tick");
     }
 }

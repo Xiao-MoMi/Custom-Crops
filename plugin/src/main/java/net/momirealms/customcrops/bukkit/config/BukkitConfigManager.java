@@ -38,15 +38,14 @@ import net.momirealms.customcrops.api.core.item.FertilizerConfig;
 import net.momirealms.customcrops.api.core.item.WateringCanConfig;
 import net.momirealms.customcrops.api.util.PluginUtils;
 import net.momirealms.customcrops.common.helper.AdventureHelper;
-import net.momirealms.customcrops.common.helper.VersionHelper;
 import net.momirealms.customcrops.common.locale.TranslationManager;
 import net.momirealms.customcrops.common.plugin.CustomCropsProperties;
 import net.momirealms.customcrops.common.util.ListUtils;
-import org.bukkit.Bukkit;
-import org.bukkit.Particle;
 
-import java.io.*;
-import java.nio.charset.StandardCharsets;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 
 public class BukkitConfigManager extends ConfigManager {

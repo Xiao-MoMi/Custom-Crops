@@ -25,7 +25,6 @@ import net.momirealms.customcrops.api.context.Context;
 import net.momirealms.customcrops.api.context.ContextKeys;
 import net.momirealms.customcrops.api.core.*;
 import net.momirealms.customcrops.api.core.block.*;
-import net.momirealms.customcrops.api.misc.water.FillMethod;
 import net.momirealms.customcrops.api.core.world.CustomCropsBlockState;
 import net.momirealms.customcrops.api.core.world.CustomCropsWorld;
 import net.momirealms.customcrops.api.core.world.Pos3;
@@ -35,8 +34,10 @@ import net.momirealms.customcrops.api.event.WateringCanFillEvent;
 import net.momirealms.customcrops.api.event.WateringCanWaterPotEvent;
 import net.momirealms.customcrops.api.event.WateringCanWaterSprinklerEvent;
 import net.momirealms.customcrops.api.misc.value.TextValue;
+import net.momirealms.customcrops.api.misc.water.FillMethod;
 import net.momirealms.customcrops.api.requirement.RequirementManager;
 import net.momirealms.customcrops.api.util.EventUtils;
+import net.momirealms.customcrops.api.util.LocationUtils;
 import net.momirealms.customcrops.common.helper.AdventureHelper;
 import net.momirealms.customcrops.common.item.Item;
 import net.momirealms.customcrops.common.util.Pair;
@@ -112,6 +113,7 @@ public class WateringCanItem extends AbstractCustomCropsItem {
 
         final Player player = event.player();;
         Context<Player> context = Context.player(player);
+        context.arg(ContextKeys.SLOT, event.hand());
         // check requirements
         if (!RequirementManager.isSatisfied(context, config.requirements()))
             return;
@@ -166,7 +168,10 @@ public class WateringCanItem extends AbstractCustomCropsItem {
             return InteractionResult.COMPLETE;
 
         final Player player = event.player();
+        Location targetLocation = LocationUtils.toBlockLocation(event.location());
         final Context<Player> context = Context.player(player);
+        context.arg(ContextKeys.SLOT, event.hand());
+        context.arg(ContextKeys.LOCATION, targetLocation);
 
         // check watering can requirements
         if (!RequirementManager.isSatisfied(context, wateringCanConfig.requirements())) {
@@ -176,7 +181,7 @@ public class WateringCanItem extends AbstractCustomCropsItem {
         final CustomCropsWorld<?> world = event.world();
         final ItemStack itemInHand = event.itemInHand();
         String targetBlockID = event.relatedID();
-        Location targetLocation = event.location();
+
         BlockFace blockFace = event.clickedBlockFace();
 
         int waterInCan = getCurrentWater(itemInHand);

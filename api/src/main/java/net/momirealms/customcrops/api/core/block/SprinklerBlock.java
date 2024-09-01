@@ -18,11 +18,12 @@
 package net.momirealms.customcrops.api.core.block;
 
 import com.flowpowered.nbt.IntTag;
+import com.flowpowered.nbt.Tag;
 import net.momirealms.customcrops.api.BukkitCustomCropsPlugin;
 import net.momirealms.customcrops.api.action.ActionManager;
 import net.momirealms.customcrops.api.context.Context;
+import net.momirealms.customcrops.api.context.ContextKeys;
 import net.momirealms.customcrops.api.core.*;
-import net.momirealms.customcrops.api.misc.water.WateringMethod;
 import net.momirealms.customcrops.api.core.world.CustomCropsBlockState;
 import net.momirealms.customcrops.api.core.world.CustomCropsWorld;
 import net.momirealms.customcrops.api.core.world.Pos3;
@@ -33,8 +34,10 @@ import net.momirealms.customcrops.api.event.SprinklerBreakEvent;
 import net.momirealms.customcrops.api.event.SprinklerFillEvent;
 import net.momirealms.customcrops.api.event.SprinklerInteractEvent;
 import net.momirealms.customcrops.api.event.SprinklerPlaceEvent;
+import net.momirealms.customcrops.api.misc.water.WateringMethod;
 import net.momirealms.customcrops.api.requirement.RequirementManager;
 import net.momirealms.customcrops.api.util.EventUtils;
+import net.momirealms.customcrops.api.util.LocationUtils;
 import net.momirealms.customcrops.api.util.PlayerUtils;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -77,6 +80,7 @@ public class SprinklerBlock extends AbstractCustomCropsBlock {
 
         final Player player = event.playerBreaker();
         Context<Player> context = Context.player(player);
+        context.arg(ContextKeys.LOCATION, LocationUtils.toBlockLocation(event.location()));
         CustomCropsBlockState state = fixOrGetState(world, pos3, config, event.brokenID());
         if (!RequirementManager.isSatisfied(context, config.breakRequirements())) {
             event.setCancelled(true);
@@ -103,6 +107,7 @@ public class SprinklerBlock extends AbstractCustomCropsBlock {
 
         final Player player = event.player();
         Context<Player> context = Context.player(player);
+        context.arg(ContextKeys.LOCATION, LocationUtils.toBlockLocation(event.location()));
         if (!RequirementManager.isSatisfied(context, config.placeRequirements())) {
             event.setCancelled(true);
             return;
@@ -140,8 +145,11 @@ public class SprinklerBlock extends AbstractCustomCropsBlock {
         }
 
         final Player player = event.player();
+        Location location = LocationUtils.toBlockLocation(event.location());
         Context<Player> context = Context.player(player);
-        CustomCropsBlockState state = fixOrGetState(event.world(), Pos3.from(event.location()), config, event.relatedID());
+        context.arg(ContextKeys.SLOT, event.hand());
+        context.arg(ContextKeys.LOCATION, location);
+        CustomCropsBlockState state = fixOrGetState(event.world(), Pos3.from(location), config, event.relatedID());
         if (!RequirementManager.isSatisfied(context, config.useRequirements())) {
             return;
         }
@@ -149,14 +157,20 @@ public class SprinklerBlock extends AbstractCustomCropsBlock {
         int waterInSprinkler = water(state);
         String itemID = event.itemID();
         ItemStack itemInHand = event.itemInHand();
+
+        context.arg(ContextKeys.STORAGE, config.storage());
+
         if (!config.infinite()) {
             for (WateringMethod method : config.wateringMethods()) {
                 if (method.getUsed().equals(itemID) && method.getUsedAmount() <= itemInHand.getAmount()) {
                     if (method.checkRequirements(context)) {
                         if (waterInSprinkler >= config.storage()) {
+                            context.arg(ContextKeys.CURRENT_WATER, waterInSprinkler);
+                            context.arg(ContextKeys.WATER_BAR, Optional.ofNullable(config.waterBar()).map(it -> it.getWaterBar(waterInSprinkler, config.storage())).orElse(""));
                             ActionManager.trigger(context, config.fullWaterActions());
+                            ActionManager.trigger(context, config.interactActions());
                         } else {
-                            SprinklerFillEvent waterEvent = new SprinklerFillEvent(player, itemInHand, event.hand(), event.location(), method, state, config);
+                            SprinklerFillEvent waterEvent = new SprinklerFillEvent(player, itemInHand, event.hand(), location, method, state, config);
                             if (EventUtils.fireAndCheckCancel(waterEvent))
                                 return;
                             if (player.getGameMode() != GameMode.CREATIVE) {
@@ -168,8 +182,16 @@ public class SprinklerBlock extends AbstractCustomCropsBlock {
                                     }
                                 }
                             }
+                            int currentWater = Math.min(config.storage(), waterInSprinkler + method.amountOfWater());
+                            context.arg(ContextKeys.CURRENT_WATER, currentWater);
+                            context.arg(ContextKeys.WATER_BAR, Optional.ofNullable(config.waterBar()).map(it -> it.getWaterBar(currentWater, config.storage())).orElse(""));
+                            if (addWater(state, config, method.amountOfWater()) && !config.threeDItem().equals(config.threeDItemWithWater())) {
+                                updateBlockAppearance(location, config, false);
+                            }
+
                             method.triggerActions(context);
                             ActionManager.trigger(context, config.addWaterActions());
+                            ActionManager.trigger(context, config.interactActions());
                         }
                     }
                     return;
@@ -177,7 +199,10 @@ public class SprinklerBlock extends AbstractCustomCropsBlock {
             }
         }
 
-        SprinklerInteractEvent interactEvent = new SprinklerInteractEvent(player, event.itemInHand(), event.location(), config, state, event.hand());
+        context.arg(ContextKeys.WATER_BAR, Optional.ofNullable(config.waterBar()).map(it -> it.getWaterBar(waterInSprinkler, config.storage())).orElse(""));
+        context.arg(ContextKeys.CURRENT_WATER, waterInSprinkler);
+
+        SprinklerInteractEvent interactEvent = new SprinklerInteractEvent(player, itemInHand, location, config, state, event.hand());
         if (EventUtils.fireAndCheckCancel(interactEvent)) {
             return;
         }
@@ -220,8 +245,7 @@ public class SprinklerBlock extends AbstractCustomCropsBlock {
             if (water <= 0) {
                 return;
             }
-            water(state, --water);
-            updateState = water == 0;
+            updateState = water(state, config, water - 1);
         } else {
             updateState = false;
         }
@@ -229,6 +253,7 @@ public class SprinklerBlock extends AbstractCustomCropsBlock {
         Context<CustomCropsBlockState> context = Context.block(state);
         World bukkitWorld = world.bukkitWorld();
         Location bukkitLocation = location.toLocation(bukkitWorld);
+        context.arg(ContextKeys.LOCATION, bukkitLocation);
 
         CompletableFuture<Boolean> syncCheck = new CompletableFuture<>();
 
@@ -300,7 +325,11 @@ public class SprinklerBlock extends AbstractCustomCropsBlock {
     }
 
     public int water(CustomCropsBlockState state) {
-        return state.get("water").getAsIntTag().map(IntTag::getValue).orElse(0);
+        Tag<?> tag = state.get("water");
+        if (tag == null) {
+            return 0;
+        }
+        return tag.getAsIntTag().map(IntTag::getValue).orElse(0);
     }
 
     public boolean water(CustomCropsBlockState state, int water) {

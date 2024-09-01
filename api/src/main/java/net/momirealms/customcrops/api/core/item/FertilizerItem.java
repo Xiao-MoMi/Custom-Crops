@@ -20,6 +20,7 @@ package net.momirealms.customcrops.api.core.item;
 import net.momirealms.customcrops.api.BukkitCustomCropsPlugin;
 import net.momirealms.customcrops.api.action.ActionManager;
 import net.momirealms.customcrops.api.context.Context;
+import net.momirealms.customcrops.api.context.ContextKeys;
 import net.momirealms.customcrops.api.core.BuiltInBlockMechanics;
 import net.momirealms.customcrops.api.core.BuiltInItemMechanics;
 import net.momirealms.customcrops.api.core.InteractionResult;
@@ -35,6 +36,7 @@ import net.momirealms.customcrops.api.core.wrapper.WrappedInteractEvent;
 import net.momirealms.customcrops.api.event.FertilizerUseEvent;
 import net.momirealms.customcrops.api.requirement.RequirementManager;
 import net.momirealms.customcrops.api.util.EventUtils;
+import net.momirealms.customcrops.api.util.LocationUtils;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -56,12 +58,14 @@ public class FertilizerItem extends AbstractCustomCropsItem {
             return InteractionResult.COMPLETE;
         }
 
+        Location targetLocation = LocationUtils.toBlockLocation(event.location());
         final Player player = event.player();
         final Context<Player> context = Context.player(player);
+        context.arg(ContextKeys.SLOT, event.hand());
+
         final CustomCropsWorld<?> world = event.world();
         final ItemStack itemInHand = event.itemInHand();
         String targetBlockID = event.relatedID();
-        Location targetLocation = event.location();
 
         // if the clicked block is a crop, correct the target block
         List<CropConfig> cropConfigs = Registries.STAGE_TO_CROP_UNSAFE.get(event.relatedID());
@@ -70,6 +74,8 @@ public class FertilizerItem extends AbstractCustomCropsItem {
             targetLocation = targetLocation.subtract(0,1,0);
             targetBlockID = BukkitCustomCropsPlugin.getInstance().getItemManager().blockID(targetLocation);
         }
+
+        context.arg(ContextKeys.LOCATION, targetLocation);
 
         // if the clicked block is a pot
         PotConfig potConfig = Registries.ITEM_TO_POT.get(targetBlockID);

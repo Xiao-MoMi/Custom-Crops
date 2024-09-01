@@ -25,7 +25,6 @@ import net.momirealms.customcrops.api.context.ContextKeys;
 import net.momirealms.customcrops.api.core.*;
 import net.momirealms.customcrops.api.core.item.Fertilizer;
 import net.momirealms.customcrops.api.core.item.FertilizerConfig;
-import net.momirealms.customcrops.api.misc.water.WateringMethod;
 import net.momirealms.customcrops.api.core.world.CustomCropsBlockState;
 import net.momirealms.customcrops.api.core.world.CustomCropsWorld;
 import net.momirealms.customcrops.api.core.world.Pos3;
@@ -33,6 +32,7 @@ import net.momirealms.customcrops.api.core.wrapper.WrappedBreakEvent;
 import net.momirealms.customcrops.api.core.wrapper.WrappedInteractEvent;
 import net.momirealms.customcrops.api.core.wrapper.WrappedPlaceEvent;
 import net.momirealms.customcrops.api.event.*;
+import net.momirealms.customcrops.api.misc.water.WateringMethod;
 import net.momirealms.customcrops.api.requirement.RequirementManager;
 import net.momirealms.customcrops.api.util.EventUtils;
 import net.momirealms.customcrops.api.util.LocationUtils;
@@ -222,6 +222,7 @@ public class PotBlock extends AbstractCustomCropsBlock {
 
         final Player player = event.player();
         Context<Player> context = Context.player(player);
+        context.arg(ContextKeys.SLOT, event.hand());
         context.arg(ContextKeys.LOCATION, LocationUtils.toBlockLocation(location));
 
         // check use requirements

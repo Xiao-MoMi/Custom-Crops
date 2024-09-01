@@ -26,7 +26,9 @@ import net.momirealms.customcrops.api.core.world.Pos3;
 import net.momirealms.customcrops.api.core.wrapper.WrappedBreakEvent;
 import net.momirealms.customcrops.api.core.wrapper.WrappedInteractEvent;
 import net.momirealms.customcrops.api.core.wrapper.WrappedPlaceEvent;
-import net.momirealms.customcrops.api.event.*;
+import net.momirealms.customcrops.api.event.ScarecrowBreakEvent;
+import net.momirealms.customcrops.api.event.ScarecrowInteractEvent;
+import net.momirealms.customcrops.api.event.ScarecrowPlaceEvent;
 import net.momirealms.customcrops.api.util.EventUtils;
 
 import java.util.Optional;

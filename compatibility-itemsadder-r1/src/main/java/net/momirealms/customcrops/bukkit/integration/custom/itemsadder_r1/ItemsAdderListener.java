@@ -21,6 +21,7 @@ import dev.lone.itemsadder.api.Events.*;
 import net.momirealms.customcrops.api.core.AbstractCustomEventListener;
 import net.momirealms.customcrops.api.core.AbstractItemManager;
 import net.momirealms.customcrops.api.util.DummyCancellable;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.inventory.EquipmentSlot;
 
@@ -84,8 +85,11 @@ public class ItemsAdderListener extends AbstractCustomEventListener {
 
     @EventHandler(ignoreCancelled = true)
     public void onPlaceFurniture(FurniturePlaceSuccessEvent event) {
+        Player player = event.getPlayer();
+        // ItemsAdder would trigger FurniturePlaceSuccessEvent if the furniture is placed by API
+        if (player == null) return;
         itemManager.handlePlayerPlace(
-                event.getPlayer(),
+                player,
                 event.getBukkitEntity().getLocation(),
                 event.getNamespacedID(),
                 EquipmentSlot.HAND,

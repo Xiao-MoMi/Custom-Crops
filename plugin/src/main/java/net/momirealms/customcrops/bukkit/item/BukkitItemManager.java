@@ -197,6 +197,7 @@ public class BukkitItemManager extends AbstractItemManager {
     @Override
     public void placeFurniture(@NotNull Location location, @NotNull String id, FurnitureRotation rotation) {
         Entity entity = this.provider.placeFurniture(location, id);
+        if (rotation == FurnitureRotation.NONE) return;
         if (entity != null) {
             if (entity instanceof ItemFrame itemFrame) {
                 itemFrame.setRotation(rotation.getBukkitRotation());

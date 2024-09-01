@@ -20,6 +20,7 @@ package net.momirealms.customcrops.bukkit.requirement;
 import dev.dejvokep.boostedyaml.block.implementation.Section;
 import net.momirealms.customcrops.api.BukkitCustomCropsPlugin;
 import net.momirealms.customcrops.api.action.ActionManager;
+import net.momirealms.customcrops.api.context.ContextKeys;
 import net.momirealms.customcrops.api.integration.LevelerProvider;
 import net.momirealms.customcrops.api.misc.value.MathValue;
 import net.momirealms.customcrops.api.requirement.AbstractRequirementManager;
@@ -27,6 +28,7 @@ import net.momirealms.customcrops.api.requirement.Requirement;
 import net.momirealms.customcrops.bukkit.integration.VaultHook;
 import net.momirealms.customcrops.common.util.ListUtils;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -63,13 +65,18 @@ public class PlayerRequirementManager extends AbstractRequirementManager<Player>
         registerRequirement((args, actions, runActions) -> {
             if (args instanceof Section section) {
                 boolean mainOrOff = section.getString("hand","main").equalsIgnoreCase("main");
-                int amount = section.getInt("amount", 1);
+                int amount = section.getInt("amount", 0);
                 List<String> items = ListUtils.toList(section.get("item"));
                 return context -> {
-                    if (context.holder() == null) return true;
-                    ItemStack itemStack = mainOrOff ?
-                            context.holder().getInventory().getItemInMainHand()
-                            : context.holder().getInventory().getItemInOffHand();
+                    Player player = context.holder();
+                    if (player == null) return true;
+                    EquipmentSlot slot = context.arg(ContextKeys.SLOT);
+                    ItemStack itemStack;
+                    if (slot == null) {
+                        itemStack = mainOrOff ? player.getInventory().getItemInMainHand() : player.getInventory().getItemInOffHand();
+                    } else {
+                        itemStack = player.getInventory().getItem(slot);
+                    }
                     String id = plugin.getItemManager().id(itemStack);
                     if (items.contains(id) && itemStack.getAmount() >= amount) return true;
                     if (runActions) ActionManager.trigger(context, actions);

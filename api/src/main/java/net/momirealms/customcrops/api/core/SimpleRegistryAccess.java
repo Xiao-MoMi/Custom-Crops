@@ -17,11 +17,11 @@
 
 package net.momirealms.customcrops.api.core;
 
-import net.momirealms.customcrops.common.util.Key;
 import net.momirealms.customcrops.api.BukkitCustomCropsPlugin;
 import net.momirealms.customcrops.api.core.block.CustomCropsBlock;
 import net.momirealms.customcrops.api.core.item.CustomCropsItem;
 import net.momirealms.customcrops.api.core.item.FertilizerType;
+import net.momirealms.customcrops.common.util.Key;
 
 public class SimpleRegistryAccess implements RegistryAccess {
 

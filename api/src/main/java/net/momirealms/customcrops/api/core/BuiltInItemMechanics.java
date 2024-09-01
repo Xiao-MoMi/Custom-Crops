@@ -17,8 +17,8 @@
 
 package net.momirealms.customcrops.api.core;
 
-import net.momirealms.customcrops.common.util.Key;
 import net.momirealms.customcrops.api.core.item.CustomCropsItem;
+import net.momirealms.customcrops.common.util.Key;
 
 public class BuiltInItemMechanics {
 

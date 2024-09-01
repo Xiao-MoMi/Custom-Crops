@@ -19,6 +19,7 @@ package net.momirealms.customcrops.api.action;
 
 import dev.dejvokep.boostedyaml.block.implementation.Section;
 import net.kyori.adventure.audience.Audience;
+import net.kyori.adventure.text.Component;
 import net.momirealms.customcrops.api.BukkitCustomCropsPlugin;
 import net.momirealms.customcrops.api.context.Context;
 import net.momirealms.customcrops.api.context.ContextKeys;
@@ -32,6 +33,7 @@ import net.momirealms.customcrops.api.core.world.CustomCropsWorld;
 import net.momirealms.customcrops.api.core.world.Pos3;
 import net.momirealms.customcrops.api.core.wrapper.WrappedBreakEvent;
 import net.momirealms.customcrops.api.event.CropPlantEvent;
+import net.momirealms.customcrops.api.misc.HologramManager;
 import net.momirealms.customcrops.api.misc.placeholder.BukkitPlaceholderManager;
 import net.momirealms.customcrops.api.misc.value.MathValue;
 import net.momirealms.customcrops.api.misc.value.TextValue;
@@ -40,7 +42,10 @@ import net.momirealms.customcrops.api.util.*;
 import net.momirealms.customcrops.common.helper.AdventureHelper;
 import net.momirealms.customcrops.common.helper.VersionHelper;
 import net.momirealms.customcrops.common.plugin.scheduler.SchedulerTask;
-import net.momirealms.customcrops.common.util.*;
+import net.momirealms.customcrops.common.util.ClassUtils;
+import net.momirealms.customcrops.common.util.ListUtils;
+import net.momirealms.customcrops.common.util.Pair;
+import net.momirealms.customcrops.common.util.RandomUtils;
 import net.momirealms.sparrow.heart.SparrowHeart;
 import net.momirealms.sparrow.heart.feature.entity.FakeEntity;
 import net.momirealms.sparrow.heart.feature.entity.armorstand.FakeArmorStand;
@@ -83,6 +88,7 @@ public abstract class AbstractActionManager<T> implements ActionManager<T> {
         this.registerDropItemsAction();
         this.registerLegacyDropItemsAction();
         this.registerFakeItemAction();
+        this.registerHologramAction();
         this.registerPlantAction();
         this.registerBreakAction();
     }
@@ -725,21 +731,84 @@ public abstract class AbstractActionManager<T> implements ActionManager<T> {
         }, "drop-items");
     }
 
-    private void registerFakeItemAction() {
+    protected void registerHologramAction() {
+        registerAction(((args, chance) -> {
+            if (args instanceof Section section) {
+                TextValue<T> text = TextValue.auto(section.getString("text", ""));
+                MathValue<T> duration = MathValue.auto(section.get("duration", 20));
+                boolean other = section.getString("position", "other").equals("other");
+                MathValue<T> x = MathValue.auto(section.get("x", 0));
+                MathValue<T> y = MathValue.auto(section.get("y", 0));
+                MathValue<T> z = MathValue.auto(section.get("z", 0));
+                boolean applyCorrection = section.getBoolean("apply-correction", false);
+                boolean onlyShowToOne = !section.getBoolean("visible-to-all", false);
+                int range = section.getInt("range", 32);
+                return context -> {
+                    if (context.holder() == null) return;
+                    if (Math.random() > chance) return;
+                    Player owner = null;
+                    if (context.holder() instanceof Player p) {
+                        owner = p;
+                    }
+                    Location location = other ? requireNonNull(context.arg(ContextKeys.LOCATION)).clone() : owner.getLocation().clone();
+                    Pos3 pos3 = Pos3.from(location).add(0,1,0);
+                    location.add(x.evaluate(context), y.evaluate(context), z.evaluate(context));
+                    Optional<CustomCropsWorld<?>> optionalWorld = plugin.getWorldManager().getWorld(location.getWorld());
+                    if (optionalWorld.isEmpty()) {
+                        return;
+                    }
+                    if (applyCorrection) {
+                        Optional<CustomCropsBlockState> optionalState = optionalWorld.get().getBlockState(pos3);
+                        if (optionalState.isPresent()) {
+                            if (optionalState.get().type() instanceof CropBlock cropBlock) {
+                                CropConfig config = cropBlock.config(optionalState.get());
+                                int point = cropBlock.point(optionalState.get());
+                                if (config != null) {
+                                    CropStageConfig stageConfig = config.stageWithModelByPoint(point);
+                                    location.add(0,stageConfig.displayInfoOffset(),0);
+                                }
+                            }
+                        }
+                    }
+                    ArrayList<Player> viewers = new ArrayList<>();
+                    if (onlyShowToOne) {
+                        if (owner == null) return;
+                        viewers.add(owner);
+                    } else {
+                        for (Player player : location.getWorld().getPlayers()) {
+                            if (LocationUtils.getDistance(player.getLocation(), location) <= range) {
+                                viewers.add(player);
+                            }
+                        }
+                    }
+                    if (viewers.isEmpty()) return;
+                    Component component = AdventureHelper.miniMessage(text.render(context));
+                    for (Player viewer : viewers) {
+                        HologramManager.getInstance().showHologram(viewer, location, AdventureHelper.componentToJson(component), (int) (duration.evaluate(context) * 50));
+                    }
+                };
+            } else {
+                plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at hologram action which is expected to be `Section`");
+                return Action.empty();
+            }
+        }), "hologram");
+    }
+
+    protected void registerFakeItemAction() {
         registerAction(((args, chance) -> {
             if (args instanceof Section section) {
                 String itemID = section.getString("item", "");
                 String[] split = itemID.split(":");
                 if (split.length >= 2) itemID = split[split.length - 1];
                 MathValue<T> duration = MathValue.auto(section.get("duration", 20));
-                boolean position = !section.getString("position", "player").equals("player");
+                boolean other = section.getString("position", "other").equals("other");
                 MathValue<T> x = MathValue.auto(section.get("x", 0));
                 MathValue<T> y = MathValue.auto(section.get("y", 0));
                 MathValue<T> z = MathValue.auto(section.get("z", 0));
                 MathValue<T> yaw = MathValue.auto(section.get("yaw", 0));
-                int range = section.getInt("range", 0);
+                int range = section.getInt("range", 32);
+                boolean visibleToAll = section.getBoolean("visible-to-all", true);
                 boolean useItemDisplay = section.getBoolean("use-item-display", false);
-                boolean onlyShowToOne = !section.getBoolean("visible-to-all", true);
                 String finalItemID = itemID;
                 return context -> {
                     if (Math.random() > chance) return;
@@ -748,8 +817,8 @@ public abstract class AbstractActionManager<T> implements ActionManager<T> {
                     if (context.holder() instanceof Player p) {
                         owner = p;
                     }
-                    Location location = position ? requireNonNull(context.arg(ContextKeys.LOCATION)).clone() : requireNonNull(owner).getLocation().clone();
-                    location.add(x.evaluate(context), y.evaluate(context) - 1, z.evaluate(context));
+                    Location location = other ? requireNonNull(context.arg(ContextKeys.LOCATION)).clone() : requireNonNull(owner).getLocation().clone();
+                    location.add(x.evaluate(context), y.evaluate(context), z.evaluate(context));
                     location.setPitch(0);
                     location.setYaw((float) yaw.evaluate(context));
                     FakeEntity fakeEntity;
@@ -765,19 +834,18 @@ public abstract class AbstractActionManager<T> implements ActionManager<T> {
                         fakeEntity = armorStand;
                     }
                     ArrayList<Player> viewers = new ArrayList<>();
-                    if (onlyShowToOne) {
-                        viewers.add(owner);
-                    } else {
-                        if (range > 0) {
-                            for (Player player : location.getWorld().getPlayers()) {
-                                if (LocationUtils.getDistance(player.getLocation(), location) <= range) {
-                                    viewers.add(player);
-                                }
+                    if (range > 0 && visibleToAll) {
+                        for (Player player : location.getWorld().getPlayers()) {
+                            if (LocationUtils.getDistance(player.getLocation(), location) <= range) {
+                                viewers.add(player);
                             }
-                        } else {
+                        }
+                    } else {
+                        if (owner != null) {
                             viewers.add(owner);
                         }
                     }
+                    if (viewers.isEmpty()) return;
                     for (Player player : viewers) {
                         fakeEntity.spawn(player);
                     }

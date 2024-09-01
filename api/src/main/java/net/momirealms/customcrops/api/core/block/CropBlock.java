@@ -99,6 +99,7 @@ public class CropBlock extends AbstractCustomCropsBlock {
 
         final Player player = event.playerBreaker();
         Context<Player> context = Context.player(player);
+        context.arg(ContextKeys.LOCATION, LocationUtils.toBlockLocation(event.location()));
 
         // check requirements
         if (!RequirementManager.isSatisfied(context, cropConfig.breakRequirements())) {
@@ -156,6 +157,7 @@ public class CropBlock extends AbstractCustomCropsBlock {
     public void onInteract(WrappedInteractEvent event) {
         final Player player = event.player();
         Context<Player> context = Context.player(player);
+        context.arg(ContextKeys.SLOT, event.hand());
 
         // data first
         CustomCropsWorld<?> world = event.world();
@@ -171,7 +173,8 @@ public class CropBlock extends AbstractCustomCropsBlock {
         }
 
         int point = point(state);
-        CropStageConfig stageConfig = cropConfig.getFloorStageEntry(point).getValue();
+        CropStageConfig stageConfig = cropConfig.stageByID(event.relatedID());
+        assert stageConfig != null;
         if (!RequirementManager.isSatisfied(context, stageConfig.interactRequirements())) {
             return;
         }

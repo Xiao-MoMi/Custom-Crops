@@ -15,17 +15,15 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.momirealms.customcrops.bukkit.misc;
+package net.momirealms.customcrops.api.misc;
 
-import net.kyori.adventure.text.Component;
 import net.momirealms.customcrops.api.BukkitCustomCropsPlugin;
-import net.momirealms.customcrops.common.helper.AdventureHelper;
 import net.momirealms.customcrops.common.helper.VersionHelper;
 import net.momirealms.customcrops.common.plugin.feature.Reloadable;
 import net.momirealms.customcrops.common.plugin.scheduler.SchedulerTask;
 import net.momirealms.customcrops.common.util.Pair;
 import net.momirealms.sparrow.heart.SparrowHeart;
-import net.momirealms.sparrow.heart.feature.entity.FakeEntity;
+import net.momirealms.sparrow.heart.feature.entity.FakeNamedEntity;
 import net.momirealms.sparrow.heart.feature.entity.armorstand.FakeArmorStand;
 import net.momirealms.sparrow.heart.feature.entity.display.FakeTextDisplay;
 import org.bukkit.Bukkit;
@@ -96,24 +94,24 @@ public class HologramManager implements Listener, Reloadable {
         this.hologramMap.remove(event.getPlayer().getUniqueId());
     }
 
-    public void showHologram(Player player, Location location, Component component, int millis) {
+    public void showHologram(Player player, Location location, String json, int millis) {
         HologramCache hologramCache = hologramMap.get(player.getUniqueId());
         if (hologramCache != null) {
-            hologramCache.showHologram(player, location, component, millis);
+            hologramCache.showHologram(player, location, json, millis);
         } else {
             hologramCache = new HologramCache();
-            hologramCache.showHologram(player, location, component, millis);
+            hologramCache.showHologram(player, location, json, millis);
             hologramMap.put(player.getUniqueId(), hologramCache);
         }
     }
 
     public static class HologramCache {
 
-        private final ConcurrentHashMap<Location, Pair<FakeEntity, Long>> cache = new ConcurrentHashMap<>();
+        private final ConcurrentHashMap<Location, Pair<FakeNamedEntity, Long>> cache = new ConcurrentHashMap<>();
 
         public void removeOutDated(long current, Player player) {
             ArrayList<Location> removed = new ArrayList<>();
-            for (Map.Entry<Location, Pair<FakeEntity, Long>> entry : cache.entrySet()) {
+            for (Map.Entry<Location, Pair<FakeNamedEntity, Long>> entry : cache.entrySet()) {
                 if (entry.getValue().right() < current) {
                     entry.getValue().left().destroy(player);
                     removed.add(entry.getKey());
@@ -124,36 +122,23 @@ public class HologramManager implements Listener, Reloadable {
             }
         }
 
-        public void showHologram(Player player, Location location, Component component, int millis) {
-            Pair<FakeEntity, Long> pair = cache.get(location);
+        public void showHologram(Player player, Location location, String json, int millis) {
+            Pair<FakeNamedEntity, Long> pair = cache.get(location);
             if (pair != null) {
-                pair.left().destroy(player);
+                pair.left().name(json);
+                pair.left().updateMetaData(player);
                 pair.right(System.currentTimeMillis() + millis);
-                if (VersionHelper.isVersionNewerThan1_19_4()) {
-                    FakeTextDisplay fakeEntity = SparrowHeart.getInstance().createFakeTextDisplay(location.clone().add(0,1.25,0));
-                    fakeEntity.name(AdventureHelper.componentToJson(component));
-                    fakeEntity.rgba(0, 0, 0, 0);
-                    fakeEntity.spawn(player);
-                    pair.left(fakeEntity);
-                } else {
-                    FakeArmorStand fakeEntity = SparrowHeart.getInstance().createFakeArmorStand(location);
-                    fakeEntity.name(AdventureHelper.componentToJson(component));
-                    fakeEntity.small(true);
-                    fakeEntity.invisible(true);
-                    fakeEntity.spawn(player);
-                    pair.left(fakeEntity);
-                }
             } else {
                 long removeTime = System.currentTimeMillis() + millis;
                 if (VersionHelper.isVersionNewerThan1_19_4()) {
                     FakeTextDisplay fakeEntity = SparrowHeart.getInstance().createFakeTextDisplay(location.clone().add(0,1.25,0));
-                    fakeEntity.name(AdventureHelper.componentToJson(component));
+                    fakeEntity.name(json);
                     fakeEntity.rgba(0, 0, 0, 0);
                     fakeEntity.spawn(player);
                     this.cache.put(location, Pair.of(fakeEntity, removeTime));
                 } else {
                     FakeArmorStand fakeEntity = SparrowHeart.getInstance().createFakeArmorStand(location);
-                    fakeEntity.name(AdventureHelper.componentToJson(component));
+                    fakeEntity.name(json);
                     fakeEntity.small(true);
                     fakeEntity.invisible(true);
                     fakeEntity.spawn(player);
@@ -163,7 +148,7 @@ public class HologramManager implements Listener, Reloadable {
         }
 
         public void removeAll(Player player) {
-            for (Map.Entry<Location, Pair<FakeEntity, Long>> entry : this.cache.entrySet()) {
+            for (Map.Entry<Location, Pair<FakeNamedEntity, Long>> entry : this.cache.entrySet()) {
                 entry.getValue().left().destroy(player);
             }
             cache.clear();

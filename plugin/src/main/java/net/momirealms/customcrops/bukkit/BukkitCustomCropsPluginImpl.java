@@ -24,6 +24,7 @@ import net.momirealms.customcrops.api.core.block.*;
 import net.momirealms.customcrops.api.core.item.*;
 import net.momirealms.customcrops.api.core.world.CustomCropsBlockState;
 import net.momirealms.customcrops.api.event.CustomCropsReloadEvent;
+import net.momirealms.customcrops.api.misc.HologramManager;
 import net.momirealms.customcrops.api.misc.cooldown.CoolDownManager;
 import net.momirealms.customcrops.api.misc.placeholder.BukkitPlaceholderManager;
 import net.momirealms.customcrops.api.util.EventUtils;
@@ -33,7 +34,6 @@ import net.momirealms.customcrops.bukkit.command.BukkitCommandManager;
 import net.momirealms.customcrops.bukkit.config.BukkitConfigManager;
 import net.momirealms.customcrops.bukkit.integration.BukkitIntegrationManager;
 import net.momirealms.customcrops.bukkit.item.BukkitItemManager;
-import net.momirealms.customcrops.bukkit.misc.HologramManager;
 import net.momirealms.customcrops.bukkit.requirement.BlockRequirementManager;
 import net.momirealms.customcrops.bukkit.requirement.PlayerRequirementManager;
 import net.momirealms.customcrops.bukkit.scheduler.BukkitSchedulerAdapter;
@@ -166,8 +166,9 @@ public class BukkitCustomCropsPluginImpl extends BukkitCustomCropsPlugin {
         boolean downloadFromBBB = buildByBit.equals("true");
 
         this.getScheduler().sync().runLater(() -> {
-            this.reload();
+            getPluginLogger().info("CustomCrops Registry has been frozen");
             ((SimpleRegistryAccess) registryAccess).freeze();
+            this.reload();
             if (ConfigManager.metrics()) new Metrics((JavaPlugin) getBoostrap(), 16593);
             if (ConfigManager.checkUpdate()) {
                 VersionHelper.UPDATE_CHECKER.apply(this).thenAccept(result -> {

@@ -18,9 +18,9 @@
 package net.momirealms.customcrops.api.core.item;
 
 import net.momirealms.customcrops.api.action.Action;
+import net.momirealms.customcrops.api.misc.value.TextValue;
 import net.momirealms.customcrops.api.misc.water.FillMethod;
 import net.momirealms.customcrops.api.misc.water.WaterBar;
-import net.momirealms.customcrops.api.misc.value.TextValue;
 import net.momirealms.customcrops.api.requirement.Requirement;
 import org.bukkit.entity.Player;
 

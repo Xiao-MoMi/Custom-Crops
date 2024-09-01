@@ -20,6 +20,7 @@ package net.momirealms.customcrops.api.core.item;
 import net.momirealms.customcrops.api.BukkitCustomCropsPlugin;
 import net.momirealms.customcrops.api.action.ActionManager;
 import net.momirealms.customcrops.api.context.Context;
+import net.momirealms.customcrops.api.context.ContextKeys;
 import net.momirealms.customcrops.api.core.*;
 import net.momirealms.customcrops.api.core.block.SprinklerBlock;
 import net.momirealms.customcrops.api.core.block.SprinklerConfig;
@@ -54,7 +55,7 @@ public class SprinklerItem extends AbstractCustomCropsItem {
         // should be place on block
         if (event.existenceForm() != ExistenceForm.BLOCK)
             return InteractionResult.PASS;
-        SprinklerConfig config = Registries.SPRINKLER.get(event.itemID());
+        SprinklerConfig config = Registries.ITEM_TO_SPRINKLER.get(event.itemID());
         if (config == null) {
             return InteractionResult.COMPLETE;
         }
@@ -68,7 +69,7 @@ public class SprinklerItem extends AbstractCustomCropsItem {
                 return InteractionResult.PASS;
             if (!clicked.isSolid())
                 return InteractionResult.PASS;
-            targetLocation = event.location().clone().add(0,1,0);
+            targetLocation = LocationUtils.toBlockLocation(event.location().clone().add(0,1,0));
             if (!suitableForSprinkler(targetLocation)) {
                 return InteractionResult.PASS;
             }
@@ -77,6 +78,7 @@ public class SprinklerItem extends AbstractCustomCropsItem {
         final Player player = event.player();
         final ItemStack itemInHand = event.itemInHand();
         Context<Player> context = Context.player(player);
+        context.arg(ContextKeys.LOCATION, targetLocation);
         // check requirements
         if (!RequirementManager.isSatisfied(context, config.placeRequirements())) {
             return InteractionResult.COMPLETE;
@@ -100,11 +102,11 @@ public class SprinklerItem extends AbstractCustomCropsItem {
         SprinklerPlaceEvent placeEvent = new SprinklerPlaceEvent(player, itemInHand, event.hand(), targetLocation.clone(), config, state);
         if (EventUtils.fireAndCheckCancel(placeEvent))
             return InteractionResult.COMPLETE;
+
         // clear replaceable block
         targetLocation.getBlock().setType(Material.AIR, false);
         if (player.getGameMode() != GameMode.CREATIVE)
             itemInHand.setAmount(itemInHand.getAmount() - 1);
-
         // place the sprinkler
         BukkitCustomCropsPlugin.getInstance().getItemManager().place(LocationUtils.toSurfaceCenterLocation(targetLocation), config.existenceForm(), config.threeDItem(), FurnitureRotation.NONE);
         world.addBlockState(pos3, state).ifPresent(previous -> {
