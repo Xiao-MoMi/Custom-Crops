@@ -450,6 +450,51 @@ public class BukkitItemManager extends AbstractItemManager {
     }
 
     @Override
+    public void handleEntityTrample(Entity entity, Location location, String brokenID, Cancellable event) {
+        Optional<CustomCropsWorld<?>> optionalWorld = plugin.getWorldManager().getWorld(entity.getWorld());
+        if (optionalWorld.isEmpty()) {
+            return;
+        }
+
+        CustomCropsWorld<?> world = optionalWorld.get();
+        WrappedBreakEvent wrapped = new WrappedBreakEvent(entity, null, world, location, brokenID, null, null, BreakReason.TRAMPLE, event);
+        CustomCropsBlock customCropsBlock = Registries.BLOCKS.get(brokenID);
+        if (customCropsBlock != null) {
+            customCropsBlock.onBreak(wrapped);
+        }
+    }
+
+    @Override
+    public void handleEntityExplode(Entity entity, Location location, String brokenID, Cancellable event) {
+        Optional<CustomCropsWorld<?>> optionalWorld = plugin.getWorldManager().getWorld(entity.getWorld());
+        if (optionalWorld.isEmpty()) {
+            return;
+        }
+
+        CustomCropsWorld<?> world = optionalWorld.get();
+        WrappedBreakEvent wrapped = new WrappedBreakEvent(entity, null, world, location, brokenID, null, null, BreakReason.EXPLODE, event);
+        CustomCropsBlock customCropsBlock = Registries.BLOCKS.get(brokenID);
+        if (customCropsBlock != null) {
+            customCropsBlock.onBreak(wrapped);
+        }
+    }
+
+    @Override
+    public void handleBlockExplode(Block block, Location location, String brokenID, Cancellable event) {
+        Optional<CustomCropsWorld<?>> optionalWorld = plugin.getWorldManager().getWorld(block.getWorld());
+        if (optionalWorld.isEmpty()) {
+            return;
+        }
+
+        CustomCropsWorld<?> world = optionalWorld.get();
+        WrappedBreakEvent wrapped = new WrappedBreakEvent(null, block, world, location, brokenID, null, null, BreakReason.EXPLODE, event);
+        CustomCropsBlock customCropsBlock = Registries.BLOCKS.get(brokenID);
+        if (customCropsBlock != null) {
+            customCropsBlock.onBreak(wrapped);
+        }
+    }
+
+    @Override
     public void handlePlayerPlace(Player player, Location location, String placedID, EquipmentSlot hand, ItemStack itemInHand, Cancellable event) {
         Optional<CustomCropsWorld<?>> optionalWorld = plugin.getWorldManager().getWorld(player.getWorld());
         if (optionalWorld.isEmpty()) {
@@ -461,9 +506,18 @@ public class BukkitItemManager extends AbstractItemManager {
         Optional<CustomCropsBlockState> optionalState = world.getBlockState(pos3);
         if (optionalState.isPresent()) {
             CustomCropsBlockState customCropsBlockState = optionalState.get();
-            String anyID = anyID(location);
-            System.out.println(anyID);
-            if (!customCropsBlockState.type().isBlockInstance(anyID)) {
+            String anyFurnitureID = furnitureID(location);
+            if (anyFurnitureID != null) {
+                if (!customCropsBlockState.type().isBlockInstance(anyFurnitureID)) {
+                    world.removeBlockState(pos3);
+                    plugin.debug("[" + location.getWorld().getName() + "] Removed inconsistent block data at " + pos3 + " which used to be " + customCropsBlockState);
+                } else {
+                    event.setCancelled(true);
+                    return;
+                }
+            }
+            String anyBlockID = blockID(location);
+            if (!customCropsBlockState.type().isBlockInstance(anyBlockID)) {
                 world.removeBlockState(pos3);
                 plugin.debug("[" + location.getWorld().getName() + "] Removed inconsistent block data at " + pos3 + " which used to be " + customCropsBlockState);
             } else {

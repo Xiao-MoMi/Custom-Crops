@@ -36,7 +36,6 @@ import net.momirealms.customcrops.api.core.block.PotConfig;
 import net.momirealms.customcrops.api.core.block.SprinklerConfig;
 import net.momirealms.customcrops.api.core.item.FertilizerConfig;
 import net.momirealms.customcrops.api.core.item.WateringCanConfig;
-import net.momirealms.customcrops.api.util.PluginUtils;
 import net.momirealms.customcrops.common.helper.AdventureHelper;
 import net.momirealms.customcrops.common.locale.TranslationManager;
 import net.momirealms.customcrops.common.plugin.CustomCropsProperties;
@@ -131,7 +130,8 @@ public class BukkitConfigManager extends ConfigManager {
 
         defaultQualityRatio = getQualityRatio(config.getString("mechanics.default-quality-ratio", "17/2/1"));
 
-        hasNamespace = PluginUtils.isEnabled("ItemsAdder");
+        preventTrampling = config.getBoolean("mechanics.vanilla-farmland.prevent-trampling", false);
+        disableMoistureMechanic = config.getBoolean("mechanics.vanilla-farmland.disable-moisture-mechanic", false);
     }
 
     @Override

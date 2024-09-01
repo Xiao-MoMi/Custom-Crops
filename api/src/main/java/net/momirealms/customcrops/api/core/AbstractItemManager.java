@@ -20,6 +20,7 @@ package net.momirealms.customcrops.api.core;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.inventory.EquipmentSlot;
@@ -57,6 +58,27 @@ public abstract class AbstractItemManager implements ItemManager {
             Player player,
             Location location,
             ItemStack itemInHand,
+            String brokenID,
+            Cancellable event
+    );
+
+    public abstract void handleEntityTrample(
+            Entity entity,
+            Location location,
+            String brokenID,
+            Cancellable event
+    );
+
+    public abstract void handleEntityExplode(
+            Entity entity,
+            Location location,
+            String brokenID,
+            Cancellable event
+    );
+
+    public abstract void handleBlockExplode(
+            Block block,
+            Location location,
             String brokenID,
             Cancellable event
     );

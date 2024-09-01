@@ -36,7 +36,6 @@ public class CrowAttack {
 
     private SchedulerTask task;
     private final Location dynamicLocation;
-    private final Location cropLocation;
     private final Vector vectorDown;
     private final Vector vectorUp;
     private final Player[] viewers;
@@ -52,14 +51,14 @@ public class CrowAttack {
             }
         }
         this.viewers = viewers.toArray(new Player[0]);
-        this.cropLocation = LocationUtils.toBlockCenterLocation(location).add(RandomUtils.generateRandomDouble(-0.25, 0.25), 0, RandomUtils.generateRandomDouble(-0.25, 0.25));
+        Location landLocation = LocationUtils.toBlockCenterLocation(location).add(RandomUtils.generateRandomDouble(-0.25, 0.25), 0, RandomUtils.generateRandomDouble(-0.25, 0.25));
         float yaw = RandomUtils.generateRandomInt(-180, 180);
-        this.cropLocation.setYaw(yaw);
+        landLocation.setYaw(yaw);
         this.flyModel = flyModel;
         this.standModel = standModel;
-        this.dynamicLocation = cropLocation.clone().add((10 * Math.sin((Math.PI * yaw) / 180)), 10, (- 10 * Math.cos((Math.PI * yaw) / 180)));
+        this.dynamicLocation = landLocation.clone().add((10 * Math.sin((Math.PI * yaw) / 180)), 10, (- 10 * Math.cos((Math.PI * yaw) / 180)));
         this.dynamicLocation.setYaw(yaw);
-        Location relative = cropLocation.clone().subtract(dynamicLocation);
+        Location relative = landLocation.clone().subtract(dynamicLocation);
         this.vectorDown = new Vector(relative.getX() / 100, -0.1, relative.getZ() / 100);
         this.vectorUp = new Vector(relative.getX() / 100, 0.1, relative.getZ() / 100);
     }

@@ -61,7 +61,8 @@ public abstract class ConfigManager implements ConfigLoader, Reloadable {
 
     protected double[] defaultQualityRatio;
 
-    protected boolean hasNamespace;
+    protected boolean preventTrampling;
+    protected boolean disableMoistureMechanic;
 
     public ConfigManager(BukkitCustomCropsPlugin plugin) {
         this.plugin = plugin;
@@ -144,8 +145,12 @@ public abstract class ConfigManager implements ConfigLoader, Reloadable {
         return instance.defaultQualityRatio;
     }
 
-    public static boolean hasNamespace() {
-        return instance.hasNamespace;
+    public static boolean preventTrampling() {
+        return instance.preventTrampling;
+    }
+
+    public static boolean disableMoistureMechanic() {
+        return instance.disableMoistureMechanic;
     }
 
     @Override
