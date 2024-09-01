@@ -53,7 +53,7 @@ public class FertilizerItem extends AbstractCustomCropsItem {
 
     @Override
     public InteractionResult interactAt(WrappedInteractEvent event) {
-        FertilizerConfig fertilizerConfig = Registries.FERTILIZER.get(event.itemID());
+        FertilizerConfig fertilizerConfig = Registries.ITEM_TO_FERTILIZER.get(event.itemID());
         if (fertilizerConfig == null) {
             return InteractionResult.COMPLETE;
         }
@@ -114,6 +114,7 @@ public class FertilizerItem extends AbstractCustomCropsItem {
                     .build();
             CustomCropsBlockState potState = potBlock.fixOrGetState(world, Pos3.from(targetLocation), potConfig, event.relatedID());
             if (!potBlock.canApplyFertilizer(potState,fertilizer)) {
+                ActionManager.trigger(context, potConfig.maxFertilizerActions());
                 return InteractionResult.COMPLETE;
             }
             // trigger event

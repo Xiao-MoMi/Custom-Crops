@@ -54,6 +54,7 @@ public class PotConfigImpl implements PotConfig {
     private final Action<Player>[] breakActions;
     private final Action<Player>[] addWaterActions;
     private final Action<Player>[] fullWaterActions;
+    private final Action<Player>[] maxFertilizerActions;
 
     public PotConfigImpl(
             String id,
@@ -74,7 +75,8 @@ public class PotConfigImpl implements PotConfig {
             Action<Player>[] placeActions,
             Action<Player>[] breakActions,
             Action<Player>[] addWaterActions,
-            Action<Player>[] fullWaterActions
+            Action<Player>[] fullWaterActions,
+            Action<Player>[] maxFertilizerActions
     ) {
         this.id = id;
         this.basicAppearance = basicAppearance;
@@ -95,6 +97,7 @@ public class PotConfigImpl implements PotConfig {
         this.breakActions = breakActions;
         this.addWaterActions = addWaterActions;
         this.fullWaterActions = fullWaterActions;
+        this.maxFertilizerActions = maxFertilizerActions;
         this.blocks.add(basicAppearance.left());
         this.blocks.add(basicAppearance.right());
         this.wetBlocks.add(basicAppearance.right());
@@ -211,6 +214,11 @@ public class PotConfigImpl implements PotConfig {
         return fullWaterActions;
     }
 
+    @Override
+    public Action<Player>[] maxFertilizerActions() {
+        return maxFertilizerActions;
+    }
+
     public static class BuilderImpl implements Builder {
 
         private String id;
@@ -233,10 +241,11 @@ public class PotConfigImpl implements PotConfig {
         private Action<Player>[] breakActions;
         private Action<Player>[] addWaterActions;
         private Action<Player>[] fullWaterActions;
+        private Action<Player>[] maxFertilizerActions;
 
         @Override
         public PotConfig build() {
-            return new PotConfigImpl(id, basicAppearance, potAppearanceMap, storage, isRainDropAccepted, isNearbyWaterAccepted, wateringMethods, waterBar, maxFertilizers, placeRequirements, breakRequirements, useRequirements, tickActions, reachLimitActions, interactActions, placeActions, breakActions, addWaterActions, fullWaterActions);
+            return new PotConfigImpl(id, basicAppearance, potAppearanceMap, storage, isRainDropAccepted, isNearbyWaterAccepted, wateringMethods, waterBar, maxFertilizers, placeRequirements, breakRequirements, useRequirements, tickActions, reachLimitActions, interactActions, placeActions, breakActions, addWaterActions, fullWaterActions, maxFertilizerActions);
         }
 
         @Override
@@ -338,6 +347,12 @@ public class PotConfigImpl implements PotConfig {
         @Override
         public Builder fullWaterActions(Action<Player>[] fullWaterActions) {
             this.fullWaterActions = fullWaterActions;
+            return this;
+        }
+
+        @Override
+        public Builder maxFertilizerActions(Action<Player>[] maxFertilizerActions) {
+            this.maxFertilizerActions = maxFertilizerActions;
             return this;
         }
 

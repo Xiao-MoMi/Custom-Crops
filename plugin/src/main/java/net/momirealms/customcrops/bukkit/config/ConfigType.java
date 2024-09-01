@@ -125,6 +125,7 @@ public class ConfigType {
                         .addWaterActions(pam.parseActions(section.getSection("events.add_water")))
                         .placeActions(pam.parseActions(section.getSection("events.place")))
                         .breakActions(pam.parseActions(section.getSection("events.break")))
+                        .maxFertilizerActions(pam.parseActions(section.getSection("events.max_fertilizers")))
                         .interactActions(pam.parseActions(section.getSection("events.interact")))
                         .reachLimitActions(pam.parseActions(section.getSection("events.reach_limit")))
                         .fullWaterActions(pam.parseActions(section.getSection("events.full")))

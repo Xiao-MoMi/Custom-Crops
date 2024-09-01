@@ -71,6 +71,8 @@ public interface PotConfig {
 
     Action<Player>[] fullWaterActions();
 
+    Action<Player>[] maxFertilizerActions();
+
     static Builder builder() {
         return new PotConfigImpl.BuilderImpl();
     }
@@ -112,6 +114,8 @@ public interface PotConfig {
         Builder addWaterActions(Action<Player>[] addWaterActions);
 
         Builder fullWaterActions(Action<Player>[] fullWaterActions);
+
+        Builder maxFertilizerActions(Action<Player>[] maxFertilizerActions);
 
         Builder basicAppearance(Pair<String, String> basicAppearance);
 

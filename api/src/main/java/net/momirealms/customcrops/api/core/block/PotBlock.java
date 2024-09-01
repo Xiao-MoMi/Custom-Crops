@@ -437,7 +437,7 @@ public class PotBlock extends AbstractCustomCropsBlock {
     public Fertilizer[] fertilizers(CustomCropsBlockState state) {
         Tag<?> fertilizerTag = state.get("fertilizers");
         if (fertilizerTag == null) return new Fertilizer[0];
-        List<CompoundTag> tags = ((ListTag<CompoundTag>) fertilizerTag.getValue()).getValue();
+        List<CompoundTag> tags = ((List<CompoundTag>) fertilizerTag.getValue());
         Fertilizer[] fertilizers = new Fertilizer[tags.size()];
         for (int i = 0; i < tags.size(); i++) {
             CompoundTag tag = tags.get(i);
@@ -480,10 +480,10 @@ public class PotBlock extends AbstractCustomCropsBlock {
     public boolean addFertilizer(CustomCropsBlockState state, Fertilizer fertilizer) {
         Tag<?> fertilizerTag = state.get("fertilizers");
         if (fertilizerTag == null) {
-            fertilizerTag = new ListTag<CompoundTag>("", TagType.TAG_COMPOUND, new ArrayList<>());
+            fertilizerTag = new ListTag<CompoundTag>("fertilizers", TagType.TAG_COMPOUND, new ArrayList<>());
             state.set("fertilizers", fertilizerTag);
         }
-        List<CompoundTag> tags = ((ListTag<CompoundTag>) fertilizerTag.getValue()).getValue();
+        List<CompoundTag> tags = ((List<CompoundTag>) fertilizerTag.getValue());
         for (CompoundTag tag : tags) {
             CompoundMap map = tag.getValue();
             Fertilizer applied = tagToFertilizer(map);
@@ -510,7 +510,7 @@ public class PotBlock extends AbstractCustomCropsBlock {
         if (fertilizerTag == null) {
             return false;
         }
-        List<CompoundTag> tags = ((ListTag<CompoundTag>) fertilizerTag.getValue()).getValue();
+        List<CompoundTag> tags = ((List<CompoundTag>) fertilizerTag.getValue());
         if (tags.isEmpty()) {
             return false;
         }

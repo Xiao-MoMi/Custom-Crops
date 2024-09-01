@@ -11,6 +11,8 @@ default:
   absorb-rainwater: true
   # Does nearby water make the pot wet
   absorb-nearby-water: false
+  # The max amount of fertilizers
+  max-fertilizers: 1
   # Set unique looks for pots with different fertilizer statuses
   fertilized-pots:
     quality:
