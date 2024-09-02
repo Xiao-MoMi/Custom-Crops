@@ -163,6 +163,9 @@ public class PotBlock extends AbstractCustomCropsBlock {
             world.removeBlockState(pos3.add(0,1,0));
             BukkitCustomCropsPlugin.getInstance().getItemManager().remove(upperLocation, ExistenceForm.ANY);
         }
+        if (cropConfig == null && Registries.ITEM_TO_DEAD_CROP.containsKey(upperID)) {
+            BukkitCustomCropsPlugin.getInstance().getItemManager().remove(upperLocation, ExistenceForm.ANY);
+        }
 
         context.arg(ContextKeys.LOCATION, location);
         ActionManager.trigger(context, config.breakActions());
