@@ -80,7 +80,8 @@ public class PotBlock extends AbstractCustomCropsBlock {
     @Override
     public void onBreak(WrappedBreakEvent event) {
         CustomCropsWorld<?> world = event.world();
-        Pos3 pos3 = Pos3.from(event.location());
+        Location location = event.location();
+        Pos3 pos3 = Pos3.from(location);
         PotConfig config = Registries.ITEM_TO_POT.get(event.brokenID());
         if (config == null) {
             world.removeBlockState(pos3);
@@ -89,12 +90,15 @@ public class PotBlock extends AbstractCustomCropsBlock {
 
         final Player player = event.playerBreaker();
         Context<Player> context = Context.player(player);
+
+        context.arg(ContextKeys.LOCATION, location);
         if (!RequirementManager.isSatisfied(context, config.breakRequirements())) {
             event.setCancelled(true);
             return;
         }
 
-        Location upperLocation = event.location().clone().add(0,1,0);
+        Location upperLocation = location.clone().add(0,1,0);
+
         String upperID = BukkitCustomCropsPlugin.getInstance().getItemManager().anyID(upperLocation);
         List<CropConfig> cropConfigs = Registries.STAGE_TO_CROP_UNSAFE.get(upperID);
 
@@ -122,6 +126,7 @@ public class PotBlock extends AbstractCustomCropsBlock {
                     cropConfig = cropConfigs.get(0);
                 }
 
+                context.arg(ContextKeys.LOCATION, upperLocation);
                 if (!RequirementManager.isSatisfied(context, cropConfig.breakRequirements())) {
                     event.setCancelled(true);
                     return;
@@ -150,7 +155,6 @@ public class PotBlock extends AbstractCustomCropsBlock {
             return;
         }
 
-        ActionManager.trigger(context, config.breakActions());
         if (stageConfig != null) {
             ActionManager.trigger(context, stageConfig.breakActions());
         }
@@ -159,6 +163,9 @@ public class PotBlock extends AbstractCustomCropsBlock {
             world.removeBlockState(pos3.add(0,1,0));
             BukkitCustomCropsPlugin.getInstance().getItemManager().remove(upperLocation, ExistenceForm.ANY);
         }
+
+        context.arg(ContextKeys.LOCATION, location);
+        ActionManager.trigger(context, config.breakActions());
 
         world.removeBlockState(pos3);
     }
@@ -297,6 +304,7 @@ public class PotBlock extends AbstractCustomCropsBlock {
     }
 
     public CustomCropsBlockState fixOrGetState(CustomCropsWorld<?> world, Pos3 pos3, PotConfig potConfig, String blockID) {
+        if (potConfig == null) return null;
         Optional<CustomCropsBlockState> optionalPotState = world.getBlockState(pos3);
         if (optionalPotState.isPresent()) {
             CustomCropsBlockState potState = optionalPotState.get();
