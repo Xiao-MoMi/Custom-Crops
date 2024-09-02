@@ -245,6 +245,21 @@ public class PotBlock extends AbstractCustomCropsBlock {
         if (tryWateringPot(player, context, state, event.hand(), event.itemID(), potConfig, location, itemInHand))
             return;
 
+        int water = water(state);
+        context.arg(ContextKeys.STORAGE, potConfig.storage());
+        context.arg(ContextKeys.CURRENT_WATER, water);
+        context.arg(ContextKeys.WATER_BAR, Optional.ofNullable(potConfig.waterBar()).map(it -> it.getWaterBar(water, potConfig.storage())).orElse(""));
+        Fertilizer[] fertilizers = fertilizers(state);
+        // for backward compatibility
+        for (Fertilizer latest : fertilizers) {
+            FertilizerConfig config = latest.config();
+            if (config != null) {
+                context.arg(ContextKeys.ICON, config.icon());
+                context.arg(ContextKeys.MAX_TIMES, config.times());
+                context.arg(ContextKeys.LEFT_TIMES, latest.times());
+                break;
+            }
+        }
         ActionManager.trigger(context, potConfig.interactActions());
     }
 

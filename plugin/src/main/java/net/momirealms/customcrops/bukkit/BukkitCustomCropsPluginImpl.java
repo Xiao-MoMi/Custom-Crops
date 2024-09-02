@@ -232,6 +232,7 @@ public class BukkitCustomCropsPluginImpl extends BukkitCustomCropsPlugin {
         registryAccess.registerBlockMechanic(new ScarecrowBlock());
         registryAccess.registerBlockMechanic(new SprinklerBlock());
         registryAccess.registerBlockMechanic(new GreenhouseBlock());
+        registryAccess.registerBlockMechanic(new DeadCrop());
 
         registryAccess.registerItemMechanic(new SeedItem());
         registryAccess.registerItemMechanic(new WateringCanItem());

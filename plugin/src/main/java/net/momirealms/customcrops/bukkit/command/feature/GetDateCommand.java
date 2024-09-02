@@ -19,7 +19,6 @@ package net.momirealms.customcrops.bukkit.command.feature;
 
 import net.kyori.adventure.text.Component;
 import net.momirealms.customcrops.api.BukkitCustomCropsPlugin;
-import net.momirealms.customcrops.api.core.world.Season;
 import net.momirealms.customcrops.api.integration.SeasonProvider;
 import net.momirealms.customcrops.bukkit.command.BukkitCommandFeature;
 import net.momirealms.customcrops.common.command.CustomCropsCommandManager;

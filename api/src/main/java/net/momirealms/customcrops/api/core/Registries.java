@@ -57,4 +57,5 @@ public class Registries {
     public static final ClearableRegistry<String, PotConfig> ITEM_TO_POT = new ClearableMappedRegistry<>(Key.key("fast_lookup", "item_to_pot"));
     public static final ClearableRegistry<String, SprinklerConfig> ITEM_TO_SPRINKLER = new ClearableMappedRegistry<>(Key.key("fast_lookup", "item_to_sprinkler"));
     public static final ClearableRegistry<String, WateringCanConfig> ITEM_TO_WATERING_CAN = new ClearableMappedRegistry<>(Key.key("fast_lookup", "item_to_wateringcan"));
+    public static final ClearableRegistry<String, Integer> ITEM_TO_DEAD_CROP = new ClearableMappedRegistry<>(Key.key("fast_lookup", "item_to_dead_crop"));
 }

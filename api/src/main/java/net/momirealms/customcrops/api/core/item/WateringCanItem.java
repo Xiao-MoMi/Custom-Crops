@@ -239,8 +239,8 @@ public class WateringCanItem extends AbstractCustomCropsItem {
         }
 
         // if the clicked block is a crop, correct the target block
-        List<CropConfig> cropConfigs = Registries.STAGE_TO_CROP_UNSAFE.get(event.relatedID());
-        if (cropConfigs != null) {
+        List<CropConfig> cropConfigs = Registries.STAGE_TO_CROP_UNSAFE.get(targetBlockID);
+        if (cropConfigs != null || Registries.ITEM_TO_DEAD_CROP.containsKey(targetBlockID)) {
             // is a crop
             targetLocation = targetLocation.subtract(0,1,0);
             targetBlockID = BukkitCustomCropsPlugin.getInstance().getItemManager().blockID(targetLocation);

@@ -42,6 +42,9 @@ public class ContextKeys<T> {
     public static final ContextKeys<EquipmentSlot> SLOT = of("slot", EquipmentSlot.class);
     public static final ContextKeys<String> TEMP_NEAR_PLAYER = of("near", String.class);
     public static final ContextKeys<Boolean> OFFLINE = of("offline", Boolean.class);
+    public static final ContextKeys<String> ICON = of("icon", String.class);
+    public static final ContextKeys<Integer> MAX_TIMES = of("max_times", Integer.class);
+    public static final ContextKeys<Integer> LEFT_TIMES = of("left_times", Integer.class);
     public static final ContextKeys<Player> PLAYER_INSTANCE = of("player_instance", Player.class);
 
     private final String key;

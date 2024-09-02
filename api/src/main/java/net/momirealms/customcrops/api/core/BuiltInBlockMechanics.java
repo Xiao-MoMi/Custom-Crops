@@ -27,6 +27,7 @@ import java.util.Objects;
 public class BuiltInBlockMechanics {
 
    public static final BuiltInBlockMechanics CROP = create("crop");
+   public static final BuiltInBlockMechanics DEAD_CROP = create("dead_crop");
    public static final BuiltInBlockMechanics SPRINKLER = create("sprinkler");
    public static final BuiltInBlockMechanics GREENHOUSE = create("greenhouse");
    public static final BuiltInBlockMechanics POT = create("pot");

@@ -50,7 +50,10 @@ import org.bukkit.event.player.PlayerItemDamageEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 public abstract class AbstractCustomEventListener implements Listener {
 
@@ -324,27 +327,8 @@ public abstract class AbstractCustomEventListener implements Listener {
                                         Context<Player> context = Context.player(null);
                                         context.arg(ContextKeys.LOCATION, location);
                                         boneMeal.triggerActions(context);
-
                                         int afterPoints = Math.min(point + boneMeal.rollPoint(), cropConfig.maxPoints());
                                         cropBlock.point(state, afterPoints);
-
-                                        String afterStage = null;
-                                        ExistenceForm afterForm = null;
-                                        int tempPoints = afterPoints;
-                                        while (tempPoints >= 0) {
-                                            Map.Entry<Integer, CropStageConfig> afterEntry = cropConfig.getFloorStageEntry(tempPoints);
-                                            CropStageConfig after = afterEntry.getValue();
-                                            if (after.stageID() != null) {
-                                                afterStage = after.stageID();
-                                                afterForm = after.existenceForm();
-                                                break;
-                                            }
-                                            tempPoints = after.point() - 1;
-                                        }
-
-                                        Objects.requireNonNull(afterForm);
-                                        Objects.requireNonNull(afterStage);
-
                                         Context<CustomCropsBlockState> blockContext = Context.block(state);
                                         blockContext.arg(ContextKeys.LOCATION, LocationUtils.toBlockLocation(location));
                                         for (int i = point + 1; i <= afterPoints; i++) {
@@ -353,14 +337,15 @@ public abstract class AbstractCustomEventListener implements Listener {
                                                 ActionManager.trigger(blockContext, stage.growActions());
                                             }
                                         }
-
-                                        // TODO if the block model chanegs
+                                        CropStageConfig currentStage = cropConfig.stageWithModelByPoint(point);
+                                        CropStageConfig afterStage = cropConfig.stageWithModelByPoint(afterPoints);
+                                        if (currentStage == afterStage) return;
                                         Location bukkitLocation = location.toLocation(world.bukkitWorld());
                                         FurnitureRotation rotation = BukkitCustomCropsPlugin.getInstance().getItemManager().remove(bukkitLocation, ExistenceForm.ANY);
                                         if (rotation == FurnitureRotation.NONE && cropConfig.rotation()) {
                                             rotation = FurnitureRotation.random();
                                         }
-                                        BukkitCustomCropsPlugin.getInstance().getItemManager().place(bukkitLocation, afterForm, afterStage, rotation);
+                                        BukkitCustomCropsPlugin.getInstance().getItemManager().place(bukkitLocation, afterStage.existenceForm(), Objects.requireNonNull(afterStage.stageID()), rotation);
                                     }
                                 }
                             }

@@ -758,17 +758,8 @@ public abstract class AbstractActionManager<T> implements ActionManager<T> {
                         return;
                     }
                     if (applyCorrection) {
-                        Optional<CustomCropsBlockState> optionalState = optionalWorld.get().getBlockState(pos3);
-                        if (optionalState.isPresent()) {
-                            if (optionalState.get().type() instanceof CropBlock cropBlock) {
-                                CropConfig config = cropBlock.config(optionalState.get());
-                                int point = cropBlock.point(optionalState.get());
-                                if (config != null) {
-                                    CropStageConfig stageConfig = config.stageWithModelByPoint(point);
-                                    location.add(0,stageConfig.displayInfoOffset(),0);
-                                }
-                            }
-                        }
+                        String itemID = plugin.getItemManager().anyID(location.clone().add(0,1,0));
+                        location.add(0,ConfigManager.getOffset(itemID),0);
                     }
                     ArrayList<Player> viewers = new ArrayList<>();
                     if (onlyShowToOne) {

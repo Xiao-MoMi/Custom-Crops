@@ -63,10 +63,15 @@ public abstract class ConfigManager implements ConfigLoader, Reloadable {
 
     protected boolean preventTrampling;
     protected boolean disableMoistureMechanic;
+    protected HashMap<String, Double> offsets = new HashMap<>();
 
     public ConfigManager(BukkitCustomCropsPlugin plugin) {
         this.plugin = plugin;
         instance = this;
+    }
+
+    public static double getOffset(String id) {
+        return instance.offsets.getOrDefault(id, 0d);
     }
 
     public static boolean syncSeasons() {

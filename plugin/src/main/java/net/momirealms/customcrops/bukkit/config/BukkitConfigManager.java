@@ -30,10 +30,7 @@ import dev.dejvokep.boostedyaml.settings.updater.UpdaterSettings;
 import dev.dejvokep.boostedyaml.utils.format.NodeRole;
 import net.momirealms.customcrops.api.BukkitCustomCropsPlugin;
 import net.momirealms.customcrops.api.core.*;
-import net.momirealms.customcrops.api.core.block.CropConfig;
-import net.momirealms.customcrops.api.core.block.CropStageConfig;
-import net.momirealms.customcrops.api.core.block.PotConfig;
-import net.momirealms.customcrops.api.core.block.SprinklerConfig;
+import net.momirealms.customcrops.api.core.block.*;
 import net.momirealms.customcrops.api.core.item.FertilizerConfig;
 import net.momirealms.customcrops.api.core.item.WateringCanConfig;
 import net.momirealms.customcrops.common.helper.AdventureHelper;
@@ -132,6 +129,16 @@ public class BukkitConfigManager extends ConfigManager {
 
         preventTrampling = config.getBoolean("mechanics.vanilla-farmland.prevent-trampling", false);
         disableMoistureMechanic = config.getBoolean("mechanics.vanilla-farmland.disable-moisture-mechanic", false);
+
+        offsets.clear();
+        Section section = config.getSection("mechanics.hologram-offset-correction");
+        if (section != null) {
+            for (Map.Entry<String, Object> entry : section.getStringRouteMappedValues(false).entrySet()) {
+                if (entry.getValue() instanceof Number n) {
+                    offsets.put(entry.getKey(), n.doubleValue());
+                }
+            }
+        }
     }
 
     @Override
@@ -228,9 +235,21 @@ public class BukkitConfigManager extends ConfigManager {
         Registries.CROP.register(config.id(), config);
         Registries.SEED_TO_CROP.register(config.seed(), config);
         Registries.ITEMS.register(config.seed(), BuiltInItemMechanics.SEED.mechanic());
+        for (DeathCondition condition : config.deathConditions()) {
+            String deadStage = condition.deathStage();
+            if (deadStage != null) {
+                if (!Registries.BLOCKS.containsKey(deadStage)) {
+                    Registries.BLOCKS.register(deadStage, BuiltInBlockMechanics.DEAD_CROP.mechanic());
+                }
+                if (!Registries.ITEM_TO_DEAD_CROP.containsKey(deadStage)) {
+                    Registries.ITEM_TO_DEAD_CROP.register(deadStage, 0);
+                }
+            }
+        }
         for (CropStageConfig stageConfig : config.stages()) {
             String stageID = stageConfig.stageID();
             if (stageID != null) {
+                offsets.put(stageID, stageConfig.displayInfoOffset());
                 List<CropConfig> list = Registries.STAGE_TO_CROP_UNSAFE.get(stageID);
                 if (list != null) {
                     list.add(config);

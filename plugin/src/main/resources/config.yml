@@ -117,6 +117,9 @@ mechanics:
     disable-moisture-mechanic: false
     # Prevent entities from trampling the farmland
     prevent-trampling: false
+  # Set hologram offset correction for other blocks
+  hologram-offset-correction:
+    "{0}crop_stage_death": 0
 other-settings:
   # It's recommended to use MiniMessage format. If you insist on using legacy color code "&", enable the support below.
   # Disable this would improve performance
