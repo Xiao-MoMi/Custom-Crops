@@ -22,17 +22,51 @@ import net.momirealms.customcrops.api.core.item.CustomCropsItem;
 import net.momirealms.customcrops.api.core.mechanic.fertilizer.FertilizerType;
 import net.momirealms.customcrops.common.util.Key;
 
+/**
+ * Interface defining methods for registering and accessing different types of custom crop mechanics
+ * such as blocks, items, and fertilizer types in the CustomCrops plugin.
+ */
 public interface RegistryAccess {
 
+    /**
+     * Registers a new custom crop block mechanic.
+     *
+     * @param block The custom crop block to register.
+     */
     void registerBlockMechanic(CustomCropsBlock block);
 
+    /**
+     * Registers a new custom crop item mechanic.
+     *
+     * @param item The custom crop item to register.
+     */
     void registerItemMechanic(CustomCropsItem item);
 
+    /**
+     * Registers a new fertilizer type mechanic.
+     *
+     * @param type The fertilizer type to register.
+     */
     void registerFertilizerType(FertilizerType type);
 
+    /**
+     * Retrieves the registry containing all registered custom crop blocks.
+     *
+     * @return the block registry
+     */
     Registry<Key, CustomCropsBlock> getBlockRegistry();
 
+    /**
+     * Retrieves the registry containing all registered custom crop items.
+     *
+     * @return the item registry
+     */
     Registry<Key, CustomCropsItem> getItemRegistry();
 
+    /**
+     * Retrieves the registry containing all registered fertilizer types.
+     *
+     * @return the fertilizer type registry
+     */
     Registry<String, FertilizerType> getFertilizerTypeRegistry();
 }

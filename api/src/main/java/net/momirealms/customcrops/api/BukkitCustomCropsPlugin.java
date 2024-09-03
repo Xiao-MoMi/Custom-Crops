@@ -36,10 +36,12 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Supplier;
 
 public abstract class BukkitCustomCropsPlugin implements CustomCropsPlugin {
 
@@ -75,7 +77,7 @@ public abstract class BukkitCustomCropsPlugin implements CustomCropsPlugin {
     }
 
     /**
-     * Retrieves the singleton instance of BukkitCustomFishingPlugin.
+     * Retrieves the singleton instance of BukkitCustomCropsPlugin.
      *
      * @return the singleton instance
      * @throws IllegalArgumentException if the plugin is not initialized
@@ -116,29 +118,115 @@ public abstract class BukkitCustomCropsPlugin implements CustomCropsPlugin {
         return translationManager;
     }
 
+    /**
+     * Retrieves the ItemManager.
+     *
+     * @return the {@link AbstractItemManager}
+     */
+    @NotNull
     public AbstractItemManager getItemManager() {
         return itemManager;
     }
 
+    /**
+     * Retrieves the SchedulerAdapter.
+     *
+     * @return the {@link SchedulerAdapter}
+     */
     @Override
+    @NotNull
     public SchedulerAdapter<Location, World> getScheduler() {
         return scheduler;
     }
 
+    /**
+     * Retrieves the SenderFactory.
+     *
+     * @return the {@link SenderFactory}
+     */
+    @NotNull
     public SenderFactory<BukkitCustomCropsPlugin, CommandSender> getSenderFactory() {
         return senderFactory;
     }
 
+    /**
+     * Retrieves the WorldManager.
+     *
+     * @return the {@link WorldManager}
+     */
+    @NotNull
     public WorldManager getWorldManager() {
         return worldManager;
     }
 
+    /**
+     * Retrieves the IntegrationManager.
+     *
+     * @return the {@link IntegrationManager}
+     */
+    @NotNull
     public IntegrationManager getIntegrationManager() {
         return integrationManager;
     }
 
+    /**
+     * Retrieves the PlaceholderManager.
+     *
+     * @return the {@link PlaceholderManager}
+     */
+    @NotNull
     public PlaceholderManager getPlaceholderManager() {
         return placeholderManager;
+    }
+
+    /**
+     * Retrieves the CoolDownManager.
+     *
+     * @return the {@link CoolDownManager}
+     */
+    @NotNull
+    public CoolDownManager getCoolDownManager() {
+        return coolDownManager;
+    }
+
+    /**
+     * Retrieves the RegistryAccess.
+     *
+     * @return the {@link RegistryAccess}
+     */
+    @NotNull
+    public RegistryAccess getRegistryAccess() {
+        return registryAccess;
+    }
+
+    /**
+     * Retrieves an ActionManager for a specific type.
+     *
+     * @param type the class type of the action
+     * @return the {@link ActionManager} for the specified type
+     * @throws IllegalArgumentException if the type is null
+     */
+    @SuppressWarnings("unchecked")
+    public <T> ActionManager<T> getActionManager(Class<T> type) {
+        if (type == null) {
+            throw new IllegalArgumentException("Type cannot be null");
+        }
+        return (ActionManager<T>) actionManagers.get(type);
+    }
+
+    /**
+     * Retrieves a RequirementManager for a specific type.
+     *
+     * @param type the class type of the requirement
+     * @return the {@link RequirementManager} for the specified type
+     * @throws IllegalArgumentException if the type is null
+     */
+    @SuppressWarnings("unchecked")
+    public <T> RequirementManager<T> getRequirementManager(Class<T> type) {
+        if (type == null) {
+            throw new IllegalArgumentException("Type cannot be null");
+        }
+        return (RequirementManager<T>) instance.requirementManagers.get(type);
     }
 
     /**
@@ -148,31 +236,19 @@ public abstract class BukkitCustomCropsPlugin implements CustomCropsPlugin {
      */
     public abstract void debug(Object message);
 
+    /**
+     * Logs a debug message using a {@link Supplier}.
+     *
+     * @param message the message supplier to log
+     */
+    public abstract void debug(Supplier<Object> message);
+
+    /**
+     * Retrieves the data folder for the plugin.
+     *
+     * @return the data folder as a {@link File}
+     */
     public File getDataFolder() {
         return boostrap.getDataFolder();
-    }
-
-    public RegistryAccess getRegistryAccess() {
-        return registryAccess;
-    }
-
-    @SuppressWarnings("unchecked")
-    public <T> ActionManager<T> getActionManager(Class<T> type) {
-        if (type == null) {
-            throw new IllegalArgumentException("Type cannot be null");
-        }
-        return (ActionManager<T>) actionManagers.get(type);
-    }
-
-    @SuppressWarnings("unchecked")
-    public <T> RequirementManager<T> getRequirementManager(Class<T> type) {
-        if (type == null) {
-            throw new IllegalArgumentException("Type cannot be null");
-        }
-        return (RequirementManager<T>) instance.requirementManagers.get(type);
-    }
-
-    public CoolDownManager getCoolDownManager() {
-        return coolDownManager;
     }
 }

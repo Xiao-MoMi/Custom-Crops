@@ -26,7 +26,7 @@ import java.util.regex.Pattern;
 /**
  * The TextValue interface represents a text value that can be rendered
  * within a specific context. This interface allows for the rendering of
- * placeholder-based or plain text values in the context of custom fishing mechanics.
+ * placeholder-based or plain text values in the context of custom crops mechanics.
  *
  * @param <T> the type of the holder object for the context
  */

@@ -409,6 +409,9 @@ public class PotBlock extends AbstractCustomCropsBlock {
                 updateBlockAppearance(bukkitLocation, config, finalHasNaturalWater, fertilizers(state));
             }, bukkitLocation);
         }
+
+        ActionManager.trigger(Context.block(state)
+                .arg(ContextKeys.LOCATION, location.toLocation(bukkitWorld)), config.tickActions());
     }
 
     public int water(CustomCropsBlockState state) {

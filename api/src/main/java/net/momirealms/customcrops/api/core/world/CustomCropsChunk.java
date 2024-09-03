@@ -24,171 +24,215 @@ import java.util.PriorityQueue;
 import java.util.Set;
 import java.util.stream.Stream;
 
+/**
+ * Interface representing a chunk in the CustomCrops plugin
+ */
 public interface CustomCropsChunk {
 
     /**
-     * Set if the chunk can be force loaded.
-     * If a chunk is force loaded, no one can unload it unless you set force load to false.
-     * This can prevent CustomCrops from unloading the chunks on {@link org.bukkit.event.world.ChunkUnloadEvent}
+     * Sets whether the chunk can be force loaded.
+     * If a chunk is force loaded, it cannot be unloaded unless force loading is set to false.
+     * This prevents CustomCrops from unloading the chunk during a {@link org.bukkit.event.world.ChunkUnloadEvent}.
      *
-     * This value will not be persistently stored. Please use {@link org.bukkit.World#setChunkForceLoaded(int, int, boolean)}
-     * if you want to force a chunk loaded.
+     * Note: This value is not persistently stored. To force a chunk to stay loaded persistently,
+     * use {@link org.bukkit.World#setChunkForceLoaded(int, int, boolean)}.
      *
-     * @param forceLoad force loaded
+     * @param forceLoad Whether the chunk should be force loaded.
      */
     void setForceLoaded(boolean forceLoad);
 
     /**
-     * Indicates whether the chunk is force loaded
+     * Checks if the chunk is force loaded.
      *
-     * @return force loaded or not
+     * @return true if the chunk is force loaded, false otherwise.
      */
     boolean isForceLoaded();
 
     /**
-     * Loads the chunk to cache and participate in the mechanism of the plugin.
+     * Loads the chunk into the cache to participate in the plugin's mechanisms.
      *
-     * @param loadBukkitChunk whether to load Bukkit chunks temporarily if it's not loaded
+     * @param loadBukkitChunk Whether to temporarily load the Bukkit chunk if it is not already loaded.
      */
     void load(boolean loadBukkitChunk);
 
     /**
-     * Unloads the chunk. Lazy refer to those chunks that will be delayed for unloading.
-     * Recently unloaded chunks are likely to be loaded again soon.
+     * Unloads the chunk, with an option for a lazy unload.
+     * Lazy unloading delays the unload, which is useful if the chunk is likely to be loaded again soon.
      *
-     * @param lazy delay unload or not
+     * @param lazy Whether to delay the unload (lazy unload).
      */
     void unload(boolean lazy);
 
     /**
-     * Unloads the chunk if it is a lazy chunk
+     * Unloads the chunk if it is marked as lazy.
      */
     void unloadLazy();
 
     /**
-     * Indicates whether the chunk is in lazy state
+     * Checks if the chunk is marked as lazy.
      *
-     * @return lazy or not
+     * @return true if the chunk is lazy, false otherwise.
      */
     boolean isLazy();
 
     /**
-     * Indicates whether the chunk is loaded
+     * Checks if the chunk is currently loaded.
      *
-     * @return loaded or not
+     * @return true if the chunk is loaded, false otherwise.
      */
     boolean isLoaded();
 
     /**
-     * Get the world associated with the chunk
+     * Gets the world associated with this chunk.
      *
-     * @return CustomCrops world
+     * @return The {@link CustomCropsWorld} instance.
      */
     CustomCropsWorld<?> getWorld();
 
     /**
-     * Get the position of the chunk
+     * Gets the position of this chunk.
      *
-     * @return chunk position
+     * @return The {@link ChunkPos} representing the chunk's position.
      */
     ChunkPos chunkPos();
 
     /**
-     * Do second timer
+     * Executes a timer task associated with this chunk.
      */
     void timer();
 
     /**
-     * Get the unloaded time in seconds
-     * This value would increase if the chunk is lazy
+     * Gets the time in seconds since the chunk was unloaded.
+     * This value increases if the chunk is in a lazy state.
      *
-     * @return the unloaded time
+     * @return The unloaded time in seconds.
      */
     int unloadedSeconds();
 
     /**
-     * Set the unloaded seconds
+     * Sets the time in seconds since the chunk was unloaded.
      *
-     * @param unloadedSeconds unloadedSeconds
+     * @param unloadedSeconds The unloaded time to set.
      */
     void unloadedSeconds(int unloadedSeconds);
 
     /**
-     * Get the last loaded time
+     * Gets the last time the chunk was loaded.
      *
-     * @return last loaded time
+     * @return The timestamp of the last loaded time.
      */
     long lastLoadedTime();
 
     /**
-     * Set the last loaded time to current time
+     * Updates the last loaded time to the current time.
      */
     void updateLastLoadedTime();
 
     /**
-     * Get the loaded time in seconds
+     * Gets the time in milliseconds since the chunk was loaded.
      *
-     * @return loaded time
+     * @return The loaded time in milliseconds.
      */
     int loadedMilliSeconds();
 
     /**
-     * Get block data at a certain location
+     * Retrieves the custom crop block state at a specific location.
      *
-     * @param location location
-     * @return block data
+     * @param location The location to check.
+     * @return An {@link Optional} containing the {@link CustomCropsBlockState} if present, otherwise empty.
      */
     @NotNull
     Optional<CustomCropsBlockState> getBlockState(Pos3 location);
 
     /**
-     * Remove any block data from a certain location
+     * Removes any custom crop block state at a specific location.
      *
-     * @param location location
-     * @return block data
+     * @param location The location from which to remove the block state.
+     * @return An {@link Optional} containing the removed {@link CustomCropsBlockState} if present, otherwise empty.
      */
     @NotNull
     Optional<CustomCropsBlockState> removeBlockState(Pos3 location);
 
     /**
-     * Add a custom block data at a certain location
+     * Adds a custom crop block state at a specific location.
      *
-     * @param block block to add
-     * @return the previous block data
+     * @param location The location to add the block state.
+     * @param block The custom crop block state to add.
+     * @return An {@link Optional} containing the previous {@link CustomCropsBlockState} if replaced, otherwise empty.
      */
     @NotNull
     Optional<CustomCropsBlockState> addBlockState(Pos3 location, CustomCropsBlockState block);
 
     /**
-     * Get CustomCrops sections
+     * Gets a stream of custom crop sections that need to be saved.
      *
-     * @return sections
+     * @return A {@link Stream} of {@link CustomCropsSection} to save.
      */
     @NotNull
     Stream<CustomCropsSection> sectionsToSave();
 
     /**
-     * Get section by ID
+     * Retrieves a loaded section by its ID.
      *
-     * @param sectionID id
-     * @return section
+     * @param sectionID The ID of the section to retrieve.
+     * @return An {@link Optional} containing the {@link CustomCropsSection} if loaded, otherwise empty.
      */
     @NotNull
     Optional<CustomCropsSection> getLoadedSection(int sectionID);
 
+    /**
+     * Retrieves a section by its ID, loading it if necessary.
+     *
+     * @param sectionID The ID of the section to retrieve.
+     * @return The {@link CustomCropsSection} instance.
+     */
     CustomCropsSection getSection(int sectionID);
 
+    /**
+     * Retrieves all sections within this chunk.
+     *
+     * @return An array of {@link CustomCropsSection}.
+     */
     CustomCropsSection[] sections();
 
+    /**
+     * Removes a section by its ID.
+     *
+     * @param sectionID The ID of the section to remove.
+     * @return An {@link Optional} containing the removed {@link CustomCropsSection} if present, otherwise empty.
+     */
     Optional<CustomCropsSection> removeSection(int sectionID);
 
+    /**
+     * Resets the unloaded time counter to zero.
+     */
     void resetUnloadedSeconds();
 
+    /**
+     * Checks if the chunk can be pruned (removed from memory or storage).
+     *
+     * @return true if the chunk can be pruned, false otherwise.
+     */
     boolean canPrune();
 
+    /**
+     * Checks if offline tasks have been notified for this chunk.
+     *
+     * @return true if offline tasks are notified, false otherwise.
+     */
     boolean isOfflineTaskNotified();
 
+    /**
+     * Gets the queue of delayed tick tasks for this chunk.
+     *
+     * @return A {@link PriorityQueue} of {@link DelayedTickTask}.
+     */
     PriorityQueue<DelayedTickTask> tickTaskQueue();
 
+    /**
+     * Gets the set of blocks that have been ticked in one tick cycle within this chunk.
+     *
+     * @return A {@link Set} of {@link BlockPos} representing ticked blocks.
+     */
     Set<BlockPos> tickedBlocks();
 }

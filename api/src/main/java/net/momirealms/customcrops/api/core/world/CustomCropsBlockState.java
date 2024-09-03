@@ -21,11 +21,26 @@ import com.flowpowered.nbt.CompoundMap;
 import net.momirealms.customcrops.api.core.block.CustomCropsBlock;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Interface representing the state of a custom crops block in the CustomCrops plugin.
+ */
 public interface CustomCropsBlockState extends DataBlock {
 
+    /**
+     * Retrieves the type of the custom crops block associated with this state.
+     *
+     * @return The {@link CustomCropsBlock} type of this block state.
+     */
     @NotNull
     CustomCropsBlock type();
 
+    /**
+     * Creates a new instance of {@link CustomCropsBlockState} with the given block type and NBT data.
+     *
+     * @param owner       The custom crops block type that owns this state.
+     * @param compoundMap The NBT data associated with this block state.
+     * @return A new instance of {@link CustomCropsBlockState} representing the specified block type and state.
+     */
     static CustomCropsBlockState create(CustomCropsBlock owner, CompoundMap compoundMap) {
         return new CustomCropsBlockStateImpl(owner, compoundMap);
     }

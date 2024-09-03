@@ -43,7 +43,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class BukkitWorldManager implements WorldManager, Listener {
 
     private final BukkitCustomCropsPlugin plugin;
-    private final Set<WorldAdaptor<?>> adaptors = new TreeSet<>();
+    private final TreeSet<WorldAdaptor<?>> adaptors = new TreeSet<>();
     private final ConcurrentHashMap<String, CustomCropsWorld<?>> worlds = new ConcurrentHashMap<>();
     private final HashMap<String, WorldSetting> worldSettings = new HashMap<>();
     private WorldSetting defaultWorldSetting;
@@ -290,7 +290,7 @@ public class BukkitWorldManager implements WorldManager, Listener {
     }
 
     @Override
-    public Set<WorldAdaptor<?>> adaptors() {
+    public TreeSet<WorldAdaptor<?>> adaptors() {
         return adaptors;
     }
 

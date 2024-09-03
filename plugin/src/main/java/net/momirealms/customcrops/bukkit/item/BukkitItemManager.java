@@ -169,6 +169,7 @@ public class BukkitItemManager extends AbstractItemManager {
         }
     }
 
+    @NotNull
     @Override
     public FurnitureRotation remove(@NotNull Location location, @NotNull ExistenceForm form) {
         switch (form) {
@@ -216,6 +217,7 @@ public class BukkitItemManager extends AbstractItemManager {
         }
     }
 
+    @NotNull
     @Override
     public FurnitureRotation removeFurniture(@NotNull Location location) {
         Collection<Entity> entities = location.getWorld().getNearbyEntities(LocationUtils.toSurfaceCenterLocation(location), 0.5,0.25,0.5);
@@ -229,7 +231,7 @@ public class BukkitItemManager extends AbstractItemManager {
                 }
             }
         }
-        return rotation;
+        return rotation == null ? FurnitureRotation.NONE : rotation;
     }
 
     @NotNull
@@ -329,7 +331,7 @@ public class BukkitItemManager extends AbstractItemManager {
     }
 
     @Override
-    public Item<ItemStack> wrap(ItemStack itemStack) {
+    public Item<ItemStack> wrap(@NotNull ItemStack itemStack) {
         return factory.wrap(itemStack);
     }
 

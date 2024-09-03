@@ -159,11 +159,6 @@ public class SlimeWorldAdaptorR1 extends AbstractWorldAdaptor<SlimeWorld> {
     }
 
     @Override
-    public long getWorldFullTime(SlimeWorld world) {
-        return Objects.requireNonNull(Bukkit.getWorld(world.getName())).getFullTime();
-    }
-
-    @Override
     public int priority() {
         return SLIME_WORLD_PRIORITY;
     }

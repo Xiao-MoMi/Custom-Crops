@@ -247,14 +247,44 @@ public abstract class ConfigManager implements ConfigLoader, Reloadable {
         return configFile;
     }
 
+    /**
+     * Registers a new WateringCan configuration to the plugin.
+     * Call this method in {@link net.momirealms.customcrops.api.event.CustomCropsReloadEvent} otherwise the config would lose on each reload
+     *
+     * @param config the WateringCanConfig object to register
+     */
     public abstract void registerWateringCanConfig(WateringCanConfig config);
 
+    /**
+     * Registers a new Fertilizer configuration to the plugin.
+     * Call this method in {@link net.momirealms.customcrops.api.event.CustomCropsReloadEvent} otherwise the config would lose on each reload
+     *
+     * @param config the FertilizerConfig object to register
+     */
     public abstract void registerFertilizerConfig(FertilizerConfig config);
 
+    /**
+     * Registers a new Crop configuration to the plugin.
+     * Call this method in {@link net.momirealms.customcrops.api.event.CustomCropsReloadEvent} otherwise the config would lose on each reload
+     *
+     * @param config the CropConfig object to register
+     */
     public abstract void registerCropConfig(CropConfig config);
 
+    /**
+     * Registers a new Pot configuration to the plugin.
+     * Call this method in {@link net.momirealms.customcrops.api.event.CustomCropsReloadEvent} otherwise the config would lose on each reload
+     *
+     * @param config the PotConfig object to register
+     */
     public abstract void registerPotConfig(PotConfig config);
 
+    /**
+     * Registers a new Sprinkler configuration to the plugin.
+     * Call this method in {@link net.momirealms.customcrops.api.event.CustomCropsReloadEvent} otherwise the config would lose on each reload
+     *
+     * @param config the SprinklerConfig object to register
+     */
     public abstract void registerSprinklerConfig(SprinklerConfig config);
 
     public WateringMethod[] getWateringMethods(Section section) {

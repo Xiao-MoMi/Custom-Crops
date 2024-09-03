@@ -60,9 +60,10 @@ public class CustomCropsWorldImpl<W> implements CustomCropsWorld<W> {
         this.regionTimer = 0;
         this.adaptor = adaptor;
         this.extraData = adaptor.loadExtraData(world);
-        this.currentMinecraftDay = (int) (adaptor.getWorldFullTime(world) / 24_000);
+        this.currentMinecraftDay = (int) (bukkitWorld().getFullTime() / 24_000);
     }
 
+    @NotNull
     @Override
     public WorldAdaptor<W> adaptor() {
         return adaptor;

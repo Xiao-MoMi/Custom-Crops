@@ -36,6 +36,7 @@ public class SprinklerConfigImpl implements SprinklerConfig {
     private final int storage;
     private final int[][] range;
     private final boolean infinite;
+    private final int wateringAmount;
     private final int sprinklingAmount;
     private final Set<String> potWhitelist;
     private final WaterBar waterBar;
@@ -61,6 +62,7 @@ public class SprinklerConfigImpl implements SprinklerConfig {
             int storage,
             int[][] range,
             boolean infinite,
+            int wateringAmount,
             int sprinklingAmount,
             Set<String> potWhitelist,
             WaterBar waterBar,
@@ -84,6 +86,7 @@ public class SprinklerConfigImpl implements SprinklerConfig {
         this.storage = storage;
         this.range = range;
         this.infinite = infinite;
+        this.wateringAmount = wateringAmount;
         this.sprinklingAmount = sprinklingAmount;
         this.potWhitelist = potWhitelist;
         this.waterBar = waterBar;
@@ -124,6 +127,11 @@ public class SprinklerConfigImpl implements SprinklerConfig {
     @Override
     public boolean infinite() {
         return infinite;
+    }
+
+    @Override
+    public int wateringAmount() {
+        return wateringAmount;
     }
 
     @Override
@@ -233,6 +241,7 @@ public class SprinklerConfigImpl implements SprinklerConfig {
         private int storage;
         private int[][] range;
         private boolean infinite;
+        private int wateringAmount;
         private int sprinklingAmount;
         private Set<String> potWhitelist;
         private WaterBar waterBar;
@@ -253,7 +262,7 @@ public class SprinklerConfigImpl implements SprinklerConfig {
 
         @Override
         public SprinklerConfig build() {
-            return new SprinklerConfigImpl(id, existenceForm, storage, range, infinite, sprinklingAmount, potWhitelist, waterBar, twoDItem, threeDItem, threeDItemWithWater,
+            return new SprinklerConfigImpl(id, existenceForm, storage, range, infinite, wateringAmount, sprinklingAmount, potWhitelist, waterBar, twoDItem, threeDItem, threeDItemWithWater,
                     placeRequirements, breakRequirements, useRequirements, workActions, interactActions, reachLimitActions, addWaterActions, placeActions, breakActions, fullWaterActions, wateringMethods);
         }
 
@@ -284,6 +293,12 @@ public class SprinklerConfigImpl implements SprinklerConfig {
         @Override
         public Builder infinite(boolean infinite) {
             this.infinite = infinite;
+            return this;
+        }
+
+        @Override
+        public Builder wateringAmount(int wateringAmount) {
+            this.wateringAmount = wateringAmount;
             return this;
         }
 

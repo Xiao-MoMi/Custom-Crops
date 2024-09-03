@@ -19,26 +19,51 @@ package net.momirealms.customcrops.api.core.mechanic.crop;
 
 import net.momirealms.customcrops.api.core.ExistenceForm;
 
+/**
+ * Represents the data associated with a crop variation.
+ */
 public class VariationData {
 
     private final String id;
     private final ExistenceForm form;
     private final double chance;
 
+    /**
+     * Constructs a new VariationData with the specified ID, existence form, and chance.
+     *
+     * @param id The unique identifier for the crop variation.
+     * @param form The {@link ExistenceForm} representing the state or form of the crop variation.
+     * @param chance The probability (as a decimal between 0 and 1) of this variation occurring.
+     */
     public VariationData(String id, ExistenceForm form, double chance) {
         this.id = id;
         this.form = form;
         this.chance = chance;
     }
 
+    /**
+     * Retrieves the unique identifier for this crop variation.
+     *
+     * @return The unique ID of the variation.
+     */
     public String id() {
         return id;
     }
 
+    /**
+     * Retrieves the existence form of this crop variation.
+     *
+     * @return The {@link ExistenceForm} representing the state or form of the variation.
+     */
     public ExistenceForm existenceForm() {
         return form;
     }
 
+    /**
+     * Retrieves the chance of this crop variation occurring.
+     *
+     * @return The probability of the variation occurring, as a decimal between 0 and 1.
+     */
     public double chance() {
         return chance;
     }

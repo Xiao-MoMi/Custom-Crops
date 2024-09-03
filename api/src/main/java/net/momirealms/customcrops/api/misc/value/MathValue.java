@@ -22,7 +22,7 @@ import net.momirealms.customcrops.api.context.Context;
 /**
  * The MathValue interface represents a mathematical value that can be evaluated
  * within a specific context. This interface allows for the evaluation of mathematical
- * expressions or plain numerical values in the context of custom fishing mechanics.
+ * expressions or plain numerical values in the context of custom crops mechanics.
  *
  * @param <T> the type of the holder object for the context
  */

@@ -44,9 +44,6 @@ public enum FurnitureRotation {
 
     public static FurnitureRotation getByRotation(Rotation rotation) {
         switch (rotation) {
-            default -> {
-                return FurnitureRotation.SOUTH;
-            }
             case CLOCKWISE -> {
                 return FurnitureRotation.WEST;
             }
@@ -55,6 +52,9 @@ public enum FurnitureRotation {
             }
             case FLIPPED -> {
                 return FurnitureRotation.NORTH;
+            }
+            default -> {
+                return FurnitureRotation.SOUTH;
             }
         }
     }

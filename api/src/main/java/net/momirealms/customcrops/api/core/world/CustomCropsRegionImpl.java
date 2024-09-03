@@ -76,6 +76,7 @@ public class CustomCropsRegionImpl implements CustomCropsRegion {
         return this.cachedChunks.get(pos);
     }
 
+    @NotNull
     @Override
     public RegionPos regionPos() {
         return this.regionPos;

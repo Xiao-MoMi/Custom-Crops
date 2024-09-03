@@ -213,11 +213,6 @@ public class BukkitWorldAdaptor extends AbstractWorldAdaptor<World> {
     }
 
     @Override
-    public long getWorldFullTime(World world) {
-        return world.getFullTime();
-    }
-
-    @Override
     public int priority() {
         return BUKKIT_WORLD_PRIORITY;
     }

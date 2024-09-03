@@ -61,6 +61,7 @@ import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public class BukkitCustomCropsPluginImpl extends BukkitCustomCropsPlugin {
 
@@ -89,6 +90,12 @@ public class BukkitCustomCropsPluginImpl extends BukkitCustomCropsPlugin {
     public void debug(Object message) {
         if (this.debugger != null)
             this.debugger.accept(message);
+    }
+
+    @Override
+    public void debug(Supplier<Object> message) {
+        if (this.debugger != null)
+            this.debugger.accept(message.get());
     }
 
     @Override

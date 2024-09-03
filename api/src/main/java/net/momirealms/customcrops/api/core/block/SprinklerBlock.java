@@ -249,10 +249,10 @@ public class SprinklerBlock extends AbstractCustomCropsBlock {
         boolean updateState;
         if (!config.infinite()) {
             int water = water(state);
-            if (water <= 0) {
+            if (water < config.sprinklingAmount()) {
                 return;
             }
-            updateState = water(state, config, water - 1);
+            updateState = water(state, config, water - config.sprinklingAmount());
         } else {
             updateState = false;
         }
@@ -303,7 +303,7 @@ public class SprinklerBlock extends AbstractCustomCropsBlock {
                        if (anotherState.type() instanceof PotBlock potBlock) {
                            PotConfig potConfig = potBlock.config(anotherState);
                            if (config.potWhitelist().contains(potConfig.id())) {
-                               if (potBlock.addWater(anotherState, potConfig, config.sprinklingAmount())) {
+                               if (potBlock.addWater(anotherState, potConfig, config.wateringAmount())) {
                                    BukkitCustomCropsPlugin.getInstance().getScheduler().sync().run(
                                            () -> potBlock.updateBlockAppearance(
                                                    pos3.toLocation(world.bukkitWorld()),

@@ -24,6 +24,9 @@ import net.momirealms.customcrops.common.util.Key;
 
 import java.util.Objects;
 
+/**
+ * BuiltInBlockMechanics defines a set of standard block mechanics for the Custom Crops plugin.
+ */
 public class BuiltInBlockMechanics {
 
    public static final BuiltInBlockMechanics CROP = create("crop");
@@ -35,26 +38,58 @@ public class BuiltInBlockMechanics {
 
    private final Key key;
 
-   public BuiltInBlockMechanics(Key key) {
+   /**
+    * Constructs a new BuiltInBlockMechanics with a unique key.
+    *
+    * @param key the unique key for this mechanic
+    */
+   private BuiltInBlockMechanics(Key key) {
       this.key = key;
    }
 
+   /**
+    * Factory method to create a new BuiltInBlockMechanics instance with the specified ID.
+    *
+    * @param id the ID of the mechanic
+    * @return a new BuiltInBlockMechanics instance
+    */
    static BuiltInBlockMechanics create(String id) {
-       return new BuiltInBlockMechanics(Key.key("customcrops", id));
+      return new BuiltInBlockMechanics(Key.key("customcrops", id));
    }
 
+   /**
+    * Retrieves the unique key associated with this block mechanic.
+    *
+    * @return the key
+    */
    public Key key() {
       return key;
    }
 
+   /**
+    * Creates a new CustomCropsBlockState using the associated block mechanic.
+    *
+    * @return a new CustomCropsBlockState
+    */
    public CustomCropsBlockState createBlockState() {
       return mechanic().createBlockState();
    }
 
+   /**
+    * Creates a new CustomCropsBlockState using the associated block mechanic and provided data.
+    *
+    * @param data the compound map data for the block state
+    * @return a new CustomCropsBlockState
+    */
    public CustomCropsBlockState createBlockState(CompoundMap data) {
       return mechanic().createBlockState(data);
    }
 
+   /**
+    * Retrieves the CustomCropsBlock associated with this block mechanic.
+    *
+    * @return the CustomCropsBlock
+    */
    public CustomCropsBlock mechanic() {
       return Objects.requireNonNull(Registries.BLOCK.get(key));
    }
