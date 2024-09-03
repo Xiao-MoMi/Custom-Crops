@@ -109,11 +109,11 @@ public class ForceTickCommand extends BukkitCommandFeature<CommandSender> {
 
     private enum Mode {
 
-        RANDOM_TICK(CustomCropsBlock::randomTick),
-        SCHEDULED_TICK(CustomCropsBlock::scheduledTick),
+        RANDOM_TICK((customCropsBlock, state, world, location) -> customCropsBlock.randomTick(state, world, location, false)),
+        SCHEDULED_TICK((customCropsBlock, state, world, location) -> customCropsBlock.scheduledTick(state, world, location, false)),
         ALL((b, s, w, p) -> {
-            b.randomTick(s, w, p);
-            b.scheduledTick(s, w, p);
+            b.randomTick(s, w, p, false);
+            b.scheduledTick(s, w, p, false);
         });
 
         private final QuadConsumer<CustomCropsBlock, CustomCropsBlockState, CustomCropsWorld<?>, Pos3> consumer;

@@ -472,8 +472,8 @@ public class PlayerActionManager extends AbstractActionManager<Player> {
             Optional<CustomCropsWorld<?>> optionalWorld = plugin.getWorldManager().getWorld(location.getWorld());
             optionalWorld.ifPresent(world -> world.getChunk(pos3.toChunkPos()).flatMap(chunk -> chunk.getBlockState(pos3)).ifPresent(state -> {
                 CustomCropsBlock customCropsBlock = state.type();
-                customCropsBlock.randomTick(state, world, pos3);
-                customCropsBlock.scheduledTick(state, world, pos3);
+                customCropsBlock.randomTick(state, world, pos3, false);
+                customCropsBlock.scheduledTick(state, world, pos3, false);
                 if (customCropsBlock instanceof SprinklerBlock sprinklerBlock) {
                     int water = sprinklerBlock.water(state);
                     SprinklerConfig config = sprinklerBlock.config(state);
@@ -490,8 +490,8 @@ public class PlayerActionManager extends AbstractActionManager<Player> {
             Optional<CustomCropsWorld<?>> optionalWorld = plugin.getWorldManager().getWorld(location.getWorld());
             optionalWorld.ifPresent(world -> world.getChunk(pos3.toChunkPos()).flatMap(chunk -> chunk.getBlockState(pos3)).ifPresent(state -> {
                 CustomCropsBlock customCropsBlock = state.type();
-                customCropsBlock.randomTick(state, world, pos3);
-                customCropsBlock.scheduledTick(state, world, pos3);
+                customCropsBlock.randomTick(state, world, pos3, false);
+                customCropsBlock.scheduledTick(state, world, pos3, false);
             }));
         }, "tick");
     }

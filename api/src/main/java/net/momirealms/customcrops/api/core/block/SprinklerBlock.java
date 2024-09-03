@@ -57,16 +57,16 @@ public class SprinklerBlock extends AbstractCustomCropsBlock {
     }
 
     @Override
-    public void randomTick(CustomCropsBlockState state, CustomCropsWorld<?> world, Pos3 location) {
+    public void randomTick(CustomCropsBlockState state, CustomCropsWorld<?> world, Pos3 location, boolean offlineTick) {
         if (!world.setting().randomTickSprinkler() && canTick(state, world.setting().tickSprinklerInterval())) {
-            tickSprinkler(state, world, location);
+            tickSprinkler(state, world, location, offlineTick);
         }
     }
 
     @Override
-    public void scheduledTick(CustomCropsBlockState state, CustomCropsWorld<?> world, Pos3 location) {
+    public void scheduledTick(CustomCropsBlockState state, CustomCropsWorld<?> world, Pos3 location, boolean offlineTick) {
         if (world.setting().randomTickSprinkler() && canTick(state, world.setting().tickSprinklerInterval())) {
-            tickSprinkler(state, world, location);
+            tickSprinkler(state, world, location, offlineTick);
         }
     }
 
@@ -231,15 +231,14 @@ public class SprinklerBlock extends AbstractCustomCropsBlock {
         id(state, sprinklerConfig.id());
         water(state, blockID.equals(sprinklerConfig.threeDItemWithWater()) ? 1 : 0);
         world.addBlockState(pos3, state).ifPresent(previous -> {
-            BukkitCustomCropsPlugin.getInstance().debug(
-                    "Overwrite old data with " + state +
-                            " at location[" + world.worldName() + "," + pos3 + "] which used to be " + previous
+            BukkitCustomCropsPlugin.getInstance().debug(() -> "Overwrite old data with " + state +
+                    " at location[" + world.worldName() + "," + pos3 + "] which used to be " + previous
             );
         });
         return state;
     }
 
-    private void tickSprinkler(CustomCropsBlockState state, CustomCropsWorld<?> world, Pos3 location) {
+    private void tickSprinkler(CustomCropsBlockState state, CustomCropsWorld<?> world, Pos3 location, boolean offline) {
         SprinklerConfig config = config(state);
         if (config == null) {
             BukkitCustomCropsPlugin.getInstance().getPluginLogger().warn("Sprinkler data is removed at location[" + world.worldName() + "," + location + "] because the sprinkler config[" + id(state) + "] has been removed.");
@@ -257,7 +256,7 @@ public class SprinklerBlock extends AbstractCustomCropsBlock {
             updateState = false;
         }
 
-        Context<CustomCropsBlockState> context = Context.block(state);
+        Context<CustomCropsBlockState> context = Context.block(state).arg(ContextKeys.OFFLINE, offline);
         World bukkitWorld = world.bukkitWorld();
         Location bukkitLocation = location.toLocation(bukkitWorld);
         context.arg(ContextKeys.LOCATION, bukkitLocation);

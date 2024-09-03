@@ -107,14 +107,14 @@ public interface CustomCropsChunk {
      *
      * @return The unloaded time in seconds.
      */
-    int unloadedSeconds();
+    int lazySeconds();
 
     /**
      * Sets the time in seconds since the chunk was unloaded.
      *
-     * @param unloadedSeconds The unloaded time to set.
+     * @param lazySeconds The unloaded time to set.
      */
-    void unloadedSeconds(int unloadedSeconds);
+    void lazySeconds(int lazySeconds);
 
     /**
      * Gets the last time the chunk was loaded.
@@ -126,7 +126,7 @@ public interface CustomCropsChunk {
     /**
      * Updates the last loaded time to the current time.
      */
-    void updateLastLoadedTime();
+    void updateLastUnloadTime();
 
     /**
      * Gets the time in milliseconds since the chunk was loaded.
@@ -204,11 +204,6 @@ public interface CustomCropsChunk {
     Optional<CustomCropsSection> removeSection(int sectionID);
 
     /**
-     * Resets the unloaded time counter to zero.
-     */
-    void resetUnloadedSeconds();
-
-    /**
      * Checks if the chunk can be pruned (removed from memory or storage).
      *
      * @return true if the chunk can be pruned, false otherwise.
@@ -221,6 +216,11 @@ public interface CustomCropsChunk {
      * @return true if offline tasks are notified, false otherwise.
      */
     boolean isOfflineTaskNotified();
+
+    /**
+     * notify offline tasks
+     */
+    void notifyOfflineTask();
 
     /**
      * Gets the queue of delayed tick tasks for this chunk.

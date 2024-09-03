@@ -23,9 +23,9 @@ import net.momirealms.customcrops.api.action.ActionManager;
 import net.momirealms.customcrops.api.context.Context;
 import net.momirealms.customcrops.api.context.ContextKeys;
 import net.momirealms.customcrops.api.core.*;
+import net.momirealms.customcrops.api.core.mechanic.crop.*;
 import net.momirealms.customcrops.api.core.mechanic.fertilizer.Fertilizer;
 import net.momirealms.customcrops.api.core.mechanic.fertilizer.FertilizerConfig;
-import net.momirealms.customcrops.api.core.mechanic.crop.*;
 import net.momirealms.customcrops.api.core.mechanic.pot.PotConfig;
 import net.momirealms.customcrops.api.core.world.CustomCropsBlockState;
 import net.momirealms.customcrops.api.core.world.CustomCropsWorld;
@@ -58,16 +58,16 @@ public class CropBlock extends AbstractCustomCropsBlock {
     }
 
     @Override
-    public void scheduledTick(CustomCropsBlockState state, CustomCropsWorld<?> world, Pos3 location) {
+    public void scheduledTick(CustomCropsBlockState state, CustomCropsWorld<?> world, Pos3 location, boolean offlineTick) {
         if (!world.setting().randomTickCrop() && canTick(state, world.setting().tickCropInterval())) {
-            tickCrop(state, world, location);
+            tickCrop(state, world, location, offlineTick);
         }
     }
 
     @Override
-    public void randomTick(CustomCropsBlockState state, CustomCropsWorld<?> world, Pos3 location) {
+    public void randomTick(CustomCropsBlockState state, CustomCropsWorld<?> world, Pos3 location, boolean offlineTick) {
         if (world.setting().randomTickCrop() && canTick(state, world.setting().tickCropInterval())) {
-            tickCrop(state, world, location);
+            tickCrop(state, world, location, offlineTick);
         }
     }
 
@@ -273,20 +273,20 @@ public class CropBlock extends AbstractCustomCropsBlock {
         }
         CropConfig cropConfig = configList.get(0);
         CropStageConfig stageConfig = cropConfig.stageByID(stageID);
+        assert stageConfig != null;
         int point = stageConfig.point();
         CustomCropsBlockState state = BuiltInBlockMechanics.CROP.createBlockState();
         point(state, point);
         id(state, cropConfig.id());
         world.addBlockState(pos3, state).ifPresent(previous -> {
-            BukkitCustomCropsPlugin.getInstance().debug(
-                    "Overwrite old data with " + state +
-                            " at location[" + world.worldName() + "," + pos3 + "] which used to be " + previous
+            BukkitCustomCropsPlugin.getInstance().debug(() -> "Overwrite old data with " + state +
+                    " at location[" + world.worldName() + "," + pos3 + "] which used to be " + previous
             );
         });
         return state;
     }
 
-    private void tickCrop(CustomCropsBlockState state, CustomCropsWorld<?> world, Pos3 location) {
+    private void tickCrop(CustomCropsBlockState state, CustomCropsWorld<?> world, Pos3 location, boolean offline) {
         CropConfig config = config(state);
         if (config == null) {
             BukkitCustomCropsPlugin.getInstance().getPluginLogger().warn("Crop data is removed at location[" + world.worldName() + "," + location + "] because the crop config[" + id(state) + "] has been removed.");
@@ -306,7 +306,7 @@ public class CropBlock extends AbstractCustomCropsBlock {
             }
         }
 
-        Context<CustomCropsBlockState> context = Context.block(state);
+        Context<CustomCropsBlockState> context = Context.block(state).arg(ContextKeys.OFFLINE, offline);
         Location bukkitLocation = location.toLocation(bukkitWorld);
         context.arg(ContextKeys.LOCATION, bukkitLocation);
         for (DeathCondition deathCondition : config.deathConditions()) {

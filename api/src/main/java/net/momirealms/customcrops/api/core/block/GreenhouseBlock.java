@@ -40,12 +40,13 @@ public class GreenhouseBlock extends AbstractCustomCropsBlock {
     }
 
     @Override
-    public void randomTick(CustomCropsBlockState state, CustomCropsWorld<?> world, Pos3 location) {
+    public void randomTick(CustomCropsBlockState state, CustomCropsWorld<?> world, Pos3 location, boolean offlineTick) {
         //tickGreenhouse(world, location);
     }
 
     @Override
-    public void scheduledTick(CustomCropsBlockState state, CustomCropsWorld<?> world, Pos3 location) {
+    public void scheduledTick(CustomCropsBlockState state, CustomCropsWorld<?> world, Pos3 location, boolean offlineTick) {
+        if (offlineTick) return;
         tickGreenhouse(world, location);
     }
 
@@ -89,9 +90,8 @@ public class GreenhouseBlock extends AbstractCustomCropsBlock {
         Pos3 pos3 = Pos3.from(event.location());
         CustomCropsWorld<?> world = event.world();
         world.addBlockState(pos3, state).ifPresent(previous -> {
-            BukkitCustomCropsPlugin.getInstance().debug(
-                    "Overwrite old data with " + state +
-                            " at location[" + world.worldName() + "," + pos3 + "] which used to be " + previous
+            BukkitCustomCropsPlugin.getInstance().debug(() -> "Overwrite old data with " + state +
+                    " at location[" + world.worldName() + "," + pos3 + "] which used to be " + previous
             );
         });
     }
@@ -108,7 +108,7 @@ public class GreenhouseBlock extends AbstractCustomCropsBlock {
         }
         CustomCropsBlockState state = createBlockState();
         world.addBlockState(pos3, state).ifPresent(previous -> {
-            BukkitCustomCropsPlugin.getInstance().debug(
+            BukkitCustomCropsPlugin.getInstance().debug(() ->
                     "Overwrite old data with " + state +
                             " at pos3[" + world.worldName() + "," + pos3 + "] which used to be " + previous
             );

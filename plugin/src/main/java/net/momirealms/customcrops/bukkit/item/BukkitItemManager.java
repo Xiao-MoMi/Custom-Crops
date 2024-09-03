@@ -512,7 +512,7 @@ public class BukkitItemManager extends AbstractItemManager {
             if (anyFurnitureID != null) {
                 if (!customCropsBlockState.type().isBlockInstance(anyFurnitureID)) {
                     world.removeBlockState(pos3);
-                    plugin.debug("[" + location.getWorld().getName() + "] Removed inconsistent block data at " + pos3 + " which used to be " + customCropsBlockState);
+                    plugin.debug(() -> "[" + location.getWorld().getName() + "] Removed inconsistent block data at " + pos3 + " which used to be " + customCropsBlockState);
                 } else {
                     event.setCancelled(true);
                     return;
@@ -521,7 +521,7 @@ public class BukkitItemManager extends AbstractItemManager {
             String anyBlockID = blockID(location);
             if (!customCropsBlockState.type().isBlockInstance(anyBlockID)) {
                 world.removeBlockState(pos3);
-                plugin.debug("[" + location.getWorld().getName() + "] Removed inconsistent block data at " + pos3 + " which used to be " + customCropsBlockState);
+                plugin.debug(() -> "[" + location.getWorld().getName() + "] Removed inconsistent block data at " + pos3 + " which used to be " + customCropsBlockState);
             } else {
                 event.setCancelled(true);
                 return;

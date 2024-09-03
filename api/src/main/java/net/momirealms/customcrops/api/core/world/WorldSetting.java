@@ -37,6 +37,7 @@ public class WorldSetting implements Cloneable {
     private final int sprinklerPerChunk;
     private final int randomTickSpeed;
     private final int maxOfflineTime;
+    private final int maxLoadingTime;
     private final boolean tickCropRandomly;
     private final boolean tickPotRandomly;
     private final boolean tickSprinklerRandomly;
@@ -54,6 +55,7 @@ public class WorldSetting implements Cloneable {
      * @param tickSprinklerInterval The interval for ticking sprinklers.
      * @param offlineTick           Whether offline ticking is enabled.
      * @param maxOfflineTime        The maximum offline time allowed.
+     * @param maxLoadingTime        The maximum time allowed to load.
      * @param enableSeason          Whether seasons are enabled.
      * @param autoSeasonChange      Whether season change is automatic.
      * @param seasonDuration        The duration of each season.
@@ -73,6 +75,7 @@ public class WorldSetting implements Cloneable {
             int tickSprinklerInterval,
             boolean offlineTick,
             int maxOfflineTime,
+            int maxLoadingTime,
             boolean enableSeason,
             boolean autoSeasonChange,
             int seasonDuration,
@@ -88,6 +91,7 @@ public class WorldSetting implements Cloneable {
         this.tickSprinklerInterval = tickSprinklerInterval;
         this.offlineTick = offlineTick;
         this.maxOfflineTime = maxOfflineTime;
+        this.maxLoadingTime = maxLoadingTime;
         this.enableSeason = enableSeason;
         this.autoSeasonChange = autoSeasonChange;
         this.seasonDuration = seasonDuration;
@@ -133,6 +137,7 @@ public class WorldSetting implements Cloneable {
             int tickSprinklerInterval,
             boolean offlineGrow,
             int maxOfflineTime,
+            int maxLoadingTime,
             boolean enableSeason,
             boolean autoSeasonChange,
             int seasonDuration,
@@ -152,6 +157,7 @@ public class WorldSetting implements Cloneable {
                 tickSprinklerInterval,
                 offlineGrow,
                 maxOfflineTime,
+                maxLoadingTime,
                 enableSeason,
                 autoSeasonChange,
                 seasonDuration,
@@ -214,6 +220,15 @@ public class WorldSetting implements Cloneable {
      */
     public boolean offlineTick() {
         return offlineTick;
+    }
+
+    /**
+     * Gets the max time allowed to load a chunk
+     *
+     * @return The max loading time
+     */
+    public int maxLoadingTime() {
+        return maxLoadingTime;
     }
 
     /**

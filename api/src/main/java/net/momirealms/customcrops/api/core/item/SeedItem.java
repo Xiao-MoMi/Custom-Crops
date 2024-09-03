@@ -117,9 +117,8 @@ public class SeedItem extends AbstractCustomCropsItem {
         BukkitCustomCropsPlugin.getInstance().getItemManager().place(LocationUtils.toSurfaceCenterLocation(seedLocation), form, stageID, cropConfig.rotation() ? FurnitureRotation.random() : FurnitureRotation.NONE);
         cropBlock.point(state, point);
         world.addBlockState(pos3, state).ifPresent(previous -> {
-            BukkitCustomCropsPlugin.getInstance().debug(
-                    "Overwrite old data with " + state +
-                            " at location[" + world.worldName() + "," + pos3 + "] which used to be " + previous
+            BukkitCustomCropsPlugin.getInstance().debug(() -> "Overwrite old data with " + state +
+                    " at location[" + world.worldName() + "," + pos3 + "] which used to be " + previous
             );
         });
 

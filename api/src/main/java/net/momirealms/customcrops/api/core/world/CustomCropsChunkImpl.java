@@ -32,30 +32,31 @@ public class CustomCropsChunkImpl implements CustomCropsChunk {
     private final ConcurrentHashMap<Integer, CustomCropsSection> loadedSections;
     private final PriorityQueue<DelayedTickTask> queue;
     private final Set<BlockPos> tickedBlocks;
-    private long lastLoadedTime;
+    private long lastUnloadTime;
     private int loadedSeconds;
-    private int unloadedSeconds;
+    private int lazySeconds;
     private boolean notified;
     private boolean isLoaded;
     private boolean forceLoad;
 
+    // new chunk
     protected CustomCropsChunkImpl(CustomCropsWorld<?> world, ChunkPos chunkPos) {
         this.world = world;
         this.chunkPos = chunkPos;
         this.loadedSections = new ConcurrentHashMap<>(16);
         this.queue = new PriorityQueue<>();
-        this.unloadedSeconds = 0;
+        this.lazySeconds = 0;
         this.tickedBlocks = Collections.synchronizedSet(new HashSet<>());
-        this.updateLastLoadedTime();
         this.notified = true;
         this.isLoaded = false;
+        this.updateLastUnloadTime();
     }
 
     protected CustomCropsChunkImpl(
             CustomCropsWorld<?> world,
             ChunkPos chunkPos,
             int loadedSeconds,
-            long lastLoadedTime,
+            long lastUnloadTime,
             ConcurrentHashMap<Integer, CustomCropsSection> loadedSections,
             PriorityQueue<DelayedTickTask> queue,
             HashSet<BlockPos> tickedBlocks
@@ -63,11 +64,13 @@ public class CustomCropsChunkImpl implements CustomCropsChunk {
         this.world = world;
         this.chunkPos = chunkPos;
         this.loadedSections = loadedSections;
-        this.lastLoadedTime = lastLoadedTime;
+        this.lastUnloadTime = lastUnloadTime;
         this.loadedSeconds = loadedSeconds;
         this.queue = queue;
-        this.unloadedSeconds = 0;
+        this.lazySeconds = 0;
         this.tickedBlocks = Collections.synchronizedSet(tickedBlocks);
+        this.notified = false;
+        this.isLoaded = false;
     }
 
     @Override
@@ -85,6 +88,7 @@ public class CustomCropsChunkImpl implements CustomCropsChunk {
         if (!isLoaded()) {
             if (((CustomCropsWorldImpl<?>) world).loadChunk(this)) {
                 this.isLoaded = true;
+                this.lazySeconds = 0;
             }
             if (loadBukkitChunk && !this.world.bukkitWorld().isChunkLoaded(chunkPos.x(), chunkPos.z())) {
                 this.world.bukkitWorld().getChunkAt(chunkPos.x(), chunkPos.z());
@@ -97,6 +101,8 @@ public class CustomCropsChunkImpl implements CustomCropsChunk {
         if (isLoaded() && !isForceLoaded()) {
             if (((CustomCropsWorldImpl<?>) world).unloadChunk(this, lazy)) {
                 this.isLoaded = false;
+                this.notified = false;
+                this.lazySeconds = 0;
             }
         }
     }
@@ -140,8 +146,8 @@ public class CustomCropsChunkImpl implements CustomCropsChunk {
             this.queue.clear();
             this.arrangeTasks(interval);
         }
-        scheduledTick();
-        randomTick(setting.randomTickSpeed());
+        scheduledTick(false);
+        randomTick(setting.randomTickSpeed(), false);
     }
 
     private void arrangeTasks(int unit) {
@@ -157,7 +163,7 @@ public class CustomCropsChunkImpl implements CustomCropsChunk {
         }
     }
 
-    private void scheduledTick() {
+    private void scheduledTick(boolean offline) {
         while (!queue.isEmpty() && queue.peek().getTime() <= loadedSeconds) {
             DelayedTickTask task = queue.poll();
             if (task != null) {
@@ -165,13 +171,13 @@ public class CustomCropsChunkImpl implements CustomCropsChunk {
                 CustomCropsSection section = loadedSections.get(pos.sectionID());
                 if (section != null) {
                     Optional<CustomCropsBlockState> block = section.getBlockState(pos);
-                    block.ifPresent(state -> state.type().scheduledTick(state, world, pos.toPos3(chunkPos)));
+                    block.ifPresent(state -> state.type().scheduledTick(state, world, pos.toPos3(chunkPos), offline));
                 }
             }
         }
     }
 
-    private void randomTick(int randomTickSpeed) {
+    private void randomTick(int randomTickSpeed, boolean offline) {
         ThreadLocalRandom random = ThreadLocalRandom.current();
         for (CustomCropsSection section : loadedSections.values()) {
             int sectionID = section.getSectionID();
@@ -182,34 +188,34 @@ public class CustomCropsChunkImpl implements CustomCropsChunk {
                 int z = random.nextInt(16);
                 BlockPos pos = new BlockPos(x,y,z);
                 Optional<CustomCropsBlockState> block = section.getBlockState(pos);
-                block.ifPresent(state -> state.type().randomTick(state, world, pos.toPos3(chunkPos)));
+                block.ifPresent(state -> state.type().randomTick(state, world, pos.toPos3(chunkPos), offline));
             }
         }
     }
 
     @Override
-    public int unloadedSeconds() {
-        return unloadedSeconds;
+    public int lazySeconds() {
+        return lazySeconds;
     }
 
     @Override
-    public void unloadedSeconds(int unloadedSeconds) {
-        this.unloadedSeconds = unloadedSeconds;
+    public void lazySeconds(int lazySeconds) {
+        this.lazySeconds = lazySeconds;
     }
 
     @Override
     public long lastLoadedTime() {
-        return lastLoadedTime;
+        return lastUnloadTime;
     }
 
     @Override
-    public void updateLastLoadedTime() {
-        this.lastLoadedTime = System.currentTimeMillis();
+    public void updateLastUnloadTime() {
+        this.lastUnloadTime = System.currentTimeMillis();
     }
 
     @Override
     public int loadedMilliSeconds() {
-        return (int) (System.currentTimeMillis() - lastLoadedTime);
+        return (int) (System.currentTimeMillis() - lastUnloadTime);
     }
 
     @NotNull
@@ -267,12 +273,6 @@ public class CustomCropsChunkImpl implements CustomCropsChunk {
     }
 
     @Override
-    public void resetUnloadedSeconds() {
-        this.unloadedSeconds = 0;
-        this.notified = false;
-    }
-
-    @Override
     public boolean canPrune() {
         return loadedSections.isEmpty();
     }
@@ -280,6 +280,36 @@ public class CustomCropsChunkImpl implements CustomCropsChunk {
     @Override
     public boolean isOfflineTaskNotified() {
         return notified;
+    }
+
+    @Override
+    public void notifyOfflineTask() {
+        if (isOfflineTaskNotified()) return;
+        this.notified = true;
+        long current = System.currentTimeMillis();
+        int offlineTimeInSeconds = (int) (current - lastLoadedTime()) / 1000;
+        WorldSetting setting = world.setting();
+        offlineTimeInSeconds = Math.min(offlineTimeInSeconds, setting.maxOfflineTime());
+        int minTickUnit = setting.minTickUnit();
+        int randomTickSpeed = setting.randomTickSpeed();
+        int threshold = setting.maxLoadingTime();
+        int i = 0;
+        long time1 = System.currentTimeMillis();
+        while (i < offlineTimeInSeconds) {
+            this.loadedSeconds++;
+            if (this.loadedSeconds >= minTickUnit) {
+                this.loadedSeconds = 0;
+                this.tickedBlocks.clear();
+                this.queue.clear();
+                this.arrangeTasks(minTickUnit);
+            }
+            scheduledTick(true);
+            randomTick(randomTickSpeed, true);
+            i++;
+            if (System.currentTimeMillis() - time1 > threshold) {
+                break;
+            }
+        }
     }
 
     @Override

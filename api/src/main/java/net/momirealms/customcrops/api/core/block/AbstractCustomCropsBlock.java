@@ -78,11 +78,11 @@ public abstract class AbstractCustomCropsBlock implements CustomCropsBlock {
     }
 
     @Override
-    public void scheduledTick(CustomCropsBlockState state, CustomCropsWorld<?> world, Pos3 location) {
+    public void scheduledTick(CustomCropsBlockState state, CustomCropsWorld<?> world, Pos3 location, boolean offlineTick) {
     }
 
     @Override
-    public void randomTick(CustomCropsBlockState state, CustomCropsWorld<?> world, Pos3 location) {
+    public void randomTick(CustomCropsBlockState state, CustomCropsWorld<?> world, Pos3 location, boolean offlineTick) {
     }
 
     @Override

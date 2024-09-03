@@ -23,11 +23,11 @@ import net.momirealms.customcrops.api.action.ActionManager;
 import net.momirealms.customcrops.api.context.Context;
 import net.momirealms.customcrops.api.context.ContextKeys;
 import net.momirealms.customcrops.api.core.*;
+import net.momirealms.customcrops.api.core.mechanic.crop.CropConfig;
+import net.momirealms.customcrops.api.core.mechanic.crop.CropStageConfig;
 import net.momirealms.customcrops.api.core.mechanic.fertilizer.Fertilizer;
 import net.momirealms.customcrops.api.core.mechanic.fertilizer.FertilizerConfig;
 import net.momirealms.customcrops.api.core.mechanic.pot.PotConfig;
-import net.momirealms.customcrops.api.core.mechanic.crop.CropConfig;
-import net.momirealms.customcrops.api.core.mechanic.crop.CropStageConfig;
 import net.momirealms.customcrops.api.core.world.CustomCropsBlockState;
 import net.momirealms.customcrops.api.core.world.CustomCropsWorld;
 import net.momirealms.customcrops.api.core.world.Pos3;
@@ -67,16 +67,16 @@ public class PotBlock extends AbstractCustomCropsBlock {
     }
 
     @Override
-    public void scheduledTick(CustomCropsBlockState state, CustomCropsWorld<?> world, Pos3 location) {
+    public void scheduledTick(CustomCropsBlockState state, CustomCropsWorld<?> world, Pos3 location, boolean offlineTick) {
         if (!world.setting().randomTickPot() && canTick(state, world.setting().tickPotInterval())) {
-            tickPot(state, world, location);
+            tickPot(state, world, location, offlineTick);
         }
     }
 
     @Override
-    public void randomTick(CustomCropsBlockState state, CustomCropsWorld<?> world, Pos3 location) {
+    public void randomTick(CustomCropsBlockState state, CustomCropsWorld<?> world, Pos3 location, boolean offlineTick) {
         if (world.setting().randomTickPot() && canTick(state, world.setting().tickPotInterval())) {
-            tickPot(state, world, location);
+            tickPot(state, world, location, offlineTick);
         }
     }
 
@@ -211,9 +211,8 @@ public class PotBlock extends AbstractCustomCropsBlock {
         }
 
         world.addBlockState(pos3, state).ifPresent(previous -> {
-            BukkitCustomCropsPlugin.getInstance().debug(
-                    "Overwrite old data with " + state +
-                            " at location[" + world.worldName() + "," + pos3 + "] which used to be " + previous
+            BukkitCustomCropsPlugin.getInstance().debug(() -> "Overwrite old data with " + state +
+                    " at location[" + world.worldName() + "," + pos3 + "] which used to be " + previous
             );
         });
         ActionManager.trigger(context, config.placeActions());
@@ -324,15 +323,14 @@ public class PotBlock extends AbstractCustomCropsBlock {
         id(state, potConfig.id());
         water(state, potConfig.isWet(blockID) ? 1 : 0);
         world.addBlockState(pos3, state).ifPresent(previous -> {
-            BukkitCustomCropsPlugin.getInstance().debug(
-                    "Overwrite old data with " + state +
-                            " at location[" + world.worldName() + "," + pos3 + "] which used to be " + previous
+            BukkitCustomCropsPlugin.getInstance().debug(() -> "Overwrite old data with " + state +
+                    " at location[" + world.worldName() + "," + pos3 + "] which used to be " + previous
             );
         });
         return state;
     }
 
-    private void tickPot(CustomCropsBlockState state, CustomCropsWorld<?> world, Pos3 location) {
+    private void tickPot(CustomCropsBlockState state, CustomCropsWorld<?> world, Pos3 location, boolean offline) {
         PotConfig config = config(state);
         if (config == null) {
             BukkitCustomCropsPlugin.getInstance().getPluginLogger().warn("Pot data is removed at location[" + world.worldName() + "," + location + "] because the pot config[" + id(state) + "] has been removed.");
@@ -411,7 +409,10 @@ public class PotBlock extends AbstractCustomCropsBlock {
         }
 
         ActionManager.trigger(Context.block(state)
-                .arg(ContextKeys.LOCATION, location.toLocation(bukkitWorld)), config.tickActions());
+                .arg(ContextKeys.OFFLINE, offline)
+                .arg(ContextKeys.LOCATION, location.toLocation(bukkitWorld)),
+                config.tickActions()
+        );
     }
 
     public int water(CustomCropsBlockState state) {

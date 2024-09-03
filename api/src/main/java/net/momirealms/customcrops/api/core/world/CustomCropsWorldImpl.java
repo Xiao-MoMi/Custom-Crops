@@ -272,11 +272,11 @@ public class CustomCropsWorldImpl<W> implements CustomCropsWorld<W> {
         ArrayList<CustomCropsChunk> chunksToSave = new ArrayList<>();
         for (Map.Entry<ChunkPos, CustomCropsChunk> lazyEntry : this.lazyChunks.entrySet()) {
             CustomCropsChunk chunk = lazyEntry.getValue();
-            int sec = chunk.unloadedSeconds() + 1;
+            int sec = chunk.lazySeconds() + 1;
             if (sec >= 30) {
                 chunksToSave.add(chunk);
             } else {
-                chunk.unloadedSeconds(sec);
+                chunk.lazySeconds(sec);
             }
         }
         for (CustomCropsChunk chunk : chunksToSave) {
@@ -309,9 +309,6 @@ public class CustomCropsWorldImpl<W> implements CustomCropsWorld<W> {
         this.setting = setting;
     }
 
-    /*
-     * Chunks
-     */
     @Nullable
     public CustomCropsChunk removeLazyChunk(ChunkPos chunkPos) {
         return this.lazyChunks.remove(chunkPos);
@@ -355,7 +352,7 @@ public class CustomCropsWorldImpl<W> implements CustomCropsWorld<W> {
             return false;
         }
         this.loadedChunks.remove(chunk.chunkPos());
-        chunk.updateLastLoadedTime();
+        chunk.updateLastUnloadTime();
         if (lazy) {
             this.lazyChunks.put(pos, chunk);
         } else {
@@ -368,7 +365,7 @@ public class CustomCropsWorldImpl<W> implements CustomCropsWorld<W> {
     public boolean unloadChunk(ChunkPos pos, boolean lazy) {
         CustomCropsChunk removed = this.loadedChunks.remove(pos);
         if (removed != null) {
-            removed.updateLastLoadedTime();
+            removed.updateLastUnloadTime();
             if (lazy) {
                 this.lazyChunks.put(pos, removed);
             } else {

@@ -194,7 +194,9 @@ public class BukkitWorldManager implements WorldManager, Listener {
         adaptedWorld.setTicking(true);
         this.worlds.put(world.getName(), adaptedWorld);
         for (Chunk chunk : world.getLoadedChunks()) {
-            loadLoadedChunk(adaptedWorld, ChunkPos.fromBukkitChunk(chunk));
+            ChunkPos pos = ChunkPos.fromBukkitChunk(chunk);
+            loadLoadedChunk(adaptedWorld, pos);
+            notifyOfflineUpdates(adaptedWorld, pos);
         }
         return adaptedWorld;
     }
@@ -204,7 +206,13 @@ public class BukkitWorldManager implements WorldManager, Listener {
         if (world.isChunkLoaded(pos)) return;
         Optional<CustomCropsChunk> customChunk = world.getChunk(pos);
         // don't load bukkit chunk again since it has been loaded
-        customChunk.ifPresent(customCropsChunk -> customCropsChunk.load(false));
+        customChunk.ifPresent(customCropsChunk -> {
+            customCropsChunk.load(false);
+        });
+    }
+
+    public void notifyOfflineUpdates(CustomCropsWorld<?> world, ChunkPos pos) {
+        world.getChunk(pos).ifPresent(CustomCropsChunk::notifyOfflineTask);
     }
 
     @Override
@@ -251,12 +259,24 @@ public class BukkitWorldManager implements WorldManager, Listener {
     public void onChunkLoad(ChunkLoadEvent event) {
         final Chunk chunk = event.getChunk();
         final World world = event.getWorld();
-        this.getWorld(world).ifPresent(customWorld -> loadLoadedChunk(customWorld, ChunkPos.fromBukkitChunk(chunk)));
+        this.getWorld(world).ifPresent(customWorld -> {
+            ChunkPos pos = ChunkPos.fromBukkitChunk(chunk);
+            loadLoadedChunk(customWorld, pos);
+            if (chunk.isEntitiesLoaded() && customWorld.setting().offlineTick()) {
+                notifyOfflineUpdates(customWorld, pos);
+            }
+        });
     }
 
     @EventHandler
     public void onEntitiesLoad(EntitiesLoadEvent event) {
-
+        final Chunk chunk = event.getChunk();
+        final World world = event.getWorld();
+        this.getWorld(world).ifPresent(customWorld -> {
+            if (customWorld.setting().offlineTick()) {
+                notifyOfflineUpdates(customWorld, ChunkPos.fromBukkitChunk(chunk));
+            }
+        });
     }
 
     public boolean isMechanicEnabled(World world) {
@@ -329,6 +349,7 @@ public class BukkitWorldManager implements WorldManager, Listener {
                 section.getInt("sprinkler.tick-interval", 2),
                 section.getBoolean("offline-tick.enable", false),
                 section.getInt("offline-tick.max-offline-seconds", 1200),
+                section.getInt("offline-tick.max-loading-time", 100),
                 section.getBoolean("season.enable", false),
                 section.getBoolean("season.auto-alternation", false),
                 section.getInt("season.duration", 28),

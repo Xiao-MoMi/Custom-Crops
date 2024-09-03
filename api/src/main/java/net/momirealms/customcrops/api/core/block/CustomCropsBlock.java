@@ -34,9 +34,9 @@ public interface CustomCropsBlock {
 
     CustomCropsBlockState createBlockState(CompoundMap data);
 
-    void scheduledTick(CustomCropsBlockState state, CustomCropsWorld<?> world, Pos3 location);
+    void scheduledTick(CustomCropsBlockState state, CustomCropsWorld<?> world, Pos3 location, boolean offlineTick);
 
-    void randomTick(CustomCropsBlockState state, CustomCropsWorld<?> world, Pos3 location);
+    void randomTick(CustomCropsBlockState state, CustomCropsWorld<?> world, Pos3 location, boolean offlineTick);
 
     void onInteract(WrappedInteractEvent event);
 

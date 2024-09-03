@@ -52,6 +52,11 @@ worlds:
         # as it may cause chunks that have been unloaded for a long time
         # taking long to load
         max-offline-seconds: 1200
+        # The max time used in loading this chunk
+        # Sometimes a chunk might contain a lot of data and has not been loaded for a long time,
+        # thus taking a long time loading and causing unexpected issues
+        # This setting allows the plugin to forcefully interrupt the tick process if the time consumed has exceeded a certain value
+        max-loading-time: 100 #ms
       # Settings for crops
       crop:
         # [RANDOM_TICK]
