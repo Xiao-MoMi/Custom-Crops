@@ -26,7 +26,7 @@ import org.bukkit.event.player.PlayerEvent;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * An event that triggered when placing a scarecrow
+ * An event that is triggered when a player places a scarecrow in the CustomCrops plugin.
  */
 public class ScarecrowPlaceEvent extends PlayerEvent implements Cancellable {
 
@@ -36,6 +36,14 @@ public class ScarecrowPlaceEvent extends PlayerEvent implements Cancellable {
     private final String scarecrowItemID;
     private final CustomCropsBlockState blockState;
 
+    /**
+     * Constructor for the ScarecrowPlaceEvent.
+     *
+     * @param who             The player who is placing the scarecrow.
+     * @param location        The location where the scarecrow is being placed.
+     * @param scarecrowItemID The item ID representing the scarecrow type being placed.
+     * @param blockState      The state of the block where the scarecrow is placed.
+     */
     public ScarecrowPlaceEvent(
             @NotNull Player who,
             @NotNull Location location,
@@ -48,42 +56,72 @@ public class ScarecrowPlaceEvent extends PlayerEvent implements Cancellable {
         this.scarecrowItemID = scarecrowItemID;
     }
 
+    /**
+     * Returns whether the event is cancelled.
+     *
+     * @return true if the event is cancelled, false otherwise.
+     */
     @Override
     public boolean isCancelled() {
         return cancelled;
     }
 
+    /**
+     * Sets the cancelled state of the event.
+     *
+     * @param cancel true to cancel the event, false otherwise.
+     */
     @Override
     public void setCancelled(boolean cancel) {
         this.cancelled = cancel;
     }
 
+    /**
+     * Gets the list of handlers for this event.
+     *
+     * @return the static handler list.
+     */
     @NotNull
     public static HandlerList getHandlerList() {
         return handlers;
     }
 
+    /**
+     * Gets the list of handlers for this event instance.
+     *
+     * @return the handler list.
+     */
     @NotNull
     @Override
     public HandlerList getHandlers() {
         return getHandlerList();
     }
 
+    /**
+     * Gets the item ID representing the scarecrow type being placed.
+     *
+     * @return the scarecrow item ID.
+     */
     @NotNull
     public String getScarecrowItemID() {
         return scarecrowItemID;
     }
 
     /**
-     * Get the scarecrow location
+     * Gets the location where the scarecrow is being placed.
      *
-     * @return location
+     * @return the location of the scarecrow.
      */
     @NotNull
     public Location getLocation() {
         return location;
     }
 
+    /**
+     * Gets the state of the block where the scarecrow is placed.
+     *
+     * @return the block state of the scarecrow.
+     */
     @NotNull
     public CustomCropsBlockState getBlockState() {
         return blockState;

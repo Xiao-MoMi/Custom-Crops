@@ -17,7 +17,7 @@
 
 package net.momirealms.customcrops.api.event;
 
-import net.momirealms.customcrops.api.core.block.SprinklerConfig;
+import net.momirealms.customcrops.api.core.mechanic.sprinkler.SprinklerConfig;
 import net.momirealms.customcrops.api.core.world.CustomCropsBlockState;
 import net.momirealms.customcrops.api.misc.water.WateringMethod;
 import org.bukkit.Location;
@@ -30,7 +30,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * An event that triggered when a pot is watered by the fill-methods set in each sprinkler's config
+ * An event that is triggered when a sprinkler is filled with water using the fill methods defined in its configuration.
  */
 public class SprinklerFillEvent extends PlayerEvent implements Cancellable {
 
@@ -43,6 +43,17 @@ public class SprinklerFillEvent extends PlayerEvent implements Cancellable {
     private final CustomCropsBlockState blockState;
     private final EquipmentSlot hand;
 
+    /**
+     * Constructor for the SprinklerFillEvent.
+     *
+     * @param player         The player who is filling the sprinkler.
+     * @param itemInHand     The ItemStack representing the item in the player's hand.
+     * @param hand           The hand (main or offhand) used by the player for filling.
+     * @param location       The location of the sprinkler being filled.
+     * @param wateringMethod The method used to fill the sprinkler.
+     * @param blockState     The state of the sprinkler block before it is filled.
+     * @param config         The configuration of the sprinkler being filled.
+     */
     public SprinklerFillEvent(
             @NotNull Player player,
             @NotNull ItemStack itemInHand,
@@ -61,21 +72,41 @@ public class SprinklerFillEvent extends PlayerEvent implements Cancellable {
         this.hand = hand;
     }
 
+    /**
+     * Returns whether the event is cancelled.
+     *
+     * @return true if the event is cancelled, false otherwise.
+     */
     @Override
     public boolean isCancelled() {
         return cancelled;
     }
 
+    /**
+     * Sets the cancelled state of the event.
+     *
+     * @param cancel true to cancel the event, false otherwise.
+     */
     @Override
     public void setCancelled(boolean cancel) {
         cancelled = cancel;
     }
 
+    /**
+     * Gets the list of handlers for this event.
+     *
+     * @return the static handler list.
+     */
     @NotNull
     public static HandlerList getHandlerList() {
         return handlers;
     }
 
+    /**
+     * Gets the list of handlers for this event instance.
+     *
+     * @return the handler list.
+     */
     @NotNull
     @Override
     public HandlerList getHandlers() {
@@ -83,9 +114,9 @@ public class SprinklerFillEvent extends PlayerEvent implements Cancellable {
     }
 
     /**
-     * Get the pot location
+     * Gets the location of the sprinkler being filled.
      *
-     * @return location
+     * @return the location of the sprinkler.
      */
     @NotNull
     public Location getLocation() {
@@ -93,30 +124,50 @@ public class SprinklerFillEvent extends PlayerEvent implements Cancellable {
     }
 
     /**
-     * Get the item in hand
+     * Gets the ItemStack representing the item in the player's hand.
      *
-     * @return item in hand
+     * @return the item in hand.
      */
     @NotNull
     public ItemStack getItemInHand() {
         return itemInHand;
     }
 
+    /**
+     * Gets the configuration of the sprinkler being filled.
+     *
+     * @return the sprinkler configuration.
+     */
     @NotNull
     public SprinklerConfig getSprinklerConfig() {
         return config;
     }
 
+    /**
+     * Gets the method used to fill the sprinkler.
+     *
+     * @return the watering method.
+     */
     @NotNull
     public WateringMethod getWateringMethod() {
         return wateringMethod;
     }
 
+    /**
+     * Gets the state of the sprinkler block before it is filled.
+     *
+     * @return the block state of the sprinkler.
+     */
     @NotNull
     public CustomCropsBlockState getBlockState() {
         return blockState;
     }
 
+    /**
+     * Gets the hand (main or offhand) used by the player to fill the sprinkler.
+     *
+     * @return the equipment slot representing the hand used.
+     */
     @NotNull
     public EquipmentSlot getHand() {
         return hand;

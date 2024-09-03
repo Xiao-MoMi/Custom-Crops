@@ -22,6 +22,7 @@ import net.momirealms.customcrops.api.core.ConfigManager;
 import net.momirealms.customcrops.api.core.SimpleRegistryAccess;
 import net.momirealms.customcrops.api.core.block.*;
 import net.momirealms.customcrops.api.core.item.*;
+import net.momirealms.customcrops.api.core.mechanic.fertilizer.FertilizerType;
 import net.momirealms.customcrops.api.core.world.CustomCropsBlockState;
 import net.momirealms.customcrops.api.event.CustomCropsReloadEvent;
 import net.momirealms.customcrops.api.misc.HologramManager;

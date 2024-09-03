@@ -28,7 +28,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * An event that triggered when interacting a sprinkler
+ * An event that is triggered when a player interacts with a greenhouse glass block in the CustomCrops plugin.
  */
 public class GreenhouseGlassInteractEvent extends PlayerEvent implements Cancellable {
 
@@ -40,6 +40,16 @@ public class GreenhouseGlassInteractEvent extends PlayerEvent implements Cancell
     private final String glassItemID;
     private final EquipmentSlot hand;
 
+    /**
+     * Constructor for the GreenhouseGlassInteractEvent.
+     *
+     * @param who        The player who is interacting with the greenhouse glass.
+     * @param itemInHand The ItemStack representing the item in the player's hand.
+     * @param location   The location of the greenhouse glass block being interacted with.
+     * @param glassItemID The item ID representing the glass type being interacted with.
+     * @param blockState The state of the greenhouse glass block at the time of interaction.
+     * @param hand       The hand (main or offhand) used by the player for the interaction.
+     */
     public GreenhouseGlassInteractEvent(
             @NotNull Player who,
             @NotNull ItemStack itemInHand,
@@ -56,21 +66,41 @@ public class GreenhouseGlassInteractEvent extends PlayerEvent implements Cancell
         this.glassItemID = glassItemID;
     }
 
+    /**
+     * Returns whether the event is cancelled.
+     *
+     * @return true if the event is cancelled, false otherwise.
+     */
     @Override
     public boolean isCancelled() {
         return cancelled;
     }
 
+    /**
+     * Sets the cancelled state of the event.
+     *
+     * @param cancel true to cancel the event, false otherwise.
+     */
     @Override
     public void setCancelled(boolean cancel) {
         this.cancelled = cancel;
     }
 
+    /**
+     * Gets the list of handlers for this event.
+     *
+     * @return the static handler list.
+     */
     @NotNull
     public static HandlerList getHandlerList() {
         return handlers;
     }
 
+    /**
+     * Gets the list of handlers for this event instance.
+     *
+     * @return the handler list.
+     */
     @NotNull
     @Override
     public HandlerList getHandlers() {
@@ -78,34 +108,49 @@ public class GreenhouseGlassInteractEvent extends PlayerEvent implements Cancell
     }
 
     /**
-     * Get the sprinkler location
+     * Gets the location of the greenhouse glass block being interacted with.
      *
-     * @return location
+     * @return the location of the glass block.
      */
     @NotNull
     public Location getLocation() {
         return location;
     }
 
+    /**
+     * Gets the state of the greenhouse glass block at the time of interaction.
+     *
+     * @return the block state of the glass.
+     */
     @NotNull
     public CustomCropsBlockState getBlockState() {
         return blockState;
     }
 
+    /**
+     * Gets the hand (main or offhand) used by the player to interact with the glass.
+     *
+     * @return the equipment slot representing the hand used.
+     */
     @NotNull
     public EquipmentSlot getHand() {
         return hand;
     }
 
+    /**
+     * Gets the item ID representing the glass type being interacted with.
+     *
+     * @return the glass item ID.
+     */
     @NotNull
     public String getGlassItemID() {
         return glassItemID;
     }
 
     /**
-     * Get the item in player's hand
+     * Gets the ItemStack representing the item in the player's hand.
      *
-     * @return item in hand
+     * @return the item in hand.
      */
     @NotNull
     public ItemStack getItemInHand() {

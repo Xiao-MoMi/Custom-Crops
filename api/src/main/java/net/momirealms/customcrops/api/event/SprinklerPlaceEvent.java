@@ -17,7 +17,7 @@
 
 package net.momirealms.customcrops.api.event;
 
-import net.momirealms.customcrops.api.core.block.SprinklerConfig;
+import net.momirealms.customcrops.api.core.mechanic.sprinkler.SprinklerConfig;
 import net.momirealms.customcrops.api.core.world.CustomCropsBlockState;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -28,8 +28,9 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+
 /**
- * An event that triggered when placing a sprinkler
+ * An event that is triggered when a player places a sprinkler in the CustomCrops plugin.
  */
 public class SprinklerPlaceEvent extends PlayerEvent implements Cancellable {
 
@@ -41,6 +42,16 @@ public class SprinklerPlaceEvent extends PlayerEvent implements Cancellable {
     private final CustomCropsBlockState blockState;
     private final EquipmentSlot hand;
 
+    /**
+     * Constructor for the SprinklerPlaceEvent.
+     *
+     * @param who        The player who is placing the sprinkler.
+     * @param itemInHand The ItemStack representing the item in the player's hand.
+     * @param hand       The hand (main or offhand) used by the player to place the sprinkler.
+     * @param location   The location where the sprinkler is being placed.
+     * @param config     The configuration of the sprinkler being placed.
+     * @param blockState The state of the block where the sprinkler is placed.
+     */
     public SprinklerPlaceEvent(
             @NotNull Player who,
             @NotNull ItemStack itemInHand,
@@ -57,21 +68,41 @@ public class SprinklerPlaceEvent extends PlayerEvent implements Cancellable {
         this.blockState = blockState;
     }
 
+    /**
+     * Returns whether the event is cancelled.
+     *
+     * @return true if the event is cancelled, false otherwise.
+     */
     @Override
     public boolean isCancelled() {
         return cancelled;
     }
 
+    /**
+     * Sets the cancelled state of the event.
+     *
+     * @param cancel true to cancel the event, false otherwise.
+     */
     @Override
     public void setCancelled(boolean cancel) {
         this.cancelled = cancel;
     }
 
+    /**
+     * Gets the list of handlers for this event.
+     *
+     * @return the static handler list.
+     */
     @NotNull
     public static HandlerList getHandlerList() {
         return handlers;
     }
 
+    /**
+     * Gets the list of handlers for this event instance.
+     *
+     * @return the handler list.
+     */
     @NotNull
     @Override
     public HandlerList getHandlers() {
@@ -79,35 +110,50 @@ public class SprinklerPlaceEvent extends PlayerEvent implements Cancellable {
     }
 
     /**
-     * Get the item in player's hand
+     * Gets the ItemStack representing the item in the player's hand.
      *
-     * @return item in hand
+     * @return the item in hand.
      */
     @NotNull
     public ItemStack getItemInHand() {
         return itemInHand;
     }
 
+    /**
+     * Gets the state of the block where the sprinkler is placed.
+     *
+     * @return the block state of the sprinkler.
+     */
     @NotNull
     public CustomCropsBlockState getBlockState() {
         return blockState;
     }
 
     /**
-     * Get the sprinkler location
+     * Gets the location where the sprinkler is being placed.
      *
-     * @return location
+     * @return the location of the sprinkler.
      */
     @NotNull
     public Location getLocation() {
         return location;
     }
 
+    /**
+     * Gets the configuration of the sprinkler being placed.
+     *
+     * @return the sprinkler configuration.
+     */
     @NotNull
     public SprinklerConfig getSprinklerConfig() {
         return config;
     }
 
+    /**
+     * Gets the hand (main or offhand) used by the player to place the sprinkler.
+     *
+     * @return the equipment slot representing the hand used.
+     */
     @NotNull
     public EquipmentSlot getHand() {
         return hand;

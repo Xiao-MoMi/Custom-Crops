@@ -17,8 +17,8 @@
 
 package net.momirealms.customcrops.api.event;
 
-import net.momirealms.customcrops.api.core.block.PotConfig;
-import net.momirealms.customcrops.api.core.item.Fertilizer;
+import net.momirealms.customcrops.api.core.mechanic.pot.PotConfig;
+import net.momirealms.customcrops.api.core.mechanic.fertilizer.Fertilizer;
 import net.momirealms.customcrops.api.core.world.CustomCropsBlockState;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -30,7 +30,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * An event that triggered when player tries adding fertilizer to pot
+ * An event that is triggered when a player tries to add fertilizer to a pot in the CustomCrops plugin.
  */
 public class FertilizerUseEvent extends PlayerEvent implements Cancellable {
 
@@ -43,6 +43,17 @@ public class FertilizerUseEvent extends PlayerEvent implements Cancellable {
     private final EquipmentSlot hand;
     private final PotConfig config;
 
+    /**
+     * Constructor for the FertilizerUseEvent.
+     *
+     * @param player     The player who is attempting to add fertilizer.
+     * @param itemInHand The ItemStack representing the fertilizer item in the player's hand.
+     * @param fertilizer The Fertilizer configuration being applied.
+     * @param location   The location of the pot where the fertilizer is being added.
+     * @param blockState The state of the block (pot) before the fertilizer is added.
+     * @param hand       The hand (main or offhand) used by the player to apply the fertilizer.
+     * @param config     The pot configuration associated with the pot being fertilized.
+     */
     public FertilizerUseEvent(
             @NotNull Player player,
             @NotNull ItemStack itemInHand,
@@ -62,30 +73,50 @@ public class FertilizerUseEvent extends PlayerEvent implements Cancellable {
         this.config = config;
     }
 
+    /**
+     * Returns whether the event is cancelled.
+     *
+     * @return true if the event is cancelled, false otherwise.
+     */
     @Override
     public boolean isCancelled() {
         return cancelled;
     }
 
+    /**
+     * Sets the cancelled state of the event.
+     *
+     * @param cancel true to cancel the event, false otherwise.
+     */
     @Override
     public void setCancelled(boolean cancel) {
         cancelled = cancel;
     }
 
+    /**
+     * Gets the list of handlers for this event instance.
+     *
+     * @return the handler list.
+     */
     @Override
     public @NotNull HandlerList getHandlers() {
         return handlers;
     }
 
+    /**
+     * Gets the list of handlers for this event.
+     *
+     * @return the static handler list.
+     */
     @NotNull
     public static HandlerList getHandlerList() {
         return handlers;
     }
 
     /**
-     * Get the fertilizer item in hand
+     * Gets the ItemStack representing the fertilizer item in the player's hand.
      *
-     * @return item in hand
+     * @return the item in hand.
      */
     @NotNull
     public ItemStack getItemInHand() {
@@ -93,34 +124,49 @@ public class FertilizerUseEvent extends PlayerEvent implements Cancellable {
     }
 
     /**
-     * Get the pot's location
+     * Gets the location of the pot where the fertilizer is being added.
      *
-     * @return location
+     * @return the location of the pot.
      */
     @NotNull
     public Location getLocation() {
         return location;
     }
 
+    /**
+     * Gets the state of the block (pot) before the fertilizer is added.
+     *
+     * @return the block state of the pot.
+     */
     @NotNull
     public CustomCropsBlockState getBlockState() {
         return blockState;
     }
 
+    /**
+     * Gets the hand (main or offhand) used by the player to apply the fertilizer.
+     *
+     * @return the equipment slot representing the hand used.
+     */
     @NotNull
     public EquipmentSlot getHand() {
         return hand;
     }
 
+    /**
+     * Gets the pot configuration associated with the pot being fertilized.
+     *
+     * @return the pot configuration.
+     */
     @NotNull
     public PotConfig getPotConfig() {
         return config;
     }
 
     /**
-     * Get the fertilizer's config
+     * Gets the fertilizer being applied.
      *
-     * @return fertilizer config
+     * @return the fertilizer configuration.
      */
     @NotNull
     public Fertilizer getFertilizer() {

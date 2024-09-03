@@ -17,8 +17,8 @@
 
 package net.momirealms.customcrops.api.event;
 
-import net.momirealms.customcrops.api.core.block.PotConfig;
-import net.momirealms.customcrops.api.core.item.WateringCanConfig;
+import net.momirealms.customcrops.api.core.mechanic.pot.PotConfig;
+import net.momirealms.customcrops.api.core.mechanic.wateringcan.WateringCanConfig;
 import net.momirealms.customcrops.api.core.world.Pos3;
 import net.momirealms.customcrops.common.util.Pair;
 import org.bukkit.entity.Player;
@@ -32,7 +32,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 /**
- * An event that triggered when player tries to use watering-can to add water to pots/sprinklers
+ * An event that is triggered when a player attempts to use a watering can to add water to pots or sprinklers.
  */
 public class WateringCanWaterPotEvent extends PlayerEvent implements Cancellable {
 
@@ -44,6 +44,16 @@ public class WateringCanWaterPotEvent extends PlayerEvent implements Cancellable
     private final PotConfig potConfig;
     private final List<Pair<Pos3, String>> potWithIDs;
 
+    /**
+     * Constructor for the WateringCanWaterPotEvent.
+     *
+     * @param player            The player who is using the watering can.
+     * @param itemInHand        The ItemStack representing the watering can in the player's hand.
+     * @param hand              The hand (main or offhand) used by the player to hold the watering can.
+     * @param wateringCanConfig The configuration of the watering can being used.
+     * @param potConfig         The configuration of the pot being watered.
+     * @param potWithIDs        The list of pots with their positions and IDs.
+     */
     public WateringCanWaterPotEvent(
             @NotNull Player player,
             @NotNull ItemStack itemInHand,
@@ -61,51 +71,91 @@ public class WateringCanWaterPotEvent extends PlayerEvent implements Cancellable
         this.potWithIDs = potWithIDs;
     }
 
+    /**
+     * Returns whether the event is cancelled.
+     *
+     * @return true if the event is cancelled, false otherwise.
+     */
     @Override
     public boolean isCancelled() {
         return cancelled;
     }
 
+    /**
+     * Sets the cancelled state of the event.
+     *
+     * @param cancel true to cancel the event, false otherwise.
+     */
     @Override
     public void setCancelled(boolean cancel) {
         cancelled = cancel;
     }
 
+    /**
+     * Gets the list of handlers for this event instance.
+     *
+     * @return the handler list.
+     */
     @Override
     public @NotNull HandlerList getHandlers() {
         return handlers;
     }
 
+    /**
+     * Gets the list of handlers for this event.
+     *
+     * @return the static handler list.
+     */
     @NotNull
     public static HandlerList getHandlerList() {
         return handlers;
     }
 
     /**
-     * Get the watering can item
+     * Gets the ItemStack representing the watering can in the player's hand.
      *
-     * @return watering can item
+     * @return the watering can item.
      */
     @NotNull
     public ItemStack getItemInHand() {
         return itemInHand;
     }
 
+    /**
+     * Gets the hand (main or offhand) used by the player to hold the watering can.
+     *
+     * @return the equipment slot representing the hand used.
+     */
     @NotNull
     public EquipmentSlot getHand() {
         return hand;
     }
 
+    /**
+     * Gets the configuration of the watering can being used.
+     *
+     * @return the watering can configuration.
+     */
     @NotNull
     public WateringCanConfig getWateringCanConfig() {
         return wateringCanConfig;
     }
 
+    /**
+     * Gets the configuration of the pot being watered.
+     *
+     * @return the pot configuration.
+     */
     @NotNull
     public PotConfig getPotConfig() {
         return potConfig;
     }
 
+    /**
+     * Gets the list of pots with their positions and IDs.
+     *
+     * @return the list of pots with positions and IDs.
+     */
     @NotNull
     public List<Pair<Pos3, String>> getPotWithIDs() {
         return potWithIDs;

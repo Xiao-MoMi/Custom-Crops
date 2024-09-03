@@ -18,7 +18,7 @@
 package net.momirealms.customcrops.api.event;
 
 import net.momirealms.customcrops.api.core.block.BreakReason;
-import net.momirealms.customcrops.api.core.block.PotConfig;
+import net.momirealms.customcrops.api.core.mechanic.pot.PotConfig;
 import net.momirealms.customcrops.api.core.world.CustomCropsBlockState;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -31,7 +31,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * An event that triggered when breaking a pot
+ * An event that is triggered when a pot block is broken in the CustomCrops plugin.
  */
 public class PotBreakEvent extends Event implements Cancellable {
 
@@ -44,6 +44,16 @@ public class PotBreakEvent extends Event implements Cancellable {
     private final Block blockBreaker;
     private final BreakReason reason;
 
+    /**
+     * Constructor for the PotBreakEvent.
+     *
+     * @param entityBreaker The entity that caused the pot to break, if applicable (can be null).
+     * @param blockBreaker  The block that caused the pot to break, if applicable (can be null).
+     * @param location      The location of the pot block being broken.
+     * @param config        The configuration of the pot that is being broken.
+     * @param blockState    The state of the pot block before it was broken.
+     * @param reason        The reason why the pot was broken.
+     */
     public PotBreakEvent(
             @Nullable Entity entityBreaker,
             @Nullable Block blockBreaker,
@@ -60,21 +70,41 @@ public class PotBreakEvent extends Event implements Cancellable {
         this.config = config;
     }
 
+    /**
+     * Returns whether the event is cancelled.
+     *
+     * @return true if the event is cancelled, false otherwise.
+     */
     @Override
     public boolean isCancelled() {
         return cancelled;
     }
 
+    /**
+     * Sets the cancelled state of the event.
+     *
+     * @param cancel true to cancel the event, false otherwise.
+     */
     @Override
     public void setCancelled(boolean cancel) {
         cancelled = cancel;
     }
 
+    /**
+     * Gets the list of handlers for this event.
+     *
+     * @return the static handler list.
+     */
     @NotNull
     public static HandlerList getHandlerList() {
         return handlers;
     }
 
+    /**
+     * Gets the list of handlers for this event instance.
+     *
+     * @return the handler list.
+     */
     @NotNull
     @Override
     public HandlerList getHandlers() {
@@ -82,20 +112,30 @@ public class PotBreakEvent extends Event implements Cancellable {
     }
 
     /**
-     * Get the pot location
+     * Gets the location of the pot block being broken.
      *
-     * @return location
+     * @return the location of the pot block.
      */
     @NotNull
     public Location getLocation() {
         return location;
     }
 
+    /**
+     * Gets the entity responsible for breaking the pot, if applicable.
+     *
+     * @return the entity that caused the break, or null if not applicable.
+     */
     @Nullable
     public Entity getEntityBreaker() {
         return entityBreaker;
     }
 
+    /**
+     * Gets the player responsible for breaking the pot, if the breaker is a player.
+     *
+     * @return the player that caused the break, or null if not applicable.
+     */
     @Nullable
     public Player getPlayer() {
         if (entityBreaker instanceof Player player) {
@@ -104,21 +144,41 @@ public class PotBreakEvent extends Event implements Cancellable {
         return null;
     }
 
+    /**
+     * Gets the reason for the pot breakage.
+     *
+     * @return the reason for the break.
+     */
     @NotNull
     public BreakReason getReason() {
         return reason;
     }
 
+    /**
+     * Gets the configuration of the pot that is being broken.
+     *
+     * @return the pot configuration.
+     */
     @NotNull
     public PotConfig getPotConfig() {
         return config;
     }
 
+    /**
+     * Gets the state of the pot block before it was broken.
+     *
+     * @return the block state of the pot.
+     */
     @NotNull
     public CustomCropsBlockState getBlockState() {
         return blockState;
     }
 
+    /**
+     * Gets the block responsible for breaking the pot, if applicable.
+     *
+     * @return the block that caused the break, or null if not applicable.
+     */
     @Nullable
     public Block getBlockBreaker() {
         return blockBreaker;

@@ -22,6 +22,7 @@ import net.momirealms.customcrops.api.context.Context;
 import net.momirealms.customcrops.api.context.ContextKeys;
 import net.momirealms.customcrops.api.core.BuiltInBlockMechanics;
 import net.momirealms.customcrops.api.core.Registries;
+import net.momirealms.customcrops.api.core.mechanic.pot.PotConfig;
 import net.momirealms.customcrops.api.core.world.CustomCropsBlockState;
 import net.momirealms.customcrops.api.core.world.CustomCropsWorld;
 import net.momirealms.customcrops.api.core.world.Pos3;

@@ -24,6 +24,8 @@ import net.momirealms.customcrops.api.action.ActionManager;
 import net.momirealms.customcrops.api.context.Context;
 import net.momirealms.customcrops.api.context.ContextKeys;
 import net.momirealms.customcrops.api.core.*;
+import net.momirealms.customcrops.api.core.mechanic.pot.PotConfig;
+import net.momirealms.customcrops.api.core.mechanic.sprinkler.SprinklerConfig;
 import net.momirealms.customcrops.api.core.world.CustomCropsBlockState;
 import net.momirealms.customcrops.api.core.world.CustomCropsWorld;
 import net.momirealms.customcrops.api.core.world.Pos3;

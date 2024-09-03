@@ -29,7 +29,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * An event that triggered when breaking a scarecrow
+ * An event that is triggered when a scarecrow is broken in the CustomCrops plugin.
  */
 public class ScarecrowBreakEvent extends Event implements Cancellable {
 
@@ -42,6 +42,16 @@ public class ScarecrowBreakEvent extends Event implements Cancellable {
     private final CustomCropsBlockState blockState;
     private final String scarecrowItemID;
 
+    /**
+     * Constructor for the ScarecrowBreakEvent.
+     *
+     * @param entityBreaker   The entity that caused the scarecrow to break, if applicable (can be null).
+     * @param blockBreaker    The block that caused the scarecrow to break, if applicable (can be null).
+     * @param location        The location of the scarecrow being broken.
+     * @param scarecrowItemID The item ID representing the scarecrow type being broken.
+     * @param blockState      The state of the scarecrow block before it was broken.
+     * @param reason          The reason why the scarecrow was broken.
+     */
     public ScarecrowBreakEvent(
             @Nullable Entity entityBreaker,
             @Nullable Block blockBreaker,
@@ -58,21 +68,41 @@ public class ScarecrowBreakEvent extends Event implements Cancellable {
         this.scarecrowItemID = scarecrowItemID;
     }
 
+    /**
+     * Returns whether the event is cancelled.
+     *
+     * @return true if the event is cancelled, false otherwise.
+     */
     @Override
     public boolean isCancelled() {
         return cancelled;
     }
 
+    /**
+     * Sets the cancelled state of the event.
+     *
+     * @param cancel true to cancel the event, false otherwise.
+     */
     @Override
     public void setCancelled(boolean cancel) {
         this.cancelled = cancel;
     }
 
+    /**
+     * Gets the list of handlers for this event.
+     *
+     * @return the static handler list.
+     */
     @NotNull
     public static HandlerList getHandlerList() {
         return handlers;
     }
 
+    /**
+     * Gets the list of handlers for this event instance.
+     *
+     * @return the handler list.
+     */
     @NotNull
     @Override
     public HandlerList getHandlers() {
@@ -80,35 +110,60 @@ public class ScarecrowBreakEvent extends Event implements Cancellable {
     }
 
     /**
-     * Get the scarecrow location
+     * Gets the location of the scarecrow being broken.
      *
-     * @return location
+     * @return the location of the scarecrow.
      */
     @NotNull
     public Location getLocation() {
         return location;
     }
 
+    /**
+     * Gets the entity responsible for breaking the scarecrow, if applicable.
+     *
+     * @return the entity that caused the break, or null if not applicable.
+     */
     @Nullable
     public Entity getEntityBreaker() {
         return entityBreaker;
     }
 
+    /**
+     * Gets the block responsible for breaking the scarecrow, if applicable.
+     *
+     * @return the block that caused the break, or null if not applicable.
+     */
     @Nullable
     public Block getBlockBreaker() {
         return blockBreaker;
     }
 
+    /**
+     * Gets the reason for the scarecrow breakage.
+     *
+     * @return the reason for the break.
+     */
     @NotNull
     public BreakReason getReason() {
         return reason;
     }
 
+    /**
+     * Gets the state of the scarecrow block before it was broken.
+     *
+     * @return the block state of the scarecrow.
+     */
     @NotNull
     public CustomCropsBlockState getBlockState() {
         return blockState;
     }
 
+    /**
+     * Gets the item ID representing the scarecrow type being broken.
+     *
+     * @return the scarecrow item ID.
+     */
     public String getScarecrowItemID() {
         return scarecrowItemID;
     }

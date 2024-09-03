@@ -22,6 +22,11 @@ import net.momirealms.customcrops.api.action.ActionManager;
 import net.momirealms.customcrops.api.context.Context;
 import net.momirealms.customcrops.api.context.ContextKeys;
 import net.momirealms.customcrops.api.core.block.*;
+import net.momirealms.customcrops.api.core.mechanic.pot.PotConfig;
+import net.momirealms.customcrops.api.core.mechanic.crop.BoneMeal;
+import net.momirealms.customcrops.api.core.mechanic.crop.CropConfig;
+import net.momirealms.customcrops.api.core.mechanic.crop.CropStageConfig;
+import net.momirealms.customcrops.api.core.mechanic.sprinkler.SprinklerConfig;
 import net.momirealms.customcrops.api.core.world.CustomCropsBlockState;
 import net.momirealms.customcrops.api.core.world.CustomCropsWorld;
 import net.momirealms.customcrops.api.core.world.Pos3;
@@ -312,7 +317,7 @@ public abstract class AbstractCustomEventListener implements Listener {
                 if (point < cropConfig.maxPoints()) {
                     for (BoneMeal boneMeal : cropConfig.boneMeals()) {
                         if (boneMeal.isDispenserAllowed()) {
-                            if (EventUtils.fireAndCheckCancel(new BoneMealDispenseEvent(block, itemStack, location, boneMeal, state))) {
+                            if (EventUtils.fireAndCheckCancel(new BoneMealDispenseEvent(block, location, state, itemStack, boneMeal))) {
                                 event.setCancelled(true);
                                 return;
                             }

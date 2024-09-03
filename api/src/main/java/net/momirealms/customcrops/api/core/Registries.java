@@ -17,14 +17,14 @@
 
 package net.momirealms.customcrops.api.core;
 
-import net.momirealms.customcrops.api.core.block.CropConfig;
+import net.momirealms.customcrops.api.core.mechanic.crop.CropConfig;
 import net.momirealms.customcrops.api.core.block.CustomCropsBlock;
-import net.momirealms.customcrops.api.core.block.PotConfig;
-import net.momirealms.customcrops.api.core.block.SprinklerConfig;
+import net.momirealms.customcrops.api.core.mechanic.pot.PotConfig;
+import net.momirealms.customcrops.api.core.mechanic.sprinkler.SprinklerConfig;
 import net.momirealms.customcrops.api.core.item.CustomCropsItem;
-import net.momirealms.customcrops.api.core.item.FertilizerConfig;
-import net.momirealms.customcrops.api.core.item.FertilizerType;
-import net.momirealms.customcrops.api.core.item.WateringCanConfig;
+import net.momirealms.customcrops.api.core.mechanic.fertilizer.FertilizerConfig;
+import net.momirealms.customcrops.api.core.mechanic.fertilizer.FertilizerType;
+import net.momirealms.customcrops.api.core.mechanic.wateringcan.WateringCanConfig;
 import net.momirealms.customcrops.common.annotation.DoNotUse;
 import net.momirealms.customcrops.common.util.Key;
 import org.jetbrains.annotations.ApiStatus;

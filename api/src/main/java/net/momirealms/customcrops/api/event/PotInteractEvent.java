@@ -17,7 +17,7 @@
 
 package net.momirealms.customcrops.api.event;
 
-import net.momirealms.customcrops.api.core.block.PotConfig;
+import net.momirealms.customcrops.api.core.mechanic.pot.PotConfig;
 import net.momirealms.customcrops.api.core.world.CustomCropsBlockState;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -29,7 +29,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * This event is called when a player is interacting a pot
+ * This event is called when a player interacts with a pot in the CustomCrops plugin.
  */
 public class PotInteractEvent extends PlayerEvent implements Cancellable {
 
@@ -41,6 +41,16 @@ public class PotInteractEvent extends PlayerEvent implements Cancellable {
     private final PotConfig config;
     private final EquipmentSlot hand;
 
+    /**
+     * Constructor for the PotInteractEvent.
+     *
+     * @param who        The player who is interacting with the pot.
+     * @param hand       The hand (main or offhand) used by the player for the interaction.
+     * @param itemInHand The ItemStack representing the item in the player's hand.
+     * @param config     The configuration of the pot being interacted with.
+     * @param location   The location of the pot block being interacted with.
+     * @param blockState The state of the pot block at the time of interaction.
+     */
     public PotInteractEvent(
             @NotNull Player who,
             @NotNull EquipmentSlot hand,
@@ -57,21 +67,41 @@ public class PotInteractEvent extends PlayerEvent implements Cancellable {
         this.hand = hand;
     }
 
+    /**
+     * Returns whether the event is cancelled.
+     *
+     * @return true if the event is cancelled, false otherwise.
+     */
     @Override
     public boolean isCancelled() {
         return cancelled;
     }
 
+    /**
+     * Sets the cancelled state of the event.
+     *
+     * @param cancel true to cancel the event, false otherwise.
+     */
     @Override
     public void setCancelled(boolean cancel) {
         this.cancelled = cancel;
     }
 
+    /**
+     * Gets the list of handlers for this event.
+     *
+     * @return the static handler list.
+     */
     @NotNull
     public static HandlerList getHandlerList() {
         return handlers;
     }
 
+    /**
+     * Gets the list of handlers for this event instance.
+     *
+     * @return the handler list.
+     */
     @NotNull
     @Override
     public HandlerList getHandlers() {
@@ -79,25 +109,30 @@ public class PotInteractEvent extends PlayerEvent implements Cancellable {
     }
 
     /**
-     * Get the item in player's hand
-     * If there's nothing in hand, it would return AIR
+     * Gets the ItemStack representing the item in the player's hand.
+     * If there is nothing in hand, it would return AIR.
      *
-     * @return item in hand
+     * @return the item in hand.
      */
     @NotNull
     public ItemStack getItemInHand() {
         return itemInHand;
     }
 
+    /**
+     * Gets the hand (main or offhand) used by the player to interact with the pot.
+     *
+     * @return the equipment slot representing the hand used.
+     */
     @NotNull
     public EquipmentSlot getHand() {
         return hand;
     }
 
     /**
-     * Get the pot location
+     * Gets the location of the pot block being interacted with.
      *
-     * @return pot location
+     * @return the location of the pot.
      */
     @NotNull
     public Location getLocation() {
@@ -105,15 +140,20 @@ public class PotInteractEvent extends PlayerEvent implements Cancellable {
     }
 
     /**
-     * Get the pot's data
+     * Gets the state of the pot block at the time of interaction.
      *
-     * @return pot key
+     * @return the block state of the pot.
      */
     @NotNull
     public CustomCropsBlockState getBlockState() {
         return blockState;
     }
 
+    /**
+     * Gets the configuration of the pot being interacted with.
+     *
+     * @return the pot configuration.
+     */
     @NotNull
     public PotConfig getPotConfig() {
         return config;

@@ -17,8 +17,8 @@
 
 package net.momirealms.customcrops.api.event;
 
-import net.momirealms.customcrops.api.core.block.BoneMeal;
-import net.momirealms.customcrops.api.core.block.CropConfig;
+import net.momirealms.customcrops.api.core.mechanic.crop.BoneMeal;
+import net.momirealms.customcrops.api.core.mechanic.crop.CropConfig;
 import net.momirealms.customcrops.api.core.world.CustomCropsBlockState;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -30,7 +30,8 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * An event that triggered when a player interacts a crop with a bone meal
+ * The BoneMealUseEvent class represents an event triggered when a player uses bone meal
+ * on a custom crop block in the CustomCrops plugin.
  */
 public class BoneMealUseEvent extends PlayerEvent implements Cancellable {
 
@@ -43,6 +44,17 @@ public class BoneMealUseEvent extends PlayerEvent implements Cancellable {
     private final EquipmentSlot equipmentSlot;
     private final CropConfig config;
 
+    /**
+     * Constructor for the BoneMealUseEvent.
+     *
+     * @param player        The player who used the bone meal.
+     * @param itemInHand    The ItemStack representing the item in the player's hand.
+     * @param location      The location of the crop block affected by the bone meal.
+     * @param boneMeal      The BoneMeal configuration being applied.
+     * @param blockState    The state of the crop block before the bone meal is applied.
+     * @param equipmentSlot The equipment slot where the bone meal item is held.
+     * @param config        The crop configuration associated with the block being targeted.
+     */
     public BoneMealUseEvent(
             @NotNull Player player,
             @NotNull ItemStack itemInHand,
@@ -61,21 +73,41 @@ public class BoneMealUseEvent extends PlayerEvent implements Cancellable {
         this.config = config;
     }
 
+    /**
+     * Returns whether the event is cancelled.
+     *
+     * @return true if the event is cancelled, false otherwise.
+     */
     @Override
     public boolean isCancelled() {
         return cancelled;
     }
 
+    /**
+     * Sets the cancelled state of the event.
+     *
+     * @param cancel true to cancel the event, false otherwise.
+     */
     @Override
     public void setCancelled(boolean cancel) {
         this.cancelled = cancel;
     }
 
+    /**
+     * Gets the list of handlers for this event.
+     *
+     * @return the static handler list.
+     */
     @NotNull
     public static HandlerList getHandlerList() {
         return handlers;
     }
 
+    /**
+     * Gets the list of handlers for this event instance.
+     *
+     * @return the handler list.
+     */
     @NotNull
     @Override
     public HandlerList getHandlers() {
@@ -83,45 +115,60 @@ public class BoneMealUseEvent extends PlayerEvent implements Cancellable {
     }
 
     /**
-     * Get the crop location
+     * Gets the location of the crop block affected by the bone meal.
      *
-     * @return location
+     * @return the location of the crop block.
      */
     @NotNull
     public Location getLocation() {
         return location;
     }
 
+    /**
+     * Gets the crop configuration associated with the block being targeted.
+     *
+     * @return the crop configuration.
+     */
     @NotNull
     public CropConfig getConfig() {
         return config;
     }
 
     /**
-     * Get the item in player's hand
-     * If there's nothing in hand, it would return AIR
+     * Gets the ItemStack representing the item in the player's hand.
+     * If there is nothing in hand, it would return AIR.
      *
-     * @return item in hand
+     * @return the ItemStack in hand.
      */
     @NotNull
     public ItemStack getItemInHand() {
         return itemInHand;
     }
 
+    /**
+     * Gets the state of the crop block before the bone meal was applied.
+     *
+     * @return the block state of the crop.
+     */
     @NotNull
     public CustomCropsBlockState getBlockState() {
         return blockState;
     }
 
+    /**
+     * Gets the equipment slot where the bone meal item is held.
+     *
+     * @return the equipment slot.
+     */
     @NotNull
     public EquipmentSlot getEquipmentSlot() {
         return equipmentSlot;
     }
 
     /**
-     * Get the bone meal config
+     * Gets the configuration of the bone meal being used.
      *
-     * @return bone meal config
+     * @return the BoneMeal configuration.
      */
     @NotNull
     public BoneMeal getBoneMeal() {

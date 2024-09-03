@@ -17,7 +17,7 @@
 
 package net.momirealms.customcrops.api.event;
 
-import net.momirealms.customcrops.api.core.block.BoneMeal;
+import net.momirealms.customcrops.api.core.mechanic.crop.BoneMeal;
 import net.momirealms.customcrops.api.core.world.CustomCropsBlockState;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -28,7 +28,9 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * An event that triggered when the bone meal is dispensed
+ * The BoneMealDispenseEvent class represents an event that is triggered when a dispenser
+ * applies bone meal to a custom crop block in the CustomCrops plugin. This event allows
+ * for handling the action of bone meal being dispensed and applied to crops.
  */
 public class BoneMealDispenseEvent extends Event implements Cancellable {
 
@@ -40,12 +42,21 @@ public class BoneMealDispenseEvent extends Event implements Cancellable {
     private final ItemStack boneMealItem;
     private final Block dispenser;
 
+    /**
+     * Constructor for the BoneMealDispenseEvent.
+     *
+     * @param dispenser    The dispenser block that dispensed the bone meal.
+     * @param location     The location of the crop block affected by the bone meal.
+     * @param blockState   The state of the crop block before the bone meal is applied.
+     * @param boneMealItem The ItemStack representing the bone meal item used.
+     * @param boneMeal     The BoneMeal configuration being used.
+     */
     public BoneMealDispenseEvent(
             @NotNull Block dispenser,
-            @NotNull ItemStack boneMealItem,
             @NotNull Location location,
-            @NotNull BoneMeal boneMeal,
-            @NotNull CustomCropsBlockState blockState
+            @NotNull CustomCropsBlockState blockState,
+            @NotNull ItemStack boneMealItem,
+            @NotNull BoneMeal boneMeal
     ) {
         this.location = location;
         this.blockState = blockState;
@@ -54,21 +65,41 @@ public class BoneMealDispenseEvent extends Event implements Cancellable {
         this.dispenser = dispenser;
     }
 
+    /**
+     * Returns whether the event is cancelled.
+     *
+     * @return true if the event is cancelled, false otherwise.
+     */
     @Override
     public boolean isCancelled() {
         return cancelled;
     }
 
+    /**
+     * Sets the cancelled state of the event.
+     *
+     * @param cancel true to cancel the event, false otherwise.
+     */
     @Override
     public void setCancelled(boolean cancel) {
         this.cancelled = cancel;
     }
 
+    /**
+     * Gets the list of handlers for this event.
+     *
+     * @return the static handler list.
+     */
     @NotNull
     public static HandlerList getHandlerList() {
         return handlers;
     }
 
+    /**
+     * Gets the list of handlers for this event instance.
+     *
+     * @return the handler list.
+     */
     @NotNull
     @Override
     public HandlerList getHandlers() {
@@ -76,8 +107,9 @@ public class BoneMealDispenseEvent extends Event implements Cancellable {
     }
 
     /**
-     * Get the crop location
-     * @return location
+     * Gets the location of the crop block affected by the bone meal.
+     *
+     * @return the location of the crop block.
      */
     @NotNull
     public Location getLocation() {
@@ -85,24 +117,29 @@ public class BoneMealDispenseEvent extends Event implements Cancellable {
     }
 
     /**
-     * Get the item in player's hand
-     * If there's nothing in hand, it would return AIR
-     * @return item in hand
+     * Gets the ItemStack representing the bone meal item used.
+     *
+     * @return the ItemStack of bone meal.
      */
     @NotNull
     public ItemStack getBoneMealItem() {
         return boneMealItem;
     }
 
+    /**
+     * Gets the state of the crop block before the bone meal was applied.
+     *
+     * @return the block state of the crop.
+     */
     @NotNull
     public CustomCropsBlockState getBlockState() {
         return blockState;
     }
 
     /**
-     * Get the bone meal's config
+     * Gets the configuration of the bone meal being used.
      *
-     * @return bone meal config
+     * @return the BoneMeal configuration.
      */
     @NotNull
     public BoneMeal getBoneMeal() {
@@ -110,9 +147,9 @@ public class BoneMealDispenseEvent extends Event implements Cancellable {
     }
 
     /**
-     * Get the dispenser block
+     * Gets the dispenser block that dispensed the bone meal.
      *
-     * @return dispenser block
+     * @return the dispenser block.
      */
     @NotNull
     public Block getDispenser() {

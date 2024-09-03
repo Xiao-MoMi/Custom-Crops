@@ -18,7 +18,7 @@
 package net.momirealms.customcrops.api.event;
 
 import net.momirealms.customcrops.api.core.block.BreakReason;
-import net.momirealms.customcrops.api.core.block.CropConfig;
+import net.momirealms.customcrops.api.core.mechanic.crop.CropConfig;
 import net.momirealms.customcrops.api.core.world.CustomCropsBlockState;
 import org.bukkit.Location;
 import org.bukkit.block.Block;

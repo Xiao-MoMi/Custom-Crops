@@ -18,7 +18,7 @@
 package net.momirealms.customcrops.api.event;
 
 import net.momirealms.customcrops.api.core.block.BreakReason;
-import net.momirealms.customcrops.api.core.block.SprinklerConfig;
+import net.momirealms.customcrops.api.core.mechanic.sprinkler.SprinklerConfig;
 import net.momirealms.customcrops.api.core.world.CustomCropsBlockState;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -30,7 +30,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * An event that triggered when breaking a sprinkler
+ * An event that is triggered when a sprinkler is broken in the CustomCrops plugin.
  */
 public class SprinklerBreakEvent extends Event implements Cancellable {
 
@@ -43,6 +43,16 @@ public class SprinklerBreakEvent extends Event implements Cancellable {
     private final Block blockBreaker;
     private final BreakReason reason;
 
+    /**
+     * Constructor for the SprinklerBreakEvent.
+     *
+     * @param entityBreaker The entity that caused the sprinkler to break, if applicable (can be null).
+     * @param blockBreaker  The block that caused the sprinkler to break, if applicable (can be null).
+     * @param location      The location of the sprinkler being broken.
+     * @param blockState    The state of the sprinkler block before it was broken.
+     * @param config        The configuration of the sprinkler being broken.
+     * @param reason        The reason why the sprinkler was broken.
+     */
     public SprinklerBreakEvent(
             @Nullable Entity entityBreaker,
             @Nullable Block blockBreaker,
@@ -59,21 +69,41 @@ public class SprinklerBreakEvent extends Event implements Cancellable {
         this.blockState = blockState;
     }
 
+    /**
+     * Returns whether the event is cancelled.
+     *
+     * @return true if the event is cancelled, false otherwise.
+     */
     @Override
     public boolean isCancelled() {
         return cancelled;
     }
 
+    /**
+     * Sets the cancelled state of the event.
+     *
+     * @param cancel true to cancel the event, false otherwise.
+     */
     @Override
     public void setCancelled(boolean cancel) {
         this.cancelled = cancel;
     }
 
+    /**
+     * Gets the list of handlers for this event.
+     *
+     * @return the static handler list.
+     */
     @NotNull
     public static HandlerList getHandlerList() {
         return handlers;
     }
 
+    /**
+     * Gets the list of handlers for this event instance.
+     *
+     * @return the handler list.
+     */
     @NotNull
     @Override
     public HandlerList getHandlers() {
@@ -81,35 +111,60 @@ public class SprinklerBreakEvent extends Event implements Cancellable {
     }
 
     /**
-     * Get the sprinkler location
+     * Gets the location of the sprinkler being broken.
      *
-     * @return location
+     * @return the location of the sprinkler.
      */
     @NotNull
     public Location getLocation() {
         return location;
     }
 
+    /**
+     * Gets the entity responsible for breaking the sprinkler, if applicable.
+     *
+     * @return the entity that caused the break, or null if not applicable.
+     */
     @Nullable
     public Entity getEntityBreaker() {
         return entityBreaker;
     }
 
+    /**
+     * Gets the state of the sprinkler block before it was broken.
+     *
+     * @return the block state of the sprinkler.
+     */
     @NotNull
     public CustomCropsBlockState getBlockState() {
         return blockState;
     }
 
+    /**
+     * Gets the configuration of the sprinkler being broken.
+     *
+     * @return the sprinkler configuration.
+     */
     @NotNull
     public SprinklerConfig getSprinklerConfig() {
         return config;
     }
 
+    /**
+     * Gets the block responsible for breaking the sprinkler, if applicable.
+     *
+     * @return the block that caused the break, or null if not applicable.
+     */
     @Nullable
     public Block getBlockBreaker() {
         return blockBreaker;
     }
 
+    /**
+     * Gets the reason for the sprinkler breakage.
+     *
+     * @return the reason for the break.
+     */
     @NotNull
     public BreakReason getReason() {
         return reason;

@@ -22,25 +22,48 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * An event that is triggered when the CustomCrops plugin is reloaded.
+ */
 public class CustomCropsReloadEvent extends Event {
 
     private static final HandlerList handlerList = new HandlerList();
     private final BukkitCustomCropsPlugin plugin;
 
+    /**
+     * Constructor for the CustomCropsReloadEvent.
+     *
+     * @param plugin The instance of the CustomCrops plugin being reloaded.
+     */
     public CustomCropsReloadEvent(BukkitCustomCropsPlugin plugin) {
         this.plugin = plugin;
     }
 
+    /**
+     * Gets the list of handlers for this event.
+     *
+     * @return the static handler list.
+     */
     public static HandlerList getHandlerList() {
         return handlerList;
     }
 
+    /**
+     * Gets the list of handlers for this event instance.
+     *
+     * @return the handler list.
+     */
     @NotNull
     @Override
     public HandlerList getHandlers() {
         return getHandlerList();
     }
 
+    /**
+     * Gets the instance of the CustomCrops plugin that is being reloaded.
+     *
+     * @return the plugin instance.
+     */
     public BukkitCustomCropsPlugin getPluginInstance() {
         return plugin;
     }
