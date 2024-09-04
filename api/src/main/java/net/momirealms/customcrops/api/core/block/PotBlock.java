@@ -18,6 +18,7 @@
 package net.momirealms.customcrops.api.core.block;
 
 import com.flowpowered.nbt.*;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.momirealms.customcrops.api.BukkitCustomCropsPlugin;
 import net.momirealms.customcrops.api.action.ActionManager;
 import net.momirealms.customcrops.api.context.Context;
@@ -637,5 +638,10 @@ public class PotBlock extends AbstractCustomCropsBlock {
         tag.put(new IntTag("times", fertilizer.times()));
         tag.put(new StringTag("id", fertilizer.id()));
         return tag;
+    }
+
+    @Override
+    public NamedTextColor insightColor() {
+        return NamedTextColor.LIGHT_PURPLE;
     }
 }

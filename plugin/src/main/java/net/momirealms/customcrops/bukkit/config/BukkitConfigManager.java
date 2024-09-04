@@ -143,6 +143,13 @@ public class BukkitConfigManager extends ConfigManager {
                 }
             }
         }
+
+        for (String id : scarecrow) {
+            Registries.BLOCKS.register(id, BuiltInBlockMechanics.SCARECROW.mechanic());
+        }
+        for (String id : greenhouse) {
+            Registries.BLOCKS.register(id, BuiltInBlockMechanics.GREENHOUSE.mechanic());
+        }
     }
 
     @Override

@@ -19,6 +19,7 @@ package net.momirealms.customcrops.api.core.block;
 
 import com.flowpowered.nbt.IntTag;
 import com.flowpowered.nbt.Tag;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.momirealms.customcrops.api.BukkitCustomCropsPlugin;
 import net.momirealms.customcrops.api.action.ActionManager;
 import net.momirealms.customcrops.api.context.Context;
@@ -358,5 +359,10 @@ public class SprinklerBlock extends AbstractCustomCropsBlock {
     public void updateBlockAppearance(Location location, SprinklerConfig config, boolean hasWater) {
         FurnitureRotation rotation = BukkitCustomCropsPlugin.getInstance().getItemManager().remove(location, ExistenceForm.ANY);
         BukkitCustomCropsPlugin.getInstance().getItemManager().place(location, config.existenceForm(), hasWater ? config.threeDItemWithWater() : config.threeDItem(), rotation);
+    }
+
+    @Override
+    public NamedTextColor insightColor() {
+        return NamedTextColor.AQUA;
     }
 }

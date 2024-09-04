@@ -137,6 +137,11 @@ public class CustomCropsWorldImpl<W> implements CustomCropsWorld<W> {
         return loadedChunks.values().toArray(new CustomCropsChunk[0]);
     }
 
+    @Override
+    public CustomCropsChunk[] lazyChunks() {
+        return lazyChunks.values().toArray(new CustomCropsChunk[0]);
+    }
+
     @NotNull
     @Override
     public Optional<CustomCropsBlockState> getBlockState(Pos3 location) {

@@ -18,6 +18,7 @@
 package net.momirealms.customcrops.api.core.block;
 
 import com.flowpowered.nbt.IntTag;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.momirealms.customcrops.api.BukkitCustomCropsPlugin;
 import net.momirealms.customcrops.api.action.ActionManager;
 import net.momirealms.customcrops.api.context.Context;
@@ -385,5 +386,10 @@ public class CropBlock extends AbstractCustomCropsBlock {
 
     public CropConfig config(CustomCropsBlockState state) {
         return Registries.CROP.get(id(state));
+    }
+
+    @Override
+    public NamedTextColor insightColor() {
+        return NamedTextColor.GREEN;
     }
 }

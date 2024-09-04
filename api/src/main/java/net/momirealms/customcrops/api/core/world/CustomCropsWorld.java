@@ -150,6 +150,13 @@ public interface CustomCropsWorld<W> {
     CustomCropsChunk[] loadedChunks();
 
     /**
+     * Gets all the lazy chunks in this world.
+     *
+     * @return An array of {@link CustomCropsChunk} representing the lazy chunks.
+     */
+    CustomCropsChunk[] lazyChunks();
+
+    /**
      * Gets the block state at a specific location.
      *
      * @param location The location of the block state.

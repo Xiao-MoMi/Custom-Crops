@@ -18,6 +18,7 @@
 package net.momirealms.customcrops.api.core.block;
 
 import com.flowpowered.nbt.CompoundMap;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.momirealms.customcrops.api.core.world.CustomCropsBlockState;
 import net.momirealms.customcrops.api.core.world.CustomCropsWorld;
 import net.momirealms.customcrops.api.core.world.Pos3;
@@ -45,4 +46,6 @@ public interface CustomCropsBlock {
     void onPlace(WrappedPlaceEvent event);
 
     boolean isBlockInstance(String id);
+
+    NamedTextColor insightColor();
 }

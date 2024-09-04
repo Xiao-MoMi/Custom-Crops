@@ -17,6 +17,7 @@
 
 package net.momirealms.customcrops.api.core.block;
 
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.momirealms.customcrops.api.BukkitCustomCropsPlugin;
 import net.momirealms.customcrops.api.core.BuiltInBlockMechanics;
 import net.momirealms.customcrops.api.core.ConfigManager;
@@ -114,5 +115,10 @@ public class ScarecrowBlock extends AbstractCustomCropsBlock {
             );
         });
         return state;
+    }
+
+    @Override
+    public NamedTextColor insightColor() {
+        return NamedTextColor.YELLOW;
     }
 }

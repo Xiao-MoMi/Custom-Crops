@@ -21,6 +21,7 @@ import com.flowpowered.nbt.CompoundMap;
 import com.flowpowered.nbt.IntTag;
 import com.flowpowered.nbt.StringTag;
 import com.flowpowered.nbt.Tag;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.momirealms.customcrops.api.core.world.CustomCropsBlockState;
 import net.momirealms.customcrops.api.core.world.CustomCropsWorld;
 import net.momirealms.customcrops.api.core.world.Pos3;
@@ -95,5 +96,10 @@ public abstract class AbstractCustomCropsBlock implements CustomCropsBlock {
 
     @Override
     public void onPlace(WrappedPlaceEvent event) {
+    }
+
+    @Override
+    public NamedTextColor insightColor() {
+        return NamedTextColor.WHITE;
     }
 }

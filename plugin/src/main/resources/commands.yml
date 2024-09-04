@@ -51,6 +51,20 @@ debug_data:
     - /customcrops debug data
     - /ccrops debug data
 
+debug_worlds:
+  enable: true
+  permission: customcrops.command.debug
+  usage:
+    - /customcrops debug worlds
+    - /ccrops debug worlds
+
+debug_insight:
+  enable: true
+  permission: customcrops.command.debug
+  usage:
+    - /customcrops debug insight
+    - /ccrops debug insight
+
 force_tick:
   enable: true
   permission: customcrops.command.force_tick
