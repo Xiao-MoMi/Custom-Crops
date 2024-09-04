@@ -372,14 +372,16 @@ public abstract class ConfigManager implements ConfigLoader, Reloadable {
     public HashMap<FertilizerType, Pair<String, String>> getFertilizedPotMap(Section section) {
         HashMap<FertilizerType, Pair<String, String>> map = new HashMap<>();
         if (section != null) {
-            for (Map.Entry<String, Object> entry : section.getStringRouteMappedValues(false).entrySet()) {
-                if (entry.getValue() instanceof Section innerSection) {
-                    FertilizerType type = Registries.FERTILIZER_TYPE.get(entry.getKey().replace("-", "_"));
-                    if (type != null) {
-                        map.put(type, Pair.of(
-                                Preconditions.checkNotNull(innerSection.getString("dry"), entry.getKey() + ".dry should not be null"),
-                                Preconditions.checkNotNull(innerSection.getString("wet"), entry.getKey() + ".wet should not be null")
-                        ));
+            if (section.getBoolean("enable")) {
+                for (Map.Entry<String, Object> entry : section.getStringRouteMappedValues(false).entrySet()) {
+                    if (entry.getValue() instanceof Section innerSection) {
+                        FertilizerType type = Registries.FERTILIZER_TYPE.get(entry.getKey().replace("-", "_"));
+                        if (type != null) {
+                            map.put(type, Pair.of(
+                                    Preconditions.checkNotNull(innerSection.getString("dry"), entry.getKey() + ".dry should not be null"),
+                                    Preconditions.checkNotNull(innerSection.getString("wet"), entry.getKey() + ".wet should not be null")
+                            ));
+                        }
                     }
                 }
             }
