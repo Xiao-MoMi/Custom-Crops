@@ -25,6 +25,9 @@ import net.momirealms.customcrops.api.integration.SeasonProvider;
 import net.momirealms.customcrops.bukkit.integration.item.*;
 import net.momirealms.customcrops.bukkit.integration.level.*;
 import net.momirealms.customcrops.bukkit.integration.papi.CustomCropsPapi;
+import net.momirealms.customcrops.bukkit.integration.quest.BattlePassQuest;
+import net.momirealms.customcrops.bukkit.integration.quest.BetonQuestQuest;
+import net.momirealms.customcrops.bukkit.integration.quest.ClueScrollsQuest;
 import net.momirealms.customcrops.bukkit.integration.season.AdvancedSeasonsProvider;
 import net.momirealms.customcrops.bukkit.integration.season.RealisticSeasonsProvider;
 import net.momirealms.customcrops.bukkit.item.BukkitItemManager;
@@ -103,6 +106,17 @@ public class BukkitIntegrationManager implements IntegrationManager {
         }
         if (isHooked("PlaceholderAPI")) {
             new CustomCropsPapi(plugin).load();
+        }
+        if (isHooked("BattlePass")){
+            BattlePassQuest battlePassQuest = new BattlePassQuest();
+            battlePassQuest.register();
+        }
+        if (isHooked("ClueScrolls")) {
+            ClueScrollsQuest clueScrollsQuest = new ClueScrollsQuest();
+            clueScrollsQuest.register();
+        }
+        if (isHooked("BetonQuest", "2")) {
+            BetonQuestQuest.register();
         }
     }
 

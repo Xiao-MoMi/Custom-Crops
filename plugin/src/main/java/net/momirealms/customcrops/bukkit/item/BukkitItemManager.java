@@ -32,6 +32,7 @@ import net.momirealms.customcrops.api.core.wrapper.WrappedBreakEvent;
 import net.momirealms.customcrops.api.core.wrapper.WrappedInteractAirEvent;
 import net.momirealms.customcrops.api.core.wrapper.WrappedInteractEvent;
 import net.momirealms.customcrops.api.core.wrapper.WrappedPlaceEvent;
+import net.momirealms.customcrops.api.integration.ExternalProvider;
 import net.momirealms.customcrops.api.integration.ItemProvider;
 import net.momirealms.customcrops.api.util.EventUtils;
 import net.momirealms.customcrops.api.util.LocationUtils;
@@ -92,6 +93,10 @@ public class BukkitItemManager extends AbstractItemManager {
     @Override
     public void load() {
         this.resetItemDetectionOrder();
+        for (ItemProvider provider : itemProviders.values()) {
+            plugin.debug("Registered ItemProvider: " + provider.identifier());
+        }
+        plugin.debug("Item order: " + Arrays.toString(Arrays.stream(itemDetectArray).map(ExternalProvider::identifier).toList().toArray(new String[0])));
     }
 
     @Override

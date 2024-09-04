@@ -151,7 +151,7 @@ public class CropBreakEvent extends Event implements Cancellable {
      *
      * @return the block state before breakage, or null if not applicable.
      */
-    @Nullable
+    @NotNull
     public CustomCropsBlockState getBlockState() {
         return blockState;
     }
