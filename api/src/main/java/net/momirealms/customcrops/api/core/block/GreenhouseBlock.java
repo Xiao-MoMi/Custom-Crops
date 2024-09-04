@@ -17,7 +17,7 @@
 
 package net.momirealms.customcrops.api.core.block;
 
-import net.kyori.adventure.text.format.NamedTextColor;
+import net.momirealms.customcrops.api.misc.NamedTextColor;
 import net.momirealms.customcrops.api.BukkitCustomCropsPlugin;
 import net.momirealms.customcrops.api.core.BuiltInBlockMechanics;
 import net.momirealms.customcrops.api.core.ConfigManager;

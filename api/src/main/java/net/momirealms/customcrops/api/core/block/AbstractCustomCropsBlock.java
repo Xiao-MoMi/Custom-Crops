@@ -21,13 +21,13 @@ import com.flowpowered.nbt.CompoundMap;
 import com.flowpowered.nbt.IntTag;
 import com.flowpowered.nbt.StringTag;
 import com.flowpowered.nbt.Tag;
-import net.kyori.adventure.text.format.NamedTextColor;
 import net.momirealms.customcrops.api.core.world.CustomCropsBlockState;
 import net.momirealms.customcrops.api.core.world.CustomCropsWorld;
 import net.momirealms.customcrops.api.core.world.Pos3;
 import net.momirealms.customcrops.api.core.wrapper.WrappedBreakEvent;
 import net.momirealms.customcrops.api.core.wrapper.WrappedInteractEvent;
 import net.momirealms.customcrops.api.core.wrapper.WrappedPlaceEvent;
+import net.momirealms.customcrops.api.misc.NamedTextColor;
 import net.momirealms.customcrops.common.util.Key;
 
 public abstract class AbstractCustomCropsBlock implements CustomCropsBlock {

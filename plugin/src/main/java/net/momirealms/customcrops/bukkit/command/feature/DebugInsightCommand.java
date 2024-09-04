@@ -167,18 +167,18 @@ public class DebugInsightCommand extends BukkitCommandFeature<CommandSender> imp
                     if (!highlightCache.containsKey(pos)) {
                         customCropsWorld.getChunk(pos).ifPresentOrElse(cropsChunk -> {
                             ArrayList<HighlightBlocks> highlightBlockList = new ArrayList<>();
-                            HashMap<net.kyori.adventure.text.format.NamedTextColor, List<Location>> blockMap = new HashMap<>();
+                            HashMap<net.momirealms.customcrops.api.misc.NamedTextColor, List<Location>> blockMap = new HashMap<>();
                             for (CustomCropsSection section : cropsChunk.sections()) {
                                 for (Map.Entry<BlockPos, CustomCropsBlockState> entry : section.blockMap().entrySet()) {
-                                    net.kyori.adventure.text.format.NamedTextColor namedTextColor = entry.getValue().type().insightColor();
+                                    net.momirealms.customcrops.api.misc.NamedTextColor namedTextColor = entry.getValue().type().insightColor();
                                     Location location = LocationUtils.toSurfaceCenterLocation(entry.getKey().toPos3(pos).toLocation(world));
                                     List<Location> locations = blockMap.computeIfAbsent(namedTextColor, k -> new ArrayList<>());
                                     locations.add(location);
                                 }
                             }
-                            for (Map.Entry<net.kyori.adventure.text.format.NamedTextColor, List<Location>> entry : blockMap.entrySet()) {
+                            for (Map.Entry<net.momirealms.customcrops.api.misc.NamedTextColor, List<Location>> entry : blockMap.entrySet()) {
                                 highlightBlockList.add(SparrowHeart.getInstance().highlightBlocks(
-                                        player, NamedTextColor.namedColor(entry.getKey().value()), entry.getValue().toArray(new Location[0])
+                                        player, NamedTextColor.namedColor(entry.getKey().getValue()), entry.getValue().toArray(new Location[0])
                                 ));
                             }
                             highlightCache.put(pos, highlightBlockList.toArray(new HighlightBlocks[0]));
