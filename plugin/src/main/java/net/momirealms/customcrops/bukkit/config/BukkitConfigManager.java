@@ -38,7 +38,6 @@ import net.momirealms.customcrops.api.core.mechanic.pot.PotConfig;
 import net.momirealms.customcrops.api.core.mechanic.sprinkler.SprinklerConfig;
 import net.momirealms.customcrops.api.core.mechanic.wateringcan.WateringCanConfig;
 import net.momirealms.customcrops.common.helper.AdventureHelper;
-import net.momirealms.customcrops.common.helper.VersionHelper;
 import net.momirealms.customcrops.common.locale.TranslationManager;
 import net.momirealms.customcrops.common.plugin.CustomCropsProperties;
 import net.momirealms.customcrops.common.util.ListUtils;
@@ -52,10 +51,6 @@ import java.util.*;
 
 public class BukkitConfigManager extends ConfigManager {
 
-    private static final Set<Material> VANILLA_CROPS = new HashSet<>(
-            List.of(Material.WHEAT, Material.CARROTS, Material.POTATOES, Material.BEETROOTS, Material.SWEET_BERRY_BUSH,
-                    Material.MELON_STEM, Material.PUMPKIN_STEM)
-    );
     private static YamlDocument MAIN_CONFIG;
     public static YamlDocument getMainConfig() {
         return MAIN_CONFIG;
@@ -63,12 +58,6 @@ public class BukkitConfigManager extends ConfigManager {
 
     public BukkitConfigManager(BukkitCustomCropsPlugin plugin) {
         super(plugin);
-        if (VersionHelper.isVersionNewerThan1_19_4()) {
-            VANILLA_CROPS.add(Material.TORCHFLOWER_CROP);
-        }
-        if (VersionHelper.isVersionNewerThan1_20()) {
-            VANILLA_CROPS.add(Material.PITCHER_CROP);
-        }
     }
 
     @Override
@@ -168,7 +157,7 @@ public class BukkitConfigManager extends ConfigManager {
         }
 
         overriddenCrops.clear();
-        overriddenCrops.addAll(config.getStringList("mechanics.override-vanilla-crops")
+        overriddenCrops.addAll(config.getStringList("mechanics.override-vanilla-blocks")
                 .stream()
                 .map(it -> {
                     try {
@@ -180,11 +169,7 @@ public class BukkitConfigManager extends ConfigManager {
                 })
                 .filter(it -> {
                     if (it == Material.AIR) return false;
-                    boolean allow = VANILLA_CROPS.contains(it);
-                    if (!allow) {
-                        plugin.getPluginLogger().warn(it.name() + " is not a supported vanilla crop type");
-                    }
-                    return allow;
+                    return it.isBlock();
                 })
                 .toList());
     }

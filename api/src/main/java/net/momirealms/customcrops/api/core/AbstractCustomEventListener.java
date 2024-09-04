@@ -114,7 +114,11 @@ public abstract class AbstractCustomEventListener implements Listener {
             return;
         }
         ItemStack itemStack = event.getItem();
-        if (itemStack != null && itemStack.getType() == Material.BONE_MEAL && ConfigManager.overriddenCrops().contains(type)) {
+        // Paper API
+        // prevents player from using bone meals
+        if (itemStack != null && itemStack.getType() == Material.BONE_MEAL
+                && ConfigManager.overriddenCrops().contains(type)
+                && ConfigManager.VANILLA_CROPS.contains(type)) {
             event.setUseItemInHand(Event.Result.DENY);
         }
         this.itemManager.handlePlayerInteractBlock(

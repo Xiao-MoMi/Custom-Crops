@@ -26,6 +26,7 @@ import net.momirealms.customcrops.api.misc.water.FillMethod;
 import net.momirealms.customcrops.api.misc.water.WateringMethod;
 import net.momirealms.customcrops.api.util.PluginUtils;
 import net.momirealms.customcrops.common.config.ConfigLoader;
+import net.momirealms.customcrops.common.helper.VersionHelper;
 import net.momirealms.customcrops.common.plugin.feature.Reloadable;
 import net.momirealms.customcrops.common.util.Pair;
 import org.bukkit.Material;
@@ -38,6 +39,23 @@ import java.nio.file.Path;
 import java.util.*;
 
 public abstract class ConfigManager implements ConfigLoader, Reloadable {
+
+    public static final Set<Material> VANILLA_CROPS;
+
+    static {
+        HashSet<Material> set = new HashSet<>(
+                List.of(Material.WHEAT, Material.CARROTS, Material.POTATOES, Material.BEETROOTS, Material.SWEET_BERRY_BUSH,
+                        Material.MELON_STEM, Material.PUMPKIN_STEM)
+        );
+        if (VersionHelper.isVersionNewerThan1_19_4()) {
+            set.add(Material.TORCHFLOWER_CROP);
+        }
+        if (VersionHelper.isVersionNewerThan1_20()) {
+            set.add(Material.PITCHER_CROP);
+        }
+        VANILLA_CROPS = Collections.unmodifiableSet(set);
+    }
+
 
     private static ConfigManager instance;
     protected final BukkitCustomCropsPlugin plugin;
