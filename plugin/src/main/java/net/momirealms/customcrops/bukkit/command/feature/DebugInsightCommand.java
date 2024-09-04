@@ -87,7 +87,12 @@ public class DebugInsightCommand extends BukkitCommandFeature<CommandSender> {
         @Override
         public void run() {
             Player player = Bukkit.getPlayer(uuid);
-            if (player == null || !player.isOnline() || !player.hasMetadata("customcrops:insight")) {
+            if (player == null || !player.isOnline()) {
+                task.cancel();
+                highlightCache.clear();
+                return;
+            }
+            if (!player.hasMetadata("customcrops:insight")) {
                 for (HighlightBlocks[] blocks : highlightCache.values()) {
                     for (HighlightBlocks block : blocks) {
                         block.destroy(player);
