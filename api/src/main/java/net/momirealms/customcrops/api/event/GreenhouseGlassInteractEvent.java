@@ -113,7 +113,7 @@ public class GreenhouseGlassInteractEvent extends PlayerEvent implements Cancell
      * @return the location of the glass block.
      */
     @NotNull
-    public Location getLocation() {
+    public Location location() {
         return location;
     }
 
@@ -123,7 +123,7 @@ public class GreenhouseGlassInteractEvent extends PlayerEvent implements Cancell
      * @return the block state of the glass.
      */
     @NotNull
-    public CustomCropsBlockState getBlockState() {
+    public CustomCropsBlockState blockState() {
         return blockState;
     }
 
@@ -133,7 +133,7 @@ public class GreenhouseGlassInteractEvent extends PlayerEvent implements Cancell
      * @return the equipment slot representing the hand used.
      */
     @NotNull
-    public EquipmentSlot getHand() {
+    public EquipmentSlot hand() {
         return hand;
     }
 
@@ -143,7 +143,7 @@ public class GreenhouseGlassInteractEvent extends PlayerEvent implements Cancell
      * @return the glass item ID.
      */
     @NotNull
-    public String getGlassItemID() {
+    public String glassItemID() {
         return glassItemID;
     }
 
@@ -153,7 +153,7 @@ public class GreenhouseGlassInteractEvent extends PlayerEvent implements Cancell
      * @return the item in hand.
      */
     @NotNull
-    public ItemStack getItemInHand() {
+    public ItemStack itemInHand() {
         return itemInHand;
     }
 }

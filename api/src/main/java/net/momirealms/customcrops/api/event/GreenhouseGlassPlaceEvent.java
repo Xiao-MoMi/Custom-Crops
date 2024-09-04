@@ -103,7 +103,7 @@ public class GreenhouseGlassPlaceEvent extends PlayerEvent implements Cancellabl
      * @return the location of the glass block.
      */
     @NotNull
-    public Location getLocation() {
+    public Location location() {
         return location;
     }
 
@@ -113,7 +113,7 @@ public class GreenhouseGlassPlaceEvent extends PlayerEvent implements Cancellabl
      * @return the block state of the glass.
      */
     @NotNull
-    public CustomCropsBlockState getBlockState() {
+    public CustomCropsBlockState blockState() {
         return blockState;
     }
 
@@ -123,7 +123,7 @@ public class GreenhouseGlassPlaceEvent extends PlayerEvent implements Cancellabl
      * @return the glass item ID.
      */
     @NotNull
-    public String getGlassItemID() {
+    public String glassItemID() {
         return glassItemID;
     }
 }

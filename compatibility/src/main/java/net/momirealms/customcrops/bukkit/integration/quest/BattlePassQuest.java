@@ -55,9 +55,9 @@ public class BattlePassQuest implements Listener {
 
         @EventHandler (ignoreCancelled = true)
         public void onBreakCrop(CropBreakEvent event) {
-            Entity entity = event.getEntityBreaker();
+            Entity entity = event.entityBreaker();
             if (!(entity instanceof Player player)) return;
-            String id = event.getStageItemID();
+            String id = event.cropStageItemID();
             // remove namespace
             if (id.contains(":")) {
                 id = id.split(":")[1];
@@ -76,7 +76,7 @@ public class BattlePassQuest implements Listener {
             // Plant crops
             this.executionBuilder("plant")
                     .player(player)
-                    .root(event.getCropConfig().id())
+                    .root(event.cropConfig().id())
                     .progress(1)
                     .buildAndExecute();
         }

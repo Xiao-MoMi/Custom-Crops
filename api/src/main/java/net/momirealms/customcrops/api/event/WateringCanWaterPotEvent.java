@@ -117,7 +117,7 @@ public class WateringCanWaterPotEvent extends PlayerEvent implements Cancellable
      * @return the watering can item.
      */
     @NotNull
-    public ItemStack getItemInHand() {
+    public ItemStack itemInHand() {
         return itemInHand;
     }
 
@@ -127,7 +127,7 @@ public class WateringCanWaterPotEvent extends PlayerEvent implements Cancellable
      * @return the equipment slot representing the hand used.
      */
     @NotNull
-    public EquipmentSlot getHand() {
+    public EquipmentSlot hand() {
         return hand;
     }
 
@@ -137,7 +137,7 @@ public class WateringCanWaterPotEvent extends PlayerEvent implements Cancellable
      * @return the watering can configuration.
      */
     @NotNull
-    public WateringCanConfig getWateringCanConfig() {
+    public WateringCanConfig wateringCanConfig() {
         return wateringCanConfig;
     }
 
@@ -147,7 +147,7 @@ public class WateringCanWaterPotEvent extends PlayerEvent implements Cancellable
      * @return the pot configuration.
      */
     @NotNull
-    public PotConfig getPotConfig() {
+    public PotConfig potConfig() {
         return potConfig;
     }
 
@@ -157,7 +157,7 @@ public class WateringCanWaterPotEvent extends PlayerEvent implements Cancellable
      * @return the list of pots with positions and IDs.
      */
     @NotNull
-    public List<Pair<Pos3, String>> getPotWithIDs() {
+    public List<Pair<Pos3, String>> pots() {
         return potWithIDs;
     }
 }

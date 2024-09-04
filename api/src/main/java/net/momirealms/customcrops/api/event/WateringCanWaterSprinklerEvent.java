@@ -119,7 +119,7 @@ public class WateringCanWaterSprinklerEvent extends PlayerEvent implements Cance
      * @return the watering can item.
      */
     @NotNull
-    public ItemStack getItemInHand() {
+    public ItemStack itemInHand() {
         return itemInHand;
     }
 
@@ -129,7 +129,7 @@ public class WateringCanWaterSprinklerEvent extends PlayerEvent implements Cance
      * @return the equipment slot representing the hand used.
      */
     @NotNull
-    public EquipmentSlot getHand() {
+    public EquipmentSlot hand() {
         return hand;
     }
 
@@ -139,7 +139,7 @@ public class WateringCanWaterSprinklerEvent extends PlayerEvent implements Cance
      * @return the watering can configuration.
      */
     @NotNull
-    public WateringCanConfig getWateringCanConfig() {
+    public WateringCanConfig wateringCanConfig() {
         return wateringCanConfig;
     }
 
@@ -149,7 +149,7 @@ public class WateringCanWaterSprinklerEvent extends PlayerEvent implements Cance
      * @return the sprinkler configuration.
      */
     @NotNull
-    public SprinklerConfig getSprinklerConfig() {
+    public SprinklerConfig sprinklerConfig() {
         return sprinklerConfig;
     }
 
@@ -159,7 +159,7 @@ public class WateringCanWaterSprinklerEvent extends PlayerEvent implements Cance
      * @return the block state of the sprinkler.
      */
     @NotNull
-    public CustomCropsBlockState getBlockState() {
+    public CustomCropsBlockState blockState() {
         return blockState;
     }
 
@@ -169,7 +169,7 @@ public class WateringCanWaterSprinklerEvent extends PlayerEvent implements Cance
      * @return the location of the sprinkler.
      */
     @NotNull
-    public Location getLocation() {
+    public Location location() {
         return location;
     }
 }

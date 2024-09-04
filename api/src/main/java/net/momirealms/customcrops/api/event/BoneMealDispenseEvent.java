@@ -112,7 +112,7 @@ public class BoneMealDispenseEvent extends Event implements Cancellable {
      * @return the location of the crop block.
      */
     @NotNull
-    public Location getLocation() {
+    public Location location() {
         return location;
     }
 
@@ -122,7 +122,7 @@ public class BoneMealDispenseEvent extends Event implements Cancellable {
      * @return the ItemStack of bone meal.
      */
     @NotNull
-    public ItemStack getBoneMealItem() {
+    public ItemStack boneMealItem() {
         return boneMealItem;
     }
 
@@ -132,7 +132,7 @@ public class BoneMealDispenseEvent extends Event implements Cancellable {
      * @return the block state of the crop.
      */
     @NotNull
-    public CustomCropsBlockState getBlockState() {
+    public CustomCropsBlockState blockState() {
         return blockState;
     }
 
@@ -142,7 +142,7 @@ public class BoneMealDispenseEvent extends Event implements Cancellable {
      * @return the BoneMeal configuration.
      */
     @NotNull
-    public BoneMeal getBoneMeal() {
+    public BoneMeal boneMeal() {
         return boneMeal;
     }
 
@@ -152,7 +152,7 @@ public class BoneMealDispenseEvent extends Event implements Cancellable {
      * @return the dispenser block.
      */
     @NotNull
-    public Block getDispenser() {
+    public Block dispenser() {
         return dispenser;
     }
 }

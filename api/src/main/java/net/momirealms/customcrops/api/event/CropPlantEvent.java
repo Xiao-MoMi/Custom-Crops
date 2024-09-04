@@ -97,7 +97,7 @@ public class CropPlantEvent extends PlayerEvent implements Cancellable {
      * @return the seed item.
      */
     @NotNull
-    public ItemStack getItemInHand() {
+    public ItemStack itemInHand() {
         return itemInHand;
     }
 
@@ -128,7 +128,7 @@ public class CropPlantEvent extends PlayerEvent implements Cancellable {
      * @return the block state of the crop.
      */
     @NotNull
-    public CustomCropsBlockState getBlockState() {
+    public CustomCropsBlockState blockState() {
         return blockState;
     }
 
@@ -138,7 +138,7 @@ public class CropPlantEvent extends PlayerEvent implements Cancellable {
      * @return the equipment slot representing the hand used.
      */
     @NotNull
-    public EquipmentSlot getHand() {
+    public EquipmentSlot hand() {
         return hand;
     }
 
@@ -148,7 +148,7 @@ public class CropPlantEvent extends PlayerEvent implements Cancellable {
      * @return the crop configuration.
      */
     @NotNull
-    public CropConfig getCropConfig() {
+    public CropConfig cropConfig() {
         return config;
     }
 
@@ -158,7 +158,7 @@ public class CropPlantEvent extends PlayerEvent implements Cancellable {
      * @return the location of the crop.
      */
     @NotNull
-    public Location getLocation() {
+    public Location location() {
         return location;
     }
 
@@ -168,7 +168,7 @@ public class CropPlantEvent extends PlayerEvent implements Cancellable {
      *
      * @return the initial point.
      */
-    public int getPoint() {
+    public int point() {
         return point;
     }
 
@@ -177,7 +177,7 @@ public class CropPlantEvent extends PlayerEvent implements Cancellable {
      *
      * @param point the new initial point value.
      */
-    public void setPoint(int point) {
+    public void point(int point) {
         this.point = point;
     }
 }

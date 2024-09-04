@@ -23,7 +23,6 @@ import net.momirealms.customcrops.api.core.world.CustomCropsBlockState;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
@@ -117,7 +116,7 @@ public class PotBreakEvent extends Event implements Cancellable {
      * @return the location of the pot block.
      */
     @NotNull
-    public Location getLocation() {
+    public Location location() {
         return location;
     }
 
@@ -127,21 +126,8 @@ public class PotBreakEvent extends Event implements Cancellable {
      * @return the entity that caused the break, or null if not applicable.
      */
     @Nullable
-    public Entity getEntityBreaker() {
+    public Entity entityBreaker() {
         return entityBreaker;
-    }
-
-    /**
-     * Gets the player responsible for breaking the pot, if the breaker is a player.
-     *
-     * @return the player that caused the break, or null if not applicable.
-     */
-    @Nullable
-    public Player getPlayer() {
-        if (entityBreaker instanceof Player player) {
-            return player;
-        }
-        return null;
     }
 
     /**
@@ -150,7 +136,7 @@ public class PotBreakEvent extends Event implements Cancellable {
      * @return the reason for the break.
      */
     @NotNull
-    public BreakReason getReason() {
+    public BreakReason reason() {
         return reason;
     }
 
@@ -160,7 +146,7 @@ public class PotBreakEvent extends Event implements Cancellable {
      * @return the pot configuration.
      */
     @NotNull
-    public PotConfig getPotConfig() {
+    public PotConfig potConfig() {
         return config;
     }
 
@@ -170,7 +156,7 @@ public class PotBreakEvent extends Event implements Cancellable {
      * @return the block state of the pot.
      */
     @NotNull
-    public CustomCropsBlockState getBlockState() {
+    public CustomCropsBlockState blockState() {
         return blockState;
     }
 
@@ -180,7 +166,7 @@ public class PotBreakEvent extends Event implements Cancellable {
      * @return the block that caused the break, or null if not applicable.
      */
     @Nullable
-    public Block getBlockBreaker() {
+    public Block blockBreaker() {
         return blockBreaker;
     }
 }

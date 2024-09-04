@@ -42,11 +42,11 @@ public class ClueScrollsQuest implements Listener {
 
     @EventHandler (ignoreCancelled = true)
     public void onBreakCrop(CropBreakEvent event) {
-        if (!(event.getEntityBreaker() instanceof Player player)) return;
+        if (!(event.entityBreaker() instanceof Player player)) return;
         harvestClue.handle(
                 player,
                 1,
-                new ClueDataPair("id", event.getStageItemID())
+                new ClueDataPair("id", event.cropStageItemID())
         );
     }
 
@@ -55,7 +55,7 @@ public class ClueScrollsQuest implements Listener {
         plantClue.handle(
                 event.getPlayer(),
                 1,
-                new ClueDataPair("id", event.getCropConfig().id())
+                new ClueDataPair("id", event.cropConfig().id())
         );
     }
 }

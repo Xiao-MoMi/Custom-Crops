@@ -115,7 +115,7 @@ public class GreenhouseGlassBreakEvent extends Event implements Cancellable {
      * @return the location of the glass block.
      */
     @NotNull
-    public Location getLocation() {
+    public Location location() {
         return location;
     }
 
@@ -125,7 +125,7 @@ public class GreenhouseGlassBreakEvent extends Event implements Cancellable {
      * @return the entity that caused the break, or null if not applicable.
      */
     @Nullable
-    public Entity getEntityBreaker() {
+    public Entity entityBreaker() {
         return entityBreaker;
     }
 
@@ -135,7 +135,7 @@ public class GreenhouseGlassBreakEvent extends Event implements Cancellable {
      * @return the block that caused the break, or null if not applicable.
      */
     @Nullable
-    public Block getBlockBreaker() {
+    public Block blockBreaker() {
         return blockBreaker;
     }
 
@@ -145,7 +145,7 @@ public class GreenhouseGlassBreakEvent extends Event implements Cancellable {
      * @return the reason for the break.
      */
     @NotNull
-    public BreakReason getReason() {
+    public BreakReason reason() {
         return reason;
     }
 
@@ -155,7 +155,7 @@ public class GreenhouseGlassBreakEvent extends Event implements Cancellable {
      * @return the block state of the glass.
      */
     @NotNull
-    public CustomCropsBlockState getBlockState() {
+    public CustomCropsBlockState blockState() {
         return blockState;
     }
 
@@ -164,7 +164,7 @@ public class GreenhouseGlassBreakEvent extends Event implements Cancellable {
      *
      * @return the glass item ID.
      */
-    public String getGlassItemID() {
+    public String glassItemID() {
         return glassItemID;
     }
 }

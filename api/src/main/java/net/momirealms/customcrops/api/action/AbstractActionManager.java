@@ -912,7 +912,7 @@ public abstract class AbstractActionManager<T> implements ActionManager<T> {
                         if (EventUtils.fireAndCheckCancel(plantEvent)) {
                             return;
                         }
-                        cropBlock.point(state, plantEvent.getPoint());
+                        cropBlock.point(state, plantEvent.point());
                         if (triggerAction) {
                             ActionManager.trigger((Context<Player>) context, cropConfig.plantActions());
                         }

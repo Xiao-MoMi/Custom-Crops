@@ -114,7 +114,7 @@ public class WateringCanFillEvent extends PlayerEvent implements Cancellable {
      * @return the watering can item.
      */
     @NotNull
-    public ItemStack getItemInHand() {
+    public ItemStack itemInHand() {
         return itemInHand;
     }
 
@@ -124,7 +124,7 @@ public class WateringCanFillEvent extends PlayerEvent implements Cancellable {
      * @return the watering can configuration.
      */
     @NotNull
-    public WateringCanConfig getConfig() {
+    public WateringCanConfig wateringCanConfig() {
         return config;
     }
 
@@ -134,7 +134,7 @@ public class WateringCanFillEvent extends PlayerEvent implements Cancellable {
      * @return the fill method.
      */
     @NotNull
-    public FillMethod getFillMethod() {
+    public FillMethod fillMethod() {
         return fillMethod;
     }
 
@@ -144,7 +144,7 @@ public class WateringCanFillEvent extends PlayerEvent implements Cancellable {
      * @return the equipment slot representing the hand used.
      */
     @NotNull
-    public EquipmentSlot getHand() {
+    public EquipmentSlot hand() {
         return hand;
     }
 
@@ -154,7 +154,7 @@ public class WateringCanFillEvent extends PlayerEvent implements Cancellable {
      * @return the location of the action.
      */
     @NotNull
-    public Location getLocation() {
+    public Location location() {
         return location;
     }
 }

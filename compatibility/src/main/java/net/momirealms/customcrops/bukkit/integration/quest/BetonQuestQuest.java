@@ -73,10 +73,10 @@ public class BetonQuestQuest {
 
         @EventHandler (ignoreCancelled = true)
         public void onBreakCrop(CropBreakEvent event) {
-            if (!(event.getEntityBreaker() instanceof Player player)) {
+            if (!(event.entityBreaker() instanceof Player player)) {
                 return;
             }
-            String id = event.getStageItemID();
+            String id = event.cropStageItemID();
 
             OnlineProfile onlineProfile = PlayerConverter.getID(player);
             if (!containsPlayer(onlineProfile)) {
@@ -155,7 +155,7 @@ public class BetonQuestQuest {
             if (isInvalidLocation(event.getPlayer(), onlineProfile)) {
                 return;
             }
-            if (this.crops.contains(event.getCropConfig().id()) && this.checkConditions(onlineProfile)) {
+            if (this.crops.contains(event.cropConfig().id()) && this.checkConditions(onlineProfile)) {
                 getCountingData(onlineProfile).progress(1);
                 completeIfDoneOrNotify(onlineProfile);
             }

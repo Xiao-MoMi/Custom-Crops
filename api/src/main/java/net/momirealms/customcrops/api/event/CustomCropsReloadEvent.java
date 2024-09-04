@@ -64,7 +64,7 @@ public class CustomCropsReloadEvent extends Event {
      *
      * @return the plugin instance.
      */
-    public BukkitCustomCropsPlugin getPluginInstance() {
+    public BukkitCustomCropsPlugin plugin() {
         return plugin;
     }
 }

@@ -118,7 +118,7 @@ public class CropInteractEvent extends PlayerEvent implements Cancellable {
      * @return the location of the crop block.
      */
     @NotNull
-    public Location getLocation() {
+    public Location location() {
         return location;
     }
 
@@ -129,7 +129,7 @@ public class CropInteractEvent extends PlayerEvent implements Cancellable {
      * @return the ItemStack in hand.
      */
     @NotNull
-    public ItemStack getItemInHand() {
+    public ItemStack itemInHand() {
         return itemInHand;
     }
 
@@ -139,7 +139,7 @@ public class CropInteractEvent extends PlayerEvent implements Cancellable {
      * @return the crop configuration.
      */
     @NotNull
-    public CropConfig getCropConfig() {
+    public CropConfig cropConfig() {
         return config;
     }
 
@@ -149,7 +149,7 @@ public class CropInteractEvent extends PlayerEvent implements Cancellable {
      * @return the block state of the crop.
      */
     @NotNull
-    public CustomCropsBlockState getBlockState() {
+    public CustomCropsBlockState blockState() {
         return blockState;
     }
 
@@ -159,7 +159,7 @@ public class CropInteractEvent extends PlayerEvent implements Cancellable {
      * @return the equipment slot representing the hand used.
      */
     @NotNull
-    public EquipmentSlot getHand() {
+    public EquipmentSlot hand() {
         return hand;
     }
 
@@ -169,7 +169,7 @@ public class CropInteractEvent extends PlayerEvent implements Cancellable {
      * @return the stage item ID.
      */
     @NotNull
-    public String getStageItemID() {
+    public String cropStageItemID() {
         return stageItemID;
     }
 }

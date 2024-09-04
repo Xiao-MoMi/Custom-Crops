@@ -122,7 +122,7 @@ public class CropBreakEvent extends Event implements Cancellable {
      * @return the location of the broken crop block.
      */
     @NotNull
-    public Location getLocation() {
+    public Location location() {
         return location;
     }
 
@@ -132,7 +132,7 @@ public class CropBreakEvent extends Event implements Cancellable {
      * @return the block that caused the break, or null if not applicable.
      */
     @Nullable
-    public Block getBlockBreaker() {
+    public Block blockBreaker() {
         return blockBreaker;
     }
 
@@ -142,7 +142,7 @@ public class CropBreakEvent extends Event implements Cancellable {
      * @return the entity that caused the break, or null if not applicable.
      */
     @Nullable
-    public Entity getEntityBreaker() {
+    public Entity entityBreaker() {
         return entityBreaker;
     }
 
@@ -152,7 +152,7 @@ public class CropBreakEvent extends Event implements Cancellable {
      * @return the block state before breakage, or null if not applicable.
      */
     @NotNull
-    public CustomCropsBlockState getBlockState() {
+    public CustomCropsBlockState blockState() {
         return blockState;
     }
 
@@ -162,7 +162,7 @@ public class CropBreakEvent extends Event implements Cancellable {
      * @return the stage item ID.
      */
     @NotNull
-    public String getStageItemID() {
+    public String cropStageItemID() {
         return stageItemID;
     }
 
@@ -172,7 +172,7 @@ public class CropBreakEvent extends Event implements Cancellable {
      * @return the crop configuration.
      */
     @NotNull
-    public CropConfig getCropConfig() {
+    public CropConfig cropConfig() {
         return config;
     }
 
@@ -182,7 +182,7 @@ public class CropBreakEvent extends Event implements Cancellable {
      * @return the reason for the break.
      */
     @NotNull
-    public BreakReason getReason() {
+    public BreakReason reason() {
         return reason;
     }
 }

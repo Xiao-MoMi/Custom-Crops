@@ -281,7 +281,7 @@ public class WateringCanItem extends AbstractCustomCropsItem {
             context.arg(ContextKeys.CURRENT_WATER, waterInCan - 1);
 
             PotBlock potBlock = (PotBlock) BuiltInBlockMechanics.POT.mechanic();
-            for (Pair<Pos3, String> pair : waterPotEvent.getPotWithIDs()) {
+            for (Pair<Pos3, String> pair : waterPotEvent.pots()) {
                 CustomCropsBlockState potState = potBlock.fixOrGetState(world,pair.left(), potConfig, pair.right());
                 Location temp = pair.left().toLocation(bukkitWorld);
                 if (potBlock.addWater(potState, potConfig, wateringCanConfig.wateringAmount())) {

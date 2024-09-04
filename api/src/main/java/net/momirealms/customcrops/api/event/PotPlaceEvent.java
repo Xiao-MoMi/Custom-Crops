@@ -37,7 +37,7 @@ public class PotPlaceEvent extends PlayerEvent implements Cancellable {
     private boolean cancelled;
     private final Location location;
     private final PotConfig config;
-    private final CustomCropsBlockState state;
+    private final CustomCropsBlockState blockState;
     private final ItemStack itemInHand;
     private final EquipmentSlot hand;
 
@@ -47,7 +47,7 @@ public class PotPlaceEvent extends PlayerEvent implements Cancellable {
      * @param who        The player who is placing the pot.
      * @param location   The location where the pot is being placed.
      * @param config     The configuration of the pot being placed.
-     * @param state      The state of the block where the pot is placed.
+     * @param blockState      The state of the block where the pot is placed.
      * @param itemInHand The ItemStack representing the item in the player's hand.
      * @param hand       The hand (main or offhand) used by the player for placing the pot.
      */
@@ -55,13 +55,13 @@ public class PotPlaceEvent extends PlayerEvent implements Cancellable {
             @NotNull Player who,
             @NotNull Location location,
             @NotNull PotConfig config,
-            @NotNull CustomCropsBlockState state,
+            @NotNull CustomCropsBlockState blockState,
             @NotNull ItemStack itemInHand,
             @NotNull EquipmentSlot hand
     ) {
         super(who);
         this.location = location;
-        this.state = state;
+        this.blockState = blockState;
         this.itemInHand = itemInHand;
         this.hand = hand;
         this.config = config;
@@ -114,7 +114,7 @@ public class PotPlaceEvent extends PlayerEvent implements Cancellable {
      * @return the location of the pot.
      */
     @NotNull
-    public Location getLocation() {
+    public Location location() {
         return location;
     }
 
@@ -124,8 +124,8 @@ public class PotPlaceEvent extends PlayerEvent implements Cancellable {
      * @return the block state of the pot.
      */
     @NotNull
-    public CustomCropsBlockState getState() {
-        return state;
+    public CustomCropsBlockState blockState() {
+        return blockState;
     }
 
     /**
@@ -134,7 +134,7 @@ public class PotPlaceEvent extends PlayerEvent implements Cancellable {
      * @return the item in hand.
      */
     @NotNull
-    public ItemStack getItemInHand() {
+    public ItemStack itemInHand() {
         return itemInHand;
     }
 
@@ -144,7 +144,7 @@ public class PotPlaceEvent extends PlayerEvent implements Cancellable {
      * @return the equipment slot representing the hand used.
      */
     @NotNull
-    public EquipmentSlot getHand() {
+    public EquipmentSlot hand() {
         return hand;
     }
 
@@ -154,7 +154,7 @@ public class PotPlaceEvent extends PlayerEvent implements Cancellable {
      * @return the pot configuration.
      */
     @NotNull
-    public PotConfig getPotConfig() {
+    public PotConfig potConfig() {
         return config;
     }
 }

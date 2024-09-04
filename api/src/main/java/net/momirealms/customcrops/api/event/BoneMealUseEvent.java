@@ -120,7 +120,7 @@ public class BoneMealUseEvent extends PlayerEvent implements Cancellable {
      * @return the location of the crop block.
      */
     @NotNull
-    public Location getLocation() {
+    public Location location() {
         return location;
     }
 
@@ -130,7 +130,7 @@ public class BoneMealUseEvent extends PlayerEvent implements Cancellable {
      * @return the crop configuration.
      */
     @NotNull
-    public CropConfig getConfig() {
+    public CropConfig cropConfig() {
         return config;
     }
 
@@ -141,7 +141,7 @@ public class BoneMealUseEvent extends PlayerEvent implements Cancellable {
      * @return the ItemStack in hand.
      */
     @NotNull
-    public ItemStack getItemInHand() {
+    public ItemStack itemInHand() {
         return itemInHand;
     }
 
@@ -151,7 +151,7 @@ public class BoneMealUseEvent extends PlayerEvent implements Cancellable {
      * @return the block state of the crop.
      */
     @NotNull
-    public CustomCropsBlockState getBlockState() {
+    public CustomCropsBlockState blockState() {
         return blockState;
     }
 
@@ -161,7 +161,7 @@ public class BoneMealUseEvent extends PlayerEvent implements Cancellable {
      * @return the equipment slot.
      */
     @NotNull
-    public EquipmentSlot getEquipmentSlot() {
+    public EquipmentSlot hand() {
         return equipmentSlot;
     }
 
@@ -171,7 +171,7 @@ public class BoneMealUseEvent extends PlayerEvent implements Cancellable {
      * @return the BoneMeal configuration.
      */
     @NotNull
-    public BoneMeal getBoneMeal() {
+    public BoneMeal boneMeal() {
         return boneMeal;
     }
 }

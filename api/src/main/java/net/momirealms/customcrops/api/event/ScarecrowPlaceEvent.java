@@ -103,7 +103,7 @@ public class ScarecrowPlaceEvent extends PlayerEvent implements Cancellable {
      * @return the scarecrow item ID.
      */
     @NotNull
-    public String getScarecrowItemID() {
+    public String scarecrowItemID() {
         return scarecrowItemID;
     }
 
@@ -113,7 +113,7 @@ public class ScarecrowPlaceEvent extends PlayerEvent implements Cancellable {
      * @return the location of the scarecrow.
      */
     @NotNull
-    public Location getLocation() {
+    public Location location() {
         return location;
     }
 
@@ -123,7 +123,7 @@ public class ScarecrowPlaceEvent extends PlayerEvent implements Cancellable {
      * @return the block state of the scarecrow.
      */
     @NotNull
-    public CustomCropsBlockState getBlockState() {
+    public CustomCropsBlockState blockState() {
         return blockState;
     }
 }

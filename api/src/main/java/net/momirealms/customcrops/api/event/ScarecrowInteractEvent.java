@@ -113,7 +113,7 @@ public class ScarecrowInteractEvent extends PlayerEvent implements Cancellable {
      * @return the location of the scarecrow.
      */
     @NotNull
-    public Location getLocation() {
+    public Location location() {
         return location;
     }
 
@@ -123,7 +123,7 @@ public class ScarecrowInteractEvent extends PlayerEvent implements Cancellable {
      * @return the block state of the scarecrow.
      */
     @NotNull
-    public CustomCropsBlockState getBlockState() {
+    public CustomCropsBlockState blockState() {
         return blockState;
     }
 
@@ -133,7 +133,7 @@ public class ScarecrowInteractEvent extends PlayerEvent implements Cancellable {
      * @return the equipment slot representing the hand used.
      */
     @NotNull
-    public EquipmentSlot getHand() {
+    public EquipmentSlot hand() {
         return hand;
     }
 
@@ -143,7 +143,7 @@ public class ScarecrowInteractEvent extends PlayerEvent implements Cancellable {
      * @return the scarecrow item ID.
      */
     @NotNull
-    public String getScarecrowItemID() {
+    public String scarecrowItemID() {
         return scarecrowItemID;
     }
 
@@ -153,7 +153,7 @@ public class ScarecrowInteractEvent extends PlayerEvent implements Cancellable {
      * @return the item in hand.
      */
     @NotNull
-    public ItemStack getItemInHand() {
+    public ItemStack itemInHand() {
         return itemInHand;
     }
 }

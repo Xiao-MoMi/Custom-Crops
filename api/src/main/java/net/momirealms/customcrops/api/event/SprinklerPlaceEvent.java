@@ -115,7 +115,7 @@ public class SprinklerPlaceEvent extends PlayerEvent implements Cancellable {
      * @return the item in hand.
      */
     @NotNull
-    public ItemStack getItemInHand() {
+    public ItemStack itemInHand() {
         return itemInHand;
     }
 
@@ -125,7 +125,7 @@ public class SprinklerPlaceEvent extends PlayerEvent implements Cancellable {
      * @return the block state of the sprinkler.
      */
     @NotNull
-    public CustomCropsBlockState getBlockState() {
+    public CustomCropsBlockState blockState() {
         return blockState;
     }
 
@@ -135,7 +135,7 @@ public class SprinklerPlaceEvent extends PlayerEvent implements Cancellable {
      * @return the location of the sprinkler.
      */
     @NotNull
-    public Location getLocation() {
+    public Location location() {
         return location;
     }
 
@@ -145,7 +145,7 @@ public class SprinklerPlaceEvent extends PlayerEvent implements Cancellable {
      * @return the sprinkler configuration.
      */
     @NotNull
-    public SprinklerConfig getSprinklerConfig() {
+    public SprinklerConfig sprinklerConfig() {
         return config;
     }
 
@@ -155,7 +155,7 @@ public class SprinklerPlaceEvent extends PlayerEvent implements Cancellable {
      * @return the equipment slot representing the hand used.
      */
     @NotNull
-    public EquipmentSlot getHand() {
+    public EquipmentSlot hand() {
         return hand;
     }
 }

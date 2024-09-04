@@ -100,7 +100,7 @@ public class SeedItem extends AbstractCustomCropsItem {
         if (EventUtils.fireAndCheckCancel(plantEvent)) {
             return InteractionResult.COMPLETE;
         }
-        int point = plantEvent.getPoint();
+        int point = plantEvent.point();
         CropStageConfig stageConfig = cropConfig.stageWithModelByPoint(point);
         if (stageConfig == null) {
             return InteractionResult.COMPLETE;

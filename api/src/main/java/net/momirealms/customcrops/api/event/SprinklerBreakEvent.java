@@ -116,7 +116,7 @@ public class SprinklerBreakEvent extends Event implements Cancellable {
      * @return the location of the sprinkler.
      */
     @NotNull
-    public Location getLocation() {
+    public Location location() {
         return location;
     }
 
@@ -126,7 +126,7 @@ public class SprinklerBreakEvent extends Event implements Cancellable {
      * @return the entity that caused the break, or null if not applicable.
      */
     @Nullable
-    public Entity getEntityBreaker() {
+    public Entity entityBreaker() {
         return entityBreaker;
     }
 
@@ -136,7 +136,7 @@ public class SprinklerBreakEvent extends Event implements Cancellable {
      * @return the block state of the sprinkler.
      */
     @NotNull
-    public CustomCropsBlockState getBlockState() {
+    public CustomCropsBlockState blockState() {
         return blockState;
     }
 
@@ -146,7 +146,7 @@ public class SprinklerBreakEvent extends Event implements Cancellable {
      * @return the sprinkler configuration.
      */
     @NotNull
-    public SprinklerConfig getSprinklerConfig() {
+    public SprinklerConfig sprinklerConfig() {
         return config;
     }
 
@@ -156,7 +156,7 @@ public class SprinklerBreakEvent extends Event implements Cancellable {
      * @return the block that caused the break, or null if not applicable.
      */
     @Nullable
-    public Block getBlockBreaker() {
+    public Block blockBreaker() {
         return blockBreaker;
     }
 
@@ -166,7 +166,7 @@ public class SprinklerBreakEvent extends Event implements Cancellable {
      * @return the reason for the break.
      */
     @NotNull
-    public BreakReason getReason() {
+    public BreakReason reason() {
         return reason;
     }
 }

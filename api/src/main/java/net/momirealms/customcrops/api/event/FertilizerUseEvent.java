@@ -119,7 +119,7 @@ public class FertilizerUseEvent extends PlayerEvent implements Cancellable {
      * @return the item in hand.
      */
     @NotNull
-    public ItemStack getItemInHand() {
+    public ItemStack itemInHand() {
         return itemInHand;
     }
 
@@ -129,7 +129,7 @@ public class FertilizerUseEvent extends PlayerEvent implements Cancellable {
      * @return the location of the pot.
      */
     @NotNull
-    public Location getLocation() {
+    public Location location() {
         return location;
     }
 
@@ -139,7 +139,7 @@ public class FertilizerUseEvent extends PlayerEvent implements Cancellable {
      * @return the block state of the pot.
      */
     @NotNull
-    public CustomCropsBlockState getBlockState() {
+    public CustomCropsBlockState blockState() {
         return blockState;
     }
 
@@ -149,7 +149,7 @@ public class FertilizerUseEvent extends PlayerEvent implements Cancellable {
      * @return the equipment slot representing the hand used.
      */
     @NotNull
-    public EquipmentSlot getHand() {
+    public EquipmentSlot hand() {
         return hand;
     }
 
@@ -159,7 +159,7 @@ public class FertilizerUseEvent extends PlayerEvent implements Cancellable {
      * @return the pot configuration.
      */
     @NotNull
-    public PotConfig getPotConfig() {
+    public PotConfig potConfig() {
         return config;
     }
 
@@ -169,7 +169,7 @@ public class FertilizerUseEvent extends PlayerEvent implements Cancellable {
      * @return the fertilizer configuration.
      */
     @NotNull
-    public Fertilizer getFertilizer() {
+    public Fertilizer fertilizer() {
         return fertilizer;
     }
 }
