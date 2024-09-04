@@ -30,6 +30,7 @@ import net.momirealms.customcrops.api.core.world.adaptor.AbstractWorldAdaptor;
 import net.momirealms.customcrops.api.util.StringUtils;
 import net.momirealms.customcrops.common.helper.GsonHelper;
 import net.momirealms.customcrops.common.helper.VersionHelper;
+import net.momirealms.customcrops.common.util.FileUtils;
 import net.momirealms.customcrops.common.util.Key;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
@@ -61,7 +62,6 @@ public class BukkitWorldAdaptor extends AbstractWorldAdaptor<World> {
             }
         });
         regionFileProvider = (world, pos) -> new File(worldFolderProvider.apply(world), "customcrops" + File.separator + getRegionDataFile(pos));
-
     }
 
     public static void regionFileProvider(BiFunction<World, RegionPos, File> regionFileProvider) {
@@ -115,6 +115,10 @@ public class BukkitWorldAdaptor extends AbstractWorldAdaptor<World> {
                     GsonHelper.get().toJson(world.extraData()));
         } else {
             File data = new File(getWorldFolder(world.world()), DATA_FILE);
+            File parentDir = data.getParentFile();
+            if (parentDir != null && !parentDir.exists()) {
+                parentDir.mkdirs();
+            }
             try (FileWriter file = new FileWriter(data)) {
                 GsonHelper.get().toJson(world.extraData(), file);
             } catch (IOException e) {
@@ -181,6 +185,10 @@ public class BukkitWorldAdaptor extends AbstractWorldAdaptor<World> {
     public void saveRegion(CustomCropsWorld<World> world, CustomCropsRegion region) {
         File file = getRegionDataFile(world.world(), region.regionPos());
         long time1 = System.currentTimeMillis();
+        File parentDir = file.getParentFile();
+        if (parentDir != null && !parentDir.exists()) {
+            parentDir.mkdirs();
+        }
         try (BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(file))) {
             bos.write(serializeRegion(region));
             long time2 = System.currentTimeMillis();
