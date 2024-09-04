@@ -62,7 +62,7 @@ public class DebugInsightCommand extends BukkitCommandFeature<CommandSender> {
                     player.setMetadata("customcrops:insight", new FixedMetadataValue(plugin.getBoostrap(), 1));
                     new InsightPlayer(player.getUniqueId());
                     plugin.getSenderFactory().wrap(player).sendMessage(AdventureHelper.miniMessage("<green>Insight mode: ON"));
-                    plugin.getSenderFactory().wrap(player).sendMessage(AdventureHelper.miniMessage("<white>Note: "));
+                    plugin.getSenderFactory().wrap(player).sendMessage(AdventureHelper.miniMessage("<white>Note that this only shows a snapshot of the data."));
                 });
     }
 
