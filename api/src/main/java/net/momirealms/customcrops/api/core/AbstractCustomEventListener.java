@@ -186,7 +186,7 @@ public abstract class AbstractCustomEventListener implements Listener {
         );
     }
 
-    @EventHandler (ignoreCancelled = true)
+    @EventHandler(ignoreCancelled = true)
     public void onItemSpawn(ItemSpawnEvent event) {
         Item item = event.getEntity();
         ItemStack itemStack = item.getItemStack();
@@ -223,7 +223,7 @@ public abstract class AbstractCustomEventListener implements Listener {
         }
     }
 
-    @EventHandler (ignoreCancelled = true)
+    @EventHandler(ignoreCancelled = true)
     public void onBlockChange(BlockFadeEvent event) {
         Block block = event.getBlock();
         if (block.getType() == Material.FARMLAND) {
@@ -242,7 +242,7 @@ public abstract class AbstractCustomEventListener implements Listener {
         }
     }
 
-    @EventHandler (ignoreCancelled = true, priority = EventPriority.HIGH)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     public void onTrampling(EntityChangeBlockEvent event) {
         Block block = event.getBlock();
         if (block.getType() == Material.FARMLAND && event.getTo() == Material.DIRT) {
@@ -254,7 +254,7 @@ public abstract class AbstractCustomEventListener implements Listener {
         }
     }
 
-    @EventHandler (ignoreCancelled = true, priority = EventPriority.HIGH)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     public void onMoistureChange(MoistureChangeEvent event) {
         if (ConfigManager.disableMoistureMechanic()) {
             event.setCancelled(true);
@@ -273,7 +273,7 @@ public abstract class AbstractCustomEventListener implements Listener {
 //        });
     }
 
-    @EventHandler (ignoreCancelled = true, priority = EventPriority.HIGH)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     public void onPistonExtend(BlockPistonExtendEvent event) {
         Optional<CustomCropsWorld<?>> world = BukkitCustomCropsPlugin.getInstance().getWorldManager().getWorld(event.getBlock().getWorld());
         if (world.isEmpty()){
@@ -288,7 +288,7 @@ public abstract class AbstractCustomEventListener implements Listener {
         }
     }
 
-    @EventHandler (ignoreCancelled = true, priority = EventPriority.HIGH)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     public void onPistonRetract(BlockPistonRetractEvent event) {
         Optional<CustomCropsWorld<?>> world = BukkitCustomCropsPlugin.getInstance().getWorldManager().getWorld(event.getBlock().getWorld());
         if (world.isEmpty()){
@@ -303,7 +303,7 @@ public abstract class AbstractCustomEventListener implements Listener {
         }
     }
 
-    @EventHandler (ignoreCancelled = true)
+    @EventHandler(ignoreCancelled = true)
     public void onItemDamage(PlayerItemDamageEvent event) {
         ItemStack itemStack = event.getItem();
         String itemID = this.itemManager.id(itemStack);
@@ -323,7 +323,7 @@ public abstract class AbstractCustomEventListener implements Listener {
         }
     }
 
-    @EventHandler (ignoreCancelled = true, priority = EventPriority.HIGHEST)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     public void onExplosion(BlockExplodeEvent event) {
         Block exploder = event.getBlock();
         for (Block block : event.blockList()) {
@@ -334,14 +334,21 @@ public abstract class AbstractCustomEventListener implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onBlockPhysics(BlockPhysicsEvent event) {
         if (ConfigManager.overriddenCrops().contains(event.getBlock().getType())) {
             event.setCancelled(true);
         }
     }
 
-    @EventHandler (ignoreCancelled = true, priority = EventPriority.HIGH)
+    @EventHandler(ignoreCancelled = true)
+    public void onBlockGrow(BlockGrowEvent event) {
+        if (ConfigManager.overriddenCrops().contains(event.getBlock().getType())) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     public void onDispenser(BlockDispenseEvent event) {
         Block block = event.getBlock();
         if (!(block.getBlockData() instanceof org.bukkit.block.data.type.Dispenser directional)) {

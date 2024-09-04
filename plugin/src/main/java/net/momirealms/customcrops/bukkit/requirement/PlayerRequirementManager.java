@@ -64,7 +64,19 @@ public class PlayerRequirementManager extends AbstractRequirementManager<Player>
     private void registerItemInHandRequirement() {
         registerRequirement((args, actions, runActions) -> {
             if (args instanceof Section section) {
-                boolean mainOrOff = section.getString("hand","main").equalsIgnoreCase("main");
+                String hand = section.getString("hand","main");
+                int mode;
+                if (hand.equalsIgnoreCase("main")) {
+                    mode = 1;
+                } else if (hand.equalsIgnoreCase("off")) {
+                    mode = 2;
+                } else if (hand.equalsIgnoreCase("other")) {
+                    mode = 3;
+                } else {
+                    mode = 0;
+                    plugin.getPluginLogger().warn("Invalid hand argument: " + hand + " which is expected to be main/off/other");
+                    return Requirement.empty();
+                }
                 int amount = section.getInt("amount", 0);
                 List<String> items = ListUtils.toList(section.get("item"));
                 return context -> {
@@ -73,9 +85,13 @@ public class PlayerRequirementManager extends AbstractRequirementManager<Player>
                     EquipmentSlot slot = context.arg(ContextKeys.SLOT);
                     ItemStack itemStack;
                     if (slot == null) {
-                        itemStack = mainOrOff ? player.getInventory().getItemInMainHand() : player.getInventory().getItemInOffHand();
+                        itemStack = mode == 1 ? player.getInventory().getItemInMainHand() : player.getInventory().getItemInOffHand();
                     } else {
-                        itemStack = player.getInventory().getItem(slot);
+                        if (mode == 3) {
+                            itemStack = player.getInventory().getItem(slot == EquipmentSlot.HAND ? EquipmentSlot.OFF_HAND : EquipmentSlot.HAND);
+                        } else {
+                            itemStack = player.getInventory().getItem(slot);
+                        }
                     }
                     String id = plugin.getItemManager().id(itemStack);
                     if (items.contains(id) && itemStack.getAmount() >= amount) return true;
