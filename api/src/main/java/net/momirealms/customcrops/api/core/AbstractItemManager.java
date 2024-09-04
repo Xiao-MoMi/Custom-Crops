@@ -62,6 +62,12 @@ public abstract class AbstractItemManager implements ItemManager {
             Cancellable event
     );
 
+    public abstract void handlePhysicsBreak(
+            Location location,
+            String brokenID,
+            Cancellable event
+    );
+
     public abstract void handleEntityTrample(
             Entity entity,
             Location location,

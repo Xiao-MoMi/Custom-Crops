@@ -205,13 +205,18 @@ public abstract class AbstractCustomEventListener implements Listener {
     public void onBlockChange(BlockFadeEvent event) {
         Block block = event.getBlock();
         if (block.getType() == Material.FARMLAND) {
-            Pos3 above = Pos3.from(block.getLocation()).add(0,1,0);
-            BukkitCustomCropsPlugin.getInstance().getWorldManager().getWorld(block.getWorld())
-                    .flatMap(world -> world.getBlockState(above)).ifPresent(blockState -> {
-                if (blockState.type() instanceof CropBlock) {
+            Pos3 pos3 = Pos3.from(block.getLocation());
+            Pos3 above = pos3.add(0,1,0);
+            Optional<CustomCropsWorld<?>> optionalWorld = BukkitCustomCropsPlugin.getInstance().getWorldManager().getWorld(block.getWorld());
+            if (optionalWorld.isPresent()) {
+                CustomCropsWorld<?> world = optionalWorld.get();
+                Optional<CustomCropsBlockState> optionalState = world.getBlockState(above);
+                if (optionalState.isPresent() && optionalState.get().type() instanceof CropBlock) {
                     event.setCancelled(true);
+                    return;
                 }
-            });
+                this.itemManager.handlePhysicsBreak(block.getLocation(), "FARMLAND", event);
+            }
         }
     }
 

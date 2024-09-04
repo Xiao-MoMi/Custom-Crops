@@ -21,5 +21,6 @@ public enum BreakReason {
     BREAK,
     TRAMPLE,
     EXPLODE,
-    ACTION
+    ACTION,
+    PHYSICS,
 }

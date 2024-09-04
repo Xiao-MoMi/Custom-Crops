@@ -475,6 +475,21 @@ public class BukkitItemManager extends AbstractItemManager {
     }
 
     @Override
+    public void handlePhysicsBreak(Location location, String brokenID, Cancellable event) {
+        Optional<CustomCropsWorld<?>> optionalWorld = plugin.getWorldManager().getWorld(location.getWorld());
+        if (optionalWorld.isEmpty()) {
+            return;
+        }
+
+        CustomCropsWorld<?> world = optionalWorld.get();
+        WrappedBreakEvent wrapped = new WrappedBreakEvent(null, null, world, location, brokenID, null, null, BreakReason.PHYSICS, event);
+        CustomCropsBlock customCropsBlock = Registries.BLOCKS.get(brokenID);
+        if (customCropsBlock != null) {
+            customCropsBlock.onBreak(wrapped);
+        }
+    }
+
+    @Override
     public void handleEntityTrample(Entity entity, Location location, String brokenID, Cancellable event) {
         Optional<CustomCropsWorld<?>> optionalWorld = plugin.getWorldManager().getWorld(entity.getWorld());
         if (optionalWorld.isEmpty()) {
