@@ -368,16 +368,18 @@ public class PotBlock extends AbstractCustomCropsBlock {
         }
 
         if (!hasNaturalWater && config.isNearbyWaterAccepted()) {
-            for (int i = -4; i <= 4; i++) {
-                for (int j = -4; j <= 4; j++) {
-                    for (int k : new int[]{0, 1}) {
-                        BlockData block = bukkitWorld.getBlockData(location.x() + i, location.y() + j, location.z() + k);
-                        if (block.getMaterial() == Material.WATER || (block instanceof Waterlogged waterlogged && waterlogged.isWaterlogged())) {
-                            if (addWater(state, 1)) {
-                                waterChanged = true;
+            outer: {
+                for (int i = -4; i <= 4; i++) {
+                    for (int j = -4; j <= 4; j++) {
+                        for (int k : new int[]{0, 1}) {
+                            BlockData block = bukkitWorld.getBlockData(location.x() + i, location.y() + j, location.z() + k);
+                            if (block.getMaterial() == Material.WATER || (block instanceof Waterlogged waterlogged && waterlogged.isWaterlogged())) {
+                                if (addWater(state, 1)) {
+                                    waterChanged = true;
+                                }
+                                hasNaturalWater = true;
+                                break outer;
                             }
-                            hasNaturalWater = true;
-                            break;
                         }
                     }
                 }
