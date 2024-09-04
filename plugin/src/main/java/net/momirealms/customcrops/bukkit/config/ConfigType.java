@@ -252,6 +252,16 @@ public class ConfigType {
                             }
                         }
                     }
+                } else if (workingMode == 3) {
+                    ArrayList<int[]> offsets = new ArrayList<>();
+                    for (int i = -rangeValue; i <= rangeValue; i++) {
+                        for (int j = -rangeValue; j <= rangeValue; j++) {
+                            if (Math.sqrt(i * i + j * j) <= rangeValue + 0.3) {
+                                offsets.add(new int[]{i, j});
+                            }
+                        }
+                    }
+                    range = offsets.toArray(new int[offsets.size()][]);
                 } else {
                     throw new IllegalArgumentException("Unrecognized working mode: " + workingMode);
                 }

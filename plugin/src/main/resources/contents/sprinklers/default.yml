@@ -1,12 +1,14 @@
 # ID
 sprinkler_1:
   # This decides the work range
-  # □□□
   # □■□
-  # □□□
+  # ■▼■
+  # □■□
   range: 1
+  # mode of sprinkling (1=square, 2=rhombus, 3=circle)
+  working-mode: 2
   # Maximum water storage capacity
-  storage: 5
+  storage: 4
   # Unlimited water source
   infinite: false
   # Amount of water added in a single sprinkling
@@ -101,12 +103,13 @@ sprinkler_1:
           pitch: 1
 sprinkler_2:
   # □□□□□
+  # □■■■□
+  # □■▼■□
+  # □■■■□
   # □□□□□
-  # □□■□□
-  # □□□□□
-  # □□□□□
-  range: 2
-  storage: 5
+  range: 1
+  working-mode: 1
+  storage: 4
   water: 1
   3D-item: {0}sprinkler_2
   2D-item: {0}sprinkler_2_item
@@ -187,14 +190,15 @@ sprinkler_2:
           pitch: 1
 sprinkler_3:
   # □□□□□□□
+  # □■■■■■□
+  # □■■■■■□
+  # □■■▼■■□
+  # □■■■■■□
+  # □■■■■■□
   # □□□□□□□
-  # □□□□□□□
-  # □□□■□□□
-  # □□□□□□□
-  # □□□□□□□
-  # □□□□□□□
-  range: 3
-  storage: 3
+  range: 2
+  working-mode: 1
+  storage: 4
   water: 1
   3D-item: {0}sprinkler_3
   2D-item: {0}sprinkler_3_item
