@@ -33,7 +33,7 @@ dependencies {
     implementation("net.kyori:adventure-text-serializer-gson:${rootProject.properties["adventure_bundle_version"]}") {
         exclude("com.google.code.gson", "gson")
     }
-    implementation("net.kyori:adventure-text-serializer-legacy:${rootProject.properties["anti_grief_version"]}")
+    implementation("net.kyori:adventure-text-serializer-legacy:${rootProject.properties["adventure_bundle_version"]}")
     implementation("com.github.Xiao-MoMi:AntiGriefLib:${rootProject.properties["anti_grief_version"]}")
     implementation("com.github.Xiao-MoMi:Sparrow-Heart:${rootProject.properties["sparrow_heart_version"]}")
     implementation("com.saicone.rtag:rtag:${rootProject.properties["rtag_version"]}")
