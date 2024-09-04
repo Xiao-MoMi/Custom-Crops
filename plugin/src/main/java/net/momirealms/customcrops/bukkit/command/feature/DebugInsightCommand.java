@@ -33,6 +33,10 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.HandlerList;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.incendo.cloud.Command;
 import org.incendo.cloud.CommandManager;
@@ -40,7 +44,7 @@ import org.incendo.cloud.CommandManager;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
-public class DebugInsightCommand extends BukkitCommandFeature<CommandSender> {
+public class DebugInsightCommand extends BukkitCommandFeature<CommandSender> implements Listener {
 
     public DebugInsightCommand(CustomCropsCommandManager<CommandSender> commandManager) {
         super(commandManager);
@@ -69,6 +73,22 @@ public class DebugInsightCommand extends BukkitCommandFeature<CommandSender> {
     @Override
     public String getFeatureID() {
         return "debug_insight";
+    }
+
+    @Override
+    public void unregisterRelatedFunctions() {
+        HandlerList.unregisterAll(this);
+    }
+
+    @Override
+    public void registerRelatedFunctions() {
+        Bukkit.getPluginManager().registerEvents(this, BukkitCustomCropsPlugin.getInstance().getBoostrap());
+    }
+
+    @EventHandler
+    public void onQuit(PlayerQuitEvent event) {
+        Player player = event.getPlayer();
+        player.removeMetadata("customcrops:insight", BukkitCustomCropsPlugin.getInstance().getBoostrap());
     }
 
     public static class InsightPlayer implements Runnable {

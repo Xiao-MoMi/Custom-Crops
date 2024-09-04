@@ -377,6 +377,7 @@ public class PotBlock extends AbstractCustomCropsBlock {
                                 waterChanged = true;
                             }
                             hasNaturalWater = true;
+                            break;
                         }
                     }
                 }

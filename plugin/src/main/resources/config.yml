@@ -41,7 +41,7 @@ worlds:
       # 300s means that a crop would be certainly ticked once in 300s
       # For crops, under the same conditions, the growth rate of crops is basically the same
       # For sprinklers and pots, they would work periodically.
-      min-tick-unit: 300
+      min-tick-unit: 180
       # Offline tick settings
       # This option allows crops to grow even if the world is unloaded or the server is closed
       # This may lead to some issues caused by timeliness conditions for instance seasons
