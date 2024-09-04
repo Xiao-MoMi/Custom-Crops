@@ -25,7 +25,9 @@ public enum CustomForm {
     CHORUS(ExistenceForm.BLOCK),
     ITEM_FRAME(ExistenceForm.FURNITURE),
     ITEM_DISPLAY(ExistenceForm.FURNITURE),
-    ARMOR_STAND(ExistenceForm.FURNITURE);
+    ARMOR_STAND(ExistenceForm.FURNITURE),
+    BLOCK(ExistenceForm.BLOCK),
+    FURNITURE(ExistenceForm.FURNITURE);
 
     private final ExistenceForm form;
 

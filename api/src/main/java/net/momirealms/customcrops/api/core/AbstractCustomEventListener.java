@@ -22,6 +22,7 @@ import net.momirealms.customcrops.api.action.ActionManager;
 import net.momirealms.customcrops.api.context.Context;
 import net.momirealms.customcrops.api.context.ContextKeys;
 import net.momirealms.customcrops.api.core.block.CropBlock;
+import net.momirealms.customcrops.api.core.block.PotBlock;
 import net.momirealms.customcrops.api.core.mechanic.crop.BoneMeal;
 import net.momirealms.customcrops.api.core.mechanic.crop.CropConfig;
 import net.momirealms.customcrops.api.core.mechanic.crop.CropStageConfig;
@@ -234,8 +235,21 @@ public abstract class AbstractCustomEventListener implements Listener {
 
     @EventHandler (ignoreCancelled = true, priority = EventPriority.HIGH)
     public void onMoistureChange(MoistureChangeEvent event) {
-        if (ConfigManager.disableMoistureMechanic())
+        if (ConfigManager.disableMoistureMechanic()) {
             event.setCancelled(true);
+            return;
+        }
+//        Location location = event.getBlock().getLocation();
+//        Optional<CustomCropsWorld<?>> world = BukkitCustomCropsPlugin.getInstance().getWorldManager().getWorld(location.getWorld());
+//        if (world.isEmpty()){
+//            return;
+//        }
+//        CustomCropsWorld<?> w = world.get();
+//        w.getBlockState(Pos3.from(location)).ifPresent(state -> {
+//            if (state.type() instanceof PotBlock) {
+//                event.setCancelled(true);
+//            }
+//        });
     }
 
     @EventHandler (ignoreCancelled = true, priority = EventPriority.HIGH)

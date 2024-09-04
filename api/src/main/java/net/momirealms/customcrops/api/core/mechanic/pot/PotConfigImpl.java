@@ -24,6 +24,7 @@ import net.momirealms.customcrops.api.core.world.CustomCropsBlockState;
 import net.momirealms.customcrops.api.misc.water.WaterBar;
 import net.momirealms.customcrops.api.misc.water.WateringMethod;
 import net.momirealms.customcrops.api.requirement.Requirement;
+import net.momirealms.customcrops.api.util.StringUtils;
 import net.momirealms.customcrops.common.util.Pair;
 import org.bukkit.entity.Player;
 
@@ -100,12 +101,19 @@ public class PotConfigImpl implements PotConfig {
         this.maxFertilizerActions = maxFertilizerActions;
         this.blocks.add(basicAppearance.left());
         this.blocks.add(basicAppearance.right());
-        this.wetBlocks.add(basicAppearance.right());
+        addToWet(basicAppearance.right());
         for (Pair<String, String> pair : potAppearanceMap.values()) {
             this.blocks.add(pair.left());
             this.blocks.add(pair.right());
-            this.wetBlocks.add(pair.right());
+            addToWet(pair.right());
         }
+    }
+
+    private void addToWet(String id) {
+        if (StringUtils.isCapitalLetter(id)) {
+            return;
+        }
+        this.wetBlocks.add(id);
     }
 
     @Override
