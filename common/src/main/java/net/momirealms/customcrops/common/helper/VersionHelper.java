@@ -40,7 +40,7 @@ public class VersionHelper {
                 URL url = new URL("https://api.polymart.org/v1/getResourceInfoSimple/?resource_id=2625&key=version");
                 URLConnection conn = url.openConnection();
                 conn.setConnectTimeout(10000);
-                conn.setReadTimeout(60000);
+                conn.setReadTimeout(30000);
                 InputStream inputStream = conn.getInputStream();
                 String newest = new BufferedReader(new InputStreamReader(inputStream)).readLine();
                 String current = plugin.getPluginVersion();

@@ -326,13 +326,19 @@ public class CropBlock extends AbstractCustomCropsBlock {
             return;
         }
 
-        int pointToAdd = 1;
-        for (GrowCondition growCondition : config.growConditions()) {
-            if (growCondition.isMet(context)) {
-                pointToAdd = growCondition.pointToAdd();
-                break;
+        int pointToAdd = 0;
+        GrowCondition[] growConditions = config.growConditions();
+        if (growConditions.length == 0) {
+            pointToAdd = 1;
+        } else {
+            for (GrowCondition growCondition : config.growConditions()) {
+                if (growCondition.isMet(context)) {
+                    pointToAdd = growCondition.pointToAdd();
+                    break;
+                }
             }
         }
+        if (pointToAdd == 0) return;
 
         Optional<CustomCropsBlockState> optionalState = world.getBlockState(location.add(0,-1,0));
         if (optionalState.isPresent()) {

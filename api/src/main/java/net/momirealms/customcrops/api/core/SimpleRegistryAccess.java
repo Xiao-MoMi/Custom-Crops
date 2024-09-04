@@ -17,7 +17,6 @@
 
 package net.momirealms.customcrops.api.core;
 
-import net.momirealms.customcrops.api.BukkitCustomCropsPlugin;
 import net.momirealms.customcrops.api.core.block.CustomCropsBlock;
 import net.momirealms.customcrops.api.core.item.CustomCropsItem;
 import net.momirealms.customcrops.api.core.mechanic.fertilizer.FertilizerType;
@@ -25,11 +24,18 @@ import net.momirealms.customcrops.common.util.Key;
 
 public class SimpleRegistryAccess implements RegistryAccess {
 
-    private BukkitCustomCropsPlugin plugin;
     private boolean frozen;
+    private static SimpleRegistryAccess instance;
 
-    public SimpleRegistryAccess(BukkitCustomCropsPlugin plugin) {
-        this.plugin = plugin;
+    private SimpleRegistryAccess() {
+        instance = this;
+    }
+
+    public static SimpleRegistryAccess getInstance() {
+        if (instance == null) {
+            instance = new SimpleRegistryAccess();
+        }
+        return instance;
     }
 
     public void freeze() {

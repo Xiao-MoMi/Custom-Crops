@@ -19,6 +19,7 @@ package net.momirealms.customcrops.bukkit.item;
 
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
+import net.momirealms.antigrieflib.AntiGriefLib;
 import net.momirealms.customcrops.api.BukkitCustomCropsPlugin;
 import net.momirealms.customcrops.api.core.*;
 import net.momirealms.customcrops.api.core.block.BreakReason;
@@ -52,6 +53,7 @@ import org.bukkit.event.player.PlayerItemDamageEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -68,6 +70,7 @@ public class BukkitItemManager extends AbstractItemManager {
     private final HashMap<String, ItemProvider> itemProviders = new HashMap<>();
     private ItemProvider[] itemDetectArray = new ItemProvider[0];
     private final BukkitItemFactory factory;
+    private AntiGriefLib antiGriefLib;
 
     public BukkitItemManager(BukkitCustomCropsPlugin plugin) {
         this.plugin = plugin;
@@ -80,6 +83,10 @@ public class BukkitItemManager extends AbstractItemManager {
             plugin.getPluginLogger().warn("ItemsAdder/Oraxen are not installed, which can cause problems unless you use the CustomCrops API.");
         }
         this.factory = BukkitItemFactory.create(plugin);
+    }
+
+    public void setAntiGriefLib(AntiGriefLib antiGriefLib) {
+        this.antiGriefLib = antiGriefLib;
     }
 
     @Override
@@ -398,6 +405,10 @@ public class BukkitItemManager extends AbstractItemManager {
             return;
         }
 
+        if (antiGriefLib != null && !antiGriefLib.canInteract(player, block.getLocation())) {
+            return;
+        }
+
         String itemID = id(itemInHand);
         CustomCropsWorld<?> world = optionalWorld.get();
         WrappedInteractEvent wrapped = new WrappedInteractEvent(ExistenceForm.BLOCK, player, world, block.getLocation(), blockID, itemInHand, itemID, hand, blockFace, event);
@@ -409,6 +420,10 @@ public class BukkitItemManager extends AbstractItemManager {
     public void handlePlayerInteractFurniture(Player player, Location location, String furnitureID, EquipmentSlot hand, ItemStack itemInHand, Cancellable event) {
         Optional<CustomCropsWorld<?>> optionalWorld = plugin.getWorldManager().getWorld(player.getWorld());
         if (optionalWorld.isEmpty()) {
+            return;
+        }
+
+        if (antiGriefLib != null && !antiGriefLib.canInteract(player, location)) {
             return;
         }
 
@@ -439,6 +454,10 @@ public class BukkitItemManager extends AbstractItemManager {
     public void handlePlayerBreak(Player player, Location location, ItemStack itemInHand, String brokenID, Cancellable event) {
         Optional<CustomCropsWorld<?>> optionalWorld = plugin.getWorldManager().getWorld(player.getWorld());
         if (optionalWorld.isEmpty()) {
+            return;
+        }
+
+        if (antiGriefLib != null && !antiGriefLib.canBreak(player, location)) {
             return;
         }
 
@@ -500,6 +519,10 @@ public class BukkitItemManager extends AbstractItemManager {
     public void handlePlayerPlace(Player player, Location location, String placedID, EquipmentSlot hand, ItemStack itemInHand, Cancellable event) {
         Optional<CustomCropsWorld<?>> optionalWorld = plugin.getWorldManager().getWorld(player.getWorld());
         if (optionalWorld.isEmpty()) {
+            return;
+        }
+
+        if (antiGriefLib != null && !antiGriefLib.canPlace(player, location)) {
             return;
         }
 

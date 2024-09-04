@@ -102,7 +102,7 @@ public abstract class AbstractCustomEventListener implements Listener {
         );
     }
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     public void onInteractBlock(PlayerInteractEvent event) {
         if (event.getAction() != Action.RIGHT_CLICK_BLOCK)
             return;
@@ -121,7 +121,7 @@ public abstract class AbstractCustomEventListener implements Listener {
         );
     }
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     public void onInteractEntity(PlayerInteractAtEntityEvent event) {
         EntityType type = event.getRightClicked().getType();
         if (entities.contains(type)) {
@@ -135,7 +135,7 @@ public abstract class AbstractCustomEventListener implements Listener {
         );
     }
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     public void onPlaceBlock(BlockPlaceEvent event) {
         Block block = event.getBlock();
         if (blocks.contains(block.getType())) {
@@ -151,7 +151,7 @@ public abstract class AbstractCustomEventListener implements Listener {
         );
     }
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     public void onBreakBlock(BlockBreakEvent event) {
         Block block = event.getBlock();
         if (blocks.contains(block.getType())) {
@@ -215,7 +215,7 @@ public abstract class AbstractCustomEventListener implements Listener {
         }
     }
 
-    @EventHandler (ignoreCancelled = true)
+    @EventHandler (ignoreCancelled = true, priority = EventPriority.HIGH)
     public void onTrampling(EntityChangeBlockEvent event) {
         Block block = event.getBlock();
         if (block.getType() == Material.FARMLAND && event.getTo() == Material.DIRT) {
@@ -227,13 +227,13 @@ public abstract class AbstractCustomEventListener implements Listener {
         }
     }
 
-    @EventHandler (ignoreCancelled = true)
+    @EventHandler (ignoreCancelled = true, priority = EventPriority.HIGH)
     public void onMoistureChange(MoistureChangeEvent event) {
         if (ConfigManager.disableMoistureMechanic())
             event.setCancelled(true);
     }
 
-    @EventHandler (ignoreCancelled = true)
+    @EventHandler (ignoreCancelled = true, priority = EventPriority.HIGH)
     public void onPistonExtend(BlockPistonExtendEvent event) {
         Optional<CustomCropsWorld<?>> world = BukkitCustomCropsPlugin.getInstance().getWorldManager().getWorld(event.getBlock().getWorld());
         if (world.isEmpty()){
@@ -248,7 +248,7 @@ public abstract class AbstractCustomEventListener implements Listener {
         }
     }
 
-    @EventHandler (ignoreCancelled = true)
+    @EventHandler (ignoreCancelled = true, priority = EventPriority.HIGH)
     public void onPistonRetract(BlockPistonRetractEvent event) {
         Optional<CustomCropsWorld<?>> world = BukkitCustomCropsPlugin.getInstance().getWorldManager().getWorld(event.getBlock().getWorld());
         if (world.isEmpty()){
@@ -294,7 +294,7 @@ public abstract class AbstractCustomEventListener implements Listener {
         }
     }
 
-    @EventHandler (ignoreCancelled = true)
+    @EventHandler (ignoreCancelled = true, priority = EventPriority.HIGH)
     public void onDispenser(BlockDispenseEvent event) {
         Block block = event.getBlock();
         if (!(block.getBlockData() instanceof org.bukkit.block.data.type.Dispenser directional)) {

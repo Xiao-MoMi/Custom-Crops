@@ -17,6 +17,7 @@
 
 package net.momirealms.customcrops.bukkit;
 
+import net.momirealms.antigrieflib.AntiGriefLib;
 import net.momirealms.customcrops.api.BukkitCustomCropsPlugin;
 import net.momirealms.customcrops.api.core.ConfigManager;
 import net.momirealms.customcrops.api.core.SimpleRegistryAccess;
@@ -86,7 +87,7 @@ public class BukkitCustomCropsPluginImpl extends BukkitCustomCropsPlugin {
         this.logger = new JavaPluginLogger(getBoostrap().getLogger());
         this.classPathAppender = new ReflectionClassPathAppender(this);
         this.dependencyManager = new DependencyManagerImpl(this);
-        this.registryAccess = new SimpleRegistryAccess(this);
+        this.registryAccess = SimpleRegistryAccess.getInstance();
     }
 
     @Override
@@ -176,29 +177,40 @@ public class BukkitCustomCropsPluginImpl extends BukkitCustomCropsPlugin {
         boolean downloadFromPolymart = polymart.equals("1");
         boolean downloadFromBBB = buildByBit.equals("true");
 
-        this.getScheduler().sync().runLater(() -> {
-            getPluginLogger().info("CustomCrops Registry has been frozen");
-            ((SimpleRegistryAccess) registryAccess).freeze();
-            this.reload();
-            if (ConfigManager.metrics()) new Metrics((JavaPlugin) getBoostrap(), 16593);
-            if (ConfigManager.checkUpdate()) {
-                VersionHelper.UPDATE_CHECKER.apply(this).thenAccept(result -> {
-                    String link;
-                    if (downloadFromPolymart) {
-                        link = "https://polymart.org/resource/2625/";
-                    } else if (downloadFromBBB) {
-                        link = "https://builtbybit.com/resources/36363/";
-                    } else {
-                        link = "https://github.com/Xiao-MoMi/Custom-Crops/";
-                    }
-                    if (!result) {
-                        this.getPluginLogger().info("You are using the latest version.");
-                    } else {
-                        this.getPluginLogger().warn("Update is available: " + link);
-                    }
-                });
-            }
-        }, 1, null);
+        ((SimpleRegistryAccess) registryAccess).freeze();
+        this.reload();
+        if (ConfigManager.metrics()) new Metrics((JavaPlugin) getBoostrap(), 16593);
+        if (ConfigManager.checkUpdate()) {
+            VersionHelper.UPDATE_CHECKER.apply(this).thenAccept(result -> {
+                String link;
+                if (downloadFromPolymart) {
+                    link = "https://polymart.org/resource/2625/";
+                } else if (downloadFromBBB) {
+                    link = "https://builtbybit.com/resources/36363/";
+                } else {
+                    link = "https://github.com/Xiao-MoMi/Custom-Crops/";
+                }
+                if (!result) {
+                    this.getPluginLogger().info("You are using the latest version.");
+                } else {
+                    this.getPluginLogger().warn("Update is available: " + link);
+                }
+            });
+        }
+        // delayed init task
+        if (VersionHelper.isFolia()) {
+            Bukkit.getGlobalRegionScheduler().run(getBoostrap(), (scheduledTask) -> {
+                ((SimpleRegistryAccess) registryAccess).freeze();
+                logger.info("Registry access has been frozen");
+                ((BukkitItemManager) itemManager).setAntiGriefLib(AntiGriefLib.builder((JavaPlugin) getBoostrap()).silentLogs(true).ignoreOP(true).build());
+            });
+        } else {
+            Bukkit.getScheduler().runTask(getBoostrap(), () -> {
+                ((SimpleRegistryAccess) registryAccess).freeze();
+                logger.info("Registry access has been frozen");
+                ((BukkitItemManager) itemManager).setAntiGriefLib(AntiGriefLib.builder((JavaPlugin) getBoostrap()).silentLogs(true).ignoreOP(true).build());
+            });
+        }
     }
 
     @Override
