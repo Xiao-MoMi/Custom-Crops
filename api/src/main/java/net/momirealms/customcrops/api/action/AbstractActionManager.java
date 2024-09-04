@@ -197,6 +197,7 @@ public abstract class AbstractActionManager<T> implements ActionManager<T> {
         registerAction((args, chance) -> {
             List<String> messages = ListUtils.toList(args);
             return context -> {
+                if (context.argOrDefault(ContextKeys.OFFLINE, false)) return;
                 if (Math.random() > chance) return;
                 OfflinePlayer offlinePlayer = null;
                 if (context.holder() instanceof Player player) {
@@ -219,6 +220,7 @@ public abstract class AbstractActionManager<T> implements ActionManager<T> {
                 List<String> messages = ListUtils.toList(section.get("message"));
                 MathValue<T> range = MathValue.auto(section.get("range"));
                 return context -> {
+                    if (context.argOrDefault(ContextKeys.OFFLINE, false)) return;
                     if (Math.random() > chance) return;
                     double realRange = range.evaluate(context);
                     OfflinePlayer owner = null;
@@ -254,6 +256,7 @@ public abstract class AbstractActionManager<T> implements ActionManager<T> {
                 String actionbar = section.getString("actionbar");
                 MathValue<T> range = MathValue.auto(section.get("range"));
                 return context -> {
+                    if (context.argOrDefault(ContextKeys.OFFLINE, false)) return;
                     if (Math.random() > chance) return;
                     OfflinePlayer owner = null;
                     if (context.holder() instanceof Player player) {
@@ -281,6 +284,7 @@ public abstract class AbstractActionManager<T> implements ActionManager<T> {
         registerAction((args, chance) -> {
             List<String> commands = ListUtils.toList(args);
             return context -> {
+                if (context.argOrDefault(ContextKeys.OFFLINE, false)) return;
                 if (Math.random() > chance) return;
                 OfflinePlayer owner = null;
                 if (context.holder() instanceof Player player) {
@@ -297,6 +301,7 @@ public abstract class AbstractActionManager<T> implements ActionManager<T> {
         registerAction((args, chance) -> {
             List<String> commands = ListUtils.toList(args);
             return context -> {
+                if (context.argOrDefault(ContextKeys.OFFLINE, false)) return;
                 if (Math.random() > chance) return;
                 OfflinePlayer owner = null;
                 if (context.holder() instanceof Player player) {
@@ -315,6 +320,7 @@ public abstract class AbstractActionManager<T> implements ActionManager<T> {
                 List<String> cmd = ListUtils.toList(section.get("command"));
                 MathValue<T> range = MathValue.auto(section.get("range"));
                 return context -> {
+                    if (context.argOrDefault(ContextKeys.OFFLINE, false)) return;
                     if (Math.random() > chance) return;
                     OfflinePlayer owner = null;
                     if (context.holder() instanceof Player player) {
@@ -492,6 +498,7 @@ public abstract class AbstractActionManager<T> implements ActionManager<T> {
                 int fadeOut = section.getInt("fade-out", 10);
                 int range = section.getInt("range", 0);
                 return context -> {
+                    if (context.argOrDefault(ContextKeys.OFFLINE, false)) return;
                     if (Math.random() > chance) return;
                     Location location = requireNonNull(context.arg(ContextKeys.LOCATION));
                     for (Player player : location.getWorld().getPlayers()) {
@@ -552,6 +559,7 @@ public abstract class AbstractActionManager<T> implements ActionManager<T> {
                 }
 
                 return context -> {
+                    if (context.argOrDefault(ContextKeys.OFFLINE, false)) return;
                     if (Math.random() > chance) return;
                     Location location = requireNonNull(context.arg(ContextKeys.LOCATION));
                     location.getWorld().spawnParticle(
@@ -749,6 +757,7 @@ public abstract class AbstractActionManager<T> implements ActionManager<T> {
                 boolean onlyShowToOne = !section.getBoolean("visible-to-all", false);
                 int range = section.getInt("range", 32);
                 return context -> {
+                    if (context.argOrDefault(ContextKeys.OFFLINE, false)) return;
                     if (context.holder() == null) return;
                     if (Math.random() > chance) return;
                     Player owner = null;
