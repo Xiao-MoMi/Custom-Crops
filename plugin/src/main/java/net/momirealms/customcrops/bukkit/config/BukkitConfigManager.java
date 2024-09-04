@@ -38,9 +38,11 @@ import net.momirealms.customcrops.api.core.mechanic.pot.PotConfig;
 import net.momirealms.customcrops.api.core.mechanic.sprinkler.SprinklerConfig;
 import net.momirealms.customcrops.api.core.mechanic.wateringcan.WateringCanConfig;
 import net.momirealms.customcrops.common.helper.AdventureHelper;
+import net.momirealms.customcrops.common.helper.VersionHelper;
 import net.momirealms.customcrops.common.locale.TranslationManager;
 import net.momirealms.customcrops.common.plugin.CustomCropsProperties;
 import net.momirealms.customcrops.common.util.ListUtils;
+import org.bukkit.Material;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -50,14 +52,23 @@ import java.util.*;
 
 public class BukkitConfigManager extends ConfigManager {
 
+    private static final Set<Material> VANILLA_CROPS = new HashSet<>(
+            List.of(Material.WHEAT, Material.CARROTS, Material.POTATOES, Material.BEETROOTS, Material.SWEET_BERRY_BUSH,
+                    Material.MELON_STEM, Material.PUMPKIN_STEM)
+    );
     private static YamlDocument MAIN_CONFIG;
-
     public static YamlDocument getMainConfig() {
         return MAIN_CONFIG;
     }
 
     public BukkitConfigManager(BukkitCustomCropsPlugin plugin) {
         super(plugin);
+        if (VersionHelper.isVersionNewerThan1_19_4()) {
+            VANILLA_CROPS.add(Material.TORCHFLOWER_CROP);
+        }
+        if (VersionHelper.isVersionNewerThan1_20()) {
+            VANILLA_CROPS.add(Material.PITCHER_CROP);
+        }
     }
 
     @Override
@@ -155,6 +166,27 @@ public class BukkitConfigManager extends ConfigManager {
         for (String id : greenhouse) {
             Registries.BLOCKS.register(id, BuiltInBlockMechanics.GREENHOUSE.mechanic());
         }
+
+        overriddenCrops.clear();
+        overriddenCrops.addAll(config.getStringList("mechanics.override-vanilla-crops")
+                .stream()
+                .map(it -> {
+                    try {
+                        return Material.valueOf(it.toUpperCase(Locale.ENGLISH));
+                    } catch (IllegalArgumentException e) {
+                        plugin.getPluginLogger().warn("No enum constant exists", e);
+                        return Material.AIR;
+                    }
+                })
+                .filter(it -> {
+                    if (it == Material.AIR) return false;
+                    boolean allow = VANILLA_CROPS.contains(it);
+                    if (!allow) {
+                        plugin.getPluginLogger().warn(it.name() + " is not a supported vanilla crop type");
+                    }
+                    return allow;
+                })
+                .toList());
     }
 
     @Override
@@ -193,8 +225,12 @@ public class BukkitConfigManager extends ConfigManager {
                             boolean save = false;
                             for (Map.Entry<String, Object> entry : document.getStringRouteMappedValues(false).entrySet()) {
                                 if (entry.getValue() instanceof Section section) {
-                                    if (type.parse(this, entry.getKey(), section)) {
-                                        save = true;
+                                    try {
+                                        if (type.parse(this, entry.getKey(), section)) {
+                                            save = true;
+                                        }
+                                    } catch (Exception e) {
+                                        plugin.getPluginLogger().warn("Error occurs during parsing configs", e);
                                     }
                                 }
                             }

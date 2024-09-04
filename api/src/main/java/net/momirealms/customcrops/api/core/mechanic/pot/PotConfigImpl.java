@@ -18,7 +18,6 @@
 package net.momirealms.customcrops.api.core.mechanic.pot;
 
 import net.momirealms.customcrops.api.action.Action;
-import net.momirealms.customcrops.api.core.ExistenceForm;
 import net.momirealms.customcrops.api.core.mechanic.fertilizer.FertilizerType;
 import net.momirealms.customcrops.api.core.world.CustomCropsBlockState;
 import net.momirealms.customcrops.api.misc.water.WaterBar;

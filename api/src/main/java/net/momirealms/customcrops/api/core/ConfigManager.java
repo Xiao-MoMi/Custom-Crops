@@ -28,6 +28,7 @@ import net.momirealms.customcrops.api.util.PluginUtils;
 import net.momirealms.customcrops.common.config.ConfigLoader;
 import net.momirealms.customcrops.common.plugin.feature.Reloadable;
 import net.momirealms.customcrops.common.util.Pair;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
 import java.io.*;
@@ -69,6 +70,8 @@ public abstract class ConfigManager implements ConfigLoader, Reloadable {
     protected boolean preventTrampling;
     protected boolean disableMoistureMechanic;
     protected HashMap<String, Double> offsets = new HashMap<>();
+
+    protected HashSet<Material> overriddenCrops = new HashSet<>();
 
     public ConfigManager(BukkitCustomCropsPlugin plugin) {
         this.plugin = plugin;
@@ -161,6 +164,10 @@ public abstract class ConfigManager implements ConfigLoader, Reloadable {
 
     public static boolean disableMoistureMechanic() {
         return instance.disableMoistureMechanic;
+    }
+
+    public static Set<Material> overriddenCrops() {
+        return instance.overriddenCrops;
     }
 
     @Override

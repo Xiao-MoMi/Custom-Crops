@@ -19,7 +19,6 @@ package net.momirealms.customcrops.api.core.block;
 
 import com.flowpowered.nbt.IntTag;
 import com.flowpowered.nbt.Tag;
-import net.momirealms.customcrops.api.misc.NamedTextColor;
 import net.momirealms.customcrops.api.BukkitCustomCropsPlugin;
 import net.momirealms.customcrops.api.action.ActionManager;
 import net.momirealms.customcrops.api.context.Context;
@@ -37,6 +36,7 @@ import net.momirealms.customcrops.api.event.SprinklerBreakEvent;
 import net.momirealms.customcrops.api.event.SprinklerFillEvent;
 import net.momirealms.customcrops.api.event.SprinklerInteractEvent;
 import net.momirealms.customcrops.api.event.SprinklerPlaceEvent;
+import net.momirealms.customcrops.api.misc.NamedTextColor;
 import net.momirealms.customcrops.api.misc.water.WateringMethod;
 import net.momirealms.customcrops.api.requirement.RequirementManager;
 import net.momirealms.customcrops.api.util.EventUtils;

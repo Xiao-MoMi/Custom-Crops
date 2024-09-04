@@ -17,7 +17,6 @@
 
 package net.momirealms.customcrops.api.core.block;
 
-import net.momirealms.customcrops.api.misc.NamedTextColor;
 import net.momirealms.customcrops.api.BukkitCustomCropsPlugin;
 import net.momirealms.customcrops.api.core.BuiltInBlockMechanics;
 import net.momirealms.customcrops.api.core.ConfigManager;
@@ -30,6 +29,7 @@ import net.momirealms.customcrops.api.core.wrapper.WrappedPlaceEvent;
 import net.momirealms.customcrops.api.event.ScarecrowBreakEvent;
 import net.momirealms.customcrops.api.event.ScarecrowInteractEvent;
 import net.momirealms.customcrops.api.event.ScarecrowPlaceEvent;
+import net.momirealms.customcrops.api.misc.NamedTextColor;
 import net.momirealms.customcrops.api.util.EventUtils;
 
 import java.util.Optional;

@@ -22,7 +22,6 @@ import net.momirealms.customcrops.api.action.ActionManager;
 import net.momirealms.customcrops.api.context.Context;
 import net.momirealms.customcrops.api.context.ContextKeys;
 import net.momirealms.customcrops.api.core.block.CropBlock;
-import net.momirealms.customcrops.api.core.block.PotBlock;
 import net.momirealms.customcrops.api.core.mechanic.crop.BoneMeal;
 import net.momirealms.customcrops.api.core.mechanic.crop.CropConfig;
 import net.momirealms.customcrops.api.core.mechanic.crop.CropStageConfig;
@@ -43,6 +42,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -109,8 +109,13 @@ public abstract class AbstractCustomEventListener implements Listener {
             return;
         Block block = event.getClickedBlock();
         assert block != null;
-        if (blocks.contains(block.getType())) {
+        Material type = block.getType();
+        if (blocks.contains(type)) {
             return;
+        }
+        ItemStack itemStack = event.getItem();
+        if (itemStack != null && itemStack.getType() == Material.BONE_MEAL && ConfigManager.overriddenCrops().contains(type)) {
+            event.setUseItemInHand(Event.Result.DENY);
         }
         this.itemManager.handlePlayerInteractBlock(
                 event.getPlayer(),
@@ -145,6 +150,10 @@ public abstract class AbstractCustomEventListener implements Listener {
         if (blocks.contains(block.getType())) {
             return;
         }
+        if (ConfigManager.overriddenCrops().contains(block.getType())) {
+            event.setCancelled(true);
+            return;
+        }
         this.itemManager.handlePlayerPlace(
                 event.getPlayer(),
                 block.getLocation(),
@@ -160,6 +169,9 @@ public abstract class AbstractCustomEventListener implements Listener {
         Block block = event.getBlock();
         if (blocks.contains(block.getType())) {
             return;
+        }
+        if (ConfigManager.overriddenCrops().contains(block.getType())) {
+            event.setDropItems(false);
         }
         this.itemManager.handlePlayerBreak(
                 event.getPlayer(),
@@ -315,6 +327,13 @@ public abstract class AbstractCustomEventListener implements Listener {
             if (event.isCancelled()) {
                 return;
             }
+        }
+    }
+
+    @EventHandler
+    public void onBlockPhysics(BlockPhysicsEvent event) {
+        if (ConfigManager.overriddenCrops().contains(event.getBlock().getType())) {
+            event.setCancelled(true);
         }
     }
 

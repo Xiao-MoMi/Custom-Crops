@@ -37,7 +37,6 @@ import net.momirealms.customcrops.api.integration.ItemProvider;
 import net.momirealms.customcrops.api.util.EventUtils;
 import net.momirealms.customcrops.api.util.LocationUtils;
 import net.momirealms.customcrops.api.util.PluginUtils;
-import net.momirealms.customcrops.api.util.StringUtils;
 import net.momirealms.customcrops.common.item.Item;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -250,7 +249,7 @@ public class BukkitItemManager extends AbstractItemManager {
     public String blockID(@NotNull Block block) {
         String id = this.provider.blockID(block);
         if (id == null) {
-            id = block.getType().toString();
+            id = block.getBlockData().getAsString();
         }
         return id;
     }
