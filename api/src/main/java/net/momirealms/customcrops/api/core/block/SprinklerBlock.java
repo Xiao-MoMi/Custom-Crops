@@ -302,18 +302,20 @@ public class SprinklerBlock extends AbstractCustomCropsBlock {
                        CustomCropsBlockState anotherState = optionalState.get();
                        if (anotherState.type() instanceof PotBlock potBlock) {
                            PotConfig potConfig = potBlock.config(anotherState);
-                           if (config.potWhitelist().contains(potConfig.id())) {
-                               if (potBlock.addWater(anotherState, potConfig, config.wateringAmount())) {
-                                   BukkitCustomCropsPlugin.getInstance().getScheduler().sync().run(
-                                           () -> potBlock.updateBlockAppearance(
-                                                   pos3.toLocation(world.bukkitWorld()),
-                                                   potConfig,
-                                                   true,
-                                                   potBlock.fertilizers(anotherState)
-                                           ),
-                                           bukkitWorld,
-                                           pos3.chunkX(), pos3.chunkZ()
-                                   );
+                           if (!potConfig.vanillaFarmland()) {
+                               if (config.potWhitelist().contains(potConfig.id())) {
+                                   if (potBlock.addWater(anotherState, potConfig, config.wateringAmount())) {
+                                       BukkitCustomCropsPlugin.getInstance().getScheduler().sync().run(
+                                               () -> potBlock.updateBlockAppearance(
+                                                       pos3.toLocation(world.bukkitWorld()),
+                                                       potConfig,
+                                                       true,
+                                                       potBlock.fertilizers(anotherState)
+                                               ),
+                                               bukkitWorld,
+                                               pos3.chunkX(), pos3.chunkZ()
+                                       );
+                                   }
                                }
                            }
                        }

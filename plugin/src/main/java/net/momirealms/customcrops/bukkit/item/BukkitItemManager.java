@@ -201,8 +201,8 @@ public class BukkitItemManager extends AbstractItemManager {
 
     @Override
     public void placeBlock(@NotNull Location location, @NotNull String id) {
-        if (StringUtils.isCapitalLetter(id)) {
-            location.getWorld().getBlockAt(location).setType(Material.valueOf(id), false);
+        if (id.startsWith("minecraft:")) {
+            location.getWorld().getBlockAt(location).setBlockData(Bukkit.createBlockData(id), false);
         } else {
             this.provider.placeCustomBlock(location, id);
         }

@@ -63,6 +63,13 @@ public interface PotConfig {
     boolean isNearbyWaterAccepted();
 
     /**
+     * Checks if the pot works as a vanilla farmland
+     *
+     * @return True if disabled
+     */
+    boolean vanillaFarmland();
+
+    /**
      * Gets the methods available for watering the pot.
      *
      * @return An array of {@link WateringMethod} instances.
@@ -220,6 +227,14 @@ public interface PotConfig {
          * @return The current instance of the Builder.
          */
         Builder storage(int storage);
+
+        /**
+         * Sets if the pot works as a vanilla farmland
+         *
+         * @param vanillaFarmland if works as a vanilla farmland
+         * @return The current instance of the Builder.
+         */
+        Builder vanillaFarmland(boolean vanillaFarmland);
 
         /**
          * Sets whether the pot can accept rain as a source of water.

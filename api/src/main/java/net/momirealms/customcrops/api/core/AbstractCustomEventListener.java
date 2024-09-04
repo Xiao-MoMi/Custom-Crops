@@ -115,7 +115,8 @@ public abstract class AbstractCustomEventListener implements Listener {
         this.itemManager.handlePlayerInteractBlock(
                 event.getPlayer(),
                 block,
-                block.getType().name(), event.getBlockFace(),
+                block.getBlockData().getAsString(),
+                event.getBlockFace(),
                 event.getHand(),
                 event.getItem(),
                 event
@@ -130,8 +131,10 @@ public abstract class AbstractCustomEventListener implements Listener {
         }
         this.itemManager.handlePlayerInteractFurniture(
                 event.getPlayer(),
-                event.getRightClicked().getLocation(), type.name(),
-                event.getHand(), event.getPlayer().getInventory().getItem(event.getHand()),
+                event.getRightClicked().getLocation(),
+                type.name(),
+                event.getHand(),
+                event.getPlayer().getInventory().getItem(event.getHand()),
                 event
         );
     }
@@ -145,7 +148,7 @@ public abstract class AbstractCustomEventListener implements Listener {
         this.itemManager.handlePlayerPlace(
                 event.getPlayer(),
                 block.getLocation(),
-                block.getType().name(),
+                block.getBlockData().getAsString(),
                 event.getHand(),
                 event.getItemInHand(),
                 event
@@ -160,7 +163,9 @@ public abstract class AbstractCustomEventListener implements Listener {
         }
         this.itemManager.handlePlayerBreak(
                 event.getPlayer(),
-                block.getLocation(), event.getPlayer().getInventory().getItemInMainHand(), block.getType().name(),
+                block.getLocation(),
+                event.getPlayer().getInventory().getItemInMainHand(),
+                block.getBlockData().getAsString(),
                 event
         );
     }
@@ -216,7 +221,7 @@ public abstract class AbstractCustomEventListener implements Listener {
                     event.setCancelled(true);
                     return;
                 }
-                this.itemManager.handlePhysicsBreak(block.getLocation(), "FARMLAND", event);
+                this.itemManager.handlePhysicsBreak(block.getLocation(), block.getBlockData().getAsString(), event);
             }
         }
     }
@@ -229,7 +234,7 @@ public abstract class AbstractCustomEventListener implements Listener {
                 event.setCancelled(true);
                 return;
             }
-            this.itemManager.handleEntityTrample(event.getEntity(), block.getLocation(), "FARMLAND", event);
+            this.itemManager.handleEntityTrample(event.getEntity(), block.getLocation(), block.getBlockData().getAsString(), event);
         }
     }
 

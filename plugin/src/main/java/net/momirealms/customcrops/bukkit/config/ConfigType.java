@@ -115,6 +115,7 @@ public class ConfigType {
 
                 PotConfig config = PotConfig.builder()
                         .id(id)
+                        .vanillaFarmland(section.getBoolean("vanilla-farmland", false))
                         .storage(section.getInt("storage", 5))
                         .isRainDropAccepted(section.getBoolean("absorb-rainwater", false))
                         .isNearbyWaterAccepted(section.getBoolean("absorb-nearby-water", false))

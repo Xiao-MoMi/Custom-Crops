@@ -18,6 +18,7 @@
 package net.momirealms.customcrops.api.core.block;
 
 import com.flowpowered.nbt.*;
+import com.flowpowered.nbt.Tag;
 import net.momirealms.customcrops.api.misc.NamedTextColor;
 import net.momirealms.customcrops.api.BukkitCustomCropsPlugin;
 import net.momirealms.customcrops.api.action.ActionManager;
@@ -42,10 +43,7 @@ import net.momirealms.customcrops.api.util.EventUtils;
 import net.momirealms.customcrops.api.util.LocationUtils;
 import net.momirealms.customcrops.api.util.PlayerUtils;
 import net.momirealms.customcrops.api.util.StringUtils;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Waterlogged;
@@ -349,6 +347,9 @@ public class PotBlock extends AbstractCustomCropsBlock {
             }
         }
 
+        // work as vanilla farmland
+        if (config.vanillaFarmland()) return;
+
         boolean hasNaturalWater = false;
         boolean waterChanged = false;
 
@@ -613,20 +614,9 @@ public class PotBlock extends AbstractCustomCropsBlock {
     }
 
     public void updateBlockAppearance(Location location, PotConfig config, boolean hasWater, @Nullable Fertilizer fertilizer) {
+        if (config.vanillaFarmland()) return;
         String appearance = config.getPotAppearance(hasWater, fertilizer == null ? null : fertilizer.type());
-        if (StringUtils.isCapitalLetter(appearance)) {
-            Block block = location.getBlock();
-            Material type = Material.valueOf(appearance);
-            if (type == Material.FARMLAND) {
-                Farmland data = ((Farmland) Material.FARMLAND.createBlockData());
-                data.setMoisture(hasWater ? 7 : 0);
-                block.setBlockData(data, false);
-            } else {
-                block.setType(type, false);
-            }
-        } else {
-            BukkitCustomCropsPlugin.getInstance().getItemManager().place(location, ExistenceForm.BLOCK, appearance, FurnitureRotation.NONE);
-        }
+        BukkitCustomCropsPlugin.getInstance().getItemManager().placeBlock(location, appearance);
     }
 
     private Fertilizer tagToFertilizer(CompoundMap tag) {

@@ -254,6 +254,8 @@ public class WateringCanItem extends AbstractCustomCropsItem {
 
         PotConfig potConfig = Registries.ITEM_TO_POT.get(targetBlockID);
         if (potConfig != null) {
+            if (potConfig.vanillaFarmland())
+                return InteractionResult.COMPLETE;
             // need to click the upper face
             if (blockFace != BlockFace.UP)
                 return InteractionResult.PASS;

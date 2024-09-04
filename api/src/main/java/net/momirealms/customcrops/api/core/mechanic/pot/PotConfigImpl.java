@@ -24,7 +24,6 @@ import net.momirealms.customcrops.api.core.world.CustomCropsBlockState;
 import net.momirealms.customcrops.api.misc.water.WaterBar;
 import net.momirealms.customcrops.api.misc.water.WateringMethod;
 import net.momirealms.customcrops.api.requirement.Requirement;
-import net.momirealms.customcrops.api.util.StringUtils;
 import net.momirealms.customcrops.common.util.Pair;
 import org.bukkit.entity.Player;
 
@@ -35,6 +34,7 @@ import java.util.Set;
 public class PotConfigImpl implements PotConfig {
 
     private final String id;
+    private final boolean vanillaFarmland;
     private final Pair<String, String> basicAppearance;
     private final HashMap<FertilizerType, Pair<String, String>> potAppearanceMap;
     private final Set<String> blocks = new HashSet<>();
@@ -59,6 +59,7 @@ public class PotConfigImpl implements PotConfig {
 
     public PotConfigImpl(
             String id,
+            boolean vanillaFarmland,
             Pair<String, String> basicAppearance,
             HashMap<FertilizerType, Pair<String, String>> potAppearanceMap,
             int storage,
@@ -80,6 +81,7 @@ public class PotConfigImpl implements PotConfig {
             Action<Player>[] maxFertilizerActions
     ) {
         this.id = id;
+        this.vanillaFarmland = vanillaFarmland;
         this.basicAppearance = basicAppearance;
         this.potAppearanceMap = potAppearanceMap;
         this.storage = storage;
@@ -101,19 +103,18 @@ public class PotConfigImpl implements PotConfig {
         this.maxFertilizerActions = maxFertilizerActions;
         this.blocks.add(basicAppearance.left());
         this.blocks.add(basicAppearance.right());
-        addToWet(basicAppearance.right());
+        this.wetBlocks.add(basicAppearance.right());
         for (Pair<String, String> pair : potAppearanceMap.values()) {
             this.blocks.add(pair.left());
             this.blocks.add(pair.right());
-            addToWet(pair.right());
+            this.wetBlocks.add(pair.right());
         }
-    }
-
-    private void addToWet(String id) {
-        if (StringUtils.isCapitalLetter(id)) {
-            return;
+        if (vanillaFarmland) {
+            this.blocks.clear();
+            for (int i = 0; i <= 7; i++) {
+                this.blocks.add("minecraft:farmland[moisture=" + i +"]");
+            }
         }
-        this.wetBlocks.add(id);
     }
 
     @Override
@@ -123,21 +124,28 @@ public class PotConfigImpl implements PotConfig {
 
     @Override
     public int storage() {
+        if (vanillaFarmland()) return 0;
         return storage;
     }
 
     @Override
     public boolean isRainDropAccepted() {
-        return isRainDropAccepted;
+        return isRainDropAccepted && !vanillaFarmland();
     }
 
     @Override
     public boolean isNearbyWaterAccepted() {
-        return isNearbyWaterAccepted;
+        return isNearbyWaterAccepted && !vanillaFarmland();
+    }
+
+    @Override
+    public boolean vanillaFarmland() {
+        return vanillaFarmland;
     }
 
     @Override
     public WateringMethod[] wateringMethods() {
+        if (vanillaFarmland()) return new WateringMethod[0];
         return wateringMethods;
     }
 
@@ -148,6 +156,7 @@ public class PotConfigImpl implements PotConfig {
 
     @Override
     public boolean isWet(String blockID) {
+        if (vanillaFarmland()) return false;
         return wetBlocks.contains(blockID);
     }
 
@@ -158,6 +167,7 @@ public class PotConfigImpl implements PotConfig {
 
     @Override
     public int maxFertilizers() {
+        if (vanillaFarmland) return 0;
         return maxFertilizers;
     }
 
@@ -230,7 +240,7 @@ public class PotConfigImpl implements PotConfig {
     public static class BuilderImpl implements Builder {
 
         private String id;
-        private ExistenceForm existenceForm;
+        private boolean vanillaFarmland;
         private Pair<String, String> basicAppearance;
         private HashMap<FertilizerType, Pair<String, String>> potAppearanceMap;
         private int storage;
@@ -253,7 +263,7 @@ public class PotConfigImpl implements PotConfig {
 
         @Override
         public PotConfig build() {
-            return new PotConfigImpl(id, basicAppearance, potAppearanceMap, storage, isRainDropAccepted, isNearbyWaterAccepted, wateringMethods, waterBar, maxFertilizers, placeRequirements, breakRequirements, useRequirements, tickActions, reachLimitActions, interactActions, placeActions, breakActions, addWaterActions, fullWaterActions, maxFertilizerActions);
+            return new PotConfigImpl(id, vanillaFarmland, basicAppearance, potAppearanceMap, storage, isRainDropAccepted, isNearbyWaterAccepted, wateringMethods, waterBar, maxFertilizers, placeRequirements, breakRequirements, useRequirements, tickActions, reachLimitActions, interactActions, placeActions, breakActions, addWaterActions, fullWaterActions, maxFertilizerActions);
         }
 
         @Override
@@ -265,6 +275,12 @@ public class PotConfigImpl implements PotConfig {
         @Override
         public Builder storage(int storage) {
             this.storage = storage;
+            return this;
+        }
+
+        @Override
+        public Builder vanillaFarmland(boolean vanillaFarmland) {
+            this.vanillaFarmland = vanillaFarmland;
             return this;
         }
 
