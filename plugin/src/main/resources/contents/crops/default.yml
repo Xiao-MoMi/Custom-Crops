@@ -1,14 +1,14 @@
 # ID
 tomato:
   # Item type
-  # TRIPWIRE / ITEM_FRAME / ITEM_DISPLAY (1.19.4+)
-  type: TRIPWIRE
+  # BLOCK / FURNITURE
+  type: BLOCK
   # The crop can only be planted on whitelisted pots
   pot-whitelist:
     - default
   # Seed of the crop
   seed: {0}tomato_seeds
-  # Only works in ITEM_FRAME / ITEM_DISPLAY mode
+  # Only works in FURNITURE mode
   random-rotation: true
   # Break/Plant requirements
   requirements:
