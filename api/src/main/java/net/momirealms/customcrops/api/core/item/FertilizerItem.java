@@ -77,7 +77,7 @@ public class FertilizerItem extends AbstractCustomCropsItem {
             targetBlockID = BukkitCustomCropsPlugin.getInstance().getItemManager().blockID(targetLocation);
         }
 
-        context.arg(ContextKeys.LOCATION, targetLocation);
+        context.updateLocation(targetLocation);
 
         // if the clicked block is a pot
         PotConfig potConfig = Registries.ITEM_TO_POT.get(targetBlockID);

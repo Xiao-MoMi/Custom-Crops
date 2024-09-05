@@ -18,7 +18,6 @@
 package net.momirealms.customcrops.api.context;
 
 import org.bukkit.Location;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 
 import java.util.Objects;
@@ -45,7 +44,6 @@ public class ContextKeys<T> {
     public static final ContextKeys<String> ICON = of("icon", String.class);
     public static final ContextKeys<Integer> MAX_TIMES = of("max_times", Integer.class);
     public static final ContextKeys<Integer> LEFT_TIMES = of("left_times", Integer.class);
-    public static final ContextKeys<Player> PLAYER_INSTANCE = of("player_instance", Player.class);
 
     private final String key;
     private final Class<T> type;

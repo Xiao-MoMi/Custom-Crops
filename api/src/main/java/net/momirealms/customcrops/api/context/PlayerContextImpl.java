@@ -27,12 +27,8 @@ public final class PlayerContextImpl extends AbstractContext<Player> {
         super(player, sync);
         if (player == null) return;
         final Location location = player.getLocation();
-        arg(ContextKeys.PLAYER, player.getName())
-        .arg(ContextKeys.LOCATION, location)
-        .arg(ContextKeys.X, location.getBlockX())
-        .arg(ContextKeys.Y, location.getBlockY())
-        .arg(ContextKeys.Z, location.getBlockZ())
-        .arg(ContextKeys.WORLD, location.getWorld().getName());
+        arg(ContextKeys.PLAYER, player.getName());
+        updateLocation(location);
     }
 
     @Override

@@ -20,7 +20,6 @@ package net.momirealms.customcrops.api.core;
 import net.momirealms.customcrops.api.BukkitCustomCropsPlugin;
 import net.momirealms.customcrops.api.action.ActionManager;
 import net.momirealms.customcrops.api.context.Context;
-import net.momirealms.customcrops.api.context.ContextKeys;
 import net.momirealms.customcrops.api.core.block.CropBlock;
 import net.momirealms.customcrops.api.core.mechanic.crop.BoneMeal;
 import net.momirealms.customcrops.api.core.mechanic.crop.CropConfig;
@@ -32,7 +31,6 @@ import net.momirealms.customcrops.api.core.world.CustomCropsWorld;
 import net.momirealms.customcrops.api.core.world.Pos3;
 import net.momirealms.customcrops.api.event.BoneMealDispenseEvent;
 import net.momirealms.customcrops.api.util.EventUtils;
-import net.momirealms.customcrops.api.util.LocationUtils;
 import net.momirealms.customcrops.common.helper.VersionHelper;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -383,13 +381,12 @@ public abstract class AbstractCustomEventListener implements Listener {
                                     String id = itemManager.id(storage);
                                     if (id.equals(itemID)) {
                                         storage.setAmount(storage.getAmount() - 1);
-                                        Context<Player> context = Context.player(null);
-                                        context.arg(ContextKeys.LOCATION, location);
-                                        boneMeal.triggerActions(context);
+                                        Context<Player> playerContext = Context.player(null);
+                                        playerContext.updateLocation(location);
+                                        boneMeal.triggerActions(playerContext);
                                         int afterPoints = Math.min(point + boneMeal.rollPoint(), cropConfig.maxPoints());
                                         cropBlock.point(state, afterPoints);
-                                        Context<CustomCropsBlockState> blockContext = Context.block(state);
-                                        blockContext.arg(ContextKeys.LOCATION, LocationUtils.toBlockLocation(location));
+                                        Context<CustomCropsBlockState> blockContext = Context.block(state, location);
                                         for (int i = point + 1; i <= afterPoints; i++) {
                                             CropStageConfig stage = cropConfig.stageByPoint(i);
                                             if (stage != null) {
@@ -399,12 +396,11 @@ public abstract class AbstractCustomEventListener implements Listener {
                                         CropStageConfig currentStage = cropConfig.stageWithModelByPoint(point);
                                         CropStageConfig afterStage = cropConfig.stageWithModelByPoint(afterPoints);
                                         if (currentStage == afterStage) return;
-                                        Location bukkitLocation = location.toLocation(world.bukkitWorld());
-                                        FurnitureRotation rotation = BukkitCustomCropsPlugin.getInstance().getItemManager().remove(bukkitLocation, ExistenceForm.ANY);
+                                        FurnitureRotation rotation = BukkitCustomCropsPlugin.getInstance().getItemManager().remove(location, ExistenceForm.ANY);
                                         if (rotation == FurnitureRotation.NONE && cropConfig.rotation()) {
                                             rotation = FurnitureRotation.random();
                                         }
-                                        BukkitCustomCropsPlugin.getInstance().getItemManager().place(bukkitLocation, afterStage.existenceForm(), Objects.requireNonNull(afterStage.stageID()), rotation);
+                                        BukkitCustomCropsPlugin.getInstance().getItemManager().place(location, afterStage.existenceForm(), Objects.requireNonNull(afterStage.stageID()), rotation);
                                     }
                                 }
                             }

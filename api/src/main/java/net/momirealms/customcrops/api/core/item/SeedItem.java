@@ -67,7 +67,7 @@ public class SeedItem extends AbstractCustomCropsItem {
         Location seedLocation = LocationUtils.toBlockLocation(event.location().add(0, 1, 0));
         Context<Player> context = Context.player(player);
         context.arg(ContextKeys.SLOT, event.hand());
-        context.arg(ContextKeys.LOCATION, seedLocation);
+        context.updateLocation(seedLocation);
         // check pot whitelist
         if (!cropConfig.potWhitelist().contains(potConfig.id())) {
             ActionManager.trigger(context, cropConfig.wrongPotActions());

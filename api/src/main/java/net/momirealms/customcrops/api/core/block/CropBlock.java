@@ -76,7 +76,8 @@ public class CropBlock extends AbstractCustomCropsBlock {
     public void onBreak(WrappedBreakEvent event) {
         List<CropConfig> configs = Registries.STAGE_TO_CROP_UNSAFE.get(event.brokenID());
         CustomCropsWorld<?> world = event.world();
-        Pos3 pos3 = Pos3.from(event.location());
+        Location location = LocationUtils.toBlockLocation(event.location());
+        Pos3 pos3 = Pos3.from(location);
         if (configs == null || configs.isEmpty()) {
             world.removeBlockState(pos3);
             return;
@@ -102,7 +103,8 @@ public class CropBlock extends AbstractCustomCropsBlock {
 
         final Player player = event.playerBreaker();
         Context<Player> context = Context.player(player);
-        context.arg(ContextKeys.LOCATION, LocationUtils.toBlockLocation(event.location()));
+
+        context.updateLocation(location);
 
         // check requirements
         if (!RequirementManager.isSatisfied(context, cropConfig.breakRequirements())) {
@@ -169,7 +171,7 @@ public class CropBlock extends AbstractCustomCropsBlock {
 
         // data first
         CustomCropsWorld<?> world = event.world();
-        Location location = event.location();
+        Location location = LocationUtils.toBlockLocation(event.location());
         Pos3 pos3 = Pos3.from(location);
         // fix if possible
         CustomCropsBlockState state = fixOrGetState(world, pos3, event.relatedID());
@@ -198,7 +200,7 @@ public class CropBlock extends AbstractCustomCropsBlock {
         String blockBelowID = BukkitCustomCropsPlugin.getInstance().getItemManager().blockID(potLocation.getBlock());
         PotConfig potConfig = Registries.ITEM_TO_POT.get(blockBelowID);
         if (potConfig != null) {
-            context.arg(ContextKeys.LOCATION, LocationUtils.toBlockLocation(potLocation));
+            context.updateLocation(potLocation);
             PotBlock potBlock = (PotBlock) BuiltInBlockMechanics.POT.mechanic();
             assert potBlock != null;
             // fix or get data
@@ -207,7 +209,7 @@ public class CropBlock extends AbstractCustomCropsBlock {
                 return;
         }
 
-        context.arg(ContextKeys.LOCATION, LocationUtils.toBlockLocation(location));
+        context.updateLocation(location);
         if (point < cropConfig.maxPoints()) {
             for (BoneMeal boneMeal : cropConfig.boneMeals()) {
                 if (boneMeal.requiredItem().equals(event.itemID()) && boneMeal.amountOfRequiredItem() <= itemInHand.getAmount()) {
@@ -230,8 +232,7 @@ public class CropBlock extends AbstractCustomCropsBlock {
 
                     CropStageConfig nextStage = cropConfig.stageWithModelByPoint(afterPoints);
 
-                    Context<CustomCropsBlockState> blockContext = Context.block(state);
-                    blockContext.arg(ContextKeys.LOCATION, LocationUtils.toBlockLocation(location));
+                    Context<CustomCropsBlockState> blockContext = Context.block(state, location);
                     for (int i = point + 1; i <= afterPoints; i++) {
                         CropStageConfig stage = cropConfig.stageByPoint(i);
                         if (stage != null) {
@@ -240,12 +241,11 @@ public class CropBlock extends AbstractCustomCropsBlock {
                     }
 
                     if (Objects.equals(nextStage.stageID(), event.relatedID())) return;
-                    Location bukkitLocation = location.toLocation(world.bukkitWorld());
-                    FurnitureRotation rotation = BukkitCustomCropsPlugin.getInstance().getItemManager().remove(bukkitLocation, ExistenceForm.ANY);
+                    FurnitureRotation rotation = BukkitCustomCropsPlugin.getInstance().getItemManager().remove(location, ExistenceForm.ANY);
                     if (rotation == FurnitureRotation.NONE && cropConfig.rotation()) {
                         rotation = FurnitureRotation.random();
                     }
-                    BukkitCustomCropsPlugin.getInstance().getItemManager().place(bukkitLocation, nextStage.existenceForm(), Objects.requireNonNull(nextStage.stageID()), rotation);
+                    BukkitCustomCropsPlugin.getInstance().getItemManager().place(location, nextStage.existenceForm(), Objects.requireNonNull(nextStage.stageID()), rotation);
                     return;
                 }
             }
@@ -307,9 +307,8 @@ public class CropBlock extends AbstractCustomCropsBlock {
             }
         }
 
-        Context<CustomCropsBlockState> context = Context.block(state).arg(ContextKeys.OFFLINE, offline);
         Location bukkitLocation = location.toLocation(bukkitWorld);
-        context.arg(ContextKeys.LOCATION, bukkitLocation);
+        Context<CustomCropsBlockState> context = Context.block(state, bukkitLocation).arg(ContextKeys.OFFLINE, offline);
         for (DeathCondition deathCondition : config.deathConditions()) {
             if (deathCondition.isMet(context)) {
                 BukkitCustomCropsPlugin.getInstance().getScheduler().sync().runLater(() -> {

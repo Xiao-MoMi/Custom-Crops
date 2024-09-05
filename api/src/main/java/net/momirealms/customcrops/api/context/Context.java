@@ -18,6 +18,7 @@
 package net.momirealms.customcrops.api.context;
 
 import net.momirealms.customcrops.api.core.world.CustomCropsBlockState;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -122,10 +123,11 @@ public interface Context<T> {
      * Creates a block-specific context.
      *
      * @param block the block to be used as the holder of the context.
+     * @param location the location of the block
      * @return a new Context instance with the specified block as the holder.
      */
-    static Context<CustomCropsBlockState> block(@NotNull CustomCropsBlockState block) {
-        return new BlockContextImpl(block, false);
+    static Context<CustomCropsBlockState> block(@NotNull CustomCropsBlockState block, @NotNull Location location) {
+        return new BlockContextImpl(block, location, false);
     }
 
     /**
@@ -143,10 +145,24 @@ public interface Context<T> {
      * Creates a block-specific context.
      *
      * @param block the block to be used as the holder of the context.
+     * @param location the location of the block
      * @param threadSafe is the created map thread safe
      * @return a new Context instance with the specified block as the holder.
      */
-    static Context<CustomCropsBlockState> block(@NotNull CustomCropsBlockState block, boolean threadSafe) {
-        return new BlockContextImpl(block, threadSafe);
+    static Context<CustomCropsBlockState> block(@NotNull CustomCropsBlockState block, @NotNull Location location, boolean threadSafe) {
+        return new BlockContextImpl(block, location, threadSafe);
+    }
+
+    /**
+     * Updates location for the context
+     *
+     * @param location location
+     */
+    default void updateLocation(Location location) {
+        arg(ContextKeys.LOCATION, location)
+        .arg(ContextKeys.X, location.getBlockX())
+        .arg(ContextKeys.Y, location.getBlockY())
+        .arg(ContextKeys.Z, location.getBlockZ())
+        .arg(ContextKeys.WORLD, location.getWorld().getName());
     }
 }

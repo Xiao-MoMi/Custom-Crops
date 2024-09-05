@@ -133,7 +133,7 @@ public class WateringCanItem extends AbstractCustomCropsItem {
             return;
         final Vector vector = result.getHitPosition();
         // for old config compatibility
-        context.arg(ContextKeys.LOCATION, new Location(player.getWorld(), vector.getX() - 0.5,vector.getY() - 1, vector.getZ() - 0.5));
+        context.updateLocation(new Location(player.getWorld(), vector.getX() - 0.5,vector.getY() - 1, vector.getZ() - 0.5));
 
         final ItemStack itemInHand = event.itemInHand();
         int water = getCurrentWater(itemInHand);
@@ -202,7 +202,7 @@ public class WateringCanItem extends AbstractCustomCropsItem {
         Location targetLocation = LocationUtils.toBlockLocation(event.location());
         final Context<Player> context = Context.player(player);
         context.arg(ContextKeys.SLOT, event.hand());
-        context.arg(ContextKeys.LOCATION, targetLocation);
+        context.updateLocation(targetLocation);
 
         // check watering can requirements
         if (!RequirementManager.isSatisfied(context, wateringCanConfig.requirements())) {
@@ -315,7 +315,7 @@ public class WateringCanItem extends AbstractCustomCropsItem {
                 if (potBlock.addWater(potState, potConfig, wateringCanConfig.wateringAmount())) {
                     potBlock.updateBlockAppearance(temp, potConfig, true, potBlock.fertilizers(potState));
                 }
-                context.arg(ContextKeys.LOCATION, temp);
+                context.updateLocation(temp);
                 ActionManager.trigger(context, potConfig.addWaterActions());
             }
 
@@ -332,7 +332,7 @@ public class WateringCanItem extends AbstractCustomCropsItem {
             return InteractionResult.COMPLETE;
         final Vector vector = result.getHitPosition();
         // for old config compatibility
-        context.arg(ContextKeys.LOCATION, new Location(player.getWorld(), vector.getX() - 0.5,vector.getY() - 1, vector.getZ() - 0.5));
+        context.updateLocation(new Location(player.getWorld(), vector.getX() - 0.5,vector.getY() - 1, vector.getZ() - 0.5));
         String blockID = BukkitCustomCropsPlugin.getInstance().getItemManager().blockID(targetBlock);
         BukkitCustomCropsPlugin.getInstance().debug(blockID);
 

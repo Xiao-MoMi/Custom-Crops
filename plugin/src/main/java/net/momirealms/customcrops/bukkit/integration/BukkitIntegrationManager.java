@@ -18,10 +18,10 @@
 package net.momirealms.customcrops.bukkit.integration;
 
 import net.momirealms.customcrops.api.BukkitCustomCropsPlugin;
-import net.momirealms.customcrops.api.integration.IntegrationManager;
-import net.momirealms.customcrops.api.integration.ItemProvider;
-import net.momirealms.customcrops.api.integration.LevelerProvider;
-import net.momirealms.customcrops.api.integration.SeasonProvider;
+import net.momirealms.customcrops.api.integration.*;
+import net.momirealms.customcrops.bukkit.integration.entity.ItemsAdderEntityProvider;
+import net.momirealms.customcrops.bukkit.integration.entity.MythicEntityProvider;
+import net.momirealms.customcrops.bukkit.integration.entity.VanillaEntityProvider;
 import net.momirealms.customcrops.bukkit.integration.item.*;
 import net.momirealms.customcrops.bukkit.integration.level.*;
 import net.momirealms.customcrops.bukkit.integration.papi.CustomCropsPapi;
@@ -43,6 +43,7 @@ public class BukkitIntegrationManager implements IntegrationManager {
 
     private final BukkitCustomCropsPlugin plugin;
     private final HashMap<String, LevelerProvider> levelerProviders = new HashMap<>();
+    private final HashMap<String, EntityProvider> entityProviders = new HashMap<>();
 
     public BukkitIntegrationManager(BukkitCustomCropsPlugin plugin) {
         this.plugin = plugin;
@@ -60,6 +61,7 @@ public class BukkitIntegrationManager implements IntegrationManager {
 
     @Override
     public void load() {
+        registerEntityProvider(new VanillaEntityProvider());
         if (isHooked("MMOItems")) {
             registerItemProvider(new MMOItemsItemProvider());
         }
@@ -69,11 +71,15 @@ public class BukkitIntegrationManager implements IntegrationManager {
         if (isHooked("NeigeItems")) {
             registerItemProvider(new NeigeItemsItemProvider());
         }
+        if (isHooked("ItemsAdder")) {
+            registerEntityProvider(new ItemsAdderEntityProvider());
+        }
         if (isHooked("CustomFishing", "2.2", "2.3", "2.4")) {
             registerItemProvider(new CustomFishingItemProvider());
         }
         if (isHooked("MythicMobs", "5")) {
             registerItemProvider(new MythicMobsItemProvider());
+            registerEntityProvider(new MythicEntityProvider());
         }
         if (isHooked("EcoJobs")) {
             registerLevelerProvider(new EcoJobsLevelerProvider());
@@ -157,8 +163,8 @@ public class BukkitIntegrationManager implements IntegrationManager {
 
     @Override
     @Nullable
-    public LevelerProvider getLevelerProvider(String plugin) {
-        return levelerProviders.get(plugin);
+    public LevelerProvider getLevelerProvider(String id) {
+        return levelerProviders.get(id);
     }
 
     @Override
@@ -174,5 +180,23 @@ public class BukkitIntegrationManager implements IntegrationManager {
     @Override
     public boolean unregisterItemProvider(@NotNull String id) {
         return ((BukkitItemManager) plugin.getItemManager()).unregisterItemProvider(id);
+    }
+
+    @Override
+    public boolean registerEntityProvider(@NotNull EntityProvider entity) {
+        if (entityProviders.containsKey(entity.identifier())) return false;
+        entityProviders.put(entity.identifier(), entity);
+        return true;
+    }
+
+    @Override
+    public boolean unregisterEntityProvider(@NotNull String id) {
+        return entityProviders.remove(id) != null;
+    }
+
+    @Nullable
+    @Override
+    public EntityProvider getEntityProvider(String id) {
+        return entityProviders.get(id);
     }
 }

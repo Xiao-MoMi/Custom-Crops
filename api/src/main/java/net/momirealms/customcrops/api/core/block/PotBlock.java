@@ -84,7 +84,7 @@ public class PotBlock extends AbstractCustomCropsBlock {
     @Override
     public void onBreak(WrappedBreakEvent event) {
         CustomCropsWorld<?> world = event.world();
-        Location location = event.location();
+        Location location = LocationUtils.toBlockLocation(event.location());
         Pos3 pos3 = Pos3.from(location);
         PotConfig config = Registries.ITEM_TO_POT.get(event.brokenID());
         if (config == null) {
@@ -95,7 +95,7 @@ public class PotBlock extends AbstractCustomCropsBlock {
         final Player player = event.playerBreaker();
         Context<Player> context = Context.player(player);
 
-        context.arg(ContextKeys.LOCATION, location);
+        context.updateLocation(location);
         if (!RequirementManager.isSatisfied(context, config.breakRequirements())) {
             event.setCancelled(true);
             return;
@@ -130,7 +130,7 @@ public class PotBlock extends AbstractCustomCropsBlock {
                     cropConfig = cropConfigs.get(0);
                 }
 
-                context.arg(ContextKeys.LOCATION, upperLocation);
+                context.updateLocation(upperLocation);
                 if (!RequirementManager.isSatisfied(context, cropConfig.breakRequirements())) {
                     event.setCancelled(true);
                     return;
@@ -171,7 +171,7 @@ public class PotBlock extends AbstractCustomCropsBlock {
             BukkitCustomCropsPlugin.getInstance().getItemManager().remove(upperLocation, ExistenceForm.ANY);
         }
 
-        context.arg(ContextKeys.LOCATION, location);
+        context.updateLocation(location);
         ActionManager.trigger(context, config.breakActions());
 
         world.removeBlockState(pos3);
@@ -231,7 +231,7 @@ public class PotBlock extends AbstractCustomCropsBlock {
             return;
         }
 
-        Location location = event.location();
+        Location location = LocationUtils.toBlockLocation(event.location());
         Pos3 pos3 = Pos3.from(location);
         CustomCropsWorld<?> world = event.world();
 
@@ -241,7 +241,7 @@ public class PotBlock extends AbstractCustomCropsBlock {
         final Player player = event.player();
         Context<Player> context = Context.player(player);
         context.arg(ContextKeys.SLOT, event.hand());
-        context.arg(ContextKeys.LOCATION, LocationUtils.toBlockLocation(location));
+        context.updateLocation(location);
 
         // check use requirements
         if (!RequirementManager.isSatisfied(context, potConfig.useRequirements())) {
@@ -407,17 +407,17 @@ public class PotBlock extends AbstractCustomCropsBlock {
 
         boolean fertilizerChanged = tickFertilizer(state);
 
+        Location bukkitLocation = location.toLocation(bukkitWorld);
         if (fertilizerChanged || waterChanged) {
             boolean finalHasNaturalWater = hasNaturalWater;
-            Location bukkitLocation = location.toLocation(bukkitWorld);
+
             BukkitCustomCropsPlugin.getInstance().getScheduler().sync().run(() -> {
                 updateBlockAppearance(bukkitLocation, config, finalHasNaturalWater, fertilizers(state));
             }, bukkitLocation);
         }
 
-        ActionManager.trigger(Context.block(state)
-                .arg(ContextKeys.OFFLINE, offline)
-                .arg(ContextKeys.LOCATION, location.toLocation(bukkitWorld)),
+        ActionManager.trigger(Context.block(state, bukkitLocation)
+                .arg(ContextKeys.OFFLINE, offline),
                 config.tickActions()
         );
     }

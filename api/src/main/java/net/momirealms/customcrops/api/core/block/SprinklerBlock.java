@@ -74,7 +74,8 @@ public class SprinklerBlock extends AbstractCustomCropsBlock {
     @Override
     public void onBreak(WrappedBreakEvent event) {
         CustomCropsWorld<?> world = event.world();
-        Pos3 pos3 = Pos3.from(event.location());
+        Location location = LocationUtils.toBlockLocation(event.location());
+        Pos3 pos3 = Pos3.from(location);
         SprinklerConfig config = Registries.ITEM_TO_SPRINKLER.get(event.brokenID());
         if (config == null) {
             world.removeBlockState(pos3);
@@ -83,14 +84,14 @@ public class SprinklerBlock extends AbstractCustomCropsBlock {
 
         final Player player = event.playerBreaker();
         Context<Player> context = Context.player(player);
-        context.arg(ContextKeys.LOCATION, LocationUtils.toBlockLocation(event.location()));
+        context.updateLocation(location);
         CustomCropsBlockState state = fixOrGetState(world, pos3, config, event.brokenID());
         if (!RequirementManager.isSatisfied(context, config.breakRequirements())) {
             event.setCancelled(true);
             return;
         }
 
-        SprinklerBreakEvent breakEvent = new SprinklerBreakEvent(event.entityBreaker(), event.blockBreaker(), event.location(), state, config, event.reason());
+        SprinklerBreakEvent breakEvent = new SprinklerBreakEvent(event.entityBreaker(), event.blockBreaker(), location, state, config, event.reason());
         if (EventUtils.fireAndCheckCancel(breakEvent)) {
             event.setCancelled(true);
             return;
@@ -110,7 +111,8 @@ public class SprinklerBlock extends AbstractCustomCropsBlock {
 
         final Player player = event.player();
         Context<Player> context = Context.player(player);
-        context.arg(ContextKeys.LOCATION, LocationUtils.toBlockLocation(event.location()));
+        Location location = LocationUtils.toBlockLocation(event.location());
+        context.updateLocation(location);
         if (!RequirementManager.isSatisfied(context, config.placeRequirements())) {
             event.setCancelled(true);
             return;
@@ -156,7 +158,7 @@ public class SprinklerBlock extends AbstractCustomCropsBlock {
         Location location = LocationUtils.toBlockLocation(event.location());
         Context<Player> context = Context.player(player);
         context.arg(ContextKeys.SLOT, event.hand());
-        context.arg(ContextKeys.LOCATION, location);
+        context.updateLocation(location);
         CustomCropsBlockState state = fixOrGetState(event.world(), Pos3.from(location), config, event.relatedID());
         if (!RequirementManager.isSatisfied(context, config.useRequirements())) {
             return;
@@ -257,10 +259,9 @@ public class SprinklerBlock extends AbstractCustomCropsBlock {
             updateState = false;
         }
 
-        Context<CustomCropsBlockState> context = Context.block(state).arg(ContextKeys.OFFLINE, offline);
         World bukkitWorld = world.bukkitWorld();
         Location bukkitLocation = location.toLocation(bukkitWorld);
-        context.arg(ContextKeys.LOCATION, bukkitLocation);
+        Context<CustomCropsBlockState> context = Context.block(state, bukkitLocation).arg(ContextKeys.OFFLINE, offline);
 
         CompletableFuture<Boolean> syncCheck = new CompletableFuture<>();
 

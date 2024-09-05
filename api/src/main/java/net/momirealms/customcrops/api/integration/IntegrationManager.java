@@ -75,4 +75,29 @@ public interface IntegrationManager extends Reloadable {
      * @return true if unregistration is successful, false otherwise.
      */
     boolean unregisterItemProvider(@NotNull String id);
+
+    /**
+     * Registers an EntityProvider.
+     *
+     * @param entityProvider the EntityProvider to register
+     * @return true if registration is successful, false otherwise.
+     */
+    boolean registerEntityProvider(@NotNull EntityProvider entityProvider);
+
+    /**
+     * Unregisters an EntityProvider by its ID.
+     *
+     * @param id the ID of the EntityProvider to unregister
+     * @return true if unregistration is successful, false otherwise.
+     */
+    boolean unregisterEntityProvider(@NotNull String id);
+
+    /**
+     * Retrieves a registered EntityProvider by its ID.
+     *
+     * @param id the ID of the EntityProvider to retrieve
+     * @return the EntityProvider if found, or null if not found
+     */
+    @Nullable
+    EntityProvider getEntityProvider(String id);
 }

@@ -48,14 +48,14 @@ public class DeadCrop extends AbstractCustomCropsBlock {
         Context<Player> context = Context.player(player);
         // data first
         CustomCropsWorld<?> world = event.world();
-        Location location = event.location();
+        Location location = LocationUtils.toBlockLocation(event.location());
         context.arg(ContextKeys.SLOT, event.hand());
         // check pot below
         Location potLocation = location.clone().subtract(0,1,0);
         String blockBelowID = BukkitCustomCropsPlugin.getInstance().getItemManager().blockID(potLocation.getBlock());
         PotConfig potConfig = Registries.ITEM_TO_POT.get(blockBelowID);
         if (potConfig != null) {
-            context.arg(ContextKeys.LOCATION, LocationUtils.toBlockLocation(potLocation));
+            context.updateLocation(potLocation);
             PotBlock potBlock = (PotBlock) BuiltInBlockMechanics.POT.mechanic();
             assert potBlock != null;
             // fix or get data

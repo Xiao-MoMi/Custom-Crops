@@ -875,7 +875,7 @@ public abstract class AbstractRequirementManager<T> implements RequirementManage
                 if (advanced) ActionManager.trigger(context, actions);
                 return false;
             };
-        }, "natural-light");
+        }, "natural-light", "skylight");
         registerRequirement((args, actions, advanced) -> {
             int value = (int) args;
             return context -> {
@@ -885,7 +885,7 @@ public abstract class AbstractRequirementManager<T> implements RequirementManage
                 if (advanced) ActionManager.trigger(context, actions);
                 return false;
             };
-        }, "skylight_more_than", "skylight-more-than");
+        }, "skylight_more_than", "skylight-more-than", "natural_light_more_than", "natural-light-more-than");
         registerRequirement((args, actions, advanced) -> {
             int value = (int) args;
             return context -> {
@@ -895,7 +895,7 @@ public abstract class AbstractRequirementManager<T> implements RequirementManage
                 if (advanced) ActionManager.trigger(context, actions);
                 return false;
             };
-        }, "skylight_less_than", "skylight-less-than");
+        }, "skylight_less_than", "skylight-less-than", "natural_light_less_than", "natural-light-less-than");
         registerRequirement((args, actions, advanced) -> {
             int value = (int) args;
             return context -> {

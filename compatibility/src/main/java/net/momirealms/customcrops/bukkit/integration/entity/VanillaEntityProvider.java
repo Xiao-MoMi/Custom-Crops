@@ -15,24 +15,27 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.momirealms.customcrops.api.context;
+package net.momirealms.customcrops.bukkit.integration.entity;
 
-import net.momirealms.customcrops.api.core.world.CustomCropsBlockState;
+import net.momirealms.customcrops.api.integration.EntityProvider;
 import org.bukkit.Location;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.jetbrains.annotations.NotNull;
 
-public class BlockContextImpl extends AbstractContext<CustomCropsBlockState> {
+import java.util.Locale;
+import java.util.Map;
 
-    public BlockContextImpl(@NotNull CustomCropsBlockState block, Location location, boolean sync) {
-        super(block, sync);
-        updateLocation(location);
-    }
+public class VanillaEntityProvider implements EntityProvider {
 
     @Override
-    public String toString() {
-        return "BlockContext{" +
-                "args=" + args() +
-                ", block=" + holder() +
-                '}';
+    public String identifier() {
+        return "vanilla";
+    }
+
+    @NotNull
+    @Override
+    public Entity spawn(@NotNull Location location, @NotNull String id, @NotNull Map<String, Object> propertyMap) {
+        return location.getWorld().spawnEntity(location, EntityType.valueOf(id.toUpperCase(Locale.ENGLISH)));
     }
 }

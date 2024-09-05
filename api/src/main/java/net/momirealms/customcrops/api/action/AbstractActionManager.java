@@ -27,7 +27,10 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public abstract class AbstractActionManager<T> implements ActionManager<T> {
 
@@ -54,6 +57,7 @@ public abstract class AbstractActionManager<T> implements ActionManager<T> {
         this.registerHologramAction();
         this.registerPlantAction();
         this.registerBreakAction();
+        this.registerSpawnEntity();
     }
 
     @Override
@@ -302,5 +306,16 @@ public abstract class AbstractActionManager<T> implements ActionManager<T> {
 
     protected void registerBreakAction() {
         this.registerAction((args, chance) -> new ActionBreak<>(plugin, args, chance), "break");
+    }
+
+    protected void registerSpawnEntity() {
+        this.registerAction((args, chance) -> {
+            if (args instanceof Section section) {
+                return new ActionSpawnEntity<>(plugin, section, chance);
+            } else {
+                plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at spawn-entity action which is expected to be `Section`");
+                return Action.empty();
+            }
+        }, "spawn-entity", "spawn-mob");
     }
 }
