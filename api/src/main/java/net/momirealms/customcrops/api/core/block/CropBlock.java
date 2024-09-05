@@ -361,18 +361,18 @@ public class CropBlock extends AbstractCustomCropsBlock {
         CropStageConfig nextStage = config.stageWithModelByPoint(afterPoints);
 
         BukkitCustomCropsPlugin.getInstance().getScheduler().sync().run(() -> {
-            for (int i = previousPoint + 1; i <= afterPoints; i++) {
-                CropStageConfig stage = config.stageByPoint(i);
-                if (stage != null) {
-                    ActionManager.trigger(context, stage.growActions());
-                }
-            }
             if (currentStage == nextStage) return;
             FurnitureRotation rotation = BukkitCustomCropsPlugin.getInstance().getItemManager().remove(bukkitLocation, ExistenceForm.ANY);
             if (rotation == FurnitureRotation.NONE && config.rotation()) {
                 rotation = FurnitureRotation.random();
             }
             BukkitCustomCropsPlugin.getInstance().getItemManager().place(bukkitLocation, nextStage.existenceForm(), Objects.requireNonNull(nextStage.stageID()), rotation);
+            for (int i = previousPoint + 1; i <= afterPoints; i++) {
+                CropStageConfig stage = config.stageByPoint(i);
+                if (stage != null) {
+                    ActionManager.trigger(context, stage.growActions());
+                }
+            }
         }, bukkitLocation);
     }
 
