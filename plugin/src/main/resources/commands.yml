@@ -16,6 +16,8 @@ reload:
     - /customcrops reload
     - /ccrops reload
 
+# A command to get the season
+# Usage: [COMMAND] [world]
 get_season:
   enable: true
   permission: customcrops.command.get_season
@@ -23,6 +25,8 @@ get_season:
     - /customcrops season get
     - /ccrops season get
 
+# A command to set the season
+# Usage: [COMMAND] [world] [season]
 set_season:
   enable: true
   permission: customcrops.command.set_season
@@ -30,6 +34,8 @@ set_season:
     - /customcrops season set
     - /ccrops season set
 
+# A command to get date
+# Usage: [COMMAND] [world]
 get_date:
   enable: true
   permission: customcrops.command.get_date
@@ -37,6 +43,8 @@ get_date:
     - /customcrops date get
     - /ccrops date get
 
+# A command to set date
+# Usage: [COMMAND] [world] [date]
 set_date:
   enable: true
   permission: customcrops.command.set_date
@@ -44,6 +52,8 @@ set_date:
     - /customcrops date set
     - /ccrops date set
 
+# A command to debug the custom data
+# Usage: [COMMAND] <--this>
 debug_data:
   enable: true
   permission: customcrops.command.debug
@@ -51,6 +61,8 @@ debug_data:
     - /customcrops debug data
     - /ccrops debug data
 
+# A command to debug the loaded chunks
+# Usage: [COMMAND]
 debug_worlds:
   enable: true
   permission: customcrops.command.debug
@@ -58,6 +70,8 @@ debug_worlds:
     - /customcrops debug worlds
     - /ccrops debug worlds
 
+# A command to toggle the insight mode
+# Usage: [COMMAND]
 debug_insight:
   enable: true
   permission: customcrops.command.debug
@@ -65,6 +79,8 @@ debug_insight:
     - /customcrops debug insight
     - /ccrops debug insight
 
+# A command to force the blocks ticking
+# Usage: [COMMAND] [world] [type] [mode]
 force_tick:
   enable: true
   permission: customcrops.command.force_tick
