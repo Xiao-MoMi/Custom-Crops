@@ -46,10 +46,12 @@ public class DebugDataCommand extends BukkitCommandFeature<CommandSender> {
                 .handler(context -> {
                     Player player = context.sender();
                     Location location;
+                    Block block;
                     if (context.flags().hasFlag("this")) {
                         location = player.getLocation();
+                        block = location.getBlock();
                     } else {
-                        Block block = player.getTargetBlockExact(10);
+                        block = player.getTargetBlockExact(10);
                         if (block == null) return;
                         location = block.getLocation();
                     }
@@ -57,12 +59,14 @@ public class DebugDataCommand extends BukkitCommandFeature<CommandSender> {
                         Optional<CustomCropsBlockState> state = world.getBlockState(Pos3.from(location));
                         if (state.isPresent()) {
                             BukkitCustomCropsPlugin.getInstance().getSenderFactory().wrap(player)
-                                    .sendMessage(AdventureHelper.miniMessage(state.get().toString()));
+                                    .sendMessage(AdventureHelper.miniMessage("<gold>" + state.get()));
                         } else {
                             BukkitCustomCropsPlugin.getInstance().getSenderFactory().wrap(player)
-                                    .sendMessage(AdventureHelper.miniMessage("Data not found"));
+                                    .sendMessage(AdventureHelper.miniMessage("<red>CustomCrops Data not found"));
                         }
                     });
+                    BukkitCustomCropsPlugin.getInstance().getSenderFactory().wrap(player)
+                            .sendMessage(AdventureHelper.miniMessage("<green>Vanilla crop data: " + block.getBlockData().getAsString()));
                 });
     }
 

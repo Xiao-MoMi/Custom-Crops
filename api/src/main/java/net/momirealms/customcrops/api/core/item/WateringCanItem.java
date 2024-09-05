@@ -140,13 +140,35 @@ public class WateringCanItem extends AbstractCustomCropsItem {
 
         String blockID = BukkitCustomCropsPlugin.getInstance().getItemManager().blockID(targetBlock);
         BukkitCustomCropsPlugin.getInstance().debug(blockID);
-        if (targetBlock.getType() == Material.WATER) {
-            blockID = "WATER";
-        }
-        if (targetBlock.getBlockData() instanceof Waterlogged waterlogged && waterlogged.isWaterlogged()) {
-            blockID = "WATER";
+
+        for (FillMethod method : config.fillMethods()) {
+            if (method.getID().equals(blockID)) {
+                if (method.checkRequirements(context)) {
+                    if (water >= config.storage()) {
+                        ActionManager.trigger(context, config.fullActions());
+                        return;
+                    }
+                    WateringCanFillEvent fillEvent = new WateringCanFillEvent(player, event.hand(), itemInHand, targetBlock.getLocation(), config, method);
+                    if (EventUtils.fireAndCheckCancel(fillEvent))
+                        return;
+                    int current = Math.min(water + method.amountOfWater(), config.storage());
+                    context.arg(ContextKeys.WATER_BAR, Optional.ofNullable(config.waterBar()).map(bar -> bar.getWaterBar(current, config.storage())).orElse(""));
+                    context.arg(ContextKeys.STORAGE, config.storage());
+                    context.arg(ContextKeys.CURRENT_WATER, current);
+                    setCurrentWater(itemInHand, config, water + method.amountOfWater(), context);
+                    method.triggerActions(context);
+                    ActionManager.trigger(context, config.addWaterActions());
+                }
+                return;
+            }
         }
 
+        // give it another try
+        if (targetBlock.getBlockData() instanceof Waterlogged waterlogged && waterlogged.isWaterlogged()) {
+            blockID = "WATER";
+        } else {
+            blockID = targetBlock.getType().name();
+        }
         for (FillMethod method : config.fillMethods()) {
             if (method.getID().equals(blockID)) {
                 if (method.checkRequirements(context)) {
@@ -313,11 +335,34 @@ public class WateringCanItem extends AbstractCustomCropsItem {
         context.arg(ContextKeys.LOCATION, new Location(player.getWorld(), vector.getX() - 0.5,vector.getY() - 1, vector.getZ() - 0.5));
         String blockID = BukkitCustomCropsPlugin.getInstance().getItemManager().blockID(targetBlock);
         BukkitCustomCropsPlugin.getInstance().debug(blockID);
-        if (targetBlock.getType() == Material.WATER) {
-            blockID = "WATER";
+
+        for (FillMethod method : wateringCanConfig.fillMethods()) {
+            if (method.getID().equals(blockID)) {
+                if (method.checkRequirements(context)) {
+                    if (waterInCan >= wateringCanConfig.storage()) {
+                        ActionManager.trigger(context, wateringCanConfig.fullActions());
+                        return InteractionResult.COMPLETE;
+                    }
+                    WateringCanFillEvent fillEvent = new WateringCanFillEvent(player, event.hand(), itemInHand, targetBlock.getLocation(), wateringCanConfig, method);
+                    if (EventUtils.fireAndCheckCancel(fillEvent))
+                        return InteractionResult.COMPLETE;
+                    int current = Math.min(waterInCan + method.amountOfWater(), wateringCanConfig.storage());
+                    context.arg(ContextKeys.WATER_BAR, Optional.ofNullable(wateringCanConfig.waterBar()).map(bar -> bar.getWaterBar(current, wateringCanConfig.storage())).orElse(""));
+                    context.arg(ContextKeys.STORAGE, wateringCanConfig.storage());
+                    context.arg(ContextKeys.CURRENT_WATER, current);
+                    setCurrentWater(itemInHand, wateringCanConfig, waterInCan + method.amountOfWater(), context);
+                    method.triggerActions(context);
+                    ActionManager.trigger(context, wateringCanConfig.addWaterActions());
+                }
+                return InteractionResult.COMPLETE;
+            }
         }
+
+        // give it another try
         if (targetBlock.getBlockData() instanceof Waterlogged waterlogged && waterlogged.isWaterlogged()) {
             blockID = "WATER";
+        } else {
+            blockID = targetBlock.getType().name();
         }
         for (FillMethod method : wateringCanConfig.fillMethods()) {
             if (method.getID().equals(blockID)) {
