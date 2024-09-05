@@ -426,17 +426,6 @@ public abstract class AbstractRequirementManager<T> implements RequirementManage
             return context -> {
                 Location location = requireNonNull(context.arg(ContextKeys.LOCATION));
                 Season season = plugin.getWorldManager().getSeason(location.getWorld());
-                if (season == Season.DISABLE) return true;
-                if (seasons.contains(season.name())) return true;
-                if (runActions) ActionManager.trigger(context, actions);
-                return false;
-            };
-        }, "season");
-        registerRequirement((args, actions, runActions) -> {
-            Set<String> seasons = new HashSet<>(ListUtils.toList(args).stream().map(it -> it.toUpperCase(Locale.ENGLISH)).toList());
-            return context -> {
-                Location location = requireNonNull(context.arg(ContextKeys.LOCATION));
-                Season season = plugin.getWorldManager().getSeason(location.getWorld());
                 if (!seasons.contains(season.name())) return true;
                 if (runActions) ActionManager.trigger(context, actions);
                 return false;
@@ -468,7 +457,7 @@ public abstract class AbstractRequirementManager<T> implements RequirementManage
                 if (runActions) ActionManager.trigger(context, actions);
                 return false;
             };
-        }, "suitable-season", "suitable_season");
+        }, "suitable-season", "suitable_season", "season");
         registerRequirement((args, actions, runActions) -> {
             Set<String> seasons = new HashSet<>(ListUtils.toList(args).stream().map(it -> it.toUpperCase(Locale.ENGLISH)).toList());
             return context -> {
