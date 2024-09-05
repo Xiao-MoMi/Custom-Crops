@@ -86,14 +86,14 @@ public class CustomCropsWorldImpl<W> implements CustomCropsWorld<W> {
                     if (clazz.isAssignableFrom(state.type().getClass())) {
                         i++;
                         if (i >= amount) {
-                            return false;
+                            return true;
                         }
                     }
                 }
             }
-            return true;
-        } else {
             return false;
+        } else {
+            return true;
         }
     }
 

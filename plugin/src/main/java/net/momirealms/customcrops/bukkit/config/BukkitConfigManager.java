@@ -88,6 +88,7 @@ public class BukkitConfigManager extends ConfigManager {
                             .builder()
                             .setVersioning(new BasicVersioning("config-version"))
                             .addIgnoredRoute(configVersion, "other-settings.placeholder-register", '.')
+                            .addIgnoredRoute(configVersion, "settings._WORLDS_", '.')
                             .build()
             );
             MAIN_CONFIG.save(resolveConfig("config.yml").toFile());
