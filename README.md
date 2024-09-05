@@ -26,7 +26,7 @@ Get the artifact under /target folder
 ## Support the developer
 
 Polymart: https://polymart.org/resource/customfishing.2723 \
-Afdian: https://afdian.net/@xiaomomi
+Afdian: https://afdian.com/@xiaomomi
 
 ## CustomCrops API
 

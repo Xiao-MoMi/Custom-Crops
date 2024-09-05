@@ -466,7 +466,7 @@ public class BukkitItemManager extends AbstractItemManager {
 
         String itemID = id(itemInHand);
         CustomCropsWorld<?> world = optionalWorld.get();
-        WrappedBreakEvent wrapped = new WrappedBreakEvent(player, null, world, location, brokenID, itemInHand, itemID, BreakReason.BREAK, event);
+        WrappedBreakEvent wrapped = new WrappedBreakEvent(player, null, EquipmentSlot.HAND, location, brokenID, itemInHand, itemID, BreakReason.BREAK, world, event);
         CustomCropsBlock customCropsBlock = Registries.BLOCKS.get(brokenID);
         if (customCropsBlock != null) {
             customCropsBlock.onBreak(wrapped);
@@ -481,7 +481,7 @@ public class BukkitItemManager extends AbstractItemManager {
         }
 
         CustomCropsWorld<?> world = optionalWorld.get();
-        WrappedBreakEvent wrapped = new WrappedBreakEvent(null, null, world, location, brokenID, null, null, BreakReason.PHYSICS, event);
+        WrappedBreakEvent wrapped = new WrappedBreakEvent(null, null, null, location, brokenID, null, null, BreakReason.PHYSICS, world, event);
         CustomCropsBlock customCropsBlock = Registries.BLOCKS.get(brokenID);
         if (customCropsBlock != null) {
             customCropsBlock.onBreak(wrapped);
@@ -496,7 +496,7 @@ public class BukkitItemManager extends AbstractItemManager {
         }
 
         CustomCropsWorld<?> world = optionalWorld.get();
-        WrappedBreakEvent wrapped = new WrappedBreakEvent(entity, null, world, location, brokenID, null, null, BreakReason.TRAMPLE, event);
+        WrappedBreakEvent wrapped = new WrappedBreakEvent(entity, null, null, location, brokenID, null, null, BreakReason.TRAMPLE, world, event);
         CustomCropsBlock customCropsBlock = Registries.BLOCKS.get(brokenID);
         if (customCropsBlock != null) {
             customCropsBlock.onBreak(wrapped);
@@ -511,7 +511,7 @@ public class BukkitItemManager extends AbstractItemManager {
         }
 
         CustomCropsWorld<?> world = optionalWorld.get();
-        WrappedBreakEvent wrapped = new WrappedBreakEvent(entity, null, world, location, brokenID, null, null, BreakReason.EXPLODE, event);
+        WrappedBreakEvent wrapped = new WrappedBreakEvent(entity, null, null, location, brokenID, null, null, BreakReason.EXPLODE, world, event);
         CustomCropsBlock customCropsBlock = Registries.BLOCKS.get(brokenID);
         if (customCropsBlock != null) {
             customCropsBlock.onBreak(wrapped);
@@ -526,7 +526,7 @@ public class BukkitItemManager extends AbstractItemManager {
         }
 
         CustomCropsWorld<?> world = optionalWorld.get();
-        WrappedBreakEvent wrapped = new WrappedBreakEvent(null, block, world, location, brokenID, null, null, BreakReason.EXPLODE, event);
+        WrappedBreakEvent wrapped = new WrappedBreakEvent(null, block, null, location, brokenID, null, null, BreakReason.EXPLODE, world, event);
         CustomCropsBlock customCropsBlock = Registries.BLOCKS.get(brokenID);
         if (customCropsBlock != null) {
             customCropsBlock.onBreak(wrapped);

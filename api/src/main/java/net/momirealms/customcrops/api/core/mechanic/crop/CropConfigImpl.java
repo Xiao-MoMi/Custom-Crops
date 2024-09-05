@@ -93,8 +93,11 @@ public class CropConfigImpl implements CropConfig {
             point2Stages.put(config.point(), config);
             navigablePoint2Stages.put(config.point(), config);
             String stageID = config.stageID();
-            id2Stages.put(stageID, config);
-            stageIDs.add(stageID);
+            if (stageID != null) {
+                id2Stages.put(stageID, config);
+                stageIDs.add(stageID);
+                cropStageWithModelMap.put(config.point(), config);
+            }
         }
         CropStageConfig tempConfig = null;
         for (int i = 0; i <= maxPoints; i++) {
@@ -206,7 +209,7 @@ public class CropConfigImpl implements CropConfig {
 
     @Override
     public CropStageConfig stageWithModelByPoint(int point) {
-        return cropStageWithModelMap.get(Math.min(maxPoints, point));
+        return cropStageWithModelMap.get(point);
     }
 
     @Override

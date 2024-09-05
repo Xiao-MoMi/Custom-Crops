@@ -83,9 +83,9 @@ public class ActionBreak<T> extends AbstractBuiltInAction<T> {
             if (player != null) {
                 EquipmentSlot slot = requireNonNull(context.arg(ContextKeys.SLOT));
                 ItemStack itemStack = player.getInventory().getItem(slot);
-                state.type().onBreak(new WrappedBreakEvent(player, null, world, location, stageConfig.stageID(), itemStack, plugin.getItemManager().id(itemStack), BreakReason.ACTION, dummyCancellable));
+                state.type().onBreak(new WrappedBreakEvent(player, null, context.arg(ContextKeys.SLOT), location, stageConfig.stageID(), itemStack, plugin.getItemManager().id(itemStack), BreakReason.ACTION, world, dummyCancellable));
             } else {
-                state.type().onBreak(new WrappedBreakEvent(null, null, world, location, stageConfig.stageID(), null, null, BreakReason.ACTION, dummyCancellable));
+                state.type().onBreak(new WrappedBreakEvent(null, null, null, location, stageConfig.stageID(), null, null, BreakReason.ACTION, world, dummyCancellable));
             }
             if (dummyCancellable.isCancelled()) {
                 return;
