@@ -96,7 +96,7 @@ mechanics:
   scarecrow:
     enable: true
     id: '{0}scarecrow'
-    type: ITEM_FRAME
+    type: FURNITURE
     range: 7
     # If enabled, the scarecrow's range will not be limited
     # It will protect all crops within the same chunk
@@ -106,7 +106,7 @@ mechanics:
     enable: true
     # You can use a list of IDs here; vanilla blocks are also supported
     id: '{0}greenhouse_glass'
-    type: CHORUS
+    type: BLOCK
     range: 5
   # Synchronize seasons with another world
   sync-season:
