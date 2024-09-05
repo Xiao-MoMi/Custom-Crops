@@ -1,5 +1,5 @@
 # Don't change
-config-version: '37'
+config-version: '${config_version}'
 # Debug
 debug: false
 # BStats
