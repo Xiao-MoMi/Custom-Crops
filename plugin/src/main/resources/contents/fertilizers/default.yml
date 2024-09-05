@@ -1,15 +1,16 @@
+# Unique identifier for the fertilizer
 quality_1:
-  type: QUALITY
-  icon: '뀆'
-  chance: 1
-  times: 28
-  ratio: 7/2/1
-  item: {0}quality_1
-  before-plant: true
+  type: QUALITY  # The type of fertilizer
+  icon: '뀆'  # Icon representing this fertilizer in the game
+  chance: 1  # Probability factor influencing effect of fertilizer
+  times: 28  # Number of ticking cycles this fertilizer lasts
+  ratio: 7/2/1  # 7/2/1 = 70%/20%/10%
+  item: {0}quality_1  # Unique item ID for this fertilizer
+  before-plant: true  # Indicates that this fertilizer must be applied before planting crops
   pot-whitelist:
-    - default
+    - default  # List of allowed pots where this fertilizer can be used
   events:
-    use:
+    use:  # Actions triggered when the fertilizer is applied
       particle_action:
         type: particle
         value:
@@ -27,7 +28,7 @@ quality_1:
           key: minecraft:item.hoe.till
           volume: 1
           pitch: 1
-    wrong_pot:
+    wrong_pot:  # Actions triggered if the fertilizer is used on the wrong pot type
       sound_action:
         type: sound
         value:
@@ -37,8 +38,8 @@ quality_1:
           pitch: 1
       actionbar_action:
         type: actionbar
-        value: '<red><bold>[X] This fertilizer can only be used in pots.'
-    before_plant:
+        value: '<red><bold>[X] This fertilizer can only be used in pots.'  # Message shown on the action bar
+    before_plant:  # Actions triggered if the fertilizer is used after planting
       sound_action:
         type: sound
         value:

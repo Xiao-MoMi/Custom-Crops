@@ -283,7 +283,7 @@ public class ConfigType {
                         .threeDItemWithWater(section.getString("3D-item-with-water"))
                         .wateringMethods(manager.getWateringMethods(section.getSection("fill-method")))
                         .potWhitelist(new HashSet<>(section.getStringList("pot-whitelist")))
-                        .existenceForm(CustomForm.valueOf(section.getString("type", "ITEM_FRAME").toUpperCase(Locale.ENGLISH)).existenceForm())
+                        .existenceForm(CustomForm.valueOf(section.getString("type", "FURNITURE").toUpperCase(Locale.ENGLISH)).existenceForm())
                         .addWaterActions(pam.parseActions(section.getSection("events.add_water")))
                         .breakActions(pam.parseActions(section.getSection("events.break")))
                         .placeActions(pam.parseActions(section.getSection("events.place")))

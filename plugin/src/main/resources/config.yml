@@ -1,88 +1,85 @@
-# Don't change
+# Do not change this value
 config-version: '${config_version}'
-# Debug
+# Enable or disable debugging mode
 debug: false
-# BStats
+# Enable or disable metrics collection using BStats
 metrics: true
-# Check updates
+# Enable automatic update checks
 update-checker: true
-# Force locale, for instance zh_cn
+# Force the locale (e.g., zh_cn)
 force-locale: ''
 # World settings
 worlds:
-  # Some servers use separate folders to store player worlds, and these world directories
-  # are often not located in the server's root directory. This option allows users to read
-  # world data from a custom directory. It is only applicable to Bukkit worlds.
+  # Some servers use separate directories for player worlds, which may not be in the server's root directory.
+  # This option allows you to specify a custom path to these world folders. This is only applicable for Bukkit worlds.
   absolute-world-folder-path: ''
-  # A list of worlds that would decide where the plugin mechanisms take effect
-  # Mode: whitelist/blacklist/regex
+  # Specifies which worlds the plugin's mechanisms should apply to
+  # Options: whitelist/blacklist/regex
   mode: blacklist
   list:
-    - blacklist_world # A non-existent world
+    - blacklist_world # A world that doesn't exist
   settings:
     # Default settings that apply to all worlds
     _DEFAULT_:
-      # Whether to enable the plugin's pre-made system
-      # Disabling this option will make all mechanisms stop counting ticks unless you have full control over it using the API.
-      # If you don't know how to code with CustomCropsAPI, just keep it true, because it is enough to meet the needs of 99% of users.
+      # Whether to enable the plugin's pre-configured systems
+      # Disabling this stops all mechanisms from ticking unless fully managed via the API.
+      # If you're not familiar with using CustomCropsAPI, keep this set to true as it meets the needs of 99% of users.
       enable: true
-      # Season mechanisms
+      # Seasonal settings
       season:
         enable: true
-        # Enable automatic seasonal change
+        # Automatically cycle through seasons
         auto-alternation: true
-        # Game days of each season
+        # Duration of each season in game days
         duration: 28
-      # It's different from the vanilla RandomTickSpeed.
-      # "Random tick" here refers to the process of randomly selecting n blocks within a 16x16x16 section every second to perform a tick while Minecraft do that every tick.
-      # Therefore, the random tick of CustomCrops has little impact on the server, and it is performed on multiple threads.
+      # This is different from the vanilla RandomTickSpeed.
+      # "Random tick" here means randomly selecting n blocks within a 16x16x16 section every second for ticking, unlike Minecraft's per-tick approach.
+      # Therefore, CustomCrops' random ticks have minimal impact on the server and run on multiple threads.
       random-tick-speed: 20
-      # The smallest tick unit in seconds used in scheduled tick mode
-      # 300s means that a crop would be certainly ticked once in 300s
-      # For crops, under the same conditions, the growth rate of crops is basically the same
-      # For sprinklers and pots, they would work periodically.
+      # The minimum tick interval in seconds when using scheduled tick mode
+      # A value of 180s means a crop is guaranteed to tick at least once every 180 seconds
+      # For crops, growth rates are nearly uniform under the same conditions
+      # Sprinklers and pots operate periodically within this interval.
       min-tick-unit: 180
-      # Offline tick settings
-      # This option allows crops to grow even if the world is unloaded or the server is closed
-      # This may lead to some issues caused by timeliness conditions for instance seasons
+      # Settings for ticking while the world is offline
+      # Allows crops to grow even if the world is unloaded or the server is down
+      # This might cause issues with time-dependent conditions like seasons
       offline-tick:
         enable: false
         # Maximum offline time recorded in seconds
-        # Please do not set this option to a value that is too large,
-        # as it may cause chunks that have been unloaded for a long time
-        # taking long to load
+        # Avoid setting this too high, as it may cause long-unloaded chunks to take a long time to load
         max-offline-seconds: 1200
-        # The max time used in loading this chunk
-        # Sometimes a chunk might contain a lot of data and has not been loaded for a long time,
-        # thus taking a long time loading and causing unexpected issues
-        # This setting allows the plugin to forcefully interrupt the tick process if the time consumed has exceeded a certain value
+        # Maximum time allowed for loading a chunk
+        # Sometimes, chunks with large amounts of data that have been unloaded for a long time can take a while to load,
+        # potentially causing unexpected issues
+        # This setting allows the plugin to forcibly interrupt the tick process if loading time exceeds a set threshold
         max-loading-time: 100 #ms
-      # Settings for crops
+      # Crop settings
       crop:
         # [RANDOM_TICK]
-        # Random tick mode is similar to the vanilla one where crops grow randomly
-        # Due to randomness, crops grown under the same conditions may have significant stage differences
+        # Random tick mode mirrors vanilla behavior, where crops grow randomly
+        # This randomness can cause significant stage differences among crops grown under identical conditions
         # [SCHEDULED_TICK]
-        # Scheduler mode provides more reliable growth schedule management
-        # which allows crops to grow at almost the same speed
+        # Scheduled tick mode provides more predictable growth management,
+        # ensuring crops grow at nearly the same rate
         mode: RANDOM_TICK
-        # The tick-interval determines how many times a block is ticked before its tick logic is actually executed.
+        # Tick interval determines how many times a block is ticked before its logic is executed
         tick-interval: 1
-        # Limit the max amount of crops in one chunk (-1 = no limit)
+        # Limit the number of crops per chunk (-1 means no limit)
         max-per-chunk: -1
-      # Settings for pots
+      # Pot settings
       pot:
-        # RANDOM_TICK / SCHEDULED_TICK
+        # RANDOM_TICK or SCHEDULED_TICK
         mode: SCHEDULED_TICK
         tick-interval: 3
         max-per-chunk: -1
-      # Settings for sprinklers
+      # Sprinkler settings
       sprinkler:
-        # RANDOM_TICK / SCHEDULED_TICK
+        # RANDOM_TICK or SCHEDULED_TICK
         mode: SCHEDULED_TICK
         tick-interval: 2
         max-per-chunk: -1
-    # You can override the default settings for worlds here
+    # Override default settings for specific worlds here
     _WORLDS_:
       world_nether:
         enable: false
@@ -90,56 +87,57 @@ worlds:
         enable: false
 # Mechanics settings
 mechanics:
-  # You can create more ranks by adding more "/" for instance x/x/x/x/x
-  # "x" is weight, represents the proportion of probability
+  # Create additional ranks by adding more slashes, e.g., x/x/x/x/x
+  # "x" represents weight, which determines the probability proportion
   # 17/2/1 = 85%/10%/5%
-  # 85% = 17/(17+2+1) * 100%
+  # 85% is calculated as 17/(17+2+1) * 100%
   default-quality-ratio: 17/2/1
-  # Scarecrow prevents crops from being attacked by crows
+  # Scarecrow settings to prevent crops from being attacked by crows
   scarecrow:
     enable: true
     id: '{0}scarecrow'
     type: ITEM_FRAME
     range: 7
-    # If this option is enabled, the range would no longer take effect
-    # This option would make it protect all the crops in the same chunk
+    # If enabled, the scarecrow's range will not be limited
+    # It will protect all crops within the same chunk
     protect-chunk: false
-  # Greenhouse glass prevents crops from withering from season changing
+  # Greenhouse glass prevents crops from withering due to seasonal changes
   greenhouse:
     enable: true
-    # You can use a list of ids here, vanilla blocks are supported too
+    # You can use a list of IDs here; vanilla blocks are also supported
     id: '{0}greenhouse_glass'
     type: CHORUS
     range: 5
-  # Sync seasons
+  # Synchronize seasons with another world
   sync-season:
     enable: false
     reference: world
-  # Vanilla farmland settings
+  # Vanilla farmland mechanics
   vanilla-farmland:
-    # Disable vanilla farmland moisture mechanics
-    # This option exists because some users prefer to use the vanilla farmland but the water system conflicts with the vanilla one
+    # Disable the moisture mechanics of vanilla farmland
+    # This is useful if you prefer vanilla farmland but the water system conflicts with vanilla mechanics
     disable-moisture-mechanic: false
-    # Prevent entities from trampling the farmland
+    # Prevent entities from trampling farmland
     prevent-trampling: false
-  # Set hologram offset correction for other blocks
+  # Set hologram offset correction for different blocks
   hologram-offset-correction:
     "{0}crop_stage_death": 0
-  # Set the block types that would be overridden
+  # Specify block types that should be overridden by the plugin
+  # Some common crops: WHEAT/CARROTS/POTATOES/BEETROOTS/SWEET_BERRY_BUSH
   override-vanilla-blocks: []
 other-settings:
-  # It's recommended to use MiniMessage format. If you insist on using legacy color code "&", enable the support below.
-  # Disable this would improve performance
+  # It is recommended to use MiniMessage format. If you want to use legacy color codes ("&"), enable support below.
+  # Disabling this can improve performance
   legacy-color-code-support: true
-  # Requires PlaceholderAPI to work
+  # Requires PlaceholderAPI to function
   placeholder-register:
     '{skill-level}': '%levelplugin_farming%'
-  # Using items from other plugins
+  # To use items from other plugins
   item-detection-order: []
-  # Whether to protect the original lore of the item
-  # This uses the scoreboard component to identify the plugin's lore,
-  # which may conflict with some plugins that still use SpigotAPI#ItemMeta.
+  # Whether to protect the original lore of items
+  # Uses the scoreboard component to identify the plugin's lore,
+  # which may conflict with some plugins still using SpigotAPI#ItemMeta
   protect-original-lore: false
-  # Whether to check if the block/furniture corresponds with the one in CustomCrops data
-  # You can enable this if you are using Oraxen as its API is more reliable
+  # Whether to verify if a block/furniture matches the data in CustomCrops
+  # Enable this if using Oraxen, as its API is more reliable
   double-check: false

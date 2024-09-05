@@ -1,88 +1,85 @@
-# ID
+# Watering can configuration by ID
 watering_can_1:
-  # ItemsAdder/Oraxen item ID
+  # Unique item identifier for ItemsAdder/Oraxen
   item: {0}watering_can_1
-  # This is optional. It will determine the appearance of watering cans with different water storage capacities
+  # Optional appearance settings for watering cans based on water capacity
+  # Uncomment and customize CustomModelData if you want different appearances for different water levels
   #appearance:
-  #  0: 1000 # CustomModelData
-  #  1: 1001
-  #  2: 1002
-  #  3: 1003
-  # Maximum water storage capacity
+  #  0: 1000 # CustomModelData for empty can
+  #  1: 1001 # CustomModelData for partially filled can
+  #  2: 1002 # CustomModelData for more filled can
+  #  3: 1003 # CustomModelData for fully filled can
+  # Maximum amount of water the watering can can store
   capacity: 3
-  # Amount of water added to pot in a single interaction
+  # Amount of water added to pot
   water: 1
-  # Effective Range
+  # The effective range of the watering can when used
   effective-range:
-    width: 1
-    length: 1
-  # Methods to fill the watering can
+    width: 1  # The width of the area affected
+    length: 1 # The length of the area affected
+  # Methods to refill the watering can with water
   fill-method:
-    # The name of the method, it's totally customized
+    # Custom refill method configuration
     method_1:
-      # The target block/furniture (That means you can create a well to get water)
-      target: WATER
-      # Amount of water to add
-      amount: 1
-  # Watering cans only work in specified planting pots
+      target: WATER  # The block or object that provides water (e.g., a water block or well)
+      amount: 1      # Amount of water added per refill
+  # Specify which types of planting pots the watering can can be used with
   pot-whitelist:
-    - default
-  # Allow watering can to divert water to sprinkler
+    - default  # Default pot type allowed
+  # Allow the watering can to fill compatible sprinklers
   sprinkler-whitelist:
     - sprinkler_1
     - sprinkler_2
     - sprinkler_3
-  # Dynamic lore settings
+  # Dynamic lore settings for the watering can's description
   dynamic-lore:
-    # Should watering-can has dynamic lore according to the water amount
-    enable: true
+    enable: true  # Enable or disable dynamic lore based on water level
+    # Lore text that will be displayed dynamically
     # Available placeholders:
-    # {water_bar}: water bar image
-    # {current}: current amount of water
-    # {storage}: max water storage
+    # {water_bar}: Visual representation of water level
+    # {current}: Current amount of water
+    # {storage}: Maximum water storage capacity
     lore:
       - '<italic:false><white><font:customcrops:default>{water_bar}</font>'
-      - '<italic:false><gray>Right click water to add water to the can.'
-  # Water bar image settings
+      - '<italic:false><gray>Right-click on water to refill the watering can.'
+  # Configuration for the water level display bar
   water-bar:
-    left: '뀂'
-    full: '뀁뀃'
-    empty: '뀁뀄'
-    right: '뀁뀅'
-  # Event settings
+    left: '뀂'   # Left cap of the water bar
+    full: '뀁뀃' # Segment representing full water level
+    empty: '뀁뀄' # Segment representing empty water level
+    right: '뀁뀅' # Right cap of the water bar
+  # Event settings to handle various actions with the watering can
   events:
-    # No water
+    # Event triggered when there's no water left in the watering can
     no_water:
       sound_action:
         type: sound
         value:
-          key: "minecraft:item.bundle.insert"
-          source: 'player'
+          key: "minecraft:item.bundle.insert"  # Sound to play
+          source: 'player'                     # Sound source
           volume: 1
           pitch: 1
       actionbar_action:
         type: actionbar
-        value: '<red><bold>[X] Water has been used out'
-    # Consume water
+        value: '<red><bold>[X] Water has been used out'  # Message displayed on action bar
+    # Event triggered when water is consumed from the watering can
     consume_water:
-      # The name of the action, it's totally customized
       sound_action:
         type: sound
         value:
-          key: "minecraft:block.water.ambient"
+          key: "minecraft:block.water.ambient"  # Sound of water being consumed
           source: 'player'
           volume: 1
           pitch: 1
       actionbar_action:
         type: actionbar
-        value: '<font:customcrops:default>{water_bar}</font>'
-    # Add water to the watering-can
+        value: '<font:customcrops:default>{water_bar}</font>' # Display updated water bar
+    # Event triggered when water is added to the watering can
     add_water:
-      # The name of the action, it's totally customized
       particle_action:
         type: particle
         value:
-          particle: WATER_SPLASH
+          particle: WATER_SPLASH  # Particle effect for adding water
           x: 0.5
           y: 1.3
           z: 0.5
@@ -90,13 +87,14 @@ watering_can_1:
       sound_action:
         type: sound
         value:
-          key: "minecraft:item.bucket.empty"
+          key: "minecraft:item.bucket.empty"  # Sound to play when filling the can
           source: 'player'
           volume: 1
           pitch: 1
       actionbar_action:
         type: actionbar
-        value: '<font:customcrops:default>{water_bar}</font>'
+        value: '<font:customcrops:default>{water_bar}</font>' # Update water bar display
+# Configuration for additional watering cans
 watering_can_2:
   item: {0}watering_can_2
   capacity: 4
@@ -118,7 +116,7 @@ watering_can_2:
     enable: true
     lore:
       - '<italic:false><white><font:customcrops:default>{water_bar}</font>'
-      - '<italic:false><gray>Right click water to add water to the can.'
+      - '<italic:false><gray>Right-click on water to refill the watering can.'
   water-bar:
     left: '뀂'
     full: '뀁뀃'
@@ -166,6 +164,7 @@ watering_can_2:
       actionbar_action:
         type: actionbar
         value: '<font:customcrops:default>{water_bar}</font>'
+# Continue similar configuration for watering_can_3 and watering_can_4...
 watering_can_3:
   item: {0}watering_can_3
   capacity: 5
@@ -187,7 +186,7 @@ watering_can_3:
     enable: true
     lore:
       - '<italic:false><white><font:customcrops:default>{water_bar}</font>'
-      - '<italic:false><gray>Right click water to add water to the can.'
+      - '<italic:false><gray>Right-click on water to refill the watering can.'
   water-bar:
     left: '뀂'
     full: '뀁뀃'
@@ -256,7 +255,7 @@ watering_can_4:
     enable: true
     lore:
       - '<italic:false><white><font:customcrops:default>{water_bar}</font>'
-      - '<italic:false><gray>Right click water to add water to the can.'
+      - '<italic:false><gray>Right-click on water to refill the watering can.'
   water-bar:
     left: '뀂'
     full: '뀁뀃'

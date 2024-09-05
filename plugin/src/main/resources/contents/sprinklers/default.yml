@@ -1,53 +1,60 @@
-# ID
+# Unique identifier for the sprinkler
 sprinkler_1:
-  # This decides the work range
+  # Sprinkler's working range:
   # □■□
   # ■▼■
   # □■□
   range: 1
-  # mode of sprinkling (1=square, 2=rhombus, 3=circle)
+  # Sprinkling pattern mode:
+  # 1 = square, 2 = rhombus, 3 = circle
   working-mode: 2
-  # Maximum water storage capacity
+  # Maximum capacity for storing water
   storage: 4
-  # Unlimited water source
+  # Indicates whether the sprinkler has unlimited water supply
   infinite: false
-  # Amount of water added in a single sprinkling
+  # The amount of water added to pot per sprinkling operation
   water: 1
-  # Basic 3d model
-  3D-item: {0}sprinkler_1
-  # Optional 2d model
+  # The amount of water consumed per sprinkling operation
+  sprinkling: 1
+  # 3D model identifier for the sprinkler
+  3D-item: {0}sprinkler_1 # without water
+  3D-item-with-water: {0}sprinkler_1 # with water
+  # Optional 2D item model identifier
   2D-item: {0}sprinkler_1_item
-  # ITEM_FRAME / TRIPWIRE / ITEM_DISPLAY (1.19.4+)
-  type: ITEM_FRAME
-  # Sprinklers only work in specified planting pots
+  # The type of sprinkler (BLOCK or FURNITURE)
+  type: FURNITURE
+  # List of allowed planting pots where the sprinkler can function
   pot-whitelist:
     - default
-  # Methods to fill the sprinkler
+  # Methods available for refilling the sprinkler's water supply
   fill-method:
-    # The name of the method, it's totally customized
+    # Custom refill method 1 configuration
     method_1:
-      # The item to use
+      # Item used for refilling
       item: WATER_BUCKET
-      # The item returned (Optional)
+      # Item returned after refilling (optional)
       return: BUCKET
-      # The amount of water to add
+      # Amount of water added by this method
       amount: 3
+    # Custom refill method 2 configuration
     method_2:
       item: POTION
       return: GLASS_BOTTLE
       amount: 1
-  # Water bar image settings
+  # Configuration for the water level display bar
   water-bar:
-    left: '뀂'
-    full: '뀁뀃'
-    empty: '뀁뀄'
-    right: '뀁뀅'
-  # Event settings
+    left: '뀂'   # Left end of the water bar
+    full: '뀁뀃' # Full segment of the water bar
+    empty: '뀁뀄' # Empty segment of the water bar
+    right: '뀁뀅' # Right end of the water bar
+  # Event settings for various interactions and actions
   events:
     place:
+      # Action performed when placing the sprinkler
       swing_hand_action:
         type: swing-hand
         value: true
+      # Sound effect triggered when placing the sprinkler
       sound_action:
         type: sound
         value:
@@ -56,6 +63,7 @@ sprinkler_1:
           volume: 1
           pitch: 1
     interact:
+      # Conditional action executed on interaction
       force_work_action:
         type: conditional
         value:
@@ -66,6 +74,7 @@ sprinkler_1:
           actions:
             action_1:
               type: force-tick
+      # Hologram display action upon interaction
       hologram_action:
         type: hologram
         value:
@@ -76,6 +85,7 @@ sprinkler_1:
           z: 0.5
           visible-to-all: false
     work:
+      # Visual effect displayed when the sprinkler is working
       fake_item_action:
         type: fake-item
         value:
@@ -86,6 +96,7 @@ sprinkler_1:
           z: 0.5
           visible-to-all: true
     add_water:
+      # Particle effect shown when adding water
       particle_action:
         type: particle
         value:
@@ -94,6 +105,7 @@ sprinkler_1:
           y: 0.7
           z: 0.5
           count: 5
+      # Sound effect played when adding water
       sound_action:
         type: sound
         value:
@@ -101,7 +113,9 @@ sprinkler_1:
           source: 'player'
           volume: 1
           pitch: 1
+
 sprinkler_2:
+  # Sprinkler's working range:
   # □□□□□
   # □■■■□
   # □■▼■□
@@ -113,7 +127,7 @@ sprinkler_2:
   water: 1
   3D-item: {0}sprinkler_2
   2D-item: {0}sprinkler_2_item
-  type: ITEM_FRAME
+  type: FURNITURE
   pot-whitelist:
     - default
   fill-method:
@@ -188,7 +202,9 @@ sprinkler_2:
           source: 'player'
           volume: 1
           pitch: 1
+
 sprinkler_3:
+  # Sprinkler's working range:
   # □□□□□□□
   # □■■■■■□
   # □■■■■■□
@@ -202,7 +218,7 @@ sprinkler_3:
   water: 1
   3D-item: {0}sprinkler_3
   2D-item: {0}sprinkler_3_item
-  type: ITEM_FRAME
+  type: FURNITURE
   pot-whitelist:
     - default
   fill-method:

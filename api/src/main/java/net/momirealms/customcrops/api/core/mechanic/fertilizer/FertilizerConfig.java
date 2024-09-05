@@ -144,6 +144,5 @@ public interface FertilizerConfig {
      *
      * @return An array of doubles representing the quality ratio override, or null if not applicable.
      */
-    @Nullable
-    double[] overrideQualityRatio();
+    double @Nullable [] overrideQualityRatio();
 }
