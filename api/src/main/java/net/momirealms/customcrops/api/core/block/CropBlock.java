@@ -317,6 +317,7 @@ public class CropBlock extends AbstractCustomCropsBlock {
                     Optional.ofNullable(deathCondition.deathStage()).ifPresent(it -> {
                         BukkitCustomCropsPlugin.getInstance().getItemManager().place(bukkitLocation, deathCondition.existenceForm(), it, rotation);
                     });
+                    ActionManager.trigger(context, config.deathActions());
                 }, deathCondition.deathDelay(), bukkitLocation);
                 return;
             }

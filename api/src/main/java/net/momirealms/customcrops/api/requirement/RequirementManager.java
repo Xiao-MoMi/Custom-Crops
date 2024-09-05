@@ -107,6 +107,7 @@ public interface RequirementManager<T> extends Reloadable {
     static <T> boolean isSatisfied(Context<T> context, @Nullable Requirement<T>[] requirements) {
         if (requirements == null) return true;
         for (Requirement<T> requirement : requirements) {
+            if (requirement == null) continue;
             if (!requirement.isSatisfied(context)) {
                 return false;
             }
