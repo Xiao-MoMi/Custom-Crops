@@ -77,22 +77,14 @@ public class ActionQualityCrops<T> extends AbstractBuiltInAction<T> {
         if (context.holder() instanceof Player p) {
             player = p;
         }
-        ItemStack drop = generateItem(location, player, random);
-        if (drop != null) {
-            if (toInv && player != null) {
-                PlayerUtils.giveItem(player, drop, 1);
-            } else {
-                location.getWorld().dropItemNaturally(location, drop);
-            }
-        }
+        generateItem(location, player, random);
     }
 
-    @Nullable
-    public ItemStack generateItem(Location location, @Nullable Player player, int randomAmount) {
+    public void generateItem(Location location, @Nullable Player player, int randomAmount) {
         double[] ratio = ConfigManager.defaultQualityRatio();
         Optional<CustomCropsWorld<?>> world = plugin.getWorldManager().getWorld(location.getWorld());
         if (world.isEmpty()) {
-            return null;
+            return;
         }
         Pos3 pos3 = Pos3.from(location);
         Fertilizer[] fertilizers = null;
@@ -119,17 +111,22 @@ public class ActionQualityCrops<T> extends AbstractBuiltInAction<T> {
                 ratio = newRatio;
             }
         }
-        for (int i = 0; i < randomAmount; i++) {
-            double r1 = Math.random();
-            for (int j = 0; j < ratio.length; j++) {
-                if (r1 < ratio[j]) {
-                    ItemStack drop = plugin.getItemManager().build(player, qualityLoots[j]);
-                    if (drop == null || drop.getType() == Material.AIR) return null;
-                    return drop;
+        outer:
+            for (int i = 0; i < randomAmount; i++) {
+                double r1 = Math.random();
+                for (int j = 0; j < ratio.length; j++) {
+                    if (r1 < ratio[j]) {
+                        ItemStack drop = plugin.getItemManager().build(player, qualityLoots[j]);
+                        if (drop == null || drop.getType() == Material.AIR) continue;
+                        if (toInv && player != null) {
+                            PlayerUtils.giveItem(player, drop, 1);
+                        } else {
+                            location.getWorld().dropItemNaturally(location, drop);
+                        }
+                        continue outer;
+                    }
                 }
             }
-        }
-        return null;
     }
 
     public MathValue<T> min() {

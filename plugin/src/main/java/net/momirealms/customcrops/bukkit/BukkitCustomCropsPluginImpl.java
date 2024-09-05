@@ -166,10 +166,10 @@ public class BukkitCustomCropsPluginImpl extends BukkitCustomCropsPlugin {
         this.translationManager = new TranslationManager(this);
         this.senderFactory = new BukkitSenderFactory(this);
         this.itemManager = new BukkitItemManager(this);
+        this.worldManager = new BukkitWorldManager(this);
         this.integrationManager = new BukkitIntegrationManager(this);
         this.placeholderManager = new BukkitPlaceholderManager(this);
         this.coolDownManager = new CoolDownManager(this);
-        this.worldManager = new BukkitWorldManager(this);
         this.hologramManager = new HologramManager(this);
         this.commandManager = new BukkitCommandManager(this);
         this.commandManager.registerDefaultFeatures();
