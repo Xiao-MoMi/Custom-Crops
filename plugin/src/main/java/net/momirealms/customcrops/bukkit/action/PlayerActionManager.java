@@ -218,25 +218,35 @@ public class PlayerActionManager extends AbstractActionManager<Player> {
 
     private void registerItemAction() {
         registerAction((args, chance) -> {
-            if (args instanceof Section section) {
-                boolean mainOrOff = section.getString("hand", "main").equalsIgnoreCase("main");
-                int amount = section.getInt("amount", 1);
-                return context -> {
-                    if (context.holder() == null) return;
-                    if (Math.random() > chance) return;
-                    Player player = context.holder();
-                    boolean tempHand = mainOrOff;
-                    EquipmentSlot hand = context.arg(ContextKeys.SLOT);
-                    if (hand == EquipmentSlot.OFF_HAND || hand == EquipmentSlot.HAND) {
-                        tempHand = hand == EquipmentSlot.HAND;
-                    }
-                    ItemStack itemStack = tempHand ? player.getInventory().getItemInMainHand() : player.getInventory().getItemInOffHand();
-                    itemStack.setAmount(Math.max(0, itemStack.getAmount() + amount));
-                };
+            Boolean mainOrOff;
+            int amount;
+            if (args instanceof Integer integer) {
+                mainOrOff = null;
+                amount = integer;
+            } else if (args instanceof Section section) {
+                String hand = section.getString("hand");
+                mainOrOff = hand == null ? null : hand.equalsIgnoreCase("main");
+                amount = section.getInt("amount", 1);
             } else {
                 plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at item-amount action which is expected to be `Section`");
                 return Action.empty();
             }
+            return context -> {
+                if (context.holder() == null) return;
+                if (Math.random() > chance) return;
+                Player player = context.holder();
+                EquipmentSlot hand = context.arg(ContextKeys.SLOT);
+                if (mainOrOff == null && hand == null) {
+                    return;
+                }
+                boolean tempHand = Objects.requireNonNullElseGet(mainOrOff, () -> hand == EquipmentSlot.HAND);
+                ItemStack itemStack = tempHand ? player.getInventory().getItemInMainHand() : player.getInventory().getItemInOffHand();
+                if (amount < 0) {
+                    itemStack.setAmount(Math.max(0, itemStack.getAmount() + amount));
+                } else if (amount > 0) {
+                    PlayerUtils.giveItem(player, itemStack, amount);
+                }
+            };
         }, "item-amount");
         registerAction((args, chance) -> {
             int amount;
@@ -259,7 +269,7 @@ public class PlayerActionManager extends AbstractActionManager<Player> {
                 if (player == null) return;
                 EquipmentSlot tempSlot = slot;
                 EquipmentSlot equipmentSlot = context.arg(ContextKeys.SLOT);
-                if (equipmentSlot != null) {
+                if (tempSlot == null && equipmentSlot != null) {
                     tempSlot = equipmentSlot;
                 }
                 if (tempSlot == null) {
