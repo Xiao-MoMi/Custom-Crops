@@ -21,7 +21,7 @@ watering_can_1:
   fill-method:
     # Custom refill method configuration
     method_1:
-      target: WATER  # The block or object that provides water (e.g., a water block or well)
+      target: WATER  # The block that provides water
       amount: 1      # Amount of water added per refill
   # Specify which types of planting pots the watering can can be used with
   pot-whitelist:
