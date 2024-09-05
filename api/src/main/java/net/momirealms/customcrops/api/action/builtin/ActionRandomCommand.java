@@ -30,7 +30,9 @@ import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class ActionRandomCommand<T> extends AbstractBuiltInAction<T> {
-    final List<String> commands;
+
+    private final List<String> commands;
+
     public ActionRandomCommand(
             BukkitCustomCropsPlugin plugin,
             Object args,
@@ -39,10 +41,10 @@ public class ActionRandomCommand<T> extends AbstractBuiltInAction<T> {
         super(plugin, chance);
         this.commands = ListUtils.toList(args);
     }
+
     @Override
-    public void trigger(Context<T> context) {
+    protected void triggerAction(Context<T> context) {
         if (context.argOrDefault(ContextKeys.OFFLINE, false)) return;
-        if (Math.random() > chance) return;
         OfflinePlayer owner = null;
         if (context.holder() instanceof Player player) {
             owner = player;
@@ -55,7 +57,7 @@ public class ActionRandomCommand<T> extends AbstractBuiltInAction<T> {
         }, null);
     }
 
-    public List<String> getCommands() {
+    public List<String> commands() {
         return commands;
     }
 }

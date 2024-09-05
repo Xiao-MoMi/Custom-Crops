@@ -30,7 +30,9 @@ import java.util.Map;
 import static java.util.Objects.requireNonNull;
 
 public class ActionDropItemLegacy<T> extends AbstractBuiltInAction<T> {
-    final List<Action<T>> actions;
+
+    private final List<Action<T>> actions;
+
     public ActionDropItemLegacy(
             BukkitCustomCropsPlugin plugin,
             ActionManager<T> manager,
@@ -52,9 +54,9 @@ public class ActionDropItemLegacy<T> extends AbstractBuiltInAction<T> {
             actions.add(requireNonNull(manager.getActionFactory("quality-crops")).process(qualitySection, 1));
         }
     }
+
     @Override
-    public void trigger(Context<T> context) {
-        if (!checkChance()) return;
+    protected void triggerAction(Context<T> context) {
         for (Action<T> action : actions) {
             action.trigger(context);
         }

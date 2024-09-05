@@ -25,8 +25,10 @@ import net.momirealms.customcrops.api.context.Context;
 import net.momirealms.customcrops.api.requirement.Requirement;
 
 public class ActionConditional<T> extends AbstractBuiltInAction<T> {
-    final Action<T>[] actions;
-    final Requirement<T>[] requirements;
+
+    private final Action<T>[] actions;
+    private final Requirement<T>[] requirements;
+
     public ActionConditional(
             BukkitCustomCropsPlugin plugin,
             AbstractActionManager<T> manager,
@@ -38,24 +40,24 @@ public class ActionConditional<T> extends AbstractBuiltInAction<T> {
         this.actions = manager.parseActions(section.getSection("actions"));
         this.requirements = plugin.getRequirementManager(tClass).parseRequirements(section.getSection("conditions"), true);
     }
+
     @Override
-    public void trigger(Context<T> condition) {
-        if (!checkChance()) return;
+    protected void triggerAction(Context<T> context) {
         for (Requirement<T> requirement : requirements) {
-            if (!requirement.isSatisfied(condition)) {
+            if (!requirement.isSatisfied(context)) {
                 return;
             }
         }
         for (Action<T> action : actions) {
-            action.trigger(condition);
+            action.trigger(context);
         }
     }
 
-    public Action<T>[] getActions() {
+    public Action<T>[] actions() {
         return actions;
     }
 
-    public Requirement<T>[] getRequirements() {
+    public Requirement<T>[] requirements() {
         return requirements;
     }
 }

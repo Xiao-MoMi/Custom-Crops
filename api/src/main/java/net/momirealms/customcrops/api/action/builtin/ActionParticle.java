@@ -26,25 +26,28 @@ import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Locale;
 
 import static java.util.Objects.requireNonNull;
 
 public class ActionParticle<T> extends AbstractBuiltInAction<T> {
-    final Particle particleType;
-    final double x;
-    final double y;
-    final double z;
-    final double offSetX;
-    final double offSetY;
-    final double offSetZ;
-    final int count;
-    final double extra;
-    final float scale;
-    final ItemStack itemStack;
-    final Color color;
-    final Color toColor;
+
+    private final Particle particleType;
+    private final double x;
+    private final double y;
+    private final double z;
+    private final double offSetX;
+    private final double offSetY;
+    private final double offSetZ;
+    private final int count;
+    private final double extra;
+    private final float scale;
+    private final ItemStack itemStack;
+    private final Color color;
+    private final Color toColor;
+
     public ActionParticle(
             BukkitCustomCropsPlugin plugin,
             Section section,
@@ -83,10 +86,10 @@ public class ActionParticle<T> extends AbstractBuiltInAction<T> {
             toColor = null;
         }
     }
+
     @Override
-    public void trigger(Context<T> context) {
+    protected void triggerAction(Context<T> context) {
         if (context.argOrDefault(ContextKeys.OFFLINE, false)) return;
-        if (Math.random() > chance) return;
         Location location = requireNonNull(context.arg(ContextKeys.LOCATION));
         location.getWorld().spawnParticle(
                 particleType,
@@ -98,55 +101,58 @@ public class ActionParticle<T> extends AbstractBuiltInAction<T> {
         );
     }
 
-    public Particle getParticleType() {
+    public Particle particleType() {
         return particleType;
     }
 
-    public double getX() {
+    public double x() {
         return x;
     }
 
-    public double getY() {
+    public double y() {
         return y;
     }
 
-    public double getZ() {
+    public double z() {
         return z;
     }
 
-    public double getOffSetX() {
+    public double offSetX() {
         return offSetX;
     }
 
-    public double getOffSetY() {
+    public double offSetY() {
         return offSetY;
     }
 
-    public double getOffSetZ() {
+    public double offSetZ() {
         return offSetZ;
     }
 
-    public int getCount() {
+    public int count() {
         return count;
     }
 
-    public double getExtra() {
+    public double extra() {
         return extra;
     }
 
-    public float getScale() {
+    public float scale() {
         return scale;
     }
 
-    public ItemStack getItemStack() {
+    @Nullable
+    public ItemStack itemStack() {
         return itemStack;
     }
 
-    public Color getColor() {
+    @Nullable
+    public Color color() {
         return color;
     }
 
-    public Color getToColor() {
+    @Nullable
+    public Color toColor() {
         return toColor;
     }
 }

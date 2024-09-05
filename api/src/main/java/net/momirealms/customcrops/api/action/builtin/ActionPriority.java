@@ -30,7 +30,9 @@ import java.util.List;
 import java.util.Map;
 
 public class ActionPriority<T> extends AbstractBuiltInAction<T> {
-    final List<Pair<Requirement<T>[], Action<T>[]>> conditionActionPairList;
+
+    private final List<Pair<Requirement<T>[], Action<T>[]>> conditionActionPairList;
+
     public ActionPriority(
             BukkitCustomCropsPlugin plugin,
             AbstractActionManager<T> manager,
@@ -48,9 +50,9 @@ public class ActionPriority<T> extends AbstractBuiltInAction<T> {
             }
         }
     }
+
     @Override
-    public void trigger(Context<T> context) {
-        if (!checkChance()) return;
+    protected void triggerAction(Context<T> context) {
         outer:
         for (Pair<Requirement<T>[], Action<T>[]> pair : conditionActionPairList) {
             if (pair.left() != null)
@@ -67,7 +69,7 @@ public class ActionPriority<T> extends AbstractBuiltInAction<T> {
         }
     }
 
-    public List<Pair<Requirement<T>[], Action<T>[]>> getConditionActionPairList() {
+    public List<Pair<Requirement<T>[], Action<T>[]>> conditionalActions() {
         return conditionActionPairList;
     }
 }

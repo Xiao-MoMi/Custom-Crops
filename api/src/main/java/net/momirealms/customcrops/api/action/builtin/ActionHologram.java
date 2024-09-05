@@ -1,7 +1,6 @@
 package net.momirealms.customcrops.api.action.builtin;
 
 import dev.dejvokep.boostedyaml.block.implementation.Section;
-import net.kyori.adventure.text.Component;
 import net.momirealms.customcrops.api.BukkitCustomCropsPlugin;
 import net.momirealms.customcrops.api.context.Context;
 import net.momirealms.customcrops.api.context.ContextKeys;
@@ -38,15 +37,17 @@ import java.util.Optional;
 import static java.util.Objects.requireNonNull;
 
 public class ActionHologram<T> extends AbstractBuiltInAction<T> {
-    final TextValue<T> text;
-    final MathValue<T> duration;
-    final boolean other;
-    final MathValue<T> x;
-    final MathValue<T> y;
-    final MathValue<T> z;
-    final boolean applyCorrection;
-    final boolean onlyShowToOne;
-    final int range;
+
+    private final TextValue<T> text;
+    private final MathValue<T> duration;
+    private final boolean other;
+    private final MathValue<T> x;
+    private final MathValue<T> y;
+    private final MathValue<T> z;
+    private final boolean applyCorrection;
+    private final boolean onlyShowToOne;
+    private final int range;
+
     public ActionHologram(
             BukkitCustomCropsPlugin plugin,
             Section section,
@@ -63,11 +64,10 @@ public class ActionHologram<T> extends AbstractBuiltInAction<T> {
         this.onlyShowToOne = !section.getBoolean("visible-to-all", false);
         this.range = section.getInt("range", 32);
     }
+
     @Override
-    public void trigger(Context<T> context) {
+    protected void triggerAction(Context<T> context) {
         if (context.argOrDefault(ContextKeys.OFFLINE, false)) return;
-        if (context.holder() == null) return;
-        if (Math.random() > chance) return;
         Player owner = null;
         if (context.holder() instanceof Player p) {
             owner = p;
@@ -95,45 +95,46 @@ public class ActionHologram<T> extends AbstractBuiltInAction<T> {
             }
         }
         if (viewers.isEmpty()) return;
-        Component component = AdventureHelper.miniMessage(text.render(context));
+        String json = AdventureHelper.componentToJson(AdventureHelper.miniMessage(text.render(context)));
+        int durationInMillis = (int) (duration.evaluate(context) * 50);
         for (Player viewer : viewers) {
-            HologramManager.getInstance().showHologram(viewer, location, AdventureHelper.componentToJson(component), (int) (duration.evaluate(context) * 50));
+            HologramManager.getInstance().showHologram(viewer, location, json, durationInMillis);
         }
     }
 
-    public TextValue<T> getText() {
+    public TextValue<T> text() {
         return text;
     }
 
-    public MathValue<T> getDuration() {
+    public MathValue<T> duration() {
         return duration;
     }
 
-    public boolean isOther() {
+    public boolean otherPosition() {
         return other;
     }
 
-    public MathValue<T> getX() {
+    public MathValue<T> x() {
         return x;
     }
 
-    public MathValue<T> getY() {
+    public MathValue<T> y() {
         return y;
     }
 
-    public MathValue<T> getZ() {
+    public MathValue<T> z() {
         return z;
     }
 
-    public boolean isApplyCorrection() {
+    public boolean applyHeightCorrection() {
         return applyCorrection;
     }
 
-    public boolean isOnlyShowToOne() {
+    public boolean showToOne() {
         return onlyShowToOne;
     }
 
-    public int getRange() {
+    public int range() {
         return range;
     }
 }

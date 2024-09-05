@@ -44,10 +44,12 @@ import java.util.Optional;
 import static java.util.Objects.requireNonNull;
 
 public class ActionQualityCrops<T> extends AbstractBuiltInAction<T> {
-    final MathValue<T> min;
-    final MathValue<T> max;
-    final boolean toInv;
-    final String[] qualityLoots;
+
+    private final MathValue<T> min;
+    private final MathValue<T> max;
+    private final boolean toInv;
+    private final String[] qualityLoots;
+
     public ActionQualityCrops(
             BukkitCustomCropsPlugin plugin,
             Section section,
@@ -66,9 +68,9 @@ public class ActionQualityCrops<T> extends AbstractBuiltInAction<T> {
             }
         }
     }
+
     @Override
-    public void trigger(Context<T> context) {
-        if (!checkChance()) return;
+    protected void triggerAction(Context<T> context) {
         Location location = requireNonNull(context.arg(ContextKeys.LOCATION));
         int random = RandomUtils.generateRandomInt((int) min.evaluate(context), (int) max.evaluate(context));
         Player player = null;
@@ -130,19 +132,19 @@ public class ActionQualityCrops<T> extends AbstractBuiltInAction<T> {
         return null;
     }
 
-    public MathValue<T> getMin() {
+    public MathValue<T> min() {
         return min;
     }
 
-    public MathValue<T> getMax() {
+    public MathValue<T> max() {
         return max;
     }
 
-    public boolean isToInv() {
+    public boolean toInventory() {
         return toInv;
     }
 
-    public String[] getQualityLoots() {
+    public String[] qualityLoots() {
         return qualityLoots;
     }
 }

@@ -38,16 +38,18 @@ import java.util.concurrent.TimeUnit;
 import static java.util.Objects.requireNonNull;
 
 public class ActionFakeItem<T> extends AbstractBuiltInAction<T> {
-    final String itemID;
-    final MathValue<T> duration;
-    final boolean other;
-    final MathValue<T> x;
-    final MathValue<T> y;
-    final MathValue<T> z;
-    final MathValue<T> yaw;
-    final int range;
-    final boolean visibleToAll;
-    final boolean useItemDisplay;
+
+    private final String itemID;
+    private final MathValue<T> duration;
+    private final boolean other;
+    private final MathValue<T> x;
+    private final MathValue<T> y;
+    private final MathValue<T> z;
+    private final MathValue<T> yaw;
+    private final int range;
+    private final boolean visibleToAll;
+    private final boolean useItemDisplay;
+
     public ActionFakeItem(
             BukkitCustomCropsPlugin plugin,
             Section section,
@@ -68,9 +70,9 @@ public class ActionFakeItem<T> extends AbstractBuiltInAction<T> {
         this.visibleToAll = section.getBoolean("visible-to-all", true);
         this.useItemDisplay = section.getBoolean("use-item-display", false);
     }
+
     @Override
-    public void trigger(Context<T> context) {
-        if (!checkChance()) return;
+    protected void triggerAction(Context<T> context) {
         if (context.argOrDefault(ContextKeys.OFFLINE, false)) return;
         Player owner = null;
         if (context.holder() instanceof Player p) {
@@ -117,43 +119,43 @@ public class ActionFakeItem<T> extends AbstractBuiltInAction<T> {
         }, (long) (duration.evaluate(context) * 50), TimeUnit.MILLISECONDS);
     }
 
-    public String getItemID() {
+    public String itemID() {
         return itemID;
     }
 
-    public MathValue<T> getDuration() {
+    public MathValue<T> duration() {
         return duration;
     }
 
-    public boolean isOther() {
+    public boolean otherPosition() {
         return other;
     }
 
-    public MathValue<T> getX() {
+    public MathValue<T> x() {
         return x;
     }
 
-    public MathValue<T> getY() {
+    public MathValue<T> y() {
         return y;
     }
 
-    public MathValue<T> getZ() {
+    public MathValue<T> z() {
         return z;
     }
 
-    public MathValue<T> getYaw() {
+    public MathValue<T> yaw() {
         return yaw;
     }
 
-    public int getRange() {
+    public int range() {
         return range;
     }
 
-    public boolean isVisibleToAll() {
+    public boolean visibleToAll() {
         return visibleToAll;
     }
 
-    public boolean isUseItemDisplay() {
+    public boolean useItemDisplay() {
         return useItemDisplay;
     }
 }

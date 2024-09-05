@@ -19,24 +19,31 @@ package net.momirealms.customcrops.api.action.builtin;
 
 import net.momirealms.customcrops.api.BukkitCustomCropsPlugin;
 import net.momirealms.customcrops.api.action.Action;
+import net.momirealms.customcrops.api.context.Context;
 
 public abstract class AbstractBuiltInAction<T> implements Action<T> {
+
     protected final BukkitCustomCropsPlugin plugin;
     protected final double chance;
+
     protected AbstractBuiltInAction(BukkitCustomCropsPlugin plugin, double chance) {
         this.plugin = plugin;
         this.chance = chance;
     }
 
-    public BukkitCustomCropsPlugin getPlugin() {
+    public BukkitCustomCropsPlugin plugin() {
         return plugin;
     }
 
-    public double getChance() {
+    public double chance() {
         return chance;
     }
 
-    public boolean checkChance() {
-        return !(Math.random() > chance);
+    @Override
+    public void trigger(Context<T> context) {
+        if (Math.random() > chance) return;
+        triggerAction(context);
     }
+
+    protected abstract void triggerAction(Context<T> context);
 }

@@ -32,9 +32,11 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 public class ActionTimer<T> extends AbstractBuiltInAction<T> {
-    final List<Action<T>> actions;
-    final int delay, duration, period;
-    final boolean async;
+
+    private final List<Action<T>> actions;
+    private final int delay, duration, period;
+    private final boolean async;
+
     public ActionTimer(
             BukkitCustomCropsPlugin plugin,
             AbstractActionManager<T> manager,
@@ -60,9 +62,9 @@ public class ActionTimer<T> extends AbstractBuiltInAction<T> {
             duration = 20;
         }
     }
+
     @Override
-    public void trigger(Context<T> context) {
-        if (!checkChance()) return;
+    protected void triggerAction(Context<T> context) {
         Location location = context.arg(ContextKeys.LOCATION);
         SchedulerTask task;
         if (async) {
@@ -81,23 +83,23 @@ public class ActionTimer<T> extends AbstractBuiltInAction<T> {
         plugin.getScheduler().asyncLater(task::cancel, duration * 50L, TimeUnit.MILLISECONDS);
     }
 
-    public List<Action<T>> getActions() {
+    public List<Action<T>> actions() {
         return actions;
     }
 
-    public int getDelay() {
+    public int delay() {
         return delay;
     }
 
-    public int getDuration() {
+    public int duration() {
         return duration;
     }
 
-    public int getPeriod() {
+    public int period() {
         return period;
     }
 
-    public boolean isAsync() {
+    public boolean async() {
         return async;
     }
 }

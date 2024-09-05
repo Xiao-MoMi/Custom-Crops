@@ -35,8 +35,10 @@ import java.util.List;
 import static java.util.Objects.requireNonNull;
 
 public class ActionCommandNearby<T> extends AbstractBuiltInAction<T> {
-    final List<String> cmd;
-    final MathValue<T> range;
+
+    private final List<String> cmd;
+    private final MathValue<T> range;
+
     public ActionCommandNearby(
             BukkitCustomCropsPlugin plugin,
             Section section,
@@ -46,10 +48,10 @@ public class ActionCommandNearby<T> extends AbstractBuiltInAction<T> {
         this.cmd = ListUtils.toList(section.get("command"));
         this.range = MathValue.auto(section.get("range"));
     }
+
     @Override
-    public void trigger(Context<T> context) {
+    protected void triggerAction(Context<T> context) {
         if (context.argOrDefault(ContextKeys.OFFLINE, false)) return;
-        if (Math.random() > chance) return;
         OfflinePlayer owner = null;
         if (context.holder() instanceof Player player) {
             owner = player;
@@ -67,11 +69,11 @@ public class ActionCommandNearby<T> extends AbstractBuiltInAction<T> {
         }
     }
 
-    public List<String> getCmd() {
+    public List<String> commands() {
         return cmd;
     }
 
-    public MathValue<T> getRange() {
+    public MathValue<T> range() {
         return range;
     }
 }

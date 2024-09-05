@@ -45,10 +45,12 @@ import java.util.Optional;
 import static java.util.Objects.requireNonNull;
 
 public class ActionPlant<T> extends AbstractBuiltInAction<T> {
-    final int point;
-    final String key;
-    final int y;
-    final boolean triggerAction;
+
+    private final int point;
+    private final String key;
+    private final int y;
+    private final boolean triggerAction;
+
     public ActionPlant(
             BukkitCustomCropsPlugin plugin,
             Section section,
@@ -60,10 +62,10 @@ public class ActionPlant<T> extends AbstractBuiltInAction<T> {
         this.y = section.getInt("y", 0);
         this.triggerAction = section.getBoolean("trigger-event", false);
     }
-    @Override
+
     @SuppressWarnings("unchecked")
-    public void trigger(Context<T> context) {
-        if (!checkChance()) return;
+    @Override
+    protected void triggerAction(Context<T> context) {
         CropConfig cropConfig = Registries.CROP.get(key);
         if (cropConfig == null) {
             plugin.getPluginLogger().warn("`plant` action is not executed due to crop[" + key + "] not exists");
@@ -111,19 +113,19 @@ public class ActionPlant<T> extends AbstractBuiltInAction<T> {
         }, cropLocation);
     }
 
-    public int getPoint() {
+    public int point() {
         return point;
     }
 
-    public String getKey() {
+    public String cropID() {
         return key;
     }
 
-    public int getY() {
+    public int yOffset() {
         return y;
     }
 
-    public boolean isTriggerAction() {
+    public boolean triggerPlantAction() {
         return triggerAction;
     }
 }

@@ -40,7 +40,9 @@ import java.util.Optional;
 import static java.util.Objects.requireNonNull;
 
 public class ActionBreak<T> extends AbstractBuiltInAction<T> {
-    final boolean triggerEvent;
+
+    private final boolean triggerEvent;
+
     public ActionBreak(
             BukkitCustomCropsPlugin plugin,
             Object args,
@@ -49,8 +51,9 @@ public class ActionBreak<T> extends AbstractBuiltInAction<T> {
         super(plugin, chance);
         this.triggerEvent = (boolean) args;
     }
+
     @Override
-    public void trigger(Context<T> context) {
+    protected void triggerAction(Context<T> context) {
         Location location = requireNonNull(context.arg(ContextKeys.LOCATION));
         Optional<CustomCropsWorld<?>> optionalWorld = plugin.getWorldManager().getWorld(location.getWorld());
         if (optionalWorld.isEmpty()) {
@@ -92,7 +95,7 @@ public class ActionBreak<T> extends AbstractBuiltInAction<T> {
         plugin.getItemManager().remove(location, ExistenceForm.ANY);
     }
 
-    public boolean isTriggerEvent() {
+    public boolean shouldBreakTriggerEvent() {
         return triggerEvent;
     }
 }

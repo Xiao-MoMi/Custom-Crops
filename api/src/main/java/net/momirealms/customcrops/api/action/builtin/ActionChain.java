@@ -27,9 +27,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class ActionBundle<T> extends AbstractBuiltInAction<T> {
-    final List<Action<T>> actions;
-    public ActionBundle(
+public class ActionChain<T> extends AbstractBuiltInAction<T> {
+
+    private final List<Action<T>> actions;
+
+    public ActionChain(
             BukkitCustomCropsPlugin plugin,
             AbstractActionManager<T> manager,
             Object args,
@@ -45,15 +47,15 @@ public class ActionBundle<T> extends AbstractBuiltInAction<T> {
             }
         }
     }
+
     @Override
-    public void trigger(Context<T> context) {
-        if (!checkChance()) return;
+    protected void triggerAction(Context<T> context) {
         for (Action<T> action : actions) {
             action.trigger(context);
         }
     }
 
-    public List<Action<T>> getActions() {
+    public List<Action<T>> actions() {
         return actions;
     }
 }

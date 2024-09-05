@@ -191,7 +191,7 @@ public abstract class AbstractActionManager<T> implements ActionManager<T> {
     }
 
     protected void registerBundleAction(Class<T> tClass) {
-        registerAction((args, chance) -> new ActionBundle<>(plugin, this, args, chance), "chain");
+        registerAction((args, chance) -> new ActionChain<>(plugin, this, args, chance), "chain");
         registerAction((args, chance) -> new ActionDelay<>(plugin, this, args, chance), "delay");
         registerAction((args, chance) -> new ActionTimer<>(plugin, this, args, chance), "timer");
         registerAction((args, chance) -> {

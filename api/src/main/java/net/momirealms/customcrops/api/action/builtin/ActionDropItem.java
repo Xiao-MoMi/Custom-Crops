@@ -42,11 +42,13 @@ import java.util.Optional;
 import static java.util.Objects.requireNonNull;
 
 public class ActionDropItem<T> extends AbstractBuiltInAction<T> {
-    final boolean ignoreFertilizer;
-    final String item;
-    final MathValue<T> min;
-    final MathValue<T> max;
-    final boolean toInv;
+
+    private final boolean ignoreFertilizer;
+    private final String item;
+    private final MathValue<T> min;
+    private final MathValue<T> max;
+    private final boolean toInv;
+
     public ActionDropItem(
             BukkitCustomCropsPlugin plugin,
             Section section,
@@ -58,11 +60,10 @@ public class ActionDropItem<T> extends AbstractBuiltInAction<T> {
         this.min = MathValue.auto(section.get("min"));
         this.max = MathValue.auto(section.get("max"));
         this.toInv = section.getBoolean("to-inventory", false);
-
     }
+
     @Override
-    public void trigger(Context<T> context) {
-        if (!checkChance()) return;
+    protected void triggerAction(Context<T> context) {
         Location location = requireNonNull(context.arg(ContextKeys.LOCATION));
         Player player = null;
         if (context.holder() instanceof Player p) {
@@ -117,23 +118,23 @@ public class ActionDropItem<T> extends AbstractBuiltInAction<T> {
         return itemStack;
     }
 
-    public boolean isIgnoreFertilizer() {
+    public boolean ignoreFertilizer() {
         return ignoreFertilizer;
     }
 
-    public String getItem() {
+    public String itemID() {
         return item;
     }
 
-    public MathValue<T> getMin() {
+    public MathValue<T> min() {
         return min;
     }
 
-    public MathValue<T> getMax() {
+    public MathValue<T> max() {
         return max;
     }
 
-    public boolean isToInv() {
+    public boolean toInventory() {
         return toInv;
     }
 }

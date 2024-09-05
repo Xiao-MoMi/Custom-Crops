@@ -31,12 +31,14 @@ import org.bukkit.entity.Player;
 import static java.util.Objects.requireNonNull;
 
 public class ActionTitleNearby<T> extends AbstractBuiltInAction<T> {
-    final TextValue<T> title;
-    final TextValue<T> subtitle;
-    final int fadeIn;
-    final int stay;
-    final int fadeOut;
-    final int range;
+
+    private final TextValue<T> title;
+    private final TextValue<T> subtitle;
+    private final int fadeIn;
+    private final int stay;
+    private final int fadeOut;
+    private final int range;
+
     public ActionTitleNearby(
             BukkitCustomCropsPlugin plugin,
             Section section,
@@ -50,10 +52,10 @@ public class ActionTitleNearby<T> extends AbstractBuiltInAction<T> {
         this.fadeOut = section.getInt("fade-out", 10);
         this.range = section.getInt("range", 0);
     }
+
     @Override
-    public void trigger(Context<T> context) {
+    protected void triggerAction(Context<T> context) {
         if (context.argOrDefault(ContextKeys.OFFLINE, false)) return;
-        if (Math.random() > chance) return;
         Location location = requireNonNull(context.arg(ContextKeys.LOCATION));
         for (Player player : location.getWorld().getPlayers()) {
             if (LocationUtils.getDistance(player.getLocation(), location) <= range) {
@@ -68,27 +70,27 @@ public class ActionTitleNearby<T> extends AbstractBuiltInAction<T> {
         }
     }
 
-    public TextValue<T> getTitle() {
+    public TextValue<T> title() {
         return title;
     }
 
-    public TextValue<T> getSubtitle() {
+    public TextValue<T> subtitle() {
         return subtitle;
     }
 
-    public int getFadeIn() {
+    public int fadeIn() {
         return fadeIn;
     }
 
-    public int getStay() {
+    public int stay() {
         return stay;
     }
 
-    public int getFadeOut() {
+    public int fadeOut() {
         return fadeOut;
     }
 
-    public int getRange() {
+    public int range() {
         return range;
     }
 }

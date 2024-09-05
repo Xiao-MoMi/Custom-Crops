@@ -29,7 +29,9 @@ import org.bukkit.entity.Player;
 import java.util.List;
 
 public class ActionCommand<T> extends AbstractBuiltInAction<T> {
-    final List<String> commands;
+
+    private final List<String> commands;
+
     public ActionCommand(
             BukkitCustomCropsPlugin plugin,
             Object args,
@@ -38,10 +40,10 @@ public class ActionCommand<T> extends AbstractBuiltInAction<T> {
         super(plugin, chance);
         this.commands = ListUtils.toList(args);
     }
+
     @Override
-    public void trigger(Context<T> context) {
+    protected void triggerAction(Context<T> context) {
         if (context.argOrDefault(ContextKeys.OFFLINE, false)) return;
-        if (Math.random() > chance) return;
         OfflinePlayer owner = null;
         if (context.holder() instanceof Player player) {
             owner = player;
@@ -54,7 +56,7 @@ public class ActionCommand<T> extends AbstractBuiltInAction<T> {
         }, null);
     }
 
-    public List<String> getCommands() {
+    public List<String> commands() {
         return commands;
     }
 }

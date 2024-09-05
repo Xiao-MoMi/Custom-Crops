@@ -36,8 +36,10 @@ import java.util.List;
 import static java.util.Objects.requireNonNull;
 
 public class ActionMessageNearby<T> extends AbstractBuiltInAction<T> {
-    final List<String> messages;
-    final MathValue<T> range;
+
+    private final List<String> messages;
+    private final MathValue<T> range;
+
     public ActionMessageNearby(
             BukkitCustomCropsPlugin plugin,
             Section section,
@@ -47,10 +49,10 @@ public class ActionMessageNearby<T> extends AbstractBuiltInAction<T> {
         this.messages = ListUtils.toList(section.get("message"));
         this.range = MathValue.auto(section.get("range"));
     }
+
     @Override
-    public void trigger(Context<T> context) {
+    protected void triggerAction(Context<T> context) {
         if (context.argOrDefault(ContextKeys.OFFLINE, false)) return;
-        if (Math.random() > chance) return;
         double realRange = range.evaluate(context);
         OfflinePlayer owner = null;
         if (context.holder() instanceof Player player) {
@@ -73,11 +75,11 @@ public class ActionMessageNearby<T> extends AbstractBuiltInAction<T> {
         }
     }
 
-    public List<String> getMessages() {
+    public List<String> messages() {
         return messages;
     }
 
-    public MathValue<T> getRange() {
+    public MathValue<T> range() {
         return range;
     }
 }

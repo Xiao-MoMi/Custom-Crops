@@ -32,8 +32,10 @@ import org.bukkit.entity.Player;
 import static java.util.Objects.requireNonNull;
 
 public class ActionActionbarNearby<T> extends AbstractBuiltInAction<T> {
-    final String actionbar;
-    final MathValue<T> range;
+
+    private final String actionbar;
+    private final MathValue<T> range;
+
     public ActionActionbarNearby(
             BukkitCustomCropsPlugin plugin,
             Section section,
@@ -43,10 +45,10 @@ public class ActionActionbarNearby<T> extends AbstractBuiltInAction<T> {
         this.actionbar = section.getString("actionbar");
         this.range = MathValue.auto(section.get("range"));
     }
+
     @Override
-    public void trigger(Context<T> context) {
+    protected void triggerAction(Context<T> context) {
         if (context.argOrDefault(ContextKeys.OFFLINE, false)) return;
-        if (Math.random() > chance) return;
         OfflinePlayer owner = null;
         if (context.holder() instanceof Player player) {
             owner = player;
@@ -63,11 +65,11 @@ public class ActionActionbarNearby<T> extends AbstractBuiltInAction<T> {
         }
     }
 
-    public String getActionbar() {
+    public String actionbar() {
         return actionbar;
     }
 
-    public MathValue<T> getRange() {
+    public MathValue<T> range() {
         return range;
     }
 }

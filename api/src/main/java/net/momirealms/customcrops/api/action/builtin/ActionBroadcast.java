@@ -30,7 +30,9 @@ import org.bukkit.entity.Player;
 import java.util.List;
 
 public class ActionBroadcast<T> extends AbstractBuiltInAction<T> {
-    final List<String> messages;
+
+    private final List<String> messages;
+
     public ActionBroadcast(
             BukkitCustomCropsPlugin plugin,
             Object args,
@@ -39,10 +41,10 @@ public class ActionBroadcast<T> extends AbstractBuiltInAction<T> {
         super(plugin, chance);
         this.messages = ListUtils.toList(args);
     }
+
     @Override
-    public void trigger(Context<T> context) {
+    protected void triggerAction(Context<T> context) {
         if (context.argOrDefault(ContextKeys.OFFLINE, false)) return;
-        if (Math.random() > chance) return;
         OfflinePlayer offlinePlayer = null;
         if (context.holder() instanceof Player player) {
             offlinePlayer = player;
@@ -56,7 +58,7 @@ public class ActionBroadcast<T> extends AbstractBuiltInAction<T> {
         }
     }
 
-    public List<String> getMessages() {
+    public List<String> messages() {
         return messages;
     }
 }

@@ -31,9 +31,11 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 public class ActionDelay<T> extends AbstractBuiltInAction<T> {
-    final List<Action<T>> actions;
-    final int delay;
-    final boolean async;
+
+    private final List<Action<T>> actions;
+    private final int delay;
+    private final boolean async;
+
     public ActionDelay(
             BukkitCustomCropsPlugin plugin,
             AbstractActionManager<T> manager,
@@ -55,9 +57,9 @@ public class ActionDelay<T> extends AbstractBuiltInAction<T> {
             async = false;
         }
     }
+
     @Override
-    public void trigger(Context<T> context) {
-        if (!checkChance()) return;
+    protected void triggerAction(Context<T> context) {
         Location location = context.arg(ContextKeys.LOCATION);
         if (async) {
             plugin.getScheduler().asyncLater(() -> {
@@ -72,15 +74,15 @@ public class ActionDelay<T> extends AbstractBuiltInAction<T> {
         }
     }
 
-    public List<Action<T>> getActions() {
+    public List<Action<T>> actions() {
         return actions;
     }
 
-    public int getDelay() {
+    public int delay() {
         return delay;
     }
 
-    public boolean isAsync() {
+    public boolean async() {
         return async;
     }
 }
