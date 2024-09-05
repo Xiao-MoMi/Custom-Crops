@@ -39,6 +39,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static java.util.Objects.requireNonNull;
@@ -77,14 +78,20 @@ public class ActionQualityCrops<T> extends AbstractBuiltInAction<T> {
         if (context.holder() instanceof Player p) {
             player = p;
         }
-        generateItem(location, player, random);
+        for (ItemStack itemStack : generateItem(location, player, random)) {
+            if (toInv && player != null) {
+                PlayerUtils.giveItem(player, itemStack, itemStack.getAmount());
+            } else {
+                location.getWorld().dropItemNaturally(location, itemStack);
+            }
+        }
     }
 
-    public void generateItem(Location location, @Nullable Player player, int randomAmount) {
+    public List<ItemStack> generateItem(Location location, @Nullable Player player, int randomAmount) {
         double[] ratio = ConfigManager.defaultQualityRatio();
         Optional<CustomCropsWorld<?>> world = plugin.getWorldManager().getWorld(location.getWorld());
         if (world.isEmpty()) {
-            return;
+            return List.of();
         }
         Pos3 pos3 = Pos3.from(location);
         Fertilizer[] fertilizers = null;
@@ -111,22 +118,20 @@ public class ActionQualityCrops<T> extends AbstractBuiltInAction<T> {
                 ratio = newRatio;
             }
         }
+        ArrayList<ItemStack> droppedItems = new ArrayList<>();
         outer:
-            for (int i = 0; i < randomAmount; i++) {
-                double r1 = Math.random();
-                for (int j = 0; j < ratio.length; j++) {
-                    if (r1 < ratio[j]) {
-                        ItemStack drop = plugin.getItemManager().build(player, qualityLoots[j]);
-                        if (drop == null || drop.getType() == Material.AIR) continue;
-                        if (toInv && player != null) {
-                            PlayerUtils.giveItem(player, drop, 1);
-                        } else {
-                            location.getWorld().dropItemNaturally(location, drop);
-                        }
-                        continue outer;
-                    }
+        for (int i = 0; i < randomAmount; i++) {
+            double r1 = Math.random();
+            for (int j = 0; j < ratio.length; j++) {
+                if (r1 < ratio[j]) {
+                    ItemStack drop = plugin.getItemManager().build(player, qualityLoots[j]);
+                    if (drop == null || drop.getType() == Material.AIR) continue;
+                    droppedItems.add(drop);
+                    continue outer;
                 }
             }
+        }
+        return droppedItems;
     }
 
     public MathValue<T> min() {
