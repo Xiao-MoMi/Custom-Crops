@@ -42,9 +42,9 @@ public class ItemsAdderProvider implements CustomItemProvider {
         if (block == null) {
             CustomStack furniture = CustomFurniture.getInstance(id);
             if (furniture == null) {
-                BukkitCustomCropsPlugin.getInstance().getPluginLogger().warn("Detected that you mistakenly configured the custom block[" + id + "] as furniture.");
-            } else {
                 BukkitCustomCropsPlugin.getInstance().getPluginLogger().warn("Detected that custom block[" + id + "] doesn't exist in ItemsAdder configs. Please double check if that block exists.");
+            } else {
+                BukkitCustomCropsPlugin.getInstance().getPluginLogger().warn("Detected that you mistakenly configured the custom block[" + id + "] as furniture.");
             }
             return false;
         }
