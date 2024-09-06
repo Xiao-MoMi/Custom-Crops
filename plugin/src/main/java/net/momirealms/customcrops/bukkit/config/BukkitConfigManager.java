@@ -119,13 +119,13 @@ public class BukkitConfigManager extends ConfigManager {
 
         enableScarecrow = config.getBoolean("mechanics.scarecrow.enable", true);
         scarecrow = new HashSet<>(ListUtils.toList(config.get("mechanics.scarecrow.id")));
-        scarecrowExistenceForm = CustomForm.valueOf(config.getString("mechanics.scarecrow.type", "ITEM_FRAME")).existenceForm();
+        scarecrowExistenceForm = CustomForm.valueOf(config.getString("mechanics.scarecrow.type", "FURNITURE")).existenceForm();
         scarecrowRange = config.getInt("mechanics.scarecrow.range", 7);
         scarecrowProtectChunk = config.getBoolean("mechanics.scarecrow.protect-chunk", false);
 
         enableGreenhouse = config.getBoolean("mechanics.greenhouse.enable", true);
         greenhouse = new HashSet<>(ListUtils.toList(config.get("mechanics.greenhouse.id")));
-        greenhouseExistenceForm = CustomForm.valueOf(config.getString("mechanics.greenhouse.type", "CHORUS")).existenceForm();
+        greenhouseExistenceForm = CustomForm.valueOf(config.getString("mechanics.greenhouse.type", "BLOCK")).existenceForm();
         greenhouseRange = config.getInt("mechanics.greenhouse.range", 5);
 
         syncSeasons = config.getBoolean("mechanics.sync-season.enable", false);

@@ -129,7 +129,7 @@ tomato:
             value:
               golden:
                 item: {0}tomato_stage_golden
-                type: TRIPWIRE
+                type: BLOCK
                 chance: 0.01
         break:
           # 100% chance to drop 1-2 tomato seeds when broken
@@ -160,7 +160,7 @@ tomato:
             value:
               gigantic:
                 item: {0}gigantic_tomato
-                type: CHORUS
+                type: BLOCK
                 chance: 0.02
     # Special configuration for a non-standard growth stage (e.g., rare or unique crops)
     99:

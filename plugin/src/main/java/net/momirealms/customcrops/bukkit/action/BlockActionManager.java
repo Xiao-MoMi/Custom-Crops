@@ -67,7 +67,7 @@ public class BlockActionManager extends AbstractActionManager<CustomCropsBlockSt
                     if (entry.getValue() instanceof Section inner) {
                         VariationData variationData = new VariationData(
                                 inner.getString("item"),
-                                CustomForm.valueOf(inner.getString("type", "TripWire").toUpperCase(Locale.ENGLISH)).existenceForm(),
+                                CustomForm.valueOf(inner.getString("type", "BLOCK").toUpperCase(Locale.ENGLISH)).existenceForm(),
                                 inner.getDouble("chance")
                         );
                         variationDataList.add(variationData);

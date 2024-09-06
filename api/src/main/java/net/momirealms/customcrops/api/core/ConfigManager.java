@@ -484,7 +484,7 @@ public abstract class ConfigManager implements ConfigLoader, Reloadable {
                 new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8))) {
             String finalStr = sb.toString();
             if (!hasNamespace) {
-                finalStr = finalStr.replace("CHORUS", "TRIPWIRE").replace("<font:customcrops:default>", "<font:minecraft:customcrops>");
+                finalStr = finalStr.replace("<font:customcrops:default>", "<font:minecraft:customcrops>");
             }
             writer.write(finalStr.replace("{0}", hasNamespace ? "customcrops:" : ""));
         } catch (IOException e) {
