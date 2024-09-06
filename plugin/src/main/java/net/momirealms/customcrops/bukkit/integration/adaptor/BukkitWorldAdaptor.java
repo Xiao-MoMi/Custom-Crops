@@ -412,7 +412,8 @@ public class BukkitWorldAdaptor extends AbstractWorldAdaptor<World> {
             for (int j = 0; j < blockAmount; j++){
                 byte[] blockData = new byte[sectionData.readInt()];
                 sectionData.read(blockData);
-                CompoundMap block = readCompound(blockData).getValue();
+                CompoundTag tag = readCompound(blockData);
+                CompoundMap block = tag.getValue();
                 Key key = keyFunction.apply((String) block.get("type").getValue());
                 CompoundMap data = (CompoundMap) block.get("data").getValue();
                 CustomCropsBlock customBlock = InternalRegistries.BLOCK.get(key);

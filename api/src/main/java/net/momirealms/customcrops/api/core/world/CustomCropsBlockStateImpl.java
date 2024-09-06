@@ -23,6 +23,8 @@ import net.momirealms.customcrops.api.core.SynchronizedCompoundMap;
 import net.momirealms.customcrops.api.core.block.CustomCropsBlock;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+
 public class CustomCropsBlockStateImpl implements CustomCropsBlockState {
 
     private final SynchronizedCompoundMap compoundMap;
@@ -65,5 +67,22 @@ public class CustomCropsBlockStateImpl implements CustomCropsBlockState {
                 "Type{" + owner.type().asString() +
                 "}, " + compoundMap +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CustomCropsBlockStateImpl that = (CustomCropsBlockStateImpl) o;
+        return Objects.equals(compoundMap, that.compoundMap);
+    }
+
+    @Override
+    public int hashCode() {
+        Tag<?> id = compoundMap.get("id");
+        if (id != null) {
+            return 7 * id.hashCode() + 13 * owner.type().hashCode();
+        }
+        return owner.type().hashCode();
     }
 }
