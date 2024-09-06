@@ -10,7 +10,7 @@
 ![bStats Players](https://img.shields.io/bstats/players/16593)
 ![GitHub](https://img.shields.io/github/license/Xiao-MoMi/Custom-Crops)
 
-CustomCrops is a Paper plugin crafted to deliver an exceptional planting experience for Minecraft servers, with a strong emphasis on customization and performance. It employs Zstd compression for data serialization, ensuring high efficiency comparable to Minecraft's own serialization techniques. The plugin optimizes server performance by running its tick system across multiple threads, reverting to the main thread only when required. Additionally, CustomCrops offers a comprehensive API that enables developers to create custom block mechanics with specific interaction and tick behaviors, such as a fish trap block that periodically provides players with fish.
+CustomCrops is a Paper plugin crafted to deliver an exceptional planting experience for Minecraft servers, with a strong emphasis on customization and performance. It employs Zstd compression for data serialization, ensuring high efficiency comparable to Minecraft's own serialization techniques. The plugin optimizes server performance by running its tick system across multiple threads, reverting to the main thread only when required. Additionally, CustomCrops offers a comprehensive API that enables developers to create custom block mechanism with specific interaction and tick behaviors, such as a fish trap block that periodically provides players with fish.
 
 ## How to build
 
