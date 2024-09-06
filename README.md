@@ -74,3 +74,5 @@ dependencies {
     compileOnly("com.github.Xiao-MoMi:Custom-Crops:{LATEST}")
 }
 ```
+#### Fun facts
+I misspelled mechanism as mechanic. I should have realized this earlier XD
