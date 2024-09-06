@@ -21,11 +21,9 @@ import net.momirealms.customcrops.api.core.block.CustomCropsBlock;
 import net.momirealms.customcrops.api.core.item.CustomCropsItem;
 import net.momirealms.customcrops.api.core.mechanic.crop.CropConfig;
 import net.momirealms.customcrops.api.core.mechanic.fertilizer.FertilizerConfig;
-import net.momirealms.customcrops.api.core.mechanic.fertilizer.FertilizerType;
 import net.momirealms.customcrops.api.core.mechanic.pot.PotConfig;
 import net.momirealms.customcrops.api.core.mechanic.sprinkler.SprinklerConfig;
 import net.momirealms.customcrops.api.core.mechanic.wateringcan.WateringCanConfig;
-import net.momirealms.customcrops.common.annotation.DoNotUse;
 import net.momirealms.customcrops.common.util.Key;
 import org.jetbrains.annotations.ApiStatus;
 
@@ -34,15 +32,7 @@ import java.util.List;
 @ApiStatus.Internal
 public class Registries {
 
-    @DoNotUse
-    public static final WriteableRegistry<Key, CustomCropsBlock> BLOCK = new MappedRegistry<>(Key.key("mechanic", "block"));
-    @DoNotUse
-    public static final WriteableRegistry<Key, CustomCropsItem> ITEM = new MappedRegistry<>(Key.key("mechanic", "item"));
-    @DoNotUse
-    public static final WriteableRegistry<String, FertilizerType> FERTILIZER_TYPE = new ClearableMappedRegistry<>(Key.key("mechanic", "fertilizer_type"));
-    @DoNotUse
     public static final ClearableRegistry<String, CustomCropsBlock> BLOCKS = new ClearableMappedRegistry<>(Key.key("internal", "blocks"));
-    @DoNotUse
     public static final ClearableRegistry<String, CustomCropsItem> ITEMS = new ClearableMappedRegistry<>(Key.key("internal", "items"));
 
     public static final ClearableRegistry<String, SprinklerConfig> SPRINKLER = new ClearableMappedRegistry<>(Key.key("config", "sprinkler"));

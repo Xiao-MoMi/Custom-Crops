@@ -22,6 +22,7 @@ import net.momirealms.customcrops.api.core.item.CustomCropsItem;
 import net.momirealms.customcrops.api.core.mechanic.fertilizer.FertilizerType;
 import net.momirealms.customcrops.common.util.Key;
 
+@SuppressWarnings("deprecation")
 public class SimpleRegistryAccess implements RegistryAccess {
 
     private boolean frozen;
@@ -45,33 +46,33 @@ public class SimpleRegistryAccess implements RegistryAccess {
     @Override
     public void registerBlockMechanic(CustomCropsBlock block) {
         if (frozen) throw new RuntimeException("Registries are frozen");
-        Registries.BLOCK.register(block.type(), block);
+        InternalRegistries.BLOCK.register(block.type(), block);
     }
 
     @Override
     public void registerItemMechanic(CustomCropsItem item) {
         if (frozen) throw new RuntimeException("Registries are frozen");
-        Registries.ITEM.register(item.type(), item);
+        InternalRegistries.ITEM.register(item.type(), item);
     }
 
     @Override
     public void registerFertilizerType(FertilizerType type) {
         if (frozen) throw new RuntimeException("Registries are frozen");
-        Registries.FERTILIZER_TYPE.register(type.id(), type);
+        InternalRegistries.FERTILIZER_TYPE.register(type.id(), type);
     }
 
     @Override
     public Registry<Key, CustomCropsBlock> getBlockRegistry() {
-        return Registries.BLOCK;
+        return InternalRegistries.BLOCK;
     }
 
     @Override
     public Registry<Key, CustomCropsItem> getItemRegistry() {
-        return Registries.ITEM;
+        return InternalRegistries.ITEM;
     }
 
     @Override
     public Registry<String, FertilizerType> getFertilizerTypeRegistry() {
-        return Registries.FERTILIZER_TYPE;
+        return InternalRegistries.FERTILIZER_TYPE;
     }
 }

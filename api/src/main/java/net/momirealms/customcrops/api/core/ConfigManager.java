@@ -400,7 +400,7 @@ public abstract class ConfigManager implements ConfigLoader, Reloadable {
             if (section.getBoolean("enable")) {
                 for (Map.Entry<String, Object> entry : section.getStringRouteMappedValues(false).entrySet()) {
                     if (entry.getValue() instanceof Section innerSection) {
-                        FertilizerType type = Registries.FERTILIZER_TYPE.get(entry.getKey().replace("-", "_"));
+                        FertilizerType type = InternalRegistries.FERTILIZER_TYPE.get(entry.getKey().replace("-", "_"));
                         if (type != null) {
                             map.put(type, Pair.of(
                                     Preconditions.checkNotNull(innerSection.getString("dry"), entry.getKey() + ".dry should not be null"),

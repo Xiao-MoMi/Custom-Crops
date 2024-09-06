@@ -91,6 +91,6 @@ public class BuiltInBlockMechanics {
     * @return the CustomCropsBlock
     */
    public CustomCropsBlock mechanic() {
-      return Objects.requireNonNull(Registries.BLOCK.get(key));
+      return Objects.requireNonNull(InternalRegistries.BLOCK.get(key));
    }
 }

@@ -24,7 +24,7 @@ import net.momirealms.customcrops.api.action.ActionManager;
 import net.momirealms.customcrops.api.core.ConfigManager;
 import net.momirealms.customcrops.api.core.CustomForm;
 import net.momirealms.customcrops.api.core.ExistenceForm;
-import net.momirealms.customcrops.api.core.Registries;
+import net.momirealms.customcrops.api.core.InternalRegistries;
 import net.momirealms.customcrops.api.core.mechanic.crop.CropConfig;
 import net.momirealms.customcrops.api.core.mechanic.crop.CropStageConfig;
 import net.momirealms.customcrops.api.core.mechanic.fertilizer.FertilizerConfig;
@@ -94,7 +94,7 @@ public class ConfigType {
             "fertilizers",
             (manager, id, section) -> {
                 String typeName = Preconditions.checkNotNull(section.getString("type"), "Fertilizer type can't be null").toLowerCase(Locale.ENGLISH);
-                FertilizerType type = Registries.FERTILIZER_TYPE.get(typeName);
+                FertilizerType type = InternalRegistries.FERTILIZER_TYPE.get(typeName);
                 if (type == null) {
                     BukkitCustomCropsPlugin.getInstance().getPluginLogger().warn("Fertilizer type " + typeName + " not found");
                     return false;

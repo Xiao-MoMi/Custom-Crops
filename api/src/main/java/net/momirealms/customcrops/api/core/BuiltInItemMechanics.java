@@ -66,6 +66,6 @@ public class BuiltInItemMechanics {
     * @return the CustomCropsItem
     */
    public CustomCropsItem mechanic() {
-      return Registries.ITEM.get(key);
+      return InternalRegistries.ITEM.get(key);
    }
 }

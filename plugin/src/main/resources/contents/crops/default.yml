@@ -228,12 +228,12 @@ tomato:
       point: 1
       conditions:
         season_condition:
-          type: suitable_season
+          type: suitable-season
           value:
             - Spring
             - Autumn
         water_condition:
-          type: water_more_than
+          type: water-more-than
           value: 0
   # Conditions that may cause the crop to die
   death-conditions:
@@ -243,7 +243,7 @@ tomato:
       conditions:
         '&&':
           condition_1:
-            type: water_less_than
+            type: water-less-than
             value: 1
           condition_2:
             type: random
@@ -253,14 +253,14 @@ tomato:
       model: {0}crop_stage_death
       conditions:
         condition_1:
-          type: unsuitable_season
+          type: unsuitable-season
           value:
             - Winter
     crow_attack:
       # Crop removal due to crow attack
       conditions:
         condition_1:
-          type: crow_attack
+          type: crow-attack
           value:
             chance: 0.005
             fly-model: {0}crow_fly

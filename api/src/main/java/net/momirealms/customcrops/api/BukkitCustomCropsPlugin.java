@@ -230,6 +230,16 @@ public abstract class BukkitCustomCropsPlugin implements CustomCropsPlugin {
     }
 
     /**
+     * Retrieves the config manager
+     *
+     * @return the config manager
+     */
+    @Override
+    public ConfigManager getConfigManager() {
+        return configManager;
+    }
+
+    /**
      * Logs a debug message.
      *
      * @param message the message to log

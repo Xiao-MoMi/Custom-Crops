@@ -17,12 +17,13 @@
 
 package net.momirealms.customcrops.common.annotation;
 
-import org.jetbrains.annotations.ApiStatus;
-
 import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@ApiStatus.Internal
-@Target({ElementType.FIELD})
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.TYPE, ElementType.METHOD})
 public @interface DoNotUse {
+    String message() default "This class is internal and should not be used.";
 }

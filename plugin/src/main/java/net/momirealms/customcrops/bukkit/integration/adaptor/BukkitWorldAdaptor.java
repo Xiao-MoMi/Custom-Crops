@@ -23,7 +23,7 @@ import com.flowpowered.nbt.stream.NBTInputStream;
 import com.flowpowered.nbt.stream.NBTOutputStream;
 import net.momirealms.customcrops.api.BukkitCustomCropsPlugin;
 import net.momirealms.customcrops.api.core.ConfigManager;
-import net.momirealms.customcrops.api.core.Registries;
+import net.momirealms.customcrops.api.core.InternalRegistries;
 import net.momirealms.customcrops.api.core.block.CustomCropsBlock;
 import net.momirealms.customcrops.api.core.world.*;
 import net.momirealms.customcrops.api.core.world.adaptor.AbstractWorldAdaptor;
@@ -415,7 +415,7 @@ public class BukkitWorldAdaptor extends AbstractWorldAdaptor<World> {
                 CompoundMap block = readCompound(blockData).getValue();
                 Key key = keyFunction.apply((String) block.get("type").getValue());
                 CompoundMap data = (CompoundMap) block.get("data").getValue();
-                CustomCropsBlock customBlock = Registries.BLOCK.get(key);
+                CustomCropsBlock customBlock = InternalRegistries.BLOCK.get(key);
                 if (customBlock == null) {
                     BukkitCustomCropsPlugin.getInstance().getInstance().getPluginLogger().warn("[" + world.worldName() + "] Unrecognized custom block " + key + " has been removed from chunk " + ChunkPos.of(x, z));
                     continue;

@@ -44,7 +44,6 @@ import net.momirealms.customcrops.bukkit.requirement.PlayerRequirementManager;
 import net.momirealms.customcrops.bukkit.scheduler.BukkitSchedulerAdapter;
 import net.momirealms.customcrops.bukkit.sender.BukkitSenderFactory;
 import net.momirealms.customcrops.bukkit.world.BukkitWorldManager;
-import net.momirealms.customcrops.common.config.ConfigLoader;
 import net.momirealms.customcrops.common.dependency.Dependency;
 import net.momirealms.customcrops.common.dependency.DependencyManagerImpl;
 import net.momirealms.customcrops.common.helper.VersionHelper;
@@ -123,11 +122,6 @@ public class BukkitCustomCropsPluginImpl extends BukkitCustomCropsPlugin {
     }
 
     @Override
-    public ConfigLoader getConfigManager() {
-        return configManager;
-    }
-
-    @Override
     public String getServerVersion() {
         return Bukkit.getServer().getBukkitVersion().split("-")[0];
     }
@@ -177,7 +171,6 @@ public class BukkitCustomCropsPluginImpl extends BukkitCustomCropsPlugin {
         boolean downloadFromPolymart = polymart.equals("1");
         boolean downloadFromBBB = buildByBit.equals("true");
 
-        ((SimpleRegistryAccess) registryAccess).freeze();
         this.reload();
         if (ConfigManager.metrics()) new Metrics((JavaPlugin) getBoostrap(), 16593);
         if (ConfigManager.checkUpdate()) {
@@ -197,18 +190,21 @@ public class BukkitCustomCropsPluginImpl extends BukkitCustomCropsPlugin {
                 }
             });
         }
+
         // delayed init task
         if (VersionHelper.isFolia()) {
             Bukkit.getGlobalRegionScheduler().run(getBoostrap(), (scheduledTask) -> {
                 ((SimpleRegistryAccess) registryAccess).freeze();
                 logger.info("Registry access has been frozen");
                 ((BukkitItemManager) itemManager).setAntiGriefLib(AntiGriefLib.builder((JavaPlugin) getBoostrap()).silentLogs(true).ignoreOP(true).build());
+                EventUtils.fireAndForget(new CustomCropsReloadEvent(this));
             });
         } else {
             Bukkit.getScheduler().runTask(getBoostrap(), () -> {
                 ((SimpleRegistryAccess) registryAccess).freeze();
                 logger.info("Registry access has been frozen");
                 ((BukkitItemManager) itemManager).setAntiGriefLib(AntiGriefLib.builder((JavaPlugin) getBoostrap()).silentLogs(false).ignoreOP(true).build());
+                EventUtils.fireAndForget(new CustomCropsReloadEvent(this));
             });
         }
     }

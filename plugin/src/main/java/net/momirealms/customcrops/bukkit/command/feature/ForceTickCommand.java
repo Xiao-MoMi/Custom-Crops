@@ -19,7 +19,7 @@ package net.momirealms.customcrops.bukkit.command.feature;
 
 import net.kyori.adventure.text.Component;
 import net.momirealms.customcrops.api.BukkitCustomCropsPlugin;
-import net.momirealms.customcrops.api.core.Registries;
+import net.momirealms.customcrops.api.core.InternalRegistries;
 import net.momirealms.customcrops.api.core.block.CustomCropsBlock;
 import net.momirealms.customcrops.api.core.world.*;
 import net.momirealms.customcrops.bukkit.command.BukkitCommandFeature;
@@ -59,10 +59,10 @@ public class ForceTickCommand extends BukkitCommandFeature<CommandSender> {
                 .required("type", NamespacedKeyParser.namespacedKeyComponent().suggestionProvider(new SuggestionProvider<>() {
                     @Override
                     public @NonNull CompletableFuture<? extends @NonNull Iterable<? extends @NonNull Suggestion>> suggestionsFuture(@NonNull CommandContext<Object> context, @NonNull CommandInput input) {
-                        int all = Registries.BLOCK.size();
+                        int all = InternalRegistries.BLOCK.size();
                         ArrayList<CustomCropsBlock> blocks = new ArrayList<>();
                         for (int i = 0; i < all; i++) {
-                            blocks.add(Registries.BLOCK.byId(i));
+                            blocks.add(InternalRegistries.BLOCK.byId(i));
                         }
                         return CompletableFuture.completedFuture(
                                 blocks.stream().map(block -> Suggestion.suggestion(block.type().asString())).toList()
@@ -76,7 +76,7 @@ public class ForceTickCommand extends BukkitCommandFeature<CommandSender> {
                     NamespacedKey type = context.get("type");
                     Mode mode = context.get("mode");
                     Key key = Key.key(type.asString());
-                    CustomCropsBlock customCropsBlock = Registries.BLOCK.get(key);
+                    CustomCropsBlock customCropsBlock = InternalRegistries.BLOCK.get(key);
                     if (customCropsBlock == null) {
                         handleFeedback(context.sender(), MessageConstants.COMMAND_FORCE_TICK_FAILURE_TYPE, Component.text(key.asString()));
                         return;
