@@ -74,7 +74,7 @@ public class CustomCropsBlockStateImpl implements CustomCropsBlockState {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         CustomCropsBlockStateImpl that = (CustomCropsBlockStateImpl) o;
-        return Objects.equals(compoundMap, that.compoundMap);
+        return compoundMap.equals(that.compoundMap);
     }
 
     @Override
