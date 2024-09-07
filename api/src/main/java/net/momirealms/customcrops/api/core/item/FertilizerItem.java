@@ -82,6 +82,9 @@ public class FertilizerItem extends AbstractCustomCropsItem {
         // if the clicked block is a pot
         PotConfig potConfig = Registries.ITEM_TO_POT.get(targetBlockID);
         if (potConfig != null) {
+            if (potConfig.disablePluginMechanism()) {
+                return InteractionResult.COMPLETE;
+            }
             // check pot whitelist
             if (!fertilizerConfig.whitelistPots().contains(potConfig.id())) {
                 ActionManager.trigger(context, fertilizerConfig.wrongPotActions());
@@ -115,7 +118,7 @@ public class FertilizerItem extends AbstractCustomCropsItem {
                     .id(fertilizerConfig.id())
                     .build();
             CustomCropsBlockState potState = potBlock.fixOrGetState(world, Pos3.from(targetLocation), potConfig, event.relatedID());
-            if (!potBlock.canApplyFertilizer(potState,fertilizer)) {
+            if (!potBlock.canApplyFertilizer(potState, fertilizer)) {
                 ActionManager.trigger(context, potConfig.maxFertilizerActions());
                 return InteractionResult.COMPLETE;
             }

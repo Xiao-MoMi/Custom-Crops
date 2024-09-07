@@ -49,7 +49,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 
 public class SprinklerBlock extends AbstractCustomCropsBlock {
 
@@ -295,7 +294,7 @@ public class SprinklerBlock extends AbstractCustomCropsBlock {
                     CustomCropsBlockState anotherState = optionalState.get();
                     if (anotherState.type() instanceof PotBlock potBlock) {
                         PotConfig potConfig = potBlock.config(anotherState);
-                        if (!potConfig.vanillaFarmland()) {
+                        if (!potConfig.disablePluginMechanism()) {
                             if (config.potWhitelist().contains(potConfig.id())) {
                                 if (potBlock.addWater(anotherState, potConfig, config.wateringAmount())) {
                                     BukkitCustomCropsPlugin.getInstance().getScheduler().sync().run(

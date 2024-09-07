@@ -24,16 +24,17 @@ import net.momirealms.customcrops.api.misc.water.WaterBar;
 import net.momirealms.customcrops.api.misc.water.WateringMethod;
 import net.momirealms.customcrops.api.requirement.Requirement;
 import net.momirealms.customcrops.common.util.Pair;
+import org.bukkit.Material;
+import org.bukkit.block.data.type.Farmland;
 import org.bukkit.entity.Player;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 public class PotConfigImpl implements PotConfig {
 
     private final String id;
     private final boolean vanillaFarmland;
+    private final boolean disablePluginSystem;
     private final Pair<String, String> basicAppearance;
     private final HashMap<FertilizerType, Pair<String, String>> potAppearanceMap;
     private final Set<String> blocks = new HashSet<>();
@@ -77,7 +78,8 @@ public class PotConfigImpl implements PotConfig {
             Action<Player>[] breakActions,
             Action<Player>[] addWaterActions,
             Action<Player>[] fullWaterActions,
-            Action<Player>[] maxFertilizerActions
+            Action<Player>[] maxFertilizerActions,
+            List<String> vanillaPots
     ) {
         this.id = id;
         this.vanillaFarmland = vanillaFarmland;
@@ -109,10 +111,19 @@ public class PotConfigImpl implements PotConfig {
             this.wetBlocks.add(pair.right());
         }
         if (vanillaFarmland) {
+            disablePluginSystem = true;
             this.blocks.clear();
             for (int i = 0; i <= 7; i++) {
-                this.blocks.add("minecraft:farmland[moisture=" + i +"]");
+                Farmland data = (Farmland) Material.FARMLAND.createBlockData();
+                data.setMoisture(i);
+                this.blocks.add(data.getAsString());
             }
+        } else if (vanillaPots != null && !vanillaPots.isEmpty()) {
+            disablePluginSystem = true;
+            this.blocks.clear();
+            this.blocks.addAll(vanillaPots);
+        } else {
+            disablePluginSystem = false;
         }
     }
 
@@ -123,28 +134,28 @@ public class PotConfigImpl implements PotConfig {
 
     @Override
     public int storage() {
-        if (vanillaFarmland()) return 0;
+        if (disablePluginMechanism()) return 0;
         return storage;
     }
 
     @Override
     public boolean isRainDropAccepted() {
-        return isRainDropAccepted && !vanillaFarmland();
+        return isRainDropAccepted && !disablePluginMechanism();
     }
 
     @Override
     public boolean isNearbyWaterAccepted() {
-        return isNearbyWaterAccepted && !vanillaFarmland();
+        return isNearbyWaterAccepted && !disablePluginMechanism();
     }
 
     @Override
-    public boolean vanillaFarmland() {
-        return vanillaFarmland;
+    public boolean disablePluginMechanism() {
+        return disablePluginSystem;
     }
 
     @Override
     public WateringMethod[] wateringMethods() {
-        if (vanillaFarmland()) return new WateringMethod[0];
+        if (disablePluginMechanism()) return new WateringMethod[0];
         return wateringMethods;
     }
 
@@ -155,18 +166,19 @@ public class PotConfigImpl implements PotConfig {
 
     @Override
     public boolean isWet(String blockID) {
-        if (vanillaFarmland()) return false;
+        if (disablePluginMechanism()) return false;
         return wetBlocks.contains(blockID);
     }
 
     @Override
     public WaterBar waterBar() {
+        if (disablePluginMechanism()) return null;
         return waterBar;
     }
 
     @Override
     public int maxFertilizers() {
-        if (vanillaFarmland) return 0;
+        if (disablePluginMechanism()) return 0;
         return maxFertilizers;
     }
 
@@ -259,10 +271,11 @@ public class PotConfigImpl implements PotConfig {
         private Action<Player>[] addWaterActions;
         private Action<Player>[] fullWaterActions;
         private Action<Player>[] maxFertilizerActions;
+        private List<String> vanillaPots = new ArrayList<>();
 
         @Override
         public PotConfig build() {
-            return new PotConfigImpl(id, vanillaFarmland, basicAppearance, potAppearanceMap, storage, isRainDropAccepted, isNearbyWaterAccepted, wateringMethods, waterBar, maxFertilizers, placeRequirements, breakRequirements, useRequirements, tickActions, reachLimitActions, interactActions, placeActions, breakActions, addWaterActions, fullWaterActions, maxFertilizerActions);
+            return new PotConfigImpl(id, vanillaFarmland, basicAppearance, potAppearanceMap, storage, isRainDropAccepted, isNearbyWaterAccepted, wateringMethods, waterBar, maxFertilizers, placeRequirements, breakRequirements, useRequirements, tickActions, reachLimitActions, interactActions, placeActions, breakActions, addWaterActions, fullWaterActions, maxFertilizerActions, vanillaPots);
         }
 
         @Override
@@ -280,6 +293,12 @@ public class PotConfigImpl implements PotConfig {
         @Override
         public Builder vanillaFarmland(boolean vanillaFarmland) {
             this.vanillaFarmland = vanillaFarmland;
+            return this;
+        }
+
+        @Override
+        public Builder vanillaPots(List<String> vanillaPots) {
+            this.vanillaPots = vanillaPots;
             return this;
         }
 

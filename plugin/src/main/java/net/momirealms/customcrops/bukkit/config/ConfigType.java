@@ -36,6 +36,7 @@ import net.momirealms.customcrops.api.core.world.CustomCropsBlockState;
 import net.momirealms.customcrops.api.misc.value.TextValue;
 import net.momirealms.customcrops.api.misc.water.WaterBar;
 import net.momirealms.customcrops.api.requirement.RequirementManager;
+import net.momirealms.customcrops.common.util.ListUtils;
 import net.momirealms.customcrops.common.util.Pair;
 import net.momirealms.customcrops.common.util.TriFunction;
 import org.bukkit.entity.Player;
@@ -116,6 +117,7 @@ public class ConfigType {
                 PotConfig config = PotConfig.builder()
                         .id(id)
                         .vanillaFarmland(section.getBoolean("vanilla-farmland", false))
+                        .vanillaPots(ListUtils.toList(section.get("vanilla-blocks")))
                         .storage(section.getInt("storage", 5))
                         .isRainDropAccepted(section.getBoolean("absorb-rainwater", false))
                         .isNearbyWaterAccepted(section.getBoolean("absorb-nearby-water", false))

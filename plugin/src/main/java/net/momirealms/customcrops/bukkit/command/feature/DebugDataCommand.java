@@ -65,8 +65,9 @@ public class DebugDataCommand extends BukkitCommandFeature<CommandSender> {
                                     .sendMessage(AdventureHelper.miniMessage("<red>CustomCrops Data not found"));
                         }
                     });
+                    String bData = block.getBlockData().getAsString();
                     BukkitCustomCropsPlugin.getInstance().getSenderFactory().wrap(player)
-                            .sendMessage(AdventureHelper.miniMessage("<green>Vanilla crop data: " + block.getBlockData().getAsString()));
+                            .sendMessage(AdventureHelper.miniMessage("<green>Vanilla crop data: <hover:show_text:'<yellow>Copy'><click:copy_to_clipboard:'"+bData+"'>" + bData + "</click>"));
                 });
     }
 

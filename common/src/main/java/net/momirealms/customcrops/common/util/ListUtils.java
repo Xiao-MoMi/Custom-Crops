@@ -38,6 +38,9 @@ public class ListUtils {
      */
     @SuppressWarnings("unchecked")
     public static List<String> toList(final Object obj) {
+        if (obj == null) {
+            return List.of();
+        }
         if (obj instanceof String s) {
             return List.of(s);
         } else if (obj instanceof List<?> list) {

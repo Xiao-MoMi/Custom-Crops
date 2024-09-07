@@ -359,7 +359,7 @@ public class PotBlock extends AbstractCustomCropsBlock {
         future.thenAcceptAsync((run) -> {
             if (!run) return;
             // work as vanilla farmland
-            if (config.vanillaFarmland()) return;
+            if (config.disablePluginMechanism()) return;
 
             boolean hasNaturalWater = false;
             boolean waterChanged = false;
@@ -620,7 +620,7 @@ public class PotBlock extends AbstractCustomCropsBlock {
     }
 
     public void updateBlockAppearance(Location location, PotConfig config, boolean hasWater, @Nullable Fertilizer fertilizer) {
-        if (config.vanillaFarmland()) return;
+        if (config.disablePluginMechanism()) return;
         String appearance = config.getPotAppearance(hasWater, fertilizer == null ? null : fertilizer.type());
         BukkitCustomCropsPlugin.getInstance().getItemManager().placeBlock(location, appearance);
     }

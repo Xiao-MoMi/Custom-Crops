@@ -27,6 +27,7 @@ import net.momirealms.customcrops.common.util.Pair;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -67,7 +68,7 @@ public interface PotConfig {
      *
      * @return True if disabled
      */
-    boolean vanillaFarmland();
+    boolean disablePluginMechanism();
 
     /**
      * Gets the methods available for watering the pot.
@@ -235,6 +236,14 @@ public interface PotConfig {
          * @return The current instance of the Builder.
          */
         Builder vanillaFarmland(boolean vanillaFarmland);
+
+        /**
+         * Mark this pot as a vanilla one and disable plugin mechanisms
+         *
+         * @param vanillaPots pots
+         * @return The current instance of the Builder.
+         */
+        Builder vanillaPots(List<String> vanillaPots);
 
         /**
          * Sets whether the pot can accept rain as a source of water.
