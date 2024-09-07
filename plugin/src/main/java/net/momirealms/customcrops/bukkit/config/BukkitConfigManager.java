@@ -248,9 +248,10 @@ public class BukkitConfigManager extends ConfigManager {
         Registries.ITEM_TO_POT.clear();
 
         Registries.FERTILIZER.clear();
-        Registries.ITEM_TO_SPRINKLER.clear();
+        Registries.ITEM_TO_FERTILIZER.clear();
 
         Registries.WATERING_CAN.clear();
+        Registries.ITEM_TO_WATERING_CAN.clear();
 
         Registries.ITEMS.clear();
         Registries.BLOCKS.clear();

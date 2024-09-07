@@ -79,7 +79,9 @@ public class CropBlock extends AbstractCustomCropsBlock {
         Location location = LocationUtils.toBlockLocation(event.location());
         Pos3 pos3 = Pos3.from(location);
         if (configs == null || configs.isEmpty()) {
-            world.removeBlockState(pos3);
+            if (!BukkitCustomCropsPlugin.isReloading()) {
+                world.removeBlockState(pos3);
+            }
             return;
         }
 

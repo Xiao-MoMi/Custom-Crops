@@ -47,6 +47,7 @@ public abstract class BukkitCustomCropsPlugin implements CustomCropsPlugin {
 
     private static BukkitCustomCropsPlugin instance;
     private final Plugin boostrap;
+    protected static boolean isReloading = false;
 
     protected AbstractJavaScheduler<Location, World> scheduler;
     protected DependencyManager dependencyManager;
@@ -260,5 +261,14 @@ public abstract class BukkitCustomCropsPlugin implements CustomCropsPlugin {
      */
     public File getDataFolder() {
         return boostrap.getDataFolder();
+    }
+
+    /**
+     * If the plugin is currently reloading
+     *
+     * @return is reloading or not
+     */
+    public static boolean isReloading() {
+        return isReloading;
     }
 }

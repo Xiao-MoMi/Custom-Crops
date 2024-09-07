@@ -77,7 +77,9 @@ public class SprinklerBlock extends AbstractCustomCropsBlock {
         Pos3 pos3 = Pos3.from(location);
         SprinklerConfig config = Registries.ITEM_TO_SPRINKLER.get(event.brokenID());
         if (config == null) {
-            world.removeBlockState(pos3);
+            if (!BukkitCustomCropsPlugin.isReloading()) {
+                world.removeBlockState(pos3);
+            }
             return;
         }
 

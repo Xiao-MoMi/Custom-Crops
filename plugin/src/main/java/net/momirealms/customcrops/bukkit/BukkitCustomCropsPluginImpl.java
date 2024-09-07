@@ -221,6 +221,7 @@ public class BukkitCustomCropsPluginImpl extends BukkitCustomCropsPlugin {
 
     @Override
     public void reload() {
+        isReloading = true;
 
         this.worldManager.unload();
 
@@ -242,6 +243,8 @@ public class BukkitCustomCropsPluginImpl extends BukkitCustomCropsPlugin {
             WorldEditHook.unregister();
         }
         EventUtils.fireAndForget(new CustomCropsReloadEvent(this));
+
+        isReloading = false;
     }
 
     private void registerDefaultMechanics() {

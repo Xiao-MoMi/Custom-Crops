@@ -89,7 +89,9 @@ public class PotBlock extends AbstractCustomCropsBlock {
         Pos3 pos3 = Pos3.from(location);
         PotConfig config = Registries.ITEM_TO_POT.get(event.brokenID());
         if (config == null) {
-            world.removeBlockState(pos3);
+            if (!BukkitCustomCropsPlugin.isReloading()) {
+                world.removeBlockState(pos3);
+            }
             return;
         }
 
