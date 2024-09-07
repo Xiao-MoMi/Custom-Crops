@@ -412,4 +412,10 @@ public abstract class AbstractCustomEventListener implements Listener {
             }
         });
     }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onBurn(BlockBurnEvent event) {
+        Block block = event.getBlock();
+        itemManager.handlePhysicsBreak(block.getLocation(), block.getBlockData().getAsString(), event);
+    }
 }

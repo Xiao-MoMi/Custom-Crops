@@ -91,6 +91,8 @@ public abstract class ConfigManager implements ConfigLoader, Reloadable {
 
     protected HashSet<Material> overriddenCrops = new HashSet<>();
 
+    protected boolean worldeditSupport = false;
+
     public ConfigManager(BukkitCustomCropsPlugin plugin) {
         this.plugin = plugin;
         instance = this;
@@ -186,6 +188,10 @@ public abstract class ConfigManager implements ConfigLoader, Reloadable {
 
     public static Set<Material> overriddenCrops() {
         return instance.overriddenCrops;
+    }
+
+    public static boolean worldeditSupport() {
+        return instance.worldeditSupport;
     }
 
     @Override

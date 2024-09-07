@@ -13,12 +13,14 @@ repositories {
     maven("https://nexus.betonquest.org/repository/betonquest/") // betonquest
     maven("https://repo.dmulloy2.net/repository/public/") // betonquest needs packet wrapper?
     maven("https://oss.sonatype.org/content/repositories/snapshots")
+    maven("https://repo.rapture.pw/repository/maven-releases/") // flow nbt
 }
 
 dependencies {
     compileOnly(project(":common"))
     compileOnly(project(":api"))
     compileOnly("dev.dejvokep:boosted-yaml:${rootProject.properties["boosted_yaml_version"]}")
+    compileOnly("com.flowpowered:flow-nbt:${rootProject.properties["flow_nbt_version"]}")
     compileOnly("net.kyori:adventure-api:${rootProject.properties["adventure_bundle_version"]}") {
         exclude(module = "adventure-bom")
         exclude(module = "checker-qual")

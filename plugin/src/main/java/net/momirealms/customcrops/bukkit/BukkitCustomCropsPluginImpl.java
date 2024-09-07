@@ -33,11 +33,14 @@ import net.momirealms.customcrops.api.misc.HologramManager;
 import net.momirealms.customcrops.api.misc.cooldown.CoolDownManager;
 import net.momirealms.customcrops.api.misc.placeholder.BukkitPlaceholderManager;
 import net.momirealms.customcrops.api.util.EventUtils;
+import net.momirealms.customcrops.api.util.PluginUtils;
 import net.momirealms.customcrops.bukkit.action.BlockActionManager;
 import net.momirealms.customcrops.bukkit.action.PlayerActionManager;
 import net.momirealms.customcrops.bukkit.command.BukkitCommandManager;
 import net.momirealms.customcrops.bukkit.config.BukkitConfigManager;
 import net.momirealms.customcrops.bukkit.integration.BukkitIntegrationManager;
+import net.momirealms.customcrops.bukkit.integration.worldedit.CustomCropsDelegateExtent;
+import net.momirealms.customcrops.bukkit.integration.worldedit.WorldEditHook;
 import net.momirealms.customcrops.bukkit.item.BukkitItemManager;
 import net.momirealms.customcrops.bukkit.requirement.BlockRequirementManager;
 import net.momirealms.customcrops.bukkit.requirement.PlayerRequirementManager;
@@ -191,21 +194,18 @@ public class BukkitCustomCropsPluginImpl extends BukkitCustomCropsPlugin {
             });
         }
 
+        Runnable delayedInitTask = () -> {
+            ((SimpleRegistryAccess) registryAccess).freeze();
+            logger.info("Registry access has been frozen");
+            ((BukkitItemManager) itemManager).setAntiGriefLib(AntiGriefLib.builder((JavaPlugin) getBoostrap()).silentLogs(true).ignoreOP(true).build());
+            EventUtils.fireAndForget(new CustomCropsReloadEvent(this));
+        };
+
         // delayed init task
         if (VersionHelper.isFolia()) {
-            Bukkit.getGlobalRegionScheduler().run(getBoostrap(), (scheduledTask) -> {
-                ((SimpleRegistryAccess) registryAccess).freeze();
-                logger.info("Registry access has been frozen");
-                ((BukkitItemManager) itemManager).setAntiGriefLib(AntiGriefLib.builder((JavaPlugin) getBoostrap()).silentLogs(true).ignoreOP(true).build());
-                EventUtils.fireAndForget(new CustomCropsReloadEvent(this));
-            });
+            Bukkit.getGlobalRegionScheduler().run(getBoostrap(), (scheduledTask) -> delayedInitTask.run());
         } else {
-            Bukkit.getScheduler().runTask(getBoostrap(), () -> {
-                ((SimpleRegistryAccess) registryAccess).freeze();
-                logger.info("Registry access has been frozen");
-                ((BukkitItemManager) itemManager).setAntiGriefLib(AntiGriefLib.builder((JavaPlugin) getBoostrap()).silentLogs(false).ignoreOP(true).build());
-                EventUtils.fireAndForget(new CustomCropsReloadEvent(this));
-            });
+            Bukkit.getScheduler().runTask(getBoostrap(), delayedInitTask);
         }
     }
 
@@ -236,6 +236,11 @@ public class BukkitCustomCropsPluginImpl extends BukkitCustomCropsPlugin {
 
         this.worldManager.load();
 
+        if (ConfigManager.worldeditSupport() && PluginUtils.isEnabled("WorldEdit")) {
+            WorldEditHook.register();
+        } else {
+            WorldEditHook.unregister();
+        }
         EventUtils.fireAndForget(new CustomCropsReloadEvent(this));
     }
 

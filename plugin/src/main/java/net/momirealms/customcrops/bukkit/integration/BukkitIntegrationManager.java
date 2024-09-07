@@ -57,6 +57,7 @@ public class BukkitIntegrationManager implements IntegrationManager {
     @Override
     public void disable() {
         this.levelerProviders.clear();
+        this.entityProviders.clear();
     }
 
     @Override
@@ -124,6 +125,24 @@ public class BukkitIntegrationManager implements IntegrationManager {
         if (isHooked("BetonQuest", "2")) {
             BetonQuestQuest.register();
         }
+    }
+
+    private boolean doesPluginExists(String hooked) {
+        return Bukkit.getPluginManager().getPlugin(hooked) != null;
+    }
+
+    @SuppressWarnings("deprecation")
+    private boolean doesPluginExists(String hooked, String... versionPrefix) {
+        Plugin p = Bukkit.getPluginManager().getPlugin(hooked);
+        if (p != null) {
+            String ver = p.getDescription().getVersion();
+            for (String prefix : versionPrefix) {
+                if (ver.startsWith(prefix)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private boolean isHooked(String hooked) {

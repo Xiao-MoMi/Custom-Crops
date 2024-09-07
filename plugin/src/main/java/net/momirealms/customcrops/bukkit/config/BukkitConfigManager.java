@@ -140,6 +140,8 @@ public class BukkitConfigManager extends ConfigManager {
         preventTrampling = config.getBoolean("mechanics.vanilla-farmland.prevent-trampling", false);
         disableMoistureMechanic = config.getBoolean("mechanics.vanilla-farmland.disable-moisture-mechanic", false);
 
+        worldeditSupport = config.getBoolean("other-settings.worldedit-support", false);
+
         offsets.clear();
         Section section = config.getSection("mechanics.hologram-offset-correction");
         if (section != null) {

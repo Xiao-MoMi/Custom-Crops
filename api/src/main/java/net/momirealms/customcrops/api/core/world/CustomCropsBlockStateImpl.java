@@ -18,9 +18,11 @@
 package net.momirealms.customcrops.api.core.world;
 
 import com.flowpowered.nbt.CompoundMap;
+import com.flowpowered.nbt.CompoundTag;
 import com.flowpowered.nbt.Tag;
 import net.momirealms.customcrops.api.core.SynchronizedCompoundMap;
 import net.momirealms.customcrops.api.core.block.CustomCropsBlock;
+import net.momirealms.customcrops.api.util.TagUtils;
 import org.jetbrains.annotations.NotNull;
 
 public class CustomCropsBlockStateImpl implements CustomCropsBlockState {
@@ -37,6 +39,11 @@ public class CustomCropsBlockStateImpl implements CustomCropsBlockState {
     @Override
     public CustomCropsBlock type() {
         return owner;
+    }
+
+    @Override
+    public byte[] getNBTDataAsBytes() {
+        return TagUtils.toBytes(new CompoundTag("data", compoundMap.originalMap()));
     }
 
     @Override

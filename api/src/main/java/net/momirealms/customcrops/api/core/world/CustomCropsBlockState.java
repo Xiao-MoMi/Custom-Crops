@@ -18,7 +18,10 @@
 package net.momirealms.customcrops.api.core.world;
 
 import com.flowpowered.nbt.CompoundMap;
+import com.flowpowered.nbt.CompoundTag;
 import net.momirealms.customcrops.api.core.block.CustomCropsBlock;
+import net.momirealms.customcrops.api.util.TagUtils;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -44,4 +47,12 @@ public interface CustomCropsBlockState extends DataBlock {
     static CustomCropsBlockState create(CustomCropsBlock owner, CompoundMap compoundMap) {
         return new CustomCropsBlockStateImpl(owner, compoundMap);
     }
+
+    @ApiStatus.Internal
+    static CustomCropsBlockState create(CustomCropsBlock owner, byte[] nbtBytes) {
+        return new CustomCropsBlockStateImpl(owner, ((CompoundTag) TagUtils.fromBytes(nbtBytes)).getValue());
+    }
+
+    @ApiStatus.Internal
+    byte[] getNBTDataAsBytes();
 }
