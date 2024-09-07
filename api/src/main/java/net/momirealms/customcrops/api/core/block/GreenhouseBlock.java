@@ -31,6 +31,7 @@ import net.momirealms.customcrops.api.event.GreenhouseGlassInteractEvent;
 import net.momirealms.customcrops.api.event.GreenhouseGlassPlaceEvent;
 import net.momirealms.customcrops.api.misc.NamedTextColor;
 import net.momirealms.customcrops.api.util.EventUtils;
+import org.bukkit.Location;
 
 import java.util.Optional;
 
@@ -53,11 +54,14 @@ public class GreenhouseBlock extends AbstractCustomCropsBlock {
 
     private void tickGreenhouse(CustomCropsWorld<?> world, Pos3 location) {
         if (!ConfigManager.doubleCheck()) return;
-        String id = BukkitCustomCropsPlugin.getInstance().getItemManager().id(location.toLocation(world.bukkitWorld()), ConfigManager.greenhouseExistenceForm());
-        if (ConfigManager.greenhouse().contains(id)) return;
-        // remove outdated data
-        BukkitCustomCropsPlugin.getInstance().getPluginLogger().warn("Greenhouse is removed at location[" + world.worldName() + "," + location + "] because the id of the block/furniture is [" + id + "]");
-        world.removeBlockState(location);
+        Location bukkitLocation = location.toLocation(world.bukkitWorld());
+        BukkitCustomCropsPlugin.getInstance().getScheduler().sync().run(() -> {
+            String id = BukkitCustomCropsPlugin.getInstance().getItemManager().id(bukkitLocation, ConfigManager.greenhouseExistenceForm());
+            if (ConfigManager.greenhouse().contains(id)) return;
+            // remove outdated data
+            BukkitCustomCropsPlugin.getInstance().getPluginLogger().warn("Greenhouse is removed at location[" + world.worldName() + "," + location + "] because the id of the block/furniture is [" + id + "]");
+            world.removeBlockState(location);
+        }, bukkitLocation);
     }
 
     @Override

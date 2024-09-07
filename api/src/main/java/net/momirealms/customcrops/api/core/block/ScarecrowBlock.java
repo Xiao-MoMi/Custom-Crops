@@ -31,6 +31,7 @@ import net.momirealms.customcrops.api.event.ScarecrowInteractEvent;
 import net.momirealms.customcrops.api.event.ScarecrowPlaceEvent;
 import net.momirealms.customcrops.api.misc.NamedTextColor;
 import net.momirealms.customcrops.api.util.EventUtils;
+import org.bukkit.Location;
 
 import java.util.Optional;
 
@@ -53,11 +54,14 @@ public class ScarecrowBlock extends AbstractCustomCropsBlock {
 
     private void tickScarecrow(CustomCropsWorld<?> world, Pos3 location) {
         if (!ConfigManager.doubleCheck()) return;
-        String id = BukkitCustomCropsPlugin.getInstance().getItemManager().id(location.toLocation(world.bukkitWorld()), ConfigManager.scarecrowExistenceForm());
-        if (ConfigManager.scarecrow().contains(id)) return;
-        // remove outdated data
-        BukkitCustomCropsPlugin.getInstance().getPluginLogger().warn("Scarecrow is removed at location[" + world.worldName() + "," + location + "] because the id of the block/furniture is [" + id + "]");
-        world.removeBlockState(location);
+        Location bukkitLocation = location.toLocation(world.bukkitWorld());
+        BukkitCustomCropsPlugin.getInstance().getScheduler().sync().run(() -> {
+            String id = BukkitCustomCropsPlugin.getInstance().getItemManager().id(bukkitLocation, ConfigManager.scarecrowExistenceForm());
+            if (ConfigManager.scarecrow().contains(id)) return;
+            // remove outdated data
+            BukkitCustomCropsPlugin.getInstance().getPluginLogger().warn("Scarecrow is removed at location[" + world.worldName() + "," + location + "] because the id of the block/furniture is [" + id + "]");
+            world.removeBlockState(location);
+        }, bukkitLocation);
     }
 
     @Override

@@ -217,7 +217,7 @@ public class WateringCanItem extends AbstractCustomCropsItem {
 
         int waterInCan = getCurrentWater(itemInHand);
 
-        SprinklerConfig sprinklerConfig = Registries.SPRINKLER.get(targetBlockID);
+        SprinklerConfig sprinklerConfig = Registries.ITEM_TO_SPRINKLER.get(targetBlockID);
         if (sprinklerConfig != null) {
             // ignore infinite sprinkler
             if (sprinklerConfig.infinite()) {
@@ -237,7 +237,6 @@ public class WateringCanItem extends AbstractCustomCropsItem {
                 ActionManager.trigger(context, wateringCanConfig.wrongSprinklerActions());
                 return InteractionResult.COMPLETE;
             }
-
             SprinklerBlock sprinklerBlock = (SprinklerBlock) BuiltInBlockMechanics.SPRINKLER.mechanic();
             CustomCropsBlockState sprinklerState = sprinklerBlock.fixOrGetState(world, Pos3.from(targetLocation), sprinklerConfig, targetBlockID);
 
@@ -266,6 +265,13 @@ public class WateringCanItem extends AbstractCustomCropsItem {
 
             ActionManager.trigger(context, wateringCanConfig.consumeWaterActions());
             setCurrentWater(itemInHand, wateringCanConfig, waterInCan - 1, context);
+
+            context.arg(ContextKeys.WATER_BAR, Optional.ofNullable(sprinklerConfig.waterBar()).map(bar -> bar.getWaterBar(sprinklerBlock.water(sprinklerState), sprinklerConfig.storage())).orElse(""));
+            context.arg(ContextKeys.STORAGE, sprinklerConfig.storage());
+            context.arg(ContextKeys.CURRENT_WATER, sprinklerBlock.water(sprinklerState));
+            ActionManager.trigger(context, sprinklerConfig.interactActions());
+            ActionManager.trigger(context, sprinklerConfig.addWaterActions());
+
             return InteractionResult.COMPLETE;
         }
 

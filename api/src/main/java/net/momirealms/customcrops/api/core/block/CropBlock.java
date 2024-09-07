@@ -51,6 +51,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 public class CropBlock extends AbstractCustomCropsBlock {
 
@@ -292,91 +293,103 @@ public class CropBlock extends AbstractCustomCropsBlock {
 
     private void tickCrop(CustomCropsBlockState state, CustomCropsWorld<?> world, Pos3 location, boolean offline) {
         CropConfig config = config(state);
+        BukkitCustomCropsPlugin plugin = BukkitCustomCropsPlugin.getInstance();
         if (config == null) {
-            BukkitCustomCropsPlugin.getInstance().getPluginLogger().warn("Crop data is removed at location[" + world.worldName() + "," + location + "] because the crop config[" + id(state) + "] has been removed.");
+            plugin.getPluginLogger().warn("Crop data is removed at location[" + world.worldName() + "," + location + "] because the crop config[" + id(state) + "] has been removed.");
             world.removeBlockState(location);
             return;
         }
 
         int previousPoint = point(state);
         World bukkitWorld = world.bukkitWorld();
-        if (ConfigManager.doubleCheck()) {
-            Map.Entry<Integer, CropStageConfig> nearest = config.getFloorStageEntry(previousPoint);
-            String blockID = BukkitCustomCropsPlugin.getInstance().getItemManager().id(location.toLocation(bukkitWorld), nearest.getValue().existenceForm());
-            if (!config.stageIDs().contains(blockID)) {
-                BukkitCustomCropsPlugin.getInstance().getPluginLogger().warn("Crop[" + config.id() + "] is removed at location[" + world.worldName() + "," + location + "] because the id of the block is [" + blockID + "]");
-                world.removeBlockState(location);
-                return;
-            }
-        }
-
         Location bukkitLocation = location.toLocation(bukkitWorld);
-        Context<CustomCropsBlockState> context = Context.block(state, bukkitLocation).arg(ContextKeys.OFFLINE, offline);
-        for (DeathCondition deathCondition : config.deathConditions()) {
-            if (deathCondition.isMet(context)) {
-                BukkitCustomCropsPlugin.getInstance().getScheduler().sync().runLater(() -> {
-                    FurnitureRotation rotation = BukkitCustomCropsPlugin.getInstance().getItemManager().remove(bukkitLocation, ExistenceForm.ANY);
+
+        CompletableFuture<Boolean> future = new CompletableFuture<>();
+        if (ConfigManager.doubleCheck()) {
+            plugin.getScheduler().sync().run(() -> {
+                CropStageConfig nearest = config.stageWithModelByPoint(previousPoint);
+                String blockID = plugin.getItemManager().id(location.toLocation(bukkitWorld), nearest.existenceForm());
+                if (!config.stageIDs().contains(blockID)) {
+                    plugin.getPluginLogger().warn("Crop[" + config.id() + "] is removed at location[" + world.worldName() + "," + location + "] because the id of the block is [" + blockID + "]");
                     world.removeBlockState(location);
-                    Optional.ofNullable(deathCondition.deathStage()).ifPresent(it -> {
-                        BukkitCustomCropsPlugin.getInstance().getItemManager().place(bukkitLocation, deathCondition.existenceForm(), it, rotation);
-                    });
-                    ActionManager.trigger(context, config.deathActions());
-                }, deathCondition.deathDelay(), bukkitLocation);
-                return;
-            }
-        }
-
-        if (previousPoint >= config.maxPoints()) {
-            return;
-        }
-
-        int pointToAdd = 0;
-        GrowCondition[] growConditions = config.growConditions();
-        if (growConditions.length == 0) {
-            pointToAdd = 1;
+                    future.complete(false);
+                    return;
+                }
+                future.complete(true);
+            }, bukkitLocation);
         } else {
-            for (GrowCondition growCondition : config.growConditions()) {
-                if (growCondition.isMet(context)) {
-                    pointToAdd = growCondition.pointToAdd();
-                    break;
+            future.complete(true);
+        }
+
+        future.thenAcceptAsync((run) -> {
+            if (!run) return;
+            Context<CustomCropsBlockState> context = Context.block(state, bukkitLocation).arg(ContextKeys.OFFLINE, offline);
+            for (DeathCondition deathCondition : config.deathConditions()) {
+                if (deathCondition.isMet(context)) {
+                    plugin.getScheduler().sync().runLater(() -> {
+                        FurnitureRotation rotation = plugin.getItemManager().remove(bukkitLocation, ExistenceForm.ANY);
+                        world.removeBlockState(location);
+                        Optional.ofNullable(deathCondition.deathStage()).ifPresent(it -> {
+                            plugin.getItemManager().place(bukkitLocation, deathCondition.existenceForm(), it, rotation);
+                        });
+                        ActionManager.trigger(context, config.deathActions());
+                    }, deathCondition.deathDelay(), bukkitLocation);
+                    return;
                 }
             }
-        }
-        if (pointToAdd == 0) return;
 
-        Optional<CustomCropsBlockState> optionalState = world.getBlockState(location.add(0,-1,0));
-        if (optionalState.isPresent()) {
-            CustomCropsBlockState belowState = optionalState.get();
-            if (belowState.type() instanceof PotBlock potBlock) {
-                for (Fertilizer fertilizer : potBlock.fertilizers(belowState)) {
-                    FertilizerConfig fertilizerConfig = fertilizer.config();
-                    if (fertilizerConfig != null) {
-                        pointToAdd = fertilizerConfig.processGainPoints(pointToAdd);
+            if (previousPoint >= config.maxPoints()) {
+                return;
+            }
+
+            int pointToAdd = 0;
+            GrowCondition[] growConditions = config.growConditions();
+            if (growConditions.length == 0) {
+                pointToAdd = 1;
+            } else {
+                for (GrowCondition growCondition : config.growConditions()) {
+                    if (growCondition.isMet(context)) {
+                        pointToAdd = growCondition.pointToAdd();
+                        break;
                     }
                 }
             }
-        }
+            if (pointToAdd == 0) return;
 
-        int afterPoints = Math.min(previousPoint + pointToAdd, config.maxPoints());
-        point(state, afterPoints);
-
-        CropStageConfig currentStage = config.stageWithModelByPoint(previousPoint);
-        CropStageConfig nextStage = config.stageWithModelByPoint(afterPoints);
-
-        BukkitCustomCropsPlugin.getInstance().getScheduler().sync().run(() -> {
-            if (currentStage == nextStage) return;
-            FurnitureRotation rotation = BukkitCustomCropsPlugin.getInstance().getItemManager().remove(bukkitLocation, ExistenceForm.ANY);
-            if (rotation == FurnitureRotation.NONE && config.rotation()) {
-                rotation = FurnitureRotation.random();
-            }
-            BukkitCustomCropsPlugin.getInstance().getItemManager().place(bukkitLocation, nextStage.existenceForm(), Objects.requireNonNull(nextStage.stageID()), rotation);
-            for (int i = previousPoint + 1; i <= afterPoints; i++) {
-                CropStageConfig stage = config.stageByPoint(i);
-                if (stage != null) {
-                    ActionManager.trigger(context, stage.growActions());
+            Optional<CustomCropsBlockState> optionalState = world.getBlockState(location.add(0,-1,0));
+            if (optionalState.isPresent()) {
+                CustomCropsBlockState belowState = optionalState.get();
+                if (belowState.type() instanceof PotBlock potBlock) {
+                    for (Fertilizer fertilizer : potBlock.fertilizers(belowState)) {
+                        FertilizerConfig fertilizerConfig = fertilizer.config();
+                        if (fertilizerConfig != null) {
+                            pointToAdd = fertilizerConfig.processGainPoints(pointToAdd);
+                        }
+                    }
                 }
             }
-        }, bukkitLocation);
+
+            int afterPoints = Math.min(previousPoint + pointToAdd, config.maxPoints());
+            point(state, afterPoints);
+
+            CropStageConfig currentStage = config.stageWithModelByPoint(previousPoint);
+            CropStageConfig nextStage = config.stageWithModelByPoint(afterPoints);
+
+            plugin.getScheduler().sync().run(() -> {
+                if (currentStage == nextStage) return;
+                FurnitureRotation rotation = plugin.getItemManager().remove(bukkitLocation, ExistenceForm.ANY);
+                if (rotation == FurnitureRotation.NONE && config.rotation()) {
+                    rotation = FurnitureRotation.random();
+                }
+                plugin.getItemManager().place(bukkitLocation, nextStage.existenceForm(), Objects.requireNonNull(nextStage.stageID()), rotation);
+                for (int i = previousPoint + 1; i <= afterPoints; i++) {
+                    CropStageConfig stage = config.stageByPoint(i);
+                    if (stage != null) {
+                        ActionManager.trigger(context, stage.growActions());
+                    }
+                }
+            }, bukkitLocation);
+        }, plugin.getScheduler().async());
     }
 
     public int point(CustomCropsBlockState state) {

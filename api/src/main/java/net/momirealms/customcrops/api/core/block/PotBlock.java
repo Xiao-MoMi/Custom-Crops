@@ -60,6 +60,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 public class PotBlock extends AbstractCustomCropsBlock {
 
@@ -333,93 +334,96 @@ public class PotBlock extends AbstractCustomCropsBlock {
 
     private void tickPot(CustomCropsBlockState state, CustomCropsWorld<?> world, Pos3 location, boolean offline) {
         PotConfig config = config(state);
+        BukkitCustomCropsPlugin plugin = BukkitCustomCropsPlugin.getInstance();
         if (config == null) {
-            BukkitCustomCropsPlugin.getInstance().getPluginLogger().warn("Pot data is removed at location[" + world.worldName() + "," + location + "] because the pot config[" + id(state) + "] has been removed.");
+            plugin.getPluginLogger().warn("Pot data is removed at location[" + world.worldName() + "," + location + "] because the pot config[" + id(state) + "] has been removed.");
             world.removeBlockState(location);
             return;
         }
 
         World bukkitWorld = world.bukkitWorld();
+        CompletableFuture<Boolean> future = new CompletableFuture<>();
         if (ConfigManager.doubleCheck()) {
-            String blockID = BukkitCustomCropsPlugin.getInstance().getItemManager().blockID(location.toLocation(bukkitWorld));
+            String blockID = plugin.getItemManager().blockID(location.toLocation(bukkitWorld));
             if (!config.blocks().contains(blockID)) {
-                BukkitCustomCropsPlugin.getInstance().getPluginLogger().warn("Pot[" + config.id() + "] is removed at location[" + world.worldName() + "," + location + "] because the id of the block is [" + blockID + "]");
+                plugin.getPluginLogger().warn("Pot[" + config.id() + "] is removed at location[" + world.worldName() + "," + location + "] because the id of the block is [" + blockID + "]");
                 world.removeBlockState(location);
+                future.complete(false);
                 return;
             }
+            future.complete(true);
+        } else {
+            future.complete(true);
         }
 
-        // work as vanilla farmland
-        if (config.vanillaFarmland()) return;
+        future.thenAcceptAsync((run) -> {
+            if (!run) return;
+            // work as vanilla farmland
+            if (config.vanillaFarmland()) return;
 
-        boolean hasNaturalWater = false;
-        boolean waterChanged = false;
+            boolean hasNaturalWater = false;
+            boolean waterChanged = false;
 
-        if (config.isRainDropAccepted()) {
-            if (bukkitWorld.hasStorm() || (!bukkitWorld.isClearWeather() && !bukkitWorld.isThundering())) {
-                double temperature = bukkitWorld.getTemperature(location.x(), location.y(), location.z());
-                if (temperature > 0.15 && temperature < 0.85) {
-                    int y = bukkitWorld.getHighestBlockYAt(location.x(), location.z());
-                    if (y == location.y()) {
-                        if (addWater(state, 1)) {
-                            waterChanged = true;
+            if (config.isRainDropAccepted()) {
+                if (bukkitWorld.hasStorm() || (!bukkitWorld.isClearWeather() && !bukkitWorld.isThundering())) {
+                    double temperature = bukkitWorld.getTemperature(location.x(), location.y(), location.z());
+                    if (temperature > 0.15 && temperature < 0.85) {
+                        int y = bukkitWorld.getHighestBlockYAt(location.x(), location.z());
+                        if (y == location.y()) {
+                            if (addWater(state, 1)) {
+                                waterChanged = true;
+                            }
+                            hasNaturalWater = true;
                         }
-                        hasNaturalWater = true;
                     }
                 }
             }
-        }
 
-        if (!hasNaturalWater && config.isNearbyWaterAccepted()) {
-            outer: {
-                for (int i = -4; i <= 4; i++) {
-                    for (int j = -4; j <= 4; j++) {
-                        for (int k : new int[]{0, 1}) {
-                            BlockData block = bukkitWorld.getBlockData(location.x() + i, location.y() + j, location.z() + k);
-                            if (block.getMaterial() == Material.WATER || (block instanceof Waterlogged waterlogged && waterlogged.isWaterlogged())) {
-                                if (addWater(state, 1)) {
-                                    waterChanged = true;
+            if (!hasNaturalWater && config.isNearbyWaterAccepted()) {
+                outer: {
+                    for (int i = -4; i <= 4; i++) {
+                        for (int j = -4; j <= 4; j++) {
+                            for (int k : new int[]{0, 1}) {
+                                BlockData block = bukkitWorld.getBlockData(location.x() + i, location.y() + j, location.z() + k);
+                                if (block.getMaterial() == Material.WATER || (block instanceof Waterlogged waterlogged && waterlogged.isWaterlogged())) {
+                                    if (addWater(state, 1)) {
+                                        waterChanged = true;
+                                    }
+                                    hasNaturalWater = true;
+                                    break outer;
                                 }
-                                hasNaturalWater = true;
-                                break outer;
                             }
                         }
                     }
                 }
             }
-        }
 
-        if (!hasNaturalWater) {
-            int waterToLose = 1;
-            Fertilizer[] fertilizers = fertilizers(state);
-            for (Fertilizer fertilizer : fertilizers) {
-                FertilizerConfig fertilizerConfig = fertilizer.config();
-                if (fertilizerConfig != null) {
-                    waterToLose = fertilizerConfig.processWaterToLose(waterToLose);
+            if (!hasNaturalWater) {
+                int waterToLose = 1;
+                Fertilizer[] fertilizers = fertilizers(state);
+                for (Fertilizer fertilizer : fertilizers) {
+                    FertilizerConfig fertilizerConfig = fertilizer.config();
+                    if (fertilizerConfig != null) {
+                        waterToLose = fertilizerConfig.processWaterToLose(waterToLose);
+                    }
+                }
+                if (waterToLose > 0) {
+                    if (addWater(state, -waterToLose)) {
+                        waterChanged = true;
+                    }
                 }
             }
-            if (waterToLose > 0) {
-                if (addWater(state, -waterToLose)) {
-                    waterChanged = true;
-                }
+
+            boolean fertilizerChanged = tickFertilizer(state);
+
+            Location bukkitLocation = location.toLocation(bukkitWorld);
+            if (fertilizerChanged || waterChanged) {
+                boolean finalHasNaturalWater = hasNaturalWater;
+                plugin.getScheduler().sync().run(() -> updateBlockAppearance(bukkitLocation, config, finalHasNaturalWater, fertilizers(state)), bukkitLocation);
             }
-        }
 
-        boolean fertilizerChanged = tickFertilizer(state);
-
-        Location bukkitLocation = location.toLocation(bukkitWorld);
-        if (fertilizerChanged || waterChanged) {
-            boolean finalHasNaturalWater = hasNaturalWater;
-
-            BukkitCustomCropsPlugin.getInstance().getScheduler().sync().run(() -> {
-                updateBlockAppearance(bukkitLocation, config, finalHasNaturalWater, fertilizers(state));
-            }, bukkitLocation);
-        }
-
-        ActionManager.trigger(Context.block(state, bukkitLocation)
-                .arg(ContextKeys.OFFLINE, offline),
-                config.tickActions()
-        );
+            ActionManager.trigger(Context.block(state, bukkitLocation).arg(ContextKeys.OFFLINE, offline), config.tickActions());
+        }, plugin.getScheduler().async());
     }
 
     public int water(CustomCropsBlockState state) {

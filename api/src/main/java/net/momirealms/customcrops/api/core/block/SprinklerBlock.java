@@ -263,8 +263,6 @@ public class SprinklerBlock extends AbstractCustomCropsBlock {
         Location bukkitLocation = location.toLocation(bukkitWorld);
         Context<CustomCropsBlockState> context = Context.block(state, bukkitLocation).arg(ContextKeys.OFFLINE, offline);
 
-        CompletableFuture<Boolean> syncCheck = new CompletableFuture<>();
-
         // place/remove entities on main thread
         BukkitCustomCropsPlugin.getInstance().getScheduler().sync().run(() -> {
 
@@ -273,7 +271,6 @@ public class SprinklerBlock extends AbstractCustomCropsBlock {
                 if (modelID == null || !config.modelIDs().contains(modelID)) {
                     world.removeBlockState(location);
                     BukkitCustomCropsPlugin.getInstance().getPluginLogger().warn("Sprinkler[" + config.id() + "] is removed at Location["  +  world.worldName() + "," + location + "] because the id of the block/furniture is " + modelID);
-                    syncCheck.complete(false);
                     return;
                 }
             }
@@ -283,47 +280,41 @@ public class SprinklerBlock extends AbstractCustomCropsBlock {
                 updateBlockAppearance(bukkitLocation, config, false);
             }
 
-            syncCheck.complete(true);
+            int[][] range = config.range();
+            Pos3[] pos3s = new Pos3[range.length * 2];
+            for (int i = 0; i < range.length; i++) {
+                int x = range[i][0];
+                int z = range[i][1];
+                pos3s[i] = location.add(x, 0, z);
+                pos3s[i] = location.add(x, -1, z);
+            }
+
+            for (Pos3 pos3 : pos3s) {
+                Optional<CustomCropsBlockState> optionalState = world.getBlockState(pos3);
+                if (optionalState.isPresent()) {
+                    CustomCropsBlockState anotherState = optionalState.get();
+                    if (anotherState.type() instanceof PotBlock potBlock) {
+                        PotConfig potConfig = potBlock.config(anotherState);
+                        if (!potConfig.vanillaFarmland()) {
+                            if (config.potWhitelist().contains(potConfig.id())) {
+                                if (potBlock.addWater(anotherState, potConfig, config.wateringAmount())) {
+                                    BukkitCustomCropsPlugin.getInstance().getScheduler().sync().run(
+                                            () -> potBlock.updateBlockAppearance(
+                                                    pos3.toLocation(world.bukkitWorld()),
+                                                    potConfig,
+                                                    true,
+                                                    potBlock.fertilizers(anotherState)
+                                            ),
+                                            bukkitWorld,
+                                            pos3.chunkX(), pos3.chunkZ()
+                                    );
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }, bukkitLocation);
-
-        syncCheck.thenAccept(result -> {
-           if (result) {
-               int[][] range = config.range();
-               Pos3[] pos3s = new Pos3[range.length * 2];
-               for (int i = 0; i < range.length; i++) {
-                   int x = range[i][0];
-                   int z = range[i][1];
-                   pos3s[i] = location.add(x, 0, z);
-                   pos3s[i] = location.add(x, -1, z);
-               }
-
-               for (Pos3 pos3 : pos3s) {
-                   Optional<CustomCropsBlockState> optionalState = world.getBlockState(pos3);
-                   if (optionalState.isPresent()) {
-                       CustomCropsBlockState anotherState = optionalState.get();
-                       if (anotherState.type() instanceof PotBlock potBlock) {
-                           PotConfig potConfig = potBlock.config(anotherState);
-                           if (!potConfig.vanillaFarmland()) {
-                               if (config.potWhitelist().contains(potConfig.id())) {
-                                   if (potBlock.addWater(anotherState, potConfig, config.wateringAmount())) {
-                                       BukkitCustomCropsPlugin.getInstance().getScheduler().sync().run(
-                                               () -> potBlock.updateBlockAppearance(
-                                                       pos3.toLocation(world.bukkitWorld()),
-                                                       potConfig,
-                                                       true,
-                                                       potBlock.fertilizers(anotherState)
-                                               ),
-                                               bukkitWorld,
-                                               pos3.chunkX(), pos3.chunkZ()
-                                       );
-                                   }
-                               }
-                           }
-                       }
-                   }
-               }
-           }
-        });
     }
 
     public boolean addWater(CustomCropsBlockState state, int water) {
