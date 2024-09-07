@@ -28,9 +28,26 @@ import io.th0rgal.oraxen.api.events.furniture.OraxenFurnitureInteractEvent;
 import io.th0rgal.oraxen.api.events.furniture.OraxenFurniturePlaceEvent;
 import net.momirealms.customcrops.api.core.AbstractCustomEventListener;
 import net.momirealms.customcrops.api.core.AbstractItemManager;
+import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 public class OraxenListener extends AbstractCustomEventListener {
+
+    private static final Set<Material> IGNORED = new HashSet<>(
+            List.of(
+                    Material.NOTE_BLOCK,
+                    Material.TRIPWIRE
+            )
+    );
+
+    @Override
+    protected Set<Material> ignoredMaterials() {
+        return IGNORED;
+    }
 
     public OraxenListener(AbstractItemManager itemManager) {
         super(itemManager);

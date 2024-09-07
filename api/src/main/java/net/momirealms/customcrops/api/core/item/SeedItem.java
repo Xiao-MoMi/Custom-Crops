@@ -23,6 +23,7 @@ import net.momirealms.customcrops.api.context.Context;
 import net.momirealms.customcrops.api.context.ContextKeys;
 import net.momirealms.customcrops.api.core.*;
 import net.momirealms.customcrops.api.core.block.CropBlock;
+import net.momirealms.customcrops.api.core.block.PotBlock;
 import net.momirealms.customcrops.api.core.mechanic.crop.CropConfig;
 import net.momirealms.customcrops.api.core.mechanic.crop.CropStageConfig;
 import net.momirealms.customcrops.api.core.mechanic.pot.PotConfig;
@@ -92,6 +93,9 @@ public class SeedItem extends AbstractCustomCropsItem {
         }
         final ItemStack itemInHand = event.itemInHand();
 
+        // try getting or fixing pot data
+        ((PotBlock) BuiltInBlockMechanics.POT.mechanic()).fixOrGetState(world, pos3.add(0,-1,0), potConfig, event.relatedID());
+        // create crop data
         CustomCropsBlockState state = BuiltInBlockMechanics.CROP.createBlockState();
         CropBlock cropBlock = (CropBlock) state.type();
         cropBlock.id(state, cropConfig.id());

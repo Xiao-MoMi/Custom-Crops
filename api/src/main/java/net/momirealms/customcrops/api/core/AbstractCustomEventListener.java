@@ -54,15 +54,16 @@ import org.bukkit.event.player.PlayerItemDamageEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 public abstract class AbstractCustomEventListener implements Listener {
 
     private final HashSet<EntityType> entities = new HashSet<>();
     private final HashSet<Material> blocks = new HashSet<>();
+
+    protected Set<Material> ignoredMaterials() {
+        return blocks;
+    }
 
     protected final AbstractItemManager itemManager;
 
@@ -108,7 +109,7 @@ public abstract class AbstractCustomEventListener implements Listener {
         Block block = event.getClickedBlock();
         assert block != null;
         Material type = block.getType();
-        if (blocks.contains(type)) {
+        if (ignoredMaterials().contains(type)) {
             return;
         }
         ItemStack itemStack = event.getItem();
@@ -149,7 +150,7 @@ public abstract class AbstractCustomEventListener implements Listener {
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     public void onPlaceBlock(BlockPlaceEvent event) {
         Block block = event.getBlock();
-        if (blocks.contains(block.getType())) {
+        if (ignoredMaterials().contains(block.getType())) {
             return;
         }
         if (ConfigManager.overriddenCrops().contains(block.getType())) {
@@ -169,7 +170,7 @@ public abstract class AbstractCustomEventListener implements Listener {
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     public void onBreakBlock(BlockBreakEvent event) {
         Block block = event.getBlock();
-        if (blocks.contains(block.getType())) {
+        if (ignoredMaterials().contains(block.getType())) {
             return;
         }
         if (ConfigManager.overriddenCrops().contains(block.getType())) {

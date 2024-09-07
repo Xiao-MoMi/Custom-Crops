@@ -21,11 +21,30 @@ import dev.lone.itemsadder.api.Events.*;
 import net.momirealms.customcrops.api.core.AbstractCustomEventListener;
 import net.momirealms.customcrops.api.core.AbstractItemManager;
 import net.momirealms.customcrops.api.util.DummyCancellable;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.inventory.EquipmentSlot;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 public class ItemsAdderListener extends AbstractCustomEventListener {
+
+    private static final Set<Material> IGNORED = new HashSet<>(
+            List.of(
+                    Material.NOTE_BLOCK,
+                    Material.MUSHROOM_STEM, Material.BROWN_MUSHROOM_BLOCK, Material.RED_MUSHROOM_BLOCK,
+                    Material.TRIPWIRE,
+                    Material.CHORUS_PLANT
+            )
+    );
+
+    @Override
+    protected Set<Material> ignoredMaterials() {
+        return IGNORED;
+    }
 
     public ItemsAdderListener(AbstractItemManager itemManager) {
         super(itemManager);

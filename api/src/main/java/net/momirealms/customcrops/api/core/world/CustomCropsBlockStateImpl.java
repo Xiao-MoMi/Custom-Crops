@@ -23,8 +23,6 @@ import net.momirealms.customcrops.api.core.SynchronizedCompoundMap;
 import net.momirealms.customcrops.api.core.block.CustomCropsBlock;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Objects;
-
 public class CustomCropsBlockStateImpl implements CustomCropsBlockState {
 
     private final SynchronizedCompoundMap compoundMap;
