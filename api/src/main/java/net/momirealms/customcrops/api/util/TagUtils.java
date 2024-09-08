@@ -17,7 +17,7 @@
 
 package net.momirealms.customcrops.api.util;
 
-import com.flowpowered.nbt.Tag;
+import com.flowpowered.nbt.*;
 import com.flowpowered.nbt.stream.NBTInputStream;
 import com.flowpowered.nbt.stream.NBTOutputStream;
 
@@ -25,6 +25,9 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteOrder;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 public class TagUtils {
 
@@ -54,5 +57,21 @@ public class TagUtils {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static CompoundMap deepClone(CompoundMap initial) {
+        CompoundMap clone = new CompoundMap();
+        for (Tag<?> tag : initial) {
+            if (tag.getType() == TagType.TAG_COMPOUND) {
+                clone.put(deepClone((CompoundTag) tag));
+            } else {
+                clone.put(tag.clone());
+            }
+        }
+        return clone;
+    }
+
+    public static CompoundTag deepClone(CompoundTag initial) {
+        return new CompoundTag(initial.getName(), deepClone(initial.getValue()));
     }
 }

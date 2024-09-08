@@ -21,6 +21,7 @@ import dev.dejvokep.boostedyaml.YamlDocument;
 import dev.dejvokep.boostedyaml.block.implementation.Section;
 import net.momirealms.customcrops.api.BukkitCustomCropsPlugin;
 import net.momirealms.customcrops.api.core.ConfigManager;
+import net.momirealms.customcrops.api.core.TickMode;
 import net.momirealms.customcrops.api.core.world.*;
 import net.momirealms.customcrops.api.core.world.adaptor.WorldAdaptor;
 import net.momirealms.customcrops.api.integration.SeasonProvider;
@@ -360,16 +361,10 @@ public class BukkitWorldManager implements WorldManager, Listener {
         );
     }
 
-    private static boolean getRandomTickModeByString(String str) {
+    private static int getRandomTickModeByString(String str) {
         if (str == null) {
-            return false;
+            return 1;
         }
-        if (str.equalsIgnoreCase("RANDOM_TICK")) {
-            return true;
-        }
-        if (str.equalsIgnoreCase("SCHEDULED_TICK")) {
-            return false;
-        }
-        throw new IllegalArgumentException("Invalid mode found when loading world settings: " + str);
+        return TickMode.valueOf(str.toUpperCase(Locale.ENGLISH)).mode();
     }
 }

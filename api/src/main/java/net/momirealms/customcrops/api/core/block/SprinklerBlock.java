@@ -58,14 +58,18 @@ public class SprinklerBlock extends AbstractCustomCropsBlock {
 
     @Override
     public void randomTick(CustomCropsBlockState state, CustomCropsWorld<?> world, Pos3 location, boolean offlineTick) {
-        if (!world.setting().randomTickSprinkler() && canTick(state, world.setting().tickSprinklerInterval())) {
+        // ignore scheduled tick
+        if (world.setting().tickSprinklerMode() == 2) return;
+        if (canTick(state, world.setting().tickSprinklerInterval())) {
             tickSprinkler(state, world, location, offlineTick);
         }
     }
 
     @Override
     public void scheduledTick(CustomCropsBlockState state, CustomCropsWorld<?> world, Pos3 location, boolean offlineTick) {
-        if (world.setting().randomTickSprinkler() && canTick(state, world.setting().tickSprinklerInterval())) {
+        // ignore random tick
+        if (world.setting().tickSprinklerMode() == 1) return;
+        if (canTick(state, world.setting().tickSprinklerInterval())) {
             tickSprinkler(state, world, location, offlineTick);
         }
     }

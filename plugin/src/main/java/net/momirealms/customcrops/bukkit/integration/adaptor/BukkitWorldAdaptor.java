@@ -28,6 +28,7 @@ import net.momirealms.customcrops.api.core.block.CustomCropsBlock;
 import net.momirealms.customcrops.api.core.world.*;
 import net.momirealms.customcrops.api.core.world.adaptor.AbstractWorldAdaptor;
 import net.momirealms.customcrops.api.util.StringUtils;
+import net.momirealms.customcrops.api.util.TagUtils;
 import net.momirealms.customcrops.common.helper.GsonHelper;
 import net.momirealms.customcrops.common.helper.VersionHelper;
 import net.momirealms.customcrops.common.util.Key;
@@ -423,7 +424,7 @@ public class BukkitWorldAdaptor extends AbstractWorldAdaptor<World> {
                 }
                 for (int pos : (int[]) block.get("pos").getValue()) {
                     BlockPos blockPos = new BlockPos(pos);
-                    blockMap.put(blockPos, CustomCropsBlockState.create(customBlock, data));
+                    blockMap.put(blockPos, CustomCropsBlockState.create(customBlock, TagUtils.deepClone(data)));
                 }
             }
             sectionMap.put(sectionID, CustomCropsSection.restore(sectionID, blockMap));

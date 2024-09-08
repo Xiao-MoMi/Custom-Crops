@@ -25,6 +25,7 @@ import net.momirealms.customcrops.api.core.block.CustomCropsBlock;
 import net.momirealms.customcrops.api.core.world.*;
 import net.momirealms.customcrops.api.core.world.adaptor.AbstractWorldAdaptor;
 import net.momirealms.customcrops.api.util.StringUtils;
+import net.momirealms.customcrops.api.util.TagUtils;
 import net.momirealms.customcrops.common.helper.GsonHelper;
 import net.momirealms.customcrops.common.util.Key;
 import org.bukkit.Bukkit;
@@ -231,7 +232,7 @@ public class SlimeWorldAdaptorR1 extends AbstractWorldAdaptor<SlimeWorld> {
                     }
                     for (int pos : (int[]) block.get("pos").getValue()) {
                         BlockPos blockPos = new BlockPos(pos);
-                        blockMap.put(blockPos, CustomCropsBlockState.create(customBlock, data));
+                        blockMap.put(blockPos, CustomCropsBlockState.create(customBlock, TagUtils.deepClone(data)));
                     }
                 }
                 sectionMap.put(id, CustomCropsSection.restore(id, blockMap));

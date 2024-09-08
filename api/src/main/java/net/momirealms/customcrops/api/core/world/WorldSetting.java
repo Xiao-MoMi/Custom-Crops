@@ -38,20 +38,20 @@ public class WorldSetting implements Cloneable {
     private final int randomTickSpeed;
     private final int maxOfflineTime;
     private final int maxLoadingTime;
-    private final boolean tickCropRandomly;
-    private final boolean tickPotRandomly;
-    private final boolean tickSprinklerRandomly;
+    private final int tickCropMode;
+    private final int tickPotMode;
+    private final int tickSprinklerMode;
 
     /**
      * Private constructor to initialize a WorldSetting instance with the provided parameters.
      *
      * @param enableScheduler       Whether the scheduler is enabled.
      * @param minTickUnit           The minimum unit of tick.
-     * @param tickCropRandomly      Whether crops are ticked randomly.
+     * @param tickCropMode          The tick mode of crop
      * @param tickCropInterval      The interval for ticking crops.
-     * @param tickPotRandomly       Whether pots are ticked randomly.
+     * @param tickPotMode           The tick mode of pot
      * @param tickPotInterval       The interval for ticking pots.
-     * @param tickSprinklerRandomly Whether sprinklers are ticked randomly.
+     * @param tickSprinklerMode     The tick mode of sprinkler
      * @param tickSprinklerInterval The interval for ticking sprinklers.
      * @param offlineTick           Whether offline ticking is enabled.
      * @param maxOfflineTime        The maximum offline time allowed.
@@ -67,11 +67,11 @@ public class WorldSetting implements Cloneable {
     private WorldSetting(
             boolean enableScheduler,
             int minTickUnit,
-            boolean tickCropRandomly,
+            int tickCropMode,
             int tickCropInterval,
-            boolean tickPotRandomly,
+            int tickPotMode,
             int tickPotInterval,
-            boolean tickSprinklerRandomly,
+            int tickSprinklerMode,
             int tickSprinklerInterval,
             boolean offlineTick,
             int maxOfflineTime,
@@ -99,9 +99,9 @@ public class WorldSetting implements Cloneable {
         this.potPerChunk = potPerChunk;
         this.sprinklerPerChunk = sprinklerPerChunk;
         this.randomTickSpeed = randomTickSpeed;
-        this.tickCropRandomly = tickCropRandomly;
-        this.tickPotRandomly = tickPotRandomly;
-        this.tickSprinklerRandomly = tickSprinklerRandomly;
+        this.tickCropMode = tickCropMode;
+        this.tickPotMode = tickPotMode;
+        this.tickSprinklerMode = tickSprinklerMode;
     }
 
     /**
@@ -109,11 +109,11 @@ public class WorldSetting implements Cloneable {
      *
      * @param enableScheduler       Whether the scheduler is enabled.
      * @param minTickUnit           The minimum unit of tick.
-     * @param tickCropRandomly      Whether crops are ticked randomly.
+     * @param tickCropMode          The tick mode of crop
      * @param tickCropInterval      The interval for ticking crops.
-     * @param tickPotRandomly       Whether pots are ticked randomly.
+     * @param tickPotMode           The tick mode of pot
      * @param tickPotInterval       The interval for ticking pots.
-     * @param tickSprinklerRandomly Whether sprinklers are ticked randomly.
+     * @param tickSprinklerMode     The tick mode of sprinkler
      * @param tickSprinklerInterval The interval for ticking sprinklers.
      * @param offlineGrow           Whether offline ticking is enabled.
      * @param maxOfflineTime        The maximum offline time allowed.
@@ -129,11 +129,11 @@ public class WorldSetting implements Cloneable {
     public static WorldSetting of(
             boolean enableScheduler,
             int minTickUnit,
-            boolean tickCropRandomly,
+            int tickCropMode,
             int tickCropInterval,
-            boolean tickPotRandomly,
+            int tickPotMode,
             int tickPotInterval,
-            boolean tickSprinklerRandomly,
+            int tickSprinklerMode,
             int tickSprinklerInterval,
             boolean offlineGrow,
             int maxOfflineTime,
@@ -149,11 +149,11 @@ public class WorldSetting implements Cloneable {
         return new WorldSetting(
                 enableScheduler,
                 minTickUnit,
-                tickCropRandomly,
+                tickCropMode,
                 tickCropInterval,
-                tickPotRandomly,
+                tickPotMode,
                 tickPotInterval,
-                tickSprinklerRandomly,
+                tickSprinklerMode,
                 tickSprinklerInterval,
                 offlineGrow,
                 maxOfflineTime,
@@ -295,30 +295,30 @@ public class WorldSetting implements Cloneable {
     }
 
     /**
-     * Checks if crops are ticked randomly.
+     * Gets the tick mode of crop
      *
-     * @return true if crops are ticked randomly, false otherwise.
+     * @return the mode
      */
-    public boolean randomTickCrop() {
-        return tickCropRandomly;
+    public int tickCropMode() {
+        return tickCropMode;
     }
 
     /**
-     * Checks if sprinklers are ticked randomly.
+     * Gets the tick mode of sprinkler
      *
-     * @return true if sprinklers are ticked randomly, false otherwise.
+     * @return the mode
      */
-    public boolean randomTickSprinkler() {
-        return tickSprinklerRandomly;
+    public int tickSprinklerMode() {
+        return tickSprinklerMode;
     }
 
     /**
-     * Checks if pots are ticked randomly.
+     * Gets the tick mode of pot
      *
-     * @return true if pots are ticked randomly, false otherwise.
+     * @return the mode
      */
-    public boolean randomTickPot() {
-        return tickPotRandomly;
+    public int tickPotMode() {
+        return tickPotMode;
     }
 
     /**

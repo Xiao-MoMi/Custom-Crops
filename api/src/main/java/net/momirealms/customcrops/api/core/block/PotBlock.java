@@ -44,6 +44,7 @@ import net.momirealms.customcrops.api.requirement.RequirementManager;
 import net.momirealms.customcrops.api.util.EventUtils;
 import net.momirealms.customcrops.api.util.LocationUtils;
 import net.momirealms.customcrops.api.util.PlayerUtils;
+import net.momirealms.sparrow.heart.SparrowHeart;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -70,14 +71,18 @@ public class PotBlock extends AbstractCustomCropsBlock {
 
     @Override
     public void scheduledTick(CustomCropsBlockState state, CustomCropsWorld<?> world, Pos3 location, boolean offlineTick) {
-        if (!world.setting().randomTickPot() && canTick(state, world.setting().tickPotInterval())) {
+        // ignore random tick
+        if (world.setting().tickPotMode() == 1) return;
+        if (canTick(state, world.setting().tickPotInterval())) {
             tickPot(state, world, location, offlineTick);
         }
     }
 
     @Override
     public void randomTick(CustomCropsBlockState state, CustomCropsWorld<?> world, Pos3 location, boolean offlineTick) {
-        if (world.setting().randomTickPot() && canTick(state, world.setting().tickPotInterval())) {
+        // ignore scheduled tick
+        if (world.setting().tickPotMode() == 2) return;
+        if (canTick(state, world.setting().tickPotInterval())) {
             tickPot(state, world, location, offlineTick);
         }
     }
@@ -350,82 +355,69 @@ public class PotBlock extends AbstractCustomCropsBlock {
             if (!config.blocks().contains(blockID)) {
                 plugin.getPluginLogger().warn("Pot[" + config.id() + "] is removed at location[" + world.worldName() + "," + location + "] because the id of the block is [" + blockID + "]");
                 world.removeBlockState(location);
-                future.complete(false);
                 return;
             }
-            future.complete(true);
-        } else {
-            future.complete(true);
         }
 
-        future.thenAcceptAsync((run) -> {
-            if (!run) return;
-            // work as vanilla farmland
-            if (config.disablePluginMechanism()) return;
+        // work as vanilla farmland
+        if (config.disablePluginMechanism()) return;
 
-            boolean hasNaturalWater = false;
-            boolean waterChanged = false;
+        boolean hasNaturalWater = false;
+        boolean waterChanged = false;
 
-            if (config.isRainDropAccepted()) {
-                if (bukkitWorld.hasStorm() || (!bukkitWorld.isClearWeather() && !bukkitWorld.isThundering())) {
-                    double temperature = bukkitWorld.getTemperature(location.x(), location.y(), location.z());
-                    if (temperature > 0.15 && temperature < 0.85) {
-                        int y = bukkitWorld.getHighestBlockYAt(location.x(), location.z());
-                        if (y == location.y()) {
-                            if (addWater(state, 1)) {
-                                waterChanged = true;
-                            }
-                            hasNaturalWater = true;
-                        }
-                    }
+        Location bukkitLocation = location.toLocation(bukkitWorld);
+
+        if (config.isRainDropAccepted()) {
+            if (SparrowHeart.getInstance().isRainingAt(bukkitLocation.clone().add(0,1,0))) {
+                if (addWater(state, 1)) {
+                    waterChanged = true;
                 }
+                hasNaturalWater = true;
             }
+        }
 
-            if (!hasNaturalWater && config.isNearbyWaterAccepted()) {
-                outer: {
-                    for (int i = -4; i <= 4; i++) {
-                        for (int j = -4; j <= 4; j++) {
-                            for (int k : new int[]{0, 1}) {
-                                BlockData block = bukkitWorld.getBlockData(location.x() + i, location.y() + j, location.z() + k);
-                                if (block.getMaterial() == Material.WATER || (block instanceof Waterlogged waterlogged && waterlogged.isWaterlogged())) {
-                                    if (addWater(state, 1)) {
-                                        waterChanged = true;
-                                    }
-                                    hasNaturalWater = true;
-                                    break outer;
+        if (!hasNaturalWater && config.isNearbyWaterAccepted()) {
+            outer: {
+                for (int i = -4; i <= 4; i++) {
+                    for (int j = -4; j <= 4; j++) {
+                        for (int k : new int[]{0, 1}) {
+                            BlockData block = bukkitWorld.getBlockData(location.x() + i, location.y() + k, location.z() + j);
+                            if (block.getMaterial() == Material.WATER || (block instanceof Waterlogged waterlogged && waterlogged.isWaterlogged())) {
+                                if (addWater(state, 1)) {
+                                    waterChanged = true;
                                 }
+                                hasNaturalWater = true;
+                                break outer;
                             }
                         }
                     }
                 }
             }
+        }
 
-            if (!hasNaturalWater) {
-                int waterToLose = 1;
-                Fertilizer[] fertilizers = fertilizers(state);
-                for (Fertilizer fertilizer : fertilizers) {
-                    FertilizerConfig fertilizerConfig = fertilizer.config();
-                    if (fertilizerConfig != null) {
-                        waterToLose = fertilizerConfig.processWaterToLose(waterToLose);
-                    }
-                }
-                if (waterToLose > 0) {
-                    if (addWater(state, -waterToLose)) {
-                        waterChanged = true;
-                    }
+        if (!hasNaturalWater) {
+            int waterToLose = 1;
+            Fertilizer[] fertilizers = fertilizers(state);
+            for (Fertilizer fertilizer : fertilizers) {
+                FertilizerConfig fertilizerConfig = fertilizer.config();
+                if (fertilizerConfig != null) {
+                    waterToLose = fertilizerConfig.processWaterToLose(waterToLose);
                 }
             }
-
-            boolean fertilizerChanged = tickFertilizer(state);
-
-            Location bukkitLocation = location.toLocation(bukkitWorld);
-            if (fertilizerChanged || waterChanged) {
-                boolean finalHasNaturalWater = hasNaturalWater;
-                plugin.getScheduler().sync().run(() -> updateBlockAppearance(bukkitLocation, config, finalHasNaturalWater, fertilizers(state)), bukkitLocation);
+            if (waterToLose > 0) {
+                if (addWater(state, -waterToLose)) {
+                    waterChanged = true;
+                }
             }
+        }
 
-            ActionManager.trigger(Context.block(state, bukkitLocation).arg(ContextKeys.OFFLINE, offline), config.tickActions());
-        }, plugin.getScheduler().async());
+        boolean fertilizerChanged = tickFertilizer(state);
+
+        if (fertilizerChanged || waterChanged) {
+            plugin.getScheduler().sync().run(() -> updateBlockAppearance(bukkitLocation, config, water(state) != 0, fertilizers(state)), bukkitLocation);
+        }
+
+        ActionManager.trigger(Context.block(state, bukkitLocation).arg(ContextKeys.OFFLINE, offline), config.tickActions());
     }
 
     public int water(CustomCropsBlockState state) {

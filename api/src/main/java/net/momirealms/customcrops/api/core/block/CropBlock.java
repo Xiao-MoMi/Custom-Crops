@@ -60,14 +60,18 @@ public class CropBlock extends AbstractCustomCropsBlock {
 
     @Override
     public void scheduledTick(CustomCropsBlockState state, CustomCropsWorld<?> world, Pos3 location, boolean offlineTick) {
-        if (!world.setting().randomTickCrop() && canTick(state, world.setting().tickCropInterval())) {
+        // ignore random tick
+        if (world.setting().tickCropMode() == 1) return;
+        if (canTick(state, world.setting().tickCropInterval())) {
             tickCrop(state, world, location, offlineTick);
         }
     }
 
     @Override
     public void randomTick(CustomCropsBlockState state, CustomCropsWorld<?> world, Pos3 location, boolean offlineTick) {
-        if (world.setting().randomTickCrop() && canTick(state, world.setting().tickCropInterval())) {
+        // ignore scheduled tick
+        if (world.setting().tickCropMode() == 2) return;
+        if (canTick(state, world.setting().tickCropInterval())) {
             tickCrop(state, world, location, offlineTick);
         }
     }
