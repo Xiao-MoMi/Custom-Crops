@@ -101,7 +101,7 @@ public class DebugInsightCommand extends BukkitCommandFeature<CommandSender> imp
 
         public InsightPlayer(UUID uuid) {
             this.uuid = uuid;
-            this.task = BukkitCustomCropsPlugin.getInstance().getScheduler().asyncRepeating(this, 50, 50, TimeUnit.MILLISECONDS);
+            this.task = BukkitCustomCropsPlugin.getInstance().getScheduler().asyncRepeating(this, 50, 500, TimeUnit.MILLISECONDS);
         }
 
         @Override
@@ -159,8 +159,10 @@ public class DebugInsightCommand extends BukkitCommandFeature<CommandSender> imp
                 }
                 for (ChunkPos pos : chunksToRemove) {
                     HighlightBlocks[] blocks = highlightCache.remove(pos);
-                    for (HighlightBlocks block : blocks) {
-                        block.destroy(player);
+                    if (blocks != null) {
+                        for (HighlightBlocks block : blocks) {
+                            block.destroy(player);
+                        }
                     }
                 }
                 for (ChunkPos pos : nearbyChunks) {
