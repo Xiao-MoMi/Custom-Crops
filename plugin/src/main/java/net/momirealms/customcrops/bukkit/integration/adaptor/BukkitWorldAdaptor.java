@@ -410,7 +410,7 @@ public class BukkitWorldAdaptor extends AbstractWorldAdaptor<World> {
             DataInputStream sectionData = new DataInputStream(new ByteArrayInputStream(sectionBytes));
             int blockAmount = sectionData.readInt();
             // read blocks
-            for (int j = 0; j < blockAmount; j++){
+            for (int j = 0; j < blockAmount; j++) {
                 byte[] blockData = new byte[sectionData.readInt()];
                 sectionData.read(blockData);
                 CompoundTag tag = readCompound(blockData);

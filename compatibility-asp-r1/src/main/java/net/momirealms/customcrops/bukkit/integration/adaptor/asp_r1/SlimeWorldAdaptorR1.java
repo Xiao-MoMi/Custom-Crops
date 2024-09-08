@@ -187,8 +187,9 @@ public class SlimeWorldAdaptorR1 extends AbstractWorldAdaptor<SlimeWorld> {
     @SuppressWarnings("all")
     private CustomCropsChunk tagToChunk(CustomCropsWorld<SlimeWorld> world, CompoundTag tag) {
         CompoundMap map = tag.getValue();
-        int version = map.get("version").getAsIntTag().orElse(new IntTag("version", 1)).getValue();
-        Function<String, Key> keyFunction = version < 2 ?
+        IntTag version = (IntTag) map.getOrDefault("version", new IntTag("version", 1));
+        int versionNumber = version.getValue();
+        Function<String, Key> keyFunction = versionNumber < 2 ?
                 (s) -> {
                     return Key.key("customcrops", StringUtils.toLowerCase(s));
                 } : s -> {

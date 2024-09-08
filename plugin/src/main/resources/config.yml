@@ -35,12 +35,12 @@ worlds:
       # This is different from the vanilla RandomTickSpeed.
       # "Random tick" here means randomly selecting n blocks within a 16x16x16 section every second for ticking, unlike Minecraft's per-tick approach.
       # Therefore, CustomCrops' random ticks have minimal impact on the server and run on multiple threads.
-      random-tick-speed: 20
+      random-tick-speed: 30
       # The minimum tick interval in seconds when using scheduled tick mode
-      # A value of 180s means a crop is guaranteed to tick at least once every 180 seconds
+      # A value of 200s means a crop is guaranteed to tick at least once every 180 seconds
       # For crops, growth rates are nearly uniform under the same conditions
       # Sprinklers and pots operate periodically within this interval.
-      min-tick-unit: 180
+      min-tick-unit: 200
       # Settings for ticking while the world is offline
       # Allows crops to grow even if the world is unloaded or the server is down
       # This might cause issues with time-dependent conditions like seasons
@@ -62,6 +62,8 @@ worlds:
         # [SCHEDULED_TICK]
         # Scheduled tick mode provides more predictable growth management,
         # ensuring crops grow at nearly the same rate
+        # [ALL]
+        # Run RANDOM_TICK and SCHEDULED_TICK at the same time
         mode: RANDOM_TICK
         # Tick interval determines how many times a block is ticked before its logic is executed
         tick-interval: 1
@@ -69,13 +71,13 @@ worlds:
         max-per-chunk: -1
       # Pot settings
       pot:
-        # RANDOM_TICK or SCHEDULED_TICK
+        # RANDOM_TICK / SCHEDULED_TICK / ALL
         mode: SCHEDULED_TICK
         tick-interval: 3
         max-per-chunk: -1
       # Sprinkler settings
       sprinkler:
-        # RANDOM_TICK or SCHEDULED_TICK
+        # RANDOM_TICK / SCHEDULED_TICK / ALL
         mode: SCHEDULED_TICK
         tick-interval: 2
         max-per-chunk: -1

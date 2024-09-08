@@ -57,10 +57,12 @@ public class BukkitWorldManager implements WorldManager, Listener {
         try {
             Class.forName("com.infernalsuite.aswm.api.SlimePlugin");
             adaptors.add(new SlimeWorldAdaptorR1(1));
+            plugin.getPluginLogger().info("SlimeWorldManager support enabled");
         } catch (ClassNotFoundException ignored) {
         }
         if (Bukkit.getPluginManager().isPluginEnabled("SlimeWorldPlugin")) {
             adaptors.add(new SlimeWorldAdaptorR1(2));
+            plugin.getPluginLogger().info("AdvancedSlimePaper support enabled");
         }
         this.adaptors.add(new BukkitWorldAdaptor());
         this.seasonProvider = new SeasonProvider() {

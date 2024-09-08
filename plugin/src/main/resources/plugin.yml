@@ -16,5 +16,6 @@ softdepend:
   - RealisticSeasons
   - AdvancedSeasons
   - SlimeWorldManager
+  - SlimeWorldPlugin
   - MythicMobs
   - WorldEdit
