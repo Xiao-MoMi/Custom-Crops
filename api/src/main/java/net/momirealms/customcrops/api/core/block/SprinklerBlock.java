@@ -282,12 +282,13 @@ public class SprinklerBlock extends AbstractCustomCropsBlock {
             }
 
             int[][] range = config.range();
-            Pos3[] pos3s = new Pos3[range.length * 2];
-            for (int i = 0; i < range.length; i++) {
+            int length = range.length;
+            Pos3[] pos3s = new Pos3[length * 2];
+            for (int i = 0; i < length; i++) {
                 int x = range[i][0];
                 int z = range[i][1];
                 pos3s[i] = location.add(x, 0, z);
-                pos3s[i] = location.add(x, -1, z);
+                pos3s[i+length] = location.add(x, -1, z);
             }
 
             for (Pos3 pos3 : pos3s) {
