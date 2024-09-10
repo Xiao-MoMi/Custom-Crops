@@ -28,13 +28,17 @@ public class RealisticSeasonsProvider implements SeasonProvider {
     @NotNull
     @Override
     public Season getSeason(@NotNull World world) {
-        return switch (SeasonsAPI.getInstance().getSeason(world)) {
-            case WINTER -> Season.WINTER;
-            case SPRING -> Season.SPRING;
-            case SUMMER -> Season.SUMMER;
-            case FALL -> Season.AUTUMN;
-            case DISABLED, RESTORE -> Season.DISABLE;
-        };
+        try {
+            return switch (SeasonsAPI.getInstance().getSeason(world)) {
+                case WINTER -> Season.WINTER;
+                case SPRING -> Season.SPRING;
+                case SUMMER -> Season.SUMMER;
+                case FALL -> Season.AUTUMN;
+                case DISABLED, RESTORE -> Season.DISABLE;
+            };
+        } catch (NullPointerException e) {
+            return Season.DISABLE;
+        }
     }
 
     @Override

@@ -426,6 +426,7 @@ public abstract class AbstractRequirementManager<T> implements RequirementManage
             return context -> {
                 Location location = requireNonNull(context.arg(ContextKeys.LOCATION));
                 Season season = plugin.getWorldManager().getSeason(location.getWorld());
+                if (season == Season.DISABLE) return true;
                 if (!seasons.contains(season.name())) return true;
                 if (runActions) ActionManager.trigger(context, actions);
                 return false;

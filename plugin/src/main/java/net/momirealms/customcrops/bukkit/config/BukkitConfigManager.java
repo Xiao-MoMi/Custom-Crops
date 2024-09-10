@@ -152,6 +152,15 @@ public class BukkitConfigManager extends ConfigManager {
             }
         }
 
+        Section placeholderSection = config.getSection("other-settings.placeholder-register");
+        if (placeholderSection != null) {
+            for (Map.Entry<String, Object> entry : placeholderSection.getStringRouteMappedValues(false).entrySet()) {
+                if (entry.getValue() instanceof String original) {
+                    plugin.getPlaceholderManager().registerCustomPlaceholder(entry.getKey(), original);
+                }
+            }
+        }
+
         for (String id : scarecrow) {
             Registries.BLOCKS.register(id, BuiltInBlockMechanics.SCARECROW.mechanic());
         }

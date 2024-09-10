@@ -39,7 +39,6 @@ import net.momirealms.customcrops.bukkit.action.PlayerActionManager;
 import net.momirealms.customcrops.bukkit.command.BukkitCommandManager;
 import net.momirealms.customcrops.bukkit.config.BukkitConfigManager;
 import net.momirealms.customcrops.bukkit.integration.BukkitIntegrationManager;
-import net.momirealms.customcrops.bukkit.integration.worldedit.CustomCropsDelegateExtent;
 import net.momirealms.customcrops.bukkit.integration.worldedit.WorldEditHook;
 import net.momirealms.customcrops.bukkit.item.BukkitItemManager;
 import net.momirealms.customcrops.bukkit.requirement.BlockRequirementManager;
@@ -197,8 +196,8 @@ public class BukkitCustomCropsPluginImpl extends BukkitCustomCropsPlugin {
         Runnable delayedInitTask = () -> {
             ((SimpleRegistryAccess) registryAccess).freeze();
             logger.info("Registry access has been frozen");
-            ((BukkitItemManager) itemManager).setAntiGriefLib(AntiGriefLib.builder((JavaPlugin) getBoostrap()).silentLogs(true).ignoreOP(true).build());
             EventUtils.fireAndForget(new CustomCropsReloadEvent(this));
+            ((BukkitItemManager) itemManager).setAntiGriefLib(AntiGriefLib.builder((JavaPlugin) getBoostrap()).silentLogs(true).ignoreOP(true).build());
         };
 
         // delayed init task
@@ -225,10 +224,10 @@ public class BukkitCustomCropsPluginImpl extends BukkitCustomCropsPlugin {
 
         this.worldManager.unload();
 
+        this.placeholderManager.reload();
         this.configManager.reload();
         this.debugger = ConfigManager.debug() ? (s) -> logger.info("[DEBUG] " + s.toString()) : (s) -> {};
         this.coolDownManager.reload();
-        this.placeholderManager.reload();
         this.translationManager.reload();
         this.hologramManager.reload();
 

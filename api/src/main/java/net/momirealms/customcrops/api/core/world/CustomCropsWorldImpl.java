@@ -91,10 +91,8 @@ public class CustomCropsWorldImpl<W> implements CustomCropsWorld<W> {
                     }
                 }
             }
-            return false;
-        } else {
-            return true;
         }
+        return false;
     }
 
     @Override
