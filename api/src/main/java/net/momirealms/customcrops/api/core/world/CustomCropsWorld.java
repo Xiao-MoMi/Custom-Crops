@@ -157,6 +157,13 @@ public interface CustomCropsWorld<W> {
     CustomCropsChunk[] lazyChunks();
 
     /**
+     * Gets all the loaded regions in this world.
+     *
+     * @return An array of {@link CustomCropsRegion} representing the loaded regions.
+     */
+    CustomCropsRegion[] loadedRegions();
+
+    /**
      * Gets the block state at a specific location.
      *
      * @param location The location of the block state.
@@ -186,8 +193,10 @@ public interface CustomCropsWorld<W> {
 
     /**
      * Saves the world data to a file.
+     *
+     * @param async async or not
      */
-    void save();
+    void save(boolean async);
 
     /**
      * Sets whether the ticking task is ongoing.
@@ -301,5 +310,12 @@ public interface CustomCropsWorld<W> {
      */
     @NotNull
     CustomCropsRegion getOrCreateRegion(RegionPos regionPos);
+
+    /**
+     * Get the scheduler for this world
+     *
+     * @return the scheduler
+     */
+    WorldScheduler scheduler();
 }
 

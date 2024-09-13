@@ -209,13 +209,11 @@ public class BukkitWorldManager implements WorldManager, Listener {
         if (world.isChunkLoaded(pos)) return;
         Optional<CustomCropsChunk> customChunk = world.getChunk(pos);
         // don't load bukkit chunk again since it has been loaded
-        customChunk.ifPresent(customCropsChunk -> {
-            customCropsChunk.load(false);
-        });
+        customChunk.ifPresent(customCropsChunk -> customCropsChunk.load(false));
     }
 
     public void notifyOfflineUpdates(CustomCropsWorld<?> world, ChunkPos pos) {
-        world.getChunk(pos).ifPresent(CustomCropsChunk::notifyOfflineTask);
+        world.getLoadedChunk(pos).ifPresent(CustomCropsChunk::notifyOfflineTask);
     }
 
     @Override
@@ -225,14 +223,16 @@ public class BukkitWorldManager implements WorldManager, Listener {
             return false;
         }
         removedWorld.setTicking(false);
-        removedWorld.save();
+        removedWorld.save(false);
+        removedWorld.scheduler().shutdownScheduler();
+        removedWorld.scheduler().shutdownExecutor();
         return true;
     }
 
     @EventHandler
     public void onWorldSave(WorldSaveEvent event) {
         final World world = event.getWorld();
-        getWorld(world).ifPresent(CustomCropsWorld::save);
+        getWorld(world).ifPresent(world1 -> world1.save(true));
     }
 
     @EventHandler (priority = EventPriority.HIGH)

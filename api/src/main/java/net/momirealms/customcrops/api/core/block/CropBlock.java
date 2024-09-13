@@ -394,7 +394,7 @@ public class CropBlock extends AbstractCustomCropsBlock {
                     }
                 }
             }, bukkitLocation);
-        }, plugin.getScheduler().async());
+        }, world.scheduler().async());
     }
 
     public int point(CustomCropsBlockState state) {

@@ -52,6 +52,7 @@ public class CustomCropsWorldImpl<W> implements CustomCropsWorld<W> {
     private WorldSetting setting;
     private final WorldAdaptor<W> adaptor;
     private final WorldExtraData extraData;
+    private final WorldScheduler scheduler;
 
     public CustomCropsWorldImpl(W world, WorldAdaptor<W> adaptor) {
         this.world = new WeakReference<>(world);
@@ -61,6 +62,7 @@ public class CustomCropsWorldImpl<W> implements CustomCropsWorld<W> {
         this.adaptor = adaptor;
         this.extraData = adaptor.loadExtraData(world);
         this.currentMinecraftDay = (int) (bukkitWorld().getFullTime() / 24_000);
+        this.scheduler = new WorldScheduler(BukkitCustomCropsPlugin.getInstance());
     }
 
     @NotNull
@@ -140,6 +142,11 @@ public class CustomCropsWorldImpl<W> implements CustomCropsWorld<W> {
         return lazyChunks.values().toArray(new CustomCropsChunk[0]);
     }
 
+    @Override
+    public CustomCropsRegion[] loadedRegions() {
+        return loadedRegions.values().toArray(new CustomCropsRegion[0]);
+    }
+
     @NotNull
     @Override
     public Optional<CustomCropsBlockState> getBlockState(Pos3 location) {
@@ -181,7 +188,15 @@ public class CustomCropsWorldImpl<W> implements CustomCropsWorld<W> {
     }
 
     @Override
-    public void save() {
+    public void save(boolean async) {
+        if (async) {
+            this.scheduler.async().execute(this::save);
+        } else {
+            BukkitCustomCropsPlugin.getInstance().getScheduler().sync().run(this::save, null);
+        }
+    }
+
+    private void save() {
         long time1 = System.currentTimeMillis();
         this.adaptor.saveExtraData(this);
         for (CustomCropsChunk chunk : loadedChunks.values()) {
@@ -201,7 +216,7 @@ public class CustomCropsWorldImpl<W> implements CustomCropsWorld<W> {
     public void setTicking(boolean tick) {
         if (tick) {
             if (this.tickTask == null || this.tickTask.isCancelled())
-                this.tickTask = BukkitCustomCropsPlugin.getInstance().getScheduler().asyncRepeating(this::timer, 1, 1, TimeUnit.SECONDS);
+                this.tickTask = this.scheduler.asyncRepeating(this::timer, 1, 1, TimeUnit.SECONDS);
         } else {
             if (this.tickTask != null && !this.tickTask.isCancelled())
                 this.tickTask.cancel();
@@ -257,7 +272,8 @@ public class CustomCropsWorldImpl<W> implements CustomCropsWorld<W> {
 
     private void saveLazyRegions() {
         this.regionTimer++;
-        if (this.regionTimer >= 600) {
+        // To avoid the same timing as saving
+        if (this.regionTimer >= 666) {
             this.regionTimer = 0;
             ArrayList<CustomCropsRegion> removed = new ArrayList<>();
             for (Map.Entry<RegionPos, CustomCropsRegion> entry : loadedRegions.entrySet()) {
@@ -461,11 +477,12 @@ public class CustomCropsWorldImpl<W> implements CustomCropsWorld<W> {
     }
 
     private boolean shouldUnloadRegion(RegionPos regionPos) {
+        World bukkitWorld = bukkitWorld();
         for (int chunkX = regionPos.x() * 32; chunkX < regionPos.x() * 32 + 32; chunkX++) {
             for (int chunkZ = regionPos.z() * 32; chunkZ < regionPos.z() * 32 + 32; chunkZ++) {
                 // if a chunk is unloaded, then it should not be in the loaded chunks map
                 ChunkPos pos = ChunkPos.of(chunkX, chunkZ);
-                if (isChunkLoaded(pos) || this.lazyChunks.containsKey(pos)) {
+                if (isChunkLoaded(pos) || this.lazyChunks.containsKey(pos) || bukkitWorld.isChunkLoaded(chunkX, chunkZ)) {
                     return false;
                 }
             }
@@ -492,8 +509,14 @@ public class CustomCropsWorldImpl<W> implements CustomCropsWorld<W> {
                 }
             }
         }
-        this.loadedRegions.remove(region.regionPos());
         this.adaptor.saveRegion(this, region);
+        this.loadedRegions.remove(region.regionPos());
+        BukkitCustomCropsPlugin.getInstance().debug(() -> "[" + worldName + "] " + "Region " + region.regionPos() + " unloaded.");
         return true;
+    }
+
+    @Override
+    public WorldScheduler scheduler() {
+        return scheduler;
     }
 }

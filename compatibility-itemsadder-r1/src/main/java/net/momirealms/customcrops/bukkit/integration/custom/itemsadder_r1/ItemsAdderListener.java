@@ -65,7 +65,8 @@ public class ItemsAdderListener extends AbstractCustomEventListener {
         itemManager.handlePlayerInteractBlock(
                 event.getPlayer(),
                 event.getBlockClicked(),
-                event.getNamespacedID(), event.getBlockFace(),
+                event.getNamespacedID(),
+                event.getBlockFace(),
                 event.getHand(),
                 event.getItem(),
                 event

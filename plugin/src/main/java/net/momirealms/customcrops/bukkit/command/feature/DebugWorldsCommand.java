@@ -42,6 +42,7 @@ public class DebugWorldsCommand extends BukkitCommandFeature<CommandSender> {
                     for (World world : Bukkit.getWorlds()) {
                         BukkitCustomCropsPlugin.getInstance().getWorldManager().getWorld(world).ifPresent(w -> {
                             sender.sendMessage(AdventureHelper.miniMessage("<gold>World: " + world.getName() + "</gold>"));
+                            sender.sendMessage(AdventureHelper.miniMessage(" - Loaded regions: " + w.loadedRegions().length));
                             sender.sendMessage(AdventureHelper.miniMessage(" - Loaded chunks: " + w.loadedChunks().length));
                             sender.sendMessage(AdventureHelper.miniMessage(" - Lazy chunks: " + w.lazyChunks().length));
                         });

@@ -184,6 +184,12 @@ public class BukkitWorldAdaptor extends AbstractWorldAdaptor<World> {
     @Override
     public void saveRegion(CustomCropsWorld<World> world, CustomCropsRegion region) {
         File file = getRegionDataFile(world.world(), region.regionPos());
+        if (region.canPrune()) {
+            if (file.exists()) {
+                file.delete();
+            }
+            return;
+        }
         long time1 = System.currentTimeMillis();
         File parentDir = file.getParentFile();
         if (parentDir != null && !parentDir.exists()) {

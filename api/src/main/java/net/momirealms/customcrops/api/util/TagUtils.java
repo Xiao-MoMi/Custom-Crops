@@ -17,7 +17,10 @@
 
 package net.momirealms.customcrops.api.util;
 
-import com.flowpowered.nbt.*;
+import com.flowpowered.nbt.CompoundMap;
+import com.flowpowered.nbt.CompoundTag;
+import com.flowpowered.nbt.Tag;
+import com.flowpowered.nbt.TagType;
 import com.flowpowered.nbt.stream.NBTInputStream;
 import com.flowpowered.nbt.stream.NBTOutputStream;
 

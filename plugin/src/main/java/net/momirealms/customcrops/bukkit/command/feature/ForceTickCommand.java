@@ -87,7 +87,7 @@ public class ForceTickCommand extends BukkitCommandFeature<CommandSender> {
                         return;
                     }
                     CustomCropsWorld<?> customCropsWorld = optionalWorld.get();
-                    BukkitCustomCropsPlugin.getInstance().getScheduler().async().execute(() -> {
+                    customCropsWorld.scheduler().async().execute(() -> {
                         int amount = 0;
                         long time1 = System.currentTimeMillis();
                         for (CustomCropsChunk customCropsChunk : customCropsWorld.loadedChunks()) {

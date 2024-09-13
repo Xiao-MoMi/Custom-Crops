@@ -39,7 +39,6 @@ import net.momirealms.customcrops.api.core.ConfigManager;
 import net.momirealms.customcrops.api.core.world.CustomCropsBlockState;
 import net.momirealms.customcrops.api.core.world.CustomCropsWorld;
 import net.momirealms.customcrops.api.core.world.Pos3;
-import net.momirealms.customcrops.api.util.PluginUtils;
 import net.momirealms.customcrops.common.plugin.feature.Reloadable;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
