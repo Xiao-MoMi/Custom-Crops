@@ -474,10 +474,16 @@ public class BukkitItemManager extends AbstractItemManager {
     public void handlePlayerBreak(Player player, Location location, ItemStack itemInHand, String brokenID, Cancellable event) {
         Optional<CustomCropsWorld<?>> optionalWorld = plugin.getWorldManager().getWorld(player.getWorld());
         if (optionalWorld.isEmpty()) {
+            if (ConfigManager.interveneAntiGrief() && antiGriefLib != null && !antiGriefLib.canBreak(player, location)) {
+                event.setCancelled(true);
+            }
             return;
         }
 
         if (antiGriefLib != null && !antiGriefLib.canBreak(player, location)) {
+            if (ConfigManager.interveneAntiGrief()) {
+                event.setCancelled(true);
+            }
             return;
         }
 

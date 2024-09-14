@@ -92,10 +92,15 @@ public abstract class ConfigManager implements ConfigLoader, Reloadable {
     protected HashSet<Material> overriddenCrops = new HashSet<>();
 
     protected boolean worldeditSupport = false;
+    protected boolean interveneAntiGrief = false;
 
     public ConfigManager(BukkitCustomCropsPlugin plugin) {
         this.plugin = plugin;
         instance = this;
+    }
+
+    public static boolean interveneAntiGrief() {
+        return instance.interveneAntiGrief;
     }
 
     public static double getOffset(String id) {

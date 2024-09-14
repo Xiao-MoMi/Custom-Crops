@@ -88,6 +88,7 @@ public class BukkitConfigManager extends ConfigManager {
                             .builder()
                             .setVersioning(new BasicVersioning("config-version"))
                             .addIgnoredRoute(configVersion, "other-settings.placeholder-register", '.')
+                            .addIgnoredRoute(configVersion, "mechanics.hologram-offset-correction", '.')
                             .addIgnoredRoute(configVersion, "worlds.settings._WORLDS_", '.')
                             .build()
             );
@@ -141,6 +142,8 @@ public class BukkitConfigManager extends ConfigManager {
         disableMoistureMechanic = config.getBoolean("mechanics.vanilla-farmland.disable-moisture-mechanic", false);
 
         worldeditSupport = config.getBoolean("other-settings.worldedit-support", false);
+
+        interveneAntiGrief = config.getBoolean("other-settings.intervene-anti-grief", false);
 
         offsets.clear();
         Section section = config.getSection("mechanics.hologram-offset-correction");

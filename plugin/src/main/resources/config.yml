@@ -145,3 +145,8 @@ other-settings:
   double-check: false
   # Enable WorldEdit support (Experimental)
   worldedit-support: false
+  # Whether to let CustomCrops intervene in the anti grief detection
+  # Sometimes some anti-grief plugins are not supported by custom item plugins, but they are supported by CustomCrops
+  # If you enable this option, CustomCrops will also protect those unsupported anti-grief plugins
+  # Supported plugins can be found on https://github.com/Xiao-MoMi/AntiGriefLib/blob/main/README.md
+  intervene-anti-grief: false
