@@ -20,7 +20,7 @@ tomato:
           - Spring
           - Autumn
         not-met-actions:
-          actionbar_action:
+          message_action:
             type: message
             value: '<red><bold>[X] It''s not a good season to plant tomato'
   # Event settings for actions like planting and breaking
