@@ -190,7 +190,7 @@ public class BukkitConfigManager extends ConfigManager {
     public void saveResource(String filePath) {
         File file = new File(plugin.getDataFolder(), filePath);
         if (!file.exists()) {
-            plugin.getBoostrap().saveResource(filePath, false);
+            plugin.getBootstrap().saveResource(filePath, false);
             addDefaultNamespace(file);
         }
     }

@@ -50,7 +50,7 @@ public class BukkitCommandManager extends AbstractCommandManager<CommandSender> 
 
     public BukkitCommandManager(BukkitCustomCropsPlugin plugin) {
         super(plugin, new LegacyPaperCommandManager<>(
-                plugin.getBoostrap(),
+                plugin.getBootstrap(),
                 ExecutionCoordinator.simpleCoordinator(),
                 SenderMapper.identity()
         ));

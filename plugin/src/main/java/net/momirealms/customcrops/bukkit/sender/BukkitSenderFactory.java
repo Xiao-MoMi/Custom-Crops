@@ -44,7 +44,7 @@ public class BukkitSenderFactory extends SenderFactory<BukkitCustomCropsPlugin, 
 
     public BukkitSenderFactory(BukkitCustomCropsPlugin plugin) {
         super(plugin);
-        this.audiences = BukkitAudiences.create(plugin.getBoostrap());
+        this.audiences = BukkitAudiences.create(plugin.getBootstrap());
     }
 
     @Override
@@ -96,7 +96,7 @@ public class BukkitSenderFactory extends SenderFactory<BukkitCustomCropsPlugin, 
 
     @Override
     protected void performCommand(CommandSender sender, String command) {
-        getPlugin().getBoostrap().getServer().dispatchCommand(sender, command);
+        getPlugin().getBootstrap().getServer().dispatchCommand(sender, command);
     }
 
     @Override

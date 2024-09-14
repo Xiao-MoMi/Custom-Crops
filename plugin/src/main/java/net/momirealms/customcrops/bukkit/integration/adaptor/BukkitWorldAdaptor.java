@@ -50,7 +50,7 @@ public class BukkitWorldAdaptor extends AbstractWorldAdaptor<World> {
 
     private static BiFunction<World, RegionPos, File> regionFileProvider;
     private static Function<World, File> worldFolderProvider;
-    private static final NamespacedKey WORLD_DATA = new NamespacedKey(BukkitCustomCropsPlugin.getInstance().getBoostrap(), "data");
+    private static final NamespacedKey WORLD_DATA = new NamespacedKey(BukkitCustomCropsPlugin.getInstance().getBootstrap(), "data");
     private static final String DATA_FILE = "customcrops.dat";
 
     public BukkitWorldAdaptor() {

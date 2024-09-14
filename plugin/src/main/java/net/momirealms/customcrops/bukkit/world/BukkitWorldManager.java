@@ -123,7 +123,7 @@ public class BukkitWorldManager implements WorldManager, Listener {
     @Override
     public void load() {
         this.loadConfig();
-        Bukkit.getPluginManager().registerEvents(this, plugin.getBoostrap());
+        Bukkit.getPluginManager().registerEvents(this, plugin.getBootstrap());
         // load and unload worlds
         for (World world : Bukkit.getWorlds()) {
             if (isMechanicEnabled(world)) {

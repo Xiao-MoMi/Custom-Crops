@@ -60,7 +60,7 @@ public class CoolDownManager implements Listener, Reloadable {
 
     @Override
     public void load() {
-        Bukkit.getPluginManager().registerEvents(this, plugin.getBoostrap());
+        Bukkit.getPluginManager().registerEvents(this, plugin.getBootstrap());
     }
 
     @Override

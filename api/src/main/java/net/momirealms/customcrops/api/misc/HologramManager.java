@@ -58,7 +58,7 @@ public class HologramManager implements Listener, Reloadable {
 
     @Override
     public void load() {
-        Bukkit.getPluginManager().registerEvents(this, plugin.getBoostrap());
+        Bukkit.getPluginManager().registerEvents(this, plugin.getBootstrap());
         this.cacheCheckTask = plugin.getScheduler().asyncRepeating(() -> {
             ArrayList<UUID> removed = new ArrayList<>();
             long current = System.currentTimeMillis();

@@ -77,7 +77,7 @@ public class WorldEditListener implements Reloadable, Listener {
     @Override
     public void load() {
         WorldEdit.getInstance().getEventBus().register(this);
-        Bukkit.getPluginManager().registerEvents(this, BukkitCustomCropsPlugin.getInstance().getBoostrap());
+        Bukkit.getPluginManager().registerEvents(this, BukkitCustomCropsPlugin.getInstance().getBootstrap());
     }
 
     @Subscribe(priority = EventHandler.Priority.LATE)

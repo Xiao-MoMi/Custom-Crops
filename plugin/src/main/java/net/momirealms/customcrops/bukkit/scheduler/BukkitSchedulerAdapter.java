@@ -40,9 +40,9 @@ public class BukkitSchedulerAdapter extends AbstractJavaScheduler<Location, Worl
     public BukkitSchedulerAdapter(BukkitCustomCropsPlugin plugin) {
         super(plugin);
         if (VersionHelper.isFolia()) {
-            this.sync = new FoliaExecutor(plugin.getBoostrap());
+            this.sync = new FoliaExecutor(plugin.getBootstrap());
         } else {
-            this.sync = new BukkitExecutor(plugin.getBoostrap());
+            this.sync = new BukkitExecutor(plugin.getBootstrap());
         }
     }
 

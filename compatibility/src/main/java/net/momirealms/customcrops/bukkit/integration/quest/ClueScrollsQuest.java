@@ -18,9 +18,9 @@
 package net.momirealms.customcrops.bukkit.integration.quest;
 
 import com.electro2560.dev.cluescrolls.api.*;
+import net.momirealms.customcrops.api.BukkitCustomCropsPlugin;
 import net.momirealms.customcrops.api.event.CropBreakEvent;
 import net.momirealms.customcrops.api.event.CropPlantEvent;
-import net.momirealms.customfishing.api.BukkitCustomFishingPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -32,12 +32,12 @@ public class ClueScrollsQuest implements Listener {
     private final CustomClue plantClue;
 
     public ClueScrollsQuest() {
-        harvestClue = ClueScrollsAPI.getInstance().registerCustomClue(BukkitCustomFishingPlugin.getInstance().getBoostrap(), "harvest", new ClueConfigData("id", DataType.STRING));
-        plantClue = ClueScrollsAPI.getInstance().registerCustomClue(BukkitCustomFishingPlugin.getInstance().getBoostrap(), "plant", new ClueConfigData("id", DataType.STRING));
+        harvestClue = ClueScrollsAPI.getInstance().registerCustomClue(BukkitCustomCropsPlugin.getInstance().getBootstrap(), "harvest", new ClueConfigData("id", DataType.STRING));
+        plantClue = ClueScrollsAPI.getInstance().registerCustomClue(BukkitCustomCropsPlugin.getInstance().getBootstrap(), "plant", new ClueConfigData("id", DataType.STRING));
     }
 
     public void register() {
-        Bukkit.getPluginManager().registerEvents(this, BukkitCustomFishingPlugin.getInstance().getBoostrap());
+        Bukkit.getPluginManager().registerEvents(this, BukkitCustomCropsPlugin.getInstance().getBootstrap());
     }
 
     @EventHandler (ignoreCancelled = true)

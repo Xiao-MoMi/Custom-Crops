@@ -58,12 +58,12 @@ public class DebugInsightCommand extends BukkitCommandFeature<CommandSender> imp
                     BukkitCustomCropsPlugin plugin = BukkitCustomCropsPlugin.getInstance();
                     Player player = context.sender();
                     if (player.hasMetadata("customcrops:insight")) {
-                        player.removeMetadata("customcrops:insight", plugin.getBoostrap());
+                        player.removeMetadata("customcrops:insight", plugin.getBootstrap());
                         plugin.getSenderFactory().wrap(player).sendMessage(AdventureHelper.miniMessage("<red>Insight mode: OFF"));
                         return;
                     }
 
-                    player.setMetadata("customcrops:insight", new FixedMetadataValue(plugin.getBoostrap(), 1));
+                    player.setMetadata("customcrops:insight", new FixedMetadataValue(plugin.getBootstrap(), 1));
                     new InsightPlayer(player.getUniqueId());
                     plugin.getSenderFactory().wrap(player).sendMessage(AdventureHelper.miniMessage("<green>Insight mode: ON"));
                     plugin.getSenderFactory().wrap(player).sendMessage(AdventureHelper.miniMessage("<white>Note that this only shows a snapshot of the data."));
@@ -82,13 +82,13 @@ public class DebugInsightCommand extends BukkitCommandFeature<CommandSender> imp
 
     @Override
     public void registerRelatedFunctions() {
-        Bukkit.getPluginManager().registerEvents(this, BukkitCustomCropsPlugin.getInstance().getBoostrap());
+        Bukkit.getPluginManager().registerEvents(this, BukkitCustomCropsPlugin.getInstance().getBootstrap());
     }
 
     @EventHandler
     public void onQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
-        player.removeMetadata("customcrops:insight", BukkitCustomCropsPlugin.getInstance().getBoostrap());
+        player.removeMetadata("customcrops:insight", BukkitCustomCropsPlugin.getInstance().getBootstrap());
     }
 
     public static class InsightPlayer implements Runnable {

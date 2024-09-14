@@ -104,7 +104,7 @@ public class BukkitItemManager extends AbstractItemManager {
             HandlerList.unregisterAll(this.eventListener);
         }
         this.eventListener = listener;
-        Bukkit.getPluginManager().registerEvents(this.eventListener, plugin.getBoostrap());
+        Bukkit.getPluginManager().registerEvents(this.eventListener, plugin.getBootstrap());
         plugin.debug("Custom event listener set to " + listener.getClass().getName());
     }
 

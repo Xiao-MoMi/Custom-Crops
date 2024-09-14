@@ -46,7 +46,7 @@ import java.util.function.Supplier;
 public abstract class BukkitCustomCropsPlugin implements CustomCropsPlugin {
 
     private static BukkitCustomCropsPlugin instance;
-    private final Plugin boostrap;
+    private final Plugin bootstrap;
     protected static boolean isReloading = false;
 
     protected AbstractJavaScheduler<Location, World> scheduler;
@@ -67,13 +67,13 @@ public abstract class BukkitCustomCropsPlugin implements CustomCropsPlugin {
     /**
      * Constructs a new BukkitCustomCropsPlugin instance.
      *
-     * @param boostrap the plugin instance used to initialize this class
+     * @param bootstrap the plugin instance used to initialize this class
      */
-    public BukkitCustomCropsPlugin(Plugin boostrap) {
-        if (!boostrap.getName().equals("CustomCrops")) {
+    public BukkitCustomCropsPlugin(Plugin bootstrap) {
+        if (!bootstrap.getName().equals("CustomCrops")) {
             throw new IllegalArgumentException("CustomCrops plugin requires custom crops plugin");
         }
-        this.boostrap = boostrap;
+        this.bootstrap = bootstrap;
         instance = this;
     }
 
@@ -95,8 +95,8 @@ public abstract class BukkitCustomCropsPlugin implements CustomCropsPlugin {
      *
      * @return the {@link Plugin} instance
      */
-    public Plugin getBoostrap() {
-        return boostrap;
+    public Plugin getBootstrap() {
+        return bootstrap;
     }
 
     /**
@@ -260,7 +260,7 @@ public abstract class BukkitCustomCropsPlugin implements CustomCropsPlugin {
      * @return the data folder as a {@link File}
      */
     public File getDataFolder() {
-        return boostrap.getDataFolder();
+        return bootstrap.getDataFolder();
     }
 
     /**

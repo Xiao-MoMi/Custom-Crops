@@ -81,11 +81,11 @@ public class BukkitCustomCropsPluginImpl extends BukkitCustomCropsPlugin {
     private String user = "%%__USER__%%";
     private String username = "%%__USERNAME__%%";
 
-    public BukkitCustomCropsPluginImpl(Plugin boostrap) {
-        super(boostrap);
+    public BukkitCustomCropsPluginImpl(Plugin bootstrap) {
+        super(bootstrap);
         VersionHelper.init(getServerVersion());
         this.scheduler = new BukkitSchedulerAdapter(this);
-        this.logger = new JavaPluginLogger(getBoostrap().getLogger());
+        this.logger = new JavaPluginLogger(getBootstrap().getLogger());
         this.classPathAppender = new ReflectionClassPathAppender(this);
         this.dependencyManager = new DependencyManagerImpl(this);
         this.registryAccess = SimpleRegistryAccess.getInstance();
@@ -105,7 +105,7 @@ public class BukkitCustomCropsPluginImpl extends BukkitCustomCropsPlugin {
 
     @Override
     public InputStream getResourceStream(String filePath) {
-        return getBoostrap().getResource(filePath);
+        return getBootstrap().getResource(filePath);
     }
 
     @Override
@@ -120,7 +120,7 @@ public class BukkitCustomCropsPluginImpl extends BukkitCustomCropsPlugin {
 
     @Override
     public Path getDataDirectory() {
-        return getBoostrap().getDataFolder().toPath().toAbsolutePath();
+        return getBootstrap().getDataFolder().toPath().toAbsolutePath();
     }
 
     @Override
@@ -131,7 +131,7 @@ public class BukkitCustomCropsPluginImpl extends BukkitCustomCropsPlugin {
     @SuppressWarnings("deprecation")
     @Override
     public String getPluginVersion() {
-        return getBoostrap().getDescription().getVersion();
+        return getBootstrap().getDescription().getVersion();
     }
 
     @Override
@@ -174,7 +174,7 @@ public class BukkitCustomCropsPluginImpl extends BukkitCustomCropsPlugin {
         boolean downloadFromBBB = buildByBit.equals("true");
 
         this.reload();
-        if (ConfigManager.metrics()) new Metrics((JavaPlugin) getBoostrap(), 16593);
+        if (ConfigManager.metrics()) new Metrics((JavaPlugin) getBootstrap(), 16593);
         if (ConfigManager.checkUpdate()) {
             VersionHelper.UPDATE_CHECKER.apply(this).thenAccept(result -> {
                 String link;
@@ -197,14 +197,14 @@ public class BukkitCustomCropsPluginImpl extends BukkitCustomCropsPlugin {
             ((SimpleRegistryAccess) registryAccess).freeze();
             logger.info("Registry access has been frozen");
             EventUtils.fireAndForget(new CustomCropsReloadEvent(this));
-            ((BukkitItemManager) itemManager).setAntiGriefLib(AntiGriefLib.builder((JavaPlugin) getBoostrap()).silentLogs(true).ignoreOP(true).build());
+            ((BukkitItemManager) itemManager).setAntiGriefLib(AntiGriefLib.builder((JavaPlugin) getBootstrap()).silentLogs(true).ignoreOP(true).build());
         };
 
         // delayed init task
         if (VersionHelper.isFolia()) {
-            Bukkit.getGlobalRegionScheduler().run(getBoostrap(), (scheduledTask) -> delayedInitTask.run());
+            Bukkit.getGlobalRegionScheduler().run(getBootstrap(), (scheduledTask) -> delayedInitTask.run());
         } else {
-            Bukkit.getScheduler().runTask(getBoostrap(), delayedInitTask);
+            Bukkit.getScheduler().runTask(getBootstrap(), delayedInitTask);
         }
     }
 
