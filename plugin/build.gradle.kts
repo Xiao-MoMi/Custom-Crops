@@ -25,6 +25,7 @@ dependencies {
     implementation(project(":compatibility-oraxen-r1"))
     implementation(project(":compatibility-oraxen-r2"))
     implementation(project(":compatibility-itemsadder-r1"))
+    implementation(project(":compatibility-crucible-r1"))
     implementation(project(":compatibility-asp-r1"))
 
     implementation("net.kyori:adventure-api:${rootProject.properties["adventure_bundle_version"]}")

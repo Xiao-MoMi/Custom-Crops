@@ -9,6 +9,7 @@ softdepend:
   - Vault
   - ItemsAdder
   - Oraxen
+  - MythicCrucible
   - PlaceholderAPI
   - BattlePass
   - BetonQuest

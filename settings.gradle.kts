@@ -7,6 +7,7 @@ include(":compatibility-asp-r1")
 include(":compatibility-oraxen-r1")
 include(":compatibility-oraxen-r2")
 include(":compatibility-itemsadder-r1")
+include(":compatibility-crucible-r1")
 
 
 

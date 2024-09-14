@@ -156,6 +156,8 @@ public class BukkitItemManager extends AbstractItemManager {
             Constructor<?> oraxenListenerConstructor = oraxenListenerClass.getDeclaredConstructor(AbstractItemManager.class);
             oraxenListenerConstructor.setAccessible(true);
             this.setCustomEventListener((AbstractCustomEventListener) oraxenListenerConstructor.newInstance(this));
+
+            plugin.getPluginLogger().info("Oraxen hooked!");
         } else if (PluginUtils.isEnabled("ItemsAdder")) {
             String rVersion = "r1";
             Class<?> itemsAdderProviderClass = Class.forName("net.momirealms.customcrops.bukkit.integration.custom.itemsadder_" + rVersion + ".ItemsAdderProvider");
@@ -167,6 +169,21 @@ public class BukkitItemManager extends AbstractItemManager {
             Constructor<?> itemsAdderListenerConstructor = itemsAdderListenerClass.getDeclaredConstructor(AbstractItemManager.class);
             itemsAdderListenerConstructor.setAccessible(true);
             this.setCustomEventListener((AbstractCustomEventListener) itemsAdderListenerConstructor.newInstance(this));
+
+            plugin.getPluginLogger().info("ItemsAdder hooked!");
+        } else if (PluginUtils.isEnabled("MythicCrucible")) {
+            String rVersion = "r1";
+            Class<?> crucibleProviderClass = Class.forName("net.momirealms.customcrops.bukkit.integration.custom.crucible_" + rVersion + ".CrucibleProvider");
+            Constructor<?> crucibleProviderConstructor = crucibleProviderClass.getDeclaredConstructor();
+            crucibleProviderConstructor.setAccessible(true);
+            this.provider = (CustomItemProvider) crucibleProviderConstructor.newInstance();
+
+            Class<?> crucibleListenerClass = Class.forName("net.momirealms.customcrops.bukkit.integration.custom.crucible_" + rVersion + ".CrucibleListener");
+            Constructor<?> crucibleListenerConstructor = crucibleListenerClass.getDeclaredConstructor(AbstractItemManager.class, crucibleProviderClass);
+            crucibleListenerConstructor.setAccessible(true);
+            this.setCustomEventListener((AbstractCustomEventListener) crucibleListenerConstructor.newInstance(this, this.provider));
+
+            plugin.getPluginLogger().info("MythicCrucible hooked!");
         }
     }
 
@@ -330,7 +347,7 @@ public class BukkitItemManager extends AbstractItemManager {
             try {
                 return new ItemStack(Material.valueOf(id.toUpperCase(Locale.ENGLISH)));
             } catch (IllegalArgumentException e) {
-                plugin.getPluginLogger().severe("Item " + id + " not exists", e);
+                plugin.getPluginLogger().warn("Item " + id + " not exists", e);
                 return new ItemStack(Material.PAPER);
             }
         } else {
