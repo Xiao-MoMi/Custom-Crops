@@ -241,13 +241,6 @@ public abstract class BukkitCustomCropsPlugin implements CustomCropsPlugin {
     }
 
     /**
-     * Logs a debug message.
-     *
-     * @param message the message to log
-     */
-    public abstract void debug(Object message);
-
-    /**
      * Logs a debug message using a {@link Supplier}.
      *
      * @param message the message supplier to log

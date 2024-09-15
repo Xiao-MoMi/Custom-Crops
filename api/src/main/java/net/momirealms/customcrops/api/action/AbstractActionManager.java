@@ -57,7 +57,8 @@ public abstract class AbstractActionManager<T> implements ActionManager<T> {
         this.registerHologramAction();
         this.registerPlantAction();
         this.registerBreakAction();
-        this.registerSpawnEntity();
+        this.registerSpawnEntityAction();
+        this.registerVariationAction();
     }
 
     @Override
@@ -308,7 +309,7 @@ public abstract class AbstractActionManager<T> implements ActionManager<T> {
         this.registerAction((args, chance) -> new ActionBreak<>(plugin, args, chance), "break");
     }
 
-    protected void registerSpawnEntity() {
+    protected void registerSpawnEntityAction() {
         this.registerAction((args, chance) -> {
             if (args instanceof Section section) {
                 return new ActionSpawnEntity<>(plugin, section, chance);
@@ -317,5 +318,16 @@ public abstract class AbstractActionManager<T> implements ActionManager<T> {
                 return Action.empty();
             }
         }, "spawn-entity", "spawn-mob");
+    }
+
+    protected void registerVariationAction() {
+        this.registerAction((args, chance) -> {
+            if (args instanceof Section section) {
+                return new ActionVariation<>(plugin, section, chance);
+            } else {
+                plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at spawn-entity action which is expected to be `Section`");
+                return Action.empty();
+            }
+        }, "variation");
     }
 }

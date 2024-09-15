@@ -89,7 +89,7 @@ public class WorldEditListener implements Reloadable, Listener {
         try {
             event.setExtent(new CustomCropsDelegateExtent(event));
         } catch (Exception e) {
-            BukkitCustomCropsPlugin.getInstance().debug(e.getMessage());
+            BukkitCustomCropsPlugin.getInstance().debug(e::getMessage);
         }
     }
 

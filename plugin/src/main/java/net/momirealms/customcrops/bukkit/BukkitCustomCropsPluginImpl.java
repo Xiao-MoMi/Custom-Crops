@@ -92,11 +92,6 @@ public class BukkitCustomCropsPluginImpl extends BukkitCustomCropsPlugin {
     }
 
     @Override
-    public void debug(Object message) {
-        this.debugger.accept(message::toString);
-    }
-
-    @Override
     public void debug(Supplier<String> message) {
         this.debugger.accept(message);
     }
@@ -224,7 +219,7 @@ public class BukkitCustomCropsPluginImpl extends BukkitCustomCropsPlugin {
 
         this.placeholderManager.reload();
         this.configManager.reload();
-        this.debugger = ConfigManager.debug() ? (s) -> logger.info("[DEBUG] " + s.toString()) : (s) -> {};
+        this.debugger = ConfigManager.debug() ? (s) -> logger.info("[DEBUG] " + s.get()) : (s) -> {};
         this.coolDownManager.reload();
         this.translationManager.reload();
         this.hologramManager.reload();

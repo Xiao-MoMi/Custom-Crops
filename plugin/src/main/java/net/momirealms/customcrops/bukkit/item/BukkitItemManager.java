@@ -92,9 +92,9 @@ public class BukkitItemManager extends AbstractItemManager {
     public void load() {
         this.resetItemDetectionOrder();
         for (ItemProvider provider : itemProviders.values()) {
-            plugin.debug("Registered ItemProvider: " + provider.identifier());
+            plugin.debug(() -> "Registered ItemProvider: " + provider.identifier());
         }
-        plugin.debug("Item order: " + Arrays.toString(Arrays.stream(itemDetectArray).map(ExternalProvider::identifier).toList().toArray(new String[0])));
+        plugin.debug(() -> "Item order: " + Arrays.toString(Arrays.stream(itemDetectArray).map(ExternalProvider::identifier).toList().toArray(new String[0])));
     }
 
     @Override
@@ -105,14 +105,14 @@ public class BukkitItemManager extends AbstractItemManager {
         }
         this.eventListener = listener;
         Bukkit.getPluginManager().registerEvents(this.eventListener, plugin.getBootstrap());
-        plugin.debug("Custom event listener set to " + listener.getClass().getName());
+        plugin.debug(() -> "Custom event listener set to " + listener.getClass().getName());
     }
 
     @Override
     public void setCustomItemProvider(@NotNull CustomItemProvider provider) {
         Objects.requireNonNull(provider, "provider cannot be null");
         this.provider = provider;
-        plugin.debug("Custom item provider set to " + provider.getClass().getName());
+        plugin.debug(() -> "Custom item provider set to " + provider.getClass().getName());
     }
 
     public boolean registerItemProvider(ItemProvider item) {
@@ -382,7 +382,7 @@ public class BukkitItemManager extends AbstractItemManager {
         ItemMeta previousMeta = itemStack.getItemMeta().clone();
         PlayerItemDamageEvent itemDamageEvent = new PlayerItemDamageEvent(player, itemStack, amount);
         if (EventUtils.fireAndCheckCancel(itemDamageEvent)) {
-            plugin.debug("Another plugin modified the item from `PlayerItemDamageEvent` called by CustomCrops");
+            plugin.debug(() -> "Another plugin modified the item from `PlayerItemDamageEvent` called by CustomCrops");
             return;
         }
         if (!itemStack.getItemMeta().equals(previousMeta)) {

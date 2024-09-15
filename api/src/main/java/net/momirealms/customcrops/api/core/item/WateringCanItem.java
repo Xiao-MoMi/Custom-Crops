@@ -139,7 +139,8 @@ public class WateringCanItem extends AbstractCustomCropsItem {
         int water = getCurrentWater(itemInHand);
 
         String blockID = BukkitCustomCropsPlugin.getInstance().getItemManager().blockID(targetBlock);
-        BukkitCustomCropsPlugin.getInstance().debug(blockID);
+        String finalBlockID = blockID;
+        BukkitCustomCropsPlugin.getInstance().debug(() -> finalBlockID);
 
         for (FillMethod method : config.fillMethods()) {
             if (method.getID().equals(blockID)) {
@@ -340,7 +341,8 @@ public class WateringCanItem extends AbstractCustomCropsItem {
         // for old config compatibility
         context.updateLocation(new Location(player.getWorld(), vector.getX() - 0.5,vector.getY() - 1, vector.getZ() - 0.5));
         String blockID = BukkitCustomCropsPlugin.getInstance().getItemManager().blockID(targetBlock);
-        BukkitCustomCropsPlugin.getInstance().debug(blockID);
+        String finalBlockID = blockID;
+        BukkitCustomCropsPlugin.getInstance().debug(() -> finalBlockID);
 
         for (FillMethod method : wateringCanConfig.fillMethods()) {
             if (method.getID().equals(blockID)) {

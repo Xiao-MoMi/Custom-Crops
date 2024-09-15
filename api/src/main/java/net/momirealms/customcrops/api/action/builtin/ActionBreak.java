@@ -49,7 +49,7 @@ public class ActionBreak<T> extends AbstractBuiltInAction<T> {
             double chance
     ) {
         super(plugin, chance);
-        this.triggerEvent = (boolean) args;
+        this.triggerEvent = Optional.ofNullable(args).map(it -> (boolean) it).orElse(true);
     }
 
     @Override

@@ -171,7 +171,7 @@ public class BukkitWorldAdaptor extends AbstractWorldAdaptor<World> {
                 CustomCropsChunk chunk = deserializeChunk(world, dataStream);
                 dataStream.close();
                 long time2 = System.currentTimeMillis();
-                BukkitCustomCropsPlugin.getInstance().debug("[" + world.worldName() + "] Took " + (time2-time1) + "ms to load chunk " + pos + " from cached region");
+                BukkitCustomCropsPlugin.getInstance().debug(() -> "[" + world.worldName() + "] Took " + (time2-time1) + "ms to load chunk " + pos + " from cached region");
                 return chunk;
             } catch (IOException e) {
                 BukkitCustomCropsPlugin.getInstance().getPluginLogger().severe("[" + world.worldName() + "] Failed to load CustomCrops data at " + pos, e);
@@ -198,7 +198,7 @@ public class BukkitWorldAdaptor extends AbstractWorldAdaptor<World> {
         try (BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(file))) {
             bos.write(serializeRegion(region));
             long time2 = System.currentTimeMillis();
-            BukkitCustomCropsPlugin.getInstance().debug("[" + world.worldName() + "] Took " + (time2-time1) + "ms to save region " + region.regionPos());
+            BukkitCustomCropsPlugin.getInstance().debug(() -> "[" + world.worldName() + "] Took " + (time2-time1) + "ms to save region " + region.regionPos());
         } catch (IOException e) {
             BukkitCustomCropsPlugin.getInstance().getPluginLogger().severe("[" + world.worldName() + "] Failed to save CustomCrops region data." + region.regionPos(), e);
         }

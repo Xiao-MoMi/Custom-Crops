@@ -98,11 +98,11 @@ public class BukkitConfigManager extends ConfigManager {
         }
         this.loadSettings();
         this.loadConfigs();
-        plugin.debug("Loaded " + Registries.CROP.size() + " crops");
-        plugin.debug("Loaded " + Registries.SPRINKLER.size() + " sprinklers");
-        plugin.debug("Loaded " + Registries.WATERING_CAN.size() + " watering-cans");
-        plugin.debug("Loaded " + Registries.POT.size() + " pots");
-        plugin.debug("Loaded " + Registries.FERTILIZER.size() + " fertilizers");
+        plugin.debug(() -> "Loaded " + Registries.CROP.size() + " crops");
+        plugin.debug(() -> "Loaded " + Registries.SPRINKLER.size() + " sprinklers");
+        plugin.debug(() -> "Loaded " + Registries.WATERING_CAN.size() + " watering-cans");
+        plugin.debug(() -> "Loaded " + Registries.POT.size() + " pots");
+        plugin.debug(() -> "Loaded " + Registries.FERTILIZER.size() + " fertilizers");
     }
 
     private void loadSettings() {

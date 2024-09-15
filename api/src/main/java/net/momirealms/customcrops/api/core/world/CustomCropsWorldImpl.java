@@ -209,7 +209,7 @@ public class CustomCropsWorldImpl<W> implements CustomCropsWorld<W> {
             this.adaptor.saveRegion(this, region);
         }
         long time2 = System.currentTimeMillis();
-        BukkitCustomCropsPlugin.getInstance().debug("Took " + (time2-time1) + "ms to save world " + worldName + ". Saved " + (lazyChunks.size() + loadedChunks.size()) + " chunks.");
+        BukkitCustomCropsPlugin.getInstance().debug(() -> "Took " + (time2-time1) + "ms to save world " + worldName + ". Saved " + (lazyChunks.size() + loadedChunks.size()) + " chunks.");
     }
 
     @Override
@@ -346,7 +346,7 @@ public class CustomCropsWorldImpl<W> implements CustomCropsWorld<W> {
     public boolean loadChunk(CustomCropsChunk chunk) {
         Optional<CustomCropsChunk> previousChunk = getLoadedChunk(chunk.chunkPos());
         if (previousChunk.isPresent()) {
-            BukkitCustomCropsPlugin.getInstance().debug("Chunk " + chunk.chunkPos() + " already loaded.");
+            BukkitCustomCropsPlugin.getInstance().debug(() -> "Chunk " + chunk.chunkPos() + " already loaded.");
             if (previousChunk.get() != chunk) {
                 BukkitCustomCropsPlugin.getInstance().getPluginLogger().severe("Failed to load the chunk. There is already a different chunk instance with the same coordinates in the cache. " + chunk.chunkPos());
                 return false;
@@ -447,7 +447,7 @@ public class CustomCropsWorldImpl<W> implements CustomCropsWorld<W> {
     public boolean loadRegion(CustomCropsRegion region) {
         Optional<CustomCropsRegion> previousRegion = getLoadedRegion(region.regionPos());
         if (previousRegion.isPresent()) {
-            BukkitCustomCropsPlugin.getInstance().debug("Region " + region.regionPos() + " already loaded.");
+            BukkitCustomCropsPlugin.getInstance().debug(() -> "Region " + region.regionPos() + " already loaded.");
             if (previousRegion.get() != region) {
                 BukkitCustomCropsPlugin.getInstance().getPluginLogger().severe("Failed to load the region. There is already a different region instance with the same coordinates in the cache. " + region.regionPos());
                 return false;

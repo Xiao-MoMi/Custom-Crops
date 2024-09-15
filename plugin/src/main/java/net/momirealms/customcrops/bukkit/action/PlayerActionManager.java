@@ -290,14 +290,18 @@ public class PlayerActionManager extends AbstractActionManager<Player> {
         registerAction((args, chance) -> {
             if (args instanceof Section section) {
                 String id = section.getString("item");
+                if (id == null) {
+                    id = section.getString("id");
+                }
+                String finalID = id;
                 int amount = section.getInt("amount", 1);
                 boolean toInventory = section.getBoolean("to-inventory", false);
                 return context -> {
                     if (Math.random() > chance) return;
                     Player player = context.holder();
                     if (player == null) return;
-                    ItemStack itemStack = plugin.getItemManager().build(context.holder(), id);
-                    if (itemStack != null) {
+                    ItemStack itemStack = plugin.getItemManager().build(context.holder(), finalID);
+                    if (itemStack != null && itemStack.getType() != Material.AIR) {
                         int maxStack = itemStack.getMaxStackSize();
                         int amountToGive = amount;
                         while (amountToGive > 0) {

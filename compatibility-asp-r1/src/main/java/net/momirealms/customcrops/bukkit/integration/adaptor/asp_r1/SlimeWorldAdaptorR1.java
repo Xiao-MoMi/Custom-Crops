@@ -132,7 +132,7 @@ public class SlimeWorldAdaptorR1 extends AbstractWorldAdaptor<SlimeWorld> {
         }
         CustomCropsChunk chunk = tagToChunk(world, chunkCompoundTag.get());
         long time2 = System.currentTimeMillis();
-        BukkitCustomCropsPlugin.getInstance().debug("Took " + (time2-time1) + "ms to load chunk " + pos);
+        BukkitCustomCropsPlugin.getInstance().debug(() -> "Took " + (time2-time1) + "ms to load chunk " + pos);
         return chunk;
     }
 
