@@ -93,29 +93,6 @@ public interface ActionManager<T> extends Reloadable {
     Action<T> parseAction(@NotNull String type, @NotNull Object args);
 
     /**
-     * Generates a map of actions triggered by specific events from a configuration section.
-     *
-     * @param section The configuration section containing event-action mappings.
-     * @return A map where the keys are action triggers and the values are arrays of actions associated with those triggers.
-     */
-    default Map<ActionTrigger, Action<T>[]> parseEventActions(Section section) {
-        HashMap<ActionTrigger, Action<T>[]> actionMap = new HashMap<>();
-        for (Map.Entry<String, Object> entry : section.getStringRouteMappedValues(false).entrySet()) {
-            if (entry.getValue() instanceof Section innerSection) {
-                try {
-                    actionMap.put(
-                            ActionTrigger.valueOf(entry.getKey().toUpperCase(Locale.ENGLISH)),
-                            parseActions(innerSection)
-                    );
-                } catch (IllegalArgumentException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        }
-        return actionMap;
-    }
-
-    /**
      * Parses a configuration section to generate a map of timed actions.
      *
      * @param section The configuration section containing time-action mappings.

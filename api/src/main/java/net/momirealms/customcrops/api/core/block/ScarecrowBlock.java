@@ -20,6 +20,7 @@ package net.momirealms.customcrops.api.core.block;
 import net.momirealms.customcrops.api.BukkitCustomCropsPlugin;
 import net.momirealms.customcrops.api.core.BuiltInBlockMechanics;
 import net.momirealms.customcrops.api.core.ConfigManager;
+import net.momirealms.customcrops.api.core.FurnitureRotation;
 import net.momirealms.customcrops.api.core.world.CustomCropsBlockState;
 import net.momirealms.customcrops.api.core.world.CustomCropsWorld;
 import net.momirealms.customcrops.api.core.world.Pos3;
@@ -102,8 +103,15 @@ public class ScarecrowBlock extends AbstractCustomCropsBlock {
     }
 
     @Override
-    public boolean isBlockInstance(String id) {
+    public boolean isInstance(String id) {
         return ConfigManager.scarecrow().contains(id);
+    }
+
+    @Override
+    public void restore(Location location, CustomCropsBlockState state) {
+        String id = ConfigManager.scarecrow().stream().findAny().orElse(null);
+        if (id == null) return;
+        BukkitCustomCropsPlugin.getInstance().getItemManager().place(location, ConfigManager.scarecrowExistenceForm(), id, FurnitureRotation.NONE);
     }
 
     public CustomCropsBlockState getOrFixState(CustomCropsWorld<?> world, Pos3 pos3) {

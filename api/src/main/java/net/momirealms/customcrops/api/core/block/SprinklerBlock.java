@@ -148,8 +148,15 @@ public class SprinklerBlock extends AbstractCustomCropsBlock {
     }
 
     @Override
-    public boolean isBlockInstance(String id) {
+    public boolean isInstance(String id) {
         return Registries.ITEM_TO_SPRINKLER.containsKey(id);
+    }
+
+    @Override
+    public void restore(Location location, CustomCropsBlockState state) {
+        SprinklerConfig config = config(state);
+        if (config == null) return;
+        updateBlockAppearance(location, config, water(state) != 0);
     }
 
     @Override

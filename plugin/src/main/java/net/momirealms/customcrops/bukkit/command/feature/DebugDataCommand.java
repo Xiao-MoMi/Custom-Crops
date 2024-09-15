@@ -17,12 +17,14 @@
 
 package net.momirealms.customcrops.bukkit.command.feature;
 
+import net.kyori.adventure.text.Component;
 import net.momirealms.customcrops.api.BukkitCustomCropsPlugin;
 import net.momirealms.customcrops.api.core.world.CustomCropsBlockState;
 import net.momirealms.customcrops.api.core.world.Pos3;
 import net.momirealms.customcrops.bukkit.command.BukkitCommandFeature;
 import net.momirealms.customcrops.common.command.CustomCropsCommandManager;
 import net.momirealms.customcrops.common.helper.AdventureHelper;
+import net.momirealms.customcrops.common.locale.MessageConstants;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
@@ -52,22 +54,21 @@ public class DebugDataCommand extends BukkitCommandFeature<CommandSender> {
                         block = location.getBlock();
                     } else {
                         block = player.getTargetBlockExact(10);
-                        if (block == null) return;
+                        if (block == null) {
+                            handleFeedback(context, MessageConstants.COMMAND_DEBUG_DATA_FAILURE);
+                            return;
+                        }
                         location = block.getLocation();
                     }
                     BukkitCustomCropsPlugin.getInstance().getWorldManager().getWorld(location.getWorld()).ifPresent(world -> {
                         Optional<CustomCropsBlockState> state = world.getBlockState(Pos3.from(location));
-                        if (state.isPresent()) {
-                            BukkitCustomCropsPlugin.getInstance().getSenderFactory().wrap(player)
-                                    .sendMessage(AdventureHelper.miniMessage("<gold>" + state.get()));
-                        } else {
-                            BukkitCustomCropsPlugin.getInstance().getSenderFactory().wrap(player)
-                                    .sendMessage(AdventureHelper.miniMessage("<red>CustomCrops Data not found"));
-                        }
+                        state.ifPresent(customCropsBlockState ->
+                                handleFeedback(context,
+                                        MessageConstants.COMMAND_DEBUG_DATA_SUCCESS_CUSTOM,
+                                        Component.text(customCropsBlockState.asString())));
                     });
                     String bData = block.getBlockData().getAsString();
-                    BukkitCustomCropsPlugin.getInstance().getSenderFactory().wrap(player)
-                            .sendMessage(AdventureHelper.miniMessage("<green>Vanilla crop data: <hover:show_text:'<yellow>Copy'><click:copy_to_clipboard:'"+bData+"'>" + bData + "</click>"));
+                    handleFeedback(context, MessageConstants.COMMAND_DEBUG_DATA_SUCCESS_VANILLA, Component.text(bData));
                 });
     }
 

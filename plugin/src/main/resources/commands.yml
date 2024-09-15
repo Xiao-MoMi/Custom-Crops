@@ -87,3 +87,21 @@ force_tick:
   usage:
     - /customcrops force-tick
     - /ccrops force-tick
+
+# A command to restore the blocks by CustomCrops data in one chunk
+# Usage: [COMMAND]
+unsafe_restore:
+  enable: true
+  permission: customcrops.command.unsafe.restore
+  usage:
+    - /customcrops unsafe restore
+    - /ccrops unsafe restore
+
+# A command to delete the CustomCrops data in one chunk
+# Usage: [COMMAND]
+unsafe_delete:
+  enable: true
+  permission: customcrops.command.unsafe.delete
+  usage:
+    - /customcrops unsafe delete
+    - /ccrops unsafe delete

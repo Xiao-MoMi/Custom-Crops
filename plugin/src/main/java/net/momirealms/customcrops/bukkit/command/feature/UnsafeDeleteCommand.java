@@ -19,47 +19,47 @@ package net.momirealms.customcrops.bukkit.command.feature;
 
 import net.kyori.adventure.text.Component;
 import net.momirealms.customcrops.api.BukkitCustomCropsPlugin;
+import net.momirealms.customcrops.api.core.world.ChunkPos;
 import net.momirealms.customcrops.api.core.world.CustomCropsWorld;
+import net.momirealms.customcrops.api.core.world.CustomCropsWorldImpl;
 import net.momirealms.customcrops.bukkit.command.BukkitCommandFeature;
 import net.momirealms.customcrops.common.command.CustomCropsCommandManager;
 import net.momirealms.customcrops.common.locale.MessageConstants;
-import org.bukkit.Bukkit;
-import org.bukkit.World;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.incendo.cloud.Command;
 import org.incendo.cloud.CommandManager;
 
 import java.util.Optional;
 
-public class DebugWorldsCommand extends BukkitCommandFeature<CommandSender> {
+public class UnsafeDeleteCommand extends BukkitCommandFeature<CommandSender> {
 
-    public DebugWorldsCommand(CustomCropsCommandManager<CommandSender> commandManager) {
+    public UnsafeDeleteCommand(CustomCropsCommandManager<CommandSender> commandManager) {
         super(commandManager);
     }
 
     @Override
     public Command.Builder<? extends CommandSender> assembleCommand(CommandManager<CommandSender> manager, Command.Builder<CommandSender> builder) {
         return builder
+                .senderType(Player.class)
+                .flag(manager.flagBuilder("silent").build())
                 .handler(context -> {
-                    int worldCount = 0;
-                    for (World world : Bukkit.getWorlds()) {
-                        Optional<CustomCropsWorld<?>> optional = BukkitCustomCropsPlugin.getInstance().getWorldManager().getWorld(world);
-                        if (optional.isPresent()) {
-                            worldCount++;
-                            CustomCropsWorld<?> w = optional.get();
-                            handleFeedback(context, MessageConstants.COMMAND_DEBUG_WORLDS_SUCCESS,
-                                    Component.text(world.getName()), Component.text(w.loadedRegions().length), Component.text(w.loadedChunks().length), Component.text(w.lazyChunks().length)
-                            );
-                        }
+                    Player player = context.sender();
+                    Optional<CustomCropsWorld<?>> optional = BukkitCustomCropsPlugin.getInstance().getWorldManager().getWorld(player.getWorld());
+                    if (optional.isEmpty()) {
+                        handleFeedback(context, MessageConstants.COMMAND_DEBUG_DELETE_FAILURE_WORLD, Component.text(player.getWorld().getName()));
+                        return;
                     }
-                    if (worldCount == 0) {
-                        handleFeedback(context, MessageConstants.COMMAND_DEBUG_WORLDS_FAILURE);
-                    }
+                    CustomCropsWorld<?> world = optional.get();
+                    CustomCropsWorldImpl<?> customCropsWorld = (CustomCropsWorldImpl<?>) world;
+                    ChunkPos chunkPos = ChunkPos.fromBukkitChunk(player.getLocation().getChunk());
+                    customCropsWorld.deleteChunk(chunkPos);
+                    handleFeedback(context, MessageConstants.COMMAND_DEBUG_DELETE_SUCCESS);
                 });
     }
 
     @Override
     public String getFeatureID() {
-        return "debug_worlds";
+        return "unsafe_delete";
     }
 }

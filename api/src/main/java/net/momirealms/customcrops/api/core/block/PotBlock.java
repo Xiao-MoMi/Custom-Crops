@@ -228,8 +228,13 @@ public class PotBlock extends AbstractCustomCropsBlock {
     }
 
     @Override
-    public boolean isBlockInstance(String id) {
+    public boolean isInstance(String id) {
         return Registries.ITEM_TO_POT.containsKey(id);
+    }
+
+    @Override
+    public void restore(Location location, CustomCropsBlockState state) {
+        updateBlockAppearance(location, state);
     }
 
     @Override
@@ -614,9 +619,13 @@ public class PotBlock extends AbstractCustomCropsBlock {
     }
 
     public void updateBlockAppearance(Location location, PotConfig config, boolean hasWater, @Nullable Fertilizer fertilizer) {
-        if (config.disablePluginMechanism()) return;
-        String appearance = config.getPotAppearance(hasWater, fertilizer == null ? null : fertilizer.type());
-        BukkitCustomCropsPlugin.getInstance().getItemManager().placeBlock(location, appearance);
+        if (config.disablePluginMechanism()) {
+            String appearance = config.blocks().stream().findAny().get();
+            BukkitCustomCropsPlugin.getInstance().getItemManager().placeBlock(location, appearance);
+        } else {
+            String appearance = config.getPotAppearance(hasWater, fertilizer == null ? null : fertilizer.type());
+            BukkitCustomCropsPlugin.getInstance().getItemManager().placeBlock(location, appearance);
+        }
     }
 
     private Fertilizer tagToFertilizer(CompoundMap tag) {

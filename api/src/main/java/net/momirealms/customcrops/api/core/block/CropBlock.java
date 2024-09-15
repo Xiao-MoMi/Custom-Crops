@@ -168,8 +168,19 @@ public class CropBlock extends AbstractCustomCropsBlock {
     }
 
     @Override
-    public boolean isBlockInstance(String id) {
+    public boolean isInstance(String id) {
         return Registries.STAGE_TO_CROP_UNSAFE.containsKey(id);
+    }
+
+    @Override
+    public void restore(Location location, CustomCropsBlockState state) {
+        CropConfig config = config(state);
+        if (config == null) return;
+        int point = point(state);
+        CropStageConfig stageConfig = config.stageWithModelByPoint(point);
+        if (stageConfig != null) {
+            BukkitCustomCropsPlugin.getInstance().getItemManager().place(location, stageConfig.existenceForm(), Objects.requireNonNull(stageConfig.stageID()), config.rotation() ? FurnitureRotation.random() : FurnitureRotation.NONE);
+        }
     }
 
     @Override

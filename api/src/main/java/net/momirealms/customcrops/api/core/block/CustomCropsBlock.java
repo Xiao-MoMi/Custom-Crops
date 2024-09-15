@@ -26,26 +26,76 @@ import net.momirealms.customcrops.api.core.wrapper.WrappedInteractEvent;
 import net.momirealms.customcrops.api.core.wrapper.WrappedPlaceEvent;
 import net.momirealms.customcrops.api.misc.NamedTextColor;
 import net.momirealms.customcrops.common.util.Key;
+import org.bukkit.Location;
 
 public interface CustomCropsBlock {
 
+    /**
+     * Get the key
+     *
+     * @return key
+     */
     Key type();
 
+    /**
+     * Create a CustomCropsBlockState based on this type
+     *
+     * @return CustomCropsBlockState
+     */
     CustomCropsBlockState createBlockState();
 
+    /**
+     * Create a CustomCropsBlockState based on this type and provided data
+     *
+     * @return CustomCropsBlockState
+     */
     CustomCropsBlockState createBlockState(CompoundMap data);
 
+    /**
+     * Runs scheduled tick tasks
+     */
     void scheduledTick(CustomCropsBlockState state, CustomCropsWorld<?> world, Pos3 location, boolean offlineTick);
 
+    /**
+     * Runs random tick tasks
+     */
     void randomTick(CustomCropsBlockState state, CustomCropsWorld<?> world, Pos3 location, boolean offlineTick);
 
+    /**
+     * Handles interactions
+     */
     void onInteract(WrappedInteractEvent event);
 
+    /**
+     * Handles breaks
+     */
     void onBreak(WrappedBreakEvent event);
 
+    /**
+     * Handles placement
+     */
     void onPlace(WrappedPlaceEvent event);
 
-    boolean isBlockInstance(String id);
+    /**
+     * Checks if the id is an instance of this block type
+     *
+     * @param id id
+     * @return is instance or not
+     */
+    boolean isInstance(String id);
 
+    /**
+     * Restores the bukkit block state or furniture based on the given block state
+     *
+     * @param location the location of the block
+     * @param state    the provided state
+     */
+    void restore(Location location, CustomCropsBlockState state);
+
+    /**
+     * Get the color on insight mode
+     *
+     * @return the color
+     */
     NamedTextColor insightColor();
 }

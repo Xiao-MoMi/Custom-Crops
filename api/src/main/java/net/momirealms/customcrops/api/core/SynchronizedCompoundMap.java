@@ -117,6 +117,10 @@ public class SynchronizedCompoundMap {
         return compoundMapToString("BlockData", compoundMap);
     }
 
+    public String asString() {
+        return compoundMapToString("", compoundMap);
+    }
+
     /**
      * Recursively converts a CompoundMap to a string representation.
      *
@@ -126,12 +130,15 @@ public class SynchronizedCompoundMap {
      */
     @SuppressWarnings("unchecked")
     private String compoundMapToString(String key, CompoundMap compoundMap) {
-        StringJoiner joiner = new StringJoiner(", ");
+        StringJoiner joiner = new StringJoiner(",");
         for (Map.Entry<String, Tag<?>> entry : compoundMap.entrySet()) {
             Tag<?> tag = entry.getValue();
             String tagValue;
             switch (tag.getType()) {
-                case TAG_STRING, TAG_BYTE, TAG_DOUBLE, TAG_FLOAT, TAG_INT, TAG_INT_ARRAY,
+                case TAG_STRING -> {
+                    tagValue = "\"" + tag.getValue().toString() + "\"";
+                }
+                case TAG_BYTE, TAG_DOUBLE, TAG_FLOAT, TAG_INT, TAG_INT_ARRAY,
                      TAG_LONG, TAG_SHORT, TAG_SHORT_ARRAY, TAG_LONG_ARRAY, TAG_BYTE_ARRAY ->
                         tagValue = tag.getValue().toString();
                 case TAG_LIST -> {
@@ -151,8 +158,12 @@ public class SynchronizedCompoundMap {
                     continue; // skip unsupported tag types
                 }
             }
-            joiner.add("\"" + entry.getKey() + "\":\"" + tagValue + "\"");
+            joiner.add(entry.getKey() + "=" + tagValue);
         }
-        return key + "{" + joiner + "}";
+        if (key.isEmpty()) {
+            return joiner.toString();
+        } else {
+            return key + "=[" + joiner + "]";
+        }
     }
 }

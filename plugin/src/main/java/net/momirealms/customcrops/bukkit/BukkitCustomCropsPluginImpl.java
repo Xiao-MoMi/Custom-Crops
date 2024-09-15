@@ -98,7 +98,7 @@ public class BukkitCustomCropsPluginImpl extends BukkitCustomCropsPlugin {
 
     @Override
     public InputStream getResourceStream(String filePath) {
-        return getBootstrap().getResource(filePath);
+        return getBootstrap().getResource(filePath.replace("\\", "/"));
     }
 
     @Override

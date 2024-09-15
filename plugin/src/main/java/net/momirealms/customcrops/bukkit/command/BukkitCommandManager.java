@@ -43,7 +43,9 @@ public class BukkitCommandManager extends AbstractCommandManager<CommandSender> 
             new SetDateCommand(this),
             new ForceTickCommand(this),
             new DebugWorldsCommand(this),
-            new DebugInsightCommand(this)
+            new DebugInsightCommand(this),
+            new UnsafeRestoreCommand(this),
+            new UnsafeDeleteCommand(this)
     );
 
     private final Index<String, CommandFeature<CommandSender>> INDEX = Index.create(CommandFeature::getFeatureID, FEATURES);

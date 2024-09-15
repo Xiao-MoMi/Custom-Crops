@@ -168,9 +168,9 @@ public class TranslationManager {
         }
 
         Map<String, String> bundle = new HashMap<>();
-        YamlDocument document = plugin.getConfigManager().loadConfig("translations" + "\\" + translationFile.getFileName(), '@');
+        YamlDocument document = plugin.getConfigManager().loadConfig("translations" + File.separator + translationFile.getFileName(), '@');
         try {
-            document.save(new File(plugin.getDataDirectory().toFile(), "translations" + "\\" + translationFile.getFileName()));
+            document.save(new File(plugin.getDataDirectory().toFile(), "translations" + File.separator + translationFile.getFileName()));
         } catch (IOException e) {
             throw new IllegalStateException("Could not update translation file: " + translationFile.getFileName(), e);
         }

@@ -55,4 +55,6 @@ public interface CustomCropsBlockState extends DataBlock {
 
     @ApiStatus.Internal
     byte[] getNBTDataAsBytes();
+
+    String asString();
 }

@@ -23,6 +23,7 @@ import net.momirealms.customcrops.api.util.LocationUtils;
 import net.momirealms.customcrops.bukkit.command.BukkitCommandFeature;
 import net.momirealms.customcrops.common.command.CustomCropsCommandManager;
 import net.momirealms.customcrops.common.helper.AdventureHelper;
+import net.momirealms.customcrops.common.locale.MessageConstants;
 import net.momirealms.customcrops.common.plugin.scheduler.SchedulerTask;
 import net.momirealms.sparrow.heart.SparrowHeart;
 import net.momirealms.sparrow.heart.feature.color.NamedTextColor;
@@ -59,14 +60,13 @@ public class DebugInsightCommand extends BukkitCommandFeature<CommandSender> imp
                     Player player = context.sender();
                     if (player.hasMetadata("customcrops:insight")) {
                         player.removeMetadata("customcrops:insight", plugin.getBootstrap());
-                        plugin.getSenderFactory().wrap(player).sendMessage(AdventureHelper.miniMessage("<red>Insight mode: OFF"));
+                        handleFeedback(context, MessageConstants.COMMAND_DEBUG_INSIGHT_OFF);
                         return;
                     }
 
                     player.setMetadata("customcrops:insight", new FixedMetadataValue(plugin.getBootstrap(), 1));
                     new InsightPlayer(player.getUniqueId());
-                    plugin.getSenderFactory().wrap(player).sendMessage(AdventureHelper.miniMessage("<green>Insight mode: ON"));
-                    plugin.getSenderFactory().wrap(player).sendMessage(AdventureHelper.miniMessage("<white>Note that this only shows a snapshot of the data."));
+                    handleFeedback(context, MessageConstants.COMMAND_DEBUG_INSIGHT_ON);
                 });
     }
 

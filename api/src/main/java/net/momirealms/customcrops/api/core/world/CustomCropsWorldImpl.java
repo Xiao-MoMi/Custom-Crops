@@ -333,6 +333,12 @@ public class CustomCropsWorldImpl<W> implements CustomCropsWorld<W> {
         return this.lazyChunks.remove(chunkPos);
     }
 
+    public void deleteChunk(ChunkPos chunkPos) {
+        this.lazyChunks.remove(chunkPos);
+        this.loadedChunks.remove(chunkPos);
+        getRegion(RegionPos.getByChunkPos(chunkPos)).ifPresent(region -> region.removeCachedChunk(chunkPos));
+    }
+
     @Nullable
     public CustomCropsChunk getLazyChunk(ChunkPos chunkPos) {
         return this.lazyChunks.get(chunkPos);

@@ -38,8 +38,13 @@ public class DeadCrop extends AbstractCustomCropsBlock {
     }
 
     @Override
-    public boolean isBlockInstance(String id) {
+    public boolean isInstance(String id) {
         return Registries.ITEM_TO_DEAD_CROP.containsKey(id);
+    }
+
+    @Override
+    public void restore(Location location, CustomCropsBlockState state) {
+        // do not restore
     }
 
     @Override

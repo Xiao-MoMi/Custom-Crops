@@ -46,4 +46,16 @@ public interface MessageConstants {
     TranslatableComponent.Builder COMMAND_FORCE_TICK_SUCCESS = Component.translatable().key("command.force_tick.success");
     TranslatableComponent.Builder COMMAND_FORCE_TICK_FAILURE_TYPE = Component.translatable().key("command.force_tick.failure.type");
     TranslatableComponent.Builder COMMAND_FORCE_TICK_FAILURE_DISABLE = Component.translatable().key("command.force_tick.failure.disable");
+    TranslatableComponent.Builder COMMAND_DEBUG_DATA_FAILURE = Component.translatable().key("command.debug.data.failure");
+    TranslatableComponent.Builder COMMAND_DEBUG_DATA_SUCCESS_VANILLA = Component.translatable().key("command.debug.data.success.vanilla");
+    TranslatableComponent.Builder COMMAND_DEBUG_DATA_SUCCESS_CUSTOM = Component.translatable().key("command.debug.data.success.custom");
+    TranslatableComponent.Builder COMMAND_DEBUG_WORLDS_FAILURE = Component.translatable().key("command.debug.worlds.failure");
+    TranslatableComponent.Builder COMMAND_DEBUG_WORLDS_SUCCESS = Component.translatable().key("command.debug.worlds.success");
+    TranslatableComponent.Builder COMMAND_DEBUG_INSIGHT_OFF = Component.translatable().key("command.debug.insight.off");
+    TranslatableComponent.Builder COMMAND_DEBUG_INSIGHT_ON = Component.translatable().key("command.debug.insight.on");
+    TranslatableComponent.Builder COMMAND_DEBUG_DELETE_FAILURE_WORLD = Component.translatable().key("command.unsafe.delete.failure.world");
+    TranslatableComponent.Builder COMMAND_DEBUG_DELETE_SUCCESS = Component.translatable().key("command.unsafe.delete.success");
+    TranslatableComponent.Builder COMMAND_DEBUG_RESTORE_FAILURE_WORLD = Component.translatable().key("command.unsafe.restore.failure.world");
+    TranslatableComponent.Builder COMMAND_DEBUG_RESTORE_FAILURE_CHUNK = Component.translatable().key("command.unsafe.restore.failure.chunk");
+    TranslatableComponent.Builder COMMAND_DEBUG_RESTORE_SUCCESS = Component.translatable().key("command.unsafe.restore.success");
 }
