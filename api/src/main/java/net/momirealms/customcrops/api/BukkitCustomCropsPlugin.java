@@ -252,7 +252,7 @@ public abstract class BukkitCustomCropsPlugin implements CustomCropsPlugin {
      *
      * @param message the message supplier to log
      */
-    public abstract void debug(Supplier<Object> message);
+    public abstract void debug(Supplier<String> message);
 
     /**
      * Retrieves the data folder for the plugin.

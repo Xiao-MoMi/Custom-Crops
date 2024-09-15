@@ -74,7 +74,7 @@ public class BukkitCustomCropsPluginImpl extends BukkitCustomCropsPlugin {
     private final PluginLogger logger;
     private BukkitCommandManager commandManager;
     private HologramManager hologramManager;
-    private Consumer<Object> debugger;
+    private Consumer<Supplier<String>> debugger = (supplier -> {});
     private String buildByBit = "%%__BUILTBYBIT__%%";
     private String polymart = "%%__POLYMART__%%";
     private String time = "%%__TIMESTAMP__%%";
@@ -93,14 +93,12 @@ public class BukkitCustomCropsPluginImpl extends BukkitCustomCropsPlugin {
 
     @Override
     public void debug(Object message) {
-        if (this.debugger != null)
-            this.debugger.accept(message);
+        this.debugger.accept(message::toString);
     }
 
     @Override
-    public void debug(Supplier<Object> message) {
-        if (this.debugger != null)
-            this.debugger.accept(message.get());
+    public void debug(Supplier<String> message) {
+        this.debugger.accept(message);
     }
 
     @Override
