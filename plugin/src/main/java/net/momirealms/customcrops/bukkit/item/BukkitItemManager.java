@@ -38,9 +38,8 @@ import net.momirealms.customcrops.api.util.EventUtils;
 import net.momirealms.customcrops.api.util.LocationUtils;
 import net.momirealms.customcrops.api.util.PluginUtils;
 import net.momirealms.customcrops.common.item.Item;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.*;
+import org.bukkit.Registry;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
@@ -347,6 +346,10 @@ public class BukkitItemManager extends AbstractItemManager {
             try {
                 return new ItemStack(Material.valueOf(id.toUpperCase(Locale.ENGLISH)));
             } catch (IllegalArgumentException e) {
+                Material material = Registry.MATERIAL.get(new NamespacedKey("minecraft", id.toLowerCase(Locale.ENGLISH)));
+                if (material != null) {
+                    return new ItemStack(material);
+                }
                 plugin.getPluginLogger().warn("Item " + id + " not exists", e);
                 return new ItemStack(Material.PAPER);
             }

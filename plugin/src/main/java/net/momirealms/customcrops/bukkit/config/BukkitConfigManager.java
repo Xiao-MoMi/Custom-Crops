@@ -42,6 +42,9 @@ import net.momirealms.customcrops.common.locale.TranslationManager;
 import net.momirealms.customcrops.common.plugin.CustomCropsProperties;
 import net.momirealms.customcrops.common.util.ListUtils;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.Registry;
+import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -178,6 +181,10 @@ public class BukkitConfigManager extends ConfigManager {
                     try {
                         return Material.valueOf(it.toUpperCase(Locale.ENGLISH));
                     } catch (IllegalArgumentException e) {
+                        Material material = Registry.MATERIAL.get(new NamespacedKey("minecraft", it.toLowerCase(Locale.ENGLISH)));
+                        if (material != null) {
+                            return material;
+                        }
                         plugin.getPluginLogger().warn("No enum constant exists", e);
                         return Material.AIR;
                     }
