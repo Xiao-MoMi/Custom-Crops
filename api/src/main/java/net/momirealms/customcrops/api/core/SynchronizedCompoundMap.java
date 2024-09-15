@@ -135,10 +135,7 @@ public class SynchronizedCompoundMap {
             Tag<?> tag = entry.getValue();
             String tagValue;
             switch (tag.getType()) {
-                case TAG_STRING -> {
-                    tagValue = "\"" + tag.getValue().toString() + "\"";
-                }
-                case TAG_BYTE, TAG_DOUBLE, TAG_FLOAT, TAG_INT, TAG_INT_ARRAY,
+                case TAG_STRING, TAG_BYTE, TAG_DOUBLE, TAG_FLOAT, TAG_INT, TAG_INT_ARRAY,
                      TAG_LONG, TAG_SHORT, TAG_SHORT_ARRAY, TAG_LONG_ARRAY, TAG_BYTE_ARRAY ->
                         tagValue = tag.getValue().toString();
                 case TAG_LIST -> {
@@ -161,7 +158,7 @@ public class SynchronizedCompoundMap {
             joiner.add(entry.getKey() + "=" + tagValue);
         }
         if (key.isEmpty()) {
-            return joiner.toString();
+            return "[" + joiner + "]";
         } else {
             return key + "=[" + joiner + "]";
         }
