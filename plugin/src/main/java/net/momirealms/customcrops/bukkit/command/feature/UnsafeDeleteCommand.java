@@ -47,14 +47,14 @@ public class UnsafeDeleteCommand extends BukkitCommandFeature<CommandSender> {
                     Player player = context.sender();
                     Optional<CustomCropsWorld<?>> optional = BukkitCustomCropsPlugin.getInstance().getWorldManager().getWorld(player.getWorld());
                     if (optional.isEmpty()) {
-                        handleFeedback(context, MessageConstants.COMMAND_DEBUG_DELETE_FAILURE_WORLD, Component.text(player.getWorld().getName()));
+                        handleFeedback(context, MessageConstants.COMMAND_UNSAFE_DELETE_FAILURE_WORLD, Component.text(player.getWorld().getName()));
                         return;
                     }
                     CustomCropsWorld<?> world = optional.get();
                     CustomCropsWorldImpl<?> customCropsWorld = (CustomCropsWorldImpl<?>) world;
                     ChunkPos chunkPos = ChunkPos.fromBukkitChunk(player.getLocation().getChunk());
                     customCropsWorld.deleteChunk(chunkPos);
-                    handleFeedback(context, MessageConstants.COMMAND_DEBUG_DELETE_SUCCESS);
+                    handleFeedback(context, MessageConstants.COMMAND_UNSAFE_DELETE_SUCCESS);
                 });
     }
 

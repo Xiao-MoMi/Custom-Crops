@@ -26,7 +26,10 @@ import net.momirealms.customcrops.api.core.mechanic.pot.PotConfig;
 import net.momirealms.customcrops.api.core.world.CustomCropsBlockState;
 import net.momirealms.customcrops.api.core.world.CustomCropsWorld;
 import net.momirealms.customcrops.api.core.world.Pos3;
+import net.momirealms.customcrops.api.core.wrapper.WrappedBreakEvent;
 import net.momirealms.customcrops.api.core.wrapper.WrappedInteractEvent;
+import net.momirealms.customcrops.api.event.ScarecrowBreakEvent;
+import net.momirealms.customcrops.api.util.EventUtils;
 import net.momirealms.customcrops.api.util.LocationUtils;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -45,6 +48,18 @@ public class DeadCrop extends AbstractCustomCropsBlock {
     @Override
     public void restore(Location location, CustomCropsBlockState state) {
         // do not restore
+    }
+
+    @Override
+    public CustomCropsBlockState createBlockState(String itemID) {
+        return null;
+    }
+
+    @Override
+    public void onBreak(WrappedBreakEvent event) {
+        CustomCropsWorld<?> world = event.world();
+        Pos3 pos3 = Pos3.from(event.location());
+        world.removeBlockState(pos3);
     }
 
     @Override

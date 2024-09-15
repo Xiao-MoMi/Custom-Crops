@@ -70,6 +70,11 @@ public abstract class AbstractCommandManager<C> implements CustomCropsCommandMan
     }
 
     @Override
+    public TriConsumer<C, String, Component> feedbackConsumer() {
+        return feedbackConsumer;
+    }
+
+    @Override
     public TriConsumer<C, String, Component> defaultFeedbackConsumer() {
         return ((sender, node, component) -> {
             wrapSender(sender).sendMessage(

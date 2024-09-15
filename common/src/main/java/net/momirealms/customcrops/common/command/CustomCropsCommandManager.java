@@ -42,6 +42,8 @@ public interface CustomCropsCommandManager<C> {
 
     void setFeedbackConsumer(@NotNull TriConsumer<C, String, Component> feedbackConsumer);
 
+    TriConsumer<C, String, Component> feedbackConsumer();
+
     TriConsumer<C, String, Component> defaultFeedbackConsumer();
 
     CommandConfig<C> getCommandConfig(YamlDocument document, String featureID);

@@ -232,6 +232,18 @@ public class SprinklerBlock extends AbstractCustomCropsBlock {
         ActionManager.trigger(context, config.interactActions());
     }
 
+    @Override
+    public CustomCropsBlockState createBlockState(String itemID) {
+        SprinklerConfig config = Registries.ITEM_TO_SPRINKLER.get(itemID);
+        if (config == null) {
+            return null;
+        }
+        CustomCropsBlockState state = createBlockState();
+        id(state, config.id());
+        water(state, itemID.equals(config.threeDItemWithWater()) ? 1 : 0);
+        return state;
+    }
+
     public CustomCropsBlockState fixOrGetState(CustomCropsWorld<?> world, Pos3 pos3, SprinklerConfig sprinklerConfig, String blockID) {
         Optional<CustomCropsBlockState> optionalPotState = world.getBlockState(pos3);
         if (optionalPotState.isPresent()) {
@@ -242,7 +254,7 @@ public class SprinklerBlock extends AbstractCustomCropsBlock {
                 }
             }
         }
-        CustomCropsBlockState state = BuiltInBlockMechanics.SPRINKLER.createBlockState();
+        CustomCropsBlockState state = createBlockState();
         id(state, sprinklerConfig.id());
         water(state, blockID.equals(sprinklerConfig.threeDItemWithWater()) ? 1 : 0);
         world.addBlockState(pos3, state).ifPresent(previous -> {

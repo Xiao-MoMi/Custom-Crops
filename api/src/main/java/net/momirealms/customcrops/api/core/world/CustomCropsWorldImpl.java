@@ -182,8 +182,6 @@ public class CustomCropsWorldImpl<W> implements CustomCropsWorld<W> {
     public Optional<CustomCropsBlockState> addBlockState(Pos3 location, CustomCropsBlockState block) {
         ChunkPos pos = location.toChunkPos();
         CustomCropsChunk chunk = getOrCreateChunk(pos);
-        // to let the bukkit system trigger the ChunkUnloadEvent later
-        chunk.load(true);
         return chunk.addBlockState(location, block);
     }
 
@@ -437,7 +435,10 @@ public class CustomCropsWorldImpl<W> implements CustomCropsWorld<W> {
             if (chunk != null) {
                 return chunk;
             }
-            return this.adaptor.loadChunk(this, chunkPos, true);
+            chunk = this.adaptor.loadChunk(this, chunkPos, true);
+            // to let the bukkit system trigger the ChunkUnloadEvent later
+            chunk.load(true);
+            return chunk;
         }));
     }
 

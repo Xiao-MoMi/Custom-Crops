@@ -18,6 +18,8 @@
 package net.momirealms.customcrops.bukkit.command.feature;
 
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TranslatableComponent;
+import net.kyori.adventure.text.event.ClickEvent;
 import net.momirealms.customcrops.api.BukkitCustomCropsPlugin;
 import net.momirealms.customcrops.api.core.world.CustomCropsBlockState;
 import net.momirealms.customcrops.api.core.world.Pos3;
@@ -25,12 +27,15 @@ import net.momirealms.customcrops.bukkit.command.BukkitCommandFeature;
 import net.momirealms.customcrops.common.command.CustomCropsCommandManager;
 import net.momirealms.customcrops.common.helper.AdventureHelper;
 import net.momirealms.customcrops.common.locale.MessageConstants;
+import net.momirealms.customcrops.common.locale.TranslationManager;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.checkerframework.checker.units.qual.C;
 import org.incendo.cloud.Command;
 import org.incendo.cloud.CommandManager;
+import org.incendo.cloud.context.CommandContext;
 
 import java.util.Optional;
 
@@ -62,13 +67,19 @@ public class DebugDataCommand extends BukkitCommandFeature<CommandSender> {
                     }
                     BukkitCustomCropsPlugin.getInstance().getWorldManager().getWorld(location.getWorld()).ifPresent(world -> {
                         Optional<CustomCropsBlockState> state = world.getBlockState(Pos3.from(location));
-                        state.ifPresent(customCropsBlockState ->
-                                handleFeedback(context,
-                                        MessageConstants.COMMAND_DEBUG_DATA_SUCCESS_CUSTOM,
-                                        Component.text(customCropsBlockState.asString())));
+                        state.ifPresent(customCropsBlockState -> {
+                            String cData = customCropsBlockState.asString();
+                            TranslatableComponent component = MessageConstants.COMMAND_DEBUG_DATA_SUCCESS_CUSTOM
+                                    .arguments(Component.text(cData))
+                                    .build();
+                            commandManager.feedbackConsumer().accept(context.sender(), component.key(), TranslationManager.render(component).clickEvent(ClickEvent.copyToClipboard(cData)));
+                        });
                     });
                     String bData = block.getBlockData().getAsString();
-                    handleFeedback(context, MessageConstants.COMMAND_DEBUG_DATA_SUCCESS_VANILLA, Component.text(bData));
+                    TranslatableComponent component = MessageConstants.COMMAND_DEBUG_DATA_SUCCESS_VANILLA
+                            .arguments(Component.text(bData))
+                            .build();
+                    commandManager.feedbackConsumer().accept(context.sender(), component.key(), TranslationManager.render(component).clickEvent(ClickEvent.copyToClipboard(bData)));
                 });
     }
 
@@ -76,4 +87,6 @@ public class DebugDataCommand extends BukkitCommandFeature<CommandSender> {
     public String getFeatureID() {
         return "debug_data";
     }
+
+
 }

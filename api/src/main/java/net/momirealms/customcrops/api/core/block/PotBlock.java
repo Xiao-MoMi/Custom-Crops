@@ -322,6 +322,18 @@ public class PotBlock extends AbstractCustomCropsBlock {
         return false;
     }
 
+    @Override
+    public CustomCropsBlockState createBlockState(String itemID) {
+        PotConfig potConfig = Registries.ITEM_TO_POT.get(itemID);
+        if (potConfig == null) {
+            return null;
+        }
+        CustomCropsBlockState state = createBlockState();
+        id(state, potConfig.id());
+        water(state, potConfig.isWet(itemID) ? 1 : 0);
+        return state;
+    }
+
     public CustomCropsBlockState fixOrGetState(CustomCropsWorld<?> world, Pos3 pos3, PotConfig potConfig, String blockID) {
         if (potConfig == null) return null;
         Optional<CustomCropsBlockState> optionalPotState = world.getBlockState(pos3);
@@ -333,7 +345,7 @@ public class PotBlock extends AbstractCustomCropsBlock {
                 }
             }
         }
-        CustomCropsBlockState state = BuiltInBlockMechanics.POT.createBlockState();
+        CustomCropsBlockState state = createBlockState();
         id(state, potConfig.id());
         water(state, potConfig.isWet(blockID) ? 1 : 0);
         world.addBlockState(pos3, state).ifPresent(previous -> {

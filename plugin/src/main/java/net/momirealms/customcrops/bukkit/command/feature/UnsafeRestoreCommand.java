@@ -50,14 +50,14 @@ public class UnsafeRestoreCommand extends BukkitCommandFeature<CommandSender> {
                     World bukkitWorld = player.getWorld();
                     Optional<CustomCropsWorld<?>> optional = BukkitCustomCropsPlugin.getInstance().getWorldManager().getWorld(bukkitWorld);
                     if (optional.isEmpty()) {
-                        handleFeedback(context, MessageConstants.COMMAND_DEBUG_RESTORE_FAILURE_WORLD, Component.text(bukkitWorld.getName()));
+                        handleFeedback(context, MessageConstants.COMMAND_UNSAFE_RESTORE_FAILURE_WORLD, Component.text(bukkitWorld.getName()));
                         return;
                     }
                     ChunkPos chunkPos = ChunkPos.fromBukkitChunk(player.getLocation().getChunk());
                     CustomCropsWorld<?> world = optional.get();
                     Optional<CustomCropsChunk> chunk = world.getLoadedChunk(chunkPos);
                     if (chunk.isEmpty()) {
-                        handleFeedback(context, MessageConstants.COMMAND_DEBUG_RESTORE_FAILURE_CHUNK);
+                        handleFeedback(context, MessageConstants.COMMAND_UNSAFE_RESTORE_FAILURE_CHUNK);
                         return;
                     }
                     CustomCropsChunk customCropsChunk = chunk.get();
@@ -76,7 +76,7 @@ public class UnsafeRestoreCommand extends BukkitCommandFeature<CommandSender> {
                             }
                         }
                     }
-                    handleFeedback(context, MessageConstants.COMMAND_DEBUG_RESTORE_SUCCESS, Component.text(restoredBlocks), Component.text(totalBlocks));
+                    handleFeedback(context, MessageConstants.COMMAND_UNSAFE_RESTORE_SUCCESS, Component.text(restoredBlocks), Component.text(totalBlocks));
                 });
     }
 

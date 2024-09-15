@@ -53,6 +53,11 @@ public abstract class AbstractCustomCropsBlock implements CustomCropsBlock {
         return CustomCropsBlockState.create(this, compoundMap);
     }
 
+    @Override
+    public CustomCropsBlockState createBlockState(String itemID) {
+        return createBlockState();
+    }
+
     public String id(CustomCropsBlockState state) {
         return state.get("key").getAsStringTag()
                 .map(StringTag::getValue)

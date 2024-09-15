@@ -27,6 +27,7 @@ import net.momirealms.customcrops.api.core.wrapper.WrappedPlaceEvent;
 import net.momirealms.customcrops.api.misc.NamedTextColor;
 import net.momirealms.customcrops.common.util.Key;
 import org.bukkit.Location;
+import org.jetbrains.annotations.Nullable;
 
 public interface CustomCropsBlock {
 
@@ -43,6 +44,14 @@ public interface CustomCropsBlock {
      * @return CustomCropsBlockState
      */
     CustomCropsBlockState createBlockState();
+
+    /**
+     * Create a CustomCropsBlockState based on the item id
+     *
+     * @return CustomCropsBlockState
+     */
+    @Nullable
+    CustomCropsBlockState createBlockState(String itemID);
 
     /**
      * Create a CustomCropsBlockState based on this type and provided data

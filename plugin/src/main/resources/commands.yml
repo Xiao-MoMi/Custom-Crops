@@ -105,3 +105,12 @@ unsafe_delete:
   usage:
     - /customcrops unsafe delete
     - /ccrops unsafe delete
+
+# A command to fix the CustomCrops data in one section(16x16x16)
+# Usage: [COMMAND]
+unsafe_fix:
+  enable: true
+  permission: customcrops.command.unsafe.fix
+  usage:
+    - /customcrops unsafe fix
+    - /ccrops unsafe fix

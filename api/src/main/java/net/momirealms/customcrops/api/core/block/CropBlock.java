@@ -275,6 +275,19 @@ public class CropBlock extends AbstractCustomCropsBlock {
         ActionManager.trigger(context, stageConfig.interactActions());
     }
 
+    @Override
+    public CustomCropsBlockState createBlockState(String itemID) {
+        List<CropConfig> configList = Registries.STAGE_TO_CROP_UNSAFE.get(itemID);
+        if (configList == null || configList.size() != 1) return null;
+        CropConfig cropConfig = configList.get(0);
+        CustomCropsBlockState state = createBlockState();
+        CropStageConfig stageConfig = cropConfig.stageByID(itemID);
+        assert stageConfig != null;
+        point(state, stageConfig.point());
+        id(state, cropConfig.id());
+        return state;
+    }
+
     public CustomCropsBlockState fixOrGetState(CustomCropsWorld<?> world, Pos3 pos3, String stageID) {
         List<CropConfig> configList = Registries.STAGE_TO_CROP_UNSAFE.get(stageID);
         if (configList == null) return null;
@@ -296,7 +309,7 @@ public class CropBlock extends AbstractCustomCropsBlock {
         CropStageConfig stageConfig = cropConfig.stageByID(stageID);
         assert stageConfig != null;
         int point = stageConfig.point();
-        CustomCropsBlockState state = BuiltInBlockMechanics.CROP.createBlockState();
+        CustomCropsBlockState state = createBlockState();
         point(state, point);
         id(state, cropConfig.id());
         world.addBlockState(pos3, state).ifPresent(previous -> {
