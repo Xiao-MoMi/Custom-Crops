@@ -114,7 +114,7 @@ public class SynchronizedCompoundMap {
 
     @Override
     public String toString() {
-        return compoundMapToString("BlockData", compoundMap);
+        return compoundMapToString("NBTData", compoundMap);
     }
 
     public String asString() {
