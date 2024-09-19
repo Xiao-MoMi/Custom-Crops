@@ -51,6 +51,7 @@ public class WorldScheduler {
             thread.setName("customcrops-world-scheduler");
             return thread;
         });
+        this.scheduler.setMaximumPoolSize(1);
         this.scheduler.setRemoveOnCancelPolicy(true);
         this.scheduler.setExecuteExistingDelayedTasksAfterShutdownPolicy(false);
         this.worker = new ForkJoinPool(PARALLELISM, new WorkerThreadFactory(), new ExceptionHandler(), false);
