@@ -28,8 +28,6 @@ import net.momirealms.customcrops.api.core.world.CustomCropsWorld;
 import net.momirealms.customcrops.api.core.world.Pos3;
 import net.momirealms.customcrops.api.core.wrapper.WrappedBreakEvent;
 import net.momirealms.customcrops.api.core.wrapper.WrappedInteractEvent;
-import net.momirealms.customcrops.api.event.ScarecrowBreakEvent;
-import net.momirealms.customcrops.api.util.EventUtils;
 import net.momirealms.customcrops.api.util.LocationUtils;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;

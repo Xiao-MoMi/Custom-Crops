@@ -29,7 +29,9 @@ import net.momirealms.customcrops.api.core.world.CustomCropsBlockState;
 import net.momirealms.customcrops.api.core.world.CustomCropsChunk;
 import net.momirealms.customcrops.api.core.world.CustomCropsWorld;
 import net.momirealms.customcrops.api.core.world.Pos3;
+import net.momirealms.customcrops.api.event.QualityCropActionEvent;
 import net.momirealms.customcrops.api.misc.value.MathValue;
+import net.momirealms.customcrops.api.util.EventUtils;
 import net.momirealms.customcrops.api.util.PlayerUtils;
 import net.momirealms.customcrops.common.util.RandomUtils;
 import org.bukkit.Location;
@@ -74,17 +76,27 @@ public class ActionQualityCrops<T> extends AbstractBuiltInAction<T> {
     protected void triggerAction(Context<T> context) {
         Location location = requireNonNull(context.arg(ContextKeys.LOCATION));
         int random = RandomUtils.generateRandomInt((int) min.evaluate(context), (int) max.evaluate(context));
-        Player player = null;
+        Player player;
         if (context.holder() instanceof Player p) {
             player = p;
+        } else {
+            player = null;
         }
-        for (ItemStack itemStack : generateItem(location, player, random)) {
-            if (toInv && player != null) {
-                PlayerUtils.giveItem(player, itemStack, itemStack.getAmount());
-            } else {
-                location.getWorld().dropItemNaturally(location, itemStack);
+        plugin.getScheduler().sync().run(() -> {
+            List<ItemStack> itemToDrop = generateItem(location, player, random);
+            QualityCropActionEvent actionEvent = new QualityCropActionEvent(context, location, qualityLoots.clone(), itemToDrop);
+            if (EventUtils.fireAndCheckCancel(actionEvent)) {
+                return;
             }
-        }
+            for (ItemStack itemStack : itemToDrop) {
+                if (itemStack == null || itemStack.getAmount() == 0 || itemStack.getType() == Material.AIR) continue;
+                if (toInv && player != null) {
+                    PlayerUtils.giveItem(player, itemStack, itemStack.getAmount());
+                } else {
+                    location.getWorld().dropItemNaturally(location, itemStack);
+                }
+            }
+        }, location);
     }
 
     public List<ItemStack> generateItem(Location location, @Nullable Player player, int randomAmount) {

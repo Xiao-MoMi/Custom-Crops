@@ -28,10 +28,13 @@ import net.momirealms.customcrops.api.core.world.CustomCropsBlockState;
 import net.momirealms.customcrops.api.core.world.CustomCropsChunk;
 import net.momirealms.customcrops.api.core.world.CustomCropsWorld;
 import net.momirealms.customcrops.api.core.world.Pos3;
+import net.momirealms.customcrops.api.event.DropItemActionEvent;
 import net.momirealms.customcrops.api.misc.value.MathValue;
+import net.momirealms.customcrops.api.util.EventUtils;
 import net.momirealms.customcrops.api.util.PlayerUtils;
 import net.momirealms.customcrops.common.util.RandomUtils;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
@@ -65,19 +68,28 @@ public class ActionDropItem<T> extends AbstractBuiltInAction<T> {
     @Override
     protected void triggerAction(Context<T> context) {
         Location location = requireNonNull(context.arg(ContextKeys.LOCATION));
-        Player player = null;
+        Player player;
         if (context.holder() instanceof Player p) {
             player = p;
+        } else {
+            player = null;
         }
         int random = RandomUtils.generateRandomInt((int) min.evaluate(context), (int) max.evaluate(context));
         ItemStack itemStack = generateItem(location, player, random);
-        if (itemStack != null) {
-            if (toInv && player != null) {
-                PlayerUtils.giveItem(player, itemStack, random);
-            } else {
-                location.getWorld().dropItemNaturally(location, itemStack);
+        plugin.getScheduler().sync().run(() -> {
+            DropItemActionEvent actionEvent = new DropItemActionEvent(context, location, item, itemStack);
+            if (EventUtils.fireAndCheckCancel(actionEvent)) {
+                return;
             }
-        }
+            ItemStack itemToDrop = actionEvent.item();
+            if (itemToDrop != null && itemToDrop.getType() != Material.AIR && itemToDrop.getAmount() > 0) {
+                if (toInv && player != null) {
+                    PlayerUtils.giveItem(player, itemToDrop, itemToDrop.getAmount());
+                } else {
+                    location.getWorld().dropItemNaturally(location, itemToDrop);
+                }
+            }
+        }, location);
     }
 
     @Nullable

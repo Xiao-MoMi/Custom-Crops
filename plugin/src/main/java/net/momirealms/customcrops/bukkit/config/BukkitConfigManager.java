@@ -44,7 +44,6 @@ import net.momirealms.customcrops.common.util.ListUtils;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Registry;
-import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
 import java.io.FileInputStream;
