@@ -83,7 +83,7 @@ public class WateringCanItem extends AbstractCustomCropsItem {
             wrapped.maxDamage().ifPresent(max -> {
                 if (max <= 0) return;
                 int damage = (int) (max * (((double) config.storage() - realWater) / config.storage()));
-                wrapped.damage(damage);
+                wrapped.damage(Math.min(Math.max(1, damage), max - 1));
             });
             // set appearance
             Optional.ofNullable(config.appearance(realWater)).ifPresent(wrapped::customModelData);

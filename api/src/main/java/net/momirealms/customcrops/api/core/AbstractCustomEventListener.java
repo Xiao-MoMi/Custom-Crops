@@ -176,10 +176,11 @@ public abstract class AbstractCustomEventListener implements Listener {
         if (ConfigManager.overriddenCrops().contains(block.getType())) {
             event.setDropItems(false);
         }
+        ItemStack itemStack = event.getPlayer().getInventory().getItemInMainHand();
         this.itemManager.handlePlayerBreak(
                 event.getPlayer(),
                 block.getLocation(),
-                event.getPlayer().getInventory().getItemInMainHand(),
+                itemStack,
                 block.getBlockData().getAsString(),
                 event
         );

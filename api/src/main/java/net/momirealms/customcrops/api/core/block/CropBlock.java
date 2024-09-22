@@ -204,7 +204,19 @@ public class CropBlock extends AbstractCustomCropsBlock {
 
         int point = point(state);
         CropStageConfig stageConfig = cropConfig.stageByID(event.relatedID());
-        assert stageConfig != null;
+        if (stageConfig == null) {
+            // fix it if it's a wrong data
+            world.removeBlockState(pos3);
+            state = fixOrGetState(world, pos3, event.relatedID());
+            if (state == null) {
+                return;
+            }
+            cropConfig = config(state);
+            stageConfig = cropConfig.stageByID(event.relatedID());
+            if (stageConfig == null) {
+                return;
+            }
+        }
         if (!RequirementManager.isSatisfied(context, stageConfig.interactRequirements())) {
             return;
         }
