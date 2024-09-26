@@ -52,15 +52,15 @@ tasks {
     shadowJar {
         archiveFileName = "CustomCrops-${rootProject.properties["project_version"]}.jar"
         destinationDirectory.set(file("$rootDir/target"))
-		relocate ("net.kyori", "net.momirealms.customcrops.libraries")
-		relocate ("org.objenesis", "net.momirealms.customcrops.libraries.objenesis")
-		relocate ("org.bstats", "net.momirealms.customcrops.libraries.bstats")
-		relocate ("dev.dejvokep.boostedyaml", "net.momirealms.customcrops.libraries.boostedyaml")
-        relocate ("net.momirealms.sparrow.heart", "net.momirealms.customcrops.libraries.sparrow")
-		relocate ("net.momirealms.antigrieflib", "net.momirealms.customcrops.libraries.antigrieflib")
-		relocate ("net.objecthunter.exp4j", "net.momirealms.customcrops.libraries.exp4j")
-        relocate ("com.saicone.rtag", "net.momirealms.customcrops.libraries.rtag")
-        relocate ("com.github.benmanes.caffeine", "net.momirealms.customcrops.libraries.caffeine")
+		relocate("net.kyori", "net.momirealms.customcrops.libraries")
+		relocate("org.objenesis", "net.momirealms.customcrops.libraries.objenesis")
+		relocate("org.bstats", "net.momirealms.customcrops.libraries.bstats")
+		relocate("dev.dejvokep.boostedyaml", "net.momirealms.customcrops.libraries.boostedyaml")
+        relocate("net.momirealms.sparrow.heart", "net.momirealms.customcrops.libraries.sparrow")
+		relocate("net.momirealms.antigrieflib", "net.momirealms.customcrops.libraries.antigrieflib")
+		relocate("net.objecthunter.exp4j", "net.momirealms.customcrops.libraries.exp4j")
+        relocate("com.saicone.rtag", "net.momirealms.customcrops.libraries.rtag")
+        relocate("com.github.benmanes.caffeine", "net.momirealms.customcrops.libraries.caffeine")
         relocate("org.incendo", "net.momirealms.customcrops.libraries")
     }
 }
