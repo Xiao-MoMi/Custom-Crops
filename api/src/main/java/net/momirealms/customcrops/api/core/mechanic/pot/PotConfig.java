@@ -71,6 +71,20 @@ public interface PotConfig {
     boolean disablePluginMechanism();
 
     /**
+     * Should the pot ignore scheduled tick?
+     *
+     * @return ignore or not
+     */
+    boolean ignoreScheduledTick();
+
+    /**
+     * Should the pot ignore random tick?
+     *
+     * @return ignore or not
+     */
+    boolean ignoreRandomTick();
+
+    /**
      * Gets the methods available for watering the pot.
      *
      * @return An array of {@link WateringMethod} instances.
@@ -260,6 +274,10 @@ public interface PotConfig {
          * @return The current instance of the Builder.
          */
         Builder isNearbyWaterAccepted(boolean isNearbyWaterAccepted);
+
+        Builder ignoreRandomTick(boolean ignoreRandomTick);
+
+        Builder ignoreScheduledTick(boolean ignoreScheduledTick);
 
         /**
          * Sets the methods available for watering the pot.

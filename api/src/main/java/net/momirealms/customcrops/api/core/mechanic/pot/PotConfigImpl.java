@@ -42,6 +42,8 @@ public class PotConfigImpl implements PotConfig {
     private final int storage;
     private final boolean isRainDropAccepted;
     private final boolean isNearbyWaterAccepted;
+    private final boolean ignoreRandomTick;
+    private final boolean ignoreScheduledTick;
     private final WateringMethod[] wateringMethods;
     private final WaterBar waterBar;
     private final int maxFertilizers;
@@ -65,6 +67,8 @@ public class PotConfigImpl implements PotConfig {
             int storage,
             boolean isRainDropAccepted,
             boolean isNearbyWaterAccepted,
+            boolean ignoreRandomTick,
+            boolean ignoreScheduledTick,
             WateringMethod[] wateringMethods,
             WaterBar waterBar,
             int maxFertilizers,
@@ -102,6 +106,8 @@ public class PotConfigImpl implements PotConfig {
         this.addWaterActions = addWaterActions;
         this.fullWaterActions = fullWaterActions;
         this.maxFertilizerActions = maxFertilizerActions;
+        this.ignoreRandomTick = ignoreRandomTick;
+        this.ignoreScheduledTick = ignoreScheduledTick;
         this.blocks.add(basicAppearance.left());
         this.blocks.add(basicAppearance.right());
         this.wetBlocks.add(basicAppearance.right());
@@ -151,6 +157,16 @@ public class PotConfigImpl implements PotConfig {
     @Override
     public boolean disablePluginMechanism() {
         return disablePluginSystem;
+    }
+
+    @Override
+    public boolean ignoreScheduledTick() {
+        return ignoreScheduledTick;
+    }
+
+    @Override
+    public boolean ignoreRandomTick() {
+        return ignoreRandomTick;
     }
 
     @Override
@@ -257,6 +273,8 @@ public class PotConfigImpl implements PotConfig {
         private int storage;
         private boolean isRainDropAccepted;
         private boolean isNearbyWaterAccepted;
+        private boolean ignoreRandomTick;
+        private boolean ignoreScheduledTick;
         private WateringMethod[] wateringMethods;
         private WaterBar waterBar;
         private int maxFertilizers;
@@ -275,7 +293,7 @@ public class PotConfigImpl implements PotConfig {
 
         @Override
         public PotConfig build() {
-            return new PotConfigImpl(id, vanillaFarmland, basicAppearance, potAppearanceMap, storage, isRainDropAccepted, isNearbyWaterAccepted, wateringMethods, waterBar, maxFertilizers, placeRequirements, breakRequirements, useRequirements, tickActions, reachLimitActions, interactActions, placeActions, breakActions, addWaterActions, fullWaterActions, maxFertilizerActions, vanillaPots);
+            return new PotConfigImpl(id, vanillaFarmland, basicAppearance, potAppearanceMap, storage, isRainDropAccepted, isNearbyWaterAccepted, ignoreRandomTick, ignoreScheduledTick, wateringMethods, waterBar, maxFertilizers, placeRequirements, breakRequirements, useRequirements, tickActions, reachLimitActions, interactActions, placeActions, breakActions, addWaterActions, fullWaterActions, maxFertilizerActions, vanillaPots);
         }
 
         @Override
@@ -311,6 +329,18 @@ public class PotConfigImpl implements PotConfig {
         @Override
         public Builder isNearbyWaterAccepted(boolean isNearbyWaterAccepted) {
             this.isNearbyWaterAccepted = isNearbyWaterAccepted;
+            return this;
+        }
+
+        @Override
+        public Builder ignoreRandomTick(boolean ignoreRandomTick) {
+            this.ignoreRandomTick = ignoreRandomTick;
+            return this;
+        }
+
+        @Override
+        public Builder ignoreScheduledTick(boolean ignoreScheduledTick) {
+            this.ignoreScheduledTick = ignoreScheduledTick;
             return this;
         }
 

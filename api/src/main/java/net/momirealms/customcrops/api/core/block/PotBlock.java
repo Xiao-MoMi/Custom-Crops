@@ -74,7 +74,7 @@ public class PotBlock extends AbstractCustomCropsBlock {
         // ignore random tick
         if (world.setting().tickPotMode() == 1) return;
         if (canTick(state, world.setting().tickPotInterval())) {
-            tickPot(state, world, location, offlineTick);
+            tickPot(state, world, location, offlineTick, false);
         }
     }
 
@@ -83,7 +83,7 @@ public class PotBlock extends AbstractCustomCropsBlock {
         // ignore scheduled tick
         if (world.setting().tickPotMode() == 2) return;
         if (canTick(state, world.setting().tickPotInterval())) {
-            tickPot(state, world, location, offlineTick);
+            tickPot(state, world, location, offlineTick, true);
         }
     }
 
@@ -356,7 +356,7 @@ public class PotBlock extends AbstractCustomCropsBlock {
         return state;
     }
 
-    private void tickPot(CustomCropsBlockState state, CustomCropsWorld<?> world, Pos3 location, boolean offline) {
+    private void tickPot(CustomCropsBlockState state, CustomCropsWorld<?> world, Pos3 location, boolean offline, boolean tickMode) {
         PotConfig config = config(state);
         BukkitCustomCropsPlugin plugin = BukkitCustomCropsPlugin.getInstance();
         if (config == null) {
@@ -365,8 +365,10 @@ public class PotBlock extends AbstractCustomCropsBlock {
             return;
         }
 
+        if (tickMode && config.ignoreRandomTick()) return;
+        if (!tickMode && config.ignoreScheduledTick()) return;
+
         World bukkitWorld = world.bukkitWorld();
-        CompletableFuture<Boolean> future = new CompletableFuture<>();
         if (ConfigManager.doubleCheck()) {
             String blockID = plugin.getItemManager().blockID(location.toLocation(bukkitWorld));
             if (!config.blocks().contains(blockID)) {

@@ -47,6 +47,8 @@ dependencies {
     compileOnly("org.betonquest:betonquest:2.1.3")
     // item
     compileOnly(files("libs/zaphkiel-2.0.24.jar"))
+    compileOnly(files("libs/ExecutableItems-7.24.9.29.jar"))
+    compileOnly(files("libs/SCore-5.24.9.29.jar"))
     compileOnly("net.Indyuce:MMOItems-API:6.10-SNAPSHOT")
     compileOnly("io.lumine:MythicLib-dist:1.6.2-SNAPSHOT")
     compileOnly("pers.neige.neigeitems:NeigeItems:1.17.13")

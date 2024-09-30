@@ -118,6 +118,8 @@ public class ConfigType {
                         .id(id)
                         .vanillaFarmland(section.getBoolean("vanilla-farmland", false))
                         .vanillaPots(ListUtils.toList(section.get("vanilla-blocks")))
+                        .ignoreRandomTick(section.getBoolean("ignore-random-tick", false))
+                        .ignoreScheduledTick(section.getBoolean("ignore-scheduled-tick", false))
                         .storage(section.getInt("storage", 5))
                         .isRainDropAccepted(section.getBoolean("absorb-rainwater", false))
                         .isNearbyWaterAccepted(section.getBoolean("absorb-nearby-water", false))

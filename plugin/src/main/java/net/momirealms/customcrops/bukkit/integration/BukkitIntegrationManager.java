@@ -69,6 +69,9 @@ public class BukkitIntegrationManager implements IntegrationManager {
         if (isHooked("Zaphkiel")) {
             registerItemProvider(new ZaphkielItemProvider());
         }
+        if (isHooked("ExecutableItems")) {
+            registerItemProvider(new ExecutableItemProvider());
+        }
         if (isHooked("NeigeItems")) {
             registerItemProvider(new NeigeItemsItemProvider());
         }
