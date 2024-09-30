@@ -129,7 +129,6 @@ public abstract class AbstractWorldAdaptor<W> implements WorldAdaptor<W> {
     }
 
     private int[] queueToIntArray(PriorityBlockingQueue<DelayedTickTask> queue) {
-        queue.removeIf(Objects::isNull);
         int size = queue.size() * 2;
         int[] tasks = new int[size];
         int i = 0;

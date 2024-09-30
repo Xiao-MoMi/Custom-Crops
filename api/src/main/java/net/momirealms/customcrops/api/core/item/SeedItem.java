@@ -72,6 +72,7 @@ public class SeedItem extends AbstractCustomCropsItem {
         // check pot whitelist
         if (!cropConfig.potWhitelist().contains(potConfig.id())) {
             ActionManager.trigger(context, cropConfig.wrongPotActions());
+            return InteractionResult.COMPLETE;
         }
         // check plant requirements
         if (!RequirementManager.isSatisfied(context, cropConfig.plantRequirements())) {
