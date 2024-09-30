@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Optional;
 import java.util.PriorityQueue;
 import java.util.Set;
+import java.util.concurrent.PriorityBlockingQueue;
 import java.util.stream.Stream;
 
 /**
@@ -227,7 +228,7 @@ public interface CustomCropsChunk {
      *
      * @return A {@link PriorityQueue} of {@link DelayedTickTask}.
      */
-    PriorityQueue<DelayedTickTask> tickTaskQueue();
+    PriorityBlockingQueue<DelayedTickTask> tickTaskQueue();
 
     /**
      * Gets the set of blocks that have been ticked in one tick cycle within this chunk.

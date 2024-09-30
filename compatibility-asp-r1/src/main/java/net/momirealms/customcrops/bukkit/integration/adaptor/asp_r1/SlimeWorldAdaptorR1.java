@@ -36,8 +36,8 @@ import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
-import java.util.PriorityQueue;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.PriorityBlockingQueue;
 import java.util.function.Function;
 
 public class SlimeWorldAdaptorR1 extends AbstractWorldAdaptor<SlimeWorld> {
@@ -204,7 +204,7 @@ public class SlimeWorldAdaptorR1 extends AbstractWorldAdaptor<SlimeWorld> {
         int[] queued = (int[]) map.get("queued").getValue();
         int[] ticked = (int[]) map.get("ticked").getValue();
 
-        PriorityQueue<DelayedTickTask> queue = new PriorityQueue<>(Math.max(11, queued.length / 2));
+        PriorityBlockingQueue<DelayedTickTask> queue = new PriorityBlockingQueue<>(Math.max(11, queued.length / 2));
         for (int i = 0, size = queued.length / 2; i < size; i++) {
             BlockPos pos = new BlockPos(queued[2*i+1]);
             queue.add(new DelayedTickTask(queued[2*i], pos));

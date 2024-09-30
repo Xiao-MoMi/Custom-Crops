@@ -43,6 +43,7 @@ import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.PriorityBlockingQueue;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -392,7 +393,7 @@ public class BukkitWorldAdaptor extends AbstractWorldAdaptor<World> {
         long lastLoadedTime = chunkData.readLong();
         // read task queue
         int tasksSize = chunkData.readInt();
-        PriorityQueue<DelayedTickTask> queue = new PriorityQueue<>(Math.max(11, tasksSize));
+        PriorityBlockingQueue<DelayedTickTask> queue = new PriorityBlockingQueue<>(Math.max(11, tasksSize));
         for (int i = 0; i < tasksSize; i++) {
             int time = chunkData.readInt();
             BlockPos pos = new BlockPos(chunkData.readInt());

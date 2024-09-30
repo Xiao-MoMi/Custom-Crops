@@ -29,6 +29,7 @@ import org.jetbrains.annotations.NotNull;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
+import java.util.concurrent.PriorityBlockingQueue;
 
 public abstract class AbstractWorldAdaptor<W> implements WorldAdaptor<W> {
 
@@ -127,7 +128,7 @@ public abstract class AbstractWorldAdaptor<W> implements WorldAdaptor<W> {
         return ticked;
     }
 
-    private int[] queueToIntArray(PriorityQueue<DelayedTickTask> queue) {
+    private int[] queueToIntArray(PriorityBlockingQueue<DelayedTickTask> queue) {
         queue.removeIf(Objects::isNull);
         int size = queue.size() * 2;
         int[] tasks = new int[size];

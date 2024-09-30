@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Stream;
 
@@ -30,7 +31,7 @@ public class CustomCropsChunkImpl implements CustomCropsChunk {
     private final CustomCropsWorld<?> world;
     private final ChunkPos chunkPos;
     private final ConcurrentHashMap<Integer, CustomCropsSection> loadedSections;
-    private final PriorityQueue<DelayedTickTask> queue;
+    private final PriorityBlockingQueue<DelayedTickTask> queue;
     private final Set<BlockPos> tickedBlocks;
     private long lastUnloadTime;
     private int loadedSeconds;
@@ -44,7 +45,7 @@ public class CustomCropsChunkImpl implements CustomCropsChunk {
         this.world = world;
         this.chunkPos = chunkPos;
         this.loadedSections = new ConcurrentHashMap<>(16);
-        this.queue = new PriorityQueue<>();
+        this.queue = new PriorityBlockingQueue<>();
         this.lazySeconds = 0;
         this.tickedBlocks = Collections.synchronizedSet(new HashSet<>());
         this.notified = true;
@@ -58,7 +59,7 @@ public class CustomCropsChunkImpl implements CustomCropsChunk {
             int loadedSeconds,
             long lastUnloadTime,
             ConcurrentHashMap<Integer, CustomCropsSection> loadedSections,
-            PriorityQueue<DelayedTickTask> queue,
+            PriorityBlockingQueue<DelayedTickTask> queue,
             HashSet<BlockPos> tickedBlocks
     ) {
         this.world = world;
@@ -313,7 +314,7 @@ public class CustomCropsChunkImpl implements CustomCropsChunk {
     }
 
     @Override
-    public PriorityQueue<DelayedTickTask> tickTaskQueue() {
+    public PriorityBlockingQueue<DelayedTickTask> tickTaskQueue() {
         return queue;
     }
 

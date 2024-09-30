@@ -24,8 +24,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
 import java.util.Optional;
-import java.util.PriorityQueue;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.PriorityBlockingQueue;
 
 /**
  * Interface representing a custom world in the CustomCrops plugin
@@ -72,7 +72,7 @@ public interface CustomCropsWorld<W> {
             int loadedSeconds,
             long lastLoadedTime,
             ConcurrentHashMap<Integer, CustomCropsSection> loadedSections,
-            PriorityQueue<DelayedTickTask> queue,
+            PriorityBlockingQueue<DelayedTickTask> queue,
             HashSet<BlockPos> tickedBlocks
     ) {
         return new CustomCropsChunkImpl(this, pos, loadedSeconds, lastLoadedTime, loadedSections, queue, tickedBlocks);
