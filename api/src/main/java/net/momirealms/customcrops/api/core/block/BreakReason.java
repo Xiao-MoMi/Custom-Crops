@@ -23,4 +23,5 @@ public enum BreakReason {
     EXPLODE,
     ACTION,
     PHYSICS,
+    CUSTOM
 }

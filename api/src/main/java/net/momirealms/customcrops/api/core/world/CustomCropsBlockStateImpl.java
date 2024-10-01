@@ -74,8 +74,7 @@ public class CustomCropsBlockStateImpl implements CustomCropsBlockState {
     @Override
     public String toString() {
         return "CustomCropsBlockState{" + owner.type().asString() +
-                "[" + compoundMap.asString() +
-                "]" + "}";
+                compoundMap.asString() + "}";
     }
 
     @Override

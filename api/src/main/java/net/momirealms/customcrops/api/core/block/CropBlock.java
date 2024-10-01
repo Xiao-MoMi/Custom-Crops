@@ -126,7 +126,7 @@ public class CropBlock extends AbstractCustomCropsBlock {
         }
 
         CropBreakEvent breakEvent = new CropBreakEvent(event.entityBreaker(), event.blockBreaker(), cropConfig, event.brokenID(), event.location(),
-                state, BreakReason.BREAK);
+                state, event.reason());
         if (EventUtils.fireAndCheckCancel(breakEvent)) {
             event.setCancelled(true);
             return;
