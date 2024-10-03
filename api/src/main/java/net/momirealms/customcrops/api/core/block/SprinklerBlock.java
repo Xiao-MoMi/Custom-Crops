@@ -27,6 +27,7 @@ import net.momirealms.customcrops.api.core.*;
 import net.momirealms.customcrops.api.core.mechanic.pot.PotConfig;
 import net.momirealms.customcrops.api.core.mechanic.sprinkler.SprinklerConfig;
 import net.momirealms.customcrops.api.core.world.CustomCropsBlockState;
+import net.momirealms.customcrops.api.core.world.CustomCropsChunk;
 import net.momirealms.customcrops.api.core.world.CustomCropsWorld;
 import net.momirealms.customcrops.api.core.world.Pos3;
 import net.momirealms.customcrops.api.core.wrapper.WrappedBreakEvent;
@@ -315,24 +316,28 @@ public class SprinklerBlock extends AbstractCustomCropsBlock {
             }
 
             for (Pos3 pos3 : pos3s) {
-                Optional<CustomCropsBlockState> optionalState = world.getBlockState(pos3);
-                if (optionalState.isPresent()) {
-                    CustomCropsBlockState anotherState = optionalState.get();
-                    if (anotherState.type() instanceof PotBlock potBlock) {
-                        PotConfig potConfig = potBlock.config(anotherState);
-                        if (!potConfig.disablePluginMechanism()) {
-                            if (config.potWhitelist().contains(potConfig.id())) {
-                                if (potBlock.addWater(anotherState, potConfig, config.wateringAmount())) {
-                                    BukkitCustomCropsPlugin.getInstance().getScheduler().sync().run(
-                                            () -> potBlock.updateBlockAppearance(
-                                                    pos3.toLocation(world.bukkitWorld()),
-                                                    potConfig,
-                                                    true,
-                                                    potBlock.fertilizers(anotherState)
-                                            ),
-                                            bukkitWorld,
-                                            pos3.chunkX(), pos3.chunkZ()
-                                    );
+                Optional<CustomCropsChunk> optionalChunk = world.getLoadedChunk(pos3.toChunkPos());
+                if (optionalChunk.isPresent()) {
+                    CustomCropsChunk chunk = optionalChunk.get();
+                    Optional<CustomCropsBlockState> optionalState = chunk.getBlockState(pos3);
+                    if (optionalState.isPresent()) {
+                        CustomCropsBlockState anotherState = optionalState.get();
+                        if (anotherState.type() instanceof PotBlock potBlock) {
+                            PotConfig potConfig = potBlock.config(anotherState);
+                            if (!potConfig.disablePluginMechanism()) {
+                                if (config.potWhitelist().contains(potConfig.id())) {
+                                    if (potBlock.addWater(anotherState, potConfig, config.wateringAmount())) {
+                                        BukkitCustomCropsPlugin.getInstance().getScheduler().sync().run(
+                                                () -> potBlock.updateBlockAppearance(
+                                                        pos3.toLocation(world.bukkitWorld()),
+                                                        potConfig,
+                                                        true,
+                                                        potBlock.fertilizers(anotherState)
+                                                ),
+                                                bukkitWorld,
+                                                pos3.chunkX(), pos3.chunkZ()
+                                        );
+                                    }
                                 }
                             }
                         }
