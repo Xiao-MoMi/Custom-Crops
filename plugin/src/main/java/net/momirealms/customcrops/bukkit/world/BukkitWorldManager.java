@@ -134,6 +134,12 @@ public class BukkitWorldManager implements WorldManager, Listener {
         }
     }
 
+    @Override
+    public void unload() {
+        HandlerList.unregisterAll(this);
+        this.worldSettings.clear();
+    }
+
     private void loadConfig() {
         YamlDocument config = BukkitConfigManager.getMainConfig();
 
@@ -168,12 +174,6 @@ public class BukkitWorldManager implements WorldManager, Listener {
                 }
             }
         }
-    }
-
-    @Override
-    public void unload() {
-        HandlerList.unregisterAll(this);
-        this.worldSettings.clear();
     }
 
     @Override

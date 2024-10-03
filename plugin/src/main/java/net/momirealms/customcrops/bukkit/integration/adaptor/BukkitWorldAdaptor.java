@@ -196,7 +196,7 @@ public class BukkitWorldAdaptor extends AbstractWorldAdaptor<World> {
         if (parentDir != null && !parentDir.exists()) {
             parentDir.mkdirs();
         }
-        try (BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(file))) {
+        try (FileOutputStream fos = new FileOutputStream(file); BufferedOutputStream bos = new BufferedOutputStream(fos)) {
             bos.write(serializeRegion(region));
             long time2 = System.currentTimeMillis();
             BukkitCustomCropsPlugin.getInstance().debug(() -> "[" + world.worldName() + "] Took " + (time2-time1) + "ms to save region " + region.regionPos());

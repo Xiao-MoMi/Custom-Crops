@@ -41,7 +41,7 @@ public class MMOItemsItemProvider implements ItemProvider {
     @NotNull
     @Override
     public ItemStack buildItem(@NotNull Player player, @NotNull String id) {
-        String[] split = id.split(":");
+        String[] split = id.split(":", 2);
         MMOItem mmoItem = MMOItems.plugin.getMMOItem(Type.get(split[0]), split[1].toUpperCase(Locale.ENGLISH));
         return mmoItem == null ? new ItemStack(Material.AIR) : requireNonNull(mmoItem.newBuilder().build());
     }
@@ -50,6 +50,10 @@ public class MMOItemsItemProvider implements ItemProvider {
     public String itemID(@NotNull ItemStack itemStack) {
         NBTItem nbtItem = NBTItem.get(itemStack);
         if (!nbtItem.hasTag("MMOITEMS_ITEM_ID")) return null;
-        return nbtItem.getString("MMOITEMS_ITEM_ID");
+        if (nbtItem.hasType()) {
+            return nbtItem.getType() + ":" + nbtItem.getString("MMOITEMS_ITEM_ID");
+        } else {
+            return nbtItem.getString("MMOITEMS_ITEM_ID");
+        }
     }
 }

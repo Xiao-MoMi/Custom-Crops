@@ -223,6 +223,7 @@ public class BukkitCustomCropsPluginImpl extends BukkitCustomCropsPlugin {
         this.coolDownManager.reload();
         this.translationManager.reload();
         this.hologramManager.reload();
+        this.itemManager.reload();
 
         this.actionManagers.values().forEach(Reloadable::reload);
         this.requirementManagers.values().forEach(Reloadable::reload);

@@ -328,7 +328,9 @@ public class BukkitItemManager extends AbstractItemManager {
         if (itemStack == null || itemStack.getType() == Material.AIR) return "AIR";
         String id = provider.itemID(itemStack);
         if (id != null) return id;
+        plugin.debug(() -> "Start checking ID from external plugins");
         for (ItemProvider p : itemDetectArray) {
+            plugin.debug(p::identifier);
             id = p.itemID(itemStack);
             if (id != null) return p.identifier() + ":" + id;
         }
@@ -458,6 +460,8 @@ public class BukkitItemManager extends AbstractItemManager {
     }
 
     private void handleInteractEvent(String blockID, WrappedInteractEvent wrapped) {
+        plugin.debug(() -> "Player [" + wrapped.player().getName() + "] interacted [" + blockID + "] with [" + wrapped.itemID() + "] at " + wrapped.location());
+
         CustomCropsItem customCropsItem = Registries.ITEMS.get(wrapped.itemID());
         if (customCropsItem != null) {
             InteractionResult result = customCropsItem.interactAt(wrapped);

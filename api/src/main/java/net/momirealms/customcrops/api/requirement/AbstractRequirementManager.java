@@ -29,10 +29,7 @@ import net.momirealms.customcrops.api.core.block.ScarecrowBlock;
 import net.momirealms.customcrops.api.core.mechanic.crop.CrowAttack;
 import net.momirealms.customcrops.api.core.mechanic.fertilizer.Fertilizer;
 import net.momirealms.customcrops.api.core.mechanic.fertilizer.FertilizerConfig;
-import net.momirealms.customcrops.api.core.world.CustomCropsBlockState;
-import net.momirealms.customcrops.api.core.world.CustomCropsWorld;
-import net.momirealms.customcrops.api.core.world.Pos3;
-import net.momirealms.customcrops.api.core.world.Season;
+import net.momirealms.customcrops.api.core.world.*;
 import net.momirealms.customcrops.api.misc.value.MathValue;
 import net.momirealms.customcrops.api.misc.value.TextValue;
 import net.momirealms.customcrops.api.util.MoonPhase;
@@ -988,10 +985,15 @@ public abstract class AbstractRequirementManager<T> implements RequirementManage
                             for (int i = -range; i <= range; i++) {
                                 for (int j = -range; j <= range; j++) {
                                     for (int k : new int[]{0,-1,1}) {
-                                        Optional<CustomCropsBlockState> optionalState = customCropsWorld.getBlockState(pos3.add(i, k, j));
-                                        if (optionalState.isPresent() && optionalState.get().type() instanceof ScarecrowBlock) {
-                                            if (advanced) ActionManager.trigger(context, actions);
-                                            return false;
+                                        Pos3 tempPos3 = pos3.add(i, k, j);
+                                        Optional<CustomCropsChunk> optionalChunk = customCropsWorld.getLoadedChunk(tempPos3.toChunkPos());
+                                        if (optionalChunk.isPresent()) {
+                                            CustomCropsChunk chunk = optionalChunk.get();
+                                            Optional<CustomCropsBlockState> optionalState = chunk.getBlockState(pos3);
+                                            if (optionalState.isPresent() && optionalState.get().type() instanceof ScarecrowBlock) {
+                                                if (advanced) ActionManager.trigger(context, actions);
+                                                return false;
+                                            }
                                         }
                                     }
                                 }

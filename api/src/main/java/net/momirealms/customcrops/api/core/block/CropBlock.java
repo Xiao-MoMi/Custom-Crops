@@ -50,7 +50,6 @@ import org.bukkit.inventory.ItemStack;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 
 public class CropBlock extends AbstractCustomCropsBlock {
 
@@ -345,25 +344,7 @@ public class CropBlock extends AbstractCustomCropsBlock {
         World bukkitWorld = world.bukkitWorld();
         Location bukkitLocation = location.toLocation(bukkitWorld);
 
-        CompletableFuture<Boolean> future = new CompletableFuture<>();
-        if (ConfigManager.doubleCheck()) {
-            plugin.getScheduler().sync().run(() -> {
-                CropStageConfig nearest = config.stageWithModelByPoint(previousPoint);
-                String blockID = plugin.getItemManager().id(location.toLocation(bukkitWorld), nearest.existenceForm());
-                if (!config.stageIDs().contains(blockID)) {
-                    plugin.getPluginLogger().warn("Crop[" + config.id() + "] is removed at location[" + world.worldName() + "," + location + "] because the id of the block is [" + blockID + "]");
-                    world.removeBlockState(location);
-                    future.complete(false);
-                    return;
-                }
-                future.complete(true);
-            }, bukkitLocation);
-        } else {
-            future.complete(true);
-        }
-
-        future.thenAcceptAsync((run) -> {
-            if (!run) return;
+        Runnable task = () -> {
             Context<CustomCropsBlockState> context = Context.block(state, bukkitLocation).arg(ContextKeys.OFFLINE, offline);
             for (DeathCondition deathCondition : config.deathConditions()) {
                 if (deathCondition.isMet(context)) {
@@ -430,7 +411,22 @@ public class CropBlock extends AbstractCustomCropsBlock {
                     }
                 }
             }, bukkitLocation);
-        }, world.scheduler().async());
+        };
+
+        if (ConfigManager.doubleCheck()) {
+            plugin.getScheduler().sync().run(() -> {
+                CropStageConfig nearest = config.stageWithModelByPoint(previousPoint);
+                String blockID = plugin.getItemManager().id(location.toLocation(bukkitWorld), nearest.existenceForm());
+                if (!config.stageIDs().contains(blockID)) {
+                    plugin.getPluginLogger().warn("Crop[" + config.id() + "] is removed at location[" + world.worldName() + "," + location + "] because the id of the block is [" + blockID + "]");
+                    world.removeBlockState(location);
+                    return;
+                }
+                world.scheduler().async().execute(task);
+            }, bukkitLocation);
+        } else {
+            task.run();
+        }
     }
 
     public int point(CustomCropsBlockState state) {

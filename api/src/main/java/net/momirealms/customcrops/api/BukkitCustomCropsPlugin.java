@@ -60,6 +60,7 @@ public abstract class BukkitCustomCropsPlugin implements CustomCropsPlugin {
     protected WorldManager worldManager;
     protected RegistryAccess registryAccess;
     protected SenderFactory<BukkitCustomCropsPlugin, CommandSender> senderFactory;
+    protected CustomCropsAPI api;
 
     protected final Map<Class<?>, ActionManager<?>> actionManagers = new HashMap<>();
     protected final Map<Class<?>, RequirementManager<?>> requirementManagers = new HashMap<>();
@@ -74,6 +75,7 @@ public abstract class BukkitCustomCropsPlugin implements CustomCropsPlugin {
             throw new IllegalArgumentException("CustomCrops plugin requires custom crops plugin");
         }
         this.bootstrap = bootstrap;
+        this.api = new BukkitCustomCropsAPI(this);
         instance = this;
     }
 
@@ -198,6 +200,15 @@ public abstract class BukkitCustomCropsPlugin implements CustomCropsPlugin {
     @NotNull
     public RegistryAccess getRegistryAccess() {
         return registryAccess;
+    }
+
+    /**
+     * Get the API instance
+     *
+     * @return API
+     */
+    public CustomCropsAPI getAPI() {
+        return api;
     }
 
     /**
