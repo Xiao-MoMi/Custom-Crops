@@ -53,6 +53,14 @@ public interface CustomCropsAPI {
     @Nullable CustomCropsWorld<?> getCustomCropsWorld(World world);
 
     /**
+     * Adds point to a crop at certain location
+     *
+     * @param location location
+     * @param point point to add
+     */
+    void addPointToCrop(Location location, int point);
+
+    /**
      * Places a crop regardless of planting conditions such as pots.
      *
      * @param location location

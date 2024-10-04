@@ -17,6 +17,8 @@
 
 package net.momirealms.customcrops.api;
 
+import net.momirealms.customcrops.api.action.ActionManager;
+import net.momirealms.customcrops.api.context.Context;
 import net.momirealms.customcrops.api.core.BuiltInBlockMechanics;
 import net.momirealms.customcrops.api.core.ExistenceForm;
 import net.momirealms.customcrops.api.core.FurnitureRotation;
@@ -37,6 +39,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
 import java.util.Optional;
 
 import static java.util.Objects.requireNonNull;
@@ -69,6 +72,38 @@ public class BukkitCustomCropsAPI implements CustomCropsAPI {
     @Override
     public @Nullable CustomCropsWorld<?> getCustomCropsWorld(World world) {
         return plugin.getWorldManager().getWorld(world).orElse(null);
+    }
+
+    @Override
+    public void addPointToCrop(Location location, int point) {
+        plugin.getWorldManager().getWorld(location.getWorld()).ifPresent(world -> {
+            Pos3 pos3 = Pos3.from(location);
+            world.getBlockState(pos3).ifPresent(state -> {
+                if (state.type() instanceof CropBlock cropBlock) {
+                    CropConfig cropConfig = cropBlock.config(state);
+                    if (cropConfig == null) return;
+                    int currentPoints = cropBlock.point(state);
+                    int afterPoints = Math.min(currentPoints + point, cropConfig.maxPoints());
+                    if (afterPoints == currentPoints) return;
+                    cropBlock.point(state, afterPoints);
+                    CropStageConfig currentStage = cropConfig.stageWithModelByPoint(currentPoints);
+                    CropStageConfig nextStage = cropConfig.stageWithModelByPoint(afterPoints);
+                    if (currentStage == nextStage) return;
+                    FurnitureRotation rotation = plugin.getItemManager().remove(location, ExistenceForm.ANY);
+                    if (rotation == FurnitureRotation.NONE && cropConfig.rotation()) {
+                        rotation = FurnitureRotation.random();
+                    }
+                    plugin.getItemManager().place(location, nextStage.existenceForm(), Objects.requireNonNull(nextStage.stageID()), rotation);
+                    Context<CustomCropsBlockState> context = Context.block(state, location);
+                    for (int i = currentPoints + 1; i <= afterPoints; i++) {
+                        CropStageConfig stage = cropConfig.stageByPoint(i);
+                        if (stage != null) {
+                            ActionManager.trigger(context, stage.growActions());
+                        }
+                    }
+                }
+            });
+        });
     }
 
     @Override
