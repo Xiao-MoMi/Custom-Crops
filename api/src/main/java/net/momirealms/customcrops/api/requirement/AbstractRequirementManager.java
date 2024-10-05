@@ -989,7 +989,7 @@ public abstract class AbstractRequirementManager<T> implements RequirementManage
                                         Optional<CustomCropsChunk> optionalChunk = customCropsWorld.getLoadedChunk(tempPos3.toChunkPos());
                                         if (optionalChunk.isPresent()) {
                                             CustomCropsChunk chunk = optionalChunk.get();
-                                            Optional<CustomCropsBlockState> optionalState = chunk.getBlockState(pos3);
+                                            Optional<CustomCropsBlockState> optionalState = chunk.getBlockState(tempPos3);
                                             if (optionalState.isPresent() && optionalState.get().type() instanceof ScarecrowBlock) {
                                                 if (advanced) ActionManager.trigger(context, actions);
                                                 return false;
