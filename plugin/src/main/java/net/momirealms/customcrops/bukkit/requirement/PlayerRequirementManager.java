@@ -103,6 +103,47 @@ public class PlayerRequirementManager extends AbstractRequirementManager<Player>
                 return Requirement.empty();
             }
         }, "item-in-hand");
+        registerRequirement((args, actions, runActions) -> {
+            if (args instanceof Section section) {
+                String hand = section.getString("hand","main");
+                int mode;
+                if (hand.equalsIgnoreCase("main")) {
+                    mode = 1;
+                } else if (hand.equalsIgnoreCase("off")) {
+                    mode = 2;
+                } else if (hand.equalsIgnoreCase("other")) {
+                    mode = 3;
+                } else {
+                    mode = 0;
+                    plugin.getPluginLogger().warn("Invalid hand argument: " + hand + " which is expected to be main/off/other");
+                    return Requirement.empty();
+                }
+                int amount = section.getInt("amount", 0);
+                List<String> items = ListUtils.toList(section.get("material"));
+                return context -> {
+                    Player player = context.holder();
+                    if (player == null) return true;
+                    EquipmentSlot slot = context.arg(ContextKeys.SLOT);
+                    ItemStack itemStack;
+                    if (slot == null) {
+                        itemStack = mode == 1 ? player.getInventory().getItemInMainHand() : player.getInventory().getItemInOffHand();
+                    } else {
+                        if (mode == 3) {
+                            itemStack = player.getInventory().getItem(slot == EquipmentSlot.HAND ? EquipmentSlot.OFF_HAND : EquipmentSlot.HAND);
+                        } else {
+                            itemStack = player.getInventory().getItem(slot);
+                        }
+                    }
+                    String id = itemStack.getType().name();
+                    if (items.contains(id) && itemStack.getAmount() >= amount) return true;
+                    if (runActions) ActionManager.trigger(context, actions);
+                    return false;
+                };
+            } else {
+                plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at material-in-hand requirement which is expected be `Section`");
+                return Requirement.empty();
+            }
+        }, "material-in-hand");
     }
 
     private void registerPluginLevelRequirement() {

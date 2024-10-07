@@ -542,7 +542,7 @@ public abstract class AbstractRequirementManager<T> implements RequirementManage
                 plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at == requirement which is expected be `Section`");
                 return Requirement.empty();
             }
-        }, "==");
+        }, "==", "=");
         registerRequirement((args, actions, runActions) -> {
             if (args instanceof Section section) {
                 MathValue<T> v1 = MathValue.auto(section.get("value1"));

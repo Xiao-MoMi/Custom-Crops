@@ -1,4 +1,4 @@
 before_install:
-  - sdk install java 17.0.9-oracle
-  - sdk install java 21.0.2-oracle
-  - sdk use java 17.0.9-oracle
+  - sdk install java 17.0.11-oracle
+  - sdk install java 21.0.3-oracle
+  - sdk use java 17.0.11-oracle
