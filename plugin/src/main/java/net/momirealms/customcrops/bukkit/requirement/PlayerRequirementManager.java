@@ -271,7 +271,7 @@ public class PlayerRequirementManager extends AbstractRequirementManager<Player>
                     case ">" -> {
                         if (level > required) result = true;
                     }
-                    case "==" -> {
+                    case "==", "=" -> {
                         if (level == required) result = true;
                     }
                     case "!=" -> {
