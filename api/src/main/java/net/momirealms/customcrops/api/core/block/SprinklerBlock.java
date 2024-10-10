@@ -266,7 +266,7 @@ public class SprinklerBlock extends AbstractCustomCropsBlock {
         return state;
     }
 
-    private void tickSprinkler(CustomCropsBlockState state, CustomCropsWorld<?> world, Pos3 location, boolean offline) {
+    public void tickSprinkler(CustomCropsBlockState state, CustomCropsWorld<?> world, Pos3 location, boolean offline) {
         SprinklerConfig config = config(state);
         if (config == null) {
             BukkitCustomCropsPlugin.getInstance().getPluginLogger().warn("Sprinkler data is removed at location[" + world.worldName() + "," + location + "] because the sprinkler config[" + id(state) + "] has been removed.");
