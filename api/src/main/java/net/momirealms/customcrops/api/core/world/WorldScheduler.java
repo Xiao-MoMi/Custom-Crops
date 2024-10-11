@@ -72,27 +72,11 @@ public class WorldScheduler {
     }
 
     public void shutdownScheduler() {
-        this.scheduler.shutdown();
-        try {
-            if (!this.scheduler.awaitTermination(1, TimeUnit.MINUTES)) {
-                this.plugin.getPluginLogger().severe("Timed out waiting for the CustomCrops scheduler to terminate");
-                reportRunningTasks(thread -> thread.getName().equals("customcrops-world-scheduler"));
-            }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        this.scheduler.shutdownNow();
     }
 
     public void shutdownExecutor() {
-        this.worker.shutdown();
-        try {
-            if (!this.worker.awaitTermination(1, TimeUnit.MINUTES)) {
-                this.plugin.getPluginLogger().severe("Timed out waiting for the CustomCrops worker thread pool to terminate");
-                reportRunningTasks(thread -> thread.getName().startsWith("customcrops-world-worker-"));
-            }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        this.worker.shutdownNow();
     }
 
     private void reportRunningTasks(Predicate<Thread> predicate) {
