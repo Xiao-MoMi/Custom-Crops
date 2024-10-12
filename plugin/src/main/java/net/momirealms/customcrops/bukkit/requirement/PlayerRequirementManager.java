@@ -64,6 +64,7 @@ public class PlayerRequirementManager extends AbstractRequirementManager<Player>
     private void registerItemInHandRequirement() {
         registerRequirement((args, actions, runActions) -> {
             if (args instanceof Section section) {
+                boolean regex = section.getBoolean("regex", false);
                 String hand = section.getString("hand","main");
                 int mode;
                 if (hand.equalsIgnoreCase("main")) {
@@ -94,7 +95,15 @@ public class PlayerRequirementManager extends AbstractRequirementManager<Player>
                         }
                     }
                     String id = plugin.getItemManager().id(itemStack);
-                    if (items.contains(id) && itemStack.getAmount() >= amount) return true;
+                    if (!regex) {
+                        if (items.contains(id) && itemStack.getAmount() >= amount) return true;
+                    } else {
+                        for (String itemRegex : items) {
+                            if (id.matches(itemRegex) && itemStack.getAmount() >= amount) {
+                                return true;
+                            }
+                        }
+                    }
                     if (runActions) ActionManager.trigger(context, actions);
                     return false;
                 };
@@ -105,6 +114,7 @@ public class PlayerRequirementManager extends AbstractRequirementManager<Player>
         }, "item-in-hand");
         registerRequirement((args, actions, runActions) -> {
             if (args instanceof Section section) {
+                boolean regex = section.getBoolean("regex", false);
                 String hand = section.getString("hand","main");
                 int mode;
                 if (hand.equalsIgnoreCase("main")) {
@@ -135,7 +145,15 @@ public class PlayerRequirementManager extends AbstractRequirementManager<Player>
                         }
                     }
                     String id = itemStack.getType().name();
-                    if (items.contains(id) && itemStack.getAmount() >= amount) return true;
+                    if (!regex) {
+                        if (items.contains(id) && itemStack.getAmount() >= amount) return true;
+                    } else {
+                        for (String itemRegex : items) {
+                            if (id.matches(itemRegex) && itemStack.getAmount() >= amount) {
+                                return true;
+                            }
+                        }
+                    }
                     if (runActions) ActionManager.trigger(context, actions);
                     return false;
                 };
