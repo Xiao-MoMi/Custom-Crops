@@ -23,6 +23,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.translation.Translator;
 import net.momirealms.customcrops.common.helper.AdventureHelper;
 import net.momirealms.customcrops.common.plugin.CustomCropsPlugin;
+import net.momirealms.customcrops.common.plugin.CustomCropsProperties;
 import net.momirealms.customcrops.common.util.Pair;
 import org.jetbrains.annotations.Nullable;
 
@@ -38,7 +39,6 @@ import java.util.stream.Stream;
 public class TranslationManager {
 
     public static final Locale DEFAULT_LOCALE = Locale.ENGLISH;
-    private static final List<String> locales = List.of("en", "zh_cn");
     private static TranslationManager instance;
     private static Locale FORCE_LOCALE = null;
 
@@ -63,7 +63,9 @@ public class TranslationManager {
             MiniMessageTranslator.translator().removeSource(this.registry);
             this.installed.clear();
         }
-        for (String lang : locales) {
+
+        String supportedLocales = CustomCropsProperties.getValue("lang");
+        for (String lang : supportedLocales.split(",")) {
             this.plugin.getConfigManager().saveResource("translations/" + lang + ".yml");
         }
 
