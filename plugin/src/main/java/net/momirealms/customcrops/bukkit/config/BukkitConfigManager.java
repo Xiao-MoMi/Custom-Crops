@@ -258,6 +258,7 @@ public class BukkitConfigManager extends ConfigManager {
         Registries.CROP.clear();
         Registries.SEED_TO_CROP.clear();
         Registries.STAGE_TO_CROP_UNSAFE.clear();
+        Registries.ITEM_TO_DEAD_CROP.clear();
 
         Registries.SPRINKLER.clear();
         Registries.ITEM_TO_SPRINKLER.clear();
