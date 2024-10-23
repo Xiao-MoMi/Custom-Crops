@@ -146,6 +146,7 @@ public class BukkitConfigManager extends ConfigManager {
         worldeditSupport = config.getBoolean("other-settings.worldedit-support", false);
 
         interveneAntiGrief = config.getBoolean("other-settings.intervene-anti-grief", false);
+        asyncWorldSaving = config.getBoolean("other-settings.async-world-saving", true);
 
         offsets.clear();
         Section section = config.getSection("mechanics.hologram-offset-correction");

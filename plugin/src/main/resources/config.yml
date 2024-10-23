@@ -150,3 +150,5 @@ other-settings:
   # If you enable this option, CustomCrops will also protect those unsupported anti-grief plugins
   # Supported plugins can be found on https://github.com/Xiao-MoMi/AntiGriefLib/blob/main/README.md
   intervene-anti-grief: false
+  # Decides whether the process of saving is async
+  async-world-saving: true

@@ -232,7 +232,7 @@ public class BukkitWorldManager implements WorldManager, Listener {
     @EventHandler
     public void onWorldSave(WorldSaveEvent event) {
         final World world = event.getWorld();
-        getWorld(world).ifPresent(world1 -> world1.save(true, false));
+        getWorld(world).ifPresent(world1 -> world1.save(ConfigManager.asyncWorldSaving(), false));
     }
 
     @EventHandler (priority = EventPriority.HIGH)
