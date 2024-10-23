@@ -80,6 +80,7 @@ public class PlayerRequirementManager extends AbstractRequirementManager<Player>
                 }
                 int amount = section.getInt("amount", 0);
                 List<String> items = ListUtils.toList(section.get("item"));
+                boolean any = items.contains("any") || items.contains("*");
                 return context -> {
                     Player player = context.holder();
                     if (player == null) return true;
@@ -96,7 +97,7 @@ public class PlayerRequirementManager extends AbstractRequirementManager<Player>
                     }
                     String id = plugin.getItemManager().id(itemStack);
                     if (!regex) {
-                        if (items.contains(id) && itemStack.getAmount() >= amount) return true;
+                        if ((any || items.contains(id)) && itemStack.getAmount() >= amount) return true;
                     } else {
                         for (String itemRegex : items) {
                             if (id.matches(itemRegex) && itemStack.getAmount() >= amount) {
@@ -130,6 +131,7 @@ public class PlayerRequirementManager extends AbstractRequirementManager<Player>
                 }
                 int amount = section.getInt("amount", 0);
                 List<String> items = ListUtils.toList(section.get("material"));
+                boolean any = items.contains("any") || items.contains("*");
                 return context -> {
                     Player player = context.holder();
                     if (player == null) return true;
@@ -146,7 +148,7 @@ public class PlayerRequirementManager extends AbstractRequirementManager<Player>
                     }
                     String id = itemStack.getType().name();
                     if (!regex) {
-                        if (items.contains(id) && itemStack.getAmount() >= amount) return true;
+                        if ((any || items.contains(id)) && itemStack.getAmount() >= amount) return true;
                     } else {
                         for (String itemRegex : items) {
                             if (id.matches(itemRegex) && itemStack.getAmount() >= amount) {

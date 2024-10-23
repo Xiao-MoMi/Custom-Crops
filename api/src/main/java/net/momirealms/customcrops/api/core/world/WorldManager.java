@@ -66,10 +66,11 @@ public interface WorldManager extends Reloadable {
     /**
      * Unloads the CustomCrops world associated with the specified Bukkit world.
      *
-     * @param world The Bukkit world to unload.
+     * @param world     The Bukkit world to unload.
+     * @param disabling
      * @return True if the world was successfully unloaded, false otherwise.
      */
-    boolean unloadWorld(World world);
+    boolean unloadWorld(World world, boolean disabling);
 
     /**
      * Retrieves a CustomCrops world based on the specified Bukkit world, if loaded.

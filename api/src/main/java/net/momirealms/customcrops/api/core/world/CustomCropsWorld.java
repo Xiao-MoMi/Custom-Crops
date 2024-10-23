@@ -194,9 +194,10 @@ public interface CustomCropsWorld<W> {
     /**
      * Saves the world data to a file.
      *
-     * @param async async or not
+     * @param async     async or not
+     * @param disabling is the server disabled
      */
-    void save(boolean async);
+    void save(boolean async, boolean disabling);
 
     /**
      * Sets whether the ticking task is ongoing.

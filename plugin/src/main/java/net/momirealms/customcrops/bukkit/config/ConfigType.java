@@ -120,7 +120,7 @@ public class ConfigType {
                         .vanillaPots(ListUtils.toList(section.get("vanilla-blocks")))
                         .ignoreRandomTick(section.getBoolean("ignore-random-tick", false))
                         .ignoreScheduledTick(section.getBoolean("ignore-scheduled-tick", false))
-                        .storage(section.getInt("storage", 5))
+                        .storage(section.getInt("storage", section.getInt("max-water-storage", 5)))
                         .isRainDropAccepted(section.getBoolean("absorb-rainwater", false))
                         .isNearbyWaterAccepted(section.getBoolean("absorb-nearby-water", false))
                         .maxFertilizers(section.getInt("max-fertilizers", 1))

@@ -129,7 +129,7 @@ public class BukkitWorldManager implements WorldManager, Listener {
             if (isMechanicEnabled(world)) {
                 loadWorld(world);
             } else {
-                unloadWorld(world);
+                unloadWorld(world, false);
             }
         }
     }
@@ -180,7 +180,7 @@ public class BukkitWorldManager implements WorldManager, Listener {
     public void disable() {
         this.unload();
         for (World world : Bukkit.getWorlds()) {
-            unloadWorld(world);
+            unloadWorld(world, true);
         }
     }
 
@@ -217,13 +217,13 @@ public class BukkitWorldManager implements WorldManager, Listener {
     }
 
     @Override
-    public boolean unloadWorld(World world) {
+    public boolean unloadWorld(World world, boolean disabling) {
         CustomCropsWorld<?> removedWorld = worlds.remove(world.getName());
         if (removedWorld == null) {
             return false;
         }
         removedWorld.setTicking(false);
-        removedWorld.save(false);
+        removedWorld.save(false, disabling);
         removedWorld.scheduler().shutdownScheduler();
         removedWorld.scheduler().shutdownExecutor();
         return true;
@@ -232,7 +232,7 @@ public class BukkitWorldManager implements WorldManager, Listener {
     @EventHandler
     public void onWorldSave(WorldSaveEvent event) {
         final World world = event.getWorld();
-        getWorld(world).ifPresent(world1 -> world1.save(true));
+        getWorld(world).ifPresent(world1 -> world1.save(true, false));
     }
 
     @EventHandler (priority = EventPriority.HIGH)
@@ -246,7 +246,7 @@ public class BukkitWorldManager implements WorldManager, Listener {
     public void onWorldUnload(WorldUnloadEvent event) {
         World world = event.getWorld();
         if (!isMechanicEnabled(world)) return;
-        unloadWorld(world);
+        unloadWorld(world, false);
     }
 
     @EventHandler

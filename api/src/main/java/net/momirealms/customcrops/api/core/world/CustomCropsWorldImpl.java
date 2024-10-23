@@ -186,11 +186,15 @@ public class CustomCropsWorldImpl<W> implements CustomCropsWorld<W> {
     }
 
     @Override
-    public void save(boolean async) {
-        if (async) {
+    public void save(boolean async, boolean disabling) {
+        if (async && !disabling) {
             this.scheduler.async().execute(this::save);
         } else {
-            BukkitCustomCropsPlugin.getInstance().getScheduler().sync().run(this::save, null);
+            if (disabling) {
+                save();
+            } else {
+                BukkitCustomCropsPlugin.getInstance().getScheduler().sync().run(this::save, null);
+            }
         }
     }
 

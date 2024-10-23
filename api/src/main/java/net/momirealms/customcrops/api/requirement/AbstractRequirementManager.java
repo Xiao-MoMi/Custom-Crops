@@ -129,7 +129,7 @@ public abstract class AbstractRequirementManager<T> implements RequirementManage
                     if (inner != null) {
                         requirements.add(parseRequirement(inner, runActions));
                     } else {
-                        plugin.getPluginLogger().warn("Section " + typeOrName + " is misconfigured");
+                        plugin.getPluginLogger().warn("Section " + section.getRouteAsString() + "." + typeOrName + " is misconfigured");
                     }
                 }
             }
