@@ -416,9 +416,15 @@ public class CropBlock extends AbstractCustomCropsBlock {
         if (ConfigManager.doubleCheck()) {
             plugin.getScheduler().sync().run(() -> {
                 CropStageConfig nearest = config.stageWithModelByPoint(previousPoint);
-                String blockID = plugin.getItemManager().id(location.toLocation(bukkitWorld), nearest.existenceForm());
-                if (!config.stageIDs().contains(blockID)) {
-                    plugin.getPluginLogger().warn("Crop[" + config.id() + "] is removed at location[" + world.worldName() + "," + location + "] because the id of the block is [" + blockID + "]");
+                if (nearest != null) {
+                    String blockID = plugin.getItemManager().id(location.toLocation(bukkitWorld), nearest.existenceForm());
+                    if (!config.stageIDs().contains(blockID)) {
+                        plugin.getPluginLogger().warn("Crop[" + config.id() + "] is removed at location[" + world.worldName() + "," + location + "] because the id of the block is [" + blockID + "]");
+                        world.removeBlockState(location);
+                        return;
+                    }
+                } else {
+                    plugin.getPluginLogger().warn("Crop[" + config.id() + "] is removed at location[" + world.worldName() + "," + location + "] because no model found for point[" + previousPoint + "]");
                     world.removeBlockState(location);
                     return;
                 }
