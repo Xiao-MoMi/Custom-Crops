@@ -60,6 +60,8 @@ dependencies {
     compileOnly("com.willfp:EcoJobs:3.56.1")
     compileOnly("com.willfp:EcoSkills:3.46.1")
     compileOnly("com.willfp:libreforge:4.58.1")
+    // wg we
+    compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.9")
 }
 
 java {

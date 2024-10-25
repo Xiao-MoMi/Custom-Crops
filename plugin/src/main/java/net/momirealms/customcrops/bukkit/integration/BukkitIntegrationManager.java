@@ -28,6 +28,7 @@ import net.momirealms.customcrops.bukkit.integration.papi.CustomCropsPapi;
 import net.momirealms.customcrops.bukkit.integration.quest.BattlePassQuest;
 import net.momirealms.customcrops.bukkit.integration.quest.BetonQuestQuest;
 import net.momirealms.customcrops.bukkit.integration.quest.ClueScrollsQuest;
+import net.momirealms.customcrops.bukkit.integration.region.WorldGuardRegion;
 import net.momirealms.customcrops.bukkit.integration.season.AdvancedSeasonsProvider;
 import net.momirealms.customcrops.bukkit.integration.season.RealisticSeasonsProvider;
 import net.momirealms.customcrops.bukkit.item.BukkitItemManager;
@@ -127,6 +128,9 @@ public class BukkitIntegrationManager implements IntegrationManager {
         }
         if (isHooked("BetonQuest", "2")) {
             BetonQuestQuest.register();
+        }
+        if (isHooked("WorldGuard", "7")) {
+            WorldGuardRegion.register();
         }
     }
 
