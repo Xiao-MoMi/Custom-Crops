@@ -154,7 +154,7 @@ public class MiniMessageTranslationRegistryImpl implements Examinable, MiniMessa
     }
 
     public static class ArgumentTag implements TagResolver {
-        private static final String NAME = "argument";
+        private static final String NAME_0 = "argument";
         private static final String NAME_1 = "arg";
 
         private final List<? extends ComponentLike> argumentComponents;
@@ -180,7 +180,7 @@ public class MiniMessageTranslationRegistryImpl implements Examinable, MiniMessa
 
         @Override
         public boolean has(final @NotNull String name) {
-            return name.equals(NAME) || name.equals(NAME_1);
+            return name.equals(NAME_0) || name.equals(NAME_1);
         }
     }
 
