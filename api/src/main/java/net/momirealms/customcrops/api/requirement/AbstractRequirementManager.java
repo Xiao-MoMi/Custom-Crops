@@ -85,6 +85,7 @@ public abstract class AbstractRequirementManager<T> implements RequirementManage
         this.registerPotRequirement();
         this.registerCrowAttackRequirement();
         this.registerWaterRequirement();
+        this.registerImpossibleRequirement();
     }
 
     @Override
@@ -197,6 +198,10 @@ public abstract class AbstractRequirementManager<T> implements RequirementManage
                  NoSuchMethodException e) {
             plugin.getPluginLogger().warn("Error occurred when creating expansion instance.", e);
         }
+    }
+
+    protected void registerImpossibleRequirement() {
+        registerRequirement((args, actions, advanced) -> context -> false, "impossible");
     }
 
     protected void registerEnvironmentRequirement() {
