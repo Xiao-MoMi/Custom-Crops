@@ -165,6 +165,10 @@ public class MiniMessageTranslationRegistryImpl implements Examinable, MiniMessa
 
         @Override
         public @Nullable Tag resolve(final @NotNull String name, final @NotNull ArgumentQueue arguments, final @NotNull Context ctx) throws ParsingException {
+            if (!has(name)) {
+                return null;
+            }
+
             final int index = arguments.popOr("No argument number provided").asInt().orElseThrow(() -> ctx.newException("Invalid argument number", arguments));
 
             if (index < 0 || index >= argumentComponents.size()) {
