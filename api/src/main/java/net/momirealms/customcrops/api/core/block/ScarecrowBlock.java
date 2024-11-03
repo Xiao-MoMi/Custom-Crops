@@ -81,6 +81,7 @@ public class ScarecrowBlock extends AbstractCustomCropsBlock {
         CustomCropsBlockState state = getOrFixState(world, pos3);
         ScarecrowBreakEvent breakEvent = new ScarecrowBreakEvent(event.entityBreaker(), event.blockBreaker(), event.location(), event.brokenID(), state, event.reason());
         if (EventUtils.fireAndCheckCancel(breakEvent)) {
+            event.setCancelled(true);
             return;
         }
         world.removeBlockState(pos3);

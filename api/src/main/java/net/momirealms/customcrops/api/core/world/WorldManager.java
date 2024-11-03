@@ -72,6 +72,8 @@ public interface WorldManager extends Reloadable {
      */
     boolean unloadWorld(World world, boolean disabling);
 
+    boolean isMechanicEnabled(World world);
+
     /**
      * Retrieves a CustomCrops world based on the specified Bukkit world, if loaded.
      *

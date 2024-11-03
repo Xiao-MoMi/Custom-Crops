@@ -56,12 +56,16 @@ public class BukkitWorldManager implements WorldManager, Listener {
         this.plugin = plugin;
         try {
             Class.forName("com.infernalsuite.aswm.api.SlimePlugin");
-            adaptors.add(new SlimeWorldAdaptorR1(1));
+            SlimeWorldAdaptorR1 adaptor = new SlimeWorldAdaptorR1(1);
+            adaptors.add(adaptor);
+            Bukkit.getPluginManager().registerEvents(adaptor, plugin.getBootstrap());
             plugin.getPluginLogger().info("SlimeWorldManager hooked!");
         } catch (ClassNotFoundException ignored) {
         }
         if (Bukkit.getPluginManager().isPluginEnabled("SlimeWorldPlugin")) {
-            adaptors.add(new SlimeWorldAdaptorR1(2));
+            SlimeWorldAdaptorR1 adaptor = new SlimeWorldAdaptorR1(2);
+            adaptors.add(adaptor);
+            Bukkit.getPluginManager().registerEvents(adaptor, plugin.getBootstrap());
             plugin.getPluginLogger().info("AdvancedSlimePaper hooked!");
         }
         this.adaptors.add(new BukkitWorldAdaptor());
@@ -140,6 +144,19 @@ public class BukkitWorldManager implements WorldManager, Listener {
         this.worldSettings.clear();
     }
 
+    @Override
+    public void disable() {
+        this.unload();
+        for (World world : Bukkit.getWorlds()) {
+            unloadWorld(world, true);
+        }
+        for (WorldAdaptor<?> adaptor : this.adaptors) {
+            if (adaptor instanceof Listener listener) {
+                HandlerList.unregisterAll(listener);
+            }
+        }
+    }
+
     private void loadConfig() {
         YamlDocument config = BukkitConfigManager.getMainConfig();
 
@@ -173,14 +190,6 @@ public class BukkitWorldManager implements WorldManager, Listener {
                     this.worldSettings.put(entry.getKey(), sectionToWorldSetting(inner));
                 }
             }
-        }
-    }
-
-    @Override
-    public void disable() {
-        this.unload();
-        for (World world : Bukkit.getWorlds()) {
-            unloadWorld(world, true);
         }
     }
 
@@ -282,7 +291,9 @@ public class BukkitWorldManager implements WorldManager, Listener {
         });
     }
 
+    @Override
     public boolean isMechanicEnabled(World world) {
+        if (world == null) return false;
         if (matchRule == MatchRule.WHITELIST) {
             return worldList.contains(world.getName());
         } else if (matchRule == MatchRule.BLACKLIST) {

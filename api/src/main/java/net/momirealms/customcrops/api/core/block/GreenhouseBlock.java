@@ -81,6 +81,7 @@ public class GreenhouseBlock extends AbstractCustomCropsBlock {
         CustomCropsBlockState state = getOrFixState(world, pos3);
         GreenhouseGlassBreakEvent breakEvent = new GreenhouseGlassBreakEvent(event.entityBreaker(), event.blockBreaker(), event.location(), event.brokenID(), state, event.reason());
         if (EventUtils.fireAndCheckCancel(breakEvent)) {
+            breakEvent.setCancelled(true);
             return;
         }
         world.removeBlockState(pos3);
