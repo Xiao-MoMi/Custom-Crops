@@ -12,7 +12,7 @@
 
 CustomCrops is a Paper plugin crafted to deliver an exceptional planting experience for Minecraft servers, with a strong emphasis on customization and performance. It employs Zstd compression for data serialization, ensuring high efficiency comparable to Minecraft's own serialization techniques. The plugin optimizes server performance by running its tick system across multiple threads, reverting to the main thread only when required. Additionally, CustomCrops offers a comprehensive API that enables developers to create custom block mechanism with specific interaction and tick behaviors, such as a fish trap block that periodically provides players with fish.
 
-## How to build
+## How to Build
 
 #### Command Line
 Install JDK 17 & 21. \
@@ -23,7 +23,13 @@ Execute ".\gradlew build" and get the artifact under /target folder
 Import the project and execute gradle build action. \
 Get the artifact under /target folder
 
-## Support the developer
+## How to Contribute
+
+#### Translations
+Clone this project and create a new language file in the /common/src/main/resources/translations directory. \
+Once your changes are ready, open a pull request for review. We appreciate your works!
+
+## Support the Developer
 
 Polymart: https://polymart.org/resource/customcrops.2625 \
 Afdian: https://afdian.com/@xiaomomi
@@ -74,5 +80,5 @@ dependencies {
     compileOnly("com.github.Xiao-MoMi:Custom-Crops:{LATEST}")
 }
 ```
-#### Fun facts
+#### Fun Facts
 I misspelled mechanism as mechanic. I should have realized this earlier XD
