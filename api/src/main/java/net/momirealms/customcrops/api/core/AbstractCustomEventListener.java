@@ -232,7 +232,7 @@ public abstract class AbstractCustomEventListener implements Listener {
             Optional<CustomCropsWorld<?>> optionalWorld = BukkitCustomCropsPlugin.getInstance().getWorldManager().getWorld(block.getWorld());
             if (optionalWorld.isPresent()) {
                 CustomCropsWorld<?> world = optionalWorld.get();
-                Optional<CustomCropsBlockState> optionalState = world.getBlockState(above);
+                Optional<CustomCropsBlockState> optionalState = world.getLoadedBlockState(above);
                 if (optionalState.isPresent() && optionalState.get().type() instanceof CropBlock) {
                     event.setCancelled(true);
                     return;
@@ -281,7 +281,8 @@ public abstract class AbstractCustomEventListener implements Listener {
         }
         CustomCropsWorld<?> w = world.get();
         for (Block block : event.getBlocks()) {
-            if (w.getBlockState(Pos3.from(block.getLocation())).isPresent()) {
+            Pos3 pos3 = Pos3.from(block.getLocation());
+            if (w.getLoadedBlockState(pos3).isPresent()) {
                 event.setCancelled(true);
                 return;
             }
@@ -296,7 +297,8 @@ public abstract class AbstractCustomEventListener implements Listener {
         }
         CustomCropsWorld<?> w = world.get();
         for (Block block : event.getBlocks()) {
-            if (w.getBlockState(Pos3.from(block.getLocation())).isPresent()) {
+            Pos3 pos3 = Pos3.from(block.getLocation());
+            if (w.getLoadedBlockState(pos3).isPresent()) {
                 event.setCancelled(true);
                 return;
             }
@@ -362,7 +364,7 @@ public abstract class AbstractCustomEventListener implements Listener {
         Block relative = block.getRelative(directional.getFacing());
         Location location = relative.getLocation();
         Pos3 pos3 = Pos3.from(location);
-        world.getBlockState(pos3).ifPresent(state -> {
+        world.getLoadedBlockState(pos3).ifPresent(state -> {
             if (state.type() instanceof CropBlock cropBlock) {
                 ItemStack itemStack = event.getItem();
                 String itemID = itemManager.id(itemStack);

@@ -147,6 +147,18 @@ public class CustomCropsWorldImpl<W> implements CustomCropsWorld<W> {
         return loadedRegions.values().toArray(new CustomCropsRegion[0]);
     }
 
+    @Override
+    public @NotNull Optional<CustomCropsBlockState> getLoadedBlockState(Pos3 location) {
+        ChunkPos pos = location.toChunkPos();
+        Optional<CustomCropsChunk> chunk = getLoadedChunk(pos);
+        if (chunk.isEmpty()) {
+            return Optional.empty();
+        } else {
+            CustomCropsChunk customChunk = chunk.get();
+            return customChunk.getBlockState(location);
+        }
+    }
+
     @NotNull
     @Override
     public Optional<CustomCropsBlockState> getBlockState(Pos3 location) {

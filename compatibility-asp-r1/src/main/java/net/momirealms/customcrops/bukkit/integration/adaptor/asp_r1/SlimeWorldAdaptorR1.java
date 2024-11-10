@@ -28,7 +28,6 @@ import net.momirealms.customcrops.api.core.world.adaptor.AbstractWorldAdaptor;
 import net.momirealms.customcrops.api.util.StringUtils;
 import net.momirealms.customcrops.api.util.TagUtils;
 import net.momirealms.customcrops.common.helper.GsonHelper;
-import net.momirealms.customcrops.common.plugin.CustomCropsPlugin;
 import net.momirealms.customcrops.common.util.Key;
 import org.bukkit.Bukkit;
 import org.bukkit.World;

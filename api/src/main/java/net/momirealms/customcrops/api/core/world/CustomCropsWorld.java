@@ -164,6 +164,15 @@ public interface CustomCropsWorld<W> {
     CustomCropsRegion[] loadedRegions();
 
     /**
+     * Gets the block state in a loaded chunk
+     *
+     * @param location location
+     * @return the optional block state
+     */
+    @NotNull
+    Optional<CustomCropsBlockState> getLoadedBlockState(Pos3 location);
+
+    /**
      * Gets the block state at a specific location.
      *
      * @param location The location of the block state.
