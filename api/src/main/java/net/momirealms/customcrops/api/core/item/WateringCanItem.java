@@ -331,6 +331,30 @@ public class WateringCanItem extends AbstractCustomCropsItem {
             return InteractionResult.COMPLETE;
         }
 
+        // check the clicked block/furniture
+        for (FillMethod method : wateringCanConfig.fillMethods()) {
+            if (method.getID().equals(targetBlockID)) {
+                if (method.checkRequirements(context)) {
+                    if (waterInCan >= wateringCanConfig.storage()) {
+                        ActionManager.trigger(context, wateringCanConfig.fullActions());
+                        return InteractionResult.COMPLETE;
+                    }
+                    WateringCanFillEvent fillEvent = new WateringCanFillEvent(player, event.hand(), itemInHand, event.location(), wateringCanConfig, method);
+                    if (EventUtils.fireAndCheckCancel(fillEvent))
+                        return InteractionResult.COMPLETE;
+                    int current = Math.min(waterInCan + method.amountOfWater(), wateringCanConfig.storage());
+                    context.arg(ContextKeys.WATER_BAR, Optional.ofNullable(wateringCanConfig.waterBar()).map(bar -> bar.getWaterBar(current, wateringCanConfig.storage())).orElse(""));
+                    context.arg(ContextKeys.STORAGE, wateringCanConfig.storage());
+                    context.arg(ContextKeys.CURRENT_WATER, current);
+                    setCurrentWater(itemInHand, wateringCanConfig, waterInCan + method.amountOfWater(), context);
+                    method.triggerActions(context);
+                    ActionManager.trigger(context, wateringCanConfig.addWaterActions());
+                }
+                return InteractionResult.COMPLETE;
+            }
+        }
+
+        // the clicked block might be a block underwater, so we do raytracing to get the water (nearest fluid)
         RayTraceResult result = player.getWorld().rayTraceBlocks(player.getEyeLocation(), player.getLocation().getDirection(), 5, FluidCollisionMode.ALWAYS);
         if (result == null)
             return InteractionResult.COMPLETE;
@@ -366,7 +390,8 @@ public class WateringCanItem extends AbstractCustomCropsItem {
             }
         }
 
-        // give it another try
+        // give it the last try, this time we don't use blockstate
+        // instead we use Bukkit Material Enum Names
         if (targetBlock.getBlockData() instanceof Waterlogged waterlogged && waterlogged.isWaterlogged()) {
             blockID = "WATER";
         } else {
