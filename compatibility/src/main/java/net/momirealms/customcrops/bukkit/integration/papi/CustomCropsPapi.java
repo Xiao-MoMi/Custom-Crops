@@ -41,6 +41,11 @@ public class CustomCropsPapi extends PlaceholderExpansion {
         super.unregister();
     }
 
+    @Override
+    public boolean persist() {
+        return true;
+    }
+
     @NotNull
     @Override
     public String getIdentifier() {
