@@ -39,7 +39,7 @@ public class ActionActionbarNearby<T> extends AbstractBuiltInAction<T> {
     public ActionActionbarNearby(
             BukkitCustomCropsPlugin plugin,
             Section section,
-            double chance
+            MathValue<T> chance
     ) {
         super(plugin, chance);
         this.actionbar = section.getString("actionbar");

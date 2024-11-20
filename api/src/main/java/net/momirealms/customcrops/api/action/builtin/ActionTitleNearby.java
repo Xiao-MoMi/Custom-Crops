@@ -22,6 +22,7 @@ import net.kyori.adventure.audience.Audience;
 import net.momirealms.customcrops.api.BukkitCustomCropsPlugin;
 import net.momirealms.customcrops.api.context.Context;
 import net.momirealms.customcrops.api.context.ContextKeys;
+import net.momirealms.customcrops.api.misc.value.MathValue;
 import net.momirealms.customcrops.api.misc.value.TextValue;
 import net.momirealms.customcrops.api.util.LocationUtils;
 import net.momirealms.customcrops.common.helper.AdventureHelper;
@@ -42,7 +43,7 @@ public class ActionTitleNearby<T> extends AbstractBuiltInAction<T> {
     public ActionTitleNearby(
             BukkitCustomCropsPlugin plugin,
             Section section,
-            double chance
+            MathValue<T> chance
     ) {
         super(plugin, chance);
         this.title = TextValue.auto(section.getString("title"));

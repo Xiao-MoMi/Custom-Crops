@@ -17,6 +17,8 @@
 
 package net.momirealms.customcrops.api.action;
 
+import net.momirealms.customcrops.api.misc.value.MathValue;
+
 /**
  * Interface representing a factory for creating actions.
  *
@@ -30,5 +32,5 @@ public interface ActionFactory<T> {
      * @param args the args containing the arguments needed to build the action
      * @return the constructed action
      */
-    Action<T> process(Object args, double chance);
+    Action<T> process(Object args, MathValue<T> chance);
 }

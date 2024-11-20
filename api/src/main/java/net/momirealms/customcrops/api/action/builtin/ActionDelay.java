@@ -23,6 +23,7 @@ import net.momirealms.customcrops.api.action.AbstractActionManager;
 import net.momirealms.customcrops.api.action.Action;
 import net.momirealms.customcrops.api.context.Context;
 import net.momirealms.customcrops.api.context.ContextKeys;
+import net.momirealms.customcrops.api.misc.value.MathValue;
 import org.bukkit.Location;
 
 import java.util.ArrayList;
@@ -40,7 +41,7 @@ public class ActionDelay<T> extends AbstractBuiltInAction<T> {
             BukkitCustomCropsPlugin plugin,
             AbstractActionManager<T> manager,
             Object args,
-            double chance
+            MathValue<T> chance
     ) {
         super(plugin, chance);
         this.actions = new ArrayList<>();

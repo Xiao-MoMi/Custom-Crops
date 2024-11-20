@@ -21,6 +21,7 @@ import net.momirealms.customcrops.api.BukkitCustomCropsPlugin;
 import net.momirealms.customcrops.api.context.Context;
 import net.momirealms.customcrops.api.context.ContextKeys;
 import net.momirealms.customcrops.api.misc.placeholder.BukkitPlaceholderManager;
+import net.momirealms.customcrops.api.misc.value.MathValue;
 import net.momirealms.customcrops.common.util.ListUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -35,7 +36,7 @@ public class ActionCommand<T> extends AbstractBuiltInAction<T> {
     public ActionCommand(
             BukkitCustomCropsPlugin plugin,
             Object args,
-            double chance
+            MathValue<T> chance
     ) {
         super(plugin, chance);
         this.commands = ListUtils.toList(args);

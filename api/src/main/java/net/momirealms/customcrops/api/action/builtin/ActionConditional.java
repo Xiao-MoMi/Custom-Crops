@@ -22,6 +22,7 @@ import net.momirealms.customcrops.api.BukkitCustomCropsPlugin;
 import net.momirealms.customcrops.api.action.AbstractActionManager;
 import net.momirealms.customcrops.api.action.Action;
 import net.momirealms.customcrops.api.context.Context;
+import net.momirealms.customcrops.api.misc.value.MathValue;
 import net.momirealms.customcrops.api.requirement.Requirement;
 
 public class ActionConditional<T> extends AbstractBuiltInAction<T> {
@@ -34,7 +35,7 @@ public class ActionConditional<T> extends AbstractBuiltInAction<T> {
             AbstractActionManager<T> manager,
             Class<T> tClass,
             Section section,
-            double chance
+            MathValue<T> chance
     ) {
         super(plugin, chance);
         this.actions = manager.parseActions(section.getSection("actions"));

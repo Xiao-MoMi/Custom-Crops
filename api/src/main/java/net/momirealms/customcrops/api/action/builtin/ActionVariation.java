@@ -33,6 +33,7 @@ import net.momirealms.customcrops.api.core.mechanic.fertilizer.FertilizerConfig;
 import net.momirealms.customcrops.api.core.world.CustomCropsBlockState;
 import net.momirealms.customcrops.api.core.world.CustomCropsWorld;
 import net.momirealms.customcrops.api.core.world.Pos3;
+import net.momirealms.customcrops.api.misc.value.MathValue;
 import org.bukkit.Location;
 
 import java.util.*;
@@ -47,7 +48,7 @@ public class ActionVariation<T> extends AbstractBuiltInAction<T> {
     public ActionVariation(
             BukkitCustomCropsPlugin plugin,
             Section section,
-            double chance
+            MathValue<T> chance
     ) {
         super(plugin, chance);
         ignore = section.getBoolean("ignore-fertilizer", false);

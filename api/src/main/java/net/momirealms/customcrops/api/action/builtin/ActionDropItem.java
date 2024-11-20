@@ -55,7 +55,7 @@ public class ActionDropItem<T> extends AbstractBuiltInAction<T> {
     public ActionDropItem(
             BukkitCustomCropsPlugin plugin,
             Section section,
-            double chance
+            MathValue<T> chance
     ) {
         super(plugin, chance);
         this.ignoreFertilizer = section.getBoolean("ignore-fertilizer", true);
@@ -75,6 +75,7 @@ public class ActionDropItem<T> extends AbstractBuiltInAction<T> {
             player = null;
         }
         int random = RandomUtils.generateRandomInt((int) min.evaluate(context), (int) max.evaluate(context));
+        if (random <= 0) return;
         ItemStack itemStack = generateItem(location, player, random);
         plugin.getScheduler().sync().run(() -> {
             DropItemActionEvent actionEvent = new DropItemActionEvent(context, location, item, itemStack);

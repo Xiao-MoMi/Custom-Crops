@@ -34,7 +34,7 @@ public class ActionHologram<T> extends AbstractBuiltInAction<T> {
     public ActionHologram(
             BukkitCustomCropsPlugin plugin,
             Section section,
-            double chance
+            MathValue<T> chance
     ) {
         super(plugin, chance);
         this.text = TextValue.auto(section.getString("text", ""));

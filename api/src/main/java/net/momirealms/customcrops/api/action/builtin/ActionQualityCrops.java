@@ -56,7 +56,7 @@ public class ActionQualityCrops<T> extends AbstractBuiltInAction<T> {
     public ActionQualityCrops(
             BukkitCustomCropsPlugin plugin,
             Section section,
-            double chance
+            MathValue<T> chance
     ) {
         super(plugin, chance);
         this.min = MathValue.auto(section.get("min"));
@@ -76,6 +76,7 @@ public class ActionQualityCrops<T> extends AbstractBuiltInAction<T> {
     protected void triggerAction(Context<T> context) {
         Location location = requireNonNull(context.arg(ContextKeys.LOCATION));
         int random = RandomUtils.generateRandomInt((int) min.evaluate(context), (int) max.evaluate(context));
+        if (random <= 0) return;
         Player player;
         if (context.holder() instanceof Player p) {
             player = p;

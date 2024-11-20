@@ -21,6 +21,7 @@ import net.kyori.adventure.audience.Audience;
 import net.momirealms.customcrops.api.BukkitCustomCropsPlugin;
 import net.momirealms.customcrops.api.context.Context;
 import net.momirealms.customcrops.api.context.ContextKeys;
+import net.momirealms.customcrops.api.misc.value.MathValue;
 import net.momirealms.customcrops.common.helper.AdventureHelper;
 import net.momirealms.customcrops.common.util.ListUtils;
 import org.bukkit.Bukkit;
@@ -36,7 +37,7 @@ public class ActionBroadcast<T> extends AbstractBuiltInAction<T> {
     public ActionBroadcast(
             BukkitCustomCropsPlugin plugin,
             Object args,
-            double chance
+            MathValue<T> chance
     ) {
         super(plugin, chance);
         this.messages = ListUtils.toList(args);

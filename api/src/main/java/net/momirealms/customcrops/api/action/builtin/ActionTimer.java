@@ -23,6 +23,7 @@ import net.momirealms.customcrops.api.action.AbstractActionManager;
 import net.momirealms.customcrops.api.action.Action;
 import net.momirealms.customcrops.api.context.Context;
 import net.momirealms.customcrops.api.context.ContextKeys;
+import net.momirealms.customcrops.api.misc.value.MathValue;
 import net.momirealms.customcrops.common.plugin.scheduler.SchedulerTask;
 import org.bukkit.Location;
 
@@ -41,7 +42,7 @@ public class ActionTimer<T> extends AbstractBuiltInAction<T> {
             BukkitCustomCropsPlugin plugin,
             AbstractActionManager<T> manager,
             Object args,
-            double chance
+            MathValue<T> chance
     ) {
         super(plugin, chance);
         this.actions = new ArrayList<>();

@@ -42,7 +42,7 @@ public class ActionCommandNearby<T> extends AbstractBuiltInAction<T> {
     public ActionCommandNearby(
             BukkitCustomCropsPlugin plugin,
             Section section,
-            double chance
+            MathValue<T> chance
     ) {
         super(plugin, chance);
         this.cmd = ListUtils.toList(section.get("command"));

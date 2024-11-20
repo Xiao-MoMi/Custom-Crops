@@ -35,6 +35,7 @@ import net.momirealms.customcrops.api.core.world.CustomCropsBlockState;
 import net.momirealms.customcrops.api.core.world.CustomCropsWorld;
 import net.momirealms.customcrops.api.core.world.Pos3;
 import net.momirealms.customcrops.api.event.CropPlantEvent;
+import net.momirealms.customcrops.api.misc.value.MathValue;
 import net.momirealms.customcrops.api.util.EventUtils;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -54,7 +55,7 @@ public class ActionPlant<T> extends AbstractBuiltInAction<T> {
     public ActionPlant(
             BukkitCustomCropsPlugin plugin,
             Section section,
-            double chance
+            MathValue<T> chance
     ) {
         super(plugin, chance);
         this.point = section.getInt("point", 0);

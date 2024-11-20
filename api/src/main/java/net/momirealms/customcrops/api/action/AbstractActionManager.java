@@ -20,6 +20,7 @@ package net.momirealms.customcrops.api.action;
 import dev.dejvokep.boostedyaml.block.implementation.Section;
 import net.momirealms.customcrops.api.BukkitCustomCropsPlugin;
 import net.momirealms.customcrops.api.action.builtin.*;
+import net.momirealms.customcrops.api.misc.value.MathValue;
 import net.momirealms.customcrops.common.util.ClassUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -96,7 +97,7 @@ public abstract class AbstractActionManager<T> implements ActionManager<T> {
             plugin.getPluginLogger().warn("Action type: " + section.getString("type") + " doesn't exist.");
             return Action.empty();
         }
-        return factory.process(section.get("value"), section.getDouble("chance", 1d));
+        return factory.process(section.get("value"), section.contains("chance") ? MathValue.auto(section.get("chance")) : MathValue.plain(1d));
     }
 
     @NotNull
@@ -122,7 +123,7 @@ public abstract class AbstractActionManager<T> implements ActionManager<T> {
             plugin.getPluginLogger().warn("Action type: " + type + " doesn't exist.");
             return Action.empty();
         }
-        return factory.process(args, 1);
+        return factory.process(args, MathValue.plain(1));
     }
 
     @SuppressWarnings({"ResultOfMethodCallIgnored", "unchecked"})

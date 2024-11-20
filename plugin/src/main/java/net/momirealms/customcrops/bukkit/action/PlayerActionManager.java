@@ -93,7 +93,7 @@ public class PlayerActionManager extends AbstractActionManager<Player> {
             List<String> messages = ListUtils.toList(args);
             return context -> {
                 if (context.holder() == null) return;
-                if (Math.random() > chance) return;
+                if (Math.random() > chance.evaluate(context)) return;
                 List<String> replaced = plugin.getPlaceholderManager().parse(context.holder(), messages, context.placeholderMap());
                 Audience audience = plugin.getSenderFactory().getAudience(context.holder());
                 for (String text : replaced) {
@@ -105,7 +105,7 @@ public class PlayerActionManager extends AbstractActionManager<Player> {
             List<String> messages = ListUtils.toList(args);
             return context -> {
                 if (context.holder() == null) return;
-                if (Math.random() > chance) return;
+                if (Math.random() > chance.evaluate(context)) return;
                 String random = messages.get(RandomUtils.generateRandomInt(0, messages.size() - 1));
                 random = BukkitPlaceholderManager.getInstance().parse(context.holder(), random, context.placeholderMap());
                 Audience audience = plugin.getSenderFactory().getAudience(context.holder());
@@ -119,7 +119,7 @@ public class PlayerActionManager extends AbstractActionManager<Player> {
             List<String> commands = ListUtils.toList(args);
             return context -> {
                 if (context.holder() == null) return;
-                if (Math.random() > chance) return;
+                if (Math.random() > chance.evaluate(context)) return;
                 List<String> replaced = BukkitPlaceholderManager.getInstance().parse(context.holder(), commands, context.placeholderMap());
                 plugin.getScheduler().sync().run(() -> {
                     for (String text : replaced) {
@@ -133,7 +133,7 @@ public class PlayerActionManager extends AbstractActionManager<Player> {
     private void registerCloseInvAction() {
         registerAction((args, chance) -> context -> {
             if (context.holder() == null) return;
-            if (Math.random() > chance) return;
+            if (Math.random() > chance.evaluate(context)) return;
             context.holder().closeInventory();
         }, "close-inv");
     }
@@ -143,7 +143,7 @@ public class PlayerActionManager extends AbstractActionManager<Player> {
             String text = (String) args;
             return context -> {
                 if (context.holder() == null) return;
-                if (Math.random() > chance) return;
+                if (Math.random() > chance.evaluate(context)) return;
                 Audience audience = plugin.getSenderFactory().getAudience(context.holder());
                 Component component = AdventureHelper.miniMessage(plugin.getPlaceholderManager().parse(context.holder(), text, context.placeholderMap()));
                 audience.sendActionBar(component);
@@ -153,7 +153,7 @@ public class PlayerActionManager extends AbstractActionManager<Player> {
             List<String> texts = ListUtils.toList(args);
             return context -> {
                 if (context.holder() == null) return;
-                if (Math.random() > chance) return;
+                if (Math.random() > chance.evaluate(context)) return;
                 String random = texts.get(RandomUtils.generateRandomInt(0, texts.size() - 1));
                 random = plugin.getPlaceholderManager().parse(context.holder(), random, context.placeholderMap());
                 Audience audience = plugin.getSenderFactory().getAudience(context.holder());
@@ -167,7 +167,7 @@ public class PlayerActionManager extends AbstractActionManager<Player> {
             MathValue<Player> value = MathValue.auto(args);
             return context -> {
                 if (context.holder() == null) return;
-                if (Math.random() > chance) return;
+                if (Math.random() > chance.evaluate(context)) return;
                 final Player player = context.holder();
                 ExperienceOrb entity = player.getLocation().getWorld().spawn(player.getLocation().clone().add(0,0.5,0), ExperienceOrb.class);
                 entity.setExperience((int) value.evaluate(context));
@@ -177,7 +177,7 @@ public class PlayerActionManager extends AbstractActionManager<Player> {
             MathValue<Player> value = MathValue.auto(args);
             return context -> {
                 if (context.holder() == null) return;
-                if (Math.random() > chance) return;
+                if (Math.random() > chance.evaluate(context)) return;
                 final Player player = context.holder();
                 player.giveExp((int) Math.round(value.evaluate(context)));
                 Audience audience = plugin.getSenderFactory().getAudience(player);
@@ -188,7 +188,7 @@ public class PlayerActionManager extends AbstractActionManager<Player> {
             MathValue<Player> value = MathValue.auto(args);
             return context -> {
                 if (context.holder() == null) return;
-                if (Math.random() > chance) return;
+                if (Math.random() > chance.evaluate(context)) return;
                 Player player = context.holder();
                 player.setLevel((int) Math.max(0, player.getLevel() + value.evaluate(context)));
             };
@@ -200,7 +200,7 @@ public class PlayerActionManager extends AbstractActionManager<Player> {
             MathValue<Player> value = MathValue.auto(args);
             return context -> {
                 if (context.holder() == null) return;
-                if (Math.random() > chance) return;
+                if (Math.random() > chance.evaluate(context)) return;
                 Player player = context.holder();
                 player.setFoodLevel((int) (player.getFoodLevel() + value.evaluate(context)));
             };
@@ -209,7 +209,7 @@ public class PlayerActionManager extends AbstractActionManager<Player> {
             MathValue<Player> value = MathValue.auto(args);
             return context -> {
                 if (context.holder() == null) return;
-                if (Math.random() > chance) return;
+                if (Math.random() > chance.evaluate(context)) return;
                 Player player = context.holder();
                 player.setSaturation((float) (player.getSaturation() + value.evaluate(context)));
             };
@@ -233,7 +233,7 @@ public class PlayerActionManager extends AbstractActionManager<Player> {
             }
             return context -> {
                 if (context.holder() == null) return;
-                if (Math.random() > chance) return;
+                if (Math.random() > chance.evaluate(context)) return;
                 Player player = context.holder();
                 EquipmentSlot hand = context.arg(ContextKeys.SLOT);
                 if (mainOrOff == null && hand == null) {
@@ -264,7 +264,7 @@ public class PlayerActionManager extends AbstractActionManager<Player> {
                 return Action.empty();
             }
             return context -> {
-                if (Math.random() > chance) return;
+                if (Math.random() > chance.evaluate(context)) return;
                 Player player = context.holder();
                 if (player == null) return;
                 EquipmentSlot tempSlot = slot;
@@ -297,7 +297,7 @@ public class PlayerActionManager extends AbstractActionManager<Player> {
                 int amount = section.getInt("amount", 1);
                 boolean toInventory = section.getBoolean("to-inventory", false);
                 return context -> {
-                    if (Math.random() > chance) return;
+                    if (Math.random() > chance.evaluate(context)) return;
                     Player player = context.holder();
                     if (player == null) return;
                     ItemStack itemStack = plugin.getItemManager().build(context.holder(), finalID);
@@ -329,7 +329,7 @@ public class PlayerActionManager extends AbstractActionManager<Player> {
             MathValue<Player> value = MathValue.auto(args);
             return context -> {
                 if (context.holder() == null) return;
-                if (Math.random() > chance) return;
+                if (Math.random() > chance.evaluate(context)) return;
                 if (!VaultHook.isHooked()) return;
                 VaultHook.deposit(context.holder(), value.evaluate(context));
             };
@@ -338,7 +338,7 @@ public class PlayerActionManager extends AbstractActionManager<Player> {
             MathValue<Player> value = MathValue.auto(args);
             return context -> {
                 if (context.holder() == null) return;
-                if (Math.random() > chance) return;
+                if (Math.random() > chance.evaluate(context)) return;
                 if (!VaultHook.isHooked()) return;
                 VaultHook.withdraw(context.holder(), value.evaluate(context));
             };
@@ -355,7 +355,7 @@ public class PlayerActionManager extends AbstractActionManager<Player> {
                 );
                 return context -> {
                     if (context.holder() == null) return;
-                    if (Math.random() > chance) return;
+                    if (Math.random() > chance.evaluate(context)) return;
                     context.holder().addPotionEffect(potionEffect);
                 };
             } else {
@@ -376,7 +376,7 @@ public class PlayerActionManager extends AbstractActionManager<Player> {
                 );
                 return context -> {
                     if (context.holder() == null) return;
-                    if (Math.random() > chance) return;
+                    if (Math.random() > chance.evaluate(context)) return;
                     Audience audience = plugin.getSenderFactory().getAudience(context.holder());
                     AdventureHelper.playSound(audience, sound);
                 };
@@ -395,7 +395,7 @@ public class PlayerActionManager extends AbstractActionManager<Player> {
                 String target = section.getString("target");
                 return context -> {
                     if (context.holder() == null) return;
-                    if (Math.random() > chance) return;
+                    if (Math.random() > chance.evaluate(context)) return;
                     Optional.ofNullable(plugin.getIntegrationManager().getLevelerProvider(pluginName)).ifPresentOrElse(it -> {
                         it.addXp(context.holder(), target, value.evaluate(context));
                     }, () -> plugin.getPluginLogger().warn("Plugin (" + pluginName + "'s) level is not compatible. Please double check if it's a problem caused by pronunciation."));
@@ -416,7 +416,7 @@ public class PlayerActionManager extends AbstractActionManager<Player> {
                 int stay = section.getInt("stay", 30);
                 int fadeOut = section.getInt("fade-out", 10);
                 return context -> {
-                    if (Math.random() > chance) return;
+                    if (Math.random() > chance.evaluate(context)) return;
                     final Player player = context.holder();
                     if (player == null) return;
                     Audience audience = plugin.getSenderFactory().getAudience(player);
@@ -442,7 +442,7 @@ public class PlayerActionManager extends AbstractActionManager<Player> {
                 int fadeOut = section.getInt("fade-out", 10);
                 return context -> {
                     if (context.holder() == null) return;
-                    if (Math.random() > chance) return;
+                    if (Math.random() > chance.evaluate(context)) return;
                     TextValue<Player> title = TextValue.auto(titles.get(RandomUtils.generateRandomInt(0, titles.size() - 1)));
                     TextValue<Player> subtitle = TextValue.auto(subtitles.get(RandomUtils.generateRandomInt(0, subtitles.size() - 1)));
                     final Player player = context.holder();
@@ -465,7 +465,7 @@ public class PlayerActionManager extends AbstractActionManager<Player> {
             boolean arg = (boolean) args;
             return context -> {
                 if (context.holder() == null) return;
-                if (Math.random() > chance) return;
+                if (Math.random() > chance.evaluate(context)) return;
                 EquipmentSlot slot = context.arg(ContextKeys.SLOT);
                 if (slot == null) {
                     SparrowHeart.getInstance().swingHand(context.holder(), arg ? HandSlot.MAIN : HandSlot.OFF);
@@ -480,7 +480,7 @@ public class PlayerActionManager extends AbstractActionManager<Player> {
     private void registerForceTickAction() {
         registerAction((args, chance) -> context -> {
             if (context.holder() == null) return;
-            if (Math.random() > chance) return;
+            if (Math.random() > chance.evaluate(context)) return;
             Location location = requireNonNull(context.arg(ContextKeys.LOCATION));
             Pos3 pos3 = Pos3.from(location);
             Optional<CustomCropsWorld<?>> optionalWorld = plugin.getWorldManager().getWorld(location.getWorld());
@@ -500,7 +500,7 @@ public class PlayerActionManager extends AbstractActionManager<Player> {
         }, "force-tick");
         registerAction((args, chance) -> context -> {
             if (context.holder() == null) return;
-            if (Math.random() > chance) return;
+            if (Math.random() > chance.evaluate(context)) return;
             Location location = requireNonNull(context.arg(ContextKeys.LOCATION));
             Pos3 pos3 = Pos3.from(location);
             Optional<CustomCropsWorld<?>> optionalWorld = plugin.getWorldManager().getWorld(location.getWorld());

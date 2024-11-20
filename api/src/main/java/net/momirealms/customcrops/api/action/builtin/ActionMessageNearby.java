@@ -43,7 +43,7 @@ public class ActionMessageNearby<T> extends AbstractBuiltInAction<T> {
     public ActionMessageNearby(
             BukkitCustomCropsPlugin plugin,
             Section section,
-            double chance
+            MathValue<T> chance
     ) {
         super(plugin, chance);
         this.messages = ListUtils.toList(section.get("message"));

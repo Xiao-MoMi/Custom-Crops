@@ -29,6 +29,7 @@ import net.momirealms.customcrops.api.core.world.CustomCropsBlockState;
 import net.momirealms.customcrops.api.core.world.CustomCropsWorld;
 import net.momirealms.customcrops.api.core.world.Pos3;
 import net.momirealms.customcrops.api.core.wrapper.WrappedBreakEvent;
+import net.momirealms.customcrops.api.misc.value.MathValue;
 import net.momirealms.customcrops.api.util.DummyCancellable;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -46,7 +47,7 @@ public class ActionBreak<T> extends AbstractBuiltInAction<T> {
     public ActionBreak(
             BukkitCustomCropsPlugin plugin,
             Object args,
-            double chance
+            MathValue<T> chance
     ) {
         super(plugin, chance);
         this.triggerEvent = Optional.ofNullable(args).map(it -> (boolean) it).orElse(true);

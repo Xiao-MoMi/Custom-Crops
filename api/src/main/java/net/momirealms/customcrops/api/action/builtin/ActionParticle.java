@@ -21,6 +21,7 @@ import dev.dejvokep.boostedyaml.block.implementation.Section;
 import net.momirealms.customcrops.api.BukkitCustomCropsPlugin;
 import net.momirealms.customcrops.api.context.Context;
 import net.momirealms.customcrops.api.context.ContextKeys;
+import net.momirealms.customcrops.api.misc.value.MathValue;
 import net.momirealms.customcrops.api.util.ParticleUtils;
 import org.bukkit.Color;
 import org.bukkit.Location;
@@ -51,7 +52,7 @@ public class ActionParticle<T> extends AbstractBuiltInAction<T> {
     public ActionParticle(
             BukkitCustomCropsPlugin plugin,
             Section section,
-            double chance
+            MathValue<T> chance
     ) {
         super(plugin, chance);
         this.particleType = ParticleUtils.getParticle(section.getString("particle", "ASH").toUpperCase(Locale.ENGLISH));

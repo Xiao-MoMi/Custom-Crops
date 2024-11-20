@@ -22,6 +22,7 @@ import net.momirealms.customcrops.api.BukkitCustomCropsPlugin;
 import net.momirealms.customcrops.api.action.Action;
 import net.momirealms.customcrops.api.action.ActionManager;
 import net.momirealms.customcrops.api.context.Context;
+import net.momirealms.customcrops.api.misc.value.MathValue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +38,7 @@ public class ActionDropItemLegacy<T> extends AbstractBuiltInAction<T> {
             BukkitCustomCropsPlugin plugin,
             ActionManager<T> manager,
             Section section,
-            double chance
+            MathValue<T> chance
     ) {
         super(plugin, chance);
         this.actions = new ArrayList<>();
@@ -45,13 +46,13 @@ public class ActionDropItemLegacy<T> extends AbstractBuiltInAction<T> {
         if (otherItemSection != null) {
             for (Map.Entry<String, Object> entry : otherItemSection.getStringRouteMappedValues(false).entrySet()) {
                 if (entry.getValue() instanceof Section inner) {
-                    actions.add(requireNonNull(manager.getActionFactory("drop-item")).process(inner, inner.getDouble("chance", 1D)));
+                    actions.add(requireNonNull(manager.getActionFactory("drop-item")).process(inner, section.contains("chance") ? MathValue.auto(section.get("chance")) : MathValue.plain(1d)));
                 }
             }
         }
         Section qualitySection = section.getSection("quality-crops");
         if (qualitySection != null) {
-            actions.add(requireNonNull(manager.getActionFactory("quality-crops")).process(qualitySection, 1));
+            actions.add(requireNonNull(manager.getActionFactory("quality-crops")).process(qualitySection, MathValue.plain(1)));
         }
     }
 

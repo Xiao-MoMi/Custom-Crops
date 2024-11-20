@@ -53,7 +53,7 @@ public class ActionFakeItem<T> extends AbstractBuiltInAction<T> {
     public ActionFakeItem(
             BukkitCustomCropsPlugin plugin,
             Section section,
-            double chance
+            MathValue<T> chance
     ) {
         super(plugin, chance);
         String itemID = section.getString("item", "");

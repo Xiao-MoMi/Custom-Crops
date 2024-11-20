@@ -20,13 +20,15 @@ package net.momirealms.customcrops.api.action.builtin;
 import net.momirealms.customcrops.api.BukkitCustomCropsPlugin;
 import net.momirealms.customcrops.api.action.Action;
 import net.momirealms.customcrops.api.context.Context;
+import net.momirealms.customcrops.api.misc.value.MathValue;
+import org.bukkit.entity.Player;
 
 public abstract class AbstractBuiltInAction<T> implements Action<T> {
 
     protected final BukkitCustomCropsPlugin plugin;
-    protected final double chance;
+    protected final MathValue<T> chance;
 
-    protected AbstractBuiltInAction(BukkitCustomCropsPlugin plugin, double chance) {
+    protected AbstractBuiltInAction(BukkitCustomCropsPlugin plugin, MathValue<T> chance) {
         this.plugin = plugin;
         this.chance = chance;
     }
@@ -35,13 +37,13 @@ public abstract class AbstractBuiltInAction<T> implements Action<T> {
         return plugin;
     }
 
-    public double chance() {
+    public MathValue<T> chance() {
         return chance;
     }
 
     @Override
     public void trigger(Context<T> context) {
-        if (Math.random() > chance) return;
+        if (Math.random() > chance.evaluate(context)) return;
         triggerAction(context);
     }
 
