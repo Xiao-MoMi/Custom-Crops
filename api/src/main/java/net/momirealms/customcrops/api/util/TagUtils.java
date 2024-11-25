@@ -59,6 +59,8 @@ public class TagUtils {
         }
     }
 
+    // There is a problem with this method, which comes from flownbt itself
+    // This method cannot perform a deep copy of a compound nested in a list.
     public static CompoundMap deepClone(CompoundMap initial) {
         CompoundMap clone = new CompoundMap();
         for (Tag<?> tag : initial) {

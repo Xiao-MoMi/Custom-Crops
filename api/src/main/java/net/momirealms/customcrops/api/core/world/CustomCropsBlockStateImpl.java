@@ -20,6 +20,7 @@ package net.momirealms.customcrops.api.core.world;
 import com.flowpowered.nbt.CompoundMap;
 import com.flowpowered.nbt.CompoundTag;
 import com.flowpowered.nbt.Tag;
+import com.flowpowered.nbt.stream.NBTInputStream;
 import net.momirealms.customcrops.api.core.SynchronizedCompoundMap;
 import net.momirealms.customcrops.api.core.block.CustomCropsBlock;
 import net.momirealms.customcrops.api.util.TagUtils;
@@ -85,6 +86,7 @@ public class CustomCropsBlockStateImpl implements CustomCropsBlockState {
         return compoundMap.equals(that.compoundMap);
     }
 
+    // Due to the defects of flownbt itself, hash efficiency is very low
     @Override
     public int hashCode() {
         Tag<?> id = compoundMap.get("id");

@@ -8,12 +8,12 @@ dependencies {
     compileOnly(project(":api"))
     compileOnly(project(":common"))
     compileOnly("io.papermc.paper:paper-api:1.20.4-R0.1-SNAPSHOT")
-    compileOnly("com.nexomc:nexo:0.1.0-dev.0")
+    compileOnly("com.nexomc:nexo:0.1.0-dev.6")
 }
 
 tasks.withType<JavaCompile> {
     options.encoding = "UTF-8"
-    options.release.set(17)
+    options.release.set(21)
 }
 
 java {
