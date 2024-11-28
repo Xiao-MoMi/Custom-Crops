@@ -35,7 +35,8 @@ dependencies {
     implementation("com.github.Xiao-MoMi:Sparrow-Heart:${rootProject.properties["sparrow_heart_version"]}")
     implementation("com.saicone.rtag:rtag:${rootProject.properties["rtag_version"]}")
     implementation("com.saicone.rtag:rtag-item:${rootProject.properties["rtag_version"]}")
-    implementation("com.flowpowered:flow-nbt:${rootProject.properties["flow_nbt_version"]}") // do not relocate for compatibility with SWM
+    // TODO use sparrow-nbt
+    implementation("com.flowpowered:flow-nbt:${rootProject.properties["flow_nbt_version"]}") // do not relocate (compatibility with AdvancedSlimePaper)
     compileOnly("org.incendo:cloud-core:${rootProject.properties["cloud_core_version"]}")
     compileOnly("org.incendo:cloud-minecraft-extras:${rootProject.properties["cloud_minecraft_extras_version"]}")
     compileOnly("org.incendo:cloud-paper:${rootProject.properties["cloud_paper_version"]}")

@@ -114,14 +114,16 @@ public class CropBlock extends AbstractCustomCropsBlock {
 
         context.updateLocation(location);
 
-        // check requirements
-        if (!RequirementManager.isSatisfied(context, cropConfig.breakRequirements())) {
-            event.setCancelled(true);
-            return;
-        }
-        if (!RequirementManager.isSatisfied(context, stageConfig.breakRequirements())) {
-            event.setCancelled(true);
-            return;
+        // check requirements only if it's triggered by direct events
+        if (event.reason() == BreakReason.BREAK) {
+            if (!RequirementManager.isSatisfied(context, cropConfig.breakRequirements())) {
+                event.setCancelled(true);
+                return;
+            }
+            if (!RequirementManager.isSatisfied(context, stageConfig.breakRequirements())) {
+                event.setCancelled(true);
+                return;
+            }
         }
 
         CropBreakEvent breakEvent = new CropBreakEvent(event.entityBreaker(), event.blockBreaker(), cropConfig, event.brokenID(), event.location(),
