@@ -78,7 +78,7 @@ public class BukkitItemManager extends AbstractItemManager {
             plugin.getPluginLogger().warn("Failed to load CustomItemProvider", e);
         }
         if (this.provider == null) {
-            plugin.getPluginLogger().warn("ItemsAdder/Oraxen are not installed, which can cause problems unless you use the CustomCrops API.");
+            plugin.getPluginLogger().warn("ItemsAdder/Oraxen/Nexo/MythicCrucible are not installed. You can safely ignore this if you implemented the custom item interface with API.");
         }
         this.factory = BukkitItemFactory.create(plugin);
     }
