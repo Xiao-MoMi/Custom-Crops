@@ -33,7 +33,7 @@ Once your changes are ready, open a pull request for review. We appreciate your 
 [1] Further improve the thread scheduler and reduce the use of ConcurrentHashMap. \
 [2] Optimize the map storage in the section as a palette. \
 [3] Use other NBT libraries (such as sparrow-nbt) to replace the current sponge flow-nbt (because this library is really a bit bad).
-I used it for compatibility with AdvancedSlimePaper. At last, we can use the same IO stream operation to convert sparrow-nbt to flow-nbt and store it in the Slime world.
+I used it for compatibility with AdvancedSlimePaper in the beginning. In fact, we can use the same IO stream operation to convert sparrow-nbt to flow-nbt and store it in the Slime world. \
 [4] Improve the region file format and use file headers and sectors to perform random read and write of region files. (4.0 milestone)
 
 ## Support the Developer
