@@ -400,7 +400,15 @@ public class CropBlock extends AbstractCustomCropsBlock {
             CropStageConfig nextStage = config.stageWithModelByPoint(afterPoints);
 
             plugin.getScheduler().sync().run(() -> {
-                if (currentStage == nextStage) return;
+                if (currentStage == nextStage) {
+                    for (int i = previousPoint + 1; i <= afterPoints; i++) {
+                        CropStageConfig stage = config.stageByPoint(i);
+                        if (stage != null) {
+                            ActionManager.trigger(context, stage.growActions());
+                        }
+                    }
+                    return;
+                }
                 FurnitureRotation rotation = plugin.getItemManager().remove(bukkitLocation, ExistenceForm.ANY);
                 if (rotation == FurnitureRotation.NONE && config.rotation()) {
                     rotation = FurnitureRotation.random();

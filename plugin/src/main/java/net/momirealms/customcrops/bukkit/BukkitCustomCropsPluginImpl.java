@@ -208,7 +208,9 @@ public class BukkitCustomCropsPluginImpl extends BukkitCustomCropsPlugin {
         this.hologramManager.disable();
         this.integrationManager.disable();
         this.coolDownManager.disable();
-        this.commandManager.unregisterFeatures();
+        if (!Bukkit.getServer().isStopping()) {
+            this.commandManager.unregisterFeatures();
+        }
     }
 
     @Override
