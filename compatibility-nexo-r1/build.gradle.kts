@@ -8,7 +8,7 @@ dependencies {
     compileOnly(project(":api"))
     compileOnly(project(":common"))
     compileOnly("io.papermc.paper:paper-api:1.20.4-R0.1-SNAPSHOT")
-    compileOnly("com.nexomc:nexo:0.1.0-dev.6")
+    compileOnly("com.nexomc:nexo:0.5.0-dev.8")
 }
 
 tasks.withType<JavaCompile> {

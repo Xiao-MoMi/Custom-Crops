@@ -19,17 +19,43 @@ package net.momirealms.customcrops.bukkit.item;
 
 import com.saicone.rtag.RtagItem;
 import com.saicone.rtag.data.ComponentType;
+import net.momirealms.customcrops.common.helper.VersionHelper;
 import net.momirealms.customcrops.common.item.ComponentKeys;
 import net.momirealms.customcrops.common.plugin.CustomCropsPlugin;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
 
 @SuppressWarnings("UnstableApiUsage")
 public class ComponentItemFactory extends BukkitItemFactory {
 
+    private final BiConsumer<RtagItem, Integer> customModelDataSetter;
+    private final Function<RtagItem, Optional<Integer>> customModelDataGetter;
+
     public ComponentItemFactory(CustomCropsPlugin plugin) {
         super(plugin);
+        this.customModelDataSetter = VersionHelper.isVersionNewerThan1_21_4() ?
+                ((item, data) -> item.setComponent(ComponentKeys.CUSTOM_MODEL_DATA,
+                        Map.of("floats", List.of(data.floatValue())))) : ((item, data) -> item.setComponent(ComponentKeys.CUSTOM_MODEL_DATA, data));
+        this.customModelDataGetter = VersionHelper.isVersionNewerThan1_21_4() ?
+                (item) -> {
+                    Optional<Object> optional = ComponentType.encodeJava(ComponentKeys.CUSTOM_MODEL_DATA, item.getComponent(ComponentKeys.CUSTOM_MODEL_DATA));
+                    if (optional.isEmpty()) return Optional.empty();
+                    @SuppressWarnings("unchecked")
+                    Map<String, Object> data = (Map<String, Object>) optional.get();
+                    @SuppressWarnings("unchecked")
+                    List<Float> floats = (List<Float>) data.get("floats");
+                    if (floats == null || floats.isEmpty()) return Optional.empty();
+                    return Optional.of((int) Math.floor(floats.get(0)));
+                } : (item) -> Optional.ofNullable(
+                (Integer) ComponentType.encodeJava(
+                        ComponentKeys.CUSTOM_MODEL_DATA,
+                        item.getComponent(ComponentKeys.CUSTOM_MODEL_DATA)
+                ).orElse(null)
+        );
     }
 
     @Override
@@ -37,19 +63,14 @@ public class ComponentItemFactory extends BukkitItemFactory {
         if (data == null) {
             item.removeComponent(ComponentKeys.CUSTOM_MODEL_DATA);
         } else {
-            item.setComponent(ComponentKeys.CUSTOM_MODEL_DATA, data);
+            this.customModelDataSetter.accept(item, data);
         }
     }
 
     @Override
     protected Optional<Integer> customModelData(RtagItem item) {
         if (!item.hasComponent(ComponentKeys.CUSTOM_MODEL_DATA)) return Optional.empty();
-        return Optional.ofNullable(
-                (Integer) ComponentType.encodeJava(
-                        ComponentKeys.CUSTOM_MODEL_DATA,
-                    item.getComponent(ComponentKeys.CUSTOM_MODEL_DATA)
-                ).orElse(null)
-        );
+        return this.customModelDataGetter.apply(item);
     }
 
     @SuppressWarnings("unchecked")
