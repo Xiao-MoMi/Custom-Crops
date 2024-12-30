@@ -220,6 +220,11 @@ public class CustomCropsChunkImpl implements CustomCropsChunk {
         return (int) (System.currentTimeMillis() - lastUnloadTime);
     }
 
+    @Override
+    public int loadedSeconds() {
+        return loadedSeconds;
+    }
+
     @NotNull
     @Override
     public Optional<CustomCropsBlockState> getBlockState(Pos3 location) {

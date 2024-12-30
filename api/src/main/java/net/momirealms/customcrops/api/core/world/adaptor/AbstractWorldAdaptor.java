@@ -79,7 +79,7 @@ public abstract class AbstractWorldAdaptor<W> implements WorldAdaptor<W> {
         return new SerializableChunk(
                 chunkPos.x(),
                 chunkPos.z(),
-                chunk.loadedMilliSeconds(),
+                chunk.loadedSeconds(),
                 chunk.lastLoadedTime(),
                 chunk.sectionsToSave().map(this::toSerializableSection).toList(),
                 queueToIntArray(chunk.tickTaskQueue()),

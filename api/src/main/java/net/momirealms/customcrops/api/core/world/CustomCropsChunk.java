@@ -136,6 +136,8 @@ public interface CustomCropsChunk {
      */
     int loadedMilliSeconds();
 
+    int loadedSeconds();
+
     /**
      * Retrieves the custom crop block state at a specific location.
      *
