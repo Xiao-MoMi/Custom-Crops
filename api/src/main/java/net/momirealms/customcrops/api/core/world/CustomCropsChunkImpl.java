@@ -139,6 +139,7 @@ public class CustomCropsChunkImpl implements CustomCropsChunk {
     public void timer() {
         WorldSetting setting = world.setting();
         int interval = setting.minTickUnit();
+        if (this.loadedSeconds < 0) this.loadedSeconds = 0;
         this.loadedSeconds++;
         // if loadedSeconds reach another recycle, rearrange the tasks
         if (this.loadedSeconds >= interval) {

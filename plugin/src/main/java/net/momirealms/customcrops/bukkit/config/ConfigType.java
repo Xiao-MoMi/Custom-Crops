@@ -54,9 +54,7 @@ public class ConfigType {
     public static final ConfigType WATERING_CAN = of(
             "watering-cans",
             (manager, id, section) -> {
-
                 ActionManager<Player> pam = BukkitCustomCropsPlugin.getInstance().getActionManager(Player.class);
-
                 WateringCanConfig config = WateringCanConfig.builder()
                         .id(id)
                         .itemID(section.getString("item"))
@@ -85,7 +83,6 @@ public class ConfigType {
                                 section.getString("water-bar.right", "")
                         ) : null)
                         .build();
-
                 manager.registerWateringCanConfig(config);
                 return false;
             }
