@@ -3,7 +3,7 @@ repositories {
     maven("https://repo.papermc.io/repository/maven-public/")
     maven("https://maven.enginehub.org/repo/") // worldguard worldedit
     maven("https://jitpack.io/")
-    maven("https://papermc.io/repo/repository/maven-public/") // paper
+    maven("https://repo.papermc.io/repository/maven-public/") // paper
     maven("https://mvn.lumine.io/repository/maven-public/") // mythicmobs
     maven("https://nexus.phoenixdevt.fr/repository/maven-public/") // mmoitems
     maven("https://repo.extendedclip.com/content/repositories/placeholderapi/") // papi
