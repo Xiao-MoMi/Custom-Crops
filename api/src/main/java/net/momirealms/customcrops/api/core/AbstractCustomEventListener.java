@@ -372,7 +372,7 @@ public abstract class AbstractCustomEventListener implements Listener {
                 int point = cropBlock.point(state);
                 if (point < cropConfig.maxPoints()) {
                     for (BoneMeal boneMeal : cropConfig.boneMeals()) {
-                        if (boneMeal.isDispenserAllowed()) {
+                        if (boneMeal.isDispenserAllowed() && boneMeal.requiredItem().equals(itemID)) {
                             if (EventUtils.fireAndCheckCancel(new BoneMealDispenseEvent(block, location, state, itemStack, boneMeal))) {
                                 event.setCancelled(true);
                                 return;
