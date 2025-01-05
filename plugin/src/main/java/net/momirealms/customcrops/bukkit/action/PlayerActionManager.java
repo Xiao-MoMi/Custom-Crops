@@ -368,15 +368,18 @@ public class PlayerActionManager extends AbstractActionManager<Player> {
     private void registerSoundAction() {
         registerAction((args, chance) -> {
             if (args instanceof Section section) {
-                Sound sound = Sound.sound(
-                        Key.key(section.getString("key")),
-                        Sound.Source.valueOf(section.getString("source", "PLAYER").toUpperCase(Locale.ENGLISH)),
-                        section.getDouble("volume", 1.0).floatValue(),
-                        section.getDouble("pitch", 1.0).floatValue()
-                );
+                MathValue<Player> volume = MathValue.auto(section.get("volume"));
+                MathValue<Player> pitch = MathValue.auto(section.get("pitch"));
+                Key key = Key.key(section.getString("key"));
+                Sound.Source source = Sound.Source.valueOf(section.getString("source", "PLAYER").toUpperCase(Locale.ENGLISH));
                 return context -> {
-                    if (context.holder() == null) return;
                     if (Math.random() > chance.evaluate(context)) return;
+                    Sound sound = Sound.sound(
+                            key,
+                            source,
+                            (float) volume.evaluate(context),
+                            (float) pitch.evaluate(context)
+                    );
                     Audience audience = plugin.getSenderFactory().getAudience(context.holder());
                     AdventureHelper.playSound(audience, sound);
                 };
