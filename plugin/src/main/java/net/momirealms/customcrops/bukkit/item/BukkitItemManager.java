@@ -361,12 +361,17 @@ public class BukkitItemManager extends AbstractItemManager {
             try {
                 return new ItemStack(Material.valueOf(id.toUpperCase(Locale.ENGLISH)));
             } catch (IllegalArgumentException e) {
-                Material material = Registry.MATERIAL.get(new NamespacedKey("minecraft", id.toLowerCase(Locale.ENGLISH)));
-                if (material != null) {
-                    return new ItemStack(material);
+                try {
+                    Material material = Registry.MATERIAL.get(new NamespacedKey("minecraft", id.toLowerCase(Locale.ENGLISH)));
+                    if (material != null) {
+                        return new ItemStack(material);
+                    }
+                    plugin.getPluginLogger().warn("Item " + id + " not exists", e);
+                    return new ItemStack(Material.PAPER);
+                } catch (IllegalArgumentException exception) {
+                    plugin.getPluginLogger().warn("Illegal item " + id, exception);
+                    return new ItemStack(Material.PAPER);
                 }
-                plugin.getPluginLogger().warn("Item " + id + " not exists", e);
-                return new ItemStack(Material.PAPER);
             }
         } else {
             String[] split = id.split(":", 2);
