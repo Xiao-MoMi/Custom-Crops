@@ -259,7 +259,7 @@ public class BukkitItemManager extends AbstractItemManager {
     @NotNull
     @Override
     public FurnitureRotation removeFurniture(@NotNull Location location) {
-        Collection<Entity> entities = location.getWorld().getNearbyEntities(LocationUtils.toSurfaceCenterLocation(location), 0.5,0.25,0.5);
+        Collection<Entity> entities = location.getWorld().getNearbyEntities(LocationUtils.toSurfaceCenterLocation(location), 0.5,0.51,0.5);
         FurnitureRotation rotation = null;
         for (Entity entity : entities) {
             if (this.provider.removeFurniture(entity) && rotation == null) {
@@ -302,7 +302,7 @@ public class BukkitItemManager extends AbstractItemManager {
     @Override
     @Nullable
     public String furnitureID(Location location) {
-        Collection<Entity> entities = location.getWorld().getNearbyEntities(LocationUtils.toSurfaceCenterLocation(location), 0.5,0.25,0.5);
+        Collection<Entity> entities = location.getWorld().getNearbyEntities(LocationUtils.toSurfaceCenterLocation(location), 0.5,0.51,0.5);
         for (Entity entity : entities) {
             if (provider.isFurniture(entity)) {
                 return provider.furnitureID(entity);
