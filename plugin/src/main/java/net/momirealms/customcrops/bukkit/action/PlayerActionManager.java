@@ -368,8 +368,8 @@ public class PlayerActionManager extends AbstractActionManager<Player> {
     private void registerSoundAction() {
         registerAction((args, chance) -> {
             if (args instanceof Section section) {
-                MathValue<Player> volume = MathValue.auto(section.get("volume"));
-                MathValue<Player> pitch = MathValue.auto(section.get("pitch"));
+                MathValue<Player> volume = MathValue.auto(section.get("volume", 1));
+                MathValue<Player> pitch = MathValue.auto(section.get("pitch", 1));
                 Key key = Key.key(section.getString("key"));
                 Sound.Source source = Sound.Source.valueOf(section.getString("source", "PLAYER").toUpperCase(Locale.ENGLISH));
                 return context -> {
