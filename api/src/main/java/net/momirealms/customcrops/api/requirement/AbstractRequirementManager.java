@@ -1077,6 +1077,8 @@ public abstract class AbstractRequirementManager<T> implements RequirementManage
                 if (state.isPresent() && state.get().type() instanceof PotBlock potBlock) {
                     int water = potBlock.water(state.get());
                     if (water < value) return true;
+                } else {
+                    return true;
                 }
                 if (advanced) ActionManager.trigger(context, actions);
                 return false;
@@ -1099,7 +1101,9 @@ public abstract class AbstractRequirementManager<T> implements RequirementManage
                 Location location = requireNonNull(context.arg(ContextKeys.LOCATION)).clone().add(0, y, 0);
                 Block block = location.getBlock();
                 if (block.getBlockData() instanceof Farmland farmland) {
-                    return farmland.getMoisture() > value;
+                    if (farmland.getMoisture() > value) {
+                        return true;
+                    }
                 }
                 if (advanced) ActionManager.trigger(context, actions);
                 return false;
@@ -1122,7 +1126,11 @@ public abstract class AbstractRequirementManager<T> implements RequirementManage
                 Location location = requireNonNull(context.arg(ContextKeys.LOCATION)).clone().add(0, y, 0);
                 Block block = location.getBlock();
                 if (block.getBlockData() instanceof Farmland farmland) {
-                    return farmland.getMoisture() < value;
+                    if (farmland.getMoisture() < value) {
+                        return true;
+                    }
+                } else {
+                    return true;
                 }
                 if (advanced) ActionManager.trigger(context, actions);
                 return false;
