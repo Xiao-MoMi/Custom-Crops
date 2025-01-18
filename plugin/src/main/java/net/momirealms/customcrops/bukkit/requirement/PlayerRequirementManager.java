@@ -54,6 +54,7 @@ public class PlayerRequirementManager extends AbstractRequirementManager<Player>
         this.registerPotionEffectRequirement();
         this.registerSneakRequirement();
         this.registerGameModeRequirement();
+        this.registerHandRequirement();
     }
 
     @Override
@@ -344,5 +345,22 @@ public class PlayerRequirementManager extends AbstractRequirementManager<Player>
                 return false;
             };
         }, "gamemode");
+    }
+
+    private void registerHandRequirement() {
+        registerRequirement((args, actions, advanced) -> {
+            String hand = ((String) args).toLowerCase(Locale.ENGLISH);
+            return context -> {
+                if (context.holder() == null) return true;
+                EquipmentSlot slot = context.arg(ContextKeys.SLOT);
+                if (slot != null) {
+                    if (slot.name().toLowerCase(Locale.ENGLISH).equals(hand)) {
+                        return true;
+                    }
+                }
+                if (advanced) ActionManager.trigger(context, actions);
+                return false;
+            };
+        }, "hand");
     }
 }

@@ -33,6 +33,9 @@ import static java.util.Objects.requireNonNull;
 public class ActionSpawnEntity<T> extends AbstractBuiltInAction<T> {
 
     private final String id;
+    private MathValue<T> x;
+    private MathValue<T> y;
+    private MathValue<T> z;
     private final Map<String, Object> properties;
 
     public ActionSpawnEntity(
@@ -42,6 +45,9 @@ public class ActionSpawnEntity<T> extends AbstractBuiltInAction<T> {
     ) {
         super(plugin, chance);
         this.id = section.getString("id");
+        this.x = MathValue.auto(section.get("x", 0));
+        this.y = MathValue.auto(section.get("y", 0));
+        this.z = MathValue.auto(section.get("z", 0));
         Section proeprtySection = section.getSection("properties");
         this.properties = proeprtySection == null ? new HashMap<>() : proeprtySection.getStringRouteMappedValues(false);
     }
@@ -49,6 +55,7 @@ public class ActionSpawnEntity<T> extends AbstractBuiltInAction<T> {
     @Override
     protected void triggerAction(Context<T> context) {
         Location location = requireNonNull(context.arg(ContextKeys.LOCATION));
+        location = location.clone().add(this.x.evaluate(context), this.y.evaluate(context), this.z.evaluate(context));
         String finalID;
         EntityProvider provider;
         if (id.contains(":")) {

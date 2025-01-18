@@ -21,7 +21,6 @@ import net.momirealms.customcrops.api.BukkitCustomCropsPlugin;
 import net.momirealms.customcrops.api.action.Action;
 import net.momirealms.customcrops.api.context.Context;
 import net.momirealms.customcrops.api.misc.value.MathValue;
-import org.bukkit.entity.Player;
 
 public abstract class AbstractBuiltInAction<T> implements Action<T> {
 

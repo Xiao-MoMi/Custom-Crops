@@ -26,7 +26,6 @@ import io.th0rgal.oraxen.api.events.custom_block.stringblock.OraxenStringBlockPl
 import io.th0rgal.oraxen.api.events.furniture.OraxenFurnitureBreakEvent;
 import io.th0rgal.oraxen.api.events.furniture.OraxenFurnitureInteractEvent;
 import io.th0rgal.oraxen.api.events.furniture.OraxenFurniturePlaceEvent;
-import io.th0rgal.oraxen.font.Glyph;
 import net.momirealms.customcrops.api.core.AbstractCustomEventListener;
 import net.momirealms.customcrops.api.core.AbstractItemManager;
 import org.bukkit.Material;
