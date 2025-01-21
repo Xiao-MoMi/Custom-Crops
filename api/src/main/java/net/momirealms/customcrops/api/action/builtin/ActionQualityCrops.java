@@ -32,6 +32,7 @@ import net.momirealms.customcrops.api.core.world.Pos3;
 import net.momirealms.customcrops.api.event.QualityCropActionEvent;
 import net.momirealms.customcrops.api.misc.value.MathValue;
 import net.momirealms.customcrops.api.util.EventUtils;
+import net.momirealms.customcrops.api.util.LocationUtils;
 import net.momirealms.customcrops.api.util.PlayerUtils;
 import net.momirealms.customcrops.common.util.RandomUtils;
 import org.bukkit.Location;
@@ -94,7 +95,7 @@ public class ActionQualityCrops<T> extends AbstractBuiltInAction<T> {
                 if (toInv && player != null) {
                     PlayerUtils.giveItem(player, itemStack, itemStack.getAmount());
                 } else {
-                    location.getWorld().dropItemNaturally(location, itemStack);
+                    location.getWorld().dropItemNaturally(LocationUtils.toBlockCenterLocation(location), itemStack);
                 }
             }
         }, location);

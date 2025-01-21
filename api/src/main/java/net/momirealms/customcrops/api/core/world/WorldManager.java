@@ -56,6 +56,14 @@ public interface WorldManager extends Reloadable {
     int getDate(World world);
 
     /**
+     * Loads a CustomCrops world
+     *
+     * @param world The CustomCrops world
+     * @return The loaded CustomCropsWorld instance, it might be another instance if it's already loaded
+     */
+    CustomCropsWorld<?> loadWorld(CustomCropsWorld<?> world);
+
+    /**
      * Loads a CustomCrops world based on the specified Bukkit world.
      *
      * @param world The Bukkit world to load as a CustomCrops world.

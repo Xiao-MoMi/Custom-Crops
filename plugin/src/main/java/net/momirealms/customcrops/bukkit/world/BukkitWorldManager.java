@@ -42,7 +42,6 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class BukkitWorldManager implements WorldManager, Listener {
-
     private final BukkitCustomCropsPlugin plugin;
     private final TreeSet<WorldAdaptor<?>> adaptors = new TreeSet<>();
     private final ConcurrentHashMap<String, CustomCropsWorld<?>> worlds = new ConcurrentHashMap<>();
@@ -191,6 +190,25 @@ public class BukkitWorldManager implements WorldManager, Listener {
                 }
             }
         }
+    }
+
+    @Override
+    public CustomCropsWorld<?> loadWorld(CustomCropsWorld<?> world) {
+        Optional<CustomCropsWorld<?>> optionalWorld = getWorld(world.worldName());
+        if (optionalWorld.isPresent()) {
+            CustomCropsWorld<?> customCropsWorld = optionalWorld.get();
+            customCropsWorld.setting(Optional.ofNullable(worldSettings.get(world.worldName())).orElse(defaultWorldSetting));
+            return customCropsWorld;
+        }
+        world.setting(Optional.ofNullable(worldSettings.get(world.worldName())).orElse(defaultWorldSetting));
+        world.setTicking(true);
+        this.worlds.put(world.worldName(), world);
+        for (Chunk chunk : world.bukkitWorld().getLoadedChunks()) {
+            ChunkPos pos = ChunkPos.fromBukkitChunk(chunk);
+            loadLoadedChunk(world, pos);
+            notifyOfflineUpdates(world, pos);
+        }
+        return world;
     }
 
     @Override

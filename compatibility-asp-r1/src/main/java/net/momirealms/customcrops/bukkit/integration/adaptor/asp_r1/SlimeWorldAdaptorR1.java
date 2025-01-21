@@ -30,6 +30,7 @@ import net.momirealms.customcrops.api.util.TagUtils;
 import net.momirealms.customcrops.common.helper.GsonHelper;
 import net.momirealms.customcrops.common.util.Key;
 import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -84,7 +85,7 @@ public class SlimeWorldAdaptorR1 extends AbstractWorldAdaptor<SlimeWorld> implem
     public void onWorldLoad(LoadSlimeWorldEvent event) {
         World world = Bukkit.getWorld(event.getSlimeWorld().getName());
         if (!BukkitCustomCropsPlugin.getInstance().getWorldManager().isMechanicEnabled(world)) return;
-        BukkitCustomCropsPlugin.getInstance().getWorldManager().loadWorld(world);
+        BukkitCustomCropsPlugin.getInstance().getWorldManager().loadWorld(adapt(event.getSlimeWorld()));
     }
 
     @Override
