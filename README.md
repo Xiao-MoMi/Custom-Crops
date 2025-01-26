@@ -1,6 +1,5 @@
 # Custom-Crops
 ![CodeFactor Grade](https://img.shields.io/codefactor/grade/github/Xiao-MoMi/Custom-Crops)
-[![](https://jitpack.io/v/Xiao-MoMi/Custom-Crops.svg)](https://jitpack.io/#Xiao-MoMi/Custom-Crops)
 <a href="https://mo-mi.gitbook.io/xiaomomi-plugins/plugin-wiki/customcrops" alt="GitBook">
 <img src="https://img.shields.io/badge/docs-gitbook-brightgreen" alt="Gitbook"/>
 </a>
@@ -26,7 +25,7 @@ Get the artifact under /target folder
 ## How to Contribute
 
 #### Translations
-Clone this project and create a new language file in the /common/src/main/resources/translations directory. \
+Clone this project and create a new language file in the /plugin/src/main/resources/translations directory. \
 Once your changes are ready, open a pull request for review. We appreciate your works!
 
 #### Areas for improvement
@@ -44,48 +43,14 @@ Afdian: https://afdian.com/@xiaomomi/
 
 ## CustomCrops API
 
-### Maven
-
-```html
-<repositories>
-  <repository>
-    <id>jitpack</id>
-    <url>https://jitpack.io/</url>
-  </repository>
-</repositories>
-```
-```html
-<dependencies>
-  <dependency>
-    <groupId>com.github.Xiao-MoMi</groupId>
-    <artifactId>Custom-Crops</artifactId>
-    <version>{LATEST}</version>
-    <scope>provided</scope>
-  </dependency>
-</dependencies>
-```
-### Gradle (Groovy)
-
-```groovy
-repositories {
-    maven { url 'https://jitpack.io' }
-}
-```
-```groovy
-dependencies {
-    compileOnly 'com.github.Xiao-MoMi:Custom-Crops:{LATEST}'
-}
-```
-### Gradle (Kotlin)
-
 ```kotlin
 repositories {
-    maven("https://jitpack.io/")
+    maven("https://repo.momirealms.net/releases/")
 }
 ```
 ```kotlin
 dependencies {
-    compileOnly("com.github.Xiao-MoMi:Custom-Crops:{LATEST}")
+    compileOnly("net.momirealms:custom-crops:3.6.29")
 }
 ```
 #### Fun Facts
