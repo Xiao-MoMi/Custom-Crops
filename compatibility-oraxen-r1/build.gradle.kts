@@ -6,7 +6,6 @@ repositories {
 
 dependencies {
     compileOnly(project(":api"))
-    compileOnly(project(":common"))
     compileOnly("io.papermc.paper:paper-api:1.20.4-R0.1-SNAPSHOT")
     compileOnly("io.th0rgal:oraxen:1.180.0")
 }

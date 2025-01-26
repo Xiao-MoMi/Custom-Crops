@@ -14,10 +14,10 @@ repositories {
     maven("https://repo.dmulloy2.net/repository/public/") // betonquest needs packet wrapper?
     maven("https://oss.sonatype.org/content/repositories/snapshots")
     maven("https://repo.rapture.pw/repository/maven-releases/") // flow nbt
+    maven("https://repo.momirealms.net/releases/") // CustomFishing
 }
 
 dependencies {
-    compileOnly(project(":common"))
     compileOnly(project(":api"))
     compileOnly("dev.dejvokep:boosted-yaml:${rootProject.properties["boosted_yaml_version"]}")
     compileOnly("com.flowpowered:flow-nbt:${rootProject.properties["flow_nbt_version"]}")
@@ -53,7 +53,7 @@ dependencies {
     compileOnly("io.lumine:MythicLib-dist:1.6.2-SNAPSHOT")
     compileOnly("pers.neige.neigeitems:NeigeItems:1.17.13")
     compileOnly("io.lumine:Mythic-Dist:5.6.2")
-    compileOnly("com.github.Xiao-MoMi:Custom-Fishing:2.2.19")
+    compileOnly("net.momirealms:custom-fishing:2.3.3")
     compileOnly("com.github.LoneDev6:api-itemsadder:3.6.3-beta-14")
     // eco
     compileOnly("com.willfp:eco:6.70.1")

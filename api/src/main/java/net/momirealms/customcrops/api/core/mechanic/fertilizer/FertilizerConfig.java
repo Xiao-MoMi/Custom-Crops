@@ -20,7 +20,6 @@ package net.momirealms.customcrops.api.core.mechanic.fertilizer;
 import net.momirealms.customcrops.api.action.Action;
 import net.momirealms.customcrops.api.requirement.Requirement;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
 
@@ -144,5 +143,5 @@ public interface FertilizerConfig {
      *
      * @return An array of doubles representing the quality ratio override, or null if not applicable.
      */
-    double @Nullable [] overrideQualityRatio();
+    double[] overrideQualityRatio();
 }

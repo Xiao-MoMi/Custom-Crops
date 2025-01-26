@@ -3,6 +3,7 @@ import java.io.ByteArrayOutputStream
 
 plugins {
     id("java")
+    id("com.gradleup.shadow") version "9.0.0-beta6"
 }
 
 val git : String = versionBanner()
@@ -11,9 +12,8 @@ ext["git_version"] = git
 ext["builder"] = builder
 
 subprojects {
-
     apply(plugin = "java")
-    apply(plugin = "java-library")
+    apply(plugin = "com.gradleup.shadow")
 
     tasks.processResources {
         filteringCharset = "UTF-8"

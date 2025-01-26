@@ -1,9 +1,3 @@
-val commitID: String by project
-
-plugins {
-    id("io.github.goooler.shadow") version "8.1.8"
-}
-
 repositories {
     mavenCentral()
     maven("https://repo.rapture.pw/repository/maven-releases/")
@@ -16,11 +10,10 @@ repositories {
 dependencies {
     // Platform
     compileOnly("dev.folia:folia-api:1.20.4-R0.1-SNAPSHOT")
-
+    // Some sub projects
     implementation(project(":api"))  {
         exclude("dev.dejvokep", "boosted-yaml")
     }
-    implementation(project(":common"))
     implementation(project(":compatibility"))
     implementation(project(":compatibility-asp-r1"))
 

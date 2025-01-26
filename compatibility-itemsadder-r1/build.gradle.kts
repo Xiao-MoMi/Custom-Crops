@@ -6,7 +6,6 @@ repositories {
 
 dependencies {
     compileOnly(project(":api"))
-    compileOnly(project(":common"))
     compileOnly("io.papermc.paper:paper-api:1.20.4-R0.1-SNAPSHOT")
     compileOnly("com.github.LoneDev6:api-itemsadder:3.6.3-beta-14")
 }

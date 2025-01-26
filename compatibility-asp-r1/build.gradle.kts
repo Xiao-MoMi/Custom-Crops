@@ -7,7 +7,6 @@ repositories {
 
 dependencies {
     compileOnly(project(":api"))
-    compileOnly(project(":common"))
     compileOnly("dev.folia:folia-api:1.20.4-R0.1-SNAPSHOT")
     compileOnly("com.infernalsuite.aswm:api:1.20.4-R0.1-SNAPSHOT")
 }

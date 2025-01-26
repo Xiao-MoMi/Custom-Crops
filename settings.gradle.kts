@@ -1,5 +1,4 @@
 rootProject.name = "CustomCrops"
-include(":common")
 include(":api")
 include(":plugin")
 include(":compatibility")

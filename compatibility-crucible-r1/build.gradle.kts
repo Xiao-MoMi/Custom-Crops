@@ -6,7 +6,6 @@ repositories {
 
 dependencies {
     compileOnly(project(":api"))
-    compileOnly(project(":common"))
     compileOnly("io.papermc.paper:paper-api:1.20.4-R0.1-SNAPSHOT")
     compileOnly("io.lumine:Mythic-Dist:5.7.1")
     compileOnly("io.lumine:MythicCrucible-Dist:2.1.0-SNAPSHOT")

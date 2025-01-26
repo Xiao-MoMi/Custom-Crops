@@ -25,7 +25,6 @@ import org.incendo.cloud.CommandManager;
 import org.incendo.cloud.context.CommandContext;
 
 public abstract class AbstractCommandFeature<C> implements CommandFeature<C> {
-
     protected final CustomCropsCommandManager<C> commandManager;
     protected CommandConfig<C> commandConfig;
 
