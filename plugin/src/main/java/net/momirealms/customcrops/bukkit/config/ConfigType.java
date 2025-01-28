@@ -151,15 +151,16 @@ public class ConfigType {
     public static final ConfigType CROP = of(
             "crops",
             (manager, id, section) -> {
-
                 ActionManager<Player> pam = BukkitCustomCropsPlugin.getInstance().getActionManager(Player.class);
                 ActionManager<CustomCropsBlockState> bam = BukkitCustomCropsPlugin.getInstance().getActionManager(CustomCropsBlockState.class);
                 RequirementManager<Player> prm = BukkitCustomCropsPlugin.getInstance().getRequirementManager(Player.class);
-
                 boolean needUpdate = false;
-
-                ExistenceForm form = CustomForm.valueOf(section.getString("type").toUpperCase(Locale.ENGLISH)).existenceForm();
-
+                String type = section.getString("type");
+                if (type == null) {
+                    BukkitCustomCropsPlugin.getInstance().getPluginLogger().warn("Failed to load " + id + " because `type` is null");
+                    return false;
+                }
+                ExistenceForm form = CustomForm.valueOf(type.toUpperCase(Locale.ENGLISH)).existenceForm();
                 Section growConditionSection = section.getSection("grow-conditions");
                 if (growConditionSection != null) {
                     for (Map.Entry<String, Object> entry : growConditionSection.getStringRouteMappedValues(false).entrySet()) {
