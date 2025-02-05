@@ -33,6 +33,7 @@ import net.momirealms.customcrops.api.misc.value.MathValue;
 import net.momirealms.customcrops.api.util.EventUtils;
 import net.momirealms.customcrops.api.util.LocationUtils;
 import net.momirealms.customcrops.api.util.PlayerUtils;
+import net.momirealms.customcrops.common.helper.VersionHelper;
 import net.momirealms.customcrops.common.util.RandomUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -88,7 +89,11 @@ public class ActionDropItem<T> extends AbstractBuiltInAction<T> {
                 if (toInv && player != null) {
                     PlayerUtils.giveItem(player, itemToDrop, itemToDrop.getAmount());
                 } else {
-                    location.getWorld().dropItemNaturally(LocationUtils.toBlockCenterLocation(location), itemToDrop);
+                    if (VersionHelper.isVersionNewerThan1_21_2()) {
+                        location.getWorld().dropItemNaturally(LocationUtils.toBlockCenterLocation(location), itemToDrop);
+                    } else {
+                        location.getWorld().dropItemNaturally(LocationUtils.toBlockLocation(location), itemToDrop);
+                    }
                 }
             }
         }, location);
