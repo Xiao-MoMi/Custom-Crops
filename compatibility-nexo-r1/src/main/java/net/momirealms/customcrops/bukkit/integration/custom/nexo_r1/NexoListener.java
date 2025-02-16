@@ -23,7 +23,8 @@ public class NexoListener extends AbstractCustomEventListener {
 	private static final Set<Material> IGNORED = new HashSet<>(
 			List.of(
 					Material.NOTE_BLOCK,
-					Material.TRIPWIRE
+					Material.TRIPWIRE,
+					Material.CHORUS_PLANT
 			)
 	);
 

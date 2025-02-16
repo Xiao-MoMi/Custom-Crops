@@ -78,7 +78,7 @@ public class BukkitItemManager extends AbstractItemManager {
             plugin.getPluginLogger().warn("Failed to load CustomItemProvider", e);
         }
         if (this.provider == null) {
-            plugin.getPluginLogger().warn("ItemsAdder/Oraxen/Nexo/MythicCrucible are not installed. You can safely ignore this if you implemented the custom item interface with API.");
+            plugin.getPluginLogger().warn("CraftEngine/ItemsAdder/Oraxen/Nexo/MythicCrucible are not installed. You can safely ignore this if you implemented the custom item interface with API.");
         }
         this.factory = BukkitItemFactory.create(plugin);
     }
@@ -139,7 +139,20 @@ public class BukkitItemManager extends AbstractItemManager {
     }
 
     private void hookDefaultPlugins() throws ReflectiveOperationException {
-        if (PluginUtils.isEnabled("Oraxen")) {
+        if (PluginUtils.isEnabled("CraftEngine")) {
+            String rVersion = "r1";
+            Class<?> craftEngineProviderClass = Class.forName("net.momirealms.customcrops.bukkit.integration.custom.craftengine_" + rVersion + ".CraftEngineProvider");
+            Constructor<?> craftEngineProviderConstructor = craftEngineProviderClass.getDeclaredConstructor();
+            craftEngineProviderConstructor.setAccessible(true);
+            this.provider = (CustomItemProvider) craftEngineProviderConstructor.newInstance();
+
+            Class<?> craftEngineListenerClass = Class.forName("net.momirealms.customcrops.bukkit.integration.custom.craftengine_" + rVersion + ".CraftEngineListener");
+            Constructor<?> craftEngineListenerConstructor = craftEngineListenerClass.getDeclaredConstructor(AbstractItemManager.class);
+            craftEngineListenerConstructor.setAccessible(true);
+            this.setCustomEventListener((AbstractCustomEventListener) craftEngineListenerConstructor.newInstance(this));
+
+            plugin.getPluginLogger().info("CraftEngine hooked!");
+        } else if (PluginUtils.isEnabled("Oraxen")) {
             String rVersion;
             if (PluginUtils.getPluginVersion("Oraxen").startsWith("2")) {
                 rVersion = "r2";

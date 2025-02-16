@@ -22,6 +22,7 @@ import dev.lone.itemsadder.api.CustomFurniture;
 import dev.lone.itemsadder.api.CustomStack;
 import net.momirealms.customcrops.api.BukkitCustomCropsPlugin;
 import net.momirealms.customcrops.api.core.CustomItemProvider;
+import net.momirealms.customcrops.api.util.LocationUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -54,7 +55,7 @@ public class ItemsAdderProvider implements CustomItemProvider {
     @Override
     public Entity placeFurniture(Location location, String id) {
         try {
-            CustomFurniture furniture = CustomFurniture.spawnPreciseNonSolid(id, location);
+            CustomFurniture furniture = CustomFurniture.spawnPreciseNonSolid(id, LocationUtils.toSurfaceCenterLocation(location));
             if (furniture == null) return null;
             return furniture.getEntity();
         } catch (RuntimeException e) {

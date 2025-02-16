@@ -7,6 +7,7 @@ authors: [ XiaoMoMi ]
 folia-supported: true
 softdepend:
   - Vault
+  - CraftEngine
   - ItemsAdder
   - Oraxen
   - Nexo
