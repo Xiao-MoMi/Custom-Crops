@@ -1,5 +1,8 @@
 package net.momirealms.customcrops.bukkit.integration.custom.nexo_r1;
 
+import com.nexomc.nexo.api.events.custom_block.chorusblock.NexoChorusBlockBreakEvent;
+import com.nexomc.nexo.api.events.custom_block.chorusblock.NexoChorusBlockInteractEvent;
+import com.nexomc.nexo.api.events.custom_block.chorusblock.NexoChorusBlockPlaceEvent;
 import com.nexomc.nexo.api.events.custom_block.noteblock.NexoNoteBlockBreakEvent;
 import com.nexomc.nexo.api.events.custom_block.noteblock.NexoNoteBlockInteractEvent;
 import com.nexomc.nexo.api.events.custom_block.noteblock.NexoNoteBlockPlaceEvent;
@@ -72,6 +75,18 @@ public class NexoListener extends AbstractCustomEventListener {
 	}
 
 	@EventHandler(ignoreCancelled = true)
+	public void onInteractCustomBlock(NexoChorusBlockInteractEvent event) {
+		itemManager.handlePlayerInteractBlock(
+				event.getPlayer(),
+				event.getBlock(),
+				event.getMechanic().getItemID(), event.getBlockFace(),
+				event.getHand(),
+				event.getItemInHand(),
+				event
+		);
+	}
+
+	@EventHandler(ignoreCancelled = true)
 	public void onBreakFurniture(NexoFurnitureBreakEvent event) {
 		itemManager.handlePlayerBreak(
 				event.getPlayer(),
@@ -91,6 +106,15 @@ public class NexoListener extends AbstractCustomEventListener {
 
 	@EventHandler(ignoreCancelled = true)
 	public void onBreakCustomBlock(NexoStringBlockBreakEvent event) {
+		itemManager.handlePlayerBreak(
+				event.getPlayer(),
+				event.getBlock().getLocation(), event.getPlayer().getInventory().getItemInMainHand(), event.getMechanic().getItemID(),
+				event
+		);
+	}
+
+	@EventHandler(ignoreCancelled = true)
+	public void onBreakCustomBlock(NexoChorusBlockBreakEvent event) {
 		itemManager.handlePlayerBreak(
 				event.getPlayer(),
 				event.getBlock().getLocation(), event.getPlayer().getInventory().getItemInMainHand(), event.getMechanic().getItemID(),
@@ -124,6 +148,18 @@ public class NexoListener extends AbstractCustomEventListener {
 
 	@EventHandler(ignoreCancelled = true)
 	public void onPlaceCustomBlock(NexoStringBlockPlaceEvent event) {
+		itemManager.handlePlayerPlace(
+				event.getPlayer(),
+				event.getBlock().getLocation(),
+				event.getMechanic().getItemID(),
+				event.getHand(),
+				event.getItemInHand(),
+				event
+		);
+	}
+
+	@EventHandler(ignoreCancelled = true)
+	public void onPlaceCustomBlock(NexoChorusBlockPlaceEvent event) {
 		itemManager.handlePlayerPlace(
 				event.getPlayer(),
 				event.getBlock().getLocation(),
