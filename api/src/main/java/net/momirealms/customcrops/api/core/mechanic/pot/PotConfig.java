@@ -275,8 +275,20 @@ public interface PotConfig {
          */
         Builder isNearbyWaterAccepted(boolean isNearbyWaterAccepted);
 
+        /**
+         * Sets whether the pot ignores random tick
+         *
+         * @param ignoreRandomTick True if ignore random tick
+         * @return The current instance of the Builder.
+         */
         Builder ignoreRandomTick(boolean ignoreRandomTick);
 
+        /**
+         * Sets whether the pot ignores scheduled tick
+         *
+         * @param ignoreScheduledTick True if ignore scheduled tick
+         * @return The current instance of the Builder.
+         */
         Builder ignoreScheduledTick(boolean ignoreScheduledTick);
 
         /**

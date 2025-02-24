@@ -62,7 +62,7 @@ public class CropBlock extends AbstractCustomCropsBlock {
         // ignore random tick
         if (world.setting().tickCropMode() == 1) return;
         if (canTick(state, world.setting().tickCropInterval())) {
-            tickCrop(state, world, location, offlineTick);
+            tickCrop(state, world, location, offlineTick, false);
         }
     }
 
@@ -71,7 +71,7 @@ public class CropBlock extends AbstractCustomCropsBlock {
         // ignore scheduled tick
         if (world.setting().tickCropMode() == 2) return;
         if (canTick(state, world.setting().tickCropInterval())) {
-            tickCrop(state, world, location, offlineTick);
+            tickCrop(state, world, location, offlineTick, true);
         }
     }
 
@@ -340,7 +340,7 @@ public class CropBlock extends AbstractCustomCropsBlock {
         return state;
     }
 
-    private void tickCrop(CustomCropsBlockState state, CustomCropsWorld<?> world, Pos3 location, boolean offline) {
+    private void tickCrop(CustomCropsBlockState state, CustomCropsWorld<?> world, Pos3 location, boolean offline, boolean tickMode) {
         CropConfig config = config(state);
         BukkitCustomCropsPlugin plugin = BukkitCustomCropsPlugin.getInstance();
         if (config == null) {
@@ -348,6 +348,9 @@ public class CropBlock extends AbstractCustomCropsBlock {
             world.removeBlockState(location);
             return;
         }
+
+        if (tickMode && config.ignoreRandomTick()) return;
+        if (!tickMode && config.ignoreScheduledTick()) return;
 
         int previousPoint = point(state);
         World bukkitWorld = world.bukkitWorld();

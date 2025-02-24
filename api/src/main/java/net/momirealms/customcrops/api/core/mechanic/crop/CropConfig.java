@@ -18,6 +18,7 @@
 package net.momirealms.customcrops.api.core.mechanic.crop;
 
 import net.momirealms.customcrops.api.action.Action;
+import net.momirealms.customcrops.api.core.mechanic.pot.PotConfig;
 import net.momirealms.customcrops.api.core.world.CustomCropsBlockState;
 import net.momirealms.customcrops.api.requirement.Requirement;
 import org.bukkit.entity.Player;
@@ -208,6 +209,20 @@ public interface CropConfig {
     }
 
     /**
+     * Should the crop ignore scheduled tick?
+     *
+     * @return ignore or not
+     */
+    boolean ignoreScheduledTick();
+
+    /**
+     * Should the crop ignore random tick?
+     *
+     * @return ignore or not
+     */
+    boolean ignoreRandomTick();
+
+    /**
      * Builder interface for constructing instances of {@link CropConfig}.
      */
     interface Builder {
@@ -355,5 +370,21 @@ public interface CropConfig {
          * @return The builder instance for chaining.
          */
         Builder stages(Collection<CropStageConfig.Builder> stages);
+
+        /**
+         * Sets whether the crop ignores random tick
+         *
+         * @param ignoreRandomTick True if ignore random tick
+         * @return The current instance of the Builder.
+         */
+        Builder ignoreRandomTick(boolean ignoreRandomTick);
+
+        /**
+         * Sets whether the crop ignores scheduled tick
+         *
+         * @param ignoreScheduledTick True if ignore scheduled tick
+         * @return The current instance of the Builder.
+         */
+        Builder ignoreScheduledTick(boolean ignoreScheduledTick);
     }
 }

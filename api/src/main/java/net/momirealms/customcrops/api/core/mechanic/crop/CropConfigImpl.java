@@ -50,6 +50,8 @@ public class CropConfigImpl implements CropConfig {
     private final HashMap<String, CropStageConfig> id2Stages = new HashMap<>();
     private final Set<String> stageIDs = new HashSet<>();
     private final HashMap<Integer, CropStageConfig> cropStageWithModelMap = new HashMap<>();
+    private final boolean ignoreScheduledTick;
+    private final boolean ignoreRandomTick;
 
     public CropConfigImpl(
             String id,
@@ -69,7 +71,9 @@ public class CropConfigImpl implements CropConfig {
             BoneMeal[] boneMeals,
             boolean rotation,
             Set<String> potWhitelist,
-            Collection<CropStageConfig.Builder> stageBuilders
+            Collection<CropStageConfig.Builder> stageBuilders,
+            boolean ignoreScheduledTick,
+            boolean ignoreRandomTick
     ) {
         this.id = id;
         this.seed = seed;
@@ -88,6 +92,8 @@ public class CropConfigImpl implements CropConfig {
         this.boneMeals = boneMeals;
         this.rotation = rotation;
         this.potWhitelist = potWhitelist;
+        this.ignoreRandomTick = ignoreRandomTick;
+        this.ignoreScheduledTick = ignoreScheduledTick;
         for (CropStageConfig.Builder builder : stageBuilders) {
             CropStageConfig config = builder.crop(this).build();
             point2Stages.put(config.point(), config);
@@ -228,8 +234,17 @@ public class CropConfigImpl implements CropConfig {
         return navigablePoint2Stages.floorEntry(point);
     }
 
-    public static class BuilderImpl implements Builder {
+    @Override
+    public boolean ignoreScheduledTick() {
+        return ignoreScheduledTick;
+    }
 
+    @Override
+    public boolean ignoreRandomTick() {
+        return ignoreRandomTick;
+    }
+
+    public static class BuilderImpl implements Builder {
         private String id;
         private String seed;
         private ExistenceForm existenceForm;
@@ -249,10 +264,12 @@ public class CropConfigImpl implements CropConfig {
         private boolean rotation;
         private Set<String> potWhitelist;
         private Collection<CropStageConfig.Builder> stages;
+        private boolean ignoreScheduledTick;
+        private boolean ignoreRandomTick;
 
         @Override
         public CropConfig build() {
-            return new CropConfigImpl(id, seed, maxPoints, wrongPotActions, interactActions, breakActions, plantActions, reachLimitActions, deathActions, plantRequirements, breakRequirements, interactRequirements, growConditions, deathConditions, boneMeals, rotation, potWhitelist, stages);
+            return new CropConfigImpl(id, seed, maxPoints, wrongPotActions, interactActions, breakActions, plantActions, reachLimitActions, deathActions, plantRequirements, breakRequirements, interactRequirements, growConditions, deathConditions, boneMeals, rotation, potWhitelist, stages, ignoreScheduledTick, ignoreRandomTick);
         }
 
         @Override
@@ -359,6 +376,18 @@ public class CropConfigImpl implements CropConfig {
         @Override
         public Builder stages(Collection<CropStageConfig.Builder> stages) {
             this.stages = new HashSet<>(stages);
+            return this;
+        }
+
+        @Override
+        public Builder ignoreRandomTick(boolean ignoreRandomTick) {
+            this.ignoreRandomTick = ignoreRandomTick;
+            return this;
+        }
+
+        @Override
+        public Builder ignoreScheduledTick(boolean ignoreScheduledTick) {
+            this.ignoreScheduledTick = ignoreScheduledTick;
             return this;
         }
     }

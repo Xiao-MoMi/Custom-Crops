@@ -209,6 +209,8 @@ public class ConfigType {
                         .seed(section.getString("seed"))
                         .rotation(section.getBoolean("random-rotation", false))
                         .maxPoints(section.getInt("max-points", 1))
+                        .ignoreRandomTick(section.getBoolean("ignore-random-tick", false))
+                        .ignoreScheduledTick(section.getBoolean("ignore-scheduled-tick", false))
                         .potWhitelist(new HashSet<>(section.getStringList("pot-whitelist")))
                         .wrongPotActions(pam.parseActions(section.getSection("events.wrong_pot")))
                         .plantActions(pam.parseActions(section.getSection("events.plant")))
