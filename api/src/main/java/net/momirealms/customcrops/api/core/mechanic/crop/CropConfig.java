@@ -18,7 +18,6 @@
 package net.momirealms.customcrops.api.core.mechanic.crop;
 
 import net.momirealms.customcrops.api.action.Action;
-import net.momirealms.customcrops.api.core.mechanic.pot.PotConfig;
 import net.momirealms.customcrops.api.core.world.CustomCropsBlockState;
 import net.momirealms.customcrops.api.requirement.Requirement;
 import org.bukkit.entity.Player;
