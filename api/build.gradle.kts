@@ -34,6 +34,7 @@ dependencies {
     compileOnly("com.saicone.rtag:rtag:${rootProject.properties["rtag_version"]}")
     compileOnly("net.objecthunter:exp4j:${rootProject.properties["exp4j_version"]}")
     compileOnly("com.google.guava:guava:${rootProject.properties["guava_version"]}")
+    compileOnly("io.netty:netty-all:${rootProject.properties["netty_version"]}.Final")
 }
 
 java {

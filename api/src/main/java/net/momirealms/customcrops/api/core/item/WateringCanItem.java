@@ -46,6 +46,7 @@ import net.momirealms.customcrops.api.util.LocationUtils;
 import net.momirealms.customcrops.common.helper.AdventureHelper;
 import net.momirealms.customcrops.common.item.Item;
 import net.momirealms.customcrops.common.util.Pair;
+import net.momirealms.sparrow.heart.SparrowHeart;
 import org.bukkit.FluidCollisionMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -58,11 +59,16 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class WateringCanItem extends AbstractCustomCropsItem {
+    private static final Set<String> VANILLA_CROP_STATES = new HashSet<>();
+
+    static {
+        for (Material material : ConfigManager.VANILLA_CROPS) {
+            VANILLA_CROP_STATES.addAll(SparrowHeart.getInstance().getAllBlockStates(material));
+        }
+    }
 
     public WateringCanItem() {
         super(BuiltInItemMechanics.WATERING_CAN.key());
@@ -278,7 +284,7 @@ public class WateringCanItem extends AbstractCustomCropsItem {
 
         // if the clicked block is a crop, correct the target block
         List<CropConfig> cropConfigs = Registries.STAGE_TO_CROP_UNSAFE.get(targetBlockID);
-        if (cropConfigs != null || Registries.ITEM_TO_DEAD_CROP.containsKey(targetBlockID)) {
+        if (cropConfigs != null || Registries.ITEM_TO_DEAD_CROP.containsKey(targetBlockID) || VANILLA_CROP_STATES.contains(targetBlockID)) {
             // is a crop
             targetLocation = targetLocation.subtract(0,1,0);
             targetBlockID = BukkitCustomCropsPlugin.getInstance().getItemManager().blockID(targetLocation);

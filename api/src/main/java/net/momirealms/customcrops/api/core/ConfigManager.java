@@ -56,7 +56,6 @@ public abstract class ConfigManager implements ConfigLoader, Reloadable {
         VANILLA_CROPS = Collections.unmodifiableSet(set);
     }
 
-
     private static ConfigManager instance;
     protected final BukkitCustomCropsPlugin plugin;
 

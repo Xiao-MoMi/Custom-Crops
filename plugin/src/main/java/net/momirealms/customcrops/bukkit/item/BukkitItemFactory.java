@@ -45,7 +45,7 @@ public abstract class BukkitItemFactory extends ItemFactory<CustomCropsPlugin, R
                 return new UniversalItemFactory(plugin);
             }
             case "1.20.5", "1.20.6",
-                 "1.21", "1.21.1", "1.21.2", "1.21.3", "1.21.4" -> {
+                 "1.21", "1.21.1", "1.21.2", "1.21.3", "1.21.4", "1.21.5" -> {
                 return new ComponentItemFactory(plugin);
             }
             default -> throw new IllegalStateException("Unsupported server version: " + plugin.getServerVersion());
