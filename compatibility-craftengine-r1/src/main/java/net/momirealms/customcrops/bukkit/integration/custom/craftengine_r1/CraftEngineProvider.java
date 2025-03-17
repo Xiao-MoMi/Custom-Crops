@@ -23,6 +23,7 @@ import net.momirealms.craftengine.bukkit.api.CraftEngineItems;
 import net.momirealms.craftengine.bukkit.entity.furniture.LoadedFurniture;
 import net.momirealms.craftengine.core.block.ImmutableBlockState;
 import net.momirealms.craftengine.core.entity.furniture.AnchorType;
+import net.momirealms.craftengine.core.item.ItemBuildContext;
 import net.momirealms.craftengine.core.util.Key;
 import net.momirealms.craftengine.libraries.nbt.CompoundTag;
 import net.momirealms.customcrops.api.core.CustomItemProvider;
@@ -74,7 +75,7 @@ public class CraftEngineProvider implements CustomItemProvider {
     @Override
     public @Nullable ItemStack itemStack(Player player, String id) {
         return Optional.ofNullable(CraftEngineItems.byId(Key.of(id)))
-                .map(it -> it.buildItemStack(null))
+                .map(it -> it.buildItemStack(ItemBuildContext.EMPTY))
                 .orElse(null);
     }
 

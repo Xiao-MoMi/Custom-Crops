@@ -85,8 +85,7 @@ public class ActionPlant<T> extends AbstractBuiltInAction<T> {
         PotConfig potConfig = Registries.ITEM_TO_POT.get(potItemID);
         CustomCropsBlockState potState = potBlock.fixOrGetState(world, potPos3, potConfig, potItemID);
         if (potState == null) {
-            plugin.getPluginLogger().warn("Pot doesn't exist below the crop when executing `plant` action at location[" + world.worldName() + "," + potPos3 + "]");
-            return;
+            plugin.debug(() -> "Pot doesn't exist below the crop when executing `plant` action at location[" + world.worldName() + "," + potPos3 + "]");
         }
 
         CropBlock cropBlock = (CropBlock) BuiltInBlockMechanics.CROP.mechanic();

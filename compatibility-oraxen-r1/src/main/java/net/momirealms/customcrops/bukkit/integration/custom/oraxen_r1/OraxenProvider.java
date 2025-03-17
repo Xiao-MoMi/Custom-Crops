@@ -50,6 +50,7 @@ public class OraxenProvider implements CustomItemProvider {
     @Override
     public boolean placeCustomBlock(Location location, String id) {
         if (OraxenItems.exists(id)) {
+            removeCustomBlock(location);
             OraxenBlocks.place(id, location);
             return true;
         } else {
