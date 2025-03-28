@@ -83,4 +83,4 @@ command.debug.worlds.success:
 command.debug.insight.off: "<red>Modo insight: OFF</red>"
 command.debug.insight.on:
   - "<green>Modo insight: ON</green>"
-  - "<white>NOTA: Este modo solo enseña una pequeña parte de la información."
+  - "<white>NOTA: Este modo solo enseña una pequeña parte de la información.</white>"
