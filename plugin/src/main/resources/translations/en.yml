@@ -83,4 +83,4 @@ command.debug.worlds.success:
 command.debug.insight.off: "<red>Insight mode: OFF</red>"
 command.debug.insight.on:
   - "<green>Insight mode: ON</green>"
-  - "<white>Note that this only shows a snapshot of the data."
+  - "<white>Note that this only shows a snapshot of the data.</white>"
