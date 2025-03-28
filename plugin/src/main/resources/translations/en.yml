@@ -63,7 +63,7 @@ command.force_tick.success: "<white>Took <arg:0>ms ticking <arg:1> blocks</white
 command.force_tick.failure.disable: "<red>CustomCrops is not enabled in world [<arg:0>]</red>"
 command.force_tick.failure.type: "<red>Unknown type [<arg:0>]</red>"
 command.unsafe.delete.failure.world: "<red>CustomCrops is not enabled in world [<arg:0>]</red>"
-command.unsafe.delete.success: "<white>Deleted block data in this chunk"
+command.unsafe.delete.success: "<white>Deleted block data in this chunk</white>"
 command.unsafe.restore.failure.world: "<red>CustomCrops is not enabled in world [<arg:0>]</red>"
 command.unsafe.restore.failure.chunk: "<red>This chunk doesn't contain any data</red>"
 command.unsafe.restore.success: "<white>Restored (<arg:0>/<arg:1>) blocks</white>"
@@ -83,4 +83,4 @@ command.debug.worlds.success:
 command.debug.insight.off: "<red>Insight mode: OFF</red>"
 command.debug.insight.on:
   - "<green>Insight mode: ON</green>"
-  - "<white>Note that this only shows a snapshot of the data."
+  - "<white>Note that this only shows a snapshot of the data.</white>"
