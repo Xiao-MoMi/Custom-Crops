@@ -52,6 +52,7 @@ import org.bukkit.event.player.PlayerItemDamageEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -184,7 +185,26 @@ public class BukkitItemManager extends AbstractItemManager {
 
             plugin.getPluginLogger().info("Nexo hooked!");
         } else if (PluginUtils.isEnabled("ItemsAdder")) {
-            String rVersion = "r1";
+            Plugin iaPlugin = Bukkit.getPluginManager().getPlugin("ItemsAdder");
+            String version = iaPlugin.getDescription().getVersion();
+            String[] split = version.split("\\.");
+            boolean above408 = false;
+            if (Integer.parseInt(split[0]) >= 4) {
+                if (Integer.parseInt(split[1]) > 0) {
+                    above408 = true;
+                } else {
+                    if (Integer.parseInt(String.valueOf(split[2].charAt(0))) >= 8) {
+                        above408 = true;
+                    }
+                }
+            }
+
+            String rVersion;
+            if (!above408) {
+                rVersion = "r1";
+            } else {
+                rVersion = "r2";
+            }
             Class<?> itemsAdderProviderClass = Class.forName("net.momirealms.customcrops.bukkit.integration.custom.itemsadder_" + rVersion + ".ItemsAdderProvider");
             Constructor<?> itemsAdderProviderConstructor = itemsAdderProviderClass.getDeclaredConstructor();
             itemsAdderProviderConstructor.setAccessible(true);
