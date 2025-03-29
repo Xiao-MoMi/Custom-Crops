@@ -203,7 +203,9 @@ public class BukkitCustomCropsPluginImpl extends BukkitCustomCropsPlugin {
 
     @Override
     public void disable() {
+        debug(() -> "Disabling worldManager");
         this.worldManager.disable();
+        debug(() -> "Disabled worldManager");
         this.placeholderManager.disable();
         this.hologramManager.disable();
         this.integrationManager.disable();
@@ -211,6 +213,8 @@ public class BukkitCustomCropsPluginImpl extends BukkitCustomCropsPlugin {
         if (!Bukkit.getServer().isStopping()) {
             this.commandManager.unregisterFeatures();
         }
+        this.scheduler.shutdownScheduler();
+        this.scheduler.shutdownExecutor();
     }
 
     @Override

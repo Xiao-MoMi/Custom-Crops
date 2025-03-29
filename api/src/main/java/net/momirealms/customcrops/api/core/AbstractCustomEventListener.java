@@ -57,7 +57,6 @@ import org.bukkit.inventory.ItemStack;
 import java.util.*;
 
 public abstract class AbstractCustomEventListener implements Listener {
-
     private final HashSet<EntityType> entities = new HashSet<>();
     private final HashSet<Material> blocks = new HashSet<>();
 

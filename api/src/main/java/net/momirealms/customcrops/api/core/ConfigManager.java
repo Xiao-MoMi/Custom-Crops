@@ -485,8 +485,12 @@ public abstract class ConfigManager implements ConfigLoader, Reloadable {
         return conditions.toArray(new GrowCondition[0]);
     }
 
+    public static boolean hasNamespace() {
+        return PluginUtils.isEnabled("ItemsAdder") || PluginUtils.isEnabled("CraftEngine");
+    }
+
     protected void addDefaultNamespace(File file) {
-        boolean hasNamespace = PluginUtils.isEnabled("ItemsAdder") || PluginUtils.isEnabled("CraftEngine");
+        boolean hasNamespace = hasNamespace();
         String line;
         StringBuilder sb = new StringBuilder();
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8))) {

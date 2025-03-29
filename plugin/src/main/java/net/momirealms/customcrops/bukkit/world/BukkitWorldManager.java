@@ -145,15 +145,20 @@ public class BukkitWorldManager implements WorldManager, Listener {
 
     @Override
     public void disable() {
+        plugin.debug(() -> "Saving Worlds");
         this.unload();
         for (World world : Bukkit.getWorlds()) {
+            plugin.debug(() -> "Unloading " + world.getName());
             unloadWorld(world, true);
+            plugin.debug(() -> "Unloaded " + world.getName());
         }
+        plugin.debug(() -> "Unload adaptors");
         for (WorldAdaptor<?> adaptor : this.adaptors) {
             if (adaptor instanceof Listener listener) {
                 HandlerList.unregisterAll(listener);
             }
         }
+        plugin.debug(() -> "Unloaded Worlds");
     }
 
     private void loadConfig() {
@@ -250,9 +255,12 @@ public class BukkitWorldManager implements WorldManager, Listener {
             return false;
         }
         removedWorld.setTicking(false);
+        plugin.debug(() -> "Unloading -> Saving");
         removedWorld.save(false, disabling);
+        plugin.debug(() -> "Saving -> Shutdown");
         removedWorld.scheduler().shutdownScheduler();
         removedWorld.scheduler().shutdownExecutor();
+        plugin.debug(() -> "Finished Shutdown");
         return true;
     }
 

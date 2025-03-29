@@ -82,7 +82,7 @@ public class CraftEngineListener extends AbstractCustomEventListener {
     }
 
     @EventHandler(ignoreCancelled = true)
-    public void onPlaceCustomBlock(CustomBlockAttemptPlaceEvent event) {
+    public void onPlaceCustomBlock(CustomBlockPlaceEvent event) {
         EquipmentSlot slot = event.hand() == InteractionHand.MAIN_HAND ? EquipmentSlot.HAND : EquipmentSlot.OFF_HAND;
         itemManager.handlePlayerPlace(
                 event.getPlayer(),
@@ -95,13 +95,13 @@ public class CraftEngineListener extends AbstractCustomEventListener {
     }
 
     @EventHandler(ignoreCancelled = true)
-    public void onPlaceFurniture(FurnitureAttemptPlaceEvent event) {
+    public void onPlaceFurniture(FurniturePlaceEvent event) {
         EquipmentSlot slot = event.hand() == InteractionHand.MAIN_HAND ? EquipmentSlot.HAND : EquipmentSlot.OFF_HAND;
         Player player = event.getPlayer();
         itemManager.handlePlayerPlace(
                 player,
                 event.location(),
-                event.furniture().id().toString(),
+                event.furniture().furnitureId().toString(),
                 slot,
                 event.getPlayer().getInventory().getItem(slot),
                 new DummyCancellable()
