@@ -15,7 +15,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.momirealms.customcrops.bukkit.integration.custom.itemsadder_r1;
+package net.momirealms.customcrops.bukkit.integration.custom.itemsadder_r2;
 
 import dev.lone.itemsadder.api.CustomBlock;
 import dev.lone.itemsadder.api.CustomFurniture;

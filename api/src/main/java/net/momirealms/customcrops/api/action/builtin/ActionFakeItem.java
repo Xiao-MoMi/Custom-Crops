@@ -24,7 +24,6 @@ import net.momirealms.customcrops.api.context.ContextKeys;
 import net.momirealms.customcrops.api.core.ConfigManager;
 import net.momirealms.customcrops.api.misc.value.MathValue;
 import net.momirealms.customcrops.api.util.LocationUtils;
-import net.momirealms.customcrops.api.util.PluginUtils;
 import net.momirealms.customcrops.common.helper.VersionHelper;
 import net.momirealms.sparrow.heart.SparrowHeart;
 import net.momirealms.sparrow.heart.feature.entity.FakeEntity;
