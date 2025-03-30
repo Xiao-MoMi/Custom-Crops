@@ -27,7 +27,7 @@ import net.momirealms.customcrops.api.core.world.adaptor.WorldAdaptor;
 import net.momirealms.customcrops.api.integration.SeasonProvider;
 import net.momirealms.customcrops.bukkit.config.BukkitConfigManager;
 import net.momirealms.customcrops.bukkit.integration.adaptor.BukkitWorldAdaptor;
-import net.momirealms.customcrops.bukkit.integration.adaptor.asp_r1.SlimeWorldAdaptorR1;
+import net.momirealms.customcrops.bukkit.integration.adaptor.asp_r2.SlimeWorldAdaptorR2;
 import net.momirealms.customcrops.common.helper.VersionHelper;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -58,14 +58,14 @@ public class BukkitWorldManager implements WorldManager, Listener {
         if (!VersionHelper.isVersionNewerThan1_21_4()) {
             try {
                 Class.forName("com.infernalsuite.aswm.api.SlimePlugin");
-                SlimeWorldAdaptorR1 adaptor = new SlimeWorldAdaptorR1(1);
+                SlimeWorldAdaptorR2 adaptor = new SlimeWorldAdaptorR2(1);
                 adaptors.add(adaptor);
                 Bukkit.getPluginManager().registerEvents(adaptor, plugin.getBootstrap());
                 plugin.getPluginLogger().info("SlimeWorldManager hooked!");
             } catch (ClassNotFoundException ignored) {
             }
             if (Bukkit.getPluginManager().isPluginEnabled("SlimeWorldPlugin")) {
-                SlimeWorldAdaptorR1 adaptor = new SlimeWorldAdaptorR1(2);
+                SlimeWorldAdaptorR2 adaptor = new SlimeWorldAdaptorR2(2);
                 adaptors.add(adaptor);
                 Bukkit.getPluginManager().registerEvents(adaptor, plugin.getBootstrap());
                 plugin.getPluginLogger().info("AdvancedSlimePaper hooked!");

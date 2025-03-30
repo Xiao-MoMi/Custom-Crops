@@ -15,7 +15,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.momirealms.customcrops.bukkit.integration.adaptor.asp_r1;
+package net.momirealms.customcrops.bukkit.integration.adaptor.asp_r2;
 
 import com.infernalsuite.aswm.api.events.LoadSlimeWorldEvent;
 import com.infernalsuite.aswm.api.world.SlimeWorld;
@@ -43,11 +43,11 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.PriorityBlockingQueue;
 import java.util.function.Function;
 
-public class SlimeWorldAdaptorR1 extends AbstractWorldAdaptor<SlimeWorld> implements Listener {
+public class SlimeWorldAdaptorR2 extends AbstractWorldAdaptor<SlimeWorld> implements Listener {
 
     private final Function<String, SlimeWorld> getSlimeWorldFunction;
 
-    public SlimeWorldAdaptorR1(int version) {
+    public SlimeWorldAdaptorR2(int version) {
         try {
             if (version == 1) {
                 Plugin plugin = Bukkit.getPluginManager().getPlugin("SlimeWorldManager");
