@@ -42,13 +42,13 @@ dependencies {
 
 tasks {
     shadowJar {
-        from(project(":compatibility-nexo-r1").tasks.jar.get().archiveFile)
-        from(project(":compatibility-oraxen-r1").tasks.jar.get().archiveFile)
-        from(project(":compatibility-oraxen-r2").tasks.jar.get().archiveFile)
-        from(project(":compatibility-itemsadder-r1").tasks.jar.get().archiveFile)
-        from(project(":compatibility-itemsadder-r2").tasks.jar.get().archiveFile)
-        from(project(":compatibility-crucible-r1").tasks.jar.get().archiveFile)
-        from(project(":compatibility-craftengine-r1").tasks.jar.get().archiveFile)
+        from(zipTree(project(":compatibility-nexo-r1").tasks.jar.get().archiveFile))
+        from(zipTree(project(":compatibility-oraxen-r1").tasks.jar.get().archiveFile))
+        from(zipTree(project(":compatibility-oraxen-r2").tasks.jar.get().archiveFile))
+        from(zipTree(project(":compatibility-itemsadder-r1").tasks.jar.get().archiveFile))
+        from(zipTree(project(":compatibility-itemsadder-r2").tasks.jar.get().archiveFile))
+        from(zipTree(project(":compatibility-crucible-r1").tasks.jar.get().archiveFile))
+        from(zipTree(project(":compatibility-craftengine-r1").tasks.jar.get().archiveFile))
         archiveFileName = "CustomCrops-${rootProject.properties["project_version"]}.jar"
         destinationDirectory.set(file("$rootDir/target"))
         relocate("net.kyori", "net.momirealms.customcrops.libraries")
