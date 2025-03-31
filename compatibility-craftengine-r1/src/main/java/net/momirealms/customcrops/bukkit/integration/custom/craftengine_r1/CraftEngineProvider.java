@@ -82,7 +82,7 @@ public class CraftEngineProvider implements CustomItemProvider {
     @Override
     public @Nullable String furnitureID(Entity entity) {
         return Optional.ofNullable(CraftEngineFurniture.getLoadedFurnitureByBaseEntity(entity))
-                .map(it -> it.furnitureId().toString())
+                .map(it -> it.id().toString())
                 .orElse(null);
     }
 
