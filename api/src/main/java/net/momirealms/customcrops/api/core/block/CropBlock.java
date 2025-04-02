@@ -46,6 +46,7 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.metadata.FixedMetadataValue;
 
 import java.util.List;
 import java.util.Objects;
@@ -286,6 +287,8 @@ public class CropBlock extends AbstractCustomCropsBlock {
                             ActionManager.trigger(blockContext, stage.growActions());
                         }
                     }
+
+                    player.setMetadata("customcrops_tick", new FixedMetadataValue(BukkitCustomCropsPlugin.getInstance().getBootstrap(), player.getTicksLived()));
                     return;
                 }
             }

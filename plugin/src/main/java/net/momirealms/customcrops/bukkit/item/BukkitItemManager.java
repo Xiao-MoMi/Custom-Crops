@@ -52,6 +52,7 @@ import org.bukkit.event.player.PlayerItemDamageEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -521,6 +522,14 @@ public class BukkitItemManager extends AbstractItemManager {
         }
 
         if (wrapped.isCancelled()) return;
+        Player player = wrapped.player();
+        if (wrapped.hand() == EquipmentSlot.OFF_HAND && player.hasMetadata("customcrops_tick")) {
+            List<MetadataValue> list = player.getMetadata("customcrops_tick");
+            if (!list.isEmpty() && player.getTicksLived() == list.get(0).asInt()) {
+                player.removeMetadata("customcrops_tick", plugin.getBootstrap());
+                return;
+            }
+        }
 
         CustomCropsBlock customCropsBlock = Registries.BLOCKS.get(blockID);
         if (customCropsBlock != null) {
