@@ -35,6 +35,8 @@ import net.momirealms.customcrops.api.event.CropPlantEvent;
 import net.momirealms.customcrops.api.requirement.RequirementManager;
 import net.momirealms.customcrops.api.util.EventUtils;
 import net.momirealms.customcrops.api.util.LocationUtils;
+import net.momirealms.sparrow.heart.SparrowHeart;
+import net.momirealms.sparrow.heart.feature.inventory.HandSlot;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -43,6 +45,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Collection;
@@ -120,6 +123,7 @@ public class SeedItem extends AbstractCustomCropsItem {
             itemInHand.setAmount(itemInHand.getAmount() - 1);
         // place model
         BukkitCustomCropsPlugin.getInstance().getItemManager().place(LocationUtils.toSurfaceCenterLocation(seedLocation), form, stageID, cropConfig.rotation() ? FurnitureRotation.random() : FurnitureRotation.NONE);
+        SparrowHeart.getInstance().swingHand(player, event.hand() == EquipmentSlot.HAND ? HandSlot.MAIN : HandSlot.OFF);
         cropBlock.point(state, point);
         world.addBlockState(pos3, state).ifPresent(previous -> {
             BukkitCustomCropsPlugin.getInstance().debug(() -> "Overwrite old data with " + state +
