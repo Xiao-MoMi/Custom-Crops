@@ -25,6 +25,7 @@ import com.nexomc.nexo.mechanics.Mechanic;
 import com.nexomc.nexo.mechanics.furniture.FurnitureMechanic;
 import net.momirealms.customcrops.api.BukkitCustomCropsPlugin;
 import net.momirealms.customcrops.api.core.CustomItemProvider;
+import net.momirealms.customcrops.api.util.LocationUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Rotation;
@@ -59,7 +60,7 @@ public class NexoProvider implements CustomItemProvider {
 
     @Override
     public @Nullable Entity placeFurniture(Location location, String id) {
-        Entity entity = NexoFurniture.place(id, location, Rotation.NONE, BlockFace.UP);
+        Entity entity = NexoFurniture.place(id, LocationUtils.toSurfaceCenterLocation(location), Rotation.NONE, BlockFace.UP);
         if (entity == null) {
             BukkitCustomCropsPlugin.getInstance().getPluginLogger().warn("Furniture[" + id +"] doesn't exist. Please double check if that furniture exists.");
         }
