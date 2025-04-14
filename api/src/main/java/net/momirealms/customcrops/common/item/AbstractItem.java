@@ -78,7 +78,6 @@ public class AbstractItem<R, I> implements Item<I> {
         return factory.lore(item);
     }
 
-
     @Override
     public boolean unbreakable() {
         return factory.unbreakable(item);
