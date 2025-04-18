@@ -32,6 +32,7 @@ CustomCrops is a high-performance **Paper plugin** designed to enhance the **pla
    ./gradlew build
    ```
 Linux users might need to make `gradlew` an executable file using `chmod +x ./gradlew`
+
 4. The generated artifact can be found in the `/target` folder.
 
 ### 🛠️ Using an IDE
