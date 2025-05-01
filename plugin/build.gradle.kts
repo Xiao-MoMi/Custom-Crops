@@ -26,7 +26,7 @@ dependencies {
         exclude("com.google.code.gson", "gson")
     }
     implementation("net.kyori:adventure-text-serializer-legacy:${rootProject.properties["adventure_bundle_version"]}")
-    implementation("com.github.Xiao-MoMi:AntiGriefLib:${rootProject.properties["anti_grief_version"]}")
+    implementation("net.momirealms:antigrieflib:${rootProject.properties["anti_grief_version"]}")
     implementation("net.momirealms:sparrow-heart:${rootProject.properties["sparrow_heart_version"]}")
     implementation("com.saicone.rtag:rtag:${rootProject.properties["rtag_version"]}")
     implementation("com.saicone.rtag:rtag-item:${rootProject.properties["rtag_version"]}")
