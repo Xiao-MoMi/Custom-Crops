@@ -15,6 +15,7 @@ default:
   max-fertilizers: 1
   # Custom appearances for pots with different fertilizer effects
   fertilized-pots:
+    enable: false
     quality:
       dry: {0}dry_pot  # Model ID for dry pot with 'quality' fertilizer effect
       wet: {0}wet_pot  # Model ID for wet pot with 'quality' fertilizer effect
