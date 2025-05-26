@@ -124,6 +124,7 @@ public class VersionHelper {
             char ch = version.charAt(i);
             if (ch >= '0' && ch <= '9') {
                 builder.append(ch);
+            } else {
                 break;
             }
         }
