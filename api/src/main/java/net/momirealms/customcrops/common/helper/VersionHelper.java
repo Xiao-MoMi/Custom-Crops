@@ -118,6 +118,18 @@ public class VersionHelper {
         return mojmap;
     }
 
+    public static int getVersion(String version) {
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < version.length(); i++) {
+            char ch = version.charAt(i);
+            if (ch >= '0' && ch <= '9') {
+                builder.append(ch);
+                break;
+            }
+        }
+        return Integer.parseInt(builder.toString());
+    }
+
     // Method to compare two version strings
     private static boolean compareVer(String newV, String currentV) {
         if (newV == null || currentV == null || newV.isEmpty() || currentV.isEmpty()) {

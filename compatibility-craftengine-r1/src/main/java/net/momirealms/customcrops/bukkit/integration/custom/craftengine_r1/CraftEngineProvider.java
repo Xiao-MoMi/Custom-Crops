@@ -20,11 +20,10 @@ package net.momirealms.customcrops.bukkit.integration.custom.craftengine_r1;
 import net.momirealms.craftengine.bukkit.api.CraftEngineBlocks;
 import net.momirealms.craftengine.bukkit.api.CraftEngineFurniture;
 import net.momirealms.craftengine.bukkit.api.CraftEngineItems;
-import net.momirealms.craftengine.bukkit.entity.furniture.LoadedFurniture;
+import net.momirealms.craftengine.bukkit.entity.furniture.BukkitFurniture;
 import net.momirealms.craftengine.core.block.ImmutableBlockState;
 import net.momirealms.craftengine.core.entity.furniture.AnchorType;
 import net.momirealms.craftengine.core.item.ItemBuildContext;
-import net.momirealms.craftengine.core.plugin.context.ContextKey;
 import net.momirealms.craftengine.core.util.Key;
 import net.momirealms.craftengine.libraries.nbt.CompoundTag;
 import net.momirealms.customcrops.api.core.CustomItemProvider;
@@ -52,7 +51,7 @@ public class CraftEngineProvider implements CustomItemProvider {
 
     @Override
     public @Nullable Entity placeFurniture(Location location, String id) {
-        LoadedFurniture furniture = CraftEngineFurniture.place(LocationUtils.toSurfaceCenterLocation(location), Key.of(id), AnchorType.GROUND);
+        BukkitFurniture furniture = CraftEngineFurniture.place(LocationUtils.toSurfaceCenterLocation(location), Key.of(id), AnchorType.GROUND);
         if (furniture == null) return null;
         return furniture.baseEntity();
     }

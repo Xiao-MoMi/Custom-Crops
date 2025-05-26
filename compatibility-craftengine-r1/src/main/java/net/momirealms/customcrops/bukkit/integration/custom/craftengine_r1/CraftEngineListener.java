@@ -37,7 +37,7 @@ public class CraftEngineListener extends AbstractCustomEventListener {
         EquipmentSlot slot = event.hand() == InteractionHand.MAIN_HAND ? EquipmentSlot.HAND : EquipmentSlot.OFF_HAND;
         itemManager.handlePlayerInteractFurniture(
                 event.getPlayer(),
-                event.furniture().location(),
+                event.location(),
                 event.furniture().id().toString(),
                 slot,
                 event.getPlayer().getInventory().getItem(slot),
@@ -65,7 +65,7 @@ public class CraftEngineListener extends AbstractCustomEventListener {
     public void onBreakFurniture(FurnitureBreakEvent event) {
         itemManager.handlePlayerBreak(
                 event.getPlayer(),
-                event.furniture().baseEntity().getLocation(),
+                event.location(),
                 event.getPlayer().getInventory().getItemInMainHand(),
                 event.furniture().id().toString(),
                 event
