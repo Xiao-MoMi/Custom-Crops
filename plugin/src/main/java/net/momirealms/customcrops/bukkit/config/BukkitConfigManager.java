@@ -237,7 +237,7 @@ public class BukkitConfigManager extends ConfigManager {
                                             save = true;
                                         }
                                     } catch (Exception e) {
-                                        plugin.getPluginLogger().warn("Error occurs during parsing configs", e);
+                                        plugin.getPluginLogger().warn("Error occurs during parsing config section " + entry.getKey() + " in file " + subFile.toPath(), e);
                                     }
                                 }
                             }

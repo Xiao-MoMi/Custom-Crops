@@ -37,7 +37,6 @@ import net.momirealms.customcrops.api.core.world.Pos3;
 import net.momirealms.customcrops.api.event.CropPlantEvent;
 import net.momirealms.customcrops.api.misc.value.MathValue;
 import net.momirealms.customcrops.api.util.EventUtils;
-import net.momirealms.customcrops.api.util.LocationUtils;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
@@ -51,7 +50,7 @@ public class ActionPlant<T> extends AbstractBuiltInAction<T> {
     private final int point;
     private final String key;
     private final int y;
-    private final boolean triggerAction;
+    private final boolean triggerEvent;
 
     public ActionPlant(
             BukkitCustomCropsPlugin plugin,
@@ -62,7 +61,7 @@ public class ActionPlant<T> extends AbstractBuiltInAction<T> {
         this.point = section.getInt("point", 0);
         this.key = requireNonNull(section.getString("crop"));
         this.y = section.getInt("y", 0);
-        this.triggerAction = section.getBoolean("trigger-event", false);
+        this.triggerEvent = section.getBoolean("trigger-event", true);
     }
 
     @SuppressWarnings("unchecked")
@@ -94,16 +93,14 @@ public class ActionPlant<T> extends AbstractBuiltInAction<T> {
         cropBlock.id(state, key);
         cropBlock.point(state, point);
 
-        if (context.holder() instanceof Player player) {
-            EquipmentSlot slot = requireNonNull(context.arg(ContextKeys.SLOT));
+        if (context.holder() instanceof Player player && this.triggerEvent) {
+            EquipmentSlot slot = Optional.ofNullable(context.arg(ContextKeys.SLOT)).orElse(EquipmentSlot.HAND);
             CropPlantEvent plantEvent = new CropPlantEvent(player, player.getInventory().getItem(slot), slot, cropLocation, cropConfig, state, point);
             if (EventUtils.fireAndCheckCancel(plantEvent)) {
                 return;
             }
             cropBlock.point(state, plantEvent.point());
-            if (triggerAction) {
-                ActionManager.trigger((Context<Player>) context, cropConfig.plantActions());
-            }
+            ActionManager.trigger((Context<Player>) context, cropConfig.plantActions());
         }
 
         CropStageConfig stageConfigWithModel = cropConfig.stageWithModelByPoint(cropBlock.point(state));
@@ -127,6 +124,6 @@ public class ActionPlant<T> extends AbstractBuiltInAction<T> {
     }
 
     public boolean triggerPlantAction() {
-        return triggerAction;
+        return triggerEvent;
     }
 }
