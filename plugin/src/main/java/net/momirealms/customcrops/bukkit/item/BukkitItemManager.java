@@ -64,7 +64,6 @@ import java.util.*;
 import static java.util.Objects.requireNonNull;
 
 public class BukkitItemManager extends AbstractItemManager {
-
     private final BukkitCustomCropsPlugin plugin;
     private CustomItemProvider provider;
     private AbstractCustomEventListener eventListener;

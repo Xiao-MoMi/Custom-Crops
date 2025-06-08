@@ -87,27 +87,31 @@ public class VersionHelper {
     }
 
     public static boolean isVersionNewerThan1_18() {
-        return version >= 18;
+        return version >= 18f;
     }
 
     public static boolean isVersionNewerThan1_19() {
-        return version >= 19;
+        return version >= 19f;
     }
 
     public static boolean isVersionNewerThan1_19_4() {
-        return version >= 19.39;
+        return version >= 19.39f;
     }
 
     public static boolean isVersionNewerThan1_20() {
-        return version >= 20;
+        return version >= 20f;
     }
 
     public static boolean isVersionNewerThan1_21_4() {
-        return version >= 21.39;
+        return version >= 21.39f;
     }
 
     public static boolean isVersionNewerThan1_21_2() {
-        return version >= 19;
+        return version >= 21.19f;
+    }
+
+    public static boolean isVersionNewerThan1_21() {
+        return version >= 21f;
     }
 
     public static boolean isFolia() {

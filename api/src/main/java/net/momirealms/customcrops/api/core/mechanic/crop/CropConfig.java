@@ -24,6 +24,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -45,6 +46,8 @@ public interface CropConfig {
      * @return The seed item ID as a {@link String}.
      */
     String seed();
+
+    List<String> seeds();
 
     /**
      * Gets the maximum growth points for this crop.
@@ -247,7 +250,7 @@ public interface CropConfig {
          * @param seed The seed item ID.
          * @return The builder instance for chaining.
          */
-        Builder seed(String seed);
+        Builder seed(List<String> seed);
 
         /**
          * Sets the maximum growth points for this crop.

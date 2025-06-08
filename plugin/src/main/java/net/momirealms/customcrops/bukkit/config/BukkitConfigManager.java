@@ -294,8 +294,10 @@ public class BukkitConfigManager extends ConfigManager {
     @Override
     public void registerCropConfig(CropConfig config) {
         Registries.CROP.register(config.id(), config);
-        Registries.SEED_TO_CROP.register(config.seed(), config);
-        Registries.ITEMS.register(config.seed(), BuiltInItemMechanics.SEED.mechanic());
+        for (String seed : config.seeds()) {
+            Registries.SEED_TO_CROP.register(seed, config);
+            Registries.ITEMS.register(seed, BuiltInItemMechanics.SEED.mechanic());
+        }
         for (DeathCondition condition : config.deathConditions()) {
             String deadStage = condition.deathStage();
             if (deadStage != null) {

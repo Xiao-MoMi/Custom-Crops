@@ -41,10 +41,7 @@ import net.momirealms.customcrops.common.util.Pair;
 import net.momirealms.customcrops.common.util.TriFunction;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Configuration types for various mechanics.
@@ -206,7 +203,7 @@ public class ConfigType {
 
                 CropConfig config = CropConfig.builder()
                         .id(id)
-                        .seed(section.getString("seed"))
+                        .seed(getAsStringList(section.get("seed")))
                         .rotation(section.getBoolean("random-rotation", false))
                         .maxPoints(section.getInt("max-points", 1))
                         .ignoreRandomTick(section.getBoolean("ignore-random-tick", false))
@@ -335,5 +332,21 @@ public class ConfigType {
 
     public boolean parse(ConfigManager manager, String id, Section section) {
         return argumentConsumer.apply(manager, id, section);
+    }
+
+    private static List<String> getAsStringList(Object o) {
+        List<String> list = new ArrayList<>();
+        if (o instanceof List<?>) {
+            for (Object object : (List<?>) o) {
+                list.add(object.toString());
+            }
+        } else if (o instanceof String) {
+            list.add((String) o);
+        } else {
+            if (o != null) {
+                list.add(o.toString());
+            }
+        }
+        return list;
     }
 }

@@ -29,7 +29,7 @@ import java.util.*;
 public class CropConfigImpl implements CropConfig {
 
     private final String id;
-    private final String seed;
+    private final List<String> seed;
     private final int maxPoints;
     private final Action<Player>[] wrongPotActions;
     private final Action<Player>[] interactActions;
@@ -55,7 +55,7 @@ public class CropConfigImpl implements CropConfig {
 
     public CropConfigImpl(
             String id,
-            String seed,
+            List<String> seed,
             int maxPoints,
             Action<Player>[] wrongPotActions,
             Action<Player>[] interactActions,
@@ -125,7 +125,12 @@ public class CropConfigImpl implements CropConfig {
 
     @Override
     public String seed() {
-        return seed;
+        return this.seed.get(0);
+    }
+
+    @Override
+    public List<String> seeds() {
+        return this.seed;
     }
 
     @Override
@@ -246,7 +251,7 @@ public class CropConfigImpl implements CropConfig {
 
     public static class BuilderImpl implements Builder {
         private String id;
-        private String seed;
+        private List<String> seed;
         private ExistenceForm existenceForm;
         private int maxPoints;
         private Action<Player>[] wrongPotActions;
@@ -279,7 +284,7 @@ public class CropConfigImpl implements CropConfig {
         }
 
         @Override
-        public Builder seed(String seed) {
+        public Builder seed(List<String> seed) {
             this.seed = seed;
             return this;
         }

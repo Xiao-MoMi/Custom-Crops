@@ -49,6 +49,7 @@ tasks {
         from(zipTree(project(":compatibility-itemsadder-r2").tasks.jar.get().archiveFile))
         from(zipTree(project(":compatibility-crucible-r1").tasks.jar.get().archiveFile))
         from(zipTree(project(":compatibility-craftengine-r1").tasks.jar.get().archiveFile))
+        from(zipTree(project(":plugin:j21").tasks.jar.get().archiveFile))
         archiveFileName = "CustomCrops-${rootProject.properties["project_version"]}.jar"
         destinationDirectory.set(file("$rootDir/target"))
         relocate("net.kyori", "net.momirealms.customcrops.libraries")

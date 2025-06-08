@@ -72,7 +72,7 @@ public class ActionPlant<T> extends AbstractBuiltInAction<T> {
             plugin.getPluginLogger().warn("`plant` action is not executed due to crop[" + key + "] not exists");
             return;
         }
-        Location cropLocation = requireNonNull(context.arg(ContextKeys.LOCATION)).clone().add(0,y,0);
+        Location cropLocation = requireNonNull(context.arg(ContextKeys.LOCATION)).clone().add(0, y, 0);
         Location potLocation = cropLocation.clone().subtract(0,1,0);
         Optional<CustomCropsWorld<?>> optionalWorld = plugin.getWorldManager().getWorld(cropLocation.getWorld());
         if (optionalWorld.isEmpty()) {
@@ -86,6 +86,7 @@ public class ActionPlant<T> extends AbstractBuiltInAction<T> {
         CustomCropsBlockState potState = potBlock.fixOrGetState(world, potPos3, potConfig, potItemID);
         if (potState == null) {
             plugin.debug(() -> "Pot doesn't exist below the crop when executing `plant` action at location[" + world.worldName() + "," + potPos3 + "]");
+            return;
         }
 
         CropBlock cropBlock = (CropBlock) BuiltInBlockMechanics.CROP.mechanic();
