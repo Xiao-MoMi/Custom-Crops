@@ -189,6 +189,7 @@ public class BukkitCustomCropsPluginImpl extends BukkitCustomCropsPlugin {
         Runnable delayedInitTask = () -> {
             ((SimpleRegistryAccess) registryAccess).freeze();
             logger.info("Registry access has been frozen");
+            this.integrationManager.delayedLoad();
             EventUtils.fireAndForget(new CustomCropsReloadEvent(this));
             ((BukkitItemManager) itemManager).setAntiGriefLib(AntiGriefLib.builder((JavaPlugin) getBootstrap()).silentLogs(true).ignoreOP(true).build());
         };

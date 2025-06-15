@@ -100,4 +100,6 @@ public interface IntegrationManager extends Reloadable {
      */
     @Nullable
     EntityProvider getEntityProvider(String id);
+
+    void delayedLoad();
 }

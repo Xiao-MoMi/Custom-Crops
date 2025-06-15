@@ -64,48 +64,8 @@ public class BukkitIntegrationManager implements IntegrationManager {
     @Override
     public void load() {
         registerEntityProvider(new VanillaEntityProvider());
-        if (isHooked("MMOItems")) {
-            registerItemProvider(new MMOItemsItemProvider());
-        }
-        if (isHooked("Zaphkiel")) {
-            registerItemProvider(new ZaphkielItemProvider());
-        }
-        if (isHooked("ExecutableItems")) {
-            registerItemProvider(new ExecutableItemProvider());
-        }
-        if (isHooked("NeigeItems")) {
-            registerItemProvider(new NeigeItemsItemProvider());
-        }
         if (isHooked("ItemsAdder")) {
             registerEntityProvider(new ItemsAdderEntityProvider());
-        }
-        if (isHooked("CustomFishing", "2.2", "2.3", "2.4")) {
-            registerItemProvider(new CustomFishingItemProvider());
-        }
-        if (isHooked("MythicMobs", "5")) {
-            registerItemProvider(new MythicMobsItemProvider());
-            registerEntityProvider(new MythicEntityProvider());
-        }
-        if (isHooked("EcoJobs")) {
-            registerLevelerProvider(new EcoJobsLevelerProvider());
-        }
-        if (isHooked("EcoSkills")) {
-            registerLevelerProvider(new EcoSkillsLevelerProvider());
-        }
-        if (isHooked("Jobs")) {
-            registerLevelerProvider(new JobsRebornLevelerProvider());
-        }
-        if (isHooked("MMOCore")) {
-            registerLevelerProvider(new MMOCoreLevelerProvider());
-        }
-        if (isHooked("mcMMO")) {
-            registerLevelerProvider(new McMMOLevelerProvider());
-        }
-        if (isHooked("AureliumSkills")) {
-            registerLevelerProvider(new AureliumSkillsProvider());
-        }
-        if (isHooked("AuraSkills")) {
-            registerLevelerProvider(new AuraSkillsLevelerProvider());
         }
         if (isHooked("RealisticSeasons")) {
             registerSeasonProvider(new RealisticSeasonsProvider());
@@ -131,6 +91,50 @@ public class BukkitIntegrationManager implements IntegrationManager {
         }
         if (isHooked("WorldGuard", "7")) {
             WorldGuardRegion.register();
+        }
+        if (isHooked("MythicMobs", "5")) {
+            registerItemProvider(new MythicMobsItemProvider());
+            registerEntityProvider(new MythicEntityProvider());
+        }
+    }
+
+    @Override
+    public void delayedLoad() {
+        if (isHooked("CustomFishing", "2.2", "2.3", "2.4")) {
+            registerItemProvider(new CustomFishingItemProvider());
+        }
+        if (isHooked("EcoJobs")) {
+            registerLevelerProvider(new EcoJobsLevelerProvider());
+        }
+        if (isHooked("EcoSkills")) {
+            registerLevelerProvider(new EcoSkillsLevelerProvider());
+        }
+        if (isHooked("Jobs")) {
+            registerLevelerProvider(new JobsRebornLevelerProvider());
+        }
+        if (isHooked("MMOCore")) {
+            registerLevelerProvider(new MMOCoreLevelerProvider());
+        }
+        if (isHooked("mcMMO")) {
+            registerLevelerProvider(new McMMOLevelerProvider());
+        }
+        if (isHooked("AureliumSkills")) {
+            registerLevelerProvider(new AureliumSkillsProvider());
+        }
+        if (isHooked("AuraSkills")) {
+            registerLevelerProvider(new AuraSkillsLevelerProvider());
+        }
+        if (isHooked("MMOItems")) {
+            registerItemProvider(new MMOItemsItemProvider());
+        }
+        if (isHooked("Zaphkiel")) {
+            registerItemProvider(new ZaphkielItemProvider());
+        }
+        if (isHooked("ExecutableItems")) {
+            registerItemProvider(new ExecutableItemProvider());
+        }
+        if (isHooked("NeigeItems")) {
+            registerItemProvider(new NeigeItemsItemProvider());
         }
     }
 
