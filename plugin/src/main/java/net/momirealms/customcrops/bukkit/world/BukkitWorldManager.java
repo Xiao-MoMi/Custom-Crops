@@ -128,9 +128,7 @@ public class BukkitWorldManager implements WorldManager, Listener {
     }
 
     @Override
-    public void load() {
-        this.loadConfig();
-        Bukkit.getPluginManager().registerEvents(this, plugin.getBootstrap());
+    public void reloadWorlds() {
         // load and unload worlds
         for (World world : Bukkit.getWorlds()) {
             if (isMechanicEnabled(world)) {
@@ -139,6 +137,12 @@ public class BukkitWorldManager implements WorldManager, Listener {
                 unloadWorld(world, false);
             }
         }
+    }
+
+    @Override
+    public void load() {
+        this.loadConfig();
+        Bukkit.getPluginManager().registerEvents(this, plugin.getBootstrap());
     }
 
     @Override

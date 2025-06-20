@@ -39,6 +39,7 @@ public class ReloadCommand extends BukkitCommandFeature<CommandSender> {
                 .handler(context -> {
                     long time1 = System.currentTimeMillis();
                     BukkitCustomCropsPlugin.getInstance().reload();
+                    BukkitCustomCropsPlugin.getInstance().getWorldManager().reloadWorlds();
                     handleFeedback(context, MessageConstants.COMMAND_RELOAD_SUCCESS, Component.text(System.currentTimeMillis() - time1));
                 });
     }

@@ -188,8 +188,17 @@ public class BukkitCustomCropsPluginImpl extends BukkitCustomCropsPlugin {
 
         Runnable delayedInitTask = () -> {
             ((SimpleRegistryAccess) registryAccess).freeze();
-            logger.info("Registry access has been frozen");
-            this.integrationManager.delayedLoad();
+            this.logger.info("Registry access has been frozen");
+            try {
+                this.worldManager.reloadWorlds();
+            } catch (Exception e) {
+                this.logger.severe("Failed to load worlds", e);
+            }
+            try {
+                this.integrationManager.delayedLoad();
+            } catch (Exception e) {
+                this.logger.severe("Failed to load integrations", e);
+            }
             EventUtils.fireAndForget(new CustomCropsReloadEvent(this));
             ((BukkitItemManager) itemManager).setAntiGriefLib(AntiGriefLib.builder((JavaPlugin) getBootstrap()).silentLogs(true).ignoreOP(true).build());
         };

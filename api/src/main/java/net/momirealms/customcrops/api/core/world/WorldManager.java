@@ -55,6 +55,8 @@ public interface WorldManager extends Reloadable {
      */
     int getDate(World world);
 
+    void reloadWorlds();
+
     /**
      * Loads a CustomCrops world
      *
