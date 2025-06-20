@@ -80,7 +80,7 @@ repositories {
 ### 📌 Dependency
 ```kotlin
 dependencies {
-    compileOnly("net.momirealms:custom-crops:3.6.29")
+    compileOnly("net.momirealms:custom-crops:3.6.40")
 }
 ```
 
