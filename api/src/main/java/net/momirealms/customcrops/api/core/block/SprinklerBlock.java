@@ -209,7 +209,7 @@ public class SprinklerBlock extends AbstractCustomCropsBlock {
                             context.arg(ContextKeys.CURRENT_WATER, currentWater);
                             context.arg(ContextKeys.WATER_BAR, Optional.ofNullable(config.waterBar()).map(it -> it.getWaterBar(currentWater, config.storage())).orElse(""));
                             if (addWater(state, config, method.amountOfWater()) && !config.threeDItem().equals(config.threeDItemWithWater())) {
-                                updateBlockAppearance(location, config, false);
+                                updateBlockAppearance(location, config, true);
                             }
 
                             method.triggerActions(context);
