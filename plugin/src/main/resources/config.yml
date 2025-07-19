@@ -97,6 +97,7 @@ mechanics:
   # Scarecrow settings to prevent crops from being attacked by crows
   scarecrow:
     enable: true
+    # You can use a list of IDs here
     id: '{0}scarecrow'
     type: FURNITURE
     range: 7
