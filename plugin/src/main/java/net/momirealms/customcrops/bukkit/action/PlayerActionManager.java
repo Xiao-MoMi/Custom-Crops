@@ -21,7 +21,6 @@ import dev.dejvokep.boostedyaml.block.implementation.Section;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
-import net.kyori.adventure.text.Component;
 import net.momirealms.customcrops.api.BukkitCustomCropsPlugin;
 import net.momirealms.customcrops.api.action.AbstractActionManager;
 import net.momirealms.customcrops.api.action.Action;
@@ -95,9 +94,8 @@ public class PlayerActionManager extends AbstractActionManager<Player> {
                 if (context.holder() == null) return;
                 if (Math.random() > chance.evaluate(context)) return;
                 List<String> replaced = plugin.getPlaceholderManager().parse(context.holder(), messages, context.placeholderMap());
-                Audience audience = plugin.getSenderFactory().getAudience(context.holder());
                 for (String text : replaced) {
-                    audience.sendMessage(AdventureHelper.miniMessage(text));
+                    SparrowHeart.getInstance().sendMessage(context.holder(), AdventureHelper.componentToJson(AdventureHelper.miniMessage(text)));
                 }
             };
         }, "message");
@@ -108,8 +106,7 @@ public class PlayerActionManager extends AbstractActionManager<Player> {
                 if (Math.random() > chance.evaluate(context)) return;
                 String random = messages.get(RandomUtils.generateRandomInt(0, messages.size() - 1));
                 random = BukkitPlaceholderManager.getInstance().parse(context.holder(), random, context.placeholderMap());
-                Audience audience = plugin.getSenderFactory().getAudience(context.holder());
-                audience.sendMessage(AdventureHelper.miniMessage(random));
+                SparrowHeart.getInstance().sendMessage(context.holder(), AdventureHelper.componentToJson(AdventureHelper.miniMessage(random)));
             };
         }, "random-message");
     }
@@ -144,9 +141,7 @@ public class PlayerActionManager extends AbstractActionManager<Player> {
             return context -> {
                 if (context.holder() == null) return;
                 if (Math.random() > chance.evaluate(context)) return;
-                Audience audience = plugin.getSenderFactory().getAudience(context.holder());
-                Component component = AdventureHelper.miniMessage(plugin.getPlaceholderManager().parse(context.holder(), text, context.placeholderMap()));
-                audience.sendActionBar(component);
+                SparrowHeart.getInstance().sendActionBar(context.holder(), AdventureHelper.componentToJson(AdventureHelper.miniMessage(plugin.getPlaceholderManager().parse(context.holder(), text, context.placeholderMap()))));
             };
         }, "actionbar");
         registerAction((args, chance) -> {
@@ -156,8 +151,7 @@ public class PlayerActionManager extends AbstractActionManager<Player> {
                 if (Math.random() > chance.evaluate(context)) return;
                 String random = texts.get(RandomUtils.generateRandomInt(0, texts.size() - 1));
                 random = plugin.getPlaceholderManager().parse(context.holder(), random, context.placeholderMap());
-                Audience audience = plugin.getSenderFactory().getAudience(context.holder());
-                audience.sendActionBar(AdventureHelper.miniMessage(random));
+                SparrowHeart.getInstance().sendActionBar(context.holder(), AdventureHelper.componentToJson(AdventureHelper.miniMessage(random)));
             };
         }, "random-actionbar");
     }
@@ -422,10 +416,9 @@ public class PlayerActionManager extends AbstractActionManager<Player> {
                     if (Math.random() > chance.evaluate(context)) return;
                     final Player player = context.holder();
                     if (player == null) return;
-                    Audience audience = plugin.getSenderFactory().getAudience(player);
-                    AdventureHelper.sendTitle(audience,
-                            AdventureHelper.miniMessage(title.render(context)),
-                            AdventureHelper.miniMessage(subtitle.render(context)),
+                    SparrowHeart.getInstance().sendTitle(player,
+                            AdventureHelper.componentToJson(AdventureHelper.miniMessage(title.render(context))),
+                            AdventureHelper.componentToJson(AdventureHelper.miniMessage(subtitle.render(context))),
                             fadeIn, stay, fadeOut
                     );
                 };
@@ -449,10 +442,9 @@ public class PlayerActionManager extends AbstractActionManager<Player> {
                     TextValue<Player> title = TextValue.auto(titles.get(RandomUtils.generateRandomInt(0, titles.size() - 1)));
                     TextValue<Player> subtitle = TextValue.auto(subtitles.get(RandomUtils.generateRandomInt(0, subtitles.size() - 1)));
                     final Player player = context.holder();
-                    Audience audience = plugin.getSenderFactory().getAudience(player);
-                    AdventureHelper.sendTitle(audience,
-                            AdventureHelper.miniMessage(title.render(context)),
-                            AdventureHelper.miniMessage(subtitle.render(context)),
+                    SparrowHeart.getInstance().sendTitle(player,
+                            AdventureHelper.componentToJson(AdventureHelper.miniMessage(title.render(context))),
+                            AdventureHelper.componentToJson(AdventureHelper.miniMessage(subtitle.render(context))),
                             fadeIn, stay, fadeOut
                     );
                 };

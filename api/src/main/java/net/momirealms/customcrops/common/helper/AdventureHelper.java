@@ -25,9 +25,7 @@ import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
-import net.kyori.adventure.title.Title;
 
-import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -101,40 +99,6 @@ public class AdventureHelper {
     public static String miniMessageToJson(String miniMessage) {
         AdventureHelper instance = getInstance();
         return instance.miniMessageToJsonCache.get(miniMessage, (text) -> instance.gsonComponentSerializer.serialize(miniMessage(text)));
-    }
-
-    /**
-     * Sends a title to an audience.
-     *
-     * @param audience the audience to send the title to
-     * @param title    the title component
-     * @param subtitle the subtitle component
-     * @param fadeIn   the fade-in duration in ticks
-     * @param stay     the stay duration in ticks
-     * @param fadeOut  the fade-out duration in ticks
-     */
-    public static void sendTitle(Audience audience, Component title, Component subtitle, int fadeIn, int stay, int fadeOut) {
-        audience.showTitle(Title.title(title, subtitle, Title.Times.times(Duration.ofMillis(fadeIn * 50L), Duration.ofMillis(stay * 50L), Duration.ofMillis(fadeOut * 50L))));
-    }
-
-    /**
-     * Sends an action bar message to an audience.
-     *
-     * @param audience  the audience to send the action bar message to
-     * @param actionBar the action bar component
-     */
-    public static void sendActionBar(Audience audience, Component actionBar) {
-        audience.sendActionBar(actionBar);
-    }
-
-    /**
-     * Sends a message to an audience.
-     *
-     * @param audience the audience to send the message to
-     * @param message  the message component
-     */
-    public static void sendMessage(Audience audience, Component message) {
-        audience.sendMessage(message);
     }
 
     /**

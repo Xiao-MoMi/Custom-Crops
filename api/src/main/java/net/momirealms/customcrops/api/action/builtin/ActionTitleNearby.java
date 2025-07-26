@@ -18,7 +18,6 @@
 package net.momirealms.customcrops.api.action.builtin;
 
 import dev.dejvokep.boostedyaml.block.implementation.Section;
-import net.kyori.adventure.audience.Audience;
 import net.momirealms.customcrops.api.BukkitCustomCropsPlugin;
 import net.momirealms.customcrops.api.context.Context;
 import net.momirealms.customcrops.api.context.ContextKeys;
@@ -26,6 +25,7 @@ import net.momirealms.customcrops.api.misc.value.MathValue;
 import net.momirealms.customcrops.api.misc.value.TextValue;
 import net.momirealms.customcrops.api.util.LocationUtils;
 import net.momirealms.customcrops.common.helper.AdventureHelper;
+import net.momirealms.sparrow.heart.SparrowHeart;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -61,10 +61,9 @@ public class ActionTitleNearby<T> extends AbstractBuiltInAction<T> {
         for (Player player : location.getWorld().getPlayers()) {
             if (LocationUtils.getDistance(player.getLocation(), location) <= range) {
                 context.arg(ContextKeys.TEMP_NEAR_PLAYER, player.getName());
-                Audience audience = plugin.getSenderFactory().getAudience(player);
-                AdventureHelper.sendTitle(audience,
-                        AdventureHelper.miniMessage(title.render(context)),
-                        AdventureHelper.miniMessage(subtitle.render(context)),
+                SparrowHeart.getInstance().sendTitle(player,
+                        AdventureHelper.componentToJson(AdventureHelper.miniMessage(title.render(context))),
+                        AdventureHelper.componentToJson(AdventureHelper.miniMessage(subtitle.render(context))),
                         fadeIn, stay, fadeOut
                 );
             }
