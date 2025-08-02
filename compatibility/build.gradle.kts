@@ -15,6 +15,7 @@ repositories {
     maven("https://oss.sonatype.org/content/repositories/snapshots")
     maven("https://repo.rapture.pw/repository/maven-releases/") // flow nbt
     maven("https://repo.momirealms.net/releases/") // CustomFishing
+    maven("https://repo.lukasa.lt/repository/maven-public/") // packet wrapper
 }
 
 dependencies {
@@ -44,7 +45,8 @@ dependencies {
     // quest
     compileOnly(files("libs/BattlePass-4.0.6-api.jar"))
     compileOnly(files("libs/ClueScrolls-4.8.7-api.jar"))
-    compileOnly("org.betonquest:betonquest:2.1.3")
+    compileOnly("com.comphenix.packetwrapper:PacketWrapper:1.20-2.2.1")
+    compileOnly("org.betonquest:betonquest:2.2.1")
     // item
     compileOnly(files("libs/zaphkiel-2.0.24.jar"))
     compileOnly(files("libs/ExecutableItems-7.24.9.29.jar"))
