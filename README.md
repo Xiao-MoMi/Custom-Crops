@@ -27,6 +27,7 @@ CustomCrops is a high-performance **Paper plugin** designed to enhance the **pla
 
 1. Install **JDK 17 & 21**.
 2. Open a terminal and navigate to the project directory.
+3. Create **j21** folder in /compatibility folder
 3. Run:
    ```sh
    ./gradlew build
