@@ -44,6 +44,7 @@ import org.bukkit.*;
 import org.bukkit.Registry;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.LivingEntity;
@@ -264,9 +265,10 @@ public class BukkitItemManager extends AbstractItemManager {
 
     @Override
     public void placeBlock(@NotNull Location location, @NotNull String id) {
-        if (id.startsWith("minecraft:")) {
-            location.getWorld().getBlockAt(location).setBlockData(Bukkit.createBlockData(id), false);
-        } else {
+        try {
+            BlockData blockData = Bukkit.createBlockData(id);
+            location.getWorld().getBlockAt(location).setBlockData(blockData, false);
+        } catch (IllegalArgumentException e) {
             this.provider.placeCustomBlock(location, id);
         }
     }
