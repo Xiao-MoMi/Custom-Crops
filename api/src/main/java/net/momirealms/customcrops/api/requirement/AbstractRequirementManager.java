@@ -41,6 +41,7 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.type.Farmland;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -976,9 +977,9 @@ public abstract class AbstractRequirementManager<T> implements RequirementManage
             if (args instanceof Section section) {
                 String flyModel = section.getString("fly-model");
                 String standModel = section.getString("stand-model");
-                double chance = section.getDouble("chance");
+                MathValue<T> chance = MathValue.auto(section.get("chance"));
                 return (context) -> {
-                    if (Math.random() > chance) return false;
+                    if (Math.random() > chance.evaluate(context)) return false;
                     Location location = requireNonNull(context.arg(ContextKeys.LOCATION));
                     Pos3 pos3 = Pos3.from(location);
                     if (ConfigManager.enableScarecrow()) {
