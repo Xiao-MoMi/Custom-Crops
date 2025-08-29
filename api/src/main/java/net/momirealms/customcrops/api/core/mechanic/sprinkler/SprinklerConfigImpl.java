@@ -25,6 +25,7 @@ import net.momirealms.customcrops.api.misc.water.WateringMethod;
 import net.momirealms.customcrops.api.requirement.Requirement;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
 import java.util.Objects;
@@ -46,6 +47,7 @@ public class SprinklerConfigImpl implements SprinklerConfig {
     private final Requirement<Player>[] placeRequirements;
     private final Requirement<Player>[] breakRequirements;
     private final Requirement<Player>[] useRequirements;
+    private final Requirement<CustomCropsBlockState>[] tickRequirements;
     private final Action<CustomCropsBlockState>[] workActions;
     private final Action<Player>[] interactActions;
     private final Action<Player>[] reachLimitActions;
@@ -72,6 +74,7 @@ public class SprinklerConfigImpl implements SprinklerConfig {
             Requirement<Player>[] placeRequirements,
             Requirement<Player>[] breakRequirements,
             Requirement<Player>[] useRequirements,
+            Requirement<CustomCropsBlockState>[] tickRequirements,
             Action<CustomCropsBlockState>[] workActions,
             Action<Player>[] interactActions,
             Action<Player>[] reachLimitActions,
@@ -95,6 +98,7 @@ public class SprinklerConfigImpl implements SprinklerConfig {
         this.threeDItemWithWater = Objects.requireNonNullElse(threeDItemWithWater, threeDItem);
         this.placeRequirements = placeRequirements;
         this.breakRequirements = breakRequirements;
+        this.tickRequirements = tickRequirements;
         this.useRequirements = useRequirements;
         this.workActions = workActions;
         this.interactActions = interactActions;
@@ -180,6 +184,11 @@ public class SprinklerConfigImpl implements SprinklerConfig {
     }
 
     @Override
+    public @Nullable Requirement<CustomCropsBlockState>[] tickRequirements() {
+        return tickRequirements;
+    }
+
+    @Override
     public Requirement<Player>[] placeRequirements() {
         return placeRequirements;
     }
@@ -248,6 +257,7 @@ public class SprinklerConfigImpl implements SprinklerConfig {
         private Requirement<Player>[] placeRequirements;
         private Requirement<Player>[] breakRequirements;
         private Requirement<Player>[] useRequirements;
+        private Requirement<CustomCropsBlockState>[] tickRequirements;
         private Action<CustomCropsBlockState>[] workActions;
         private Action<Player>[] interactActions;
         private Action<Player>[] reachLimitActions;
@@ -263,7 +273,7 @@ public class SprinklerConfigImpl implements SprinklerConfig {
         @Override
         public SprinklerConfig build() {
             return new SprinklerConfigImpl(id, existenceForm, storage, range, infinite, wateringAmount, sprinklingAmount, potWhitelist, waterBar, twoDItem, threeDItem, threeDItemWithWater,
-                    placeRequirements, breakRequirements, useRequirements, workActions, interactActions, reachLimitActions, addWaterActions, placeActions, breakActions, fullWaterActions, wateringMethods);
+                    placeRequirements, breakRequirements, useRequirements, tickRequirements, workActions, interactActions, reachLimitActions, addWaterActions, placeActions, breakActions, fullWaterActions, wateringMethods);
         }
 
         @Override
@@ -341,6 +351,12 @@ public class SprinklerConfigImpl implements SprinklerConfig {
         @Override
         public Builder placeRequirements(Requirement<Player>[] placeRequirements) {
             this.placeRequirements = placeRequirements;
+            return this;
+        }
+
+        @Override
+        public Builder tickRequirements(Requirement<CustomCropsBlockState>[] workRequirements) {
+            this.tickRequirements = workRequirements;
             return this;
         }
 

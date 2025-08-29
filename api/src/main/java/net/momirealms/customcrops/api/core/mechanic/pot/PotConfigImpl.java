@@ -31,7 +31,6 @@ import org.bukkit.entity.Player;
 import java.util.*;
 
 public class PotConfigImpl implements PotConfig {
-
     private final String id;
     private final boolean vanillaFarmland;
     private final boolean disablePluginSystem;

@@ -273,6 +273,14 @@ public class SprinklerBlock extends AbstractCustomCropsBlock {
             world.removeBlockState(location);
             return;
         }
+
+        World bukkitWorld = world.bukkitWorld();
+        Location bukkitLocation = location.toLocation(bukkitWorld);
+        Context<CustomCropsBlockState> context = Context.block(state, bukkitLocation).arg(ContextKeys.OFFLINE, offline);
+        if (!RequirementManager.isSatisfied(context, config.tickRequirements())) {
+            return;
+        }
+
         boolean updateState;
         if (!config.infinite()) {
             int water = water(state);
@@ -283,10 +291,6 @@ public class SprinklerBlock extends AbstractCustomCropsBlock {
         } else {
             updateState = false;
         }
-
-        World bukkitWorld = world.bukkitWorld();
-        Location bukkitLocation = location.toLocation(bukkitWorld);
-        Context<CustomCropsBlockState> context = Context.block(state, bukkitLocation).arg(ContextKeys.OFFLINE, offline);
 
         // place/remove entities on main thread
         BukkitCustomCropsPlugin.getInstance().getScheduler().sync().run(() -> {

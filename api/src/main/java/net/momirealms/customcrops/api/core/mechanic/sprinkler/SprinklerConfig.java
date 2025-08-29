@@ -132,6 +132,14 @@ public interface SprinklerConfig {
     ExistenceForm existenceForm();
 
     /**
+     * Gets the tick requirements for the sprinkler.
+     *
+     * @return An array of tick {@link Requirement}s, or null if none.
+     */
+    @Nullable
+    Requirement<CustomCropsBlockState>[] tickRequirements();
+
+    /**
      * Gets the placement requirements for the sprinkler.
      *
      * @return An array of placement {@link Requirement}s, or null if none.
@@ -359,6 +367,14 @@ public interface SprinklerConfig {
          * @return The current instance of the Builder.
          */
         Builder useRequirements(Requirement<Player>[] useRequirements);
+
+        /**
+         * Sets the requirements for the sprinkler to tick.
+         *
+         * @param tickRequirements An array of {@link Requirement} instances for ticking.
+         * @return The current instance of the Builder.
+         */
+        Builder tickRequirements(Requirement<CustomCropsBlockState>[] tickRequirements);
 
         /**
          * Sets the actions to be performed when the sprinkler is working.

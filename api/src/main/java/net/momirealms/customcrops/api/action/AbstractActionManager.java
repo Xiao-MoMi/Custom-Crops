@@ -47,6 +47,7 @@ public abstract class AbstractActionManager<T> implements ActionManager<T> {
     protected void registerBuiltInActions() {
         this.registerCommandAction();
         this.registerBroadcastAction();
+        this.registerConsumeWater();
         this.registerNearbyMessage();
         this.registerNearbyActionBar();
         this.registerNearbyTitle();
@@ -155,6 +156,17 @@ public abstract class AbstractActionManager<T> implements ActionManager<T> {
         } catch (InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException e) {
             plugin.getPluginLogger().warn("Error occurred when creating expansion instance.", e);
         }
+    }
+
+    protected void registerConsumeWater() {
+        registerAction((args, chance) -> {
+            if (args instanceof Section section) {
+                return new ActionConsumeWater<>(plugin, section, chance);
+            } else {
+                plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at consume-water action which should be Section");
+                return Action.empty();
+            }
+        }, "consume-water");
     }
 
     protected void registerBroadcastAction() {

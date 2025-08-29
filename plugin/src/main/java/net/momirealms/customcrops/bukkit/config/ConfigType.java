@@ -271,6 +271,7 @@ public class ConfigType {
                 ActionManager<Player> pam = BukkitCustomCropsPlugin.getInstance().getActionManager(Player.class);
                 ActionManager<CustomCropsBlockState> bam = BukkitCustomCropsPlugin.getInstance().getActionManager(CustomCropsBlockState.class);
                 RequirementManager<Player> prm = BukkitCustomCropsPlugin.getInstance().getRequirementManager(Player.class);
+                RequirementManager<CustomCropsBlockState> brm = BukkitCustomCropsPlugin.getInstance().getRequirementManager(CustomCropsBlockState.class);
 
                 SprinklerConfig config = SprinklerConfig.builder()
                         .id(id)
@@ -295,6 +296,7 @@ public class ConfigType {
                         .useRequirements(prm.parseRequirements(section.getSection("requirements.use"), true))
                         .placeRequirements(prm.parseRequirements(section.getSection("requirements.place"), true))
                         .breakRequirements(prm.parseRequirements(section.getSection("requirements.break"), true))
+                        .tickRequirements(brm.parseRequirements(section.getSection("requirements.tick"), true))
                         .waterBar(section.contains("water-bar") ? WaterBar.of(
                                 section.getString("water-bar.left", ""),
                                 section.getString("water-bar.empty", ""),
