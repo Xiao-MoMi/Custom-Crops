@@ -142,7 +142,6 @@ other-settings:
   # which may conflict with some plugins still using SpigotAPI#ItemMeta
   protect-original-lore: false
   # Whether to verify if a block/furniture matches the data in CustomCrops
-  # Enable this if using Oraxen, as its API is more reliable
   double-check: false
   # Enable WorldEdit support (Experimental)
   worldedit-support: false
@@ -153,3 +152,6 @@ other-settings:
   intervene-anti-grief: false
   # Decides whether the process of saving is async
   async-world-saving: true
+  # Prevents crop stage items from dropping
+  # As some custom block plugins don't know how to handle loot table correctly
+  prevent-dropping-stage-items: true

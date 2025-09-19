@@ -206,7 +206,9 @@ public abstract class AbstractCustomEventListener implements Listener {
         String itemID = this.itemManager.id(itemStack);
 
         if (Registries.STAGE_TO_CROP_UNSAFE.containsKey(itemID)) {
-            event.setCancelled(true);
+            if (ConfigManager.preventDroppingStageItems()) {
+                event.setCancelled(true);
+            }
             return;
         }
 

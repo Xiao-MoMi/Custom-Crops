@@ -148,6 +148,8 @@ public class BukkitConfigManager extends ConfigManager {
         interveneAntiGrief = config.getBoolean("other-settings.intervene-anti-grief", false);
         asyncWorldSaving = config.getBoolean("other-settings.async-world-saving", true);
 
+        preventDroppingStageItems = config.getBoolean("other-settings.prevent-dropping-stage-items", true);
+
         offsets.clear();
         Section section = config.getSection("mechanics.hologram-offset-correction");
         if (section != null) {

@@ -95,6 +95,8 @@ public abstract class ConfigManager implements ConfigLoader, Reloadable {
 
     protected boolean asyncWorldSaving = true;
 
+    protected boolean preventDroppingStageItems = true;
+
     public ConfigManager(BukkitCustomCropsPlugin plugin) {
         this.plugin = plugin;
         instance = this;
@@ -202,6 +204,10 @@ public abstract class ConfigManager implements ConfigLoader, Reloadable {
 
     public static boolean worldeditSupport() {
         return instance.worldeditSupport;
+    }
+
+    public static boolean preventDroppingStageItems() {
+        return instance.preventDroppingStageItems;
     }
 
     @Override
