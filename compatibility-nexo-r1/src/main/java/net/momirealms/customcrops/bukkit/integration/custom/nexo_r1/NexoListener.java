@@ -16,6 +16,7 @@ import net.momirealms.customcrops.api.core.AbstractCustomEventListener;
 import net.momirealms.customcrops.api.core.AbstractItemManager;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 
 import java.util.HashSet;
 import java.util.List;
@@ -86,7 +87,7 @@ public class NexoListener extends AbstractCustomEventListener {
 		);
 	}
 
-	@EventHandler(ignoreCancelled = true)
+	@EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
 	public void onBreakFurniture(NexoFurnitureBreakEvent event) {
 		itemManager.handlePlayerBreak(
 				event.getPlayer(),
