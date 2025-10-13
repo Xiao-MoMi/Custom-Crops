@@ -1,6 +1,6 @@
 plugins {
     id("java")
-    id("com.gradleup.shadow") version "9.0.0-beta11"
+    id("com.gradleup.shadow") version "9.2.2"
 }
 
 val git : String = versionBanner()
@@ -21,8 +21,8 @@ subprojects {
 
         filesMatching(arrayListOf("*.yml", "*/*.yml")) {
             expand(
-                Pair("project_version", rootProject.properties["project_version"]),
-                Pair("config_version", rootProject.properties["config_version"])
+                Pair("project_version", rootProject.properties["project_version"]!!),
+                Pair("config_version", rootProject.properties["config_version"]!!)
             )
         }
     }
