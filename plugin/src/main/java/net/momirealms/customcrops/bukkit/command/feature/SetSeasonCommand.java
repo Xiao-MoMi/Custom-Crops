@@ -26,17 +26,22 @@ import net.momirealms.customcrops.api.integration.SeasonProvider;
 import net.momirealms.customcrops.bukkit.command.BukkitCommandFeature;
 import net.momirealms.customcrops.common.command.CustomCropsCommandManager;
 import net.momirealms.customcrops.common.locale.MessageConstants;
+import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.incendo.cloud.Command;
 import org.incendo.cloud.CommandManager;
 import org.incendo.cloud.bukkit.parser.WorldParser;
+import org.incendo.cloud.context.CommandContext;
+import org.incendo.cloud.context.CommandInput;
 import org.incendo.cloud.parser.standard.StringParser;
 import org.incendo.cloud.suggestion.Suggestion;
 import org.incendo.cloud.suggestion.SuggestionProvider;
 
 import java.util.Locale;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 public class SetSeasonCommand extends BukkitCommandFeature<CommandSender> {
 
@@ -47,12 +52,19 @@ public class SetSeasonCommand extends BukkitCommandFeature<CommandSender> {
     @Override
     public Command.Builder<? extends CommandSender> assembleCommand(CommandManager<CommandSender> manager, Command.Builder<CommandSender> builder) {
         return builder
-                .required("world", WorldParser.worldParser())
+                .required("world", StringParser.stringComponent(StringParser.StringMode.GREEDY).suggestionProvider(new SuggestionProvider<>() {
+                    @Override
+                    public @NonNull CompletableFuture<? extends @NonNull Iterable<? extends @NonNull Suggestion>> suggestionsFuture(@NonNull CommandContext<Object> context, @NonNull CommandInput input) {
+                        return CompletableFuture.completedFuture(Bukkit.getWorlds().stream().map(World::getName).map(Suggestion::suggestion).toList());
+                    }
+                }))
                 .required("season", StringParser.stringComponent().suggestionProvider(SuggestionProvider.suggesting(
                         Suggestion.suggestion("spring"), Suggestion.suggestion("summer"),Suggestion.suggestion("autumn"),Suggestion.suggestion("winter")
                 )))
                 .handler(context -> {
-                    World world = context.get("world");
+                    String worldName = context.get("world");
+                    World world = Bukkit.getWorld(worldName);
+                    if (world == null) return;
                     SeasonProvider provider = BukkitCustomCropsPlugin.getInstance().getWorldManager().seasonProvider();
 
                     if (provider.identifier().equals("CustomCrops")) {
