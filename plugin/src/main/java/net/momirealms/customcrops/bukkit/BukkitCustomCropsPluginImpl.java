@@ -167,7 +167,7 @@ public class BukkitCustomCropsPluginImpl extends BukkitCustomCropsPlugin {
         boolean downloadFromBBB = buildByBit.equals("true");
 
         this.reload();
-        if (ConfigManager.metrics()) new Metrics((JavaPlugin) getBootstrap(), 16593);
+        if (ConfigManager.metrics()) new Metrics(getBootstrap(), 16593);
         if (ConfigManager.checkUpdate()) {
             VersionHelper.UPDATE_CHECKER.apply(this).thenAccept(result -> {
                 String link;
