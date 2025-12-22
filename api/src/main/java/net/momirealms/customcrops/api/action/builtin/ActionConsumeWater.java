@@ -21,22 +21,15 @@ import dev.dejvokep.boostedyaml.block.implementation.Section;
 import net.momirealms.customcrops.api.BukkitCustomCropsPlugin;
 import net.momirealms.customcrops.api.context.Context;
 import net.momirealms.customcrops.api.context.ContextKeys;
-import net.momirealms.customcrops.api.core.BuiltInBlockMechanics;
-import net.momirealms.customcrops.api.core.CustomForm;
-import net.momirealms.customcrops.api.core.ExistenceForm;
-import net.momirealms.customcrops.api.core.FurnitureRotation;
 import net.momirealms.customcrops.api.core.block.CropBlock;
 import net.momirealms.customcrops.api.core.block.PotBlock;
-import net.momirealms.customcrops.api.core.mechanic.crop.VariationData;
-import net.momirealms.customcrops.api.core.mechanic.fertilizer.Fertilizer;
-import net.momirealms.customcrops.api.core.mechanic.fertilizer.FertilizerConfig;
 import net.momirealms.customcrops.api.core.world.CustomCropsBlockState;
 import net.momirealms.customcrops.api.core.world.CustomCropsWorld;
 import net.momirealms.customcrops.api.core.world.Pos3;
 import net.momirealms.customcrops.api.misc.value.MathValue;
 import org.bukkit.Location;
 
-import java.util.*;
+import java.util.Optional;
 
 import static java.util.Objects.requireNonNull;
 

@@ -86,7 +86,7 @@ public class BukkitIntegrationManager implements IntegrationManager {
             ClueScrollsQuest clueScrollsQuest = new ClueScrollsQuest();
             clueScrollsQuest.register();
         }
-        if (isHooked("BetonQuest", "2")) {
+        if (isHooked("BetonQuest", "3")) {
             BetonQuestQuest.register();
         }
         if (isHooked("WorldGuard", "7")) {

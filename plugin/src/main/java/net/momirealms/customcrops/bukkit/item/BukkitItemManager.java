@@ -25,7 +25,6 @@ import net.momirealms.customcrops.api.core.*;
 import net.momirealms.customcrops.api.core.block.BreakReason;
 import net.momirealms.customcrops.api.core.block.CustomCropsBlock;
 import net.momirealms.customcrops.api.core.item.CustomCropsItem;
-import net.momirealms.customcrops.api.core.mechanic.crop.CropConfig;
 import net.momirealms.customcrops.api.core.world.CustomCropsBlockState;
 import net.momirealms.customcrops.api.core.world.CustomCropsWorld;
 import net.momirealms.customcrops.api.core.world.Pos3;
