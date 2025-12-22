@@ -7,7 +7,9 @@ repositories {
 
 dependencies {
     compileOnly(project(":api"))
+    compileOnly("dev.folia:folia-api:1.20.4-R0.1-SNAPSHOT")
     compileOnly("com.infernalsuite.asp:api:4.0.0-SNAPSHOT")
+    compileOnly("com.flowpowered:flow-nbt:${rootProject.properties["flow_nbt_version"]}")
 }
 
 java {

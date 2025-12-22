@@ -17,8 +17,13 @@
 
 package net.momirealms.customcrops.bukkit.integration.adaptor.asp_r2;
 
-import com.infernalsuite.aswm.api.events.LoadSlimeWorldEvent;
-import com.infernalsuite.aswm.api.world.SlimeWorld;
+import com.flowpowered.nbt.*;
+import com.flowpowered.nbt.stream.NBTInputStream;
+import com.flowpowered.nbt.stream.NBTOutputStream;
+import com.infernalsuite.asp.api.AdvancedSlimePaperAPI;
+import com.infernalsuite.asp.api.events.LoadSlimeWorldEvent;
+import com.infernalsuite.asp.api.world.SlimeChunk;
+import com.infernalsuite.asp.api.world.SlimeWorld;
 import net.momirealms.customcrops.api.BukkitCustomCropsPlugin;
 import net.momirealms.customcrops.api.core.InternalRegistries;
 import net.momirealms.customcrops.api.core.block.CustomCropsBlock;
@@ -28,14 +33,19 @@ import net.momirealms.customcrops.api.util.StringUtils;
 import net.momirealms.customcrops.api.util.TagUtils;
 import net.momirealms.customcrops.common.helper.GsonHelper;
 import net.momirealms.customcrops.common.util.Key;
+import net.momirealms.customcrops.common.util.ReflectionUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.lang.reflect.Method;
+import java.nio.ByteOrder;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
@@ -44,38 +54,26 @@ import java.util.concurrent.PriorityBlockingQueue;
 import java.util.function.Function;
 
 public class SlimeWorldAdaptorR2 extends AbstractWorldAdaptor<SlimeWorld> implements Listener {
+    private final Class<?> byteArrayTagClass = ReflectionUtils.getClazz("net{}kyori{}adventure{}nbt{}ByteArrayBinaryTag".replace("{}", "."));
+    private final Method method$ByteArrayBinaryTag$byteArrayBinaryTag = ReflectionUtils.getStaticMethod(byteArrayTagClass, byteArrayTagClass, byte.class.arrayType());
+    private final Method method$ByteArrayBinaryTag$value = ReflectionUtils.getMethod(byteArrayTagClass, byte.class.arrayType());
 
-    private final Function<String, SlimeWorld> getSlimeWorldFunction;
+    public SlimeWorldAdaptorR2() {
+    }
 
-    public SlimeWorldAdaptorR2(int version) {
+    public byte[] byteArrayTagToBytes(Object byteArrayTag) {
         try {
-            if (version == 1) {
-                Plugin plugin = Bukkit.getPluginManager().getPlugin("SlimeWorldManager");
-                Class<?> slimeClass = Class.forName("com.infernalsuite.aswm.api.SlimePlugin");
-                Method method = slimeClass.getMethod("getWorld", String.class);
-                this.getSlimeWorldFunction = (name) -> {
-                    try {
-                        return (SlimeWorld) method.invoke(plugin, name);
-                    } catch (ReflectiveOperationException e) {
-                        throw new RuntimeException(e);
-                    }
-                };
-            } else if (version == 2) {
-                Class<?> apiClass = Class.forName("com.infernalsuite.aswm.api.AdvancedSlimePaperAPI");
-                Object apiInstance = apiClass.getMethod("instance").invoke(null);
-                Method method = apiClass.getMethod("getLoadedWorld", String.class);
-                this.getSlimeWorldFunction = (name) -> {
-                    try {
-                        return (SlimeWorld) method.invoke(apiInstance, name);
-                    } catch (ReflectiveOperationException e) {
-                        throw new RuntimeException(e);
-                    }
-                };
-            } else {
-                throw new IllegalArgumentException("Unsupported version: " + version);
-            }
+            return (byte[]) method$ByteArrayBinaryTag$value.invoke(byteArrayTag);
         } catch (ReflectiveOperationException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Failed to convert byte array tag to byte[]", e);
+        }
+    }
+
+    public Object bytesToByteArrayTag(byte[] bytes) {
+        try {
+            return method$ByteArrayBinaryTag$byteArrayBinaryTag.invoke(null, (Object) bytes);
+        } catch (ReflectiveOperationException e) {
+            throw new RuntimeException("Failed to convert byte array tag to byte[]", e);
         }
     }
 
@@ -93,32 +91,45 @@ public class SlimeWorldAdaptorR2 extends AbstractWorldAdaptor<SlimeWorld> implem
 
     @Override
     public SlimeWorld getWorld(String worldName) {
-        return getSlimeWorldFunction.apply(worldName);
-    }
-
-    private CompoundMap createOrGetDataMap(SlimeWorld world) {
-        Optional<CompoundTag> optionalCompoundTag = world.getExtraData().getAsCompoundTag("customcrops");
-        CompoundMap ccDataMap;
-        if (optionalCompoundTag.isEmpty()) {
-            ccDataMap = new CompoundMap();
-            world.getExtraData().getValue().put(new CompoundTag("customcrops", ccDataMap));
-        } else {
-            ccDataMap = optionalCompoundTag.get().getValue();
-        }
-        return ccDataMap;
+        return AdvancedSlimePaperAPI.instance().getLoadedWorld(worldName);
     }
 
     @Override
     public WorldExtraData loadExtraData(SlimeWorld world) {
-        CompoundMap ccDataMap = createOrGetDataMap(world);
+        Object extraTag = world.getExtraData().get("customcrops-extra-data");
+        CompoundMap ccDataMap = null;
+        if (extraTag != null) {
+            try {
+                NBTInputStream nbtInputStream = new NBTInputStream(new ByteArrayInputStream(byteArrayTagToBytes(extraTag)), 0, ByteOrder.BIG_ENDIAN);
+                ccDataMap = ((CompoundTag) nbtInputStream.readTag()).getValue();
+            } catch (IOException e) {
+                BukkitCustomCropsPlugin.getInstance().getPluginLogger().severe("Failed to read extra data from custom crops tag", e);
+            }
+        }
+        if (ccDataMap == null) {
+            ccDataMap = new CompoundMap();
+        }
         String json = Optional.ofNullable(ccDataMap.get("world-info")).map(tag -> tag.getAsStringTag().get().getValue()).orElse(null);
         return (json == null || json.equals("null")) ? WorldExtraData.empty() : GsonHelper.get().fromJson(json, WorldExtraData.class);
     }
 
+    @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
     public void saveExtraData(CustomCropsWorld<SlimeWorld> world) {
-        CompoundMap ccDataMap = createOrGetDataMap(world.world());
-        ccDataMap.put(new StringTag("world-info", GsonHelper.get().toJson(world.extraData())));
+        CompoundTag ccDataMap = new CompoundTag("", new CompoundMap());
+        ccDataMap.getValue().put(new StringTag("world-info", GsonHelper.get().toJson(world.extraData())));
+        byte[] data;
+        try {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            NBTOutputStream nbtOutputStream = new NBTOutputStream(baos, 0, ByteOrder.BIG_ENDIAN);
+            nbtOutputStream.writeTag(ccDataMap);
+            data = baos.toByteArray();
+            nbtOutputStream.close();
+            Map<String, Object> data2 = (Map) world.world().getExtraData();
+            data2.put("customcrops-extra-data", bytesToByteArrayTag(data));
+        } catch (IOException e) {
+            BukkitCustomCropsPlugin.getInstance().getPluginLogger().severe("Failed to save extra data to custom crops tag", e);
+        }
     }
 
     @Nullable
@@ -131,16 +142,24 @@ public class SlimeWorldAdaptorR2 extends AbstractWorldAdaptor<SlimeWorld> implem
     @Override
     public CustomCropsChunk loadChunk(CustomCropsWorld<SlimeWorld> world, ChunkPos pos, boolean createIfNotExists) {
         long time1 = System.currentTimeMillis();
-        CompoundMap ccDataMap = createOrGetDataMap(world.world());
-        Tag<?> chunkTag = ccDataMap.get(pos.asString());
+        SlimeChunk slimeChunk = world.world().getChunk(pos.x(), pos.z());
+        if (slimeChunk == null) {
+            return createIfNotExists ? world.createChunk(pos) : null;
+        }
+        Object extraTag = slimeChunk.getExtraData().get("customcrops-data");
+        CompoundTag chunkTag = null;
+        if (extraTag != null) {
+            try {
+                NBTInputStream nbtInputStream = new NBTInputStream(new ByteArrayInputStream(byteArrayTagToBytes(extraTag)), 0, ByteOrder.BIG_ENDIAN);
+                chunkTag = ((CompoundTag) nbtInputStream.readTag());
+            } catch (IOException e) {
+                BukkitCustomCropsPlugin.getInstance().getPluginLogger().severe("Failed to read extra data from custom crops tag", e);
+            }
+        }
         if (chunkTag == null) {
             return createIfNotExists ? world.createChunk(pos) : null;
         }
-        Optional<CompoundTag> chunkCompoundTag = chunkTag.getAsCompoundTag();
-        if (chunkCompoundTag.isEmpty()) {
-            return createIfNotExists ? world.createChunk(pos) : null;
-        }
-        CustomCropsChunk chunk = tagToChunk(world, chunkCompoundTag.get());
+        CustomCropsChunk chunk = tagToChunk(world, chunkTag);
         long time2 = System.currentTimeMillis();
         BukkitCustomCropsPlugin.getInstance().debug(() -> "Took " + (time2-time1) + "ms to load chunk " + pos);
         return chunk;
@@ -149,15 +168,32 @@ public class SlimeWorldAdaptorR2 extends AbstractWorldAdaptor<SlimeWorld> implem
     @Override
     public void saveRegion(CustomCropsWorld<SlimeWorld> world, CustomCropsRegion region) {}
 
+    @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
     public void saveChunk(CustomCropsWorld<SlimeWorld> world, CustomCropsChunk chunk) {
-        CompoundMap ccDataMap = createOrGetDataMap(world.world());
+        ChunkPos chunkPos = chunk.chunkPos();
+        SlimeChunk slimeChunk = world.world().getChunk(chunkPos.x(), chunkPos.z());
+        if (slimeChunk == null) {
+            return;
+        }
+        Map<String, Object> data = (Map) slimeChunk.getExtraData();
         SerializableChunk serializableChunk = toSerializableChunk(chunk);
         Runnable runnable = () -> {
             if (serializableChunk.canPrune()) {
-                ccDataMap.remove(chunk.chunkPos().asString());
+                data.remove("customcrops-data");
             } else {
-                ccDataMap.put(chunkToTag(serializableChunk));
+                CompoundTag chunkTag = chunkToTag(serializableChunk);
+                byte[] bytes;
+                try {
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    NBTOutputStream nbtOutputStream = new NBTOutputStream(baos, 0, ByteOrder.BIG_ENDIAN);
+                    nbtOutputStream.writeTag(chunkTag);
+                    bytes = baos.toByteArray();
+                    nbtOutputStream.close();
+                    data.put("customcrops-data", bytesToByteArrayTag(bytes));
+                } catch (IOException e) {
+                    BukkitCustomCropsPlugin.getInstance().getPluginLogger().severe("Failed to save chunk " + chunk.chunkPos() + " on world " + world.worldName(), e);
+                }
             }
         };
         if (Bukkit.isPrimaryThread()) {
