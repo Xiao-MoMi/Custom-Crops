@@ -51,7 +51,7 @@ public class SetDateCommand extends BukkitCommandFeature<CommandSender> {
     @Override
     public Command.Builder<? extends CommandSender> assembleCommand(CommandManager<CommandSender> manager, Command.Builder<CommandSender> builder) {
         return builder
-                .required("world", StringParser.stringComponent(StringParser.StringMode.GREEDY).suggestionProvider(new SuggestionProvider<>() {
+                .required("world", StringParser.stringComponent(StringParser.StringMode.SINGLE).suggestionProvider(new SuggestionProvider<>() {
                     @Override
                     public @NonNull CompletableFuture<? extends @NonNull Iterable<? extends @NonNull Suggestion>> suggestionsFuture(@NonNull CommandContext<Object> context, @NonNull CommandInput input) {
                         return CompletableFuture.completedFuture(Bukkit.getWorlds().stream().map(World::getName).map(Suggestion::suggestion).toList());
