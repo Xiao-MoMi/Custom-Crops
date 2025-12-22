@@ -17,6 +17,7 @@
 
 package net.momirealms.customcrops.api.core;
 
+import io.papermc.paper.event.block.BlockBreakBlockEvent;
 import net.momirealms.customcrops.api.BukkitCustomCropsPlugin;
 import net.momirealms.customcrops.api.action.ActionManager;
 import net.momirealms.customcrops.api.context.Context;
@@ -41,10 +42,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
+import org.bukkit.event.*;
 import org.bukkit.event.block.*;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
@@ -440,17 +438,17 @@ public abstract class AbstractCustomEventListener implements Listener {
         itemManager.handlePhysicsBreak(block.getLocation(), block.getBlockData().getAsString(), event);
     }
 
-//    @EventHandler(ignoreCancelled = true)
-//    public void onBlockBreak(BlockBreakBlockEvent event) {
-//        Block block = event.getBlock();
-//        itemManager.handlePhysicsBreak(block.getLocation(), block.getBlockData().getAsString(), new Cancellable() {
-//            @Override
-//            public boolean isCancelled() {
-//                return false;
-//            }
-//            @Override
-//            public void setCancelled(boolean b) {
-//            }
-//        });
-//    }
+    @EventHandler(ignoreCancelled = true)
+    public void onBlockBreakBlock(BlockBreakBlockEvent event) {
+        Block block = event.getBlock();
+        itemManager.handlePhysicsBreak(block.getLocation(), block.getBlockData().getAsString(), new Cancellable() {
+            @Override
+            public boolean isCancelled() {
+                return false;
+            }
+            @Override
+            public void setCancelled(boolean b) {
+            }
+        });
+    }
 }
