@@ -17,8 +17,10 @@
 
 package net.momirealms.customcrops.bukkit.integration.quest;
 
-import net.momirealms.customcrops.bukkit.integration.quest.bq.HarvestCropObjectiveFactory;
-import net.momirealms.customcrops.bukkit.integration.quest.bq.PlantCropObjectiveFactory;
+import net.momirealms.customcrops.bukkit.integration.quest.bq.crops.HarvestCropObjectiveFactory;
+import net.momirealms.customcrops.bukkit.integration.quest.bq.crops.PlantCropObjectiveFactory;
+import net.momirealms.customcrops.bukkit.integration.quest.bq.pots.BreakPotObjectiveFactory;
+import net.momirealms.customcrops.bukkit.integration.quest.bq.pots.PlacePotObjectiveFactory;
 import org.betonquest.betonquest.BetonQuest;
 
 @SuppressWarnings("DuplicatedCode")
@@ -28,5 +30,7 @@ public class BetonQuestQuest {
         BetonQuest bq = BetonQuest.getInstance();
         bq.getQuestRegistries().objective().register("customcrops_harvest", new HarvestCropObjectiveFactory());
         bq.getQuestRegistries().objective().register("customcrops_plant", new PlantCropObjectiveFactory());
+        bq.getQuestRegistries().objective().register("customcrops_place_pot", new PlacePotObjectiveFactory());
+        bq.getQuestRegistries().objective().register("customcrops_break_pot", new BreakPotObjectiveFactory());
     }
 }
