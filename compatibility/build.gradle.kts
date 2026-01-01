@@ -10,7 +10,7 @@ repositories {
     maven("https://r.irepo.space/maven/") // neigeitems
     maven("https://repo.oraxen.com/releases/") // oraxen
     maven("https://repo.auxilor.io/repository/maven-public/") // eco
-    maven("https://nexus.betonquest.org/repository/betonquest/") // betonquest
+    maven("https://repo.betonquest.org/betonquest") // betonquest
     maven("https://repo.dmulloy2.net/repository/public/") // betonquest needs packet wrapper?
     maven("https://oss.sonatype.org/content/repositories/snapshots")
     maven("https://repo.rapture.pw/repository/maven-releases/") // flow nbt
@@ -46,8 +46,9 @@ dependencies {
     compileOnly(files("libs/BattlePass-4.0.6-api.jar"))
     compileOnly(files("libs/ClueScrolls-4.8.7-api.jar"))
     compileOnly("com.comphenix.packetwrapper:PacketWrapper:1.20-2.2.1")
-//    compileOnly("org.betonquest:betonquest:3.0.0-SNAPSHOT")
-    compileOnly(files("libs/BetonQuest.jar"))
+    compileOnly("org.betonquest:betonquest:3.0.0-SNAPSHOT") {
+        exclude(group = "de.themoep", module = "minedown-adventure")
+    } // { exclude("*") }
     // item
     compileOnly(files("libs/zaphkiel-2.0.24.jar"))
     compileOnly(files("libs/ExecutableItems-7.24.9.29.jar"))
