@@ -9,16 +9,16 @@ import org.betonquest.betonquest.api.quest.objective.ObjectiveFactory;
 import java.util.List;
 
 /**
- * A factory class responsible for parsing quest instructions and creating CustomCrops objectives.
+ * A simplified factory for creating CustomCrops objectives that do not require target filters.
  */
-public class CustomCropsObjectiveFactory implements ObjectiveFactory {
+public class SimpleCustomCropsObjectiveFactory implements ObjectiveFactory {
 
     private final ObjectiveCreator creator;
 
     /**
      * @param creator the strategy used to instantiate the objective
      */
-    public CustomCropsObjectiveFactory(ObjectiveCreator creator) {
+    public SimpleCustomCropsObjectiveFactory(ObjectiveCreator creator) {
         this.creator = creator;
     }
 
@@ -28,27 +28,25 @@ public class CustomCropsObjectiveFactory implements ObjectiveFactory {
      * @throws QuestException if mandatory arguments are missing or invalid
      */
     @Override
-    public DefaultObjective parseInstruction(Instruction instruction) throws QuestException {
+    public DefaultObjective parseInstruction(final Instruction instruction) throws QuestException {
         final Argument<List<String>> identifiers = instruction.string().list().get();
-        final Argument<List<String>> targets = instruction.string().list().get("targets", List.of());
         final Argument<Number> targetAmount = instruction.number().get("amount", 1);
-        return creator.create(instruction, targetAmount, identifiers, targets);
+        return creator.create(instruction, targetAmount, identifiers);
     }
 
     /**
-     * Functional interface for objective instantiation.
+     * Functional interface for simple objective instantiation.
      */
     @FunctionalInterface
     public interface ObjectiveCreator {
         /**
-         * @param instruction        the instruction for the objective
+         * @param instruction the instruction for the objective
          * @param amount      the required amount for completion
-         * @param identifiers the list of allowed tool or item identifiers
-         * @param targets     the list of allowed target identifiers
+         * @param identifiers the list of allowed identifiers
          * @return the new objective instance
          * @throws QuestException if initialization fails
          */
         DefaultObjective create(Instruction instruction, Argument<Number> amount,
-                                Argument<List<String>> identifiers, Argument<List<String>> targets) throws QuestException;
+                                Argument<List<String>> identifiers) throws QuestException;
     }
 }

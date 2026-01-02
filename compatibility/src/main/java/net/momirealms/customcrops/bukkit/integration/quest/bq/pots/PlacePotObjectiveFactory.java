@@ -1,5 +1,6 @@
 package net.momirealms.customcrops.bukkit.integration.quest.bq.pots;
 
+import net.momirealms.customcrops.bukkit.integration.quest.bq.SimpleCustomCropsObjectiveFactory;
 import org.betonquest.betonquest.api.DefaultObjective;
 import org.betonquest.betonquest.api.QuestException;
 import org.betonquest.betonquest.api.instruction.Argument;
@@ -8,6 +9,11 @@ import org.betonquest.betonquest.api.quest.objective.ObjectiveFactory;
 
 import java.util.List;
 
+/**
+ * @deprecated This factory is currently under review for potential replacement by
+ * {@link SimpleCustomCropsObjectiveFactory} to unify the objective creation logic.
+ */
+@Deprecated(since = "Next Version", forRemoval = true)
 public class PlacePotObjectiveFactory implements ObjectiveFactory {
 
     @Override

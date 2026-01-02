@@ -32,6 +32,10 @@ objective:
 
   # Fertilizers
   <objective name>: customcrops_use_fertilizer <fertilizer_id> [targets:pot_id] [amount:int]
+
+  # Common
+  <objective name>: customcrops_place_scarecrow <scarecrow_id> [amount:int]
+  <objective name>: customcrops_break_scarecrow <scarecrow_id> [amount:int]
 ```
 
 ---
@@ -94,6 +98,26 @@ objectives:
 
 * **Use:** Use fertilizer 10 times.
 
+### **Common**
+This category covers general interaction objectives with various blocks and items in CustomCrops,
+
+#### **Scarecrows**
+```yaml
+objectives:
+  placeScarecrow: customcrops_place_scarecrow <scarecrow_id> amount:3
+  breakScarecrow: customcrops_break_scarecrow <scarecrow_id> amount:1
+```
+
+* **Place:** Place 3 scarecrow with the specified ID.
+* **Break:** Break 1 scarecrow with the specified ID.
+
+> [!IMPORTANT]
+> **Scarecrow ID Check**
+> The `<scarecrow_id>` must match the ID defined in your server's configuration file. You can find these IDs in the following path:
+> `yourServer/plugins/CustomCrops/config.yml`
+>
+> Specifically, look for the **`mechanics.scarecrow.id`** section to ensure you are using the correct identifier.
+
 # Message Configuration
 
 **Location:** `yourServer/plugins/BetonQuest/lang/<your_language>.yml`
@@ -110,4 +134,6 @@ customcrops:
   sprinkler_placed: "@[legacy]&2{amount} sprinklers left to place"
   sprinkler_broken: "@[legacy]&2{amount} sprinklers left to break"
   use_fertilizer: "@[legacy]&2{amount} fertilizers left to use"
+  scarecrow_placed: "@[legacy]&2{amount} scarecrows left to place"
+  scarecrow_broken: "@[legacy]&2{amount} scarecrows left to break"
 ```

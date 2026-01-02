@@ -16,8 +16,11 @@ public class HarvestCropObjective extends CountingObjective implements Listener 
 
     private final Argument<List<String>> identifiers;
 
-    public HarvestCropObjective(final Instruction instruction, final Argument<Number> targetAmount,
-                                 final Argument<List<String>> identifiers) throws QuestException {
+    public HarvestCropObjective(
+            final Instruction instruction,
+            final Argument<Number> targetAmount,
+            final Argument<List<String>> identifiers
+    ) throws QuestException {
         super(instruction, targetAmount, "customcrops.crop_harvested");
         this.identifiers = identifiers;
     }
