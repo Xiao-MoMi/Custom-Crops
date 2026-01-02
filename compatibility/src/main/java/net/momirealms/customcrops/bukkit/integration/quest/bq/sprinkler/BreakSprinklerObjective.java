@@ -6,7 +6,6 @@ import org.betonquest.betonquest.api.QuestException;
 import org.betonquest.betonquest.api.instruction.Argument;
 import org.betonquest.betonquest.api.instruction.Instruction;
 import org.betonquest.betonquest.api.profile.OnlineProfile;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
@@ -27,8 +26,7 @@ public class BreakSprinklerObjective extends CountingObjective implements Listen
 
     @EventHandler(ignoreCancelled = true)
     public void onPlaceSprinkler(SprinklerPlaceEvent event) throws QuestException {
-        Player player = event.getPlayer();
-        OnlineProfile profile = profileProvider.getProfile(player);
+        OnlineProfile profile = profileProvider.getProfile(event.getPlayer());
         if (!containsPlayer(profile) || !checkConditions(profile)) {
             return;
         }
