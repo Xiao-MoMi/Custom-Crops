@@ -109,6 +109,5 @@ customcrops:
   can_sprinkler: "@[legacy]&2{amount} sprinklers left to activate"
   sprinkler_placed: "@[legacy]&2{amount} sprinklers left to place"
   sprinkler_broken: "@[legacy]&2{amount} sprinklers left to break"
-  sprinkler_work: "@[legacy]&2{amount} sprinkler operations remaining"
   use_fertilizer: "@[legacy]&2{amount} fertilizers left to use"
 ```
