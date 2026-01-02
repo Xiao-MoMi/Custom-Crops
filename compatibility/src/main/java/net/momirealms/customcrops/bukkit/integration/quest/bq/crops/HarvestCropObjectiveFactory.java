@@ -10,9 +10,6 @@ import java.util.List;
 
 public class HarvestCropObjectiveFactory implements ObjectiveFactory {
 
-    public HarvestCropObjectiveFactory() {
-    }
-
     @Override
     public DefaultObjective parseInstruction(final Instruction instruction) throws QuestException {
         final Argument<List<String>> names = instruction.string().list().get();

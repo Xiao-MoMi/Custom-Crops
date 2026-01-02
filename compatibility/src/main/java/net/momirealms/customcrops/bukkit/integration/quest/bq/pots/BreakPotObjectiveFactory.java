@@ -10,9 +10,6 @@ import java.util.List;
 
 public class BreakPotObjectiveFactory implements ObjectiveFactory {
 
-    public BreakPotObjectiveFactory() {
-    }
-
     @Override
     public DefaultObjective parseInstruction(final Instruction instruction) throws QuestException {
         final Argument<List<String>> names = instruction.string().list().get();

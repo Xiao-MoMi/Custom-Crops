@@ -37,7 +37,6 @@ public class WaterSprinklerObjective extends CountingObjective implements Listen
         if (!this.canIDList.getValue(profile).contains(event.wateringCanConfig().id())) {
             return;
         }
-
         if (this.sprinklerIDList.getValue(profile).contains(event.sprinklerConfig().id())) {
             getCountingData(profile).progress();
             completeIfDoneOrNotify(profile);

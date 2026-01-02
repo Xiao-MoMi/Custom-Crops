@@ -37,12 +37,7 @@ public class WaterPotObjective extends CountingObjective implements Listener {
         if (!this.canIDList.getValue(profile).contains(event.wateringCanConfig().id())) {
             return;
         }
-
-        // DEUBG
-        System.out.println(event.pots().stream().map(Pair::right).anyMatch(this.potIDList.getValue(profile)::contains));
-        // DEBUG
-
-        if (event.pots().stream().map(Pair::right).anyMatch(this.potIDList.getValue(profile)::contains)) {
+        if (this.potIDList.getValue(profile).contains(event.potConfig().id())) {
             getCountingData(profile).progress();
             completeIfDoneOrNotify(profile);
         }
