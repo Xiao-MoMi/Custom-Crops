@@ -5,60 +5,72 @@
 ### **Objective Structures**
 
 ```yaml
+# The default value for amount is 1.
 objective:
   # [Crops]
-  <objective name>: customcrops_harvest_crop <crop_stage_id> <amount>
-  <objective name>: customcrops_plant_crop <crop_id> <amount>
+  <objective name>: customcrops_harvest_crop <crop_stage_id> [amount:int]
+  <objective name>: customcrops_plant_crop <crop_id> [amount:int]
   
   # [Pots]
-  <objective name>: customcrops_place_pot <pot_id> <amount>
-  <objective name>: customcrops_break_pot <pot_id> <amount>
+  <objective name>: customcrops_place_pot <pot_id> [amount:int]
+  <objective name>: customcrops_break_pot <pot_id> [amount:int]
 
   # [Watering Can] - Coming soon. Structure subject to change.
-  <objective name>: customcrops_fill_can <can_id> <amount>
-  <objective name>: customcrops_water_pot <can_id> <pot_id> <amount>
-  <objective name>: customcrops_sprinkler_setup <can_id> <sprinkler_id> <amount>
-
+  <objective name>: customcrops_fill_can <can_id> [amount:int]
+  <objective name>: customcrops_water_pot <can_id> <pot_id> [amount:int]
+  <objective name>: customcrops_water_sprinkler <can_id> <sprinkler_id> [amount:int]
 ```
 
 ---
 
 # Example Usage
 
-### **1. Crops**
+### **Crops**
 
 ```yaml
 objectives:
-  harvestTomato: "customcrops_harvest_crop customcrops:tomato_stage_4 5"
-  plantTomato: "customcrops_plant_crop tomato 3"
+  harvestTomato: customcrops_harvest_crop customcrops:tomato_stage_4 amount:5
+  plantTomato: customcrops_plant_crop tomato
 ```
 
 * **Harvest:** Harvest 5 fully grown tomatoes (stage 4).
-* **Plant:** Plant 3 tomato seeds.
+* **Plant:** Plant 1 tomato seeds.
 
-### **2. Farming Pots**
+### **Pots**
 
 ```yaml
 objectives:
-  placePot: "customcrops_place_pot default 4"
-  breakPot: "customcrops_break_pot default 1"
+  placePot: customcrops_place_pot default amount:4
+  breakPot: customcrops_break_pot default amount:1
 ```
 
-* **Place:** Place 4 'default' type farming pots.
-* **Break:** Break/Remove 1 'default' type farming pot.
+* **Place:** Place 4 'default' id pot.
+* **Break:** Break 1 'default' id pot.
 
-### **3. Watering Can (Work in Progress)**
+### **Watering Can**
 
 ```yaml
 objectives:
-  fillCan: "customcrops_fill_can watering_can_1 3"
-  waterPot: "customcrops_water_pot watering_can_2 default 5"
-  sprinklerSetup: "customcrops_sprinkler_setup watering_can_3 sprinkler_1 1"
+  fillCan: customcrops_fill_can watering_can_1 amount:3
+  waterPot: customcrops_water_pot watering_can_2 default amount:5
+  waterSprinkler: customcrops_water_sprinkler watering_can_3 sprinkler_1
 ```
 
 * **Fill:** Refill 'watering_can_1' from a water source 3 times.
 * **Water:** Water 'default' pots 5 times using 'watering_can_2'.
 * **Sprinkler:** Activate/Setup 'sprinkler_1' using 'watering_can_3'.
+
+### **Sprinklers**
+
+```yaml
+objectives:
+  placeSprinklers: customcrops_place_sprinkler sprinkler_1
+  breakSprinklers: customcrops_break_sprinkler sprinkler_2 amount:2
+```
+
+* **Place:** Place 1 'sprinkler_1' id sprinkler.
+* **Break:** Break 2 'sprinkler_2' id sprinkler.
+
 
 ---
 
@@ -68,11 +80,13 @@ objectives:
 
 ```yaml
 customcrops:
-    crop_harvested: "@[legacy]&2{amount} crops left to harvest"
-    crop_planted: "@[legacy]&2{amount} seeds left to plant"
-    pot_placed: "@[legacy]&2{amount} pots left to place"
-    pot_broken: "@[legacy]&e{amount} pots left to break"
-    can_fill: "@[legacy]&bWatering can refilled!"
-    can_pot: "@[legacy]&b{amount} pots left to water"
-    can_sprinkler: "@[legacy]&3{amount} sprinklers left to activate"
+  crop_harvested: "@[legacy]&2{amount} crops left to harvest"
+  crop_planted: "@[legacy]&2{amount} seeds left to plant"
+  pot_placed: "@[legacy]&2{amount} pots left to place"
+  pot_broken: "@[legacy]&e{amount} pots left to break"
+  can_fill: "@[legacy]&b{amount} Watering can refilled!"
+  can_pot: "@[legacy]&b{amount} pots left to water"
+  can_sprinkler: "@[legacy]&3{amount} sprinklers left to activate"
+  sprinkler_placed: "@[legacy]&2{amount} sprinklers left to place"
+  sprinkler_broken: "@[legacy]&e{amount} sprinklers left to break"
 ```
