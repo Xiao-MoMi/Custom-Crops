@@ -28,8 +28,8 @@ public class BetonQuestQuest {
 
     public static void register() {
         BetonQuest bq = BetonQuest.getInstance();
-        bq.getQuestRegistries().objective().register("customcrops_harvest", new HarvestCropObjectiveFactory());
-        bq.getQuestRegistries().objective().register("customcrops_plant", new PlantCropObjectiveFactory());
+        bq.getQuestRegistries().objective().register("customcrops_harvest_crop", new HarvestCropObjectiveFactory());
+        bq.getQuestRegistries().objective().register("customcrops_plant_crop", new PlantCropObjectiveFactory());
         bq.getQuestRegistries().objective().register("customcrops_place_pot", new PlacePotObjectiveFactory());
         bq.getQuestRegistries().objective().register("customcrops_break_pot", new BreakPotObjectiveFactory());
     }

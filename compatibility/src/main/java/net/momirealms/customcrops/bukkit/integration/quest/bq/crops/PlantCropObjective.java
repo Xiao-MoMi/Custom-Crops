@@ -17,7 +17,7 @@ public class PlantCropObjective extends CountingObjective implements Listener {
 
     public PlantCropObjective(final Instruction instruction, final Argument<Number> targetAmount,
                               final Argument<List<String>> identifiers) throws QuestException {
-        super(instruction, targetAmount, "custom_crops_to_plant");
+        super(instruction, targetAmount, "customcrops.crop_planted");
         this.identifiers = identifiers;
     }
 

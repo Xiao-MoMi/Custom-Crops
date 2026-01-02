@@ -20,7 +20,7 @@ public class PlacePotObjective extends CountingObjective implements Listener {
             final Argument<Number> targetAmount,
             final Argument<List<String>> identifiers
     ) throws QuestException {
-        super(instruction, targetAmount, "custom_crops_to_place_pot");
+        super(instruction, targetAmount, "customcrops.pot_broken");
         this.identifiers = identifiers;
     }
 
