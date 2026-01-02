@@ -6,6 +6,11 @@
 
 ```yaml
 # The default value for amount is 1.
+
+# <crop_stage_id>, <crop_id>, <pot_id>, <can_id>, and <sprinkler_id>
+# are all defined in the CustomCrops configuration files.
+# These values can also be provided as a list (A, B, C, ...)
+
 objective:
   # [Crops]
   <objective name>: customcrops_harvest_crop <crop_stage_id> [amount:int]
@@ -15,10 +20,14 @@ objective:
   <objective name>: customcrops_place_pot <pot_id> [amount:int]
   <objective name>: customcrops_break_pot <pot_id> [amount:int]
 
-  # [Watering Can] - Coming soon. Structure subject to change.
+  # [Watering Can]
   <objective name>: customcrops_fill_can <can_id> [amount:int]
   <objective name>: customcrops_water_pot <can_id> <pot_id> [amount:int]
   <objective name>: customcrops_water_sprinkler <can_id> <sprinkler_id> [amount:int]
+
+  # [Sprinklers]
+  <objective name>: customcrops_place_sprinkler <sprinkler_id> [amount:int]
+  <objective name>: customcrops_break_sprinkler <sprinkler_id> [amount:int]
 ```
 
 ---
@@ -44,8 +53,8 @@ objectives:
   breakPot: customcrops_break_pot default amount:1
 ```
 
-* **Place:** Place 4 'default' id pot.
-* **Break:** Break 1 'default' id pot.
+* **Place:** Place 4 pots with the ID `default`.
+* **Break:** Break 1 pots with the ID `default`.
 
 ### **Watering Can**
 
@@ -56,9 +65,9 @@ objectives:
   waterSprinkler: customcrops_water_sprinkler watering_can_3 sprinkler_1
 ```
 
-* **Fill:** Refill 'watering_can_1' from a water source 3 times.
-* **Water:** Water 'default' pots 5 times using 'watering_can_2'.
-* **Sprinkler:** Activate/Setup 'sprinkler_1' using 'watering_can_3'.
+* **Fill:** Refill `watering_can_1` from a water source 3 times.
+* **Water:** Water `default` pots 5 times using `watering_can_2`.
+* **Sprinkler:** Activate or set up `sprinkler_1` using `watering_can_3`.
 
 ### **Sprinklers**
 
@@ -68,9 +77,8 @@ objectives:
   breakSprinklers: customcrops_break_sprinkler sprinkler_2 amount:2
 ```
 
-* **Place:** Place 1 'sprinkler_1' id sprinkler.
-* **Break:** Break 2 'sprinkler_2' id sprinkler.
-
+* **Place:** Place 1 sprinkler with the ID `sprinkler_1`.
+* **Break:** Break 2 sprinkler with the ID `sprinkler_2`.
 
 ---
 
@@ -84,7 +92,7 @@ customcrops:
   crop_planted: "@[legacy]&2{amount} seeds left to plant"
   pot_placed: "@[legacy]&2{amount} pots left to place"
   pot_broken: "@[legacy]&e{amount} pots left to break"
-  can_fill: "@[legacy]&b{amount} Watering can refilled!"
+  can_fill: "@[legacy]&b{amount} watering can refills remaining"
   can_pot: "@[legacy]&b{amount} pots left to water"
   can_sprinkler: "@[legacy]&3{amount} sprinklers left to activate"
   sprinkler_placed: "@[legacy]&2{amount} sprinklers left to place"
