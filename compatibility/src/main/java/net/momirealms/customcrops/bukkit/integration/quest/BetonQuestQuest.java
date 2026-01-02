@@ -17,8 +17,10 @@
 
 package net.momirealms.customcrops.bukkit.integration.quest;
 
+import net.momirealms.customcrops.bukkit.integration.quest.bq.CustomCropsObjectiveFactory;
 import net.momirealms.customcrops.bukkit.integration.quest.bq.crops.HarvestCropObjectiveFactory;
 import net.momirealms.customcrops.bukkit.integration.quest.bq.crops.PlantCropObjectiveFactory;
+import net.momirealms.customcrops.bukkit.integration.quest.bq.fertilizers.FertilizerUseObjective;
 import net.momirealms.customcrops.bukkit.integration.quest.bq.pots.BreakPotObjectiveFactory;
 import net.momirealms.customcrops.bukkit.integration.quest.bq.pots.PlacePotObjectiveFactory;
 import net.momirealms.customcrops.bukkit.integration.quest.bq.sprinkler.BreakSprinklerObjectiveFactory;
@@ -41,11 +43,14 @@ public class BetonQuestQuest {
 
         // watering cans
         bq.getQuestRegistries().objective().register("customcrops_fill_can", new FillCanObjectiveFactory());
-        bq.getQuestRegistries().objective().register("customcrops_water_pot", new WateringObjectiveFactory(WaterPotObjective::new));
-        bq.getQuestRegistries().objective().register("customcrops_water_sprinkler", new WateringObjectiveFactory(WaterSprinklerObjective::new));
+        bq.getQuestRegistries().objective().register("customcrops_water_pot", new CustomCropsObjectiveFactory(WaterPotObjective::new));
+        bq.getQuestRegistries().objective().register("customcrops_water_sprinkler", new CustomCropsObjectiveFactory(WaterSprinklerObjective::new));
 
         // sprinklers
         bq.getQuestRegistries().objective().register("customcrops_place_sprinkler", new PlaceSprinklerObjectiveFactory());
         bq.getQuestRegistries().objective().register("customcrops_break_sprinkler", new BreakSprinklerObjectiveFactory());
+
+        // fertilizers
+        bq.getQuestRegistries().objective().register("customcrops_use_fertilizer", new CustomCropsObjectiveFactory(FertilizerUseObjective::new));
     }
 }

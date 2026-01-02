@@ -14,17 +14,17 @@ import java.util.List;
 
 public class WaterPotObjective extends CountingObjective implements Listener {
 
-    private final Argument<List<String>> canIDList;
+    private final Argument<List<String>> identifiers;
     private final Argument<List<String>> potIDList;
 
     public WaterPotObjective(
             final Instruction instruction,
             final Argument<Number> targetAmount,
-            final Argument<List<String>> canIDList,
+            final Argument<List<String>> identifiers,
             final Argument<List<String>> potIDList
     ) throws QuestException {
         super(instruction, targetAmount, "customcrops.can_pot");
-        this.canIDList = canIDList;
+        this.identifiers = identifiers;
         this.potIDList = potIDList;
     }
 
@@ -34,10 +34,13 @@ public class WaterPotObjective extends CountingObjective implements Listener {
         if (!containsPlayer(profile) || !checkConditions(profile)) {
             return;
         }
-        if (!this.canIDList.getValue(profile).contains(event.wateringCanConfig().id())) {
+
+        if (!this.identifiers.getValue(profile).contains(event.wateringCanConfig().id())) {
             return;
         }
-        if (this.potIDList.getValue(profile).contains(event.potConfig().id())) {
+
+        List<String> allowedPots = this.potIDList.getValue(profile);
+        if (allowedPots.isEmpty() || allowedPots.contains(event.potConfig().id())){
             getCountingData(profile).progress();
             completeIfDoneOrNotify(profile);
         }

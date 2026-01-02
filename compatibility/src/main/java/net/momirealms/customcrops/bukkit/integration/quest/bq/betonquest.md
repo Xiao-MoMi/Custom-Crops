@@ -6,28 +6,32 @@
 
 ```yaml
 # The default value for amount is 1.
+# The default value for targets is it anything is acceptable.
 
-# <crop_stage_id>, <crop_id>, <pot_id>, <can_id>, and <sprinkler_id>
+# crop_stage_id, crop_id, pot_id, can_id, and sprinkler_id
 # are all defined in the CustomCrops configuration files.
 # These values can also be provided as a list (A, B, C, ...)
 
 objective:
-  # [Crops]
+  # Crops
   <objective name>: customcrops_harvest_crop <crop_stage_id> [amount:int]
   <objective name>: customcrops_plant_crop <crop_id> [amount:int]
   
-  # [Pots]
+  # Pots
   <objective name>: customcrops_place_pot <pot_id> [amount:int]
   <objective name>: customcrops_break_pot <pot_id> [amount:int]
 
-  # [Watering Can]
+  # Watering Cans
   <objective name>: customcrops_fill_can <can_id> [amount:int]
-  <objective name>: customcrops_water_pot <can_id> <pot_id> [amount:int]
-  <objective name>: customcrops_water_sprinkler <can_id> <sprinkler_id> [amount:int]
+  <objective name>: customcrops_water_pot <can_id> [targets:pot_id] [amount:int]
+  <objective name>: customcrops_water_sprinkler <can_id> [targets:sprinkler_id] [amount:int]
 
-  # [Sprinklers]
+  # Sprinklers
   <objective name>: customcrops_place_sprinkler <sprinkler_id> [amount:int]
   <objective name>: customcrops_break_sprinkler <sprinkler_id> [amount:int]
+
+  # Fertilizers
+  <objective name>: customcrops_use_fertilizer <fertilizer_id> [targets:pot_id] [amount:int]
 ```
 
 ---
@@ -82,6 +86,14 @@ objectives:
 
 ---
 
+### **Fertilizers**
+```yaml
+objectives:
+  useFertilizer: customcrops_use_fertilizer quality_1 amount:10
+```
+
+* **Use:** Use fertilizer 10 times.
+
 # Message Configuration
 
 **Location:** `yourServer/plugins/BetonQuest/lang/<your_language>.yml`
@@ -97,4 +109,5 @@ customcrops:
   can_sprinkler: "@[legacy]&3{amount} sprinklers left to activate"
   sprinkler_placed: "@[legacy]&2{amount} sprinklers left to place"
   sprinkler_broken: "@[legacy]&e{amount} sprinklers left to break"
+  use_fertilizer: "@[legacy]&6{amount} fertilizers left to use"
 ```
