@@ -21,7 +21,7 @@ public class BreakPotObjective extends CountingObjective implements Listener {
             final Argument<Number> targetAmount,
             final Argument<List<String>> identifiers
     ) throws QuestException {
-        super(instruction, targetAmount, "customcrops.pot_placed");
+        super(instruction, targetAmount, "customcrops.pot_broken");
         this.identifiers = identifiers;
     }
 
