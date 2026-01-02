@@ -89,7 +89,7 @@ objectives:
 ### **Fertilizers**
 ```yaml
 objectives:
-  useFertilizer: customcrops_use_fertilizer quality_1 amount:10
+  useFertilizer: customcrops_use_fertilizer quality_1 [targets:pot_id] amount:10
 ```
 
 * **Use:** Use fertilizer 10 times.
