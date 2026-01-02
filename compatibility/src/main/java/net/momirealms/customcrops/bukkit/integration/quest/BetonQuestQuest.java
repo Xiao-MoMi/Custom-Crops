@@ -21,6 +21,7 @@ import net.momirealms.customcrops.bukkit.integration.quest.bq.crops.HarvestCropO
 import net.momirealms.customcrops.bukkit.integration.quest.bq.crops.PlantCropObjectiveFactory;
 import net.momirealms.customcrops.bukkit.integration.quest.bq.pots.BreakPotObjectiveFactory;
 import net.momirealms.customcrops.bukkit.integration.quest.bq.pots.PlacePotObjectiveFactory;
+import net.momirealms.customcrops.bukkit.integration.quest.bq.wateringcans.*;
 import org.betonquest.betonquest.BetonQuest;
 
 @SuppressWarnings("DuplicatedCode")
@@ -32,5 +33,8 @@ public class BetonQuestQuest {
         bq.getQuestRegistries().objective().register("customcrops_plant_crop", new PlantCropObjectiveFactory());
         bq.getQuestRegistries().objective().register("customcrops_place_pot", new PlacePotObjectiveFactory());
         bq.getQuestRegistries().objective().register("customcrops_break_pot", new BreakPotObjectiveFactory());
+        bq.getQuestRegistries().objective().register("customcrops_fill_can", new FillCanObjectiveFactory());
+        bq.getQuestRegistries().objective().register("customcrops_water_pot", new WateringObjectiveFactory(WaterPotObjective::new));
+        bq.getQuestRegistries().objective().register("customcrops_sprinkler_setup", new WateringObjectiveFactory(WaterSprinklerObjective::new));
     }
 }

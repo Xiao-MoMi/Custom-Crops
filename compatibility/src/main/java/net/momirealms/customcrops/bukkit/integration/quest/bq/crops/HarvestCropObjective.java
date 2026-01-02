@@ -28,10 +28,7 @@ public class HarvestCropObjective extends CountingObjective implements Listener 
             return;
         }
         OnlineProfile profile = profileProvider.getProfile(player);
-        if (!containsPlayer(profile)) {
-            return;
-        }
-        if (!checkConditions(profile)) {
+        if (!containsPlayer(profile) || !checkConditions(profile)) {
             return;
         }
         if (this.identifiers.getValue(profile).contains(event.cropStageItemID())) {

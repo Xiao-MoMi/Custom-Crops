@@ -24,10 +24,7 @@ public class PlantCropObjective extends CountingObjective implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onPlantCrop(CropPlantEvent event) throws QuestException {
         OnlineProfile profile = profileProvider.getProfile(event.getPlayer());
-        if (!containsPlayer(profile)) {
-            return;
-        }
-        if (!checkConditions(profile)) {
+        if (!containsPlayer(profile) || !checkConditions(profile)) {
             return;
         }
         if (this.identifiers.getValue(profile).contains(event.cropConfig().id())) {
