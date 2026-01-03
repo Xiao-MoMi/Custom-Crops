@@ -1,6 +1,5 @@
 repositories {
     mavenCentral()
-    maven("https://repo.papermc.io/repository/maven-public/")
     maven("https://maven.enginehub.org/repo/") // worldguard worldedit
     maven("https://jitpack.io/")
     maven("https://repo.papermc.io/repository/maven-public/") // paper
