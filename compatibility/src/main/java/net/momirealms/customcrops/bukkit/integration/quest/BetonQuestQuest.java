@@ -37,26 +37,19 @@ public class BetonQuestQuest {
     public static void register() {
         BetonQuest bq = BetonQuest.getInstance();
         // crops
-//        bq.getQuestRegistries().objective().register("customcrops_harvest_crop", new HarvestCropObjectiveFactory());
-//        bq.getQuestRegistries().objective().register("customcrops_plant_crop", new PlantCropObjectiveFactory());
         bq.getQuestRegistries().objective().register("customcrops_harvest_crop", new SimpleCustomCropsObjectiveFactory(HarvestCropObjective::new));
         bq.getQuestRegistries().objective().register("customcrops_plant_crop", new SimpleCustomCropsObjectiveFactory(PlantCropObjective::new));
 
         // pots
-//        bq.getQuestRegistries().objective().register("customcrops_place_pot", new PlacePotObjectiveFactory());
-//        bq.getQuestRegistries().objective().register("customcrops_break_pot", new BreakPotObjectiveFactory());
         bq.getQuestRegistries().objective().register("customcrops_place_pot", new SimpleCustomCropsObjectiveFactory(PlacePotObjective::new));
         bq.getQuestRegistries().objective().register("customcrops_break_pot", new SimpleCustomCropsObjectiveFactory(BreakPotObjective::new));
 
         // watering cans
-        // bq.getQuestRegistries().objective().register("customcrops_fill_can", new FillCanObjectiveFactory());
         bq.getQuestRegistries().objective().register("customcrops_fill_can", new SimpleCustomCropsObjectiveFactory(FillCanObjective::new));
         bq.getQuestRegistries().objective().register("customcrops_water_pot", new CustomCropsObjectiveFactory(WaterPotObjective::new));
         bq.getQuestRegistries().objective().register("customcrops_water_sprinkler", new CustomCropsObjectiveFactory(WaterSprinklerObjective::new));
 
         // sprinklers
-//        bq.getQuestRegistries().objective().register("customcrops_place_sprinkler", new PlaceSprinklerObjectiveFactory());
-//        bq.getQuestRegistries().objective().register("customcrops_break_sprinkler", new BreakSprinklerObjectiveFactory());
         bq.getQuestRegistries().objective().register("customcrops_place_sprinkler", new SimpleCustomCropsObjectiveFactory(PlaceSprinklerObjective::new));
         bq.getQuestRegistries().objective().register("customcrops_break_sprinkler", new SimpleCustomCropsObjectiveFactory(BreakSprinklerObjective::new));
 
