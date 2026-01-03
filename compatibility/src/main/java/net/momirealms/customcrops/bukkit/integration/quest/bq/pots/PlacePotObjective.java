@@ -20,17 +20,14 @@ public class PlacePotObjective extends CountingObjective implements Listener {
             final Argument<Number> targetAmount,
             final Argument<List<String>> identifiers
     ) throws QuestException {
-        super(instruction, targetAmount, "custom_crops_to_place_pot");
+        super(instruction, targetAmount, "customcrops.pot_broken");
         this.identifiers = identifiers;
     }
 
     @EventHandler(ignoreCancelled = true)
     public void onPlacePot(PotPlaceEvent event) throws QuestException {
         OnlineProfile profile = profileProvider.getProfile(event.getPlayer());
-        if (!containsPlayer(profile)) {
-            return;
-        }
-        if (!checkConditions(profile)) {
+        if (!containsPlayer(profile) || !checkConditions(profile)) {
             return;
         }
         if (this.identifiers.getValue(profile).contains(event.potConfig().id())) {

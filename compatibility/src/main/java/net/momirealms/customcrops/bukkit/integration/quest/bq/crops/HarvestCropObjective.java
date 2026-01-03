@@ -16,9 +16,12 @@ public class HarvestCropObjective extends CountingObjective implements Listener 
 
     private final Argument<List<String>> identifiers;
 
-    public HarvestCropObjective(final Instruction instruction, final Argument<Number> targetAmount,
-                                 final Argument<List<String>> identifiers) throws QuestException {
-        super(instruction, targetAmount, "custom_crops_to_harvest");
+    public HarvestCropObjective(
+            final Instruction instruction,
+            final Argument<Number> targetAmount,
+            final Argument<List<String>> identifiers
+    ) throws QuestException {
+        super(instruction, targetAmount, "customcrops.crop_harvested");
         this.identifiers = identifiers;
     }
 
@@ -28,10 +31,7 @@ public class HarvestCropObjective extends CountingObjective implements Listener 
             return;
         }
         OnlineProfile profile = profileProvider.getProfile(player);
-        if (!containsPlayer(profile)) {
-            return;
-        }
-        if (!checkConditions(profile)) {
+        if (!containsPlayer(profile) || !checkConditions(profile)) {
             return;
         }
         if (this.identifiers.getValue(profile).contains(event.cropStageItemID())) {

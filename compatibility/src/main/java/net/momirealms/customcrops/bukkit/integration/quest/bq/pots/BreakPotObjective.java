@@ -21,7 +21,7 @@ public class BreakPotObjective extends CountingObjective implements Listener {
             final Argument<Number> targetAmount,
             final Argument<List<String>> identifiers
     ) throws QuestException {
-        super(instruction, targetAmount, "custom_crops_to_break_pot");
+        super(instruction, targetAmount, "customcrops.pot_broken");
         this.identifiers = identifiers;
     }
 
@@ -31,10 +31,7 @@ public class BreakPotObjective extends CountingObjective implements Listener {
             return;
         }
         OnlineProfile profile = profileProvider.getProfile(player);
-        if (!containsPlayer(profile)) {
-            return;
-        }
-        if (!checkConditions(profile)) {
+        if (!containsPlayer(profile) || !checkConditions(profile)) {
             return;
         }
         if (this.identifiers.getValue(profile).contains(event.potConfig().id())) {
