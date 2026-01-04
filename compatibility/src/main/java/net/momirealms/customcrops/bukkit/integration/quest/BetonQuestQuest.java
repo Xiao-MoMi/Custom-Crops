@@ -26,8 +26,8 @@ import net.momirealms.customcrops.bukkit.integration.quest.bq.crops.PlantCropObj
 import net.momirealms.customcrops.bukkit.integration.quest.bq.fertilizers.FertilizerUseObjective;
 import net.momirealms.customcrops.bukkit.integration.quest.bq.pots.BreakPotObjective;
 import net.momirealms.customcrops.bukkit.integration.quest.bq.pots.PlacePotObjective;
-import net.momirealms.customcrops.bukkit.integration.quest.bq.sprinkler.BreakSprinklerObjective;
-import net.momirealms.customcrops.bukkit.integration.quest.bq.sprinkler.PlaceSprinklerObjective;
+import net.momirealms.customcrops.bukkit.integration.quest.bq.sprinklers.BreakSprinklerObjective;
+import net.momirealms.customcrops.bukkit.integration.quest.bq.sprinklers.PlaceSprinklerObjective;
 import net.momirealms.customcrops.bukkit.integration.quest.bq.wateringcans.*;
 import org.betonquest.betonquest.BetonQuest;
 

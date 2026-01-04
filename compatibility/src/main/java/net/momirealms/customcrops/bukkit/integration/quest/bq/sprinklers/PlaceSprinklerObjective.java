@@ -1,21 +1,22 @@
-package net.momirealms.customcrops.bukkit.integration.quest.bq.sprinkler;
+package net.momirealms.customcrops.bukkit.integration.quest.bq.sprinklers;
 
-import net.momirealms.customcrops.api.event.SprinklerPlaceEvent;
+import net.momirealms.customcrops.api.event.SprinklerBreakEvent;
 import org.betonquest.betonquest.api.CountingObjective;
 import org.betonquest.betonquest.api.QuestException;
 import org.betonquest.betonquest.api.instruction.Argument;
 import org.betonquest.betonquest.api.instruction.Instruction;
 import org.betonquest.betonquest.api.profile.OnlineProfile;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
 import java.util.List;
 
-public class BreakSprinklerObjective extends CountingObjective implements Listener {
+public class PlaceSprinklerObjective extends CountingObjective implements Listener {
 
     private final Argument<List<String>> identifiers;
 
-    public BreakSprinklerObjective(
+    public PlaceSprinklerObjective(
             final Instruction instruction,
             final Argument<Number> targetAmount,
             final Argument<List<String>> identifiers
@@ -25,8 +26,11 @@ public class BreakSprinklerObjective extends CountingObjective implements Listen
     }
 
     @EventHandler(ignoreCancelled = true)
-    public void onPlaceSprinkler(SprinklerPlaceEvent event) throws QuestException {
-        OnlineProfile profile = profileProvider.getProfile(event.getPlayer());
+    public void onBreakSprinkler(SprinklerBreakEvent event) throws QuestException {
+        if (!(event.entityBreaker() instanceof Player player)) {
+            return;
+        }
+        OnlineProfile profile = profileProvider.getProfile(player);
         if (!containsPlayer(profile) || !checkConditions(profile)) {
             return;
         }
