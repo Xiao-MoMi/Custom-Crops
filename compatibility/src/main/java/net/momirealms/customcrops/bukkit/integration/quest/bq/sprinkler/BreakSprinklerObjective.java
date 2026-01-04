@@ -1,6 +1,6 @@
-package net.momirealms.customcrops.bukkit.integration.quest.bq.wateringcans;
+package net.momirealms.customcrops.bukkit.integration.quest.bq.sprinkler;
 
-import net.momirealms.customcrops.api.event.WateringCanFillEvent;
+import net.momirealms.customcrops.api.event.SprinklerPlaceEvent;
 import org.betonquest.betonquest.api.CountingObjective;
 import org.betonquest.betonquest.api.QuestException;
 import org.betonquest.betonquest.api.instruction.Argument;
@@ -11,28 +11,29 @@ import org.bukkit.event.Listener;
 
 import java.util.List;
 
-public class FillCanObjective extends CountingObjective implements Listener {
+public class BreakSprinklerObjective extends CountingObjective implements Listener {
 
     private final Argument<List<String>> identifiers;
 
-    public FillCanObjective(
+    public BreakSprinklerObjective(
             final Instruction instruction,
             final Argument<Number> targetAmount,
             final Argument<List<String>> identifiers
     ) throws QuestException {
-        super(instruction, targetAmount, "customcrops.can_fill");
+        super(instruction, targetAmount, "customcrops.sprinkler_placed");
         this.identifiers = identifiers;
     }
 
     @EventHandler(ignoreCancelled = true)
-    public void onFillWateringCan(WateringCanFillEvent event) throws QuestException {
+    public void onPlaceSprinkler(SprinklerPlaceEvent event) throws QuestException {
         OnlineProfile profile = profileProvider.getProfile(event.getPlayer());
         if (!containsPlayer(profile) || !checkConditions(profile)) {
             return;
         }
-        if (this.identifiers.getValue(profile).contains(event.wateringCanConfig().id())) {
+        if (this.identifiers.getValue(profile).contains(event.sprinklerConfig().id())) {
             getCountingData(profile).progress();
             completeIfDoneOrNotify(profile);
         }
     }
+
 }

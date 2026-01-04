@@ -1,7 +1,6 @@
-package net.momirealms.customcrops.bukkit.integration.quest.bq.wateringcans;
+package net.momirealms.customcrops.bukkit.integration.quest.bq.wateringcan;
 
-import net.momirealms.customcrops.api.event.WateringCanWaterPotEvent;
-import net.momirealms.customcrops.common.util.Pair;
+import net.momirealms.customcrops.api.event.WateringCanWaterSprinklerEvent;
 import org.betonquest.betonquest.api.CountingObjective;
 import org.betonquest.betonquest.api.QuestException;
 import org.betonquest.betonquest.api.instruction.Argument;
@@ -12,24 +11,24 @@ import org.bukkit.event.Listener;
 
 import java.util.List;
 
-public class WaterPotObjective extends CountingObjective implements Listener {
+public class WaterSprinklerObjective extends CountingObjective implements Listener {
 
     private final Argument<List<String>> identifiers;
-    private final Argument<List<String>> potIDList;
+    private final Argument<List<String>> sprinklerIDList;
 
-    public WaterPotObjective(
+    public WaterSprinklerObjective(
             final Instruction instruction,
             final Argument<Number> targetAmount,
             final Argument<List<String>> identifiers,
-            final Argument<List<String>> potIDList
+            final Argument<List<String>> sprinklerIDList
     ) throws QuestException {
-        super(instruction, targetAmount, "customcrops.can_pot");
+        super(instruction, targetAmount, "customcrops.can_sprinkler");
         this.identifiers = identifiers;
-        this.potIDList = potIDList;
+        this.sprinklerIDList = sprinklerIDList;
     }
 
     @EventHandler(ignoreCancelled = true)
-    public void onWateringPot(WateringCanWaterPotEvent event) throws QuestException {
+    public void onWateringSprinkler(WateringCanWaterSprinklerEvent event) throws QuestException {
         OnlineProfile profile = profileProvider.getProfile(event.getPlayer());
         if (!containsPlayer(profile) || !checkConditions(profile)) {
             return;
@@ -39,8 +38,8 @@ public class WaterPotObjective extends CountingObjective implements Listener {
             return;
         }
 
-        List<String> allowedPots = this.potIDList.getValue(profile);
-        if (allowedPots.isEmpty() || allowedPots.contains(event.potConfig().id())){
+        List<String> allowedSprinklers = this.sprinklerIDList.getValue(profile);
+        if (allowedSprinklers.isEmpty() || allowedSprinklers.contains(event.sprinklerConfig().id())) {
             getCountingData(profile).progress();
             completeIfDoneOrNotify(profile);
         }

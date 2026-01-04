@@ -1,4 +1,4 @@
-package net.momirealms.customcrops.bukkit.integration.quest.bq.pots;
+package net.momirealms.customcrops.bukkit.integration.quest.bq.pot;
 
 import net.momirealms.customcrops.api.event.PotBreakEvent;
 import org.betonquest.betonquest.api.CountingObjective;
