@@ -4,8 +4,8 @@ import net.momirealms.customcrops.api.event.SprinklerBreakEvent;
 import org.betonquest.betonquest.api.CountingObjective;
 import org.betonquest.betonquest.api.QuestException;
 import org.betonquest.betonquest.api.instruction.Argument;
-import org.betonquest.betonquest.api.instruction.Instruction;
 import org.betonquest.betonquest.api.profile.OnlineProfile;
+import org.betonquest.betonquest.api.quest.objective.event.ObjectiveFactoryService;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -17,11 +17,11 @@ public class PlaceSprinklerObjective extends CountingObjective implements Listen
     private final Argument<List<String>> identifiers;
 
     public PlaceSprinklerObjective(
-            final Instruction instruction,
+            final ObjectiveFactoryService service,
             final Argument<Number> targetAmount,
             final Argument<List<String>> identifiers
     ) throws QuestException {
-        super(instruction, targetAmount, "customcrops.sprinkler_placed");
+        super(service, targetAmount, "customcrops.sprinkler_placed");
         this.identifiers = identifiers;
     }
 

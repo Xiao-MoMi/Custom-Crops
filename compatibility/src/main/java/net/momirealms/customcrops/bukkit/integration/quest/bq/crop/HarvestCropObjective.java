@@ -4,7 +4,7 @@ import net.momirealms.customcrops.api.event.CropBreakEvent;
 import org.betonquest.betonquest.api.CountingObjective;
 import org.betonquest.betonquest.api.QuestException;
 import org.betonquest.betonquest.api.instruction.Argument;
-import org.betonquest.betonquest.api.instruction.Instruction;
+import org.betonquest.betonquest.api.quest.objective.event.ObjectiveFactoryService;
 import org.betonquest.betonquest.api.profile.OnlineProfile;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -17,11 +17,11 @@ public class HarvestCropObjective extends CountingObjective implements Listener 
     private final Argument<List<String>> identifiers;
 
     public HarvestCropObjective(
-            final Instruction instruction,
+            final ObjectiveFactoryService service,
             final Argument<Number> targetAmount,
             final Argument<List<String>> identifiers
     ) throws QuestException {
-        super(instruction, targetAmount, "customcrops.crop_harvested");
+        super(service, targetAmount, "customcrops.crop_harvested");
         this.identifiers = identifiers;
     }
 

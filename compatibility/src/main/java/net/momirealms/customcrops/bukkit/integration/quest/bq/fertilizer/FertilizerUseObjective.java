@@ -4,7 +4,7 @@ import net.momirealms.customcrops.api.event.FertilizerUseEvent;
 import org.betonquest.betonquest.api.CountingObjective;
 import org.betonquest.betonquest.api.QuestException;
 import org.betonquest.betonquest.api.instruction.Argument;
-import org.betonquest.betonquest.api.instruction.Instruction;
+import org.betonquest.betonquest.api.quest.objective.event.ObjectiveFactoryService;
 import org.betonquest.betonquest.api.profile.OnlineProfile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -17,12 +17,12 @@ public class FertilizerUseObjective extends CountingObjective implements Listene
     private final Argument<List<String>> potIDList;
 
     public FertilizerUseObjective(
-            final Instruction instruction,
+            final ObjectiveFactoryService service,
             final Argument<Number> targetAmount,
             final Argument<List<String>> identifiers,
             final Argument<List<String>> potIDList
     ) throws QuestException {
-        super(instruction, targetAmount, "customcrops.use_fertilizer");
+        super(service, targetAmount, "customcrops.use_fertilizer");
         this.identifiers = identifiers;
         this.potIDList = potIDList;
     }
