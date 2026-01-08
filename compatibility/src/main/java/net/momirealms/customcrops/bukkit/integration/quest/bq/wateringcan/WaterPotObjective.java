@@ -4,8 +4,8 @@ import net.momirealms.customcrops.api.event.WateringCanWaterPotEvent;
 import org.betonquest.betonquest.api.CountingObjective;
 import org.betonquest.betonquest.api.QuestException;
 import org.betonquest.betonquest.api.instruction.Argument;
-import org.betonquest.betonquest.api.instruction.Instruction;
 import org.betonquest.betonquest.api.profile.OnlineProfile;
+import org.betonquest.betonquest.api.quest.objective.event.ObjectiveFactoryService;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
@@ -17,12 +17,12 @@ public class WaterPotObjective extends CountingObjective implements Listener {
     private final Argument<List<String>> potIDList;
 
     public WaterPotObjective(
-            final Instruction instruction,
+            final ObjectiveFactoryService service,
             final Argument<Number> targetAmount,
             final Argument<List<String>> identifiers,
             final Argument<List<String>> potIDList
     ) throws QuestException {
-        super(instruction, targetAmount, "customcrops.can_pot");
+        super(service, targetAmount, "customcrops.can_pot");
         this.identifiers = identifiers;
         this.potIDList = potIDList;
     }
