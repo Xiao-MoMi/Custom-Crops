@@ -1,8 +1,6 @@
 package net.momirealms.customcrops.bukkit.integration.quest.bq.sprinkler;
 
-import net.momirealms.customcrops.api.event.PotBreakEvent;
 import net.momirealms.customcrops.api.event.SprinklerBreakEvent;
-import net.momirealms.customcrops.api.event.SprinklerPlaceEvent;
 import org.betonquest.betonquest.api.CountingObjective;
 import org.betonquest.betonquest.api.QuestException;
 import org.betonquest.betonquest.api.instruction.Argument;

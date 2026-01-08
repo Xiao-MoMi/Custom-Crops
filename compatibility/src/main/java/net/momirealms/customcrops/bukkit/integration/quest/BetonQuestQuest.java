@@ -21,14 +21,14 @@ import net.momirealms.customcrops.bukkit.integration.quest.bq.CustomCropsObjecti
 import net.momirealms.customcrops.bukkit.integration.quest.bq.SimpleCustomCropsObjectiveFactory;
 import net.momirealms.customcrops.bukkit.integration.quest.bq.common.BreakScarecrowObjective;
 import net.momirealms.customcrops.bukkit.integration.quest.bq.common.PlaceScarecrowObjective;
-import net.momirealms.customcrops.bukkit.integration.quest.bq.crops.HarvestCropObjective;
-import net.momirealms.customcrops.bukkit.integration.quest.bq.crops.PlantCropObjective;
-import net.momirealms.customcrops.bukkit.integration.quest.bq.fertilizers.FertilizerUseObjective;
-import net.momirealms.customcrops.bukkit.integration.quest.bq.pots.BreakPotObjective;
-import net.momirealms.customcrops.bukkit.integration.quest.bq.pots.PlacePotObjective;
+import net.momirealms.customcrops.bukkit.integration.quest.bq.crop.HarvestCropObjective;
+import net.momirealms.customcrops.bukkit.integration.quest.bq.crop.PlantCropObjective;
+import net.momirealms.customcrops.bukkit.integration.quest.bq.fertilizer.FertilizerUseObjective;
+import net.momirealms.customcrops.bukkit.integration.quest.bq.pot.BreakPotObjective;
+import net.momirealms.customcrops.bukkit.integration.quest.bq.pot.PlacePotObjective;
 import net.momirealms.customcrops.bukkit.integration.quest.bq.sprinkler.BreakSprinklerObjective;
 import net.momirealms.customcrops.bukkit.integration.quest.bq.sprinkler.PlaceSprinklerObjective;
-import net.momirealms.customcrops.bukkit.integration.quest.bq.wateringcans.*;
+import net.momirealms.customcrops.bukkit.integration.quest.bq.wateringcan.*;
 import org.betonquest.betonquest.BetonQuest;
 
 @SuppressWarnings("DuplicatedCode")

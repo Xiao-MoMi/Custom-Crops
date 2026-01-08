@@ -5,6 +5,7 @@ import org.betonquest.betonquest.api.QuestException;
 import org.betonquest.betonquest.api.instruction.Argument;
 import org.betonquest.betonquest.api.instruction.Instruction;
 import org.betonquest.betonquest.api.quest.objective.ObjectiveFactory;
+import org.betonquest.betonquest.api.quest.objective.event.ObjectiveFactoryService;
 
 import java.util.List;
 
@@ -28,7 +29,7 @@ public class SimpleCustomCropsObjectiveFactory implements ObjectiveFactory {
      * @throws QuestException if mandatory arguments are missing or invalid
      */
     @Override
-    public DefaultObjective parseInstruction(final Instruction instruction) throws QuestException {
+    public DefaultObjective parseInstruction(Instruction instruction, ObjectiveFactoryService objectiveFactoryService) throws QuestException {
         final Argument<List<String>> identifiers = instruction.string().list().get();
         final Argument<Number> targetAmount = instruction.number().get("amount", 1);
         return creator.create(instruction, targetAmount, identifiers);

@@ -47,7 +47,7 @@ dependencies {
     compileOnly("com.comphenix.packetwrapper:PacketWrapper:1.20-2.2.1")
     compileOnly("org.betonquest:betonquest:3.0.0-SNAPSHOT") {
         exclude(group = "de.themoep", module = "minedown-adventure")
-    } // { exclude("*") }
+    }
     // item
     compileOnly(files("libs/zaphkiel-2.0.24.jar"))
     compileOnly(files("libs/ExecutableItems-7.24.9.29.jar"))
