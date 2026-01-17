@@ -6,14 +6,13 @@ repositories {
     mavenCentral()
     maven("https://jitpack.io/")
     maven("https://repo.papermc.io/repository/maven-public/")
-    maven("https://repo.rapture.pw/repository/maven-releases/") // flow nbt
     maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
     maven("https://s01.oss.sonatype.org/content/repositories/snapshots/")
     maven("https://repo.momirealms.net/releases/")
 }
 
 dependencies {
-    implementation("com.flowpowered:flow-nbt:${rootProject.properties["flow_nbt_version"]}")
+    implementation(files("${rootProject.rootDir}/libs/flow-nbt-2.0.2.jar"))
     implementation(files("libs/boosted-yaml-${rootProject.properties["boosted_yaml_version"]}.jar"))
     compileOnly("net.kyori:adventure-api:${rootProject.properties["adventure_bundle_version"]}") {
         exclude(module = "adventure-bom")

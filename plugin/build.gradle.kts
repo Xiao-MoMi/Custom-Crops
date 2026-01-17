@@ -1,6 +1,5 @@
 repositories {
     mavenCentral()
-    maven("https://repo.rapture.pw/repository/maven-releases/")
     maven("https://repo.papermc.io/repository/maven-public/")
     maven("https://jitpack.io/")
     maven("https://oss.sonatype.org/content/repositories/snapshots")
@@ -31,7 +30,7 @@ dependencies {
     implementation("com.saicone.rtag:rtag:${rootProject.properties["rtag_version"]}")
     implementation("com.saicone.rtag:rtag-item:${rootProject.properties["rtag_version"]}")
     // TODO use sparrow-nbt
-    implementation("com.flowpowered:flow-nbt:${rootProject.properties["flow_nbt_version"]}") // do not relocate (compatibility with AdvancedSlimePaper)
+    compileOnly(files("${rootProject.rootDir}/libs/flow-nbt-2.0.2.jar")) // do not relocate (compatibility with AdvancedSlimePaper)
     compileOnly("org.incendo:cloud-core:${rootProject.properties["cloud_core_version"]}")
     compileOnly("org.incendo:cloud-minecraft-extras:${rootProject.properties["cloud_minecraft_extras_version"]}")
     compileOnly("org.incendo:cloud-paper:${rootProject.properties["cloud_paper_version"]}")

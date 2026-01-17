@@ -11,7 +11,6 @@ repositories {
     maven("https://repo.auxilor.io/repository/maven-public/") // eco
     maven("https://repo.dmulloy2.net/repository/public/") // betonquest needs packet wrapper?
     maven("https://oss.sonatype.org/content/repositories/snapshots")
-    maven("https://repo.rapture.pw/repository/maven-releases/") // flow nbt
     maven("https://repo.momirealms.net/releases/") // CustomFishing
     maven("https://repo.lukasa.lt/repository/maven-public/") // packet wrapper
 }
@@ -19,7 +18,7 @@ repositories {
 dependencies {
     compileOnly(project(":api"))
     compileOnly("dev.dejvokep:boosted-yaml:${rootProject.properties["boosted_yaml_version"]}")
-    compileOnly("com.flowpowered:flow-nbt:${rootProject.properties["flow_nbt_version"]}")
+    compileOnly(files("${rootProject.rootDir}/libs/flow-nbt-2.0.2.jar"))
     compileOnly("net.kyori:adventure-api:${rootProject.properties["adventure_bundle_version"]}") {
         exclude(module = "adventure-bom")
         exclude(module = "checker-qual")

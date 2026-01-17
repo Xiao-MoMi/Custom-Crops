@@ -20,6 +20,7 @@ package net.momirealms.customcrops.bukkit.item;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
 import net.momirealms.antigrieflib.AntiGriefLib;
+import net.momirealms.antigrieflib.Flag;
 import net.momirealms.customcrops.api.BukkitCustomCropsPlugin;
 import net.momirealms.customcrops.api.core.*;
 import net.momirealms.customcrops.api.core.block.BreakReason;
@@ -484,7 +485,7 @@ public class BukkitItemManager extends AbstractItemManager {
             return;
         }
 
-        if (antiGriefLib != null && !antiGriefLib.canInteract(player, block.getLocation())) {
+        if (antiGriefLib != null && !antiGriefLib.test(player, Flag.INTERACT, block.getLocation())) {
             return;
         }
 
@@ -502,7 +503,7 @@ public class BukkitItemManager extends AbstractItemManager {
             return;
         }
 
-        if (antiGriefLib != null && !antiGriefLib.canInteract(player, location)) {
+        if (antiGriefLib != null && !antiGriefLib.test(player, Flag.INTERACT, location)) {
             return;
         }
 
@@ -542,13 +543,13 @@ public class BukkitItemManager extends AbstractItemManager {
     public void handlePlayerBreak(Player player, Location location, ItemStack itemInHand, String brokenID, Cancellable event) {
         Optional<CustomCropsWorld<?>> optionalWorld = plugin.getWorldManager().getWorld(player.getWorld());
         if (optionalWorld.isEmpty()) {
-            if (ConfigManager.interveneAntiGrief() && antiGriefLib != null && !antiGriefLib.canBreak(player, location)) {
+            if (ConfigManager.interveneAntiGrief() && antiGriefLib != null && !antiGriefLib.test(player, Flag.BREAK, location)) {
                 event.setCancelled(true);
             }
             return;
         }
 
-        if (antiGriefLib != null && !antiGriefLib.canBreak(player, location)) {
+        if (antiGriefLib != null && !antiGriefLib.test(player, Flag.BREAK, location)) {
             if (ConfigManager.interveneAntiGrief()) {
                 event.setCancelled(true);
             }
@@ -631,7 +632,7 @@ public class BukkitItemManager extends AbstractItemManager {
             return;
         }
 
-        if (antiGriefLib != null && !antiGriefLib.canPlace(player, location)) {
+        if (antiGriefLib != null && !antiGriefLib.test(player, Flag.PLACE, location)) {
             return;
         }
 
