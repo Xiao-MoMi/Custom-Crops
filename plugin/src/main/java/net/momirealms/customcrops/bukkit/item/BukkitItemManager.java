@@ -412,8 +412,8 @@ public class BukkitItemManager extends AbstractItemManager {
             }
         } else {
             String[] split = id.split(":", 2);
-            ItemProvider provider = requireNonNull(itemProviders.get(split[0]), "Item provider: " + split[0] + " not found");
-            return requireNonNull(provider.buildItem(player, split[1]), "Item: " + split[0] + " not found");
+            ItemProvider provider = requireNonNull(itemProviders.get(split[0]), "Item provider: " + split[0] + " not found when building " + id);
+            return requireNonNull(provider.buildItem(player, split[1]), "Item: " + id + " not found");
         }
     }
 
