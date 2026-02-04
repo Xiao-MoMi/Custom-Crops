@@ -13,6 +13,7 @@ repositories {
     maven("https://oss.sonatype.org/content/repositories/snapshots")
     maven("https://repo.momirealms.net/releases/") // CustomFishing
     maven("https://repo.lukasa.lt/repository/maven-public/") // packet wrapper
+    maven("https://repo.repsy.io/mvn/athlaeos/valhallammo/") // valhallammo
 }
 
 dependencies {
@@ -39,6 +40,7 @@ dependencies {
     compileOnly("dev.aurelium:auraskills-api-bukkit:2.1.5")
     compileOnly("com.github.Archy-X:AureliumSkills:Beta1.3.21")
     compileOnly("com.github.Zrips:Jobs:v5.2.2.3")
+    compileOnly("me.athlaeos:valhallammo-dist:premium_1.11")
     // quest
     compileOnly(files("libs/BattlePass-4.0.6-api.jar"))
     compileOnly(files("libs/ClueScrolls-4.8.7-api.jar"))

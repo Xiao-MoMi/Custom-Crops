@@ -26,6 +26,10 @@ public class PluginUtils {
         return Bukkit.getPluginManager().isPluginEnabled(name);
     }
 
+    public static boolean hasPlugin(String name) {
+        return Bukkit.getPluginManager().getPlugin(name) != null;
+    }
+
     @SuppressWarnings("deprecation")
     public static String getPluginVersion(String name) {
         Plugin plugin = Bukkit.getPluginManager().getPlugin(name);

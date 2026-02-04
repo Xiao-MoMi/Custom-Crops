@@ -143,7 +143,7 @@ public class BukkitItemManager extends AbstractItemManager {
     }
 
     private void hookDefaultPlugins() throws ReflectiveOperationException {
-        if (PluginUtils.isEnabled("CraftEngine")) {
+        if (PluginUtils.hasPlugin("CraftEngine")) {
             String rVersion = "r1";
             Class<?> craftEngineProviderClass = Class.forName("net.momirealms.customcrops.bukkit.integration.custom.craftengine_" + rVersion + ".CraftEngineProvider");
             Constructor<?> craftEngineProviderConstructor = craftEngineProviderClass.getDeclaredConstructor();
@@ -156,7 +156,7 @@ public class BukkitItemManager extends AbstractItemManager {
             this.setCustomEventListener((AbstractCustomEventListener) craftEngineListenerConstructor.newInstance(this));
 
             plugin.getPluginLogger().info("CraftEngine hooked!");
-        } else if (PluginUtils.isEnabled("Oraxen")) {
+        } else if (PluginUtils.hasPlugin("Oraxen")) {
             String rVersion;
             if (PluginUtils.getPluginVersion("Oraxen").startsWith("2")) {
                 rVersion = "r2";
@@ -174,7 +174,7 @@ public class BukkitItemManager extends AbstractItemManager {
             this.setCustomEventListener((AbstractCustomEventListener) oraxenListenerConstructor.newInstance(this));
 
             plugin.getPluginLogger().info("Oraxen hooked!");
-        } else if (PluginUtils.isEnabled("Nexo")) {
+        } else if (PluginUtils.hasPlugin("Nexo")) {
             String rVersion = "r1";
             Class<?> nexoProviderClass = Class.forName("net.momirealms.customcrops.bukkit.integration.custom.nexo_" + rVersion + ".NexoProvider");
             Constructor<?> nexoProviderConstructor = nexoProviderClass.getDeclaredConstructor();
@@ -187,7 +187,7 @@ public class BukkitItemManager extends AbstractItemManager {
             this.setCustomEventListener((AbstractCustomEventListener) nexoListenerConstructor.newInstance(this));
 
             plugin.getPluginLogger().info("Nexo hooked!");
-        } else if (PluginUtils.isEnabled("ItemsAdder")) {
+        } else if (PluginUtils.hasPlugin("ItemsAdder")) {
             Plugin iaPlugin = Bukkit.getPluginManager().getPlugin("ItemsAdder");
             String version = iaPlugin.getDescription().getVersion();
             String[] split = version.split("\\.");

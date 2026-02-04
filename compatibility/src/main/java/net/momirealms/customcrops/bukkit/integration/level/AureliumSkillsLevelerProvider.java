@@ -23,7 +23,7 @@ import net.momirealms.customcrops.api.integration.LevelerProvider;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-public class AureliumSkillsProvider implements LevelerProvider {
+public class AureliumSkillsLevelerProvider implements LevelerProvider {
 
     @Override
     public String identifier() {
@@ -32,7 +32,7 @@ public class AureliumSkillsProvider implements LevelerProvider {
 
     private final Leveler leveler;
 
-    public AureliumSkillsProvider() {
+    public AureliumSkillsLevelerProvider() {
         leveler = AureliumAPI.getPlugin().getLeveler();
     }
 

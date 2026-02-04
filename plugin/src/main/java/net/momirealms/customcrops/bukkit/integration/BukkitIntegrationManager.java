@@ -115,7 +115,10 @@ public class BukkitIntegrationManager implements IntegrationManager {
             registerLevelerProvider(new McMMOLevelerProvider());
         }
         if (isHooked("AureliumSkills")) {
-            registerLevelerProvider(new AureliumSkillsProvider());
+            registerLevelerProvider(new AureliumSkillsLevelerProvider());
+        }
+        if (isHooked("ValhallaMMO")) {
+            registerLevelerProvider(new ValhallaMMOLevelerProvider());
         }
         if (isHooked("AuraSkills")) {
             registerLevelerProvider(new AuraSkillsLevelerProvider());
