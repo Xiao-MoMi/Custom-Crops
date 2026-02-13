@@ -77,9 +77,13 @@ public class BukkitIntegrationManager implements IntegrationManager {
         if (isHooked("PlaceholderAPI")) {
             new CustomCropsPapi(plugin).load();
         }
-        if (isHooked("BattlePass")){
-            BattlePassQuest battlePassQuest = new BattlePassQuest();
-            battlePassQuest.register();
+        try {
+            Class.forName("io.github.battlepass.BattlePlugin");
+            if (isHooked("BattlePass")){
+                BattlePassQuest battlePassQuest = new BattlePassQuest();
+                battlePassQuest.register();
+            }
+        } catch (ClassNotFoundException ignore) {
         }
         if (isHooked("WorldGuard", "7")) {
             WorldGuardRegion.register();
