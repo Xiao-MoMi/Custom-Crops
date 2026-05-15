@@ -459,7 +459,7 @@ public class BukkitItemManager extends AbstractItemManager {
         }
         int damage = wrapped.damage().orElse(0);
         if (damage + amount >= wrapped.maxDamage().orElse((int) itemStack.getType().getMaxDurability())) {
-            plugin.getSenderFactory().getAudience(player).playSound(Sound.sound(Key.key("minecraft:entity.item.break"), Sound.Source.PLAYER, 1, 1));
+            player.playSound(player, "minecraft:entity.item.break", SoundCategory.PLAYERS, 1, 1);
             itemStack.setAmount(0);
             return;
         }

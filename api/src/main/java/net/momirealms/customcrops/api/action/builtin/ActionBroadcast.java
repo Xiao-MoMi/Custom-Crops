@@ -24,6 +24,7 @@ import net.momirealms.customcrops.api.context.ContextKeys;
 import net.momirealms.customcrops.api.misc.value.MathValue;
 import net.momirealms.customcrops.common.helper.AdventureHelper;
 import net.momirealms.customcrops.common.util.ListUtils;
+import net.momirealms.sparrow.heart.SparrowHeart;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -52,9 +53,8 @@ public class ActionBroadcast<T> extends AbstractBuiltInAction<T> {
         }
         List<String> replaced = plugin.getPlaceholderManager().parse(offlinePlayer, messages, context.placeholderMap());
         for (Player player : Bukkit.getOnlinePlayers()) {
-            Audience audience = plugin.getSenderFactory().getAudience(player);
             for (String text : replaced) {
-                audience.sendMessage(AdventureHelper.miniMessage(text));
+                SparrowHeart.getInstance().sendMessage(player, AdventureHelper.miniMessageToJson(text));
             }
         }
     }

@@ -1,14 +1,14 @@
 repositories {
     mavenCentral()
     maven("https://repo.papermc.io/repository/maven-public/")
-    maven("https://repo.momirealms.net/snapshots/")
+    maven("https://repo.momirealms.net/releases/")
 }
 
 dependencies {
     compileOnly(project(":api"))
     compileOnly("io.papermc.paper:paper-api:1.20.4-R0.1-SNAPSHOT")
-    compileOnly("net.momirealms:craft-engine-core:26.4-SNAPSHOT")
-    compileOnly("net.momirealms:craft-engine-bukkit:26.4-SNAPSHOT")
+    compileOnly("net.momirealms:craft-engine-core:26.5")
+    compileOnly("net.momirealms:craft-engine-bukkit:26.5")
 }
 
 tasks.withType<JavaCompile> {

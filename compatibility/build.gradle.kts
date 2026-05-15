@@ -30,7 +30,7 @@ dependencies {
     // papi
     compileOnly("me.clip:placeholderapi:${rootProject.properties["placeholder_api_version"]}")
     // vault
-    compileOnly("com.github.MilkBowl:VaultAPI:${rootProject.properties["vault_version"]}")
+    compileOnly(files("libs/Vault.jar"))
     // season
     compileOnly(files("libs/RealisticSeasons-api.jar"))
     compileOnly(files("libs/AdvancedSeasons-API.jar"))

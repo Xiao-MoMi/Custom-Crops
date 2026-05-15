@@ -27,6 +27,7 @@ import net.momirealms.customcrops.api.misc.value.MathValue;
 import net.momirealms.customcrops.api.util.LocationUtils;
 import net.momirealms.customcrops.common.helper.AdventureHelper;
 import net.momirealms.customcrops.common.util.ListUtils;
+import net.momirealms.sparrow.heart.SparrowHeart;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -67,9 +68,8 @@ public class ActionMessageNearby<T> extends AbstractBuiltInAction<T> {
                         messages,
                         context.placeholderMap()
                 );
-                Audience audience = plugin.getSenderFactory().getAudience(player);
                 for (String text : replaced) {
-                    audience.sendMessage(AdventureHelper.miniMessage(text));
+                    SparrowHeart.getInstance().sendMessage(player, AdventureHelper.miniMessageToJson(text));
                 }
             }
         }

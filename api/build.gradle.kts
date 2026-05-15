@@ -64,11 +64,9 @@ tasks {
 publishing {
     repositories {
         maven {
+            name = "XiaoMoMi"
             url = uri("https://repo.momirealms.net/releases")
-            credentials(PasswordCredentials::class) {
-                username = System.getenv("REPO_USERNAME")
-                password = System.getenv("REPO_PASSWORD")
-            }
+            credentials(PasswordCredentials::class)
         }
     }
     publications {

@@ -6,7 +6,7 @@ repositories {
 
 dependencies {
     compileOnly(project(":api"))
-    compileOnly("dev.folia:folia-api:1.20.4-R0.1-SNAPSHOT")
+    compileOnly("dev.folia:folia-api:${rootProject.properties["paper_version"]}-R0.1-SNAPSHOT")
     compileOnly("com.infernalsuite.asp:api:4.0.0-SNAPSHOT")
     compileOnly(files("${rootProject.rootDir}/libs/flow-nbt-2.0.2.jar"))
 }

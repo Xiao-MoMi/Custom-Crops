@@ -19,12 +19,12 @@ package net.momirealms.customcrops.common.helper;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
-import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
+import org.bukkit.SoundCategory;
 
 import java.util.concurrent.TimeUnit;
 
@@ -32,7 +32,6 @@ import java.util.concurrent.TimeUnit;
  * Helper class for handling Adventure components and related functionalities.
  */
 public class AdventureHelper {
-
     private final MiniMessage miniMessage;
     private final MiniMessage miniMessageStrict;
     private final GsonComponentSerializer gsonComponentSerializer;
@@ -99,16 +98,6 @@ public class AdventureHelper {
     public static String miniMessageToJson(String miniMessage) {
         AdventureHelper instance = getInstance();
         return instance.miniMessageToJsonCache.get(miniMessage, (text) -> instance.gsonComponentSerializer.serialize(miniMessage(text)));
-    }
-
-    /**
-     * Plays a sound for an audience.
-     *
-     * @param audience the audience to play the sound for
-     * @param sound    the sound to play
-     */
-    public static void playSound(Audience audience, Sound sound) {
-        audience.playSound(sound);
     }
 
     /**
@@ -245,5 +234,21 @@ public class AdventureHelper {
             i++;
         }
         return stringBuilder.toString();
+    }
+
+    public static SoundCategory toBukkit(Sound.Source source) {
+        return switch (source) {
+            case MASTER -> SoundCategory.MASTER;
+            case MUSIC -> SoundCategory.MUSIC;
+            case RECORD -> SoundCategory.RECORDS;
+            case WEATHER -> SoundCategory.WEATHER;
+            case BLOCK -> SoundCategory.BLOCKS;
+            case HOSTILE -> SoundCategory.HOSTILE;
+            case NEUTRAL -> SoundCategory.NEUTRAL;
+            case PLAYER ->  SoundCategory.MASTER;
+            case AMBIENT -> SoundCategory.AMBIENT;
+            case VOICE -> SoundCategory.VOICE;
+            case UI -> SoundCategory.UI;
+        };
     }
 }

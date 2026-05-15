@@ -25,8 +25,6 @@
 
 package net.momirealms.customcrops.bukkit.sender;
 
-import net.kyori.adventure.audience.Audience;
-import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.Component;
 import net.momirealms.customcrops.api.BukkitCustomCropsPlugin;
 import net.momirealms.customcrops.common.helper.AdventureHelper;
@@ -42,11 +40,9 @@ import org.bukkit.entity.Player;
 import java.util.UUID;
 
 public class BukkitSenderFactory extends SenderFactory<BukkitCustomCropsPlugin, CommandSender> {
-    private final BukkitAudiences audiences;
 
     public BukkitSenderFactory(BukkitCustomCropsPlugin plugin) {
         super(plugin);
-        this.audiences = BukkitAudiences.create(plugin.getBootstrap());
     }
 
     @Override
@@ -66,19 +62,11 @@ public class BukkitSenderFactory extends SenderFactory<BukkitCustomCropsPlugin, 
     }
 
     @Override
-    public Audience getAudience(CommandSender sender) {
-        return this.audiences.sender(sender);
-    }
-
-    @Override
     protected void sendMessage(CommandSender sender, Component message) {
-        // we can safely send async for players and the console - otherwise, send it sync
         if (sender instanceof Player player) {
             SparrowHeart.getInstance().sendMessage(player, AdventureHelper.componentToJson(message));
-        } else if (sender instanceof ConsoleCommandSender consoleCommandSender || sender instanceof RemoteConsoleCommandSender) {
-            getAudience(sender).sendMessage(message);
         } else {
-            getPlugin().getScheduler().executeSync(() -> getAudience(sender).sendMessage(message));
+            sender.sendRichMessage(AdventureHelper.getMiniMessage().serialize(message));
         }
     }
 
@@ -111,6 +99,5 @@ public class BukkitSenderFactory extends SenderFactory<BukkitCustomCropsPlugin, 
     @Override
     public void close() {
         super.close();
-        this.audiences.close();
     }
 }

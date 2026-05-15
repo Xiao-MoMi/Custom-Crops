@@ -25,6 +25,7 @@ import net.momirealms.customcrops.api.context.ContextKeys;
 import net.momirealms.customcrops.api.misc.value.MathValue;
 import net.momirealms.customcrops.api.util.LocationUtils;
 import net.momirealms.customcrops.common.helper.AdventureHelper;
+import net.momirealms.sparrow.heart.SparrowHeart;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -59,8 +60,7 @@ public class ActionActionbarNearby<T> extends AbstractBuiltInAction<T> {
             if (LocationUtils.getDistance(player.getLocation(), location) <= realRange) {
                 context.arg(ContextKeys.TEMP_NEAR_PLAYER, player.getName());
                 String replaced = plugin.getPlaceholderManager().parse(owner, actionbar, context.placeholderMap());
-                Audience audience = plugin.getSenderFactory().getAudience(player);
-                audience.sendActionBar(AdventureHelper.miniMessage(replaced));
+                SparrowHeart.getInstance().sendActionBar(player, AdventureHelper.miniMessageToJson(replaced));
             }
         }
     }

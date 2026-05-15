@@ -42,6 +42,7 @@ import net.momirealms.sparrow.heart.SparrowHeart;
 import net.momirealms.sparrow.heart.feature.inventory.HandSlot;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.SoundCategory;
 import org.bukkit.entity.ExperienceOrb;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
@@ -174,8 +175,7 @@ public class PlayerActionManager extends AbstractActionManager<Player> {
                 if (Math.random() > chance.evaluate(context)) return;
                 final Player player = context.holder();
                 player.giveExp((int) Math.round(value.evaluate(context)));
-                Audience audience = plugin.getSenderFactory().getAudience(player);
-                AdventureHelper.playSound(audience, Sound.sound(Key.key("minecraft:entity.experience_orb.pickup"), Sound.Source.PLAYER, 1, 1));
+                player.getWorld().playSound(player.getLocation(), "minecraft:entity.experience_orb.pickup", SoundCategory.PLAYERS, 1, 1);
             };
         }, "exp");
         registerAction((args, chance) -> {
@@ -364,18 +364,11 @@ public class PlayerActionManager extends AbstractActionManager<Player> {
             if (args instanceof Section section) {
                 MathValue<Player> volume = MathValue.auto(section.get("volume", 1));
                 MathValue<Player> pitch = MathValue.auto(section.get("pitch", 1));
-                Key key = Key.key(section.getString("key"));
+                String soundId = section.getString("key");
                 Sound.Source source = Sound.Source.valueOf(section.getString("source", "PLAYER").toUpperCase(Locale.ENGLISH));
                 return context -> {
                     if (Math.random() > chance.evaluate(context)) return;
-                    Sound sound = Sound.sound(
-                            key,
-                            source,
-                            (float) volume.evaluate(context),
-                            (float) pitch.evaluate(context)
-                    );
-                    Audience audience = plugin.getSenderFactory().getAudience(context.holder());
-                    AdventureHelper.playSound(audience, sound);
+                    context.holder().playSound(context.holder(), soundId, AdventureHelper.toBukkit(source), (float) volume.evaluate(context),  (float) pitch.evaluate(context));
                 };
             } else {
                 plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at sound action which is expected to be `Section`");
