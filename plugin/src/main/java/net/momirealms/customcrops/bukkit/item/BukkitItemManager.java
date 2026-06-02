@@ -78,7 +78,7 @@ public class BukkitItemManager extends AbstractItemManager {
         this.plugin = plugin;
         try {
             this.hookDefaultPlugins();
-        } catch (ReflectiveOperationException e) {
+        } catch (Throwable e) {
             plugin.getPluginLogger().warn("Failed to load CustomItemProvider", e);
         }
         if (this.provider == null) {

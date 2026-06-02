@@ -32,6 +32,7 @@ import org.bukkit.Rotation;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.ItemDisplay;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -60,11 +61,17 @@ public class NexoProvider implements CustomItemProvider {
 
     @Override
     public @Nullable Entity placeFurniture(Location location, String id) {
-        Entity entity = NexoFurniture.place(id, LocationUtils.toSurfaceCenterLocation(location), Rotation.NONE, BlockFace.UP);
-        if (entity == null) {
+        FurnitureMechanic furnitureMechanic = NexoFurniture.furnitureMechanic(id);
+        if (furnitureMechanic != null) {
+            ItemDisplay placedFurniture = furnitureMechanic.place(location, 0f, BlockFace.UP, false);
+            if (placedFurniture == null) {
+                BukkitCustomCropsPlugin.getInstance().getPluginLogger().warn("Furniture[" + id +"] cannot be placed for unknown reason.");
+            }
+            return placedFurniture;
+        } else {
             BukkitCustomCropsPlugin.getInstance().getPluginLogger().warn("Furniture[" + id +"] doesn't exist. Please double check if that furniture exists.");
+            return null;
         }
-        return entity;
     }
 
     @Override
