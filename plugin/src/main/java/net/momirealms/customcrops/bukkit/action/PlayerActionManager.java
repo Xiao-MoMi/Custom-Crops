@@ -368,7 +368,9 @@ public class PlayerActionManager extends AbstractActionManager<Player> {
                 Sound.Source source = Sound.Source.valueOf(section.getString("source", "PLAYER").toUpperCase(Locale.ENGLISH));
                 return context -> {
                     if (Math.random() > chance.evaluate(context)) return;
-                    context.holder().playSound(context.holder(), soundId, AdventureHelper.toBukkit(source), (float) volume.evaluate(context),  (float) pitch.evaluate(context));
+                    Player holder = context.holder();
+                    if (holder == null) return;
+                    holder.playSound(context.holder(), soundId, AdventureHelper.toBukkit(source), (float) volume.evaluate(context),  (float) pitch.evaluate(context));
                 };
             } else {
                 plugin.getPluginLogger().warn("Invalid value type: " + args.getClass().getSimpleName() + " found at sound action which is expected to be `Section`");
