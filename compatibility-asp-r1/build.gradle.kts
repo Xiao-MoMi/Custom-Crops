@@ -9,7 +9,7 @@ dependencies {
     compileOnly(project(":api"))
     compileOnly("dev.folia:folia-api:${rootProject.properties["paper_version"]}-R0.1-SNAPSHOT")
     compileOnly(files("${rootProject.rootDir}/libs/flow-nbt-2.0.2.jar"))
-    compileOnly(files("/libs/api-1.20.4-R0.1-20240524.171344-26.jar"))
+    compileOnly(files("libs/api-1.20.4-R0.1-20240524.171344-26.jar"))
 }
 
 java {
