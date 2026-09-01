@@ -17,8 +17,6 @@
 
 package net.momirealms.customcrops.bukkit.item;
 
-import net.kyori.adventure.key.Key;
-import net.kyori.adventure.sound.Sound;
 import net.momirealms.antigrieflib.AntiGriefLib;
 import net.momirealms.antigrieflib.Flag;
 import net.momirealms.customcrops.api.BukkitCustomCropsPlugin;
@@ -495,7 +493,7 @@ public class BukkitItemManager extends AbstractItemManager {
             return;
         }
 
-        if (antiGriefLib != null && !antiGriefLib.test(player, Flag.INTERACT, block.getLocation())) {
+        if (antiGriefLib != null && !antiGriefLib.test(player, Flag.PLACE, block.getLocation())) {
             return;
         }
 
@@ -513,7 +511,7 @@ public class BukkitItemManager extends AbstractItemManager {
             return;
         }
 
-        if (antiGriefLib != null && !antiGriefLib.test(player, Flag.INTERACT, location)) {
+        if (antiGriefLib != null && !antiGriefLib.test(player, Flag.PLACE, location)) {
             return;
         }
 

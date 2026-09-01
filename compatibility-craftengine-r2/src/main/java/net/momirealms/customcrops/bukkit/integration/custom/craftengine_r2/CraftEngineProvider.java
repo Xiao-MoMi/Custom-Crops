@@ -76,7 +76,7 @@ public class CraftEngineProvider implements CustomItemProvider {
     @Override
     public @Nullable ItemStack itemStack(Player player, String id) {
         return Optional.ofNullable(CraftEngineItems.byId(Key.of(id)))
-                .map(it -> it.buildBukkitItem(ItemBuildContext.EMPTY))
+                .map(it -> it.buildBukkitItem(ItemBuildContext.empty()))
                 .orElse(null);
     }
 
