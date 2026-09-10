@@ -421,6 +421,7 @@ public abstract class AbstractCustomEventListener implements Listener {
                                             rotation = FurnitureRotation.random();
                                         }
                                         BukkitCustomCropsPlugin.getInstance().getItemManager().place(location, afterStage.existenceForm(), Objects.requireNonNull(afterStage.stageID()), rotation);
+                                        return;
                                     }
                                 }
                             }
