@@ -7,8 +7,8 @@ repositories {
 dependencies {
     compileOnly(project(":api"))
     compileOnly("io.papermc.paper:paper-api:1.20.4-R0.1-SNAPSHOT")
-    compileOnly("net.momirealms:craft-engine-core:26.5")
-    compileOnly("net.momirealms:craft-engine-bukkit:26.5")
+    compileOnly("net.momirealms:craft-engine-core:26.8")
+    compileOnly("net.momirealms:craft-engine-bukkit:26.8")
 }
 
 tasks.withType<JavaCompile> {
