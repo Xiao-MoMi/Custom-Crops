@@ -233,6 +233,11 @@ public enum Dependency {
         return name + "-" + this.getVersion() + extra + ".jar";
     }
 
+    public String toLocalPath() {
+        return rewriteEscaping(groupId).replace(".", "/") + "/"
+                + rewriteEscaping(rawArtifactId) + "/" + getVersion();
+    }
+
     String getMavenRepoPath() {
         return String.format(MAVEN_FORMAT,
                 rewriteEscaping(groupId).replace(".", "/"),

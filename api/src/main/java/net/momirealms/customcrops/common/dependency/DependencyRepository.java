@@ -137,7 +137,9 @@ public enum DependencyRepository {
      */
     public void download(Dependency dependency, Path file) throws DependencyDownloadException {
         try {
-            Files.write(file, download(dependency));
+            byte[] bytes = download(dependency);
+            Files.createDirectories(file.getParent());
+            Files.write(file, bytes);
         } catch (IOException e) {
             throw new DependencyDownloadException(e);
         }
