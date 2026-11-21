@@ -1,13 +1,12 @@
 repositories {
     mavenCentral()
-    maven("https://maven.devs.beer/")
     maven("https://repo.papermc.io/repository/maven-public/")
 }
 
 dependencies {
     compileOnly(project(":api"))
     compileOnly("io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT")
-    compileOnly("dev.lone:api-itemsadder:4.0.9")
+    compileOnly("beer.devs:itemsadder-api:4.0.17")
 }
 
 java {

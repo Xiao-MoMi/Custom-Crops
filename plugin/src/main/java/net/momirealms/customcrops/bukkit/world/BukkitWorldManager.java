@@ -217,41 +217,53 @@ public class BukkitWorldManager implements WorldManager, Listener {
 
     @Override
     public CustomCropsWorld<?> loadWorld(CustomCropsWorld<?> world) {
-        Optional<CustomCropsWorld<?>> optionalWorld = getWorld(world.worldName());
+        String worldName = world.worldName();
+        Optional<CustomCropsWorld<?>> optionalWorld = getWorld(worldName);
         if (optionalWorld.isPresent()) {
             CustomCropsWorld<?> customCropsWorld = optionalWorld.get();
-            customCropsWorld.setting(Optional.ofNullable(worldSettings.get(world.worldName())).orElse(defaultWorldSetting));
+            customCropsWorld.setting(Optional.ofNullable(worldSettings.get(worldName)).orElse(defaultWorldSetting));
             return customCropsWorld;
         }
-        world.setting(Optional.ofNullable(worldSettings.get(world.worldName())).orElse(defaultWorldSetting));
+        world.setting(Optional.ofNullable(worldSettings.get(worldName)).orElse(defaultWorldSetting));
         world.setTicking(true);
-        this.worlds.put(world.worldName(), world);
-        for (Chunk chunk : world.bukkitWorld().getLoadedChunks()) {
-            ChunkPos pos = ChunkPos.fromBukkitChunk(chunk);
-            loadLoadedChunk(world, pos);
-            notifyOfflineUpdates(world, pos);
-        }
+        this.worlds.put(worldName, world);
+        loadWorldChunks(world, world.bukkitWorld());
         return world;
     }
 
     @Override
     public CustomCropsWorld<?> loadWorld(World world) {
+        String worldName = world.getName();
         Optional<CustomCropsWorld<?>> optionalWorld = getWorld(world);
         if (optionalWorld.isPresent()) {
             CustomCropsWorld<?> customCropsWorld = optionalWorld.get();
-            customCropsWorld.setting(Optional.ofNullable(worldSettings.get(world.getName())).orElse(defaultWorldSetting));
+            customCropsWorld.setting(Optional.ofNullable(worldSettings.get(worldName)).orElse(defaultWorldSetting));
             return customCropsWorld;
         }
         CustomCropsWorld<?> adaptedWorld = adapt(world);
-        adaptedWorld.setting(Optional.ofNullable(worldSettings.get(world.getName())).orElse(defaultWorldSetting));
+        adaptedWorld.setting(Optional.ofNullable(worldSettings.get(worldName)).orElse(defaultWorldSetting));
         adaptedWorld.setTicking(true);
-        this.worlds.put(world.getName(), adaptedWorld);
-        for (Chunk chunk : world.getLoadedChunks()) {
-            ChunkPos pos = ChunkPos.fromBukkitChunk(chunk);
-            loadLoadedChunk(adaptedWorld, pos);
-            notifyOfflineUpdates(adaptedWorld, pos);
-        }
+        this.worlds.put(worldName, adaptedWorld);
+        loadWorldChunks(adaptedWorld, world);
         return adaptedWorld;
+    }
+
+    private void loadWorldChunks(CustomCropsWorld<?> world, World bukkitWorld) {
+        for (Chunk chunk : bukkitWorld.getLoadedChunks()) {
+            ChunkPos pos = ChunkPos.fromBukkitChunk(chunk);
+            loadLoadedChunk(world, pos);
+            if (!world.setting().offlineTick()) continue;
+
+            if (VersionHelper.isFolia()) {
+                plugin.getScheduler().sync().run(() -> {
+                    if (bukkitWorld.isChunkLoaded(pos.x(), pos.z())) {
+                        notifyOfflineUpdates(world, pos);
+                    }
+                }, bukkitWorld, pos.x(), pos.z());
+            } else {
+                notifyOfflineUpdates(world, pos);
+            }
+        }
     }
 
     // Before using the method, make sure that the bukkit chunk is loaded
